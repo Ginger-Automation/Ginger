@@ -23,10 +23,8 @@ using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore;
-using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,6 +38,10 @@ namespace Ginger.SolutionWindows
     {
         Solution mSolution;
         string AppName;
+
+        public delegate void OnActivityTargetApplicationUpdate();
+
+        public static event OnActivityTargetApplicationUpdate OnActivityUpdate;
 
         public TargetApplicationsPage()
         {
@@ -185,26 +187,16 @@ namespace Ginger.SolutionWindows
             foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
             {
                 //update the BF target applications 
-                foreach (var bfApp in bf.TargetApplications)
+                foreach (var activity in bf.Activities)
                 {
                     //donot check for TargetPlugins, only for TargetApplications 
-                    if (bfApp.GetType() == typeof(TargetApplication))
-                    {
-                        if (((TargetApplication)bfApp).AppName == app.NameBeforeEdit)
-                        {
-                            ((TargetApplication)bfApp).AppName = app.AppName;
 
-                            //update the bf activities 
-                            foreach (Activity activity in bf.Activities)
-                            {
-                                if (activity.TargetApplication == app.NameBeforeEdit)
-                                {
-                                    activity.TargetApplication = app.AppName;                                    
-                                }
-                            }
-                            numOfAfectedItems++;
-                            break;
-                        }
+                    if (activity.TargetApplication.Equals(app.NameBeforeEdit))
+                    {
+                        activity.StartDirtyTracking();
+                        activity.TargetApplication = app.AppName;
+
+                        numOfAfectedItems++;
                     }
                 }
             }
@@ -218,6 +210,11 @@ namespace Ginger.SolutionWindows
                     activity.TargetApplication = app.AppName;
                     numOfAfectedItems++;
                 }                             
+            }
+
+            if(numOfAfectedItems > 0 && OnActivityUpdate!=null)
+            {
+                OnActivityUpdate();
             }
             Reporter.ToUser(eUserMsgKey.StaticInfoMessage, string.Format("{0} items were updated successfully, please remember to Save All change.", numOfAfectedItems));
         }

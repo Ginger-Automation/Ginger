@@ -267,7 +267,15 @@ namespace Ginger.ALM.Repository
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                if (businessFlow.ALMTestSetLevel == "RunSet")
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Export to ALM Failed The { GingerDicser.GetTermResValue(eTermResKey.RunSet) } ' {businessFlow.Name}' failed to be exported to ALM. { Environment.NewLine }{ Environment.NewLine } Error Details: {res}");
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                }
+                
             }
 
             Reporter.HideStatusMessage();

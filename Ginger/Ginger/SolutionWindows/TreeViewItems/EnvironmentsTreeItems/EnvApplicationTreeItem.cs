@@ -88,7 +88,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Save Parent Environment", Save, this, eImageType.Save);
-            TreeViewUtils.AddMenuItem(mContextMenu, "Duplicate", Duplicate, null, eImageType.Duplicate);
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete, null, eImageType.Delete);
             TreeViewUtils.AddMenuItem(mContextMenu, "Share With Other Environments", Share, this, eImageType.Share);
         }
@@ -96,7 +95,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void DeleteEnvTreeItems()
         {
             mTreeView.Tree.DeleteItemAndSelectParent(this);
-            ProjEnvironment.Applications.Remove(EnvApplication);
+            ProjEnvironment.StartDirtyTracking();
+            ProjEnvironment.Applications = new(ProjEnvironment.Applications.Where((app) => !app.Equals(EnvApplication)));
+            ProjEnvironment.OnPropertyChanged(nameof(ProjEnvironment.Applications));
             ProjEnvironment.SaveBackup();//to mark the env as changed
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
 
@@ -123,14 +124,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-        private void Duplicate(object sender, RoutedEventArgs e)
-        {
-            EnvApplication copy = (EnvApplication)EnvApplication.CreateCopy();
-            copy.Name = copy.Name + "_copy";
-            ProjEnvironment.Applications.Add(copy);
-            ProjEnvironment.SaveBackup();//to mark the env as changed
-            mTreeView.Tree.RefreshSelectedTreeNodeParent();
-        }
 
         private void Share(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -146,6 +139,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                         env.Applications.Add(app);
                         env.SaveBackup();//to mark the env as changed
                         appsWereAdded = true;
+                        env.OnPropertyChanged(nameof(env.Applications));
                     }
                 }
             }
@@ -154,6 +148,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 Reporter.ToUser(eUserMsgKey.ShareEnvAppWithAllEnvs);
             }
+            mTreeView.Tree.RefreshSelectedTreeNodeParent();
         }
 
         private void Save(object sender, System.Windows.RoutedEventArgs e)

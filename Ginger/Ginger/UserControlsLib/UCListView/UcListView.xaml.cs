@@ -504,6 +504,19 @@ namespace Ginger.UserControlsLib.UCListView
                 SelectionTitle.Content = value;
             }
         }
+
+        public FontWeight SelectTitleFontWeight
+        {
+            get
+            {
+                return SelectionTitle.FontWeight;
+            }
+
+            set
+            {
+                SelectionTitle.FontWeight = value;
+            }
+        }
         public void ScrollToViewCurrentItem()
         {
             if (mObjList != null && mObjList.CurrentItem != null)
