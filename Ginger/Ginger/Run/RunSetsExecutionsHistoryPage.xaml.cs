@@ -136,7 +136,22 @@ namespace Ginger.Run
                 {
                     Field = RunSetReport.Fields.Description,
                     WidthWeight = 20,
-                    ReadOnly = true },
+                    ReadOnly = true 
+                },
+                new()
+                {
+                    Field = RunSetReport.Fields.SourceApplication,
+                    Header = "Requested From",
+                    WidthWeight = 10,
+                    ReadOnly = true,
+                },
+                new()
+                {
+                    Field = RunSetReport.Fields.SourceApplicationUser,
+                    Header = "Requested By",
+                    WidthWeight = 10,
+                    ReadOnly = true,
+                },
                 new()
                 {
                     Field = RunSetReport.Fields.StartTimeStamp,
@@ -498,6 +513,10 @@ namespace Ginger.Run
                     {
                         LoadRunsetEventHandler? handler = LoadRunset;
                         handler?.Invoke(runset);
+                        if (runset.IsVirtual)
+                        {
+                            runset.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified;
+                        }
                     });
                 }
                 catch(Exception ex)

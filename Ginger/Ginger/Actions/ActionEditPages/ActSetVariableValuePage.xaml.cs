@@ -55,7 +55,14 @@ namespace Ginger.Actions
             }
             else
             {
-                mVars = WorkSpace.Instance.Solution.Variables;
+                mVars = new(WorkSpace.Instance.Solution.Variables);
+                if (mContext != null && mContext.Activity != null)
+                {
+                    foreach (var activityVar in mContext.Activity.Variables)
+                    {
+                        mVars.Add(activityVar);
+                    }
+                }
             }
 
             foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))
