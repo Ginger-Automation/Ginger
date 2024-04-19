@@ -13,14 +13,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         {
             if(ApplicationConfig == null || (string.IsNullOrEmpty(ApplicationConfig.Name) && ApplicationConfig.TargetApplicationGUID.Equals(Guid.Empty)))
             {
-                throw new Exception("Both Target Application GUID and Applicaition Name cannot be null or empty. Atleast one of them should have a value");
+                throw new ArgumentException("Both Target Application GUID and Applicaition Name cannot be null or empty. Atleast one of them should have a value");
             }
         }
 
-        public static ePlatformType GetTargetAppPlatformFromGinger(ApplicationConfig application)
+        private static ePlatformType GetTargetAppPlatformFromGinger(ApplicationConfig application)
         {
-
-            ValidateApplicationConfig(application);
 
              var TargetApplicationInGinger = WorkSpace.Instance.Solution.ApplicationPlatforms
                 .FirstOrDefault((ApplicationPlatform) =>
@@ -35,7 +33,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static EnvApplication CreateEnvApplicationFromConfig(ApplicationConfig application)
         {
-            
+            ValidateApplicationConfig(application);
             EnvApplication envApplication = new()
             {
                 Name = application.Name,
@@ -51,6 +49,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static void UpdateEnvApplicationFromConfig(ref EnvApplication AppFromGinger , ApplicationConfig App)
         {
+            ValidateApplicationConfig(App);
+
             AppFromGinger.Platform = GetTargetAppPlatformFromGinger(App);
             AppFromGinger.AppVersion = App.AppVersion;
             AppFromGinger.Url = App.URL;

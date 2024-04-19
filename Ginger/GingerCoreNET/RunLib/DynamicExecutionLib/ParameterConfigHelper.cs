@@ -11,7 +11,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         {
             if(string.IsNullOrEmpty(Parameter.Value) || string.IsNullOrEmpty(Parameter.Name))
             {
-                throw new Exception("Parameter Name or Value cannot be null or empty");
+                throw new ArgumentException("Parameter Name or Value cannot be null or empty");
             }
         }
 

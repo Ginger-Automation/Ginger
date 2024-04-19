@@ -132,7 +132,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             set
             {
                 mSetEnvironmentDetails = value;
-                OnPropertyChanged(nameof(mSetEnvironmentDetails));
+                OnPropertyChanged(nameof(SetEnvironmentDetails));
             }
         }
 

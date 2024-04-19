@@ -24,7 +24,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 eDBTypes.Couchbase => eDBConfigType.Couchbase,
                 eDBTypes.DB2 => eDBConfigType.DB2,
                 eDBTypes.Hbase => eDBConfigType.Hbase,
-                _ => throw new Exception($"Mentioned DB Type does not exist"),
+                _ => throw new ArgumentException($"Mentioned DB Type does not exist"),
             };
         }
 
@@ -44,19 +44,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 eDBConfigType.Couchbase => eDBTypes.Couchbase,
                 eDBConfigType.DB2 => eDBTypes.DB2,
                 eDBConfigType.Hbase => eDBTypes.Hbase,
-                _ => throw new Exception($"Mentioned DB Type does not exist"),
+                _ => throw new ArgumentException($"Mentioned DB Type does not exist"),
             };
         }
 
         public static void ValidateDatabaseConfig(DatabaseConfig databaseConfig)
         {
-            if (databaseConfig == null)
+            if (databaseConfig == null || databaseConfig.DBType == null || string.IsNullOrEmpty(databaseConfig.ConnectionString) || !databaseConfig.KeepConnectionOpen.HasValue || string.IsNullOrEmpty(databaseConfig.Name))
             {
-                return;
-            }
-            if (databaseConfig.DBType == null || string.IsNullOrEmpty(databaseConfig.ConnectionString) || !databaseConfig.KeepConnectionOpen.HasValue || string.IsNullOrEmpty(databaseConfig.Name))
-            {
-                throw new Exception("Either DBType, ConnectionString or Name is not mentioned of the Database");
+                throw new ArgumentException("Either DBType, ConnectionString or Name is not mentioned of the Database");
             }
         }
 
