@@ -658,7 +658,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return header;
         }
 
-        public void FilterItemsByText2(string text)
+        public void FilterItemsByTextNew(string text)
         {
             long startTime = DateTime.UtcNow.Ticks;
 
@@ -671,12 +671,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 }
             }
 
-            FilterItemsByText2(items, text);
+            FilterItemsByTextNew(items, text);
 
-            Debug.WriteLine($"==================== FilterItemsByText2: {TimeSpan.FromTicks(DateTime.UtcNow.Ticks - startTime).TotalMilliseconds}ms ====================");
+            Reporter.ToLog(eLogLevel.DEBUG,$"FilterItemsByTextNew took {TimeSpan.FromTicks(DateTime.UtcNow.Ticks - startTime).TotalMilliseconds}ms");
         }
 
-        private bool FilterItemsByText2(IEnumerable<ITreeViewItem> items, string text)
+        private bool FilterItemsByTextNew(IEnumerable<ITreeViewItem> items, string text)
         {
             if (items == null)
             {
@@ -697,7 +697,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     wasFound = true;
                 }
 
-                if (FilterItemsByText2(item.Childrens(), text))
+                if (FilterItemsByTextNew(item.Childrens(), text))
                 {
                     wasFound = true;
                     itemBase.Visibility = Visibility.Visible;
