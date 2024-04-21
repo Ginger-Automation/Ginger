@@ -84,8 +84,8 @@ namespace Ginger.Variables
             mVariable.NameBeforeEdit = mVariable.Name;
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
             xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
-
-            if(parent is EnvApplication)
+            
+            if (parent is EnvApplication)
             {
 
                 xTitleName.Text = $"{GingerDicser.GetTermResValue(eTermResKey.Parameter)} Type: ";

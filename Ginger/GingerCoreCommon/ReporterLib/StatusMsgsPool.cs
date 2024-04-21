@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -60,7 +60,8 @@ namespace Amdocs.Ginger.Common
         StaticStatusMessage, StaticStatusProcess, PasteProcess, CreatingBackupProcess,
         NewVersionAvailable, CleaningLegacyActions, PublishingToCentralDB,
         ExportingToBPMNFile,
-        ExportingToBPMNZIP
+        ExportingToBPMNZIP,
+        LoadingTreeViewChildren
     }
 
     public static class StatusMsgsPool
@@ -147,6 +148,7 @@ namespace Amdocs.Ginger.Common
 
             #region General
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.UndoChanges, new StatusMsg(eStatusMsgType.PROCESS, "Undo Changes", "Undo changes for the item '{0}'"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.LoadingTreeViewChildren, new StatusMsg(eStatusMsgType.PROCESS, "Loading Items", "Loading items..."));
             #endregion General
 
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.RunCompleted, new StatusMsg(eStatusMsgType.INFO, GingerDicser.GetTermResValue(eTermResKey.RunSet), "Execution Completed '{0}'"));
