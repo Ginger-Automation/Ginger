@@ -47,7 +47,7 @@ namespace Ginger.ALM.AzureDevOps
         }
         private void UpdateStatus(string msg = "")
         {
-            if (importStatus == false)
+            if (!importStatus)
             {
                 lblStatus.Content = msg;
                 lblStatus.Visibility = System.Windows.Visibility.Visible;

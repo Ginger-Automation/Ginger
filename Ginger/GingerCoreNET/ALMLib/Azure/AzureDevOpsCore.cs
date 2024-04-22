@@ -937,16 +937,15 @@ namespace GingerCore.ALM
                     selectedTS.Project = logincred.Project;
                 }
 
-                List<AzureTestCasesSteps> testCasesSteps = new();
+                List<AzureTestCasesSteps> testCasesSteps = [];
 
-                List<AzureTestCases> azureTestCases = new();
 
                 foreach (var testCaseId in testCasesIds)
                 {
 
                     testCasesSteps = SetTestCaseSteps(testCaseId);
 
-                    azureTestCases.Add(new AzureTestCases
+                    selectedTS.TestCases.Add(new AzureTestCases
                     {
                         TestName = testCaseId.workItem.Name,
                         TestID = testCaseId.workItem.Id.ToString(),
@@ -954,7 +953,6 @@ namespace GingerCore.ALM
                     });
 
                 }
-                selectedTS.TestCases = azureTestCases;
 
                 return selectedTS;
             }
@@ -988,7 +986,7 @@ namespace GingerCore.ALM
                     foreach (var item in test)
                     {
                         var stepText = RemoveHtmlTags(((XmlNode)item)?.FirstChild?.InnerText);
-                        testCasesSteps.Add(new AzureTestCasesSteps(stepText.ToString(),Guid.NewGuid().ToString()));
+                        testCasesSteps.Add(new AzureTestCasesSteps(stepText, Guid.NewGuid().ToString()));
                     }
                 }
                 else
@@ -1190,7 +1188,6 @@ namespace GingerCore.ALM
                 stepActivity = new Activity();
                 stepActivity.ActivityName = step.StepName;
                 stepActivity.ExternalID = step.StepID;
-                //stepActivity.Expected = StripHTML(step.Expected);
 
                 toAddStepActivity = true;
             }
