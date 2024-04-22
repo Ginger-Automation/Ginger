@@ -1,7 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="23ac9f62-72ed-446a-a6fc-01be97cb2b40" ItemType="ProjEnvironment" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.4.0.0" Version="2" LastUpdateBy="YARONWE" LastUpdate="201909061517" />
+<GingerRepositoryItem><Header ItemGuid="23ac9f62-72ed-446a-a6fc-01be97cb2b40" ItemType="ProjEnvironment" CreatedBy="YARONWE" Created="201904012027" GingerVersion="24.2.1.1" Version="4" LastUpdateBy="manaska" LastUpdate="202404211549" />
 <ProjEnvironment Guid="23ac9f62-72ed-446a-a6fc-01be97cb2b40" Name="Default" ParentGuid="00000000-0000-0000-0000-000000000000">
 <Applications>
-<EnvApplication Active="True" Guid="1e6807f0-7101-4200-a944-d437e7442032" Name="app1" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<EnvApplication Active="True" Guid="1e6807f0-7101-4200-a944-d437e7442032" Name="app1" ParentGuid="00000000-0000-0000-0000-000000000000">
+<Dbs>
+<Database ConnectionString="Data Source=ilrnaginger02;User Id={USER};Password={PASS};" DBType="MSSQL" Guid="c487c433-c2aa-4218-91e4-33587a305d7d" KeepConnectionOpen="False" Name="sonar" ParentGuid="00000000-0000-0000-0000-000000000000" Pass="ycwR0ojowmdmohaH6VBy+A==" TNS="ilrnaginger02" User="test" />
+</Dbs>
+
+<Variables>
+<VariableString Guid="63b4faa2-1676-4036-bda3-2dac4dd776f2" InitialStringValue="users" MappedOutputType="None" Name="MSSQL_Table" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsInputValue="False" SetAsOutputValue="False" />
+</Variables>
+</EnvApplication>
 </Applications>
 </ProjEnvironment></GingerRepositoryItem>

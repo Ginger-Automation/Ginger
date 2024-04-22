@@ -425,6 +425,46 @@ namespace WorkspaceHold
             Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).Subject, "Test44", "Validating customized report mail Subject");
         }
 
+        [TestMethod]
+        // Testing if virtual environment is successfully used
+        public void CLIDynamicJSON_TestingVirtualEnvironment()
+        {
+
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-VirtualEnvironment.json"), mSolutionFolder);
+
+            CLIProcessor CLI = new ();
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name , "Default123");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Applications.Count, 1);
+        }
+
+
+
+        // checks if after the virtual environment is update the runset still works as expected and the 
+        [TestMethod]
+        public void CLIDynamicJSON_TestingExistingEnvironmentUpdate()
+        {
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-ExistingEnvironment.json"), mSolutionFolder);
+            CLIProcessor CLI = new();
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            Database database = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Applications[0].Dbs[0] as Database;
+
+
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Default");
+            Assert.AreEqual(database.DBType, Database.eDBTypes.PostgreSQL);
+        }
+
+
+
         /// <summary>
         /// Testing JSON non existing Runset 
         /// </summary>   

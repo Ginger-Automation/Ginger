@@ -1,0 +1,110 @@
+{
+    "SolutionScmDetails": {
+      "SCMType": "GIT",
+      "SolutionRepositoryUrl": "https://github.com/Ginger-Automation/Ginger.git",
+      "User": "manaska",
+      "Password": "4kRI0Sifu4GQ+VzqHdhVfGro9vUr/Xt5Wsk7gEN/zRk=",
+      "PasswordEncrypted": true,
+      "UndoSolutionLocalChanges": false,
+      "Branch": "Feature/EnvironmentCLI"
+    },
+    "Environments": [
+      {
+        "Name": "Default",
+        "Exist": true,
+        "Guid": "23ac9f62-72ed-446a-a6fc-01be97cb2b40",
+        "Applications": [
+          {
+            "Name": "app1",
+            "Guid": "1e6807f0-7101-4200-a944-d437e7442032",
+            "TargetApplicationGUID": "00000000-0000-0000-0000-000000000000",
+            "DBs": [
+              {
+                "Name": "sonar",
+                "Guid": "c487c433-c2aa-4218-91e4-33587a305d7d",
+                "DBType": "PostgreSQL",
+                "ConnectionString": "Server=ilrnaginger01;User Id=postgres; Password=postgres;Database=TDmDev;",
+                "KeepConnectionOpen": false
+              }
+            ],
+            "Parameters": [
+              {
+                "Name": "MSSQL_Table",
+                "Value": "public.\"Lob\"",
+                "Guid": "63b4faa2-1676-4036-bda3-2dac4dd776f2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Env1",
+        "Exist": true,
+        "Guid": "a3a457f7-a545-4137-840e-33c2bd530791",
+        "Applications": [
+          {
+            "Name": "app1",
+            "Guid": "c29384ec-1e27-4100-a516-796412c0493d",
+            "TargetApplicationGUID": "00000000-0000-0000-0000-000000000000",
+            "DBs": [],
+            "Parameters": []
+          }
+        ]
+      }
+    ],
+    "SolutionLocalPath": "C:\\Users\\manaska\\Documents\\Ginger-C\\Ginger\\GingerCoreNETUnitTest\\TestResources\\Solutions\\CLI",
+    "EncryptionKey": "D3^hdfr7%ws4Kb56=Qt",
+    "ShowAutoRunWindow": false,
+    "VerboseLevel": "normal",
+    "Runset": {
+      "Exist": true,
+      "Name": "VirtualEnvironment-Runset",
+      "ID": "3256a43f-9ab0-42ec-82a1-0259cc895230",
+      "EnvironmentName": "Default",
+      "EnvironmentID": "23ac9f62-72ed-446a-a6fc-01be97cb2b40",
+      "RunAnalyzer": true,
+      "RunInParallel": true,
+      "StopRunnersOnFailure": false,
+      "Runners": [
+        {
+          "Exist": true,
+          "Name": "Runner 1",
+          "ID": "f144d56a-23f4-43d0-b7e6-d50af2746f47",
+          "Active": true,
+          "OnFailureRunOption": "ContinueToRunall",
+          "RunInSimulationMode": false,
+          "RunInVisualTestingMode": true,
+          "AppAgentMappings": [
+            {
+              "ApplicationName": "app1",
+              "ApplicationID": "e514fcc7-9e32-40c4-badf-845930479277",
+              "AgentName": "IE",
+              "AgentID": "bdcdb5d7-4166-4cb8-a937-8789d58e8e2f"
+            }
+          ],
+          "KeepAgentsOpen": false,
+          "BusinessFlows": [
+            {
+              "Exist": true,
+              "Name": "RDBMS_Flow",
+              "ID": "d83ba6ac-29a3-4664-8d2a-17a6164e0f1e",
+              "InstanceID": "fedcba0f-4d0e-4d70-ac6c-2d7ca32d1eaa",
+              "Active": true
+            }
+          ]
+        }
+      ],
+      "RerunConfigurations": {
+        "Active": false,
+        "RerunLevel": "RunSet",
+        "ReferenceExecutionID": "00000000-0000-0000-0000-000000000000"
+      },
+      "SelfHealingConfiguration": {
+        "ReprioritizePOMLocators": true,
+        "AutoFixAnalyzerIssue": false,
+        "AutoUpdateApplicationModel": false,
+        "SaveChangesInSourceControl": false,
+        "AutoExecuteInSimulationMode": false
+      }
+    }
+  }
