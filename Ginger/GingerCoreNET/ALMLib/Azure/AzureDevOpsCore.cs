@@ -1156,7 +1156,6 @@ namespace GingerCore.ALM
                     stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                     // in any case update description/expected/name - even if "step" was taken from repository
                    
-                    //stepActivity.Expected = StripHTML(step.Expected);
                     stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
                 }
                 else//not in ActivitiesGroup so get instance from repo

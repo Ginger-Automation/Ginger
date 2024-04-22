@@ -111,7 +111,7 @@ namespace Ginger.ALM.AzureDevOps
             }
             AzureTestPlanList.Add(grdAzureTestPlan.CurrentItem as AzureTestPlan);
 
-            if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, AzureTestPlanList) == true)
+            if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, AzureTestPlanList))
             {
                 _pageGenericWin.Close();
             }
