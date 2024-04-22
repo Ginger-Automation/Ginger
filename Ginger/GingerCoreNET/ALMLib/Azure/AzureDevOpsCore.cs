@@ -979,8 +979,7 @@ namespace GingerCore.ALM
             try
             {
                 testCasesSteps.Add(new AzureTestCasesSteps(result, Guid.NewGuid().ToString()));
-                string temprfile = xmlDoc.ToString();
-                //temprfile.Contains();
+               
 
             }
             catch(Exception ex)
@@ -1030,21 +1029,12 @@ namespace GingerCore.ALM
                             //not in group- need to add it
                             busFlow.AddActivity(stepActivity, tcActivsGroup);
                         }
-
-                        //pull TC-Step parameters and add them to the Activity level
-                        List<string> stepParamsList = new List<string>();
-                        //GetStepParameters(StripHTML(step.Variables), ref stepParamsList);
-                        //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
-                       // foreach (string param in stepParamsList)
-                        //{
-                            //ConvertJiraParameters(tc, stepActivity, param);
-                        //}
                     }
 
                     //order the Activities Group activities according to the order of the matching steps in the TC
                     try
                     {
-                        int startGroupActsIndxInBf = 0;// busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
+                        int startGroupActsIndxInBf = 0;
                         if (tcActivsGroup.ActivitiesIdentifiers.Count > 0)
                         {
                             startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
@@ -1140,16 +1130,10 @@ namespace GingerCore.ALM
             {
                 tcActivsGroup = new ActivitiesGroup();
                 tcActivsGroup.Name = tc.TestName;
-                if (tc.TestID == null || tc.TestID == string.Empty)
-                {
-                    tcActivsGroup.ExternalID = tc.TestID;
-                    tcActivsGroup.Description = tc.Description;
-                }
-                else
-                {
-                    tcActivsGroup.ExternalID = tc.TestID;
-                    tcActivsGroup.Description = tc.Description;
-                }
+
+                tcActivsGroup.ExternalID = tc.TestID;
+                tcActivsGroup.Description = tc.Description;
+                
                 busFlow.AddActivitiesGroup(tcActivsGroup);
             }
 
@@ -1171,7 +1155,7 @@ namespace GingerCore.ALM
                     //already in Activities Group so get link to it
                     stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                     // in any case update description/expected/name - even if "step" was taken from repository
-                   // stepActivity.Description = StripHTML(step.Description);
+                   
                     //stepActivity.Expected = StripHTML(step.Expected);
                     stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
                 }

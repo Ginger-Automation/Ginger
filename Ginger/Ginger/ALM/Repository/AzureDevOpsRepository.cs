@@ -301,7 +301,10 @@ namespace Ginger.ALM.Repository
                AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
                 Reporter.HideStatusMessage();
             }
-            catch { }
+            catch(Exception ex) 
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Importing Test Plan/Suite got failed", ex);
+            }
 
         }
 
@@ -312,7 +315,7 @@ namespace Ginger.ALM.Repository
                 //add the applications mapped to the Activities
                 foreach (Activity activ in tsBusFlow.Activities)
                 {
-                    if (string.IsNullOrEmpty(activ.TargetApplication) == false)
+                    if (!string.IsNullOrEmpty(activ.TargetApplication))
                     {
                         if (tsBusFlow.TargetApplications.FirstOrDefault(x => x.Name == activ.TargetApplication) == null)
                         {

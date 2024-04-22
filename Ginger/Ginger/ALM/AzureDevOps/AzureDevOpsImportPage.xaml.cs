@@ -84,12 +84,12 @@ namespace Ginger.ALM.AzureDevOps
                 return;
             }
 
-            if (ALMIntegration.Instance.ShowImportReviewPage(mImportDestinationPath, grdAzureTestPlan.CurrentItem) == true)
+            if (ALMIntegration.Instance.ShowImportReviewPage(mImportDestinationPath, grdAzureTestPlan.CurrentItem))
             {
                 ObservableList<Object> AzureTestPlanList = new ObservableList<Object>();
                 AzureTestPlanList.Add(mTestSet);
 
-                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, AzureTestPlanList) == true)
+                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, AzureTestPlanList))
                 {
                     _pageGenericWin.Close();
                 }

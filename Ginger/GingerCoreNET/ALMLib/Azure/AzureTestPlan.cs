@@ -10,10 +10,10 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.Azure
     {
         public static partial class Fields
         {
-            public static string Name = "Name";
-            public static string AzureID = "AzureID";
-            public static string State = "State";
-            public static string Project = "Project";
+            public static readonly string Name = "Name";
+            public static readonly string AzureID = "AzureID";
+            public static readonly string State = "State";
+            public static readonly string Project = "Project";
         }
         public AzureTestPlan()
         {
