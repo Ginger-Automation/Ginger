@@ -920,7 +920,7 @@ namespace GingerCore.ALM
         {
             try
             {
-
+               
 
                 int testplanId = Int32.Parse(selectedTS.AzureID);
                 LoginDTO logincred = GetLoginDTO();
@@ -929,20 +929,30 @@ namespace GingerCore.ALM
                 TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
                 var testCasesIds = testPlanClient.GetTestCaseListAsync(logincred.Project, testplanId, testplanId + 1).Result;
 
+                // In case of  Import from Test Set By d
+                if (string.IsNullOrEmpty(selectedTS.Name) && string.IsNullOrEmpty(selectedTS.Project))
+                {
+                    var itm = testPlanClient.GetTestSuiteByIdAsync(logincred.Project,testplanId, testplanId+1).Result;
+                    selectedTS.Name = itm.Name;
+                    selectedTS.Project = logincred.Project;
+                }
+
                 List<AzureTestCasesSteps> testCasesSteps = new();
 
                 List<AzureTestCases> azureTestCases = new();
 
-
                 foreach (var testCaseId in testCasesIds)
                 {
-                    testCasesSteps.Add(new AzureTestCasesSteps("dummy Action", Guid.NewGuid().ToString()));
+
+                    testCasesSteps = SetTestCaseSteps(testCaseId);
+
                     azureTestCases.Add(new AzureTestCases
                     {
                         TestName = testCaseId.workItem.Name,
                         TestID = testCaseId.workItem.Id.ToString(),
                         Steps = testCasesSteps
                     });
+
                 }
                 selectedTS.TestCases = azureTestCases;
 
@@ -960,32 +970,39 @@ namespace GingerCore.ALM
         /// </summary>
         /// <param name="testCasesIds"></param>
         /// <returns></returns>
-        public List<AzureTestCasesSteps> SetTestCaseSteps(dynamic testCasesIds)
+        public List<AzureTestCasesSteps> SetTestCaseSteps(dynamic testCasesId)
         {
-            JObject testStep = (JObject)testCasesIds[0].workItem.WorkItemFields[0];
+
+            JObject testStep = (JObject)testCasesId.workItem.WorkItemFields[0];
             string testStepValue = testStep.GetValue("Microsoft.VSTS.TCM.Steps").ToString();
+
+            List<AzureTestCasesSteps> testCasesSteps = new();
+            if (!string.IsNullOrEmpty(testStepValue))
+            {
+                XmlDocument xmlDoc = new();
+                xmlDoc.LoadXml(testStepValue);
+                if (xmlDoc != null)
+                {
+                   
+                    var test = xmlDoc.FirstChild.ChildNodes;
+                    foreach (var item in test)
+                    {
+                        var stepText = RemoveHtmlTags(((XmlNode)item)?.FirstChild?.InnerText);
+                        testCasesSteps.Add(new AzureTestCasesSteps(stepText.ToString(),Guid.NewGuid().ToString()));
+                    }
+                }
+                else
+                {
+
+                    Reporter.ToLog(eLogLevel.INFO, "Unable to convert Test Step/s to XML");
+                }
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.INFO, "Test Case may not contains test steps");
+            }
            
-            XmlDocument xmlDoc = new();
-            xmlDoc.LoadXml(testStepValue);
-            XmlNodeList pNodes = xmlDoc.SelectNodes("//DIV/P");
-
-            if (xmlDoc == null)
-            {
-                return null;
-            }
-            var itm = xmlDoc.FirstChild.ChildNodes[0].ChildNodes[0].InnerText;
-            string result = RemoveHtmlTags(itm);
-            List<AzureTestCasesSteps> testCasesSteps = new ();
-            try
-            {
-                testCasesSteps.Add(new AzureTestCasesSteps(result, Guid.NewGuid().ToString()));
-               
-
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR,"Got Error in test step creation", ex);
-            }
+            
             return testCasesSteps;
         }
 
@@ -1011,6 +1028,9 @@ namespace GingerCore.ALM
                 busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
                 busFlow.Activities = new ObservableList<Activity>();
                 busFlow.Variables = new ObservableList<VariableBase>();
+
+                //Test suite ID
+                busFlow.ExternalID2 = (Int32.Parse(azureTestPlan.AzureID) + 1).ToString();
 
                 //Create Activities Group + Activities for each TC
                 foreach (AzureTestCases tc in azureTestPlan.TestCases)
@@ -1091,7 +1111,7 @@ namespace GingerCore.ALM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import Azure test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -1156,7 +1176,7 @@ namespace GingerCore.ALM
                     stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                     // in any case update description/expected/name - even if "step" was taken from repository
                    
-                    stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
+                    stepActivity.ActivityName =  step.StepName;
                 }
                 else//not in ActivitiesGroup so get instance from repo
                 {
@@ -1168,7 +1188,7 @@ namespace GingerCore.ALM
             else//Step not exist in Ginger repository so create new one
             {
                 stepActivity = new Activity();
-                stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
+                stepActivity.ActivityName = step.StepName;
                 stepActivity.ExternalID = step.StepID;
                 //stepActivity.Expected = StripHTML(step.Expected);
 

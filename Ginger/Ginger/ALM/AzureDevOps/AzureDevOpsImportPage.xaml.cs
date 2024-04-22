@@ -68,13 +68,9 @@ namespace Ginger.ALM.AzureDevOps
 
         private void ImportTestSet(object sender, RoutedEventArgs e)
         {
-            ImportTestSet(sender);
-        }
-
-        private void ImportTestSet(object sender, EventArgs e)
-        {
             ImportTestSet();
         }
+
 
         private void ImportTestSet()
         {

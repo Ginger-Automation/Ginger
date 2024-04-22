@@ -254,6 +254,12 @@ namespace Ginger.ALM.Repository
             win.ShowAsWindow();
         }
 
+        public override void ImportALMTestsById(string importDestinationFolderPath)
+        {
+            AzureDevOpsImportSetByIdPage win = new AzureDevOpsImportSetByIdPage();
+            win.ShowAsWindow();
+        }
+
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTests)
         {
             if (selectedTests != null && selectedTests.Any())
