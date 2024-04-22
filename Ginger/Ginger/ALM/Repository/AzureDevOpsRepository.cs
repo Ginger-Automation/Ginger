@@ -18,15 +18,23 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ALMLib.Azure;
 using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using Amdocs.Ginger.Repository;
+using Ginger.ALM.AzureDevOps;
 using Ginger.ALM.QC;
 using Ginger.ALM.QC.TreeViewItems;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
+using GingerCore.ALM.JIRA;
+using GingerCore.Platforms;
+using GingerCoreNET.ALMLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -123,7 +131,7 @@ namespace Ginger.ALM.Repository
                     {
                         if (String.IsNullOrEmpty(testPlanUploadPath))
                         {
-                            testPlanUploadPath = matchingTS.ParentId;
+                            testPlanUploadPath = ALMCore.DefaultAlmConfig.ALMProjectName;
                         }
                     }
                 }
@@ -241,14 +249,104 @@ namespace Ginger.ALM.Repository
             {
                 importDestinationFolderPath = WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
             }
-            //show Test Lab browser for selecting the Test Set/s to import
-            QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.Import, importDestinationFolderPath);
-            win.ShowAsWindow(eWindowShowStyle.Dialog);
+
+            AzureDevOpsImportPage win = new AzureDevOpsImportPage(importDestinationPath: importDestinationFolderPath);
+            win.ShowAsWindow();
         }
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTests)
         {
-            throw new NotImplementedException();
+            if (selectedTests != null && selectedTests.Any())
+            {
+                ObservableList<AzureTestPlan> testSetsItemsToImport = new ObservableList<AzureTestPlan>();
+                foreach (AzureTestPlan selectedTS in selectedTests)
+                {
+                    try
+                    {
+                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == selectedTS.AzureID);
+                        if (existedBF != null)
+                        {
+                            Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, selectedTS.Name);
+                            if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                            {
+                                File.Delete(existedBF.FileName);
+                            }
+                        }
+                        Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, selectedTS.Name);
+                       AzureTestPlan azureImportedTSData = ((AzureDevOpsCore)ALMIntegration.Instance.AlmCore).GetAzureTestSetData(selectedTS);
+
+                       SetImportedTS(azureImportedTSData, importDestinationPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, selectedTS.Name, ex.Message);
+                    }
+                }
+                Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
+                return true;
+            }
+            return false;
+        }
+
+        private void SetImportedTS(AzureTestPlan importedTS, string importDestinationPath)
+        {
+            try
+            {
+                //import test set data
+                Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, importedTS.Name);
+               BusinessFlow tsBusFlow = ((AzureDevOpsCore)ALMIntegration.Instance.AlmCore).ConvertAzureTestSetToBF(importedTS);
+               SetBFPropertiesAfterImport(tsBusFlow);
+
+                //save bf
+               AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
+                Reporter.HideStatusMessage();
+            }
+            catch { }
+
+        }
+
+        private void SetBFPropertiesAfterImport(BusinessFlow tsBusFlow)
+        {
+            if (WorkSpace.Instance.Solution.MainApplication != null)
+            {
+                //add the applications mapped to the Activities
+                foreach (Activity activ in tsBusFlow.Activities)
+                {
+                    if (string.IsNullOrEmpty(activ.TargetApplication) == false)
+                    {
+                        if (tsBusFlow.TargetApplications.FirstOrDefault(x => x.Name == activ.TargetApplication) == null)
+                        {
+                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == activ.TargetApplication);
+                            if (appAgent != null)
+                            {
+                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                            }
+                        }
+                    }
+                }
+                //handle non mapped Activities
+                if (tsBusFlow.TargetApplications.Count == 0)
+                {
+                    tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                }
+
+                foreach (Activity activ in tsBusFlow.Activities)
+                {
+                    if (string.IsNullOrEmpty(activ.TargetApplication))
+                    {
+                        activ.TargetApplication = tsBusFlow.MainApplication;
+                    }
+
+                    activ.Active = true;
+                }
+            }
+            else
+            {
+                foreach (Activity activ in tsBusFlow.Activities)
+                {
+                    activ.TargetApplication = null; // no app configured on solution level
+                }
+            }
         }
 
         public override bool LoadALMConfigurations()
