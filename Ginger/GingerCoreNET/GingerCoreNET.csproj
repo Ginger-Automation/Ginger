@@ -231,7 +231,7 @@
   
     <PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.5" />
   
-    <PackageReference Include="Azure.Identity" Version="1.10.4" />
+    <PackageReference Include="Azure.Identity" Version="1.11.0" />
   
     <PackageReference Include="CassandraCSharpDriver" Version="3.19.5" />
   
@@ -255,7 +255,7 @@
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.4" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.3" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.4" />
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
