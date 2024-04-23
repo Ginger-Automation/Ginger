@@ -111,6 +111,7 @@ namespace Ginger.Actions.VisualTesting
             xVRTNote.Visibility = Visibility.Visible;
             xCreateBaseline.Visibility = Visibility.Visible;
             xCreateBaselineCheckbox.Visibility = Visibility.Visible;
+            xCreateBaselineNote.Visibility = Visibility.Visible;
             switch (vrtAction)
             {
                 case VRTAnalyzer.eVRTAction.Start:
@@ -360,7 +361,7 @@ namespace Ginger.Actions.VisualTesting
         {
             try
             {
-                string previewBaselineImage = GingerCoreNET.GeneralLib.General.DownloadBaselineImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + mAct.previewBaselineImageName, mAct);
+                string previewBaselineImage = GingerCoreNET.GeneralLib.General.DownloadBaselineImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{mAct.previewBaselineImageName}", mAct);
                 string FileName = General.GetFullFilePath(previewBaselineImage);
                 BitmapImage b = null;
                 if (File.Exists(FileName) && new FileInfo(FileName).Length > 0)
@@ -373,7 +374,7 @@ namespace Ginger.Actions.VisualTesting
             }
             catch(Exception ex) 
             {
-                Reporter.ToLog(eLogLevel.INFO, "unable to fetch the baseline image",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "unable to fetch the baseline image",ex);
             } 
         }
 

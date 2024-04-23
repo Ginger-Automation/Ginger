@@ -308,37 +308,34 @@ namespace GingerCore.Actions.VisualTesting
                     switch (result.Status)
                     {
                         case TestRunStatus.New:
-                            mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline." + System.Environment.NewLine + result.Url;
+                            mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline.{System.Environment.NewLine}{result.Url}";
                             //Add baseline image to act screenshots
                             if (result.ImageUrl != null)
                             {
-                                string imageToDownload = Path.GetFileName(result.ImageUrl);
-                                mAct.previewBaselineImageName = imageToDownload;
+                                mAct.previewBaselineImageName = Path.GetFileName(result.ImageUrl);
                             }
                             break;
                         case TestRunStatus.Unresolved:
-                            mAct.Error += $"Differences from baseline was found." + System.Environment.NewLine + result.DiffUrl;
+                            mAct.Error += $"Differences from baseline was found.{System.Environment.NewLine}{result.DiffUrl}";
 
                             //Add difference image to act screenshots
                             if(result.DiffUrl != null){
-                                string imageToDownload = Path.GetFileName(result.DiffUrl);
-                                General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{ Path.GetFileName(result.DiffUrl)}", mAct);
                             }
                             
 
                             //Add baseline image to act screenshots
                             if(result.BaselineUrl != null)
                             {
-                                string imageToDownload = Path.GetFileName(result.BaselineUrl);
-                                mAct.previewBaselineImageName = imageToDownload;
-                                General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                                mAct.previewBaselineImageName = Path.GetFileName(result.BaselineUrl);
+                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.BaselineUrl)}", mAct);
                             }
                             
 
                             //No need to Add current Screenshot to act screenshots, it will be added in the end if the action is failed
                             break;
                         default:
-                            mAct.ExInfo = "TestRun Results Status: " + result.Status;
+                            mAct.ExInfo = $"TestRun Results Status: {result.Status}";
                             break;
                     }
                 }

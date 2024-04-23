@@ -541,12 +541,15 @@ namespace GingerCoreNET.GeneralLib
                 HttpResponseMessage response = SendRequest(ImageURL);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                    response.Content.CopyToAsync(fs).ContinueWith(
-                    (discard) =>
+                    using (var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
-                        fs.Close();
-                    });
+                        response.Content.CopyToAsync(fs).ContinueWith(
+                            (discard) =>
+                            {
+                                fs.Close();
+                            });
+                    }
+                    
                    return currImagePath;
                 }
             }
