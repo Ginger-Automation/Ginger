@@ -61,7 +61,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                     FailOnDeserializationError = false,
                     ThrowOnDeserializationError = false
                 };
-                RestClient restClient = new RestClient(options);
+                restClient = new RestClient(options);
             }
         }
 
