@@ -68,7 +68,7 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> issues = new();
 
             issues.AddRange(AnalyzeIndependently(businessFlow, checks));
-            AnalyzeTargetApplication.AnalyzeTargetApplicationInBusinessFlows(businessFlow, issues);
+            AnalyzeEnvApplication.AnalyzeEnvAppInBusinessFlows(businessFlow, issues);
             return issues;
         }
 
@@ -83,7 +83,7 @@ namespace Ginger.AnalyzerLib
 
             issues.AddRange(AnalyzeWithSolutionDependency(businessFlow, solution, checks));
             issues.AddRange(AnalyzeIndependently(businessFlow, checks));
-            AnalyzeTargetApplication.AnalyzeTargetApplicationInBusinessFlows(businessFlow, issues);
+            AnalyzeEnvApplication.AnalyzeEnvAppInBusinessFlows(businessFlow, issues);
             return issues;
         }
 
@@ -482,6 +482,59 @@ namespace Ginger.AnalyzerLib
                 ABF.BusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = SAN });
                 ABF.Status = eStatus.Fixed;
             }
+        }
+
+        public static void AnalyzeValueExpInBusinessFlow(BusinessFlow businessFlow, ref List<AnalyzerItemBase> issuesList)
+        {
+            if(!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(businessFlow.RunDescription, businessFlow.Environment))
+            {
+
+                AnalyzeBusinessFlow issue = new()
+                {
+                    Description = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} RunDescription value expression does not exist in the Current Environment",
+                    UTDescription = "MissingParameterInCurrentEnvironment",
+                    Details = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} RunDescription value expression does not exist in the Current Environment",
+                    CanAutoFix = eCanFix.No,
+                    IssueType = eType.Error,
+                    Impact = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} will fail due to missing {GingerDicser.GetTermResValue(eTermResKey.Variable)} in Environment",
+                    Severity = eSeverity.High,
+                    IssueCategory = eIssueCategory.MissingVariable,
+                    ItemParent = businessFlow.Name,
+                    ItemClass = "BusinessFlow",
+                    Status = eStatus.NeedFix
+                };
+
+                issuesList.Add(issue);
+            }
+
+            var FilteredVariables =  businessFlow.Variables
+                .Where((variable) =>
+            {
+                return variable is VariableDynamic variableDynamic && !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(variableDynamic.ValueExpression, businessFlow.Environment);
+            });
+
+
+            foreach (var FilteredVariable in FilteredVariables)
+            {
+
+                AnalyzeBusinessFlow issue = new()
+                {
+                    Description = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {GingerDicser.GetTermResValue(eTermResKey.Variable)}: {FilteredVariable.Name} value does not exist in the Current Environment",
+                    UTDescription = "MissingVariableInCurrentEnvironment",
+                    Details = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {GingerDicser.GetTermResValue(eTermResKey.Variable)}: {FilteredVariable.Name} value does not exist in the Current Environment",
+                    CanAutoFix = eCanFix.No,
+                    IssueType = eType.Error,
+                    Impact = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} will fail due to missing {GingerDicser.GetTermResValue(eTermResKey.Variable)} in Environment",
+                    Severity = eSeverity.High,
+                    IssueCategory = eIssueCategory.MissingVariable,
+                    ItemParent = businessFlow.Name,
+                    ItemClass = "VariableDynamic",
+                    Status = eStatus.NeedFix
+                };
+                issuesList.Add(issue);  
+            }
+
+
         }
     }
 }

@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using amdocs.ginger.GingerCoreNET;
 using Microsoft.VisualStudio.Services.Common;
-
+using System.Text.RegularExpressions;
 namespace Amdocs.Ginger.CoreNET.AnalyzerLib
 {
-    public class AnalyzeTargetApplication : AnalyzerItemBase
+    public class AnalyzeEnvApplication : AnalyzerItemBase
     {
-        public static void AnalyzeTargetApplicationInBusinessFlows(BusinessFlow businessFlow, List<AnalyzerItemBase> issues)
+        public static void AnalyzeEnvAppInBusinessFlows(BusinessFlow businessFlow, List<AnalyzerItemBase> issues)
         {
             businessFlow
                 .Activities
@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                 {
                     string EnvApps = string.Join(";", currentEnvironment?.Applications.Select(p => p.Name).ToList());
 
-                    AnalyzeTargetApplication AB = new()
+                    AnalyzeEnvApplication AB = new()
                     {
                         Description = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)} {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} not found in Environment: {currentEnvironment.Name}",
                         UTDescription = "MissingApplicationInEnvironment",
@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
 
                 if (ExistingApplication == null || ExistingApplication.Platform.Equals(ePlatformType.NA))
                 {
-                    AnalyzeTargetApplication AB = new()
+                    AnalyzeEnvApplication AB = new()
                     {
                         Description = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Platform cannot be 'NA'",
                         UTDescription = "MissingApplicationInTargetApplication",
@@ -87,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
         private static void FixMissingEnvApp(object? sender, EventArgs e)
         {
 
-            AnalyzeTargetApplication AnalyzeTargetApplication = sender as AnalyzeTargetApplication;
+            AnalyzeEnvApplication AnalyzeTargetApplication = sender as AnalyzeEnvApplication;
 
             if (AnalyzeTargetApplication == null)
             {
@@ -114,5 +114,77 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
         }
 
 
+        public static bool DoesEnvParamOrURLExistInValueExp(string ValueExp , string CurrentEnvironment)
+        {
+
+            if (string.IsNullOrEmpty(ValueExp))
+            {
+                return true;
+            }
+
+
+
+           MatchCollection envParamMatches = GingerCore.ValueExpression.rxEnvParamPattern.Matches(ValueExp);
+
+            if( envParamMatches == null || envParamMatches.Count == 0)
+            {
+                return true;
+            }
+
+            ProjEnvironment CurrentProjEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((proj)=>proj.Name.Equals(CurrentEnvironment));
+
+
+            if(CurrentProjEnv == null)
+            {
+                return true;
+            }
+
+
+            foreach (Match envParamMatch in envParamMatches)
+            {
+                string AppName = string.Empty, GlobalParamName = string.Empty;
+
+                GingerCore.ValueExpression.GetEnvAppAndParam(envParamMatch.Value, ref AppName , ref GlobalParamName);
+
+                if(string.IsNullOrEmpty(AppName) || string.IsNullOrEmpty(GlobalParamName))
+                {
+                    return false;
+                }
+
+                EnvApplication CurrentEnvApp = CurrentProjEnv.Applications.FirstOrDefault((app) => app.Name.Equals(AppName));
+
+                CurrentEnvApp?.ConvertGeneralParamsToVariable();
+
+                 bool doesParamExistInCurrEnv =  CurrentEnvApp?.Variables?.Any((Param)=>Param.Name.Equals(GlobalParamName)) ?? false;
+
+                if (!doesParamExistInCurrEnv)
+                {
+                    return false;
+                }
+            }
+
+            MatchCollection envURLMatches = GingerCore.ValueExpression.rxEnvUrlPattern.Matches(ValueExp);
+
+            if (envURLMatches == null || envURLMatches.Count == 0)
+            {
+                return true;
+            }
+
+            foreach(Match envURLMatch in envURLMatches)
+            {
+                string AppName = string.Empty;
+                GingerCore.ValueExpression.GetEnvAppFromEnvURL(envURLMatch.Value , ref AppName);
+
+
+                if (string.IsNullOrEmpty(AppName))
+                {
+                    return false;
+                }
+
+                return CurrentProjEnv.Applications.Any((envApp) => envApp.Name.Equals(AppName));
+            }
+
+            return false;
+        }
     }
 }

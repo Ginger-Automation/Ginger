@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.AnalyzerLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -28,6 +29,7 @@ using GingerCore.DataSource;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,43 +52,11 @@ namespace Ginger.AnalyzerLib
             List<string> mMissingStoreToGlobalParameters = new List<string>();
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
             ObservableList<GlobalAppModelParameter> mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
-            // Check if the action is obsolete and suggest conversion/upgrade/delete
-            //if (a is IObsoleteAction)
-            //{                
-            //    if (a.Active)
-            //    {
-            //        // TODO: get platform from activity in test
-            //        Platform.eType ActivitySourcePlatform = Platform.eType.AndroidDevice;  //FIXME temp
 
-            //        // if it is active then create conversion issue
-            //        if (((IObsoleteAction)a).IsObsoleteForPlatform(ActivitySourcePlatform))
-            //        {                            
-            //            AnalyzeAction AA = CreateNewIssue(IssuesList, BusinessFlow, Activity, a);
-            //            AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Contains Obsolete action"; ;
-            //            AA.Details = a.Description + " Old Class=" + a.ActClass;
-            //            AA.HowToFix = "Convert to new action"; // TODO: get name of new action
-            //            AA.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
-            //            AA.IssueType = eType.Warning;
-            //            AA.Impact = "New action can have more capabilities and more stable, good to upgrade";
-            //            AA.Severity = eSeverity.Medium;
-            //            AA.FixItHandler = UpgradeAction;
-            //            AA.ActivitySourcePlatform = ActivitySourcePlatform;                        
-            //        }
-            //    }
-            //    else
-            //    {
-            //        // old action but not active so create issue of delete old unused action
-            //        AnalyzeAction AA = CreateNewIssue(IssuesList, BusinessFlow, Activity, a);
-            //        AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Contains Obsolete action which is not used"; ;
-            //        AA.Details = a.Description + " Old Class=" + a.ActClass;
-            //        AA.HowToFix = "Delete action"; 
-            //        AA.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
-            //        AA.IssueType = eType.Warning;
-            //        AA.Impact = "slower execution, disk space";
-            //        AA.Severity = eSeverity.Low;
-            //        AA.FixItHandler = DeleteAction;                        
-            //    }
-            //}
+            AnalyzeValueExpInAction(a, BusinessFlow , parentActivity, ref IssuesList);
+            AnalyzeActivity.AnalyzeValueExpInActivity(parentActivity, BusinessFlow,ref IssuesList);
+            AnalyzeBusinessFlow.AnalyzeValueExpInBusinessFlow(BusinessFlow, ref IssuesList);
+
             //Flow Control -> GoToAction , Check if Action u want to go to exist
             if (a.FlowControls.Count > 0)
             {
@@ -523,6 +493,71 @@ namespace Ginger.AnalyzerLib
                     missingStoreToGlobalParameters.Add(returnValue.Param);
                 }
             }
+        }
+
+        public static void AnalyzeValueExpInAction(Act action, BusinessFlow businessFlow, Activity activity, ref List<AnalyzerItemBase> issues)
+        {
+
+
+            var ValueExpsNotInCurrEnv = action.ActInputValues
+                                .Where((actInputValue) =>
+                                !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actInputValue.Value, businessFlow.Environment)
+                                ).Select((filteredActInputVal) => filteredActInputVal.ItemName)
+                                .ToList();
+
+
+            if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(action.RunDescription, businessFlow.Environment)){
+
+                ValueExpsNotInCurrEnv.Add("Run Description");
+            }
+
+
+            var FlowControlValues = action
+                                    .ActFlowControls
+                                    .Where((actFlowControl) =>
+                                    {
+                                        return !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Condition, businessFlow.Environment) ||
+                                        !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Value, businessFlow.Environment);
+                                    })
+                                    .Select((filteredFlowControl) => filteredFlowControl.ItemName);
+
+
+
+            var ReturnValues = action
+                                .ActReturnValues
+                                .Where((actReturnValue) =>
+                                {
+                                    return
+                                    !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Param, businessFlow.Environment) ||
+                                    !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Path, businessFlow.Environment) ||
+                                    !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Expected, businessFlow.Environment);
+                                })
+                                .Select((filteredReturnValue) => filteredReturnValue.ItemName);
+
+            ValueExpsNotInCurrEnv.AddRange(FlowControlValues);
+            ValueExpsNotInCurrEnv.AddRange(ReturnValues);
+
+
+
+
+            foreach (var filteredValueExp in ValueExpsNotInCurrEnv)
+            {
+                AnalyzeAction AA = new AnalyzeAction();
+                AA.Status = eStatus.NeedFix;
+                AA.mActivity = activity;
+                AA.Description = $"Current Environment: {businessFlow.Environment} Does not have the mentioned Parameter {filteredValueExp}";
+                AA.ItemName = action.Description;
+                AA.ItemParent = businessFlow.Name + " > " + activity.ActivityName;
+                AA.mAction = action;
+                AA.mBusinessFlow = businessFlow;
+                AA.ItemClass = "Action";
+                AA.Severity = eSeverity.High;
+                issues.Add(AA);
+            }
+
+
+
+
         }
 
         public static List<string> GetUsedVariableFromAction(Act action)
