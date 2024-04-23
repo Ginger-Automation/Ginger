@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.AnalyzerLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.Variables;
@@ -31,8 +32,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using static Ginger.AnalyzerLib.AnalyzeBusinessFlow;
-
 #nullable enable
 namespace Ginger.AnalyzerLib
 {
@@ -55,7 +54,7 @@ namespace Ginger.AnalyzerLib
         private static Regex rxVarPattern = new(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
 
         public BusinessFlow BusinessFlow { get; set; }
-        private Solution Solution { get; set; }
+        public Solution Solution { get; set; }
 
         public List<ActReturnValue> ReturnValues { get; set; } = new List<ActReturnValue>();
 
@@ -69,7 +68,7 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> issues = new();
 
             issues.AddRange(AnalyzeIndependently(businessFlow, checks));
-
+            AnalyzeTargetApplication.AnalyzeTargetApplicationInBusinessFlows(businessFlow, issues);
             return issues;
         }
 
@@ -84,7 +83,7 @@ namespace Ginger.AnalyzerLib
 
             issues.AddRange(AnalyzeWithSolutionDependency(businessFlow, solution, checks));
             issues.AddRange(AnalyzeIndependently(businessFlow, checks));
-            
+            AnalyzeTargetApplication.AnalyzeTargetApplicationInBusinessFlows(businessFlow, issues);
             return issues;
         }
 
@@ -127,7 +126,7 @@ namespace Ginger.AnalyzerLib
             return issues;
         }
 
-        
+
 
         private static bool HasMissingTargetApplications(BusinessFlow businessFlow, Solution solution, out AnalyzeBusinessFlow issue)
         {
@@ -188,7 +187,7 @@ namespace Ginger.AnalyzerLib
                 return false;
             }
         }
-        
+
         public static bool HasMissingMandatoryInputValues(BusinessFlow businessFlow, out List<AnalyzeBusinessFlow> issueList)
         {
             issueList = new();
@@ -236,7 +235,7 @@ namespace Ginger.AnalyzerLib
                 issue.ReturnValues.AddRange(action.ActReturnValues.Where(returnValue => returnValue.Operator == Amdocs.Ginger.Common.Expressions.eOperator.Legacy));
             }
 
-            if(issue.ReturnValues.Any())
+            if (issue.ReturnValues.Any())
             {
                 issue.ItemName = businessFlow.Name;
                 issue.Description = LegacyOutPutValidationDescription;
@@ -259,14 +258,14 @@ namespace Ginger.AnalyzerLib
         public static bool HasInvalidInputValueRules(BusinessFlow businessFlow, out List<AnalyzeBusinessFlow> issueList)
         {
             issueList = new();
-            
+
             ObservableList<VariableBase> bfInputVariables = businessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true);
 
             foreach (InputVariableRule rule in businessFlow.InputVariableRules)
             {
                 if (rule.Active)
                 {
-                    if(HasInvalidSourceVariableInRule(businessFlow, bfInputVariables, rule, out AnalyzeBusinessFlow issue))
+                    if (HasInvalidSourceVariableInRule(businessFlow, bfInputVariables, rule, out AnalyzeBusinessFlow issue))
                     {
                         issueList.Add(issue);
                     }
@@ -277,7 +276,7 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
-            if(issueList.Any())
+            if (issueList.Any())
             {
                 return true;
             }
