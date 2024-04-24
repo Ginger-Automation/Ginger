@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool CommitAndCheckinChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("CommitAndCheckinChanges not implemented");
         }
 
         public override bool CreateConfigFile(ref string error)
@@ -243,9 +243,9 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             throw new NotImplementedException();
         }
 
-        public override ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommitsCount()
+        public override ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommits()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("GetUnpushedLocalCommits not Implemented");
         }
     }
 }

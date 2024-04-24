@@ -1185,9 +1185,9 @@ namespace GingerCore.SourceControl
             return false;
         }
 
-        public override ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommitsCount()
+        public override ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommits()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("GetUnpushedLocalCommits not Implemented");
         }
     }
 }

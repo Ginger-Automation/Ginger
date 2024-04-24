@@ -118,8 +118,6 @@ namespace Ginger.SourceControl
 
                 await Task.Run(() =>
                 {
-
-
                     mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);                    
                     //set items name and type
                     Parallel.ForEach(mFiles, SCFI =>
@@ -242,7 +240,7 @@ namespace Ginger.SourceControl
             CheckInFilesGrid.DataSourceList = mFiles;
         }
         
-        private async void CoomitAndCheckinButton_Click(object sender, RoutedEventArgs e)
+        private async void CommitAndCheckinButton_Click(object sender, RoutedEventArgs e)
         {
             if (WorkSpace.Instance.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
             {
@@ -266,7 +264,7 @@ namespace Ginger.SourceControl
                 ObservableList<SourceControlChangesetDetails> unpushedLocalCommits = null;
                 if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    unpushedLocalCommits = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommitsCount();
+                    unpushedLocalCommits = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
                 }
 
                 if ((SelectedFiles == null || SelectedFiles.Count == 0) && (unpushedLocalCommits == null || unpushedLocalCommits.Count == 0))
@@ -553,7 +551,7 @@ namespace Ginger.SourceControl
 
             Button CommitAndCheckin = new Button();
             CommitAndCheckin.Content = "Commit and Check-In Selected Changes";
-            CommitAndCheckin.Click += CoomitAndCheckinButton_Click;
+            CommitAndCheckin.Click += CommitAndCheckinButton_Click;
 
             windowBtnsList.Add(CommitAndCheckin);
 
@@ -769,7 +767,7 @@ namespace Ginger.SourceControl
 
         private void InitLocalCommitGrid()
         {
-            LocalCommitedFilesGrid.DataSourceList = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommitsCount();
+            LocalCommitedFilesGrid.DataSourceList = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
         }
 
         private void SetLocalCommitGridView()

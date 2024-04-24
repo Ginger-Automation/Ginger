@@ -147,7 +147,7 @@ namespace GingerCoreNET.SourceControl
 
         public abstract bool CommitAndCheckinChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false);
 
-        public abstract ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommitsCount();
+        public abstract ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommits();
 
         //clear locks
         public abstract void CleanUp(string path);

@@ -66,7 +66,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
                 return false;
             }
             return true;
@@ -85,9 +85,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = e.Message + Environment.NewLine + e.InnerException;
-                Reporter.ToLog(eLogLevel.ERROR, error, e);
-
+                error = HandleGitExceptions(e);
             }
             return result;
         }
@@ -104,9 +102,7 @@ namespace GingerCore.SourceControl
                 }
                 catch (Exception e)
                 {
-                    error = e.Message + Environment.NewLine + e.InnerException;
-                    Reporter.ToLog(eLogLevel.ERROR, error, e);
-
+                    error = HandleGitExceptions(e);
                 }
                 finally
                 {
@@ -121,8 +117,8 @@ namespace GingerCore.SourceControl
                     }
                     catch (Exception e)
                     {
+                        error = HandleGitExceptions(e);
 
-                        error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
                         if (e.Message.Contains("403"))
                         {
                             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Check-In Failed, please check if user has Write Permission for this repository");
@@ -131,7 +127,6 @@ namespace GingerCore.SourceControl
                         {
                             Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, e.Message);
                         }
-                        Reporter.ToLog(eLogLevel.ERROR, error, e);
                         try
                         {
                             Pull();
@@ -201,7 +196,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
                 return false;
             }
             return true;
@@ -297,7 +292,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
             }
             return remoteURL;
         }
@@ -1078,10 +1073,17 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
                 return false;
             }
             return true;
+        }
+
+        private static string HandleGitExceptions(Exception e)
+        {
+            string error = e.Message + Environment.NewLine + e.InnerException;
+            Reporter.ToLog(eLogLevel.ERROR, error, e);
+            return error;
         }
 
         public override bool TestConnection(ref string error)
@@ -1353,7 +1355,7 @@ namespace GingerCore.SourceControl
             }
         }
 
-        public override ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommitsCount()
+        public override ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommits()
         {
             using (var repo = new Repository(RepositoryRootFolder))
             {
