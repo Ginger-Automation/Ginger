@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -145,7 +145,9 @@ namespace GingerCoreNET.SourceControl
 
         public abstract bool CommitChanges(string Comments, ref string error);
 
-        public abstract bool CommitChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false);
+        public abstract bool CommitAndCheckinChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false);
+
+        public abstract ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommitsCount();
 
         //clear locks
         public abstract void CleanUp(string path);

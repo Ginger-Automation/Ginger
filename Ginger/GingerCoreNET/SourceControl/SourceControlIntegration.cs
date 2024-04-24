@@ -387,7 +387,7 @@ namespace Ginger.SourceControl
             }
 
             List<string> conflictsPaths = new List<string>();
-            return mSourceControl.CommitChanges(paths, "check-in self healing changes.", ref error, ref conflictsPaths, false);
+            return mSourceControl.CommitAndCheckinChanges(paths, "check-in self healing changes.", ref error, ref conflictsPaths, false);
 
         }
 
