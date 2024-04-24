@@ -667,17 +667,15 @@ namespace Ginger.SourceControl
                         bool CommitSuccess = CommitChanges(WorkSpace.Instance.Solution.SourceControl, Comments);
 
 
-                        this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+                        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
                         {
-                            if (CommitSuccess)
-                            {
-                                CloseWindow();
-                            }
-                            else if (!CommitSuccess)
+                            if (!CommitSuccess)
                             {
                                 Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandledFailed);
-                                CloseWindow();
                             }
+
+                            CloseWindow();
+
                         }));
 
                         if (CommitSuccess)
