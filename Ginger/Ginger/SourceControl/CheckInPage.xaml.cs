@@ -771,23 +771,7 @@ namespace Ginger.SourceControl
 
         private void InitLocalCommitGrid()
         {
-            try
-            {
-                xProcessingIcon.Visibility = Visibility.Visible;
-                if (SourceControlIntegration.BusyInProcessWhileDownloading)
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
-                    return;
-                }
-                SourceControlIntegration.BusyInProcessWhileDownloading = true;
-
-                LocalCommitedFilesGrid.DataSourceList = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommitsCount();
-            }
-            finally
-            {
-                xProcessingIcon.Visibility = Visibility.Collapsed;
-                SourceControlIntegration.BusyInProcessWhileDownloading = false;
-            }
+            LocalCommitedFilesGrid.DataSourceList = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommitsCount();
         }
 
         private void SetLocalCommitGridView()
@@ -796,10 +780,10 @@ namespace Ginger.SourceControl
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
 
-            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.ID), Header = "ID", WidthWeight = 10, AllowSorting = true });
-            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.Message), Header = "Message", WidthWeight = 60, AllowSorting = false });
-            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.Author), Header = "Author", WidthWeight = 10, ReadOnly = true, AllowSorting = true });
-            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.Date), Header = "Date", WidthWeight = 10, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.ID), Header = "ID", WidthWeight = 20, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.Author), Header = "Author", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.Date), Header = "Date", WidthWeight = 20, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.Message), Header = "Message", WidthWeight = 45, AllowSorting = false });
 
             LocalCommitedFilesGrid.SetAllColumnsDefaultView(view);
             LocalCommitedFilesGrid.InitViewItems();
