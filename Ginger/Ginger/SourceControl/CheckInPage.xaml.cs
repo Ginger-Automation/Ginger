@@ -552,7 +552,7 @@ namespace Ginger.SourceControl
             ObservableList<Button> windowBtnsList = new ObservableList<Button>();
 
             Button CommitAndCheckin = new Button();
-            CommitAndCheckin.Content = "Coommit and Check-In Selected Changes";
+            CommitAndCheckin.Content = "Commit and Check-In Selected Changes";
             CommitAndCheckin.Click += CoomitAndCheckinButton_Click;
 
             windowBtnsList.Add(CommitAndCheckin);
