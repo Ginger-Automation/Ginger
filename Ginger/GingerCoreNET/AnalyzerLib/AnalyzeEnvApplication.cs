@@ -27,14 +27,20 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
         {
             if (!string.IsNullOrEmpty(TargetApplication))
             {
-                ProjEnvironment? currentEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((projEnvironment) => projEnvironment.Name.Equals(businessFlow.Environment));
+                ProjEnvironment currentEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((projEnvironment) => projEnvironment.Name.Equals(businessFlow.Environment));
 
-                EnvApplication? application = currentEnvironment?.Applications?.FirstOrDefault((appName) => appName.Name.Equals(TargetApplication));
+                if(currentEnvironment == null)
+                {
+                    return;
+                }
+
+
+                EnvApplication application = currentEnvironment?.Applications?.FirstOrDefault((appName) => appName.Name.Equals(TargetApplication));
 
 
                 if (application == null || string.IsNullOrEmpty(application.Name))
                 {
-                    string EnvApps = string.Join(";", currentEnvironment?.Applications.Select(p => p.Name).ToList());
+                    string EnvApps = string.Join(";", currentEnvironment.Applications.Select(p => p.Name)?.ToList());
 
                     AnalyzeEnvApplication AB = new()
                     {
@@ -45,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                         CanAutoFix = eCanFix.Yes,
                         Status = eStatus.NeedFix,
                         IssueType = eType.Error,
-                        ItemParent = currentEnvironment?.Name,
+                        ItemParent = currentEnvironment.Name,
                         ItemName = TargetApplication,
                         Impact = "Execution probably will fail due to missing input value.",
                         ItemClass = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
