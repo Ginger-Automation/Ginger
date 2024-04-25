@@ -692,7 +692,7 @@ namespace Ginger.Actions
                 a.GetType() != typeof(ActGenerateFileFromTemplate) && a.GetType() != typeof(ActPBControl) && a.GetType() != typeof(ActWindowsControl) &&
                 a.GetType() != typeof(ActMenuItem) && a.GetType() != typeof(ActJavaElement))
             {
-                if (a.InputValues.Count > minimumInputValuesToHideGrid)
+                if (a.InputValues.Count > minimumInputValuesToHideGrid || a.GetType() == typeof(ActCLIOrchestration))
                 {
                     xInputValuesGrid.Visibility = Visibility.Visible;
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
@@ -1029,7 +1029,12 @@ namespace Ginger.Actions
 
             xInputValuesGrid.ClearTools();
             xInputValuesGrid.ShowDelete = System.Windows.Visibility.Visible;
-
+            if(mAction.GetType() == typeof(ActCLIOrchestration))
+            {
+                xInputValuesGrid.ShowAdd = System.Windows.Visibility.Visible;
+                xInputValuesGrid.ShowClearAll = System.Windows.Visibility.Visible;
+            }
+            
             //List<GridColView> view = new List<GridColView>();
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
