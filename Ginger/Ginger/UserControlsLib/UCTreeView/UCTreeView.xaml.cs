@@ -479,11 +479,22 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         public void RefreshTreeNodeChildrens(ITreeViewItem NodeItem)
         {
-            TreeViewItem TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], NodeItem);
-            if (TVI != null)
+            try
             {
-                TVI.Items.Clear();
-                TVI.IsExpanded = true;
+                Dispatcher.Invoke(() =>
+                {
+                    TreeViewItem TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], NodeItem);
+                    if (TVI != null)
+                    {
+                        TVI.Items.Clear();
+                        TVI.IsExpanded = true;
+                    }
+                });
+            }
+
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
         }
 
