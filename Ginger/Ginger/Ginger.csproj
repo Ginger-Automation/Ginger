@@ -690,6 +690,7 @@
     <PackageReference Include="EPPlus" Version="6.0.4" />
     <PackageReference Include="FontAwesome5" Version="2.1.11" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.5" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
@@ -756,9 +757,6 @@
     </Reference>
     <Reference Include="CredentialManagement">
       <HintPath>DLLs\CredentialManagement.dll</HintPath>
-    </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>..\..\..\..\OneDrive - AMDOCS\Backup Folders\Documents\Ginger-Execution-Services\Ginger.ExecuterService.Contracts\bin\Debug\net8.0\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>..\GingerCoreNET\DLLS\GingerExternal.dll</HintPath>

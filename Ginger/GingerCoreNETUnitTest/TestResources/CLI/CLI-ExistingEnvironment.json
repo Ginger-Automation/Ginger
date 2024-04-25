@@ -2,8 +2,8 @@
     "SolutionScmDetails": {
       "SCMType": "GIT",
       "SolutionRepositoryUrl": "https://github.com/Ginger-Automation/Ginger.git",
-      "User": "manaska",
-      "Password": "4kRI0Sifu4GQ+VzqHdhVfGro9vUr/Xt5Wsk7gEN/zRk=",
+      "User": "user",
+      "Password": "password",
       "PasswordEncrypted": true,
       "UndoSolutionLocalChanges": false,
       "Branch": "Feature/EnvironmentCLI"
@@ -23,7 +23,7 @@
                 "Name": "sonar",
                 "Guid": "c487c433-c2aa-4218-91e4-33587a305d7d",
                 "DBType": "PostgreSQL",
-                "ConnectionString": "Server=ilrnaginger01;User Id=postgres; Password=postgres;Database=TDmDev;",
+                "ConnectionString": "Server=Server;User Id=userid; Password=password;Database=database;",
                 "KeepConnectionOpen": false
               }
             ],
@@ -52,7 +52,7 @@
         ]
       }
     ],
-    "SolutionLocalPath": "C:\\Users\\manaska\\Documents\\Ginger-C\\Ginger\\GingerCoreNETUnitTest\\TestResources\\Solutions\\CLI",
+    "SolutionLocalPath": "SOLUTION_PATH",
     "EncryptionKey": "D3^hdfr7%ws4Kb56=Qt",
     "ShowAutoRunWindow": false,
     "VerboseLevel": "normal",

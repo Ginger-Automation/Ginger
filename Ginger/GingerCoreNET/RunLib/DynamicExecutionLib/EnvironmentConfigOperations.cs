@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
-    public class EnvironmentConfigOperations
+    public static class EnvironmentConfigOperations
     {
         public static List<EnvironmentConfig> ConvertToEnvironmentRunsetConfig(ProjEnvironment runsetExecutionEnvironment, IList<GingerRunner> GingerRunners)
         {
@@ -79,7 +79,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             Guid = application.Guid,
                             Parameters = parameters,
                             URL = application.Url,
-                            TargetApplicationGUID = application.ParentGuid,
                         });
 
                     }
@@ -91,7 +90,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         public static void UpdateExistingEnvironmentDetails(IEnumerable<EnvironmentConfig> ExistingEnvironments, ObservableList<ProjEnvironment> AllEnvironmentsInGinger)
         {
 
-            ExistingEnvironments.ForEach((env) =>
+            ExistingEnvironments?.ForEach((env) =>
             {
                 var envFromGinger = DynamicExecutionManager.FindItemByIDAndName(
                         new Tuple<string, Guid?>(nameof(ProjEnvironment.Guid), env.Guid),

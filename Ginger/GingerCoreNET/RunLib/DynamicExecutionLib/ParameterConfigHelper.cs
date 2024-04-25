@@ -4,14 +4,14 @@ using System;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
-    public class ParameterConfigHelper
+    public static class ParameterConfigHelper
     {
 
         public static void ValidateParameterConfig(ParameterConfig Parameter)
         {
             if(Parameter == null || string.IsNullOrEmpty(Parameter.Value) || string.IsNullOrEmpty(Parameter.Name))
             {
-                throw new ArgumentException("Parameter Name or Value cannot be null or empty");
+                throw new ArgumentException($"{nameof(Parameter)} Name or Value cannot be null or empty");
             }
         }
 

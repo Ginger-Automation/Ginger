@@ -535,10 +535,6 @@ namespace Ginger.Run
 
                         Task t = new Task(() =>
                         {
-                            if (!string.IsNullOrEmpty(GR.SpecificEnvironmentName))
-                            {
-                                Reporter.ToLog(eLogLevel.INFO, $"Selected Environment for {GR.Name} is {GR.SpecificEnvironmentName}");
-                            }
                             if (!doContinueRun)
                         {
                             GR.Executor.RunRunner();

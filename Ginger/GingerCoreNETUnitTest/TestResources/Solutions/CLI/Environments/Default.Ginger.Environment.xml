@@ -4,7 +4,7 @@
 <Applications>
 <EnvApplication Active="True" Guid="1e6807f0-7101-4200-a944-d437e7442032" Name="app1" ParentGuid="00000000-0000-0000-0000-000000000000">
 <Dbs>
-<Database ConnectionString="Data Source=ilrnaginger02;User Id={USER};Password={PASS};" DBType="MSSQL" Guid="c487c433-c2aa-4218-91e4-33587a305d7d" KeepConnectionOpen="False" Name="sonar" ParentGuid="00000000-0000-0000-0000-000000000000" Pass="ycwR0ojowmdmohaH6VBy+A==" TNS="ilrnaginger02" User="test" />
+<Database ConnectionString="Data Source=tempURL;User Id=userId;Password=password;" DBType="MSSQL" Guid="c487c433-c2aa-4218-91e4-33587a305d7d" KeepConnectionOpen="False" Name="sonar" ParentGuid="00000000-0000-0000-0000-000000000000" Pass="password" TNS="tempURL" User="test" />
 </Dbs>
 
 <Variables>

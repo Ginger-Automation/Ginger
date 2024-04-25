@@ -254,6 +254,8 @@
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.4" />
+  
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.5" />
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
@@ -343,9 +345,6 @@
     </Reference>
     <Reference Include="AzureDevOpsRepo">
       <HintPath>..\..\..\..\ALMInteraction\AzureRepositoryStd\bin\Debug\net8.0\AzureDevOpsRepo.dll</HintPath>
-    </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>..\..\..\..\OneDrive - AMDOCS\Backup Folders\Documents\Ginger-Execution-Services\Ginger.ExecuterService.Contracts\bin\Debug\net8.0\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>

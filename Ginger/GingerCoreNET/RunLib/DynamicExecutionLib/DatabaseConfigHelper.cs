@@ -6,7 +6,7 @@ using static GingerCore.Environments.Database;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
-    public class DatabaseConfigHelper
+    public static class DatabaseConfigHelper
     {
 
         public static eDBConfigType ConverDBTypeToDBConfigType(eDBTypes dBType)

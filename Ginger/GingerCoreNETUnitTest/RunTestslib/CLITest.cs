@@ -30,6 +30,7 @@ using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Environments;
+using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -440,7 +441,18 @@ namespace WorkspaceHold
             }).Wait();
 
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name , "Default123");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Applications.Count, 1);
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Applications[0].Name, "app1");
+
+            VariableDynamic variable = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Applications[0].Variables[0] as VariableDynamic;
+
+            Database database = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Applications[0].Dbs[0] as Database;
+
+            Assert.AreEqual(variable.Name, "MSSQL_Table");
+            Assert.AreEqual(variable.ValueExpression, "users");
+
+            Assert.AreEqual(database.Name, "sonar");
+            Assert.AreEqual(database.ConnectionString, "Data Source=tempURL;User Id=id;Password=password;");
+            Assert.AreEqual(database.DBType, Database.eDBTypes.MSSQL);
         }
 
 
@@ -457,10 +469,12 @@ namespace WorkspaceHold
                 await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
             }).Wait();
             Database database = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Applications[0].Dbs[0] as Database;
-
+            VariableString variable = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Applications[0].Variables[0] as VariableString;
 
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Default");
             Assert.AreEqual(database.DBType, Database.eDBTypes.PostgreSQL);
+            Assert.AreEqual(database.ConnectionString, "Server=Server;User Id=userid; Password=password;Database=database;");
+            Assert.AreEqual(variable.Value, "public.\"Lob\"");
         }
 
 

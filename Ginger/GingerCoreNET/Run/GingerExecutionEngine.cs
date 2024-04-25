@@ -487,6 +487,12 @@ namespace Ginger.Run
         public void RunRunner(bool doContinueRun = false)
         {
             bool runnerExecutionSkipped = false;
+
+            if (!string.IsNullOrEmpty(mGingerRunner.SpecificEnvironmentName))
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Selected Environment for {mGingerRunner.Name} is {mGingerRunner.SpecificEnvironmentName}");
+            }
+
             try
             {
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || !BusinessFlows.Any(x => x.Active))
