@@ -41,13 +41,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using OctaneStdSDK.Entities.Base;
 using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
-using GingerCore.ALM.QC;
 using TestSuite = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestSuite;
 using TestPlan = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan;
-using SuiteEntry = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.SuiteEntry;
 using WorkItem2 = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.WorkItem;
 using WorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
-using Microsoft.TeamFoundation.Core.WebApi;
+using Amdocs.Ginger.CoreNET.ALMLib.Azure;
+using Newtonsoft.Json.Linq;
+using GingerCore.Variables;
+using Microsoft.VisualStudio.Services.Common;
+using System.Xml;
+using System.Text.RegularExpressions;
+using System.Web;
 
 
 namespace GingerCore.ALM
@@ -70,9 +74,28 @@ namespace GingerCore.ALM
         }
 
 
-        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override ObservableList<Activity> GingerActivitiesRepo { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override ObservableList<ApplicationPlatform> ApplicationPlatforms { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ObservableList<ActivitiesGroup> _gingerActivitiesGroupsRepo { get; set; }
+
+        public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
+        {
+            get 
+            { return _gingerActivitiesGroupsRepo; }
+            set
+            { _gingerActivitiesGroupsRepo = value;}
+                 
+        }
+
+
+        public ObservableList<Activity> _gingerActivitiesRepo { get; set; }
+
+        public override ObservableList<Activity> GingerActivitiesRepo
+        {
+            get { return _gingerActivitiesRepo; }
+            set { _gingerActivitiesRepo = value; }
+        }
+
+        public ObservableList<ApplicationPlatform> _applicationPlatforms { get; set; }
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms { get { return _applicationPlatforms; } set { _applicationPlatforms = value; } }
 
 
       
@@ -120,10 +143,138 @@ namespace GingerCore.ALM
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
+                List<WorkItem> defectsToExport = new List<WorkItem>();
+                List<string> screenshots = new List<string>();
+                foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
+                {
+                    string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
+                    if (!string.IsNullOrEmpty(summaryValue))
+                    {
+                        string defectId = CheckIfDefectExist(summaryValue);
+                        if (!string.IsNullOrEmpty(defectId))
+                        {
+                            defectsOpeningResults.Add(defectForOpening.Key, defectId);
+                            continue;
+                        }
+                        else
+                        {
+                            string paths = defectForOpening.Value.ContainsKey("screenshots") ? defectForOpening.Value["screenshots"] : string.Empty;
+                            screenshots.Add(paths);
+                        }
+                    }
+                    //if no then add into list to open new defect
+                    defectsToExport.Add(CreateDefectData(defectsForOpening));
+                    foreach (var defect in defectsToExport)
+                    {
+
+                        defectsOpeningResults.Add(Guid.NewGuid(), defect.Id.ToString());
+                    }
+                }
+                return defectsOpeningResults;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Unable to Create New Defect", ex);
+               
+                return null;
+            }
         }
 
-      
+        private static WorkItem CreateDefectData(Dictionary<Guid, Dictionary<string, string>> defectForOpening)
+        {
+            try
+            {
+
+
+                LoginDTO login = GetLoginDTO();
+
+
+                VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
+
+
+                WorkItemTrackingHttpClient workItemTrackingClient = connection.GetClient<WorkItemTrackingHttpClient>();
+
+                JsonPatchDocument patchDocument = new JsonPatchDocument();
+
+
+                foreach (var item in defectForOpening)
+                {
+
+
+                    patchDocument.Add(
+                        new JsonPatchOperation()
+                        {
+                            Operation = Operation.Add,
+                            Path = "/fields/System.Title",
+                            Value = item.Value.TryGetValue("Summary", out string value) ? value : string.Empty
+
+                        }
+                    );
+                }
+
+
+
+                Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, "Bug").Result;
+
+                return newWorkItem;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating defect ", ex);
+                return null;
+            }
+        }
+
+        private static string CheckIfDefectExist(string summaryValue)
+        {
+            try
+            {
+
+                Wiql wiql = new Wiql()
+                {
+                    Query = $"Select [System.Title] From WorkItems WHERE [System.WorkItemType] = 'Bug' AND [System.Title] = '{summaryValue}'"
+                };
+                LoginDTO login = GetLoginDTO();
+
+
+                VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
+
+                WorkItemTrackingHttpClient witClient = connection.GetClient<WorkItemTrackingHttpClient>();
+
+                WorkItemQueryResult queryResult = witClient.QueryByWiqlAsync(wiql).Result;
+
+                if (queryResult.WorkItems.Any())
+                {
+                    List<int> workItemIds = queryResult.WorkItems.Select(wi => wi.Id).ToList();
+
+                    // Fetch details of each work item
+                    List<Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem> workItems = witClient.GetWorkItemsAsync(workItemIds, new[] { "System.Title" }).Result;
+
+                    foreach (var workItem in workItems)
+                    {
+                        if (workItem.Fields["System.Title"].ToString().Equals(summaryValue))
+                        {
+                            return summaryValue;
+                        }
+
+                    }
+                }
+                else
+                {
+                    return "";
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Unable to get data from the Azure", ex);
+            }
+            return "";
+        }
+
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
             if (bizFlow is null)
@@ -471,7 +622,8 @@ namespace GingerCore.ALM
                    Value = bf.Name
                });
 
-            workItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, fatherId, "Test Suite").Result;
+            workItem = workItemTrackingClient.UpdateWorkItemAsync(patchDocument, Int32.Parse(bf.ExternalID2)).Result;
+
             return workItem.Id;
         }
 
@@ -509,23 +661,48 @@ namespace GingerCore.ALM
 
         public void UpdateTestCase(ActivitiesGroup ag, string fatherId, ObservableList<ExternalItemFieldBase> testcasefields, List<string> step)
         {
-            LoginDTO logincred = GetLoginDTO();
-            // Get a testplan client instance
-            VssConnection connection = AzureDevOpsRepository.LoginAzure(logincred);
+            try
+            {
 
-            // Get a client
-            WorkItemTrackingHttpClient _witClient = connection.GetClient<WorkItemTrackingHttpClient>();
 
-            int testcaseId = Int32.Parse(ag.ExternalID);
-            var testCaseObject = _witClient.GetWorkItemAsync( logincred.Project, testcaseId, null, null, WorkItemExpand.Relations).Result;
+                LoginDTO logincred = GetLoginDTO();
+                // Get a testplan client instance
+                VssConnection connection = AzureDevOpsRepository.LoginAzure(logincred);
 
-            // initiate testbase object again
-            ITestBaseHelper helper = new TestBaseHelper();
-           ITestBase testBase = helper.Create();
-            var xml = testCaseObject.Fields["Microsoft.VSTS.TCM.Steps"].ToString();
+                // Get a client
+                WorkItemTrackingHttpClient _witClient = connection.GetClient<WorkItemTrackingHttpClient>();
 
-            // create tcmattachemntlink object from workitem relation, teststep helper will use this
-         
+                int testcaseId = Int32.Parse(ag.ExternalID);
+                var testCaseObject = _witClient.GetWorkItemAsync(logincred.Project, testcaseId, null, null, WorkItemExpand.Relations).Result;
+
+                // initiate testbase object again
+                ITestBaseHelper helper = new TestBaseHelper();
+                ITestBase testBase = helper.Create();
+
+                testBase = CreateTestStep(step, testBase);
+
+                JsonPatchDocument patchDocument = new JsonPatchDocument();
+
+
+                // create a title field
+                JsonPatchOperation patchDocument1 = new JsonPatchOperation();
+                patchDocument1.Operation = Operation.Add;
+                patchDocument1.Path = "/fields/System.Title";
+                patchDocument1.Value = ag.Name;
+                patchDocument.Add(patchDocument1);
+
+                // add test steps in json
+                // it will update json document based on test steps and attachments
+                patchDocument = testBase.SaveActions(patchDocument);
+
+
+                var ress = _witClient.UpdateWorkItemAsync(patchDocument, Int32.Parse(ag.ExternalID)).Result;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to update the test case", ex);
+                
+            }
         }
 
 
@@ -651,18 +828,20 @@ namespace GingerCore.ALM
             return testlabPathList;
         }
 
-        public List<ALMTestSetSummary> GetTestSetExplorer(string PathNode)
+        public List<AzureTestPlan> GetTestSetExplorer(string PathNode)
         {
-            List<ALMTestSetSummary> testlabPathList = new List<ALMTestSetSummary>();
+
+            List<AzureTestPlan> testlabPathList = new List<AzureTestPlan>();
             Dictionary<string, List<string>> listoftestPlans = GetTestPlan();
             foreach (var testset in listoftestPlans)
             {
-                ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary();
-                QCTestSetTreeItem.TestSetID = testset.Value[1];
-                QCTestSetTreeItem.TestSetName = testset.Key;
-                QCTestSetTreeItem.TestSetStatuses = testset.Value[2];
-                    testlabPathList.Add(QCTestSetTreeItem);
-                }
+                AzureTestPlan azureTestPlanItems = new AzureTestPlan();
+                azureTestPlanItems.Name = testset.Key;
+                azureTestPlanItems.AzureID = testset.Value[1];
+                azureTestPlanItems.State = testset.Value[2];
+                azureTestPlanItems.Project = testset.Value[0];
+                testlabPathList.Add(azureTestPlanItems);
+            }
             
             return testlabPathList;
         }
@@ -735,6 +914,283 @@ namespace GingerCore.ALM
                 return null;
             }
             
+        }
+
+        public AzureTestPlan GetAzureTestSetData(AzureTestPlan selectedTS)
+        {
+            try
+            {
+               
+
+                int testplanId = Int32.Parse(selectedTS.AzureID);
+                LoginDTO logincred = GetLoginDTO();
+                VssConnection? connection = AzureDevOpsRepository.LoginAzure(logincred);
+
+                TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
+                var testCasesIds = testPlanClient.GetTestCaseListAsync(logincred.Project, testplanId, testplanId + 1).Result;
+
+                // In case of  Import from Test Set By d
+                if (string.IsNullOrEmpty(selectedTS.Name) && string.IsNullOrEmpty(selectedTS.Project))
+                {
+                    var itm = testPlanClient.GetTestSuiteByIdAsync(logincred.Project,testplanId, testplanId+1).Result;
+                    selectedTS.Name = itm.Name;
+                    selectedTS.Project = logincred.Project;
+                }
+
+                List<AzureTestCasesSteps> testCasesSteps = [];
+
+
+                foreach (var testCaseId in testCasesIds)
+                {
+
+                    testCasesSteps = SetTestCaseSteps(testCaseId);
+
+                    selectedTS.TestCases.Add(new AzureTestCases
+                    {
+                        TestName = testCaseId.workItem.Name,
+                        TestID = testCaseId.workItem.Id.ToString(),
+                        Steps = testCasesSteps
+                    });
+
+                }
+
+                return selectedTS;
+            }
+            catch (Exception ex) 
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Unable to Get the Azure Test Plan Data", ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Need to implement this method, related to test steps during import, explore ITestStep interface for parametrized tag
+        /// </summary>
+        /// <param name="testCasesIds"></param>
+        /// <returns></returns>
+        public List<AzureTestCasesSteps> SetTestCaseSteps(dynamic testCasesId)
+        {
+
+            JObject testStep = (JObject)testCasesId.workItem.WorkItemFields[0];
+            string testStepValue = testStep.GetValue("Microsoft.VSTS.TCM.Steps").ToString();
+
+            List<AzureTestCasesSteps> testCasesSteps = new();
+            if (!string.IsNullOrEmpty(testStepValue))
+            {
+                XmlDocument xmlDoc = new();
+                xmlDoc.LoadXml(testStepValue);
+                if (xmlDoc != null)
+                {
+                   
+                    var test = xmlDoc.FirstChild.ChildNodes;
+                    foreach (var item in test)
+                    {
+                        var stepText = RemoveHtmlTags(((XmlNode)item)?.FirstChild?.InnerText);
+                        testCasesSteps.Add(new AzureTestCasesSteps(stepText, Guid.NewGuid().ToString()));
+                    }
+                }
+                else
+                {
+
+                    Reporter.ToLog(eLogLevel.INFO, "Unable to convert Test Step/s to XML");
+                }
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.INFO, "Test Case may not contains test steps");
+            }
+           
+            
+            return testCasesSteps;
+        }
+
+        static string RemoveHtmlTags(string htmlString)
+        {
+            return Regex.Replace(htmlString, "<.*?>", string.Empty);
+        }
+
+        public BusinessFlow ConvertAzureTestSetToBF(AzureTestPlan azureTestPlan)
+        {
+
+            try
+            {
+                if (azureTestPlan == null)
+                {
+                    return null;
+                }
+
+                //Create Business Flow
+                BusinessFlow busFlow = new BusinessFlow();
+                busFlow.Name = azureTestPlan.Name;
+                busFlow.ExternalID = azureTestPlan.AzureID;
+                busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
+                busFlow.Activities = new ObservableList<Activity>();
+                busFlow.Variables = new ObservableList<VariableBase>();
+
+                //Test suite ID
+                busFlow.ExternalID2 = (Int32.Parse(azureTestPlan.AzureID) + 1).ToString();
+
+                //Create Activities Group + Activities for each TC
+                foreach (AzureTestCases tc in azureTestPlan.TestCases)
+                {
+                    ActivitiesGroup tcActivsGroup = ConvertAzureTestToAG(busFlow, tc);
+
+                    //Add the TC steps as Activities if not already on the Activities group
+                    foreach (AzureTestCasesSteps step in tc.Steps)
+                    {
+                        Activity stepActivity;
+                        bool toAddStepActivity;
+                        ConvertAzureTestStepToActivity(busFlow, tc, tcActivsGroup, step, out stepActivity, out toAddStepActivity);
+
+                        if (toAddStepActivity)
+                        {
+                            //not in group- need to add it
+                            busFlow.AddActivity(stepActivity, tcActivsGroup);
+                        }
+                    }
+
+                    //order the Activities Group activities according to the order of the matching steps in the TC
+                    try
+                    {
+                        int startGroupActsIndxInBf = 0;
+                        if (tcActivsGroup.ActivitiesIdentifiers.Count > 0)
+                        {
+                            startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
+                        }
+                        foreach (AzureTestCasesSteps step in tc.Steps)
+                        {
+                            int stepIndx = tc.Steps.IndexOf(step) + 1;
+                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                            if (actIdent == null || actIdent.IdentifiedActivity == null)
+                            {
+                                break;//something wrong- shouldnt be null
+                            }
+
+                            Activity act = actIdent.IdentifiedActivity;
+                            int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
+                            int bfActIndx = busFlow.Activities.IndexOf(act);
+
+                            //set it in the correct place in the group
+                            int numOfSeenSteps = 0;
+                            int groupIndx = -1;
+                            foreach (ActivityIdentifiers ident in tcActivsGroup.ActivitiesIdentifiers)
+                            {
+                                groupIndx++;
+                                if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
+                                        tc.Steps.FirstOrDefault(x => x.StepID == ident.ActivityExternalID) == null)
+                                {
+                                    continue;//activity which not originaly came from the TC
+                                }
+
+                                numOfSeenSteps++;
+
+                                if (numOfSeenSteps >= stepIndx)
+                                {
+                                    break;
+                                }
+                            }
+                            ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                            if (identOnPlace.ActivityGuid != act.Guid)
+                            {
+                                //replace places in group
+                                tcActivsGroup.ActivitiesIdentifiers.Move(groupActIndx, groupIndx);
+                                //replace places in business flow
+                                busFlow.Activities.Move(bfActIndx, startGroupActsIndxInBf + groupIndx);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method , Error - {ex.Message}", ex);
+                        //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
+                    }
+                }
+                return busFlow;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import Azure test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                return null;
+            }
+        }
+
+
+        private ActivitiesGroup ConvertAzureTestToAG(BusinessFlow busFlow, AzureTestCases tc)
+        {
+            //check if the TC is already exist in repository
+            ActivitiesGroup tcActivsGroup;
+            ActivitiesGroup repoActivsGroup = null;
+           
+
+            if (repoActivsGroup != null)
+            {
+                List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
+                                                                               .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
+
+                tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance(true);
+
+                var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
+                for (int indx = tcActivsGroup.ActivitiesIdentifiers.Count - 1; indx >= 0; indx--)
+                {
+                    if ((indx < tcActivsGroup.ActivitiesIdentifiers.Count) && (ActivitySIdentifiersToRemove.Contains(tcActivsGroup.ActivitiesIdentifiers[indx])))
+                    {
+                        tcActivsGroup.ActivitiesIdentifiers.Remove(tcActivsGroup.ActivitiesIdentifiers[indx]);
+                    }
+                }
+
+                tcActivsGroup.ExternalID = tc.TestID;
+                busFlow.AddActivitiesGroup(tcActivsGroup);
+                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
+
+                busFlow.AttachActivitiesGroupsAndActivities();
+            }
+            else //TC not exist in Ginger repository so create new one
+            {
+                tcActivsGroup = new ActivitiesGroup();
+                tcActivsGroup.Name = tc.TestName;
+
+                tcActivsGroup.ExternalID = tc.TestID;
+                tcActivsGroup.Description = tc.Description;
+                
+                busFlow.AddActivitiesGroup(tcActivsGroup);
+            }
+
+            return tcActivsGroup;
+        }
+
+        private void ConvertAzureTestStepToActivity(BusinessFlow busFlow, AzureTestCases tc, ActivitiesGroup tcActivsGroup, AzureTestCasesSteps step, out Activity stepActivity, out bool toAddStepActivity)
+        {
+            toAddStepActivity = false;
+
+            //check if mapped activity exist in repository
+            Activity repoStepActivity = null;
+            if (repoStepActivity != null)
+            {
+                //check if it is part of the Activities Group
+                ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                if (groupStepActivityIdent != null)
+                {
+                    //already in Activities Group so get link to it
+                    stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
+                    // in any case update description/expected/name - even if "step" was taken from repository
+                   
+                    stepActivity.ActivityName =  step.StepName;
+                }
+                else//not in ActivitiesGroup so get instance from repo
+                {
+                    stepActivity = (Activity)repoStepActivity.CreateInstance();
+                    stepActivity.ExternalID = step.StepID;
+                    toAddStepActivity = true;
+                }
+            }
+            else//Step not exist in Ginger repository so create new one
+            {
+                stepActivity = new Activity();
+                stepActivity.ActivityName = step.StepName;
+                stepActivity.ExternalID = step.StepID;
+
+                toAddStepActivity = true;
+            }
         }
     }
 }
