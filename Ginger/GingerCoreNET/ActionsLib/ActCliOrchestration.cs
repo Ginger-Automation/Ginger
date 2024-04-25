@@ -85,8 +85,10 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Delimiter { get; set; }
 
+        String DataBuffer;
         public override async void Execute()
         {
+            DataBuffer = string.Empty;
             if (ParseResult && string.IsNullOrEmpty(ValueExpression.Calculate(Delimiter)))
             {
                 Error = "Delimiter is Empty";
@@ -121,7 +123,7 @@ namespace GingerCore.Actions
                 Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                 if (WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder != null)
                 {
-                    string folderPath = Path.Combine(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, @"CLIOrchestration");
+                    string folderPath = $"{WorkSpace.Instance.Solution.Folder}{Path.DirectorySeparatorChar}Documents{Path.DirectorySeparatorChar}CLIOrchestration";
                     if (!Directory.Exists(folderPath))
                     {
                         Directory.CreateDirectory(folderPath);
@@ -133,7 +135,7 @@ namespace GingerCore.Actions
                 }
 
                 var cmd = Cli.Wrap(this.ScriptInterpreter)
-                                .WithArguments(argumentsstring.ToString()) | (PipeTarget.ToDelegate(parseRcwithDelimiter), PipeTarget.ToFile(path));
+                                .WithArguments(argumentsstring.ToString()) | (PipeTarget.ToDelegate(parseRcwithDelimiter));
                 try
                 {
                     var Result = await cmd.ExecuteAsync();
@@ -145,6 +147,7 @@ namespace GingerCore.Actions
                     {
                         Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     }
+                    WriteTofile(path, DataBuffer);
                     ExInfo += $"ExitCode: {Result.ExitCode}";
                 }
                 catch(Exception ex)
@@ -157,8 +160,17 @@ namespace GingerCore.Actions
             }
         }
 
+        private void WriteTofile(string filepath,string data)
+        {
+            using (var writer = new StreamWriter(filepath, true))
+            {
+                writer.WriteLine(data);
+            }
+        }
+
         private void parseRcwithDelimiter(string sRC)
         {
+            DataBuffer += $"{sRC}{Environment.NewLine}";
             string[] RCValues = sRC.Split('\n');
             foreach (string RCValue in RCValues)
             {
