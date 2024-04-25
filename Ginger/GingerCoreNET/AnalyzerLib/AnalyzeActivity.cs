@@ -16,10 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.CoreNET.AnalyzerLib;
 using DocumentFormat.OpenXml.Bibliography;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Variables;
+using NUglify.Helpers;
 using OpenQA.Selenium.Interactions;
 using System;
 using System.Collections.Generic;
@@ -50,6 +52,7 @@ namespace Ginger.AnalyzerLib
 
             CheckIfExistsInAnyActivityGroup(activity, businessFlow, ref issues);
 
+            AnalyzeValueExpInActivity(activity, businessFlow, ref issues);
             return issues;
         }
 
@@ -210,6 +213,30 @@ namespace Ginger.AnalyzerLib
             List<string> activityUsedVariables = new List<string>();
             VariableBase.GetListOfUsedVariables(activity, ref activityUsedVariables);
             return activityUsedVariables;
+        }
+
+        public static void AnalyzeValueExpInActivity(Activity activity, BusinessFlow businessFlow, ref List<AnalyzerItemBase> issuesList)
+        {
+            if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(activity.RunDescription, businessFlow.Environment))
+            {
+                var analyzeActivity = CreateNewIssue(businessFlow, activity);
+                analyzeActivity.Description = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)} Run Description uses an Environment Parameter which does not exist in the Current Environment";
+                analyzeActivity.Severity = eSeverity.Medium;
+
+                issuesList.Add(analyzeActivity);
+            }
+
+           var filteredVariables = activity.Variables
+                .Where((variable) => variable is VariableDynamic variableDynamic && !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(variableDynamic.ValueExpression, businessFlow.Environment));
+
+
+            foreach (var filteredVariable in filteredVariables)
+            {
+                var analyzeActivity = CreateNewIssue(businessFlow, activity);
+                analyzeActivity.Description = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)} {GingerDicser.GetTermResValue(eTermResKey.Variable)} {filteredVariable.Name} uses an Environment Parameter which does not exist in the Current Environment";
+                analyzeActivity.Severity = eSeverity.High;
+                issuesList.Add(analyzeActivity);
+            }
         }
     }
 }
