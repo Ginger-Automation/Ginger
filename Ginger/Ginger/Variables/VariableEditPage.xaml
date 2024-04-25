@@ -27,7 +27,7 @@
                             <StackPanel Orientation="Horizontal"  Margin="0,0,0,5">
                                 <Label Style="{StaticResource $LabelStyle}">
                                     <Label.Content>
-                                        <GingerCore:ucTextDicResource Text="[Variable] Type:"/>
+                                        <GingerCore:ucTextDicResource Name="xTitleName" Text="[Variable] Type:"/>
                                     </Label.Content>
                                 </Label>
                                 <Label x:Name="xTypeLbl" Style="{StaticResource $LabelStyle}" Content="Variable Type" Margin="-5,0,0,0"/>
@@ -47,8 +47,8 @@
                                 </DockPanel>
                                 <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  VerticalAlignment="Center" Content="Set as Output" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked"/>
                                 <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Center" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Style="{StaticResource $CeckBoxStyle}" Visibility="Collapsed"/>
-                                <StackPanel Orientation="Horizontal" Margin="5,10,0,0" VerticalAlignment="Center">
-                                    <Label Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Name="LinkedVariableStackPanel">
+                                <StackPanel Orientation="Horizontal" Margin="5,10,0,0" VerticalAlignment="Center" Name="LinkedVariableStackPanel"> 
+                                    <Label Style="{StaticResource $LabelStyle}" VerticalAlignment="Center">
                                         <Label.Content>
                                             <GingerCore:ucTextDicResource Text="Linked [Variable]:"/>
                                         </Label.Content>
@@ -76,7 +76,7 @@
                 <DockPanel DockPanel.Dock="Top" Margin="5,5,5,5">
                     <Label HorizontalAlignment="Stretch" DockPanel.Dock="Top" Style="{StaticResource $HeaderStyle}">
                         <Label.Content>
-                            <GingerCore:ucTextDicResource Text="[Variable] Type Configurations:"/>
+                            <GingerCore:ucTextDicResource Name="xNameConfig" Text="[Variable] Type Configurations:"/>
                         </Label.Content>
                     </Label>
 

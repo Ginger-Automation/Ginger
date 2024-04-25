@@ -66,6 +66,14 @@ namespace Ginger.BusinessFlowPages
 
             mVariabelsParent = variabelsParent;
             mVariablesLevel = GetVariablesLevel();
+
+            if (mVariablesLevel.Equals(eVariablesLevel.EnvApplication))
+            {
+                xPreviousBtn.ToolTip = $"Previous {GingerDicser.GetTermResValue(eTermResKey.Parameter)}";
+                xNextBtn.ToolTip = $"Next {GingerDicser.GetTermResValue(eTermResKey.Parameter)}";
+                xDeleteBtn.ToolTip = $"Delete {GingerDicser.GetTermResValue(eTermResKey.Parameter)}";
+                xResetValueBtn.ToolTip = $"Reset {GingerDicser.GetTermResValue(eTermResKey.Parameter)} Value";
+            }
             mContext = context;
             mPageViewMode = pageViewMode;
             if (pageViewMode == General.eRIPageViewMode.Standalone)

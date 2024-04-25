@@ -446,6 +446,7 @@ namespace Ginger.Run
                     BusinessFlowIsMandatory = bf.Mandatory,
                     BusinessFlowInstanceGuid = bf.InstanceGuid,
                     BusinessFlowRunDescription = bf.RunDescription,
+                    ExternalID = bf.ExternalID,
                     BFFlowControls = bf.BFFlowControls
                 };
 
@@ -1930,7 +1931,7 @@ namespace Ginger.Run
                                 try
                                 {
                                     string valueToEvaluate = EvaluateWebApiModelParameterValue(IV.Value, subList);
-                                    if (valueToEvaluate!= null)
+                                    if (!string.IsNullOrEmpty(valueToEvaluate))
                                     {
                                         IV.ValueForDriver = act.ValueExpression.Calculate(valueToEvaluate);
                                     }

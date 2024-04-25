@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using GingerCoreNET.GeneralLib;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using VisualRegressionTracker;
 
@@ -37,7 +38,7 @@ namespace GingerCore.Actions.VisualTesting
         public static string ImageName = "ImageName";
         public static string BaselineImage = "BaselineImage";
         public static string VRTSavedBaseImageFilenameString = "VRTSavedBaseImageFilenameString";
-
+        
 
         ActVisualTesting mAct;
         IVisualTestingDriver mDriver;
@@ -124,7 +125,7 @@ namespace GingerCore.Actions.VisualTesting
         {
             throw new NotImplementedException();
         }
-
+     
         public void Execute()
         {
             switch (GetSelectedVRTActionEnum())
@@ -188,10 +189,11 @@ namespace GingerCore.Actions.VisualTesting
         }
         private void TrackVRT()
         {
-            if (!vrt.IsStarted)
+
+            if (vrt == null || !vrt.IsStarted)
             {
                 mAct.Error = "VRT is not Started";
-                mAct.ExInfo = "You require to add VRT Start Action one step before.";
+                mAct.ExInfo = "Please include a VRT Start Action one step before the current one, if it has not been done already, and ensure that it runs before the current action.";
                 return;
             }
             try
@@ -306,32 +308,34 @@ namespace GingerCore.Actions.VisualTesting
                     switch (result.Status)
                     {
                         case TestRunStatus.New:
-                            mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline." + System.Environment.NewLine + result.Url;
+                            mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline.{System.Environment.NewLine}{result.Url}";
+                            //Add baseline image to act screenshots
+                            if (result.ImageUrl != null)
+                            {
+                                mAct.previewBaselineImageName = Path.GetFileName(result.ImageUrl);
+                            }
                             break;
                         case TestRunStatus.Unresolved:
-                            mAct.Error += $"Differences from baseline was found." + System.Environment.NewLine + result.DiffUrl;
+                            mAct.Error += $"Differences from baseline was found.{System.Environment.NewLine}{result.DiffUrl}";
 
                             //Add difference image to act screenshots
                             if(result.DiffUrl != null){
-                                int index = result.DiffUrl.LastIndexOf("/");
-                                string imageToDownload = result.DiffUrl.Substring(index + 1);
-                                General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{ Path.GetFileName(result.DiffUrl)}", mAct);
                             }
                             
 
                             //Add baseline image to act screenshots
                             if(result.BaselineUrl != null)
                             {
-                                int index = result.BaselineUrl.LastIndexOf("/");
-                                string imageToDownload = result.BaselineUrl.Substring(index + 1);
-                                General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                                mAct.previewBaselineImageName = Path.GetFileName(result.BaselineUrl);
+                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.BaselineUrl)}", mAct);
                             }
                             
 
                             //No need to Add current Screenshot to act screenshots, it will be added in the end if the action is failed
                             break;
                         default:
-                            mAct.ExInfo = "TestRun Results Status: " + result.Status;
+                            mAct.ExInfo = $"TestRun Results Status: {result.Status}";
                             break;
                     }
                 }
@@ -399,6 +403,12 @@ namespace GingerCore.Actions.VisualTesting
         {
             try
             {
+                if (vrt == null || !vrt.IsStarted)
+                {
+                    mAct.Error = "VRT is not Started";
+                    mAct.ExInfo = "Please include a VRT Start Action one step before the current one, if it has not been done already, and ensure that it runs before the current action..";
+                    return;
+                }
                 if (vrt.IsStarted)
                 {
                     vrt.Stop().GetAwaiter().GetResult();

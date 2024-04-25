@@ -816,6 +816,8 @@ namespace Ginger.Actions
             }
             //RowSelectorValue.IsEnabled = true;
             mActDSTblElem.ByRowNum = true;
+            mActDSTblElem.ByNextAvailable = false;
+            mActDSTblElem.ByWhere = false;
 
             if (WherePanel != null)
             {
@@ -851,6 +853,8 @@ namespace Ginger.Actions
             MultiRows.IsChecked = false;
             MultiRows.IsEnabled = false;
             mActDSTblElem.ByNextAvailable = true;
+            mActDSTblElem.ByWhere = false;
+            mActDSTblElem.ByRowNum = false;
             UpdateValueExpression();
             SetIdentifierHeight();
         }
@@ -858,6 +862,8 @@ namespace Ginger.Actions
         private void Where_Checked(object sender, RoutedEventArgs e)
         {
             mActDSTblElem.ByWhere = true;
+            mActDSTblElem.ByRowNum = false;
+            mActDSTblElem.ByNextAvailable = false;
             RowSelectorValue.Visibility = Visibility.Collapsed;
             RowSelectorValue.Visibility = Visibility.Collapsed;
             RowSelectorValueVE.Visibility = Visibility.Collapsed;

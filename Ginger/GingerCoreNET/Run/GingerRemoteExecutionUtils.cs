@@ -122,7 +122,9 @@ namespace Amdocs.Ginger.CoreNET
                     Elapsed = runsetHLInfo.Duration,
                     ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert((runsetHLInfo.Duration / 1000).ToString()),
                     RunSetExecutionStatus = runStatus,
-                    DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.Remote
+                    DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.Remote,
+                    SourceApplication = runsetHLInfo.SourceApplication,
+                    SourceApplicationUser = runsetHLInfo.SourceApplicationUser
                 });
             }
 

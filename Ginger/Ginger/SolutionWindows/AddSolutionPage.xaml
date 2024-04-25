@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
-      Height="350" Width="520" MinHeight="270"
+      Height="230" Width="520" MinHeight="230"
 	Title="Add Solution">
 
     <Grid Background="{StaticResource $BackgroundColor_White}">
@@ -27,7 +27,7 @@
                     <ColumnDefinition Width="auto" MaxWidth="35"/>
                     <ColumnDefinition Width="55"/>
                 </Grid.ColumnDefinitions>
-                <Label x:Name="ApplicationLabel"  Style="{StaticResource @InputFieldLabelStyle}" Content="Select Application" FontSize ="12"  Height="30"  Grid.Column="0" VerticalContentAlignment="Center" />
+                <Label x:Name="ApplicationLabel"  Style="{StaticResource @InputFieldLabelStyle}" Content="Select Application"  Height="30"  Grid.Column="0" VerticalContentAlignment="Center" />
                 <usercontrols:ImageMakerControl x:Name="xApplicationImage"  ImageType="Empty" Height="14" Visibility="Collapsed" Margin="5,0,5,0" Grid.Column="1"/>
                 <Button x:Name="SelectButton" Click="SelectButton_Click" Content="Select" ToolTip="Select From List of Known Applications" Style="{StaticResource @InputButtonStyle}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
             </Grid>
