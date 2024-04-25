@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                     {
                         Description = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)} {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} not found in Environment: {currentEnvironment.Name}",
                         UTDescription = "MissingApplicationInEnvironment",
-                        Details = GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "= '" + TargetApplication + "' while Environment app(s) is: '" + EnvApps + "'",
+                        Details = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)}  {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} = '{TargetApplication}' while Environment app(s) is: '{EnvApps}'",
                         HowToFix = $"Open the Environment Configurations Page and add set correct {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}",
                         CanAutoFix = eCanFix.No,
                         Status = eStatus.NeedFix,

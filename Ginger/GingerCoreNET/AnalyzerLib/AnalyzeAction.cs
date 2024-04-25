@@ -495,47 +495,67 @@ namespace Ginger.AnalyzerLib
 
         public static void AnalyzeValueExpInAction(Act action, BusinessFlow businessFlow, Activity activity, ref List<AnalyzerItemBase> issues)
         {
+            /// Description Example : "Cannot Calculate Value Expression : <ValueExpression> used in Custom Condition in the Flow Control Tab"
 
 
             var ValueExpsNotInCurrEnv = action.ActInputValues
                                 .Where((actInputValue) =>
                                 !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actInputValue.Value, businessFlow.Environment)
-                                ).Select((filteredActInputVal) => "Operation Settings")
+                                ).Select((filteredActInputVal) => $"{filteredActInputVal.Value} used in Operation Settings")
                                 .ToList();
 
 
             if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(action.RunDescription, businessFlow.Environment)){
 
-                ValueExpsNotInCurrEnv.Add("Run Description");
+                ValueExpsNotInCurrEnv.Add("used in Run Description");
             }
 
 
             var FlowControlValues = action
                                     .ActFlowControls
-                                    .Where((actFlowControl) =>
+                                    .Select((actFlowControl) =>
                                     {
-                                        return !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Condition, businessFlow.Environment) ||
-                                        !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Value, businessFlow.Environment);
+                                       if(!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Condition, businessFlow.Environment))
+                                       {
+                                            return $"{actFlowControl.Condition} used in Custom Condition in the Flow Control Tab";
+                                       }
+
+                                       if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Value, businessFlow.Environment))
+                                       {
+                                            return $"{actFlowControl.Value} used in the Flow Control Tab";
+                                       }
+                                        return string.Empty;
                                     })
-                                    .Select((filteredFlowControl) => "Flow Control");
+                                    .Where((filteredFlowControl) => !string.Equals(filteredFlowControl, string.Empty));
 
 
 
             var ReturnValues = action
                                 .ActReturnValues
-                                .Where((actReturnValue) =>
+                                .Select((actReturnValue) =>
                                 {
-                                    return
-                                    !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Param, businessFlow.Environment) ||
-                                    !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Path, businessFlow.Environment) ||
-                                    !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Expected, businessFlow.Environment);
+
+                                    if(!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Param, businessFlow.Environment))
+                                    {
+                                        return $"{actReturnValue.Param} used in Param in Output Values Tab";
+                                    }
+
+                                    if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Path, businessFlow.Environment))
+                                    {
+                                        return $"{actReturnValue.Path} used in Path in the Output Values Tab";
+                                    }
+
+                                    if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Expected, businessFlow.Environment))
+                                    {
+                                        return $"{actReturnValue.Expected} used in Expected Value in the Output Values Tab";
+                                    }
+                                    return string.Empty;
+                                    
                                 })
-                                .Select((filteredReturnValue) => "Output Values");
+                                .Where((filteredReturnValue) => !string.Equals(filteredReturnValue, string.Empty));
 
             ValueExpsNotInCurrEnv.AddRange(FlowControlValues);
             ValueExpsNotInCurrEnv.AddRange(ReturnValues);
-
-
 
 
             foreach (var filteredValueExp in ValueExpsNotInCurrEnv)
@@ -543,7 +563,7 @@ namespace Ginger.AnalyzerLib
                 AnalyzeAction AA = new AnalyzeAction();
                 AA.Status = eStatus.NeedFix;
                 AA.mActivity = activity;
-                AA.Description = $"Cannot Calculate Value Expression used in {filteredValueExp} of the {action.Description} ";
+                AA.Description = $"Cannot Calculate Value Expression: {filteredValueExp}";
                 AA.ItemName = action.Description;
                 AA.ItemParent = businessFlow.Name + " > " + activity.ActivityName;
                 AA.mAction = action;
