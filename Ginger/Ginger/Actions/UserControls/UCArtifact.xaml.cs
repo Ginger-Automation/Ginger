@@ -93,7 +93,7 @@ namespace Ginger.Actions.UserControls
                 docPage.ShowAsWindow(ArtifactName);                
                 return;
             }          
-            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw response view, see log for details.");
+            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load file content, see log for details.");
         }
 
         public void OpenBySystem()

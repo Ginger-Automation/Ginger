@@ -2327,7 +2327,6 @@ namespace Ginger.Run
                                     }
                                 }
                                 else if (a.AgentType == Agent.eAgentType.Service)
-
                                 {
                                     ExecuteOnPlugin.ExecutesScreenShotActionOnAgent(a, act);
                                 }

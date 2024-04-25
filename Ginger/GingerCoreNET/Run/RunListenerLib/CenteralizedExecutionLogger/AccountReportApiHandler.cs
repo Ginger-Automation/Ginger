@@ -378,10 +378,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
                         List<string> temp = new List<string>();
 
-                        foreach (string screenshot in filePaths)
+                        foreach (string artifact in filePaths)
                         {
-                            fileSize += new System.IO.FileInfo(screenshot).Length;
-                            temp.Add(screenshot);
+                            fileSize += new System.IO.FileInfo(artifact).Length;
+                            temp.Add(artifact);
                             if ((5 * 1000000) < fileSize) // 5 MB
                             {
                                 await UploadArtifactsAsync(executionId, temp);
