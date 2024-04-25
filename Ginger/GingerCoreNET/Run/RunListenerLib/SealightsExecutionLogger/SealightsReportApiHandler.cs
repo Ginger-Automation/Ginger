@@ -54,8 +54,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
             if (!String.IsNullOrEmpty(EndPointUrl))
             {
-                restClient = new RestClient(EndPointUrl);
-                restClient.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+                var options = new RestClientOptions(EndPointUrl)
+                {
+                    ThrowOnAnyError = false,
+                    RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true,
+                    FailOnDeserializationError = false,
+                    ThrowOnDeserializationError = false
+                };
+                restClient = new RestClient(options);
             }
         }
 
