@@ -550,7 +550,7 @@ namespace Ginger.SourceControl
             ObservableList<Button> windowBtnsList = new ObservableList<Button>();
 
             Button CommitAndCheckin = new Button();
-            CommitAndCheckin.Content = "Commit and Check-In Selected Changes";
+            CommitAndCheckin.Content = "Commit and Push";
             CommitAndCheckin.Click += CommitAndCheckinButton_Click;
 
             windowBtnsList.Add(CommitAndCheckin);
@@ -559,7 +559,7 @@ namespace Ginger.SourceControl
             if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
                 Button LocalCommit = new Button();
-                LocalCommit.Content = "Local Commit Selected Changes";
+                LocalCommit.Content = "Commit Locally";
                 LocalCommit.Click += LocalCommitButton_Click;
                 windowBtnsList.Add(LocalCommit);
             }
@@ -665,7 +665,7 @@ namespace Ginger.SourceControl
                         bool CommitSuccess = CommitChanges(WorkSpace.Instance.Solution.SourceControl, Comments);
 
 
-                        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+                        Dispatcher.BeginInvoke(delegate ()
                         {
                             if (!CommitSuccess)
                             {
@@ -674,7 +674,7 @@ namespace Ginger.SourceControl
 
                             CloseWindow();
 
-                        }));
+                        });
 
                         if (CommitSuccess)
                         {
@@ -768,6 +768,7 @@ namespace Ginger.SourceControl
         private void InitLocalCommitGrid()
         {
             LocalCommitedFilesGrid.DataSourceList = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
+            LocalCommitedFilesGrid.Title = $"Pending Local Commits for Check-In {{{LocalCommitedFilesGrid.DataSourceList.Count}}}";
         }
 
         private void SetLocalCommitGridView()
