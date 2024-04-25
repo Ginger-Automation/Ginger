@@ -73,6 +73,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public bool ReRunFailed;
         public string ReferenceExecutionID;
         public string RerunLevel;
+        public string SourceApplication;
+        public string SourceApplicationUser;
 
         public bool SelfHealingCheckInConfigured;
 
@@ -851,6 +853,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsTestRecommendations: '" + value + "'");
                 SealightsTestRecommendations = (bool)value;
             }
+        }
+
+        internal void SetSourceAppAndUser()
+        {
+            if (string.IsNullOrEmpty(this.SourceApplication))
+            {
+                this.SourceApplication = "Ginger CLI";
+            }
+            if (string.IsNullOrEmpty(this.SourceApplicationUser))
+            {
+                this.SourceApplicationUser = System.Environment.UserName;
+            }
+            mRunSetConfig.SourceApplication = this.SourceApplication;
+            mRunSetConfig.SourceApplicationUser = this.SourceApplicationUser;
         }
     }
 }
