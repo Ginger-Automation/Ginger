@@ -52,6 +52,7 @@ namespace Ginger.AnalyzerLib
 
             CheckIfExistsInAnyActivityGroup(activity, businessFlow, ref issues);
 
+            AnalyzeValueExpInActivity(activity, businessFlow, ref issues);
             return issues;
         }
 

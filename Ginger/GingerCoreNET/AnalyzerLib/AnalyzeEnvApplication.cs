@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                         UTDescription = "MissingApplicationInEnvironment",
                         Details = GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "= '" + TargetApplication + "' while Environment app(s) is: '" + EnvApps + "'",
                         HowToFix = $"Open the Environment Configurations Page and add set correct {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}",
-                        CanAutoFix = eCanFix.Yes,
+                        CanAutoFix = eCanFix.No,
                         Status = eStatus.NeedFix,
                         IssueType = eType.Error,
                         ItemParent = currentEnvironment.Name,
@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                         ItemClass = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
                         Severity = eSeverity.Critical,
                         Selected = true,
-                        FixItHandler = FixMissingEnvApp
+                        FixItHandler = null
                     };
                     issues.Add(AB);
                     return;
@@ -104,8 +104,8 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
             string ApplicationName = AnalyzeTargetApplication.ItemName;
             string EnvironmentName = AnalyzeTargetApplication.ItemParent;
 
-            ProjEnvironment? SelectedEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((proj) => proj.Name.Equals(EnvironmentName));
-            ApplicationPlatform? ApplicationPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault((appPlat) => appPlat.AppName.Equals(ApplicationName));
+            ProjEnvironment SelectedEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((proj) => proj.Name.Equals(EnvironmentName));
+            ApplicationPlatform ApplicationPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault((appPlat) => appPlat.AppName.Equals(ApplicationName));
 
             if (SelectedEnvironment == null || ApplicationPlatform == null)
             {
@@ -119,6 +119,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
 
         }
 
+        private static readonly object lockObject = new();
 
         public static bool DoesEnvParamOrURLExistInValueExp(string ValueExp , string CurrentEnvironment)
         {
@@ -159,9 +160,12 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
 
                 EnvApplication CurrentEnvApp = CurrentProjEnv.Applications.FirstOrDefault((app) => app.Name.Equals(AppName));
 
-                CurrentEnvApp?.ConvertGeneralParamsToVariable();
+                lock (lockObject)
+                {
+                    CurrentEnvApp?.ConvertGeneralParamsToVariable();
+                }
 
-                 bool doesParamExistInCurrEnv =  CurrentEnvApp?.Variables?.Any((Param)=>Param.Name.Equals(GlobalParamName)) ?? false;
+                bool doesParamExistInCurrEnv =  CurrentEnvApp?.Variables?.Any((Param)=>Param.Name.Equals(GlobalParamName)) ?? false;
 
                 if (!doesParamExistInCurrEnv)
                 {

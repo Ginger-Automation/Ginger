@@ -69,6 +69,7 @@ namespace Ginger.AnalyzerLib
 
             issues.AddRange(AnalyzeIndependently(businessFlow, checks));
             AnalyzeEnvApplication.AnalyzeEnvAppInBusinessFlows(businessFlow, issues);
+            AnalyzeValueExpInBusinessFlow(businessFlow, ref issues);
             return issues;
         }
 
@@ -84,6 +85,7 @@ namespace Ginger.AnalyzerLib
             issues.AddRange(AnalyzeWithSolutionDependency(businessFlow, solution, checks));
             issues.AddRange(AnalyzeIndependently(businessFlow, checks));
             AnalyzeEnvApplication.AnalyzeEnvAppInBusinessFlows(businessFlow, issues);
+            AnalyzeValueExpInBusinessFlow(businessFlow, ref issues);
             return issues;
         }
 

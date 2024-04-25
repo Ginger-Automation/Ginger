@@ -54,8 +54,6 @@ namespace Ginger.AnalyzerLib
             ObservableList<GlobalAppModelParameter> mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
 
             AnalyzeValueExpInAction(a, BusinessFlow , parentActivity, ref IssuesList);
-            AnalyzeActivity.AnalyzeValueExpInActivity(parentActivity, BusinessFlow,ref IssuesList);
-            AnalyzeBusinessFlow.AnalyzeValueExpInBusinessFlow(BusinessFlow, ref IssuesList);
 
             //Flow Control -> GoToAction , Check if Action u want to go to exist
             if (a.FlowControls.Count > 0)
