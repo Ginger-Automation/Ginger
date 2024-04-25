@@ -500,7 +500,7 @@ namespace Ginger.AnalyzerLib
             var ValueExpsNotInCurrEnv = action.ActInputValues
                                 .Where((actInputValue) =>
                                 !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actInputValue.Value, businessFlow.Environment)
-                                ).Select((filteredActInputVal) => filteredActInputVal.ItemName)
+                                ).Select((filteredActInputVal) => "Operation Settings")
                                 .ToList();
 
 
@@ -517,7 +517,7 @@ namespace Ginger.AnalyzerLib
                                         return !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Condition, businessFlow.Environment) ||
                                         !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Value, businessFlow.Environment);
                                     })
-                                    .Select((filteredFlowControl) => filteredFlowControl.ItemName);
+                                    .Select((filteredFlowControl) => "Flow Control");
 
 
 
@@ -530,7 +530,7 @@ namespace Ginger.AnalyzerLib
                                     !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Path, businessFlow.Environment) ||
                                     !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Expected, businessFlow.Environment);
                                 })
-                                .Select((filteredReturnValue) => filteredReturnValue.ItemName);
+                                .Select((filteredReturnValue) => "Output Values");
 
             ValueExpsNotInCurrEnv.AddRange(FlowControlValues);
             ValueExpsNotInCurrEnv.AddRange(ReturnValues);
@@ -543,16 +543,17 @@ namespace Ginger.AnalyzerLib
                 AnalyzeAction AA = new AnalyzeAction();
                 AA.Status = eStatus.NeedFix;
                 AA.mActivity = activity;
-                AA.Description = $"Current Environment: {businessFlow.Environment} Does not have the mentioned Parameter {filteredValueExp}";
+                AA.Description = $"Cannot Calculate Value Expression used in {filteredValueExp} of the {action.Description} ";
                 AA.ItemName = action.Description;
                 AA.ItemParent = businessFlow.Name + " > " + activity.ActivityName;
                 AA.mAction = action;
                 AA.mBusinessFlow = businessFlow;
                 AA.ItemClass = "Action";
+                AA.CanAutoFix = eCanFix.No;
                 AA.Severity = eSeverity.High;
+                AA.HowToFix = "Please select the appropriate Environment or make sure the parameter/URL exists in the used Environment";
                 issues.Add(AA);
             }
-
 
 
 
