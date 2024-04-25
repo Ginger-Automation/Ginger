@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="3256a43f-9ab0-42ec-82a1-0259cc895230" ItemType="RunSetConfig" CreatedBy="manaska" Created="202404211553" GingerVersion="24.2.1.1" Version="3" LastUpdateBy="manaska" LastUpdate="202404211641" />
+<GingerRepositoryItem><Header ItemGuid="3256a43f-9ab0-42ec-82a1-0259cc895230" ItemType="RunSetConfig" CreatedBy="manaska" Created="202404211553" GingerVersion="3.6.0.0" Version="3" LastUpdateBy="manaska" LastUpdate="202404211641" />
 <RunSetConfig Guid="3256a43f-9ab0-42ec-82a1-0259cc895230" Name="VirtualEnvironment-Runset" ParentGuid="00000000-0000-0000-0000-000000000000" SealightsTestRecommendations="No">
 <CategoriesDefinitions>
 <SolutionCategoryDefinition Category="Product" Guid="f3243358-cb22-4a9f-98b1-545529e834fe" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="23ac9f62-72ed-446a-a6fc-01be97cb2b40" ItemType="ProjEnvironment" CreatedBy="YARONWE" Created="201904012027" GingerVersion="24.2.1.1" Version="4" LastUpdateBy="manaska" LastUpdate="202404211549" />
+<GingerRepositoryItem><Header ItemGuid="23ac9f62-72ed-446a-a6fc-01be97cb2b40" ItemType="ProjEnvironment" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.6.0.0" Version="4" LastUpdateBy="manaska" LastUpdate="202404211549" />
 <ProjEnvironment Guid="23ac9f62-72ed-446a-a6fc-01be97cb2b40" Name="Default" ParentGuid="00000000-0000-0000-0000-000000000000">
 <Applications>
 <EnvApplication Active="True" Guid="1e6807f0-7101-4200-a944-d437e7442032" Name="app1" ParentGuid="00000000-0000-0000-0000-000000000000">
