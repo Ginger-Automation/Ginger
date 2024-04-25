@@ -298,7 +298,7 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.AddOrUpdateReturnParamActual("Image URL", result.ImageUrl + "");
                 mAct.AddOrUpdateReturnParamActual("Baseline URL", result.BaselineUrl + "");
                 mAct.AddOrUpdateReturnParamActual("Difference URL", result.DiffUrl + "");
-                mAct.AddOrUpdateReturnParamActual("URL", result.Url + "");
+                mAct.AddOrUpdateReturnParamActual("URL", result.Url + "");               
 
 
                 //Calculate the action status based on the results
@@ -315,8 +315,8 @@ namespace GingerCore.Actions.VisualTesting
                             //Add difference image to act screenshots
                             if(result.DiffUrl != null){
                                 int index = result.DiffUrl.LastIndexOf("/");
-                                string imageToDownload = result.DiffUrl.Substring(index + 1);
-                                General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                                string imageToDownload = result.DiffUrl.Substring(index + 1);                               
+                                General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct, true, "Difference_Image");
                             }
                             
 
@@ -324,8 +324,8 @@ namespace GingerCore.Actions.VisualTesting
                             if(result.BaselineUrl != null)
                             {
                                 int index = result.BaselineUrl.LastIndexOf("/");
-                                string imageToDownload = result.BaselineUrl.Substring(index + 1);
-                                General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                                string imageToDownload = result.BaselineUrl.Substring(index + 1);                                
+                                General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct, true, "BaseLine_Image");
                             }
                             
 

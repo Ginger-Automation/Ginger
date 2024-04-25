@@ -47,6 +47,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string SEND_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/businessflow/";
         private const string SEND_RUNNER_EXECUTION_DATA = "api/AccountReport/runner/";
         private const string UPLOAD_FILES = "api/AccountReport/UploadFiles/";
+        private const string UPLOAD_ARTIFACTS = "api/AccountReport/UploadArtifacts/";
         private const string EXECUTION_ID_VALIDATION = "api/AccountReport/ExecutionIdValidation/";
         private const string GET_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/GetAccountReportBusinessflowsByExecutionId/";
         private const string GET_RUNSET_EXECUTION_DATA = "api/AccountReport/GetRunsetHLExecutionInfo/";
@@ -351,6 +352,81 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Exception occurred during uploading { message}", ex);
+                }
+            }
+        }
+
+        public async Task SendArtifactsToCentralDBAsync(Guid executionId, List<string> filePaths)
+        {
+            if (restClient != null)
+            {
+                if (filePaths != null && filePaths.Count > 0)
+                {
+                    try
+                    {
+                        Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Uploading execution artifacts to central DB");
+
+                        long fileSize = 0;
+
+                        List<string> temp = new List<string>();
+
+                        foreach (string screenshot in filePaths)
+                        {
+                            fileSize += new System.IO.FileInfo(screenshot).Length;
+                            temp.Add(screenshot);
+                            if ((5 * 1000000) < fileSize) // 5 MB
+                            {
+                                await UploadArtifactsAsync(executionId, temp);
+                                temp = new List<string>();
+                                fileSize = 0;
+                            }
+
+                        }
+
+                        if (temp.Any())
+                        {
+                            await UploadArtifactsAsync(executionId, temp);
+                        }
+                    }
+                    finally
+                    {
+                        Reporter.HideStatusMessage();
+                    }
+                }
+            }
+        }
+
+
+        public async Task UploadArtifactsAsync(Guid executionId, List<string> filePaths)
+        {
+            if (restClient != null)
+            {
+                string message = string.Format("artifact/s to Central DB for Execution Id:'{0}'", executionId);
+                try
+                {
+                    RestRequest restRequest = new RestRequest(UPLOAD_ARTIFACTS, Method.Post);
+                    restRequest.AddHeader("Content-Type", "multipart/form-data");
+                    restRequest.AddHeader("ExecutionId", executionId.ToString());
+
+                    foreach (string item in filePaths)
+                    {
+                        restRequest.AddFile(Path.GetFileName(item), item);
+                    }
+                    RestResponse response = await restClient.ExecuteAsync(restRequest);
+
+                    if (response.IsSuccessful)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully uploaded {message}");
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to upload {message} Response: {response.Content}");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception occurred during uploading {message}", ex);
                 }
             }
         }

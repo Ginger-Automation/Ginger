@@ -79,6 +79,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             AccountReportAction accountReportAction = new AccountReportAction();
             List<string> newScreenShotsList = new List<string>();
+            Dictionary<string, string> newArtifactList = new Dictionary<string, string>();           
             accountReportAction.Id = action.ExecutionId;
             accountReportAction.EntityId = action.Guid;
             accountReportAction.AccountReportDbActivityId = action.ParentExecutionId;
@@ -99,9 +100,19 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 newScreenShotsList.Add(newScreenshotPath);
             }
             accountReportAction.ScreenShots = newScreenShotsList;
-
+            
+            accountReportAction.Artifacts = new List<AccountReport.Contracts.Helpers.DictObject>();
+          
+            foreach(ArtifactDetails artifact in action.Artifacts)
+            {                                   
+                string newArtifactPath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + "/" +  Path.GetFileName(artifact.ArtifactNewPath);
+                newArtifactList.Add(artifact.ArtifactName, newArtifactPath);
+                accountReportAction.Artifacts.Add(new AccountReport.Contracts.Helpers.DictObject
+                { Key = artifact.ArtifactName, Value = newArtifactPath });                                 
+            }           
             return accountReportAction;
         }
+
         public static AccountReportActivity MapActivityStartData(Activity activity, Context context)
         {
             activity.ExecutionId = Guid.NewGuid();// check incase of rerun / flow control 
