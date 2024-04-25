@@ -27,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 });
 
             return TargetApplicationInGinger == null
-                ? throw new Exception("The mention Application Platform does not exist in ginger. Please make sure that the mentioned Application Platform exists in ginger")
+                ? throw new InvalidOperationException("The mention Application Platform does not exist in ginger. Please make sure that the mentioned Application Platform exists in ginger")
                 : TargetApplicationInGinger.Platform;
         }
 

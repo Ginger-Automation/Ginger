@@ -215,7 +215,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             if (doesEnvironmentExist)
             {
-                throw new Exception($"The Environment {EnvironmentConfig.Name} already exists in Ginger. Please make sure that the Name and GUID is unique");
+                throw new InvalidOperationException($"The Environment {EnvironmentConfig.Name} already exists in Ginger. Please make sure that the Name and GUID is unique");
             }
         }
 
@@ -226,7 +226,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             var actualCount = List.Count();
             if (distinctCount != actualCount)
             {
-                throw new Exception($"{typeof(T).Name.Replace("Config","")} Name should be distinct in the list");
+                throw new InvalidOperationException($"{typeof(T).Name.Replace("Config","")} Name should be distinct in the list");
             }
         }
     }
