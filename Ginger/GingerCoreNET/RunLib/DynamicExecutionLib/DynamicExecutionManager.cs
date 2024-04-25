@@ -410,7 +410,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             //Create execution object
             GingerExecConfig executionConfig = GetGingerExecConfigurationObject(solution, runsetExecutor, cliHelper);
-
+            executionConfig.SourceApplication = "Ginger CLI";
+            executionConfig.SourceApplicationUser = System.Environment.UserName;
             //serilize object to JSON String
             return SerializeDynamicExecutionToJSON(executionConfig);
         }
@@ -554,7 +555,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
             executionConfig.EncryptionKey = solution.EncryptionKey;
-
 
 
             RunsetExecConfig runset = new RunsetExecConfig();
