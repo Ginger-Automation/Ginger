@@ -420,7 +420,7 @@ namespace GingerCore.Drivers.Common
             //TODO: FIXME!!!
             //temp just do find first
 
-            List<ElementInfo> list = new List<ElementInfo>();
+            List<ElementInfo> list = [];
             ElementInfo EI = GetElementByXpath(XPath);
             list.Add(EI);
             return list;
@@ -433,7 +433,7 @@ namespace GingerCore.Drivers.Common
             List<object> elemsList = null;
             try
             {
-                while (relxpath.IndexOf("//") == -1 && elemInfo.ElementObject != null)
+                while (!relxpath.Contains("//") && elemInfo.ElementObject != null)
                 {
                     string id = mDriver.GetElementID(elemInfo);
                     if (!string.IsNullOrEmpty(id))
@@ -462,14 +462,14 @@ namespace GingerCore.Drivers.Common
                             continue;
                         }
                     }
-                    if (relxpath.IndexOf("//") != -1 && elemsList != null)
+                    if (relxpath.Contains("//") && elemsList != null)
                     {
                         string path = relxpath;
-                        for (int i = 1; i <= elemsList.Count(); i++)
+                        for (int i = 1; i <= elemsList.Count; i++)
                         {
                             relxpath = "(" + path + ")[" + i + "]";
                             List<object> newElem = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
-                            if (newElem != null && newElem.Any() && newElem[0].Equals(elemInfo.ElementObject))
+                            if (newElem != null && newElem.Count != 0 && newElem[0].Equals(elemInfo.ElementObject))
                             {
                                 break;
                             }
@@ -479,9 +479,9 @@ namespace GingerCore.Drivers.Common
                     if (relxpath == "")
                     {
                         elemInfo = mDriver.GetElementParent(elemInfo, pomSetting);
-                        if (elemInfo is HTMLElementInfo && !string.IsNullOrEmpty(((HTMLElementInfo)elemInfo).RelXpath))
+                        if (elemInfo is HTMLElementInfo elementInfo && !string.IsNullOrEmpty(elementInfo.RelXpath))
                         {
-                            relxpath = xpath.Replace(elemInfo.XPath, ((HTMLElementInfo)elemInfo).RelXpath);
+                            relxpath = xpath.Replace(elemInfo.XPath, elementInfo.RelXpath);
                             break;
                         }
                     }
@@ -509,9 +509,9 @@ namespace GingerCore.Drivers.Common
                 //creating relative xpath with multiple attribute and tagname
                 if (elementInfo.Properties.Count > 1)
                 {
-                    System.Text.StringBuilder elementAttributes = new System.Text.StringBuilder();
+                    System.Text.StringBuilder elementAttributes = new();
                     var fieldInfos = typeof(ElementProperty).GetFields();
-                    List<string> propNames = new List<string>();
+                    List<string> propNames = [];
 
                     foreach (var fieldInfo in fieldInfos)
                     {
@@ -521,7 +521,7 @@ namespace GingerCore.Drivers.Common
                     {
                         if (!propNames.Contains(prop.Name) && !prop.Name.ToLower().Equals("value") && !prop.Name.ToLower().Equals("id") && !prop.Name.ToLower().Equals("name"))
                         {
-                            if (!prop.Value.Contains(";"))
+                            if (!prop.Value.Contains(';'))
                             {
                                 elementAttributes.Append(string.Concat("@", prop.Name, "=", "\'", prop.Value, "\'", " ", "and", " "));
                             }
