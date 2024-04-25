@@ -358,6 +358,7 @@ namespace GingerCoreNET.GeneralLib
                     EA.CoreProductName = AP.Core;
                     EA.CoreVersion = AP.CoreVersion;
                     EA.Active = true;
+                    EA.ParentGuid = AP.Guid;
                     newEnv.Applications.Add(EA);
                 }
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
@@ -533,7 +534,35 @@ namespace GingerCoreNET.GeneralLib
             {
                 act.Error += ex.Message;
             }
-        }       
+        }
+
+        public static string DownloadBaselineImage(string ImageURL, Act act)
+        { 
+            String currImagePath = Act.GetScreenShotRandomFileName();
+            try
+            {
+                HttpResponseMessage response = SendRequest(ImageURL);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    using (var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        response.Content.CopyToAsync(fs).ContinueWith(
+                            (discard) =>
+                            {
+                                fs.Close();
+                            });
+                    }
+                    
+                   return currImagePath;
+                }
+            }
+            catch (Exception ex)
+            {
+                act.Error += ex.Message;
+            }
+            return currImagePath;
+        }
+
         public static HttpResponseMessage SendRequest(string URL)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, URL);
