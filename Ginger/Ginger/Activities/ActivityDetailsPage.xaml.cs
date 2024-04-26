@@ -167,18 +167,16 @@ namespace Ginger.BusinessFlowPages
             xAutomationStatusCombo.BindControl(mActivity, nameof(Activity.AutomationStatus));
             BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Publish));
-            if (mContext != null && mContext.BusinessFlow != null)
+
+            
+            xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+
+            if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.ApplicationPlatforms!=null)
             {
-                //if (!mContext.BusinessFlow.TargetApplications.Any(ta => ta.Equals(mActivity.TargetApplication)))
-                //{
-                  //  mContext.BusinessFlow.MapTAToBF(eUserMsgSelection.None, mActivity, WorkSpace.Instance.Solution.ApplicationPlatforms);
-               // }
-                xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;
+                WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged -= OnApplicationPlatformChanged;
+                WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged += OnApplicationPlatformChanged;
             }
-            else
-            {
-                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-            }
+
             xTargetApplicationlbl.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
             xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
@@ -223,6 +221,31 @@ namespace Ginger.BusinessFlowPages
             mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Started;
         }
 
+        private void OnApplicationPlatformChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+
+            if(xTargetApplicationComboBox.Items == null || mActivity == null || mActivity.TargetApplication == null)
+            {
+                return;
+            }
+
+            int pointer = 0;
+
+            foreach(TargetApplication targetApplication in xTargetApplicationComboBox.Items)
+            {
+
+                if (targetApplication.AppName.Equals(mActivity.TargetApplication))
+                {
+                    xTargetApplicationComboBox.SelectedIndex = pointer;
+                }
+
+                pointer++;
+            }
+
+            TargetAppSelectedComboBox();
+        }
+
         private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if(string.Equals(e.PropertyName, nameof(UserProfile.ShowEnterpriseFeatures)))
@@ -230,7 +253,37 @@ namespace Ginger.BusinessFlowPages
                 TargetAppSelectedComboBox();
             }
         }
+        public void UpdateTargetApplication()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                int pointer = 0;
+                foreach(TargetApplication targetApplication in xTargetApplicationComboBox.Items)
+                {
+                    
+                   var ApplicationPlatform =   WorkSpace.Instance?.Solution?.ApplicationPlatforms?
+                    .FirstOrDefault((appPlat) =>
+                    {
+                        if(appPlat.NameBeforeEdit!=null && appPlat.NameBeforeEdit.Equals(targetApplication.AppName))
+                        {
+                            return true ;  
+                        }
+                        return false;
+                    });
+                    if(ApplicationPlatform != null)
+                    {
+                        targetApplication.AppName = ApplicationPlatform.AppName;
 
+                        if (targetApplication.AppName.Equals(mActivity.TargetApplication) && xTargetApplicationComboBox.SelectedIndex != pointer)
+                        {
+                            xTargetApplicationComboBox.SelectedIndex = pointer;
+                        }
+                    }
+                    pointer++;
+                }
+
+            });
+        }
         private void AutoUpdate_ConsumerList(object? sender, NotifyCollectionChangedEventArgs e)
         {
              TargetAppSelectedComboBox();
@@ -318,11 +371,10 @@ namespace Ginger.BusinessFlowPages
                 xConsumerStack.Visibility = Visibility.Visible;                
 
                 //logic for Consumer ComboBox for Otoma
-                ObservableList<TargetBase> targetApplications;
+                ObservableList<TargetBase> targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
                 ObservableList<Consumer> consumerList = new();
                 if (mContext.BusinessFlow != null)
                 {
-                    targetApplications = mContext.BusinessFlow.TargetApplications;
                     // this logic is developed to support the backward compatibility where parent guids are empty
                     if (targetApplications.Any(f => f.ParentGuid.Equals(Guid.Empty)))
                     {
@@ -337,14 +389,10 @@ namespace Ginger.BusinessFlowPages
                         }
                     }
                 }
-                else
-                {
-                    targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-                }
 
                 if (xTargetApplicationComboBox.SelectedItem != null)
                 {
-                    foreach (var targetApplication in targetApplications.Cast<TargetApplication>())
+                    foreach (var targetApplication in targetApplications.OfType<TargetApplication>())
                     {
                         if (!targetApplication.AppName.Equals(xTargetApplicationComboBox.SelectedItem.ToString()))
                         {

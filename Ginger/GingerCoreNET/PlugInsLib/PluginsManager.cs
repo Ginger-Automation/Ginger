@@ -98,10 +98,13 @@ namespace Amdocs.Ginger.Repository
             AddPluginPackage(folder);
             return folder;
         }
-
-        public void UninstallPluginPackage(OnlinePluginPackage pluginPackageInfo)
+        public PluginPackage GetPluginPackageById(String id)
         {
-            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginPackageInfo.Id select x).FirstOrDefault();
+            return mPluginPackages.FirstOrDefault(x => string.Equals(x.PluginId, id));
+        }
+
+        public void UninstallPluginPackage(PluginPackage pluginPackage)
+        {
             WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(pluginPackage);
         }
 
@@ -250,11 +253,11 @@ namespace Amdocs.Ginger.Repository
             Reporter.ToLog(eLogLevel.DEBUG, "Getting Plugins list from " + url);
 
             ObservableList<OnlinePluginPackage> list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
-            Reporter.ToLog(eLogLevel.DEBUG, "Online Plugins count=" + list.Count);
+            Reporter.ToLog(eLogLevel.DEBUG, "Online Plugins count=" + list?.Count);
             ObservableList<PluginPackage> installedPlugins = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
             foreach (OnlinePluginPackage onlinePluginPackage in list)
             {
-                PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).FirstOrDefault();
+                PluginPackage pluginPackage = installedPlugins.FirstOrDefault(x=> x.PluginId == onlinePluginPackage.Id);
                 if (pluginPackage != null)
                 {
                     onlinePluginPackage.CurrentPackage = pluginPackage.PluginPackageVersion;

@@ -55,7 +55,7 @@ namespace Ginger
         private bool OwnerWindowClosing = false;
 
         public GenericWindow(Window Owner, eWindowShowStyle windowStyle, string windowTitle,
-                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, FrameworkElement loaderElement = null)
+                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showCloseBtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, FrameworkElement loaderElement = null)
         {
             InitializeComponent();
             this.Owner = Owner;
@@ -219,7 +219,7 @@ namespace Ginger
 
             //close buttons handling
             mCloseEventHandler = closeEventHandler;
-            if (!showClosebtn)
+            if (!showCloseBtn)
             {
                 CloseBtn.Visibility = System.Windows.Visibility.Collapsed;
                 if (mCloseEventHandler == null)

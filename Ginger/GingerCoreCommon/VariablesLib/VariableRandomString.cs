@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -219,6 +219,11 @@ namespace GingerCore.Variables
             supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
 
             return supportedOperations;
+        }
+
+        public override void SetInitialValue(string InitialValue)
+        {
+            Value = InitialValue;
         }
 
         public override bool SupportResetValue { get { return false; } }

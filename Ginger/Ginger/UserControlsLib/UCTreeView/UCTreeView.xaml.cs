@@ -234,6 +234,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (item is NewTreeViewItemBase newTreeViewItem)
             {
                 newTreeViewItem.TreeViewItem = TVI;
+                Binding visibilityBinding = new()
+                {
+                    Mode = BindingMode.TwoWay,
+                    Source = item,
+                    Path = new PropertyPath(nameof(NewTreeViewItemBase.Visibility)),
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                };
+                TVI.SetBinding(TreeViewItem.VisibilityProperty, visibilityBinding);
             }
             if (Parent == null)
             {
@@ -307,6 +315,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private AutoResetEvent? mSetTreeNodeItemChildsEvent = null;
 
         private readonly Dictionary<TreeViewItem, Task> tviChildNodesLoadTaskMap = new();
+        public enum ChildrenLoadState
+        {
+            Started,
+            Completed
+        }
+
+        public delegate void ChildrenLoadHandler(ChildrenLoadState state);
+        
+        public event ChildrenLoadHandler ChildrenLoadEvent;
 
         private Task SetTreeNodeItemChilds(TreeViewItem TVI)
         {
@@ -322,6 +339,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     setChildItemsTask = Task.Run(() =>
                     {
+                        ChildrenLoadEvent?.Invoke(ChildrenLoadState.Started);
                         try
                         {
                             mSetTreeNodeItemChildsEvent = new AutoResetEvent(false);
@@ -358,6 +376,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         catch(Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                        }
+                        finally
+                        {
+                            ChildrenLoadEvent?.Invoke(ChildrenLoadState.Completed);
                         }
                     });
                 }
@@ -457,11 +479,22 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         public void RefreshTreeNodeChildrens(ITreeViewItem NodeItem)
         {
-            TreeViewItem TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], NodeItem);
-            if (TVI != null)
+            try
             {
-                TVI.Items.Clear();
-                TVI.IsExpanded = true;
+                Dispatcher.Invoke(() =>
+                {
+                    TreeViewItem TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], NodeItem);
+                    if (TVI != null)
+                    {
+                        TVI.Items.Clear();
+                        TVI.IsExpanded = true;
+                    }
+                });
+            }
+
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
         }
 
@@ -634,6 +667,75 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
 
             return header;
+        }
+
+        public void FilterItemsByTextNew(string text)
+        {
+            long startTime = DateTime.UtcNow.Ticks;
+
+            List<ITreeViewItem> items = [];
+            foreach (TreeViewItem tvi in ((TreeViewItem)Tree.Items[0]).Items)
+            {
+                if (tvi.Tag is ITreeViewItem item)
+                {
+                    items.Add(item);
+                }
+            }
+
+            FilterItemsByTextNew(items, text);
+
+            Reporter.ToLog(eLogLevel.DEBUG,$"FilterItemsByTextNew took {TimeSpan.FromTicks(DateTime.UtcNow.Ticks - startTime).TotalMilliseconds}ms");
+        }
+
+        private bool FilterItemsByTextNew(IEnumerable<ITreeViewItem> items, string text)
+        {
+            if (items == null)
+            {
+                return false;
+            }
+
+            bool wasFound = false;
+            foreach (ITreeViewItem item in items)
+            {
+                NewTreeViewItemBase itemBase = (NewTreeViewItemBase)item;
+
+                itemBase.Visibility = Visibility.Collapsed;
+
+                string header = GetItemHeaderText(item);
+                if (!string.IsNullOrEmpty(header) && header.Contains(text, StringComparison.OrdinalIgnoreCase))
+                {
+                    itemBase.Visibility = Visibility.Visible;
+                    wasFound = true;
+                }
+
+                if (FilterItemsByTextNew(item.Childrens(), text))
+                {
+                    wasFound = true;
+                    itemBase.Visibility = Visibility.Visible;
+                }
+            }
+
+            return wasFound;
+        }
+
+        private string GetItemHeaderText(ITreeViewItem item)
+        {
+            StackPanel SP = (StackPanel)item.Header();
+
+            //Combine text of all label child's of the header Stack panel
+            string HeaderTXT = "";
+            foreach (var v in SP.Children)
+            {
+                if (v.GetType() == typeof(Label))
+                {
+                    Label l = (Label)v;
+                    if (l.Content != null)
+                    {
+                        HeaderTXT += l.Content.ToString();
+                    }
+                }
+            }
+            return HeaderTXT;
         }
 
         /// <summary>

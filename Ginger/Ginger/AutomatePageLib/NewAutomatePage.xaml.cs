@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
@@ -56,7 +57,9 @@ using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using LiteDB;
+using Microsoft.VisualStudio.Services.Common;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
@@ -89,7 +92,7 @@ namespace GingerWPF.BusinessFlowsLib
         BusinessFlowConfigurationsPage mConfigurationsPage;
         ActivityPage mActivityPage;
         MainAddActionsNavigationPage mAddActionMainPage;
-
+        ActivityDetailsPage mActivityDetailsPage;
         bool mExecutionIsInProgress = false;
         bool mSyncSelectedItemWithExecution = true;
 
@@ -113,7 +116,6 @@ namespace GingerWPF.BusinessFlowsLib
         public NewAutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
-
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEventAsync;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEventAsync;
             WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
@@ -217,6 +219,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (e.PropertyName == nameof(Activity.TargetApplication))
             {
+                OnTargetApplicationChanged(sender , null);
                 UpdateContextWithActivityDependencies();
             }
         }
@@ -443,6 +446,9 @@ namespace GingerWPF.BusinessFlowsLib
 
 
                         PropertyChangedEventManager.AddHandler(source: mBusinessFlow, handler: mBusinessFlow_PropertyChanged, propertyName: allProperties);
+                        CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Activities, handler: OnActivitiesListChanged);
+                        CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Activities, handler: OnActivitiesListChanged);
+
 
                         //--BF sections updates
                         //Environments
@@ -484,6 +490,8 @@ namespace GingerWPF.BusinessFlowsLib
                             mActivity = mBusinessFlow.Activities[0];
                             mBusinessFlow.CurrentActivity = mActivity;
                             mContext.Activity = mActivity;
+                            PropertyChangedEventManager.RemoveHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
+                            PropertyChangedEventManager.AddHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
 
                             if (mContext.Platform == ePlatformType.NA)
                             {
@@ -517,6 +525,11 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                 }
             }
+        }
+
+        private void OnActivitiesListChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnTargetApplicationChanged(sender, null);
         }
 
         private void ResetPageUI()
@@ -589,13 +602,17 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mActivityPage == null)
                     {
                         var pageViewMode = mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute;
-                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode, highlightActivityName:true);
+                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode, highlightActivityName: true);
                     }
                     else
                     {
                         mActivityPage.UpdateActivity(mContext.Activity);
                         ToggleActivityPageUIButtons(!mExecutionIsInProgress);
                     }
+                    mActivityDetailsPage = new ActivityDetailsPage(mContext.Activity, mContext, mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute);
+/*                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged -= OnTargetApplicationChanged;
+                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged += OnTargetApplicationChanged;
+*/
                 }
                 else
                 {
@@ -609,6 +626,47 @@ namespace GingerWPF.BusinessFlowsLib
                 xCurrentActivityFrame.SetContent(mActivityPage);
             }
         }
+         
+        private void OnTargetApplicationChanged(object arg1, SelectionChangedEventArgs args)
+        {
+            var selectedTargetApplication = (mActivity!=null) ? WorkSpace.Instance.Solution.GetSolutionTargetApplications().FirstOrDefault((targetApp)=>targetApp.Name.Equals(mActivity.TargetApplication)) as TargetApplication : null;
+
+            if (selectedTargetApplication !=null && !mBusinessFlow.TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(selectedTargetApplication.AppName)))
+            {
+                //    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)actTargetApp).AppName };
+                //    applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                //    applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(actTargetApp.LastExecutingAgentName)) as Agent;
+                //    if (applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
+                //    {
+                //        applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
+                //    }
+                mBusinessFlow.TargetApplications.Add(selectedTargetApplication);
+            }
+
+
+            // Create a list to store the items to be removed
+            List<TargetBase> agentsToRemove = [];
+            var userTA = mBusinessFlow.Activities.Select(f => f.TargetApplication);
+
+            // Iterate through the ApplicationAgents
+            foreach (var existingTargetApp in mBusinessFlow.TargetApplications.OfType<TargetApplication>())
+            {
+                // Check if the existing agent is not present in mBusinessFlow.TargetApplications
+                if (!userTA.Contains((existingTargetApp as TargetApplication).AppName))
+                {
+                    // If not present, add to the removal list
+                    agentsToRemove.Add(existingTargetApp);
+                }
+            }
+
+            // Remove the agents from mExecutionEngine.GingerRunner.ApplicationAgents
+            foreach (var agentToRemove in agentsToRemove)
+            {
+                mBusinessFlow.TargetApplications.Remove(agentToRemove);
+            }
+
+        }
+
 
         private void mBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -1036,6 +1094,12 @@ namespace GingerWPF.BusinessFlowsLib
 
             Act actionToExecute = actionToExecuteInfo.Item2;
 
+            if (actionToExecute == null)
+            {
+                Reporter.ToUser(eUserMsgKey.NoActionAvailable);
+                return;
+            }
+
             // set errorhandler execution status
             actionToExecute.ErrorHandlerExecuted = false;
 
@@ -1094,7 +1158,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 if (mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
                 {
-                    if(((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.NotStarted)
+                    if (((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.NotStarted)
                     {
 
                         ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Close();
@@ -1103,7 +1167,6 @@ namespace GingerWPF.BusinessFlowsLib
                     ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).IsFailedToStart = false;
                 }
             }
-
         }
 
         private async Task ContinueRunFromAutomatePage(eContinueFrom continueFrom, object executedItem = null)
@@ -1359,7 +1422,8 @@ namespace GingerWPF.BusinessFlowsLib
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to Restore backup", ex);
-                        } });
+                        }
+                    });
 
                     mActivitiesPage.ListView.UpdateGrouping();
                     mBusinessFlow.SaveBackup();
@@ -1676,7 +1740,7 @@ namespace GingerWPF.BusinessFlowsLib
                     ScenariosGenerator SG = new ScenariosGenerator();
                     SG.CreateScenarios(mBusinessFlow);
                     int cnt = mBusinessFlow.ActivitiesGroups.Count;
-                    int optCount = mBusinessFlow.ActivitiesGroups.Where(z => z.Name.StartsWith("Optimized Activities")).Count();
+                    int optCount = mBusinessFlow.ActivitiesGroups.Count(z => z.Name.StartsWith("Optimized Activities"));
                     if (optCount > 0)
                     {
                         cnt = cnt - optCount;
@@ -1769,7 +1833,7 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
-            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)mExecutionEngine.RunListeners.FirstOrDefault(x=>x.GetType() == typeof(GingerRunnerTimeLine));
+            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)mExecutionEngine.RunListeners.FirstOrDefault(x => x.GetType() == typeof(GingerRunnerTimeLine));
             TimeLinePage timeLinePage = new TimeLinePage(gingerRunnerTimeLine.timeLineEvents);
             timeLinePage.ShowAsWindow();
         }
@@ -1806,7 +1870,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue"); 
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
         }
 
         private void xExportToCSVMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1855,7 +1919,7 @@ namespace GingerWPF.BusinessFlowsLib
                     Reporter.HideStatusMessage();
                 }
             }
-        }       
+        }
     }
 
     public class ActiveImageTypeConverter : IValueConverter
@@ -1875,6 +1939,6 @@ namespace GingerWPF.BusinessFlowsLib
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
-        }   
-    } 
+        }
+    }
 }

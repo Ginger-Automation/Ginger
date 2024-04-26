@@ -16,13 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.Environments;
+using Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems;
 using GingerCore.Environments;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -59,6 +65,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             foreach (EnvApplication app in ProjEnvironment.Applications.OrderBy(nameof(EnvApplication.Name)))
             {
                 EnvApplicationTreeItem EATI = new EnvApplicationTreeItem();
+                app.SetDataFromAppPlatform(WorkSpace.Instance.Solution.ApplicationPlatforms);
                 EATI.EnvApplication = app;
                 EATI.ProjEnvironment = ProjEnvironment;
                 Childrens.Add(EATI);
@@ -110,17 +117,48 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
+            var ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !ProjEnvironment.CheckIfApplicationPlatformExists(app.Guid , app.AppName))?.ToList();
+            
+            
+            
             string appName = string.Empty;
-            EnvApplication app = new EnvApplication();
-            if (GingerCore.General.GetInputWithValidation("Add Application", "Application Name:", ref appName, null, false, app))
+            ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
+
+            EnvironmentApplicationList applicationList = new(DisplayedApplicationPlatforms);
+            applicationList.ShowAsWindow();
+
+            IEnumerable<ApplicationPlatform> SelectedApplications = DisplayedApplicationPlatforms.Where((displayedApp) => displayedApp.Selected);
+
+            ProjEnvironment.AddApplications(SelectedApplications);
+            ProjEnvironment.OnPropertyChanged(nameof(ProjEnvironment.Applications));
+
+            if (SelectedApplications.Any())
             {
-                app.Name = appName;
-                ProjEnvironment.Applications.Add(app);
-                if (mTreeView != null && mTreeView.Tree != null)
+
+                ObservableList<ProjEnvironment> AllEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+                if(AllEnvironments.Count > 1)
                 {
-                    mTreeView.Tree.RefreshSelectedTreeNodeParent();
+                     eUserMsgSelection eUserMsg = Reporter.ToUser(eUserMsgKey.PublishApplicationToOtherEnv);
+
+                    if (eUserMsg.Equals(eUserMsgSelection.Yes))
+                    {
+                        AllEnvironments.ForEach((env) =>
+                        {
+                            if (!env.Guid.Equals(ProjEnvironment.Guid) && !SelectedApplications.Any((app)=>env.CheckIfApplicationPlatformExists(app.Guid , app.AppName)))
+                            {
+                                env.AddApplications(SelectedApplications);
+                                env.OnPropertyChanged(nameof(env.Applications));
+                            }
+                        });
+                    }
                 }
+
+                mTreeView?.Tree?.RefreshSelectedTreeNodeParent();
             }
         }
+  
+
+
+
     }
 }

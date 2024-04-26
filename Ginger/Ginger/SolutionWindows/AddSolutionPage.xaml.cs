@@ -41,7 +41,9 @@ namespace Ginger.SolutionWindows
     {
         Solution mSolution;
         GenericWindow _pageGenericWin = null;
-
+        private ePlatformType SelectedPlatform = ePlatformType.NA;
+        private bool isApplicationDetailsSet = false;
+        private string mainAppDescription = string.Empty;
         public AddSolutionPage(Solution s)
         {
             InitializeComponent();
@@ -50,8 +52,8 @@ namespace Ginger.SolutionWindows
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
             UCEncryptionKey.mSolution = mSolution;
             UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
-            GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
         }
+
 
         public bool IsUploadSolutionToSourceControl { get; set; }
 
@@ -68,9 +70,7 @@ namespace Ginger.SolutionWindows
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 //check name and folder inputs exists
                 if (SolutionNameTextBox.Text.Trim() == string.Empty || SolutionFolderTextBox.Text.Trim() == string.Empty
-                        || ApplicationTextBox.Text.Trim() == string.Empty
-                            || MainPlatformComboBox.SelectedItem == null || MainPlatformComboBox.SelectedItem.ToString() == "Null"
-                            || UCEncryptionKey.EncryptionKeyPasswordBox.Password.Trim() == string.Empty)
+                            || UCEncryptionKey.EncryptionKeyPasswordBox.Password.Trim() == string.Empty || !isApplicationDetailsSet)
                 {
                     Mouse.OverrideCursor = null;
                     Reporter.ToUser(eUserMsgKey.MissingAddSolutionInputs);
@@ -87,8 +87,10 @@ namespace Ginger.SolutionWindows
 
                 mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
                 ApplicationPlatform MainApplicationPlatform = new ApplicationPlatform();
-                MainApplicationPlatform.AppName = ApplicationTextBox.Text;
-                MainApplicationPlatform.Platform = (ePlatformType)MainPlatformComboBox.SelectedValue;
+                MainApplicationPlatform.AppName = ApplicationLabel.Content.ToString();
+                MainApplicationPlatform.Platform = SelectedPlatform;
+                MainApplicationPlatform.Description = mainAppDescription;
+
                 mSolution.ApplicationPlatforms.Add(MainApplicationPlatform);
                 mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
@@ -150,6 +152,26 @@ namespace Ginger.SolutionWindows
             }
         }
 
+        private ePlatformType ConvertStringToPlatformType(string text)
+        {
+            switch (text)
+            {
+                case "Windows": return ePlatformType.Windows;
+                case "Unix": return ePlatformType.Unix;
+                case "Mobile": return ePlatformType.Mobile;
+                case "Web": return ePlatformType.Web;
+                case "DOS": return ePlatformType.DOS;
+                case "Java": return ePlatformType.Java;
+                case "WebServices": return ePlatformType.WebServices;
+                case "ASCF": return ePlatformType.ASCF;
+                case "MainFrame": return ePlatformType.MainFrame;
+                case "PowerBuilder": return ePlatformType.PowerBuilder;
+                case "Service": return ePlatformType.Service;
+                default: return ePlatformType.NA;
+            }
+
+        }
+
         private void AddDeafultReportTemplate()
         {
             HTMLReportConfiguration r = new HTMLReportConfiguration();
@@ -169,7 +191,7 @@ namespace Ginger.SolutionWindows
             AgentOperations agentOperations = new AgentOperations(agent);
             agent.AgentOperations = agentOperations;
 
-            agent.Name = MainApplicationPlatform.AppName + " - Agent 1";
+            agent.Name = MainApplicationPlatform.AppName;
             switch (MainApplicationPlatform.Platform)
             {
                 case ePlatformType.ASCF:
@@ -198,6 +220,9 @@ namespace Ginger.SolutionWindows
                     break;
                 case ePlatformType.Java:
                     agent.DriverType = Agent.eDriverType.JavaDriver;
+                    break;
+                case ePlatformType.MainFrame:
+                    agent.DriverType = Agent.eDriverType.MainFrame3270;
                     break;
                 default:
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No default driver set for first agent");
@@ -285,13 +310,17 @@ namespace Ginger.SolutionWindows
             }
 
             mSolution.ApplicationPlatforms.Clear();
-            AddApplicationPage AAP = new AddApplicationPage(mSolution);
+            AddApplicationPage AAP = new AddApplicationPage(mSolution, true);
             AAP.ShowAsWindow();
 
             if (mSolution.ApplicationPlatforms.Any())
             {
-                ApplicationTextBox.Text = mSolution.ApplicationPlatforms[0].AppName;
-                MainPlatformComboBox.SelectedValue = mSolution.ApplicationPlatforms[0].Platform;
+                ApplicationLabel.Content = mSolution.ApplicationPlatforms[0].AppName;
+                xApplicationImage.ImageType = ApplicationPlatform.GetPlatformImage(mSolution.ApplicationPlatforms[0].Platform);
+                xApplicationImage.Visibility = Visibility.Visible;
+                SelectedPlatform = mSolution.ApplicationPlatforms[0].Platform;
+                mainAppDescription = mSolution.ApplicationPlatforms[0].Description;
+                isApplicationDetailsSet = true;
             }
         }
     }

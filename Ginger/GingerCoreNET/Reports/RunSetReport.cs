@@ -33,6 +33,8 @@ namespace Ginger.Reports
         {
             public static string Name = "Name";
             public static string Description = "Description";
+            public static string SourceApplication = "SourceApplication";
+            public static string SourceApplicationUser = "SourceApplicationUser";
             public static string StartTimeStamp = "StartTimeStamp";
             public static string EndTimeStamp = "EndTimeStamp";
             public static string Elapsed = "Elapsed";
@@ -86,6 +88,8 @@ namespace Ginger.Reports
 
         [JsonProperty]
         public string GUID { get; set; }
+
+        public Guid RunSetGuid { get; set; }
 
         public float? ElapsedSecs { get; set; }
 
@@ -147,6 +151,22 @@ namespace Ginger.Reports
         [FieldParamsIsSelected(true)]
         public string ExecutedbyUser { get; set; }
 
+        [JsonProperty]
+        [FieldParams]
+        [FieldParamsNameCaption("Requested From")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string SourceApplication { get; set; }
+
+
+        [JsonProperty]
+        [FieldParams]
+        [FieldParamsNameCaption("Requested By")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string SourceApplicationUser { get; set; }
 
         [FieldParams]
         [FieldParamsNameCaption("Execution Statistics Details")]
@@ -235,15 +255,15 @@ namespace Ginger.Reports
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 }
-                else if ((from x in GingerReports where x.IsBlocked == true select x).Any())
+                else if (GingerReports.Any(x=>x.IsBlocked))
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                 }
-                else if ((from x in GingerReports where x.IsStopped == true select x).Any())
+                else if (GingerReports.Any(x => x.IsStopped))
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                 }
-                else if ((from x in GingerReports where (x.IsPassed == true || x.IsSkipped == true) select x).Count() == TotalGingerRunners)
+                else if (GingerReports.Count(x=>x.IsPassed || x.IsSkipped) == TotalGingerRunners)
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
@@ -261,6 +281,7 @@ namespace Ginger.Reports
         public void SetLiteDBData(LiteDbRunSet runSet)
         {
             GUID = runSet._id.ToString();
+            RunSetGuid = runSet.GUID;
             Name = runSet.Name;
             Description = runSet.Description;
             StartTimeStamp = runSet.StartTimeStamp;
@@ -310,8 +331,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in GingerReports where x.IsPassed == true select x).Count();
-                return count;
+                return GingerReports.Count(x => x.IsPassed);
             }
         }
 
@@ -319,8 +339,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in GingerReports where x.IsFailed == true select x).Count();
-                return count;
+                return GingerReports.Count(x => x.IsFailed);
             }
         }
 
@@ -328,8 +347,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in GingerReports where x.IsStopped select x).Count();
-                return count;
+                return GingerReports.Count(x=> x.IsStopped);
             }
         }
 
@@ -337,8 +355,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = TotalGingerRunners - TotalGingerRunnersFailed - TotalGingerRunnersPassed - TotalGingerRunnersStopped;
-                return count;
+                return TotalGingerRunners - TotalGingerRunnersFailed - TotalGingerRunnersPassed - TotalGingerRunnersStopped;
             }
         }
 
@@ -346,7 +363,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return (TotalGingerRunners - (TotalGingerRunnersFailed + TotalGingerRunnersPassed));
+                return TotalGingerRunners - (TotalGingerRunnersFailed + TotalGingerRunnersPassed);
             }
         }
         public List<LiteDbRunner> liteDbRunnerList = new List<LiteDbRunner>();

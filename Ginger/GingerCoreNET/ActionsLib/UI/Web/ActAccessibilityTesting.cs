@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
@@ -37,6 +38,7 @@ using HtmlAgilityPack;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -475,7 +477,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
             doc.DocumentNode.SelectSingleNode("//script").InnerHtml = EmbeddedResourceProvider.ReadEmbeddedFile("htmlReporterElements.js");
 
-            doc.Save(destination, Encoding.UTF8);
+            doc.Save(destination, Encoding.UTF8);            
         }
 
         private static void GetReadableAxeResults(AxeResultItem[] results, ResultType type, HtmlDocument doc, HtmlNode body)
@@ -718,6 +720,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             AxeBuilder axeBuilder = null;
             try
             {
+                Artifacts = new ObservableList<ArtifactDetails>();
                 axeBuilder = CreateAxeBuilder(Driver);
                 if(Status == eRunStatus.Failed && !string.IsNullOrEmpty(Error))
                 {
@@ -744,9 +747,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     {
                         Directory.CreateDirectory(folderPath);
                     }
-                    string DatetimeFormate = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
-                    string reportname = $"{ItemName}{DatetimeFormate}_AccessibilityReport.html";
+                    string DatetimeFormate = DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
+                    string reportname = $"{ItemName}_AccessibilityReport_{DatetimeFormate}.html";
                     path = $"{folderPath}{Path.DirectorySeparatorChar}{reportname}";
+                    Act.AddArtifactToAction(Path.GetFileName(path), this, path);                    
                 }
 
                 CreateAxeHtmlReport(Driver, axeResult, path, ActAccessibilityTesting.ReportTypes.All);
@@ -778,6 +782,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 if (StandardList != null && StandardList.Any())
                 {
                     string[] Tag_array = StandardList.Select(i => i.Value.ToString()).ToArray();
+                    for(int i=0;i<Tag_array.Length;i++)
+                    {
+                        if (Tag_array[i].Equals("bestpractice",StringComparison.OrdinalIgnoreCase))
+                        {
+                            Tag_array[i] = "best-practice";
+                        }
+                    }
                     axeBuilder.WithTags(Tag_array);
                 }
                 else if (StandardList == null || !StandardList.Any())
@@ -824,23 +835,21 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         {
             bool hasAnyViolations = axeResult.Violations.Any();
             bool ActionResult = true;
-
+            IEnumerable<string> AcceptableSeverity = Enumerable.Empty<string>().ToList();
+            IEnumerable<string> Violationseverity = Enumerable.Empty<string>().ToList();
             if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString() && SeverityList != null && SeverityList.Any())
             {
-                List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
-                List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
-                foreach (string severity in sevritylist)
-                {
-                    ActionResult = !Violationsevrity.Any(y => y.Equals(severity));
-                }
+                AcceptableSeverity = SeverityList.Select(x => x.Value.ToLower()).ToList();
+                Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
+                ActionResult = Violationseverity.Intersect(AcceptableSeverity).Any();
             }
             else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString() && SeverityList != null && SeverityList.Any())
             {
                 List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
-                List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
+                Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
                 foreach (string severity in sevritylist)
                 {
-                    ActionResult = Violationsevrity.Any(y => y.Equals(severity));
+                    ActionResult = Violationseverity.Any(y => y.Equals(severity));
                 }
             }
             var jsonresponse = JsonConvert.SerializeObject(axeResult, Newtonsoft.Json.Formatting.Indented);
@@ -859,6 +868,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 Error = $"Accessibility testing resulted in violations.";
                 AddOrUpdateReturnParamActual(ParamName: "ViolationCount", ActualValue: axeResult.Violations.Length.ToString());
                 AddOrUpdateReturnParamActual(ParamName: "ViolationList", ActualValue: String.Join(",", axeResult.Violations.Select(x => x.Id)));
+                AddOrUpdateReturnParamActual(ParamName: "ViolationSeverity", ActualValue: string.Join(",", Violationseverity.Distinct()));
                 int violatedNodeIndex = 0;
                 foreach (AxeResultItem violation in axeResult.Violations)
                 {

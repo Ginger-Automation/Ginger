@@ -1358,14 +1358,20 @@ namespace GingerCore
 
             return Expr;
         }
+        public static void GetEnvAppFromEnvURL(string EnvValExp , ref string AppName )
+        {
+
+            AppName = EnvValExp.Replace("\r\n", "vbCrLf");
+            AppName = AppName.Substring(1, AppName.Length - 2);
+            AppName = AppName.Replace("EnvURL App=", "");
+        }
+
 
         private void ReplaceEnvURLWithValue(string p, string[] a)
         {
             string AppName = null;
             string URL = null;
-            AppName = p.Replace("\r\n", "vbCrLf");
-            AppName = AppName.Substring(1, AppName.Length - 2);
-            AppName = AppName.Replace("EnvURL App=", "");
+            GetEnvAppFromEnvURL(p, ref AppName);
 
             EnvApplication app = null;
             if (Env != null)
@@ -1385,20 +1391,25 @@ namespace GingerCore
             }
         }
 
-        private void ReplaceEnvParamWithValue(string p, string[] a)
+        public static void GetEnvAppAndParam(string EnvValueExp , ref string AppName , ref string GlobalParamName )
         {
-            string AppName = null;
-            string GlobalParamName = null;
-
-            p = p.Replace("\r\n", "vbCrLf");
+            EnvValueExp = EnvValueExp.Replace("\r\n", "vbCrLf");
             string appStr = " App=";
             string paramStr = " Param=";
-            int indxOfApp = p.IndexOf(appStr);
-            int indexOfParam = p.IndexOf(paramStr);
-            AppName = p.Substring(indxOfApp + appStr.Length, indexOfParam - (indxOfApp + appStr.Length));
-            GlobalParamName = p.Substring(indexOfParam + paramStr.Length, (p.Length - 1) - (indexOfParam + paramStr.Length));
+            int indxOfApp = EnvValueExp.IndexOf(appStr);
+            int indexOfParam = EnvValueExp.IndexOf(paramStr);
+            AppName = EnvValueExp.Substring(indxOfApp + appStr.Length, indexOfParam - (indxOfApp + appStr.Length));
+            GlobalParamName = EnvValueExp.Substring(indexOfParam + paramStr.Length, (EnvValueExp.Length - 1) - (indexOfParam + paramStr.Length));
+        }
+
+        private void ReplaceEnvParamWithValue(string p, string[] a)
+        {
 
             string ParamValue = null;
+            string AppName = string.Empty, GlobalParamName = string.Empty;
+
+            GetEnvAppAndParam(p , ref AppName , ref GlobalParamName);
+
 
             EnvApplication app = null;
             if (Env != null)
@@ -1407,18 +1418,26 @@ namespace GingerCore
             }
             if (app != null)
             {
-                GeneralParam GP = app.GetParam(GlobalParamName);
-                if (GP != null)
+                VariableBase VB = app.GetVariable(GlobalParamName);
+                if (VB != null)
                 {
-                    ParamValue = GP.Value + "";  // Autohandle in case param is null convert to empty string
-
-                    if (DecryptFlag == true && GP.Encrypt == true)
+                    if (VB is VariableDynamic variableDynamic) 
                     {
-                        string strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
+                        ParamValue = variableDynamic.ValueExpression + "";
+                        
+                    }
+                    else
+                    {
+                        ParamValue = VB.Value + "";  // Autohandle in case param is null convert to empty string
+                    }
+
+                    if (DecryptFlag && VB is VariablePasswordString)
+                    {
+                        string strValuetoPass = EncryptionHandler.DecryptwithKey(VB.Value);
                         if (!string.IsNullOrEmpty(strValuetoPass))
                         { 
                             mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
-                            mEncryptedValue = GP.Value;
+                            mEncryptedValue = VB.Value;
                         }
                         else
                         {
@@ -1638,6 +1657,11 @@ namespace GingerCore
                         {
                             VarValue = vb.Value;
                         }
+                    }
+                    else if (vb is VariableDynamic variableDynamic)
+                    {
+                        variableDynamic.Init(Env , BF);
+                        VarValue = variableDynamic.Value;
                     }
                     else
                     {

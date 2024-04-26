@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -985,7 +985,6 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                //throw new NotImplementedException("ItemImageType not defined for: " + this.GetType().FullName); 
                 return eImageType.Null;
             }
         }
@@ -1380,9 +1379,9 @@ namespace Amdocs.Ginger.Repository
         #endregion Dirty
 
 
-        public RepositoryItemBase CreateInstance(bool originFromSharedRepository = false)
+        public RepositoryItemBase CreateInstance(bool originFromSharedRepository = false, bool setNewGUID = true)
         {
-            RepositoryItemBase copiedItem = this.CreateCopy();
+            RepositoryItemBase copiedItem = this.CreateCopy(setNewGUID);
             copiedItem.ParentGuid = this.Guid;
             if (originFromSharedRepository)
             {

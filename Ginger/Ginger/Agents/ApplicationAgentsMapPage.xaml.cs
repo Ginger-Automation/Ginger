@@ -20,12 +20,15 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Run;
+using Ginger.SolutionWindows;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -45,8 +48,9 @@ namespace Ginger.Agents
         public ObservableList<ApplicationAgent> ApplicationAgents;
         GingerExecutionEngine mRunner;
         Context mContext;
-
         bool AllowAgentsManipulation;
+        public delegate void OnBusinessFlowTargetApplicationChange();
+        public static event OnBusinessFlowTargetApplicationChange BusinessFlowTargetApplicationChanged;
 
         public ListBox MappingList
         {
@@ -61,7 +65,7 @@ namespace Ginger.Agents
             AllowAgentsManipulation = allowAgentsManipulation;
             xAppAgentsListBox.Tag = AllowAgentsManipulation;//Placed here for binding with list dataTemplate- need better place
             mRunner.GingerRunner.PropertyChanged += MGR_PropertyChanged;
-
+            TargetApplicationsPage.OnActivityUpdate += RefreshApplicationAgentsList;
             xKeepAgentsOn.Visibility = Visibility.Collapsed;
             if (!AllowAgentsManipulation && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
             {
@@ -80,26 +84,38 @@ namespace Ginger.Agents
             }
         }
 
-        private void RefreshApplicationAgentsList()
+        public void RefreshApplicationAgentsList()
         {
             this.Dispatcher.Invoke(() =>
             {
                 ApplicationAgents = new ObservableList<ApplicationAgent>();
-
                 foreach (ApplicationAgent Apag in mRunner.GingerRunner.ApplicationAgents)
                 {
                     if (Apag.ApplicationAgentOperations == null)
                     {
                         Apag.ApplicationAgentOperations = new ApplicationAgentOperations(Apag);
                     }
-                    if (mRunner.SolutionApplications.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
+                    if (mRunner.SolutionApplications?.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
                     {
                         ApplicationAgents.Add(Apag);
                     }
                 }
-
                 xAppAgentsListBox.ItemsSource = ApplicationAgents;
             });
+        }
+
+        public IEnumerable<string> GetAllTargetApplicationNames()
+        {
+            if (mContext.BusinessFlow != null)
+            {
+                return mContext.BusinessFlow.Activities.Select((activity) => activity.TargetApplication);
+            }
+
+            else if (mRunner != null && mRunner.BusinessFlows!=null)
+            {
+                return mRunner.BusinessFlows.SelectMany((businessFlow) => businessFlow.Activities).Select((activity) => activity.TargetApplication);
+            }
+            return null;
         }
 
         private async void xStartCloseAgentBtn_Click(object sender, RoutedEventArgs e)
@@ -110,28 +126,38 @@ namespace Ginger.Agents
                 {
                     ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
                     Agent agent = ((Agent)AG.Agent);
-                    if (((AgentOperations)agent.AgentOperations).Status != Agent.eStatus.Running)
-                    {
-                        //start Agent
-                        Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
 
-                        ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
-                        ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
-                        ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
-                        ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                        await System.Threading.Tasks.Task.Run(() =>
-                        {
-                            ((Agent)AG.Agent).AgentOperations.StartDriver();
-                        });
-                    }
-                    else
+                    switch (((AgentOperations)agent.AgentOperations).Status)
                     {
-                        //close Agent
-                        Reporter.ToStatus(eStatusMsgKey.StopAgent, null, AG.AgentName, AG.AppName);
-                        await System.Threading.Tasks.Task.Run(() =>
-                        {
-                            agent.AgentOperations.Close();
-                        });
+                        case Agent.eStatus.Completed:
+                        case Agent.eStatus.Ready:
+                        case Agent.eStatus.Running:
+                            //Close Agent
+                            Reporter.ToStatus(eStatusMsgKey.StopAgent, null, AG.AgentName, AG.AppName);
+                            await System.Threading.Tasks.Task.Run(() =>
+                            {
+                                agent.AgentOperations.Close();
+                            });
+                            break;
+
+                        case Agent.eStatus.Starting:
+                            //Do nothing till Agent finish to start
+                            break;
+
+                        case Agent.eStatus.FailedToStart:
+                        case Agent.eStatus.NotStarted:
+                        default:
+                            //Start Agent
+                            Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
+                            ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
+                            ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
+                            ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
+                            ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+                            await System.Threading.Tasks.Task.Run(() =>
+                            {
+                                ((Agent)AG.Agent).AgentOperations.StartDriver();
+                            });
+                            break;
                     }
                 }
                 finally

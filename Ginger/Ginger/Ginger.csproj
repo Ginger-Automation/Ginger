@@ -14,16 +14,12 @@
   <ItemGroup>
     <Compile Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <Compile Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <Compile Remove="UserControlsLib\NewFolder\**" />
     <EmbeddedResource Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <EmbeddedResource Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <EmbeddedResource Remove="UserControlsLib\NewFolder\**" />
     <None Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <None Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <None Remove="UserControlsLib\NewFolder\**" />
     <Page Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <Page Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <Page Remove="UserControlsLib\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -101,6 +97,8 @@
     <None Remove="Images\%40Automate_16x16.png" />
     <None Remove="Images\%40A_16x16.png" />
     <None Remove="Images\%40BeatLogo.jpg" />
+    <None Remove="Images\%40BPMN_16x16.png" />
+    <None Remove="Images\%40BPMN_32x32.png" />
     <None Remove="Images\%40BrokenFile_32x32.png" />
     <None Remove="Images\%40BrokenFile_Orange_24x24.png" />
     <None Remove="Images\%40BrokenFile_Orange_32x32.png" />
@@ -242,6 +240,8 @@
     <None Remove="Images\%40LightRun_16x16.png" />
     <None Remove="Images\%40Link_16x16.png" />
     <None Remove="Images\%40List_16x16.png" />
+    <None Remove="Images\%40Load_Arrow_16x16.png" />
+    <None Remove="Images\%40Load_Arrow_32x32.png" />
     <None Remove="Images\%40Lock_16x16.png" />
     <None Remove="Images\%40Lock_Red_10x10.png" />
     <None Remove="Images\%40Lock_Red_16x16.png" />
@@ -591,6 +591,8 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\Environment.ico" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\Environment.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
@@ -652,6 +654,18 @@
     <Resource Include="Images\$Expand-Window.png" />
     <Resource Include="Images\$Minimize-Window.png" />
     <Resource Include="Images\$Pin-Window.png" />
+    <Resource Include="Images\@BPMN_16x16.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\@BPMN_32x32.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\@Load_Arrow_16x16.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\@Load_Arrow_32x32.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="Resources\GingerDataSource.mdb">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -672,6 +686,7 @@
     <PackageReference Include="EPPlus" Version="6.0.4" />
     <PackageReference Include="FontAwesome5" Version="2.1.11" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.5" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
@@ -2411,6 +2426,9 @@
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\Environment.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Ginger.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

@@ -26,6 +26,7 @@ using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
@@ -83,7 +84,13 @@ namespace Ginger.Variables
             mVariable.NameBeforeEdit = mVariable.Name;
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
             xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
+            
+            if (parent is EnvApplication)
+            {
 
+                xTitleName.Text = $"{GingerDicser.GetTermResValue(eTermResKey.Parameter)} Type: ";
+                xNameConfig.Text = $"{GingerDicser.GetTermResValue(eTermResKey.Parameter)} Type Configurations:";
+            }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarDescritpiontxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFormulaTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCurrentValueTextBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
@@ -145,7 +152,15 @@ namespace Ginger.Variables
             mVariable.PropertyChanged += mVariable_PropertyChanged;
             LoadVarPage();
 
-            SetLinkedVarCombo();
+            if(parent is EnvApplication)
+            {
+                LinkedVariableStackPanel.Visibility = Visibility.Collapsed;
+                xTagsViewer.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                SetLinkedVarCombo();
+            }
 
             if (mVariable.Tags == null)
             {
@@ -480,6 +495,25 @@ namespace Ginger.Variables
                         bool changedwasDone = false;
                         VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                     });
+                }
+                else if (mParent is EnvApplication)
+                {   
+                    EnvApplication envApplication = (EnvApplication)mParent;
+                    envApplication.SetUniqueVariableName(mVariable);
+
+                    ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+
+                    foreach (BusinessFlow bf in bfs)
+                    {
+                        foreach (Activity activity in bf.Activities)
+                        {
+                            foreach (Act action in activity.Acts)
+                            {
+                                bool changedwasDone = false;
+                                GeneralParam.UpdateNameChangeInItem(action, envApplication.Name, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                            }
+                        }
+                    }
                 }
                 if (mVariable.SetAsOutputValue || mParent is Solution)
                 {

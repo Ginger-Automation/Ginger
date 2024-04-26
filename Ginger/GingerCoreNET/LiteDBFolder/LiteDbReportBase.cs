@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts.Helpers;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -790,6 +791,13 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
         public List<string> ScreenShots { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Artifacts")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public IList<DictObject> Artifacts { get; set; }
 
         [FieldParams]
         [FieldParamsNameCaption("Wait")]

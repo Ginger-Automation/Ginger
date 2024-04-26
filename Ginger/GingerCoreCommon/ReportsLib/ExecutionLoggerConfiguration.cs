@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -201,6 +201,21 @@ namespace Ginger.Reports
                 {
                     mCentralLoggerEndPointUrl = value;
                     OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
+                }
+            }
+        }
+
+        private string mExecutionHandlerURL;
+        [IsSerializedForLocalRepository]
+        public string ExecutionHandlerURL
+        {
+            get => mExecutionHandlerURL;
+            set
+            {
+                if (!string.Equals(mExecutionHandlerURL, value))
+                {
+                    mExecutionHandlerURL = value;
+                    OnPropertyChanged(nameof(ExecutionHandlerURL));
                 }
             }
         }

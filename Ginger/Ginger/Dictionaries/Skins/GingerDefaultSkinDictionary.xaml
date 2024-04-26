@@ -1712,7 +1712,7 @@
                     <ControlTemplate.Resources>
                         <SolidColorBrush x:Key="MouseOverBackground" Color="#DFE9F5" />
                     </ControlTemplate.Resources>
-                    <Border Name="Border" BorderThickness="0 0 1 0"  BorderBrush="{StaticResource $BackgroundColor_Black}">
+                    <Border Name="Border" BorderThickness="0 0 1 0"  BorderBrush="{StaticResource $BackgroundColor_DarkGray}">
                         <ContentPresenter x:Name="ContentSite"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
@@ -2572,6 +2572,10 @@
     <ImageSource x:Key="@XML_32x32.png">pack://application:,,,/Ginger;component/Images/@XML_32x32.png</ImageSource>
     <ImageSource x:Key="@CSV_16x16.png">pack://application:,,,/Ginger;component/Images/@CSV_16x16.png</ImageSource>
     <ImageSource x:Key="@TagClose_16X16.png">pack://application:,,,/Ginger;component/Images/@TagClose_16X16.png</ImageSource>
+    <ImageSource x:Key="@BPMN_16x16.png">pack://application:,,,/Ginger;component/Images/@BPMN_16x16.png</ImageSource>
+    <ImageSource x:Key="@BPMN_32x32.png">pack://application:,,,/Ginger;component/Images/@BPMN_32x32.png</ImageSource>
+    <ImageSource x:Key="@Load_Arrow_16x16.png">pack://application:,,,/Ginger;component/Images/@Load_Arrow_16x16.png</ImageSource>
+    <ImageSource x:Key="@Load_Arrow_32x32.png">pack://application:,,,/Ginger;component/Images/@Load_Arrow_32x32.png</ImageSource>
 
     <ImageSource x:Key="@StarBlue_16x16">pack://application:,,,/Ginger;component/Images/@StarBlue_16x16.png</ImageSource>
     <ImageSource x:Key="@UploadStar_16x16">pack://application:,,,/Ginger;component/Images/@UploadStar_16x16.png</ImageSource>
