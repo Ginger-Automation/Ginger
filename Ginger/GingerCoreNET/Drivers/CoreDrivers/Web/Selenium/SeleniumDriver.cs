@@ -1417,6 +1417,9 @@ namespace GingerCore.Drivers
                     // TODO: save it in the solution docs... 
                     string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
                     BMPClient.SaveHAR(filename);
+
+                    Act.AddArtifactToAction(Path.GetFileName(filename), act, filename);                    
+
                     act.ExInfo += "Action HAR file saved at: " + filename;
                 }
             }
@@ -10336,6 +10339,7 @@ namespace GingerCore.Drivers
         {
             try
             {
+                act.Artifacts = new ObservableList<ArtifactDetails>();
                 if (isNetworkLogMonitoringStarted)
                 {
                     await interceptor.StopMonitoring();
@@ -10367,6 +10371,9 @@ namespace GingerCore.Drivers
                     act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
                     act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
 
+                    Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
+                    
+                    Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);                    
                 }
                 else
                 {

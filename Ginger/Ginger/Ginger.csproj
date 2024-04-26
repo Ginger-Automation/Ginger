@@ -14,16 +14,12 @@
   <ItemGroup>
     <Compile Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <Compile Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <Compile Remove="UserControlsLib\NewFolder\**" />
     <EmbeddedResource Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <EmbeddedResource Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <EmbeddedResource Remove="UserControlsLib\NewFolder\**" />
     <None Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <None Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <None Remove="UserControlsLib\NewFolder\**" />
     <Page Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <Page Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <Page Remove="UserControlsLib\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
