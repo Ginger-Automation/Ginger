@@ -55,12 +55,14 @@ namespace GingerCore.Actions.VisualTesting
 
         private void CreateVRTConfig()
         {
+            ValueExpression VE = new ValueExpression(null, null);
+
             config = new VisualRegressionTracker.Config
             {
-                BranchName = WorkSpace.Instance.Solution.VRTConfiguration.BranchName,
-                Project = WorkSpace.Instance.Solution.VRTConfiguration.Project,
-                ApiUrl = WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl,
-                ApiKey = WorkSpace.Instance.Solution.VRTConfiguration.ApiKey,
+                BranchName = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.BranchName),
+                Project = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.Project),
+                ApiUrl = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl),
+                ApiKey = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey),
                 EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes ? false : true
             };
         }
