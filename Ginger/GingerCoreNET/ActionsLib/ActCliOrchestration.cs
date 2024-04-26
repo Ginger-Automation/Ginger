@@ -109,9 +109,9 @@ namespace GingerCore.Actions
         {
             bool isVBSScript = false;
             StringBuilder arguments = new ();
-            if ((Path.GetExtension(this.FilePath)).Equals(".vbs"))
+            if ((Path.GetExtension(this.FilePath)).Equals(".vbs", StringComparison.InvariantCultureIgnoreCase) || (Path.GetExtension(this.FilePath)).Equals(".js",StringComparison.InvariantCultureIgnoreCase))
             {
-                arguments.Append(this.FilePath);
+                arguments.Append(this.FilePath).Append(" ");
                 isVBSScript = true;
             }
             foreach (var p in this.InputValues)
@@ -144,6 +144,12 @@ namespace GingerCore.Actions
                     if(isVBSScript)
                     {
                         filePath = GetSystemDirectory() + $"{Path.DirectorySeparatorChar}cscript.exe";
+                        if(!File.Exists(filePath))
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error: Interpretor is not available for file {this.FilePath}");
+                            Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            return;
+                        }
                     }
                     if (WaitForProcessToFinish)
                     {
