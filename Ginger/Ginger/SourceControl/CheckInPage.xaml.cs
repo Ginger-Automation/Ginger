@@ -310,7 +310,7 @@ namespace Ginger.SourceControl
                         CommitSuccess = CommitAndCheckinChanges(WorkSpace.Instance.Solution.SourceControl, pathsToCommit, Comments, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
 
 
-                        AfterCommitProcess(CommitSuccess, conflictHandled);
+                        AfterCommitAndCheckinProcess(CommitSuccess, conflictHandled);
 
                         if (CommitSuccess && conflictHandled)
                         {
@@ -458,14 +458,14 @@ namespace Ginger.SourceControl
             }
         }
 
-        private void AfterCommitProcess(bool CommitSuccess, bool conflictHandled)
+        private void AfterCommitAndCheckinProcess(bool CommitSuccess, bool conflictHandled)
         {
             this.Dispatcher.BeginInvoke(
             System.Windows.Threading.DispatcherPriority.Normal,
                 new Action(
                     delegate ()
                     {
-                        if (CommitSuccess && conflictHandled && Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandled) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        if (CommitSuccess && conflictHandled)
                         {
                             Init();
                             CommentsTextBox.Text = string.Empty;
