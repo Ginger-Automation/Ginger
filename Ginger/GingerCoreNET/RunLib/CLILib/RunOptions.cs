@@ -125,6 +125,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("RerunLevel", Required = false, HelpText = "Set RerunLevel")]
         public string RerunLevel { get; set; }
 
+        //adding to support account level execution details
+        [Option("sourceApplication", Required = false, HelpText = "Set Source Application name")]
+        public string SourceApplication { get; set; }
+
+        [Option("sourceApplicationUser", Required = false, HelpText = "Set Source Application username")]
+        public string SourceApplicationUser { get; set; }
     }
 
 }
