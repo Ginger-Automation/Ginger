@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="Ginger.Actions.UserControls.UCArtifact"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="60" d:DesignWidth="60">
+    <Grid Name="pageGrid" Margin="0" Background="{StaticResource $BackgroundColor_White}" Width="100">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="40*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <usercontrols:ImageMakerControl ImageType="{Binding Path=ArtifactImage}" ToolTip="{Binding Path=ArtifactName}"
+            SetAsFontImageWithSize="50" HorizontalAlignment="Center" MouseDoubleClick="ImageMakerControl_MouseDoubleClick"/>
+            <Label x:Name="xArtifactName">
+                <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Path=ArtifactName}"></TextBlock>
+            </Label>
+        </StackPanel>
+    </Grid>
+</UserControl>

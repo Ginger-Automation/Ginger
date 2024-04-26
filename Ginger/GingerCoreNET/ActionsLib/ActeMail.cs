@@ -34,6 +34,7 @@ using File = System.IO.File;
 using Microsoft.Graph;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
 
 namespace GingerCore.Actions.Communication
 {
@@ -616,6 +617,7 @@ namespace GingerCore.Actions.Communication
 
         public override void Execute()
         {
+            Artifacts = new Amdocs.Ginger.Common.ObservableList<ArtifactDetails>();
             if (eMailActionType == eEmailActionType.SendEmail)
             {
                 SendEmail();
@@ -795,6 +797,7 @@ namespace GingerCore.Actions.Communication
                         foreach ((string filename, string filepath) in fileNamesAndPaths)
                         {
                             AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
+                            Act.AddArtifactToAction(Path.GetFileName(filename), this, filepath);                            
                         }
                     } 
                 }

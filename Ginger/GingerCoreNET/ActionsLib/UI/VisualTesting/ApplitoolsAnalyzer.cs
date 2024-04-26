@@ -527,6 +527,7 @@ namespace GingerCore.Actions.VisualTesting
             for (int i = 1; i <= numOfImages; i++)
             {
                 String currImagePath = Act.GetScreenShotRandomFileName();
+                currImagePath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(currImagePath), "Applitools_" + DateTime.Now.ToString("ddmmyyyyss.mm") + ".png");
                 String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + i.ToString() + "/images/diff?ApiKey=" + mDriver.GetApplitoolKey();// ((SeleniumDriver)mDriver).ApplitoolsViewKey;
                 try
                 {
@@ -539,8 +540,9 @@ namespace GingerCore.Actions.VisualTesting
                         {
                             fs.Close();
                         });
-                        mAct.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
+                        mAct.ScreenShotsNames.Add(Path.GetFileName(currImagePath));                       
                         mAct.ScreenShots.Add(currImagePath);
+                        Act.AddArtifactToAction("Difference_Image", mAct, currImagePath);                        
 
                     }
                 }

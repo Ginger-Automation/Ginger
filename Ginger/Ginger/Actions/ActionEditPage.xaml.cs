@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Expressions;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
@@ -118,6 +119,24 @@ namespace Ginger.Actions
             }
         }
 
+        ObservableList<UCArtifact> mArtifactsItems = null;
+        public ObservableList<UCArtifact> ArtifactsItems
+        {
+            get
+            {
+                if (mArtifactsItems == null)
+                {
+                    mArtifactsItems = new ObservableList<UCArtifact>();
+                }
+                return mArtifactsItems;
+            }
+            set
+            {
+                mArtifactsItems = value;
+            }
+        }
+
+
         public General.eRIPageViewMode EditMode { get; set; }
 
         public ActionEditPage(Act act, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation, BusinessFlow? actParentBusinessFlow = null, Activity? actParentActivity = null)
@@ -158,6 +177,8 @@ namespace Ginger.Actions
 
             CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
+            CollectionChangedEventManager.RemoveHandler(source: mAction.Artifacts, handler: Artifacts__CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mAction.Artifacts, handler: Artifacts__CollectionChanged);
 
             mContext = Context.GetAsContext(mAction.Context);
             if (mContext != null && mContext.Runner != null)
@@ -199,6 +220,7 @@ namespace Ginger.Actions
                 CollectionChangedEventManager.RemoveHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
+                CollectionChangedEventManager.RemoveHandler(source: mAction.Artifacts, handler: Artifacts__CollectionChanged);                
             }
 
             xDetailsTab.Tag = false;
@@ -419,7 +441,7 @@ namespace Ginger.Actions
         private void InitOutputValuesTabView()
         {
             xOutputValuesTab.Tag = true;//marking that bindings were done
-
+            LoadArticats();
             if (!datasourceGridToolbarItemsAdded)
             {
                 datasourceGridToolbarItemsAdded = true;
@@ -518,8 +540,7 @@ namespace Ginger.Actions
             BindingHandler.ObjFieldBinding(xFailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.FailIgnored));
 
             BindingHandler.ObjFieldBinding(xEnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
-            InitActionLog();
-
+            InitActionLog();          
             //execution details section
             if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View ||
                 EditMode == General.eRIPageViewMode.ViewAndExecute || EditMode == General.eRIPageViewMode.Explorer || EditMode == General.eRIPageViewMode.SharedReposiotry)
@@ -560,6 +581,31 @@ namespace Ginger.Actions
             }
         }
 
+        private void LoadArticats()
+        {
+            ArtifactsItems = new ObservableList<UCArtifact>();
+            foreach (ArtifactDetails a in mAction.Artifacts)
+            {
+                UCArtifact artifact = new UCArtifact();                
+                artifact.ArtifactPath = a.ArtifactOriginalPath;
+                artifact.ArtifactName = a.ArtifactName;                
+                artifact.IntiArtifact();
+                ArtifactsItems.Add(artifact);
+            }
+            xFilesListView.ItemsSource = ArtifactsItems;
+
+            if(ArtifactsItems.Count > 0)
+            {
+                xFilesListView.Visibility = Visibility.Visible;
+                xlbl_msg.Visibility = Visibility.Collapsed;              
+            }
+            else
+            {
+                xFilesListView.Visibility = Visibility.Collapsed;
+                xlbl_msg.Visibility = Visibility.Visible;             
+            }
+            xFilesTabTextBlock.Text = string.Concat("Artifacts (", ArtifactsItems.Count, ")");         
+        }
         private void RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture captureType)
         {
             var comboEnumItem = xWindowsToCaptureCombo.Items.Cast<ComboEnumItem>().FirstOrDefault(x => x.Value.ToString() == captureType.ToString());
@@ -581,7 +627,14 @@ namespace Ginger.Actions
                 UpdateScreenShots();
             });
         }
-
+        private void Artifacts__CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                LoadArticats();
+            });
+        }
+       
         public void StopEdit()
         {
             if (mAFCP != null)
@@ -1602,11 +1655,11 @@ namespace Ginger.Actions
             {
                 if (mAction.ReturnValues.Any())
                 {
-                    xOutputValuesTabHeaderTextBlock.Text = string.Format("Output Values ({0})", mAction.ReturnValues.Count());
+                    xOutputValuesTabTextBlock.Text = string.Format("Validations / Assignments ({0})", mAction.ReturnValues.Count());
                 }
                 else
                 {
-                    xOutputValuesTabHeaderTextBlock.Text = "Output Values";
+                    xOutputValuesTabTextBlock.Text = "Validations / Assignments";
                 }
             });
         }
@@ -2071,6 +2124,7 @@ namespace Ginger.Actions
                 CollectionChangedEventManager.RemoveHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
+                CollectionChangedEventManager.RemoveHandler(source: mAction.Artifacts, handler: Artifacts__CollectionChanged);
                 mAction = null;
             }
             xFlowControlConditionsFrame.NavigationService.RemoveBackEntry();
