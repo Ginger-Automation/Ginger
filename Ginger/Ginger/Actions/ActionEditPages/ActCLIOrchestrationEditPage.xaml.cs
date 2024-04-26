@@ -44,15 +44,26 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WaitForProcessToFinish, System.Windows.Controls.CheckBox.IsCheckedProperty, act, nameof(mAct.WaitForProcessToFinish));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ParseResult, System.Windows.Controls.CheckBox.IsCheckedProperty, act, nameof(mAct.ParseResult));
             xDelimiterTextBox.Init(mContext, act, nameof(mAct.Delimiter));
-            if (mAct.ParseResult)
+            if(mAct.WaitForProcessToFinish)
             {
+                xPanelParseResult.Visibility = Visibility.Visible;
                 xPanelDelimiter.Visibility = Visibility.Visible;
-                xDelimiterTextBox.ValueTextBox.TextChanged += DelimiterTextBox_TextChanged;
+                if (mAct.ParseResult)
+                {
+                    xPanelDelimiter.Visibility = Visibility.Visible;
+                    xDelimiterTextBox.ValueTextBox.TextChanged += DelimiterTextBox_TextChanged;
+                }
+                else
+                {
+                    xPanelDelimiter.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
+                xPanelParseResult.Visibility = Visibility.Collapsed;
                 xPanelDelimiter.Visibility = Visibility.Collapsed;
             }
+            
             
         }
 
@@ -79,12 +90,16 @@ namespace Ginger.Actions
         private void WaitForProcessToFinishChecked(object sender, RoutedEventArgs e)
         {
             mAct.WaitForProcessToFinish = true;
+            xPanelParseResult.Visibility = Visibility.Visible;
+            xPanelDelimiter.Visibility = Visibility.Visible;
             mAct.InvokPropertyChanngedForAllFields();
         }
 
         private void WaitForProcessToFinishUnChecked(object sender, RoutedEventArgs e)
         {
             mAct.WaitForProcessToFinish = false;
+            xPanelParseResult.Visibility = Visibility.Collapsed;
+            xPanelDelimiter.Visibility = Visibility.Collapsed;
             mAct.InvokPropertyChanngedForAllFields();
 
         }

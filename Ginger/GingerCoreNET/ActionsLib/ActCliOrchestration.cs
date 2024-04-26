@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CliWrap;
 using System.IO;
+using GingerCoreNET.GeneralLib;
 
 namespace GingerCore.Actions
 {
@@ -93,15 +94,13 @@ namespace GingerCore.Actions
                 return;
             }
 
-            if(WaitForProcessToFinish)
-            {
-                Task.Run(() =>
+            var task = Task.Factory.StartNew(() =>
                 ExecuteCliProcess()
-                ).Wait();
-            }
-            else
+                );
+
+            if (WaitForProcessToFinish)
             {
-               ExecuteCliProcess();
+                task.Wait();
             }
         }
 
@@ -121,45 +120,46 @@ namespace GingerCore.Actions
             {
                 string path = String.Empty;
                 Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-                if (WorkSpace.Instance.Solution.Folder != null)
+                if (WorkSpace.Instance.Solution.Folder != null && WaitForProcessToFinish)
                 {
                     string folderPath = $"{WorkSpace.Instance.Solution.Folder}{Path.DirectorySeparatorChar}Documents{Path.DirectorySeparatorChar}CLIOrchestration";
                     if (!Directory.Exists(folderPath))
                     {
                         Directory.CreateDirectory(folderPath);
                     }
-                    string DatetimeFormate = DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
-                    string Filename = $"{ItemName}_{DatetimeFormate}.txt";
-                    path = $"{folderPath}{Path.DirectorySeparatorChar}{Filename}";
+                    path = General.GenerateFilePath(folderPath,ItemName);
                     AddOrUpdateReturnParamActual(ParamName: "Output logfile", ActualValue: path);
                 }
-                
+
                 try
                 {
-                    if(ParseResult)
+                    if (WaitForProcessToFinish)
                     {
-                        var cmd = Cli.Wrap(this.FilePath)
-                                .WithArguments(arguments.ToString()) | (PipeTarget.ToDelegate(parseRcwithDelimiter));
-                        CommandResult Result = await cmd.ExecuteAsync();
-                        if (WaitForProcessToFinish)
+                        if (ParseResult)
                         {
+                            var cmd = Cli.Wrap(this.FilePath)
+                                .WithArguments(arguments.ToString()) | (PipeTarget.ToDelegate(parseRcwithDelimiter));
+                            CommandResult Result = await cmd.ExecuteAsync();
+                            UpdateActionStatus(Result);
+                        }
+                        else
+                        {
+                            var cmd = Cli.Wrap(this.FilePath)
+                                .WithArguments(arguments.ToString()) | PipeTarget.ToStringBuilder(DataBuffer);
+                            CommandResult Result = await cmd.ExecuteAsync();
                             UpdateActionStatus(Result);
                         }
                     }
                     else
                     {
                         var cmd = Cli.Wrap(this.FilePath)
-                                .WithArguments(arguments.ToString()) | PipeTarget.ToStringBuilder(DataBuffer);
-                        CommandResult Result = await cmd.ExecuteAsync();
-                        if(WaitForProcessToFinish)
-                        {
-                            UpdateActionStatus(Result);
-                        }
-                        
+                            .WithArguments(arguments.ToString());
+                        cmd.ExecuteAsync();
                     }
-                    WriteTofile(path, DataBuffer);
-                    
-                }
+                    if(WaitForProcessToFinish)
+                    {
+                        WriteTofile(path, DataBuffer);
+                    }                }
                 catch(Exception ex)
                 {
                     Error = "Error: during CLI Orchestration:" + ex.Message;
@@ -169,7 +169,6 @@ namespace GingerCore.Actions
                 }
             }
         }
-
         private void UpdateActionStatus(CommandResult result)
         {
             if (result.ExitCode == 0)

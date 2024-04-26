@@ -25,11 +25,11 @@
             <Label x:Name="FilePathLabel" Style="{StaticResource @InputFieldLabelStyle}"  Width="250" Height="35">File Path:</Label>
             <Actions:UCFileBrowser HorizontalAlignment="Left" x:Name="FilePath" Width="370"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="2" >
+        <StackPanel Orientation="Horizontal" Grid.Row="2" x:Name="xPanelWaitForProcessToFinish">
             <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="250" VerticalAlignment="Center" >Wait for Process:</Label>
             <CheckBox x:Name="WaitForProcessToFinish" VerticalAlignment="Center" Margin="0,0,0,0" Checked="WaitForProcessToFinishChecked" Unchecked="WaitForProcessToFinishUnChecked" />
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="3" >
+        <StackPanel Orientation="Horizontal" Grid.Row="3" x:Name="xPanelParseResult">
             <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="250" VerticalAlignment="Center" >Parse the Result:</Label>
             <CheckBox x:Name="ParseResult" VerticalAlignment="Center" Margin="0,0,0,0" Checked="ParseResultChecked" Unchecked="ParseResultUnChecked" />
         </StackPanel>
