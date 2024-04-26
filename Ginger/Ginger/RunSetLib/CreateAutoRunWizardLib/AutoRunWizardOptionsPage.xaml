@@ -57,7 +57,12 @@
                     <GingerCore:ucTextDicResource Text="Set Global Variables configuration used in RunSet"/>
                 </CheckBox.Content>
             </CheckBox>
-            
+            <CheckBox x:Name="xEnivonrmentDetailsCheckbox" Style="{StaticResource $CeckBoxStyle}" Margin="5">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Set Environment Details used in RunSet"/>
+                </CheckBox.Content>
+            </CheckBox>
+
             <DockPanel>
                 <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="0,10,0,0">Artifacts path (Output folder for execution results/reports)</Label>
                 <Actions:UCValueExpression x:Name="xArtifactsPathTextBox" DockPanel.Dock="Top" Margin="5,0,0,0"/>

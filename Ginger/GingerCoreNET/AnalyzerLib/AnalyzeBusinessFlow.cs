@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.AnalyzerLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.Variables;
@@ -31,8 +32,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using static Ginger.AnalyzerLib.AnalyzeBusinessFlow;
-
 #nullable enable
 namespace Ginger.AnalyzerLib
 {
@@ -55,7 +54,7 @@ namespace Ginger.AnalyzerLib
         private static Regex rxVarPattern = new(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
 
         public BusinessFlow BusinessFlow { get; set; }
-        private Solution Solution { get; set; }
+        public Solution Solution { get; set; }
 
         public List<ActReturnValue> ReturnValues { get; set; } = new List<ActReturnValue>();
 
@@ -69,7 +68,8 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> issues = new();
 
             issues.AddRange(AnalyzeIndependently(businessFlow, checks));
-
+            AnalyzeEnvApplication.AnalyzeEnvAppInBusinessFlows(businessFlow, issues);
+            AnalyzeValueExpInBusinessFlow(businessFlow, ref issues);
             return issues;
         }
 
@@ -84,7 +84,8 @@ namespace Ginger.AnalyzerLib
 
             issues.AddRange(AnalyzeWithSolutionDependency(businessFlow, solution, checks));
             issues.AddRange(AnalyzeIndependently(businessFlow, checks));
-            
+            AnalyzeEnvApplication.AnalyzeEnvAppInBusinessFlows(businessFlow, issues);
+            AnalyzeValueExpInBusinessFlow(businessFlow, ref issues);
             return issues;
         }
 
@@ -127,7 +128,7 @@ namespace Ginger.AnalyzerLib
             return issues;
         }
 
-        
+
 
         private static bool HasMissingTargetApplications(BusinessFlow businessFlow, Solution solution, out AnalyzeBusinessFlow issue)
         {
@@ -188,7 +189,7 @@ namespace Ginger.AnalyzerLib
                 return false;
             }
         }
-        
+
         public static bool HasMissingMandatoryInputValues(BusinessFlow businessFlow, out List<AnalyzeBusinessFlow> issueList)
         {
             issueList = new();
@@ -236,7 +237,7 @@ namespace Ginger.AnalyzerLib
                 issue.ReturnValues.AddRange(action.ActReturnValues.Where(returnValue => returnValue.Operator == Amdocs.Ginger.Common.Expressions.eOperator.Legacy));
             }
 
-            if(issue.ReturnValues.Any())
+            if (issue.ReturnValues.Any())
             {
                 issue.ItemName = businessFlow.Name;
                 issue.Description = LegacyOutPutValidationDescription;
@@ -259,14 +260,14 @@ namespace Ginger.AnalyzerLib
         public static bool HasInvalidInputValueRules(BusinessFlow businessFlow, out List<AnalyzeBusinessFlow> issueList)
         {
             issueList = new();
-            
+
             ObservableList<VariableBase> bfInputVariables = businessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true);
 
             foreach (InputVariableRule rule in businessFlow.InputVariableRules)
             {
                 if (rule.Active)
                 {
-                    if(HasInvalidSourceVariableInRule(businessFlow, bfInputVariables, rule, out AnalyzeBusinessFlow issue))
+                    if (HasInvalidSourceVariableInRule(businessFlow, bfInputVariables, rule, out AnalyzeBusinessFlow issue))
                     {
                         issueList.Add(issue);
                     }
@@ -277,7 +278,7 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
-            if(issueList.Any())
+            if (issueList.Any())
             {
                 return true;
             }
@@ -483,6 +484,59 @@ namespace Ginger.AnalyzerLib
                 ABF.BusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = SAN });
                 ABF.Status = eStatus.Fixed;
             }
+        }
+
+        public static void AnalyzeValueExpInBusinessFlow(BusinessFlow businessFlow, ref List<AnalyzerItemBase> issuesList)
+        {
+            if(!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(businessFlow.RunDescription, businessFlow.Environment))
+            {
+
+                AnalyzeBusinessFlow issue = new()
+                {
+                    Description = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} RunDescription value expression does not exist in the Current Environment",
+                    UTDescription = "MissingParameterInCurrentEnvironment",
+                    Details = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} RunDescription value expression does not exist in the Current Environment",
+                    CanAutoFix = eCanFix.No,
+                    IssueType = eType.Error,
+                    Impact = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} will fail due to missing {GingerDicser.GetTermResValue(eTermResKey.Variable)} in Environment",
+                    Severity = eSeverity.High,
+                    IssueCategory = eIssueCategory.MissingVariable,
+                    ItemParent = businessFlow.Name,
+                    ItemClass = "BusinessFlow",
+                    Status = eStatus.NeedFix
+                };
+
+                issuesList.Add(issue);
+            }
+
+            var FilteredVariables =  businessFlow.Variables
+                .Where((variable) =>
+            {
+                return variable is VariableDynamic variableDynamic && !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(variableDynamic.ValueExpression, businessFlow.Environment);
+            });
+
+
+            foreach (var FilteredVariable in FilteredVariables)
+            {
+
+                AnalyzeBusinessFlow issue = new()
+                {
+                    Description = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {GingerDicser.GetTermResValue(eTermResKey.Variable)}: {FilteredVariable.Name} value does not exist in the Current Environment",
+                    UTDescription = "MissingVariableInCurrentEnvironment",
+                    Details = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {GingerDicser.GetTermResValue(eTermResKey.Variable)}: {FilteredVariable.Name} value does not exist in the Current Environment",
+                    CanAutoFix = eCanFix.No,
+                    IssueType = eType.Error,
+                    Impact = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} will fail due to missing {GingerDicser.GetTermResValue(eTermResKey.Variable)} in Environment",
+                    Severity = eSeverity.High,
+                    IssueCategory = eIssueCategory.MissingVariable,
+                    ItemParent = businessFlow.Name,
+                    ItemClass = "VariableDynamic",
+                    Status = eStatus.NeedFix
+                };
+                issuesList.Add(issue);  
+            }
+
+
         }
     }
 }
