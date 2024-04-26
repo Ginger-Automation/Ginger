@@ -161,16 +161,13 @@ namespace GingerCore.Actions
                             CommandResult Result = await cmd.ExecuteAsync();
                             UpdateActionStatus(Result);
                         }
+                        WriteTofile(path, DataBuffer);
                     }
                     else
                     {
                         var cmd = Cli.Wrap(filePath)
                             .WithArguments(arguments.ToString());
                         cmd.ExecuteAsync();
-                    }
-                    if(WaitForProcessToFinish)
-                    {
-                        WriteTofile(path, DataBuffer);
                     }                }
                 catch(Exception ex)
                 {
