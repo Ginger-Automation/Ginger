@@ -122,7 +122,7 @@ namespace GingerCoreNET.GeneralLib
         #endregion ENUM
 
        static Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
-       static string DatetimeFormat = DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
+        static string GetDatetimeFormat() => DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
         public static T ParseEnum<T>(string value)
         {
             return (T)Enum.Parse(typeof(T), value, true);
@@ -598,7 +598,7 @@ namespace GingerCoreNET.GeneralLib
         {
             string path;
             
-            string Filename = $"{ItemName}_{DatetimeFormat}.txt";
+            string Filename = $"{ItemName}_{GetDatetimeFormat()}.txt";
             path = $"{folderPath}{Path.DirectorySeparatorChar}{Filename}";
             return path;
         }
