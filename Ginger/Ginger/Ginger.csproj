@@ -688,7 +688,8 @@
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
     <PackageReference Include="EPPlus" Version="6.0.4" />
-    <PackageReference Include="FontAwesome5" Version="2.1.11" />
+    <PackageReference Include="FontAwesome6.Fonts" Version="2.5.1" />
+    <PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.5" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
