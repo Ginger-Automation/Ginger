@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -30,6 +31,7 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.WizardLib;
+using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -294,6 +296,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(addSelectedToSR);
             }
 
+            if(VariablesParent is EnvApplication)
+            {
+                ListItemOperation addSelectedToSR = new ListItemOperation();
+                addSelectedToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                addSelectedToSR.AutomationID = "shareSelectedToOtherEnv";
+                addSelectedToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
+                addSelectedToSR.Header = "Add Selected Parameter to Other Environment";
+                addSelectedToSR.OperationHandler = AddSelectedToOtherEnv;
+                extraOperationsList.Add(addSelectedToSR);
+            }
+
             //if(VariablesParent.GetType() == typeof(BusinessFlow))
             //{
             ListItemOperation inputvariablesRules = new ListItemOperation();
@@ -307,6 +320,31 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             //}
             
             return extraOperationsList;
+        }
+
+        private void AddSelectedToOtherEnv(object sender, RoutedEventArgs e)
+        {
+           var SelectedVariables = ListView.List.SelectedItems.Cast<VariableBase>().ToList();
+
+            ObservableList<ProjEnvironment> ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+
+            foreach (var varToAdd in SelectedVariables)
+            {
+                ProjEnvironments.ForEach((projEnv) =>
+                {
+
+                    projEnv.Applications.Where((envApp) =>
+                    {
+                        return envApp.Name.Equals(((EnvApplication)VariablesParent).Name) && !envApp.Variables.Any((var) => var.Name.Equals(varToAdd.Name));
+                    })
+                    .ForEach((filteredApp) =>
+                    {
+
+                        filteredApp.Variables.Add(varToAdd);
+                    });
+                });
+            }
+
         }
 
         public List<ListItemNotification> GetItemNotificationsList(object item)
@@ -520,7 +558,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             pasterAfterCurrent.OperationHandler = PasteAfterCurrentHandler;
             extraOperationsList.Add(pasterAfterCurrent);
 
-
+            if(VariablesParent is EnvApplication)
+            {
+                ListItemOperation addSelectedToSR = new ListItemOperation();
+                addSelectedToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                addSelectedToSR.AutomationID = "shareSelectedToOtherEnv";
+                addSelectedToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
+                addSelectedToSR.Header = "Add Selected Parameter to Other Environment";
+                addSelectedToSR.OperationHandler = AddSelectedToOtherEnv;
+                extraOperationsList.Add(addSelectedToSR);
+            }
 
             return extraOperationsList;
         }
