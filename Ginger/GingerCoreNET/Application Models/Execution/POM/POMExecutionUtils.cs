@@ -223,24 +223,15 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
             if (passedLocator == null || !passedLocator.Any())
             {
-                if (ExecutedFrom == eExecutedFrom.Run)
+                // Get start time stamp of RunSet or BusinessFlow
+                DateTime? startTimeStamp = ExecutedFrom == eExecutedFrom.Run
+                                             ? WorkSpace.Instance.RunsetExecutor.RunSetConfig?.StartTimeStamp
+                                             : ((GingerCore.Agent)currentAgent).BusinessFlow?.StartTimeStamp;
+
+                // Check if the POM was updated after the start time stamp, if yes, don't update the POM
+                if (startTimeStamp.HasValue && Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime).ToUniversalTime() > startTimeStamp.Value)
                 {
-                    var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
-                    if (runSetConfig != null)
-                    {
-                        if ((Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime).ToUniversalTime() > runSetConfig.StartTimeStamp))
-                        {
-                            return null;
-                        }
-                    }
-                }
-                else
-                {
-                    var pomLastUpdatedTimeSpan = (System.DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).TotalHours;
-                    if (pomLastUpdatedTimeSpan < 5)
-                    {
-                        return null;
-                    }
+                    return null;
                 }
             }
 
@@ -248,10 +239,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
             if (deltaElementInfos.Count > 0)
             {
-                UpdateElementSelfHealingDetails(deltaElementInfos.ToList());
+                UpdateElementSelfHealingDetails([.. deltaElementInfos]);
             }
 
-            Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
+            Guid currentPOMElementInfoGUID = new(PomElementGUID[1]);
             var currentElementDelta = deltaElementInfos.FirstOrDefault(x => x.ElementInfo.Guid == currentPOMElementInfoGUID);
             if (currentElementDelta == null || currentElementDelta.DeltaStatus == eDeltaStatus.Deleted)
             {
@@ -308,7 +299,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 var pomLastUpdatedTimeSpan = (DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).Minutes;
                 if (pomLastUpdatedTimeSpan < 5)
                 {
-                    return new ObservableList<DeltaElementInfo>();
+                    return [];
                 }
             }
 
@@ -331,7 +322,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 pomDeltaUtils.LearnDelta().Wait();
                 mAct.ExInfo += DateTime.Now + " Self healing operation application model was updated";
             }
-            catch (Exception ex)
+            catch
             {
             }
             finally
