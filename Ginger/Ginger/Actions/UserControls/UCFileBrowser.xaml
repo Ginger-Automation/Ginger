@@ -12,6 +12,6 @@
         </Grid.ColumnDefinitions>
 
         <TextBox x:Name="FilePathTextBox" TextWrapping="Wrap" Text="" Grid.ColumnSpan="1" AcceptsReturn="True" Style="{StaticResource @TextBoxStyle}" Height="25"/>
-        <Button x:Name="BrowseFileButton" Click="BrowseFileButton_Click" Content="..." Width="Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" Style="{StaticResource @InputButtonStyle}" Height="25"/>
+        <Button x:Name="BrowseFileButton" Click="BrowseFileButton_Click" Content="..." Width="Auto" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2" VerticalAlignment="Stretch" Style="{StaticResource @InputButtonStyle}" Height="25"/>
     </Grid>
 </UserControl>
