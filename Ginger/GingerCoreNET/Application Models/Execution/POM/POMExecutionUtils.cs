@@ -299,7 +299,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 var pomLastUpdatedTimeSpan = (DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).Minutes;
                 if (pomLastUpdatedTimeSpan < 5)
                 {
-                    return new ObservableList<DeltaElementInfo>();
+                    return [];
                 }
             }
 
@@ -322,7 +322,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 pomDeltaUtils.LearnDelta().Wait();
                 mAct.ExInfo += DateTime.Now + " Self healing operation application model was updated";
             }
-            catch (Exception ex)
+            catch
             {
             }
             finally

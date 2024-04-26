@@ -440,7 +440,7 @@ namespace GingerCore.Drivers.Common
                     {
                         relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "']");
                         elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
-                        if (elemsList == null || (elemsList != null && elemsList.Count() < 2))
+                        if (elemsList == null || (elemsList != null && elemsList.Count < 2))
                         {
                             continue;
                         }
@@ -558,7 +558,7 @@ namespace GingerCore.Drivers.Common
             var tagStartWithName = "*";
             var tagName = mDriver.GetElementTagName(elementInfo);
 
-            if (tagName.ToLower().Equals(eElementType.Label.ToString().ToLower()) || (tagName.ToLower().Equals(eElementType.Div.ToString().ToLower()) && !isExactMatch))
+            if (tagName.ToLower().Equals(nameof(eElementType.Label).ToLower()) || (tagName.ToLower().Equals(nameof(eElementType.Div).ToLower()) && !isExactMatch))
             {
                 tagStartWithName = tagName;
             }
@@ -566,11 +566,11 @@ namespace GingerCore.Drivers.Common
             var innerText = mDriver.GetInnerText(elementInfo);
             if (isExactMatch)
             {
-                relXpath = string.Concat("//", tagStartWithName, "[text()=", "\'", innerText, "\'", "]");
+                relXpath = string.Concat("html/body//", tagStartWithName, "[text()=", "\'", innerText, "\'", "]");
             }
             else
             {
-                relXpath = string.Concat("//", tagStartWithName, "[contains(text(),", "\'", innerText, "\'", ")]");
+                relXpath = string.Concat("html/body//", tagStartWithName, "[contains(text(),", "\'", innerText, "\'", ")]");
             }
 
             return relXpath;
@@ -585,7 +585,7 @@ namespace GingerCore.Drivers.Common
 
             if (!string.IsNullOrEmpty(previousSiblingInnerText))
             {
-                relXpath = string.Concat("//*[text()=\'", previousSiblingInnerText, "\']//following::", mDriver.GetElementTagName(elementInfo));
+                relXpath = string.Concat("html/body//*[text()=\'", previousSiblingInnerText, "\']//following::", mDriver.GetElementTagName(elementInfo));
             }
 
             return relXpath;
