@@ -152,7 +152,7 @@
                                     <Label Content="Wait:" Style="{StaticResource $LabelStyle}" />
                                     <Actions:UCValueExpression x:Name="xWaitVeUC" ToolTip="Action will wait this seconds long before start to run" HorizontalAlignment="Stretch" Width="80" />
                                     <Label Content="Timeout:" Style="{StaticResource $LabelStyle}" Margin="10,0,0,0"/>
-                                    <TextBox x:Name="xTimeoutTextBox" TextChanged="txtTimeout_TextChanged" ToolTip="Timeout is been used to configure the MAXIMUM allowed time (Action can finish before) for the Action to run. If action running longer than the timeout time (seconds), the action will stop and mark as Failed" Style="{StaticResource @TextBoxStyle}" Width="50" TextAlignment="Center"  HorizontalAlignment="Left" />
+                                    <TextBox x:Name="xTimeoutTextBox" TextChanged="txtTimeout_TextChanged" ToolTip="Timeout field is in seconds. Default is 30 minutes (1800 seconds). Use 0 for no timeout, allowing actions to run indefinitely. If an action exceeds the specified timeout duration, it will be stopped and marked as failed." Style="{StaticResource @TextBoxStyle}" Width="50" TextAlignment="Center"  HorizontalAlignment="Left" />
                                 </StackPanel>
 
                                 <Expander x:Name="xRetryExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">

@@ -738,6 +738,12 @@ namespace Ginger.Actions
                 minimumInputValuesToHideGrid = 3;
             }
 
+            if (a.GetType() == typeof(ActCLIOrchestration))
+            {
+                //for CLI Orchestration need to show by default
+                minimumInputValuesToHideGrid = -1;
+            }
+
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) &&
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) &&
                 a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand) &&
@@ -1082,7 +1088,12 @@ namespace Ginger.Actions
 
             xInputValuesGrid.ClearTools();
             xInputValuesGrid.ShowDelete = System.Windows.Visibility.Visible;
-
+            if(mAction.GetType() == typeof(ActCLIOrchestration))
+            {
+                xInputValuesGrid.ShowAdd = System.Windows.Visibility.Visible;
+                xInputValuesGrid.ShowClearAll = System.Windows.Visibility.Visible;
+            }
+            
             //List<GridColView> view = new List<GridColView>();
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
