@@ -108,11 +108,18 @@ namespace GingerCore.Actions
         private async Task ExecuteCliProcess()
         {
             bool isVBSScript = false;
+            bool isshellScript = false;
             StringBuilder arguments = new ();
-            if ((Path.GetExtension(this.FilePath)).Equals(".vbs", StringComparison.InvariantCultureIgnoreCase) || (Path.GetExtension(this.FilePath)).Equals(".js",StringComparison.InvariantCultureIgnoreCase))
+            string actulaApplicationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(this.FilePath);
+            if ((Path.GetExtension(actulaApplicationPath)).Equals(".vbs", StringComparison.InvariantCultureIgnoreCase) || (Path.GetExtension(actulaApplicationPath)).Equals(".js",StringComparison.InvariantCultureIgnoreCase))
             {
-                arguments.Append(this.FilePath).Append(" ");
+                arguments.Append(actulaApplicationPath).Append(" ");
                 isVBSScript = true;
+            }
+            else if((Path.GetExtension(actulaApplicationPath)).Equals(".sh", StringComparison.InvariantCultureIgnoreCase))
+            {
+                arguments.Append(actulaApplicationPath).Append(" ");
+                isshellScript = true;
             }
             foreach (var p in this.InputValues)
             {
@@ -123,7 +130,7 @@ namespace GingerCore.Actions
                 }
             }
 
-            if (!string.IsNullOrEmpty(this.FilePath))
+            if (!string.IsNullOrEmpty(actulaApplicationPath))
             {
                 string path = String.Empty;
                 Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
@@ -136,15 +143,25 @@ namespace GingerCore.Actions
                     }
                     path = General.GenerateFilePath(folderPath,ItemName);
                     AddOrUpdateReturnParamActual(ParamName: "Output logfile", ActualValue: path);
+                    Act.AddArtifactToAction(Path.GetFileName(path), this, path);
                 }
 
                 try
                 {
-                    string filePath = this.FilePath;
                     if(isVBSScript)
                     {
-                        filePath = GetSystemDirectory() + $"{Path.DirectorySeparatorChar}cscript.exe";
-                        if(!File.Exists(filePath))
+                        actulaApplicationPath = GetSystemDirectory() + $"{Path.DirectorySeparatorChar}cscript.exe";
+                        if(!File.Exists(actulaApplicationPath))
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error: Interpretor is not available for file {this.FilePath}");
+                            Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            return;
+                        }
+                    }
+                    else if(isshellScript)
+                    {
+                        actulaApplicationPath = $"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}bash";
+                        if (!File.Exists(actulaApplicationPath))
                         {
                             Reporter.ToLog(eLogLevel.ERROR, $"Error: Interpretor is not available for file {this.FilePath}");
                             Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -155,14 +172,14 @@ namespace GingerCore.Actions
                     {
                         if (ParseResult)
                         {
-                            var cmd = Cli.Wrap(filePath)
+                            var cmd = Cli.Wrap(actulaApplicationPath)
                                 .WithArguments(arguments.ToString()) | (PipeTarget.ToDelegate(parseRcwithDelimiter));
                             CommandResult Result = await cmd.ExecuteAsync();
                             UpdateActionStatus(Result);
                         }
                         else
                         {
-                            var cmd = Cli.Wrap(filePath)
+                            var cmd = Cli.Wrap(actulaApplicationPath)
                                 .WithArguments(arguments.ToString()) | PipeTarget.ToStringBuilder(DataBuffer);
                             CommandResult Result = await cmd.ExecuteAsync();
                             UpdateActionStatus(Result);
@@ -171,7 +188,7 @@ namespace GingerCore.Actions
                     }
                     else
                     {
-                        var cmd = Cli.Wrap(filePath)
+                        var cmd = Cli.Wrap(actulaApplicationPath)
                             .WithArguments(arguments.ToString());
                         cmd.ExecuteAsync();
                     }                }

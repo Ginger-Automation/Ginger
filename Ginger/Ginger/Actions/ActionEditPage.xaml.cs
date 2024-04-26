@@ -738,6 +738,12 @@ namespace Ginger.Actions
                 minimumInputValuesToHideGrid = 3;
             }
 
+            if (a.GetType() == typeof(ActCLIOrchestration))
+            {
+                //for CLI Orchestration need to show by default
+                minimumInputValuesToHideGrid = -1;
+            }
+
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) &&
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) &&
                 a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand) &&
@@ -745,7 +751,7 @@ namespace Ginger.Actions
                 a.GetType() != typeof(ActGenerateFileFromTemplate) && a.GetType() != typeof(ActPBControl) && a.GetType() != typeof(ActWindowsControl) &&
                 a.GetType() != typeof(ActMenuItem) && a.GetType() != typeof(ActJavaElement))
             {
-                if (a.InputValues.Count > minimumInputValuesToHideGrid || a.GetType() == typeof(ActCLIOrchestration))
+                if (a.InputValues.Count > minimumInputValuesToHideGrid)
                 {
                     xInputValuesGrid.Visibility = Visibility.Visible;
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
