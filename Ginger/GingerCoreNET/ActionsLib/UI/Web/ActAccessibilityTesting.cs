@@ -781,7 +781,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     string[] Tag_array = StandardList.Select(i => i.Value.ToString()).ToArray();
                     for(int i=0;i<Tag_array.Length;i++)
                     {
-                        if (Tag_array[i].Equals("bestpractice",StringComparison.CurrentCultureIgnoreCase))
+                        if (Tag_array[i].Equals("bestpractice",StringComparison.OrdinalIgnoreCase))
                         {
                             Tag_array[i] = "best-practice";
                         }
