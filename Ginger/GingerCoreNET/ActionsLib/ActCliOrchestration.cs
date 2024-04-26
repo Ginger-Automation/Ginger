@@ -110,16 +110,16 @@ namespace GingerCore.Actions
             bool isVBSScript = false;
             bool isshellScript = false;
             StringBuilder arguments = new ();
-            string actulaApplicationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(this.FilePath);
-            if ((Path.GetExtension(actulaApplicationPath)).Equals(".vbs", StringComparison.InvariantCultureIgnoreCase) || (Path.GetExtension(actulaApplicationPath)).Equals(".js",StringComparison.InvariantCultureIgnoreCase))
+            string actualApplicationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(this.FilePath);
+            if ((Path.GetExtension(actualApplicationPath)).Equals(".vbs", StringComparison.InvariantCultureIgnoreCase) || (Path.GetExtension(actualApplicationPath)).Equals(".js",StringComparison.InvariantCultureIgnoreCase))
             {
-                arguments.Append(actulaApplicationPath).Append(" ");
-                isVBSScript = true;
+                arguments.Append(actualApplicationPath).Append(" ");
+                actualApplicationPath = GetSystemDirectory() + $"{Path.DirectorySeparatorChar}cscript.exe";
             }
-            else if((Path.GetExtension(actulaApplicationPath)).Equals(".sh", StringComparison.InvariantCultureIgnoreCase))
+            else if((Path.GetExtension(actualApplicationPath)).Equals(".sh", StringComparison.InvariantCultureIgnoreCase))
             {
-                arguments.Append(actulaApplicationPath).Append(" ");
-                isshellScript = true;
+                arguments.Append(actualApplicationPath).Append(" ");
+                actualApplicationPath = $"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}bash";
             }
             foreach (var p in this.InputValues)
             {
@@ -130,7 +130,7 @@ namespace GingerCore.Actions
                 }
             }
 
-            if (!string.IsNullOrEmpty(actulaApplicationPath))
+            if (!string.IsNullOrEmpty(actualApplicationPath))
             {
                 string path = String.Empty;
                 Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
@@ -143,52 +143,36 @@ namespace GingerCore.Actions
                     }
                     path = General.GenerateFilePath(folderPath,ItemName);
                     AddOrUpdateReturnParamActual(ParamName: "Output logfile", ActualValue: path);
-                    Act.AddArtifactToAction(Path.GetFileName(path), this, path);
                 }
-
                 try
                 {
-                    if(isVBSScript)
+                    if (!File.Exists(actualApplicationPath))
                     {
-                        actulaApplicationPath = GetSystemDirectory() + $"{Path.DirectorySeparatorChar}cscript.exe";
-                        if(!File.Exists(actulaApplicationPath))
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error: Interpretor is not available for file {this.FilePath}");
-                            Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            return;
-                        }
-                    }
-                    else if(isshellScript)
-                    {
-                        actulaApplicationPath = $"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}bash";
-                        if (!File.Exists(actulaApplicationPath))
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error: Interpretor is not available for file {this.FilePath}");
-                            Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            return;
-                        }
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error:Provided file not exist or Interpretor for it not available for file {this.FilePath}");
+                        Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        return;
                     }
                     if (WaitForProcessToFinish)
                     {
+                        Command cmd;
                         if (ParseResult)
                         {
-                            var cmd = Cli.Wrap(actulaApplicationPath)
+                            cmd = Cli.Wrap(actualApplicationPath)
                                 .WithArguments(arguments.ToString()) | (PipeTarget.ToDelegate(parseRcwithDelimiter));
-                            CommandResult Result = await cmd.ExecuteAsync();
-                            UpdateActionStatus(Result);
                         }
                         else
                         {
-                            var cmd = Cli.Wrap(actulaApplicationPath)
+                            cmd = Cli.Wrap(actualApplicationPath)
                                 .WithArguments(arguments.ToString()) | PipeTarget.ToStringBuilder(DataBuffer);
-                            CommandResult Result = await cmd.ExecuteAsync();
-                            UpdateActionStatus(Result);
                         }
+                        CommandResult Result = await cmd.ExecuteAsync();
+                        UpdateActionStatus(Result);
                         WriteTofile(path, DataBuffer);
+                        Act.AddArtifactToAction(Path.GetFileName(path), this, path);
                     }
                     else
                     {
-                        var cmd = Cli.Wrap(actulaApplicationPath)
+                        var cmd = Cli.Wrap(actualApplicationPath)
                             .WithArguments(arguments.ToString());
                         cmd.ExecuteAsync();
                     }                }
