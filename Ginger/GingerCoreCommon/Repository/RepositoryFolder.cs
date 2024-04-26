@@ -839,43 +839,38 @@ namespace Amdocs.Ginger.Repository
             //update the folder name in file system
             string newFullPath = Path.Combine(Path.GetDirectoryName(PathHelper.GetLongPath(FolderFullPath)), newFolderName);
 
-            if (FolderName.ToUpper() == newFolderName.ToUpper())//user just changed the name letters case
+            if (FolderName.ToUpper() != newFolderName.ToUpper())//user just changed the name letters case
             {
-                //move to temp folder
-                string tempTargetPath = Path.Combine(Path.GetTempPath(), FolderName);
-                Directory.Move(PathHelper.GetLongPath(FolderFullPath), PathHelper.GetLongPath(tempTargetPath));
-                Directory.Move(PathHelper.GetLongPath(tempTargetPath), PathHelper.GetLongPath(newFullPath));
-            }
-            else
-            {
+
                 StopFileWatcherRecursive();
                 Directory.Move(PathHelper.GetLongPath(FolderFullPath), PathHelper.GetLongPath(newFullPath));
 
                 StartFileWatcherRecursive(newFolderName, FolderName);
-            }
-            //Enable file watcher to catch the change first, so it will be visible in UI
-            Thread.Sleep(100);
 
-            //update folder fields            
-            FolderRelativePath = Path.Combine(FolderRelativePath.Substring(0, FolderRelativePath.LastIndexOf(FolderName)), newFolderName); //parentFolderRelativePath + "/" + FolderName;
-            OnPropertyChanged(nameof(FolderRelativePath));
-            OnPropertyChanged(nameof(FolderFullPath));
-            OnPropertyChanged(nameof(DisplayName));
-            OnPropertyChanged(nameof(FolderName));
-            if (mFileWatcher != null)
-            {
-                mFileWatcher.Path = FolderFullPath;
-            }
+                //Enable file watcher to catch the change first, so it will be visible in UI
+                Thread.Sleep(100);
 
-            //updating the folder items cache with correct File Path
-            UpdateFolderItemsCacheFilePath();
-
-            //update the sub folders and their items in cache
-            if (mSubFoldersCache != null)
-            {
-                foreach (RepositoryFolder<T> sf in mSubFoldersCache)
+                //update folder fields            
+                FolderRelativePath = Path.Combine(FolderRelativePath.Substring(0, FolderRelativePath.LastIndexOf(FolderName)), newFolderName); //parentFolderRelativePath + "/" + FolderName;
+                OnPropertyChanged(nameof(FolderRelativePath));
+                OnPropertyChanged(nameof(FolderFullPath));
+                OnPropertyChanged(nameof(DisplayName));
+                OnPropertyChanged(nameof(FolderName));
+                if (mFileWatcher != null)
                 {
-                    sf.UpdateSubFolderFieldsAndItemsPath(FolderRelativePath);
+                    mFileWatcher.Path = FolderFullPath;
+                }
+
+                //updating the folder items cache with correct File Path
+                UpdateFolderItemsCacheFilePath();
+
+                //update the sub folders and their items in cache
+                if (mSubFoldersCache != null)
+                {
+                    foreach (RepositoryFolder<T> sf in mSubFoldersCache)
+                    {
+                        sf.UpdateSubFolderFieldsAndItemsPath(FolderRelativePath);
+                    }
                 }
             }
         }

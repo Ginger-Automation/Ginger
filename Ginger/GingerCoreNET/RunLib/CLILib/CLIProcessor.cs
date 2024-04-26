@@ -403,7 +403,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
             mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel?.ToString() == "None" ? null : runOptions.SealightsEntityLevel?.ToString();
             mCLIHelper.SealightsTestRecommendations = runOptions.SealightsTestRecommendations;
-            
+
+            //set source application and source app user
+            mCLIHelper.SourceApplication = runOptions.SourceApplication;
+            mCLIHelper.SourceApplicationUser = runOptions.SourceApplicationUser;
+
+
             if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId))
             {
                 if (!Guid.TryParse(runOptions.RunSetExecutionId, out Guid temp))
@@ -608,6 +613,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return false;
                 }
 
+                //set source app and user
+                mCLIHelper.SetSourceAppAndUser();
 
                 mCLIHelper.SetTestArtifactsFolder();
                 WorkSpace.Instance.StartLocalGrid();

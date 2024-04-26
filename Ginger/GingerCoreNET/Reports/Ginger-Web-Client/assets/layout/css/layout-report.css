@@ -11,7 +11,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: #122e51;
+  background: #22212E;
 }
 .splash-screen .splash-screen-bars {
   width: 135px;
@@ -24,46 +24,47 @@
   background: url("../../layout/images/bars.svg");
 }
 
-/* source-sans-pro-300 - latin-ext_latin */
+/* Montserrat-Light*/
 @font-face {
-  font-family: "Source Sans Pro";
+  font-family: "Montserrat";
   font-style: normal;
   font-weight: 300;
-  src: url("../fonts/source-sans-pro-v11-latin-ext_latin-300.eot");
+  src: url("../fonts/Montserrat/eot/Montserrat-Light.eot");
   /* IE9 Compat Modes */
-  src: local("Source Sans Pro Light"), local("SourceSansPro-Light"), url("../fonts/source-sans-pro-v11-latin-ext_latin-300.eot#iefix") format("embedded-opentype"), url("../fonts/source-sans-pro-v11-latin-ext_latin-300.woff2") format("woff2"), url("../fonts/source-sans-pro-v11-latin-ext_latin-300.woff") format("woff"), url("../fonts/source-sans-pro-v11-latin-ext_latin-300.ttf") format("truetype"), url("../fonts/source-sans-pro-v11-latin-ext_latin-300.svg#SourceSansPro") format("svg");
+  src: local("Montserrat Light"), local("Montserrat-Light"), url("../fonts/Montserrat/eot/Montserrat-Light.eot#iefix") format("embedded-opentype"), url("../fonts/Montserrat/woff2/Montserrat-Light.woff2") format("woff2"), url("../fonts/Montserrat/woff/Montserrat-Light.woff") format("woff"), url("../fonts/Montserrat/ttf/Montserrat-Light.ttf") format("truetype"), url("../fonts/Montserrat/svg/Montserrat-Light.svg#Montserrat") format("svg");
   /* Legacy iOS */
 }
-/* source-sans-pro-regular - latin-ext_latin */
+/* Montserrat-regular*/
 @font-face {
-  font-family: "Source Sans Pro";
+  font-family: "Montserrat";
   font-style: normal;
   font-weight: 400;
-  src: url("../fonts/source-sans-pro-v11-latin-ext_latin-regular.eot");
-  /* IE9 Compat Modes */
-  src: local("Source Sans Pro Regular"), local("SourceSansPro-Regular"), url("../fonts/source-sans-pro-v11-latin-ext_latin-regular.eot#iefix") format("embedded-opentype"), url("../fonts/source-sans-pro-v11-latin-ext_latin-regular.woff2") format("woff2"), url("../fonts/source-sans-pro-v11-latin-ext_latin-regular.woff") format("woff"), url("../fonts/source-sans-pro-v11-latin-ext_latin-regular.ttf") format("truetype"), url("../fonts/source-sans-pro-v11-latin-ext_latin-regular.svg#SourceSansPro") format("svg");
+  src: url("../fonts/Montserrat/eot/Montserrat-Regular.eot");
+  /* IE9 Compat Modes */  
+  src: local("Montserrat Regular"), local("Montserrat-Regular"), url("../fonts/Montserrat/eot/Montserrat-Regular.eot#iefix") format("embedded-opentype"), url("../fonts/Montserrat/woff2/Montserrat-Regular.woff2") format("woff2"), url("../fonts/Montserrat/woff/Montserrat-Regular.woff") format("woff"), url("../fonts/Montserrat/ttf/Montserrat-Regular.ttf") format("truetype"), url("../fonts/Montserrat/svg/Montserrat-Regular.svg#Montserrat") format("svg");
   /* Legacy iOS */
 }
-/* source-sans-pro-italic - latin-ext_latin */
+/* Montserrat-italic*/
 @font-face {
-  font-family: "Source Sans Pro";
+  font-family: "Montserrat";
   font-style: italic;
   font-weight: 400;
-  src: url("../fonts/source-sans-pro-v11-latin-ext_latin-italic.eot");
+  src: url("../fonts/Montserrat/eot/Montserrat-Italic.eot");
   /* IE9 Compat Modes */
-  src: local("Source Sans Pro Italic"), local("SourceSansPro-Italic"), url("../fonts/source-sans-pro-v11-latin-ext_latin-italic.eot#iefix") format("embedded-opentype"), url("../fonts/source-sans-pro-v11-latin-ext_latin-italic.woff2") format("woff2"), url("../fonts/source-sans-pro-v11-latin-ext_latin-italic.woff") format("woff"), url("../fonts/source-sans-pro-v11-latin-ext_latin-italic.ttf") format("truetype"), url("../fonts/source-sans-pro-v11-latin-ext_latin-italic.svg#SourceSansPro") format("svg");
+  src: local("Montserrat Italic"), local("Montserrat-Italic"), url("../fonts/Montserrat/eot/Montserrat-Italic.eot#iefix") format("embedded-opentype"), url("../fonts/Montserrat/woff2/Montserrat-Italic.woff2") format("woff2"), url("../fonts/Montserrat/woff/Montserrat-Italic.woff") format("woff"), url("../fonts/Montserrat/ttf/Montserrat-Italic.ttf") format("truetype"), url("../fonts/Montserrat/svg/Montserrat-Italic.svg#Montserrat") format("svg");
   /* Legacy iOS */
 }
-/* source-sans-pro-700 - latin-ext_latin */
+/* Montserrat-Bold*/
 @font-face {
-  font-family: "Source Sans Pro";
+  font-family: "Montserrat";
   font-style: bold;
   font-weight: 700;
-  src: url("../fonts/source-sans-pro-v11-latin-ext_latin-700.eot");
+  src: url("../fonts/Montserrat/eot/Montserrat-Bold.eot");
   /* IE9 Compat Modes */
-  src: local("Source Sans Pro Bold"), local("SourceSansPro-Bold"), url("../fonts/source-sans-pro-v11-latin-ext_latin-700.eot#iefix") format("embedded-opentype"), url("../fonts/source-sans-pro-v11-latin-ext_latin-700.woff2") format("woff2"), url("../fonts/source-sans-pro-v11-latin-ext_latin-700.woff") format("woff"), url("../fonts/source-sans-pro-v11-latin-ext_latin-700.ttf") format("truetype"), url("../fonts/source-sans-pro-v11-latin-ext_latin-700.svg#SourceSansPro") format("svg");
+  src: local("Montserrat Bold"), local("Montserrat-Bold"), url("../fonts/Montserrat/eot/Montserrat-Bold.eot#iefix") format("embedded-opentype"), url("../fonts/Montserrat/woff2/Montserrat-Bold.woff2") format("woff2"), url("../fonts/Montserrat/woff/Montserrat-Bold.woff") format("woff"), url("../fonts/Montserrat/ttf/Montserrat-Bold.ttf") format("truetype"), url("../fonts/Montserrat/svg/Montserrat-Bold.svg#Montserrat") format("svg");
   /* Legacy iOS */
 }
+
 /* Utils */
 .clearfix:after {
   content: " ";
@@ -748,12 +749,12 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   height: 60px;
-  background: #122e51;
+  background: #22212E;
   /* Old browsers */
-  background: -moz-linear-gradient(-206deg, #122e51 5%, #122e51 100%);
-  background: -webkit-linear-gradient(-206deg, #122e51 5%, #122e51 100%);
-  background: linear-gradient(-206deg, #122e51 5%, #122e51 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#122e51", endColorstr="#122e51",GradientType=1 );
+  background: -moz-linear-gradient(-206deg, #22212E 5%, #22212E 100%);
+  background: -webkit-linear-gradient(-206deg, #22212E 5%, #22212E 100%);
+  background: linear-gradient(-206deg, #22212E 5%, #22212E 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#22212E", endColorstr="#22212E",GradientType=1 );
 }
 .login-body .login-topbar .logo {
   -webkit-box-sizing: border-box;
@@ -787,37 +788,37 @@
   max-height: 75px;
   margin-bottom: 25px;
 }
-.login-body .login-panel .p-grid .logo-container {
+.login-body .login-panel .grid .logo-container {
   padding: 0;
 }
-.login-body .login-panel .p-grid .logo-container .login-summary {
+.login-body .login-panel .grid .logo-container .login-summary {
   line-height: 48px;
   font-size: 36px;
   font-weight: bold;
   text-align: left;
 }
-.login-body .login-panel .p-grid .logo-container .login-detail {
+.login-body .login-panel .grid .logo-container .login-detail {
   line-height: 20px;
   font-size: 16px;
   text-align: left;
 }
-.login-body .login-panel .p-grid .p-col-12 {
+.login-body .login-panel .grid .col-12 {
   padding: 15px 0px;
 }
-.login-body .login-panel .p-grid .p-col-12 .p-inputtext {
+.login-body .login-panel .grid .col-12 .p-inputtext {
   display: block;
   margin-top: 5px;
 }
-.login-body .login-panel .p-grid .p-col-12.chkbox-container a {
+.login-body .login-panel .grid .col-12.chkbox-container a {
   float: right;
 }
-.login-body .login-panel .p-grid .p-col-12 .p-checkbox {
+.login-body .login-panel .grid .col-12 .p-checkbox {
   margin-right: 5px;
 }
-.login-body .login-panel .p-grid .p-col-12 .p-outputlabel {
+.login-body .login-panel .grid .col-12 .p-outputlabel {
   vertical-align: middle;
 }
-.login-body .login-panel .p-grid .p-button {
+.login-body .login-panel .grid .p-button {
   width: 130px;
   border-radius: 3px;
 }
@@ -841,12 +842,12 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   height: 60px;
-  background: #122e51;
+  background: #22212E;
   /* Old browsers */
-  background: -moz-linear-gradient(-206deg, #122e51 5%, #122e51 100%);
-  background: -webkit-linear-gradient(-206deg, #122e51 5%, #122e51 100%);
-  background: linear-gradient(-206deg, #122e51 5%, #122e51 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#122e51", endColorstr="#122e51",GradientType=1 );
+  background: -moz-linear-gradient(-206deg, #22212E 5%, #22212E 100%);
+  background: -webkit-linear-gradient(-206deg, #22212E 5%, #22212E 100%);
+  background: linear-gradient(-206deg, #22212E 5%, #22212E 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#22212E", endColorstr="#22212E",GradientType=1 );
 }
 .exception-body .exception-topbar .logo {
   -webkit-box-sizing: border-box;
@@ -928,7 +929,7 @@
 }
 .landing-wrapper #header .header-content .header-content-panel {
   padding: 20px 25px;
-  background-color: #122e51;
+  background-color: #22212E;
   text-align: left;
   width: 300px;
 }
@@ -980,7 +981,7 @@
 .landing-wrapper .features img {
   width: 100%;
 }
-.landing-wrapper .features .p-col-9 {
+.landing-wrapper .features .col-9 {
   padding-left: 10px;
 }
 .landing-wrapper .premium {
@@ -1050,7 +1051,7 @@
 }
 .landing-wrapper .pricing .pricing-box .pricing-header {
   color: #ffffff;
-  background-color: #122e51;
+  background-color: #22212E;
   letter-spacing: 2px;
   font-weight: 600;
   padding: 12px 0px;
@@ -1062,7 +1063,7 @@
   display: block;
   font-size: 32px;
   font-weight: 600;
-  color: #122e51;
+  color: #22212E;
 }
 .landing-wrapper .pricing .pricing-box .duration {
   display: block;
@@ -1113,7 +1114,7 @@
   margin-top: 50px;
 }
 .landing-wrapper .footer {
-  background-color: #122e51;
+  background-color: #22212E;
   border-top: 10px solid #00a6d2;
   padding: 50px 150px;
 }
@@ -1183,10 +1184,10 @@
   .landing-wrapper .features img {
     width: 130px;
   }
-  .landing-wrapper .features .p-col-9 {
+  .landing-wrapper .features .col-9 {
     padding-left: 0;
   }
-  .landing-wrapper .features .p-grid > .p-col-12 {
+  .landing-wrapper .features .grid > .col-12 {
     padding-top: 32px;
   }
   .landing-wrapper .features p {
@@ -1207,14 +1208,14 @@
     padding: 75px 50px;
     text-align: center;
   }
-  .landing-wrapper .news .p-grid > .p-col-12 {
+  .landing-wrapper .news .grid > .col-12 {
     padding-top: 32px;
   }
   .landing-wrapper .pricing {
     padding: 75px 50px;
     text-align: center;
   }
-  .landing-wrapper .pricing .p-grid > .p-col-12 {
+  .landing-wrapper .pricing .grid > .col-12 {
     padding-top: 32px;
   }
   .landing-wrapper .media {
@@ -1230,7 +1231,7 @@
   .landing-wrapper .footer .appname {
     text-align: center;
   }
-  .landing-wrapper .footer .p-grid > .p-col-12 {
+  .landing-wrapper .footer .grid > .col-12 {
     padding-top: 32px;
   }
 }
@@ -1240,7 +1241,7 @@ html {
 }
 
 body {
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: "Montserrat";
   font-size: 14px;
   color: #212121;
   -webkit-font-smoothing: antialiased;
@@ -1251,13 +1252,15 @@ body {
   background-color: #f2f5fa;
 }
 body a {
-  text-decoration: none;
-  color: #0098ff;
+  font-weight: 500;
+  color:  #131318;
+  letter-spacing: 0;
+  line-height: 20px;
 }
 
 body a:active, body a:hover
 {
-  color: #D5665F;
+  color: #131318;
 }
 
 .layout-wrapper .layout-topbar {
@@ -1267,12 +1270,12 @@ body a:active, body a:hover
   width: 100%;
   z-index: 998;
   height: 60px;
-  background: #122e51;
+  background: #22212E;
   /* Old browsers */
-  background: -moz-linear-gradient(-206deg, #122e51 5%, #122e51 100%);
-  background: -webkit-linear-gradient(-206deg, #122e51 5%, #122e51 100%);
-  background: linear-gradient(-206deg, #122e51 5%, #122e51 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#122e51", endColorstr="#122e51",GradientType=1 );
+  background: -moz-linear-gradient(-206deg, #22212E 5%, #22212E 100%);
+  background: -webkit-linear-gradient(-206deg, #22212E 5%, #22212E 100%);
+  background: linear-gradient(-206deg, #22212E 5%, #22212E 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#22212E", endColorstr="#22212E",GradientType=1 );
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -1459,7 +1462,7 @@ body a:active, body a:hover
   font-weight: 700;
   font-size: 13px;
   line-height: 14px;
-  text-shadow: 0px 0px 2px #000000;
+  text-shadow: 0px 0px 2px #22212E;
 }
 .layout-wrapper .layout-megamenu .layout-megamenu-submenu .content-img .img-subheader {
   color: #ffffff;
@@ -1468,7 +1471,7 @@ body a:active, body a:hover
   line-height: 14px;
   position: absolute;
   top: 40px;
-  text-shadow: 0px 0px 2px #000000;
+  text-shadow: 0px 0px 2px #22212E;
 }
 .layout-wrapper .layout-megamenu .layout-megamenu-submenu .content-img .p-button {
   margin-top: 10px;
@@ -1519,7 +1522,7 @@ body a:active, body a:hover
   color: #00a6d2;
 }
 .layout-wrapper .layout-megamenu.layout-megamenu-dark {
-  background-color: #122e51;
+  background-color: #22212E;
   border: none;
 }
 .layout-wrapper .layout-megamenu.layout-megamenu-dark h6 {
@@ -1545,7 +1548,7 @@ body a:active, body a:hover
   color: #00bfe7;
 }
 .layout-wrapper .layout-megamenu.layout-megamenu-gradient {
-  background-image: linear-gradient(to top, #295b89, #122e51);
+  background-image: linear-gradient(to top, #295b89, #22212E);
   border: none;
 }
 .layout-wrapper .layout-megamenu.layout-megamenu-active {
@@ -1743,8 +1746,8 @@ body a:active, body a:hover
   border-bottom-color: transparent;
 }
 .layout-wrapper .layout-sidebar.layout-sidebar-dark {
-  background-color: #122e51;
-  border-right-color: #122e51;
+  background-color: #22212E;
+  border-right-color: #22212E;
 }
 .layout-wrapper .layout-sidebar.layout-sidebar-dark .user-profile {
   color: #ffffff;
@@ -1798,15 +1801,15 @@ body a:active, body a:hover
 }
 .layout-wrapper .layout-sidebar.layout-sidebar-gradient {
   border-right-color: transparent;
-  background-color: #122e51;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#122e51), to(#295b89));
-  background-image: -webkit-linear-gradient(to bottom, #122e51, #295b89);
-  background-image: -moz-linear-gradient(to bottom, #122e51, #295b89);
-  background-image: -ms-linear-gradient(to bottom, #122e51, #295b89);
-  background-image: -o-linear-gradient(to bottom, #122e51, #295b89);
-  background-image: linear-gradient(to bottom, #122e51, #295b89);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#122e51", endColorStr="#295b89");
-  border-right-color: #122e51;
+  background-color: #22212E;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#22212E), to(#295b89));
+  background-image: -webkit-linear-gradient(to bottom, #22212E, #295b89);
+  background-image: -moz-linear-gradient(to bottom, #22212E, #295b89);
+  background-image: -ms-linear-gradient(to bottom, #22212E, #295b89);
+  background-image: -o-linear-gradient(to bottom, #22212E, #295b89);
+  background-image: linear-gradient(to bottom, #22212E, #295b89);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#22212E", endColorStr="#295b89");
+  border-right-color: #22212E;
 }
 .layout-wrapper .layout-sidebar.layout-sidebar-gradient .layout-menu li > a {
   color: #ffffff;
@@ -2015,8 +2018,8 @@ body a:active, body a:hover
     border-right-color: #212121;
   }
   .layout-wrapper.layout-wrapper-slim-sidebar .layout-sidebar.layout-sidebar-dark .user-profile .usermenu {
-    background-color: #122e51;
-    border: #122e51;
+    background-color: #22212E;
+    border: #22212E;
     color: #ffffff;
   }
   .layout-wrapper.layout-wrapper-slim-sidebar .layout-sidebar.layout-sidebar-dark .user-profile .usermenu > li a {
@@ -2055,20 +2058,20 @@ body a:active, body a:hover
     border-top: 1px solid rgba(255, 255, 255, 0.075);
   }
   .layout-wrapper.layout-wrapper-slim-sidebar .layout-sidebar.layout-sidebar-dark .layout-menu > li > ul {
-    background-color: #122e51;
-    border-color: #122e51;
+    background-color: #22212E;
+    border-color: #22212E;
     color: #ffffff;
   }
   .layout-wrapper.layout-wrapper-slim-sidebar .layout-sidebar.layout-sidebar-gradient .user-profile .usermenu {
-    background-color: #122e51;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#122e51), to(#295b89));
-    background-image: -webkit-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: -moz-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: -ms-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: -o-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: linear-gradient(to bottom, #122e51, #295b89);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#122e51", endColorStr="#295b89");
-    border-color: #122e51;
+    background-color: #22212E;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#22212E), to(#295b89));
+    background-image: -webkit-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: -moz-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: -ms-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: -o-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: linear-gradient(to bottom, #22212E, #295b89);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#22212E", endColorStr="#295b89");
+    border-color: #22212E;
     color: #ffffff;
   }
   .layout-wrapper.layout-wrapper-slim-sidebar .layout-sidebar.layout-sidebar-gradient .user-profile .usermenu li a {
@@ -2107,15 +2110,15 @@ body a:active, body a:hover
     border-top: 1px solid rgba(255, 255, 255, 0.075);
   }
   .layout-wrapper.layout-wrapper-slim-sidebar .layout-sidebar.layout-sidebar-gradient .layout-menu > li > ul {
-    background-color: #122e51;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#122e51), to(#295b89));
-    background-image: -webkit-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: -moz-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: -ms-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: -o-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: linear-gradient(to bottom, #122e51, #295b89);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#122e51", endColorStr="#295b89");
-    border-color: #122e51;
+    background-color: #22212E;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#22212E), to(#295b89));
+    background-image: -webkit-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: -moz-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: -ms-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: -o-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: linear-gradient(to bottom, #22212E, #295b89);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#22212E", endColorStr="#295b89");
+    border-color: #22212E;
     color: #ffffff;
   }
   .layout-wrapper.layout-wrapper-slim-sidebar .layout-main {
@@ -2231,8 +2234,8 @@ body a:active, body a:hover
     color: #00a6d2;
   }
   .layout-wrapper.layout-wrapper-horizontal-sidebar .layout-sidebar.layout-sidebar-dark .layout-menu > li > ul {
-    background-color: #122e51;
-    border-color: #122e51;
+    background-color: #22212E;
+    border-color: #22212E;
     color: #ffffff;
   }
   .layout-wrapper.layout-wrapper-horizontal-sidebar .layout-sidebar.layout-sidebar-dark .layout-menu > li > ul li.active-menuitem > a {
@@ -2266,15 +2269,15 @@ body a:active, body a:hover
     color: #00a6d2;
   }
   .layout-wrapper.layout-wrapper-horizontal-sidebar .layout-sidebar.layout-sidebar-gradient .layout-menu > li > ul {
-    background-color: #122e51;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#122e51), to(#295b89));
-    background-image: -webkit-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: -moz-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: -ms-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: -o-linear-gradient(to bottom, #122e51, #295b89);
-    background-image: linear-gradient(to bottom, #122e51, #295b89);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#122e51", endColorStr="#295b89");
-    border-color: #122e51;
+    background-color: #22212E;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#22212E), to(#295b89));
+    background-image: -webkit-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: -moz-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: -ms-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: -o-linear-gradient(to bottom, #22212E, #295b89);
+    background-image: linear-gradient(to bottom, #22212E, #295b89);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#22212E", endColorStr="#295b89");
+    border-color: #22212E;
     color: #ffffff;
   }
   .layout-wrapper.layout-wrapper-horizontal-sidebar .layout-sidebar.layout-sidebar-gradient .layout-menu > li > ul li.active-menuitem > a {
@@ -2336,7 +2339,7 @@ body a:active, body a:hover
 }
 .usermenu.usermenu-overlay {
   position: fixed;
-  background: #122e51;
+  background: #22212E;
   width: 200px;
   z-index: 999;
   display: none;
@@ -2571,10 +2574,10 @@ body a:active, body a:hover
 #layout-right-sidebar .submenu-content.settings {
   padding: 0 11px;
 }
-#layout-right-sidebar .submenu-content.settings .p-grid {
+#layout-right-sidebar .submenu-content.settings .grid {
   padding: 20px 10px;
 }
-#layout-right-sidebar .submenu-content.settings .p-grid .p-col-6 {
+#layout-right-sidebar .submenu-content.settings .grid .col-6 {
   margin: 10px;
 }
 #layout-right-sidebar .submenu-content ul {
@@ -2762,7 +2765,7 @@ body a:active, body a:hover
   }
 }
 .layout-footer {
-  background-color: #122e51;
+  background-color: #22212E;
   padding: 20px 25px;
 }
 .layout-footer h3 {
@@ -3648,7 +3651,7 @@ mark {
   background: #FFF8E1;
   padding: 0.25rem 0.4rem;
   border-radius: 0;
-  font-family: monospace;
+  font-family: 'Montserrat';
 }
 
 blockquote {
@@ -3671,4 +3674,32 @@ p:last-child {
   margin-bottom: 0;
 }
 
+/* Commenting because of breaking fonts */
+/*pre[class*=language-]:before, pre[class*=language-]:after {
+  display: none !important;
+}
+pre[class*=language-] code {
+  border-left: 6px solid var(--surface-border) !important;
+  box-shadow: none !important;
+  background: var(--surface-ground) !important;
+  margin: 1em 0;
+  color: var(--text-color);
+  font-size: 14px;
+}
+
+i:not([class~=pi]) {
+  background-color: transparent;
+  color: #2196f3;
+  font-family: Monaco, courier, monospace;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0 4px;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin: 0 2px;
+  display: inline-flex;
+}*/
+
 /* Add your customizations of layout here */
+

@@ -535,7 +535,7 @@ namespace Ginger.Run
 
                         Task t = new Task(() =>
                         {
-                        if (!doContinueRun)
+                            if (!doContinueRun)
                         {
                             GR.Executor.RunRunner();
                         }

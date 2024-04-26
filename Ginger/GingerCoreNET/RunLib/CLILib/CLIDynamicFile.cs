@@ -213,6 +213,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     LoadGlobalVariableValues(exeConfiguration);
                 }
+                RunSetConfig runsetConfig = DynamicExecutionManager.LoadRunsetFromExecutionConfig(exeConfiguration);
+
                 if (runset.EnvironmentName != null || runset.EnvironmentID != null)
                 {
                     ProjEnvironment env = DynamicExecutionManager.FindItemByIDAndName<ProjEnvironment>(
@@ -228,7 +230,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     cliHelper.RunAnalyzer = (bool)runset.RunAnalyzer;
                 }
-                RunSetConfig runsetConfig = DynamicExecutionManager.LoadRunsetFromExecutionConfig(exeConfiguration);
                 runsetExecutor.RunSetConfig = runsetConfig;
             }
             else

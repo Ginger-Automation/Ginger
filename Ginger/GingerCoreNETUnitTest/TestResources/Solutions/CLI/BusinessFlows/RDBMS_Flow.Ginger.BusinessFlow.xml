@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="d83ba6ac-29a3-4664-8d2a-17a6164e0f1e" ItemType="BusinessFlow" CreatedBy="manaska" Created="202404211548" GingerVersion="3.6.0.0" Version="4" LastUpdateBy="manaska" LastUpdate="202404211552" />
+<BusinessFlow Guid="d83ba6ac-29a3-4664-8d2a-17a6164e0f1e" Name="RDBMS_Flow" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="577e3ea1-5bd8-4971-92de-4a552b81b600" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="app1" Type="Regular">
+<Acts>
+<ActDBValidation Active="True" AppName="app1" DBName="sonar" DBValidationType="RecordCount" Description="Database Action" Guid="c374376b-0dd6-42f9-8cea-b056ae718c2f" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="1868b3d0-dd66-4bc0-a5b0-b86f422b013d" Param="SQL" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{EnvParam App=app1 Param=MSSQL_Table}" />
+<ActInputValue Guid="32d717c7-cb59-4a3d-9eda-6e2a6780334b" Param="QueryTypeRadioButton" ParentGuid="00000000-0000-0000-0000-000000000000" Value="FreeSQL" />
+<ActInputValue Guid="12671a06-d72f-43ad-8061-953af5ebf72e" Param="QueryFile" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="03b3e57a-e4b0-4fd1-8bb3-3265116b4bfb" Param="CommitDB" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="a2da61bc-d3ef-4fe9-9b23-08fe70bb9c00" Param="InsertJson" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="abf72689-3240-4f8a-98bc-daf3fcb1c91b" Param="PrimaryKey" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="66b87c5b-27b6-45d1-b7f0-7ad0608bcaa5" Param="PartitionKey" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+</ActDBValidation>
+</Acts>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="7d26f9b2-f717-4d5b-a40c-f6046383ee3a" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="577e3ea1-5bd8-4971-92de-4a552b81b600" ActivityName="Activity 1" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="beb47b56-d226-49e8-b99c-62a27f53a034" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="app1" Guid="f0d50906-e495-4795-b7a5-50f1a12f2042" ParentGuid="e514fcc7-9e32-40c4-badf-845930479277" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>

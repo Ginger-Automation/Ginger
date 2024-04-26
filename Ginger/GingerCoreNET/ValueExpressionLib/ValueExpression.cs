@@ -1358,14 +1358,20 @@ namespace GingerCore
 
             return Expr;
         }
+        public static void GetEnvAppFromEnvURL(string EnvValExp , ref string AppName )
+        {
+
+            AppName = EnvValExp.Replace("\r\n", "vbCrLf");
+            AppName = AppName.Substring(1, AppName.Length - 2);
+            AppName = AppName.Replace("EnvURL App=", "");
+        }
+
 
         private void ReplaceEnvURLWithValue(string p, string[] a)
         {
             string AppName = null;
             string URL = null;
-            AppName = p.Replace("\r\n", "vbCrLf");
-            AppName = AppName.Substring(1, AppName.Length - 2);
-            AppName = AppName.Replace("EnvURL App=", "");
+            GetEnvAppFromEnvURL(p, ref AppName);
 
             EnvApplication app = null;
             if (Env != null)
@@ -1385,20 +1391,25 @@ namespace GingerCore
             }
         }
 
-        private void ReplaceEnvParamWithValue(string p, string[] a)
+        public static void GetEnvAppAndParam(string EnvValueExp , ref string AppName , ref string GlobalParamName )
         {
-            string AppName = null;
-            string GlobalParamName = null;
-
-            p = p.Replace("\r\n", "vbCrLf");
+            EnvValueExp = EnvValueExp.Replace("\r\n", "vbCrLf");
             string appStr = " App=";
             string paramStr = " Param=";
-            int indxOfApp = p.IndexOf(appStr);
-            int indexOfParam = p.IndexOf(paramStr);
-            AppName = p.Substring(indxOfApp + appStr.Length, indexOfParam - (indxOfApp + appStr.Length));
-            GlobalParamName = p.Substring(indexOfParam + paramStr.Length, (p.Length - 1) - (indexOfParam + paramStr.Length));
+            int indxOfApp = EnvValueExp.IndexOf(appStr);
+            int indexOfParam = EnvValueExp.IndexOf(paramStr);
+            AppName = EnvValueExp.Substring(indxOfApp + appStr.Length, indexOfParam - (indxOfApp + appStr.Length));
+            GlobalParamName = EnvValueExp.Substring(indexOfParam + paramStr.Length, (EnvValueExp.Length - 1) - (indexOfParam + paramStr.Length));
+        }
+
+        private void ReplaceEnvParamWithValue(string p, string[] a)
+        {
 
             string ParamValue = null;
+            string AppName = string.Empty, GlobalParamName = string.Empty;
+
+            GetEnvAppAndParam(p , ref AppName , ref GlobalParamName);
+
 
             EnvApplication app = null;
             if (Env != null)

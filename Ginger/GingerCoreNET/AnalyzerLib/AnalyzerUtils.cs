@@ -91,8 +91,11 @@ namespace Ginger.AnalyzerLib
                 {
                     if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
                     {
+
                         checkedGuidList.Add(BF.Guid);
                         BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(BF.Guid);
+                        actualBf.Environment = GR.SpecificEnvironmentName ?? WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
+
                         if (actualBf != null)
                         {
                             RunBusinessFlowAnalyzer(actualBf, solution, issuesList, AnalyzeBusinessFlow.Check.All.ExcludeFlags(AnalyzeBusinessFlow.Check.MissingMandatoryInputValues));

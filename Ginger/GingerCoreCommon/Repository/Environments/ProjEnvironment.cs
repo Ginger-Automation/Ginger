@@ -157,6 +157,7 @@ namespace GingerCore.Environments
                 envApplication.Platform = SelectedApplication.Platform;
                 envApplication.Active = true;
                 this.Applications.Add(envApplication);
+                OnPropertyChanged(nameof(Applications));
             }
         }
 

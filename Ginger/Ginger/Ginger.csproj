@@ -14,16 +14,12 @@
   <ItemGroup>
     <Compile Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <Compile Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <Compile Remove="UserControlsLib\NewFolder\**" />
     <EmbeddedResource Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <EmbeddedResource Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <EmbeddedResource Remove="UserControlsLib\NewFolder\**" />
     <None Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <None Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <None Remove="UserControlsLib\NewFolder\**" />
     <Page Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <Page Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <Page Remove="UserControlsLib\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -690,7 +686,7 @@
     <PackageReference Include="EPPlus" Version="6.0.4" />
     <PackageReference Include="FontAwesome5" Version="2.1.11" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.4" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.5" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />

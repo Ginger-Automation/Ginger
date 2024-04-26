@@ -89,6 +89,7 @@ namespace GingerCore.Drivers
         private const string CHROME_DRIVER_NAME = "chromedriver";
         private const string EDGE_DRIVER_NAME = "msedgedriver";
         private const string FIREFOX_DRIVER_NAME = "geckodriver";
+        private const string TRANSLATOR_FOR_CASE_INSENSITIVE_MATCH = "translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')";
 
         private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
 
@@ -1416,6 +1417,9 @@ namespace GingerCore.Drivers
                     // TODO: save it in the solution docs... 
                     string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
                     BMPClient.SaveHAR(filename);
+
+                    Act.AddArtifactToAction(Path.GetFileName(filename), act, filename);                    
+
                     act.ExInfo += "Action HAR file saved at: " + filename;
                 }
             }
@@ -3064,7 +3068,7 @@ namespace GingerCore.Drivers
                     return;
                 }
 
-                SelectElement se = new SelectElement(e);
+                SelectElement se = new(e);
                 switch (dd.ActDropDownListAction)
                 {
                     case ActDropDownList.eActDropDownListAction.SetSelectedValueByValue:
@@ -3113,192 +3117,72 @@ namespace GingerCore.Drivers
 
         private string GetKeyName(string skey)
         {
-            switch (skey)
+            return skey switch
             {
-                case "Keys.Alt":
-                    return Keys.Alt;
-                case "Keys.ArrowDown":
-                    return Keys.ArrowDown;
-                case "Keys.ArrowLeft":
-                    return Keys.ArrowLeft;
-                case "Keys.ArrowRight":
-                    return Keys.ArrowRight;
-                case "Keys.ArrowUp":
-                    return Keys.ArrowUp;
-                case "Keys.Backspace":
-                    return Keys.Backspace;
-
-                case "Keys.Cancel":
-                    return Keys.Cancel;
-
-                case "Keys.Clear":
-                    return Keys.Clear;
-
-                case "Keys.Command":
-                    return Keys.Command;
-
-                case "Keys.Control":
-                    return Keys.Control;
-
-                case "Keys.Decimal":
-                    return Keys.Decimal;
-
-                case "Keys.Delete":
-                    return Keys.Delete;
-
-                case "Keys.Divide":
-                    return Keys.Divide;
-
-                case "Keys.Down":
-                    return Keys.Down;
-
-                case "Keys.End":
-                    return Keys.End;
-
-                case "Keys.Enter":
-                    return Keys.Enter;
-
-                case "Keys.Equal":
-                    return Keys.Equal;
-
-                case "Keys.Escape":
-                    return Keys.Escape;
-
-                case "Keys.F1":
-                    return Keys.F1;
-
-                case "Keys.F10":
-                    return Keys.F10;
-
-                case "Keys.F11":
-                    return Keys.F11;
-
-                case "Keys.F12":
-                    return Keys.F12;
-
-                case "Keys.F2":
-                    return Keys.F2;
-
-                case "Keys.F3":
-                    return Keys.F3;
-
-                case "Keys.F4":
-                    return Keys.F4;
-
-                case "Keys.F5":
-                    return Keys.F5;
-
-                case "Keys.F6":
-                    return Keys.F6;
-
-                case "Keys.F7":
-                    return Keys.F7;
-
-                case "Keys.F8":
-                    return Keys.F8;
-
-                case "Keys.F9":
-                    return Keys.F9;
-
-                case "Keys.Help":
-                    return Keys.Help;
-
-                case "Keys.Home":
-                    return Keys.Home;
-
-                case "Keys.Insert":
-                    return Keys.Insert;
-
-                case "Keys.Left":
-                    return Keys.Left;
-
-                case "Keys.LeftAlt":
-                    return Keys.LeftAlt;
-
-                case "Keys.LeftControl":
-                    return Keys.LeftControl;
-
-                case "Keys.LeftShift":
-                    return Keys.LeftShift;
-
-                case "Keys.Meta":
-                    return Keys.Meta;
-
-                case "Keys.Multiply":
-                    return Keys.Multiply;
-
-                case "Keys.Null":
-                    return Keys.Null;
-
-                case "Keys.NumberPad0":
-                    return Keys.NumberPad0;
-
-                case "Keys.NumberPad1":
-                    return Keys.NumberPad1;
-
-                case "Keys.NumberPad2":
-                    return Keys.NumberPad2;
-
-                case "Keys.NumberPad3":
-                    return Keys.NumberPad3;
-
-                case "Keys.NumberPad4":
-                    return Keys.NumberPad4;
-
-                case "Keys.NumberPad5":
-                    return Keys.NumberPad5;
-
-                case "Keys.NumberPad6":
-                    return Keys.NumberPad6;
-
-                case "Keys.NumberPad7":
-                    return Keys.NumberPad7;
-
-                case "Keys.NumberPad8":
-                    return Keys.NumberPad8;
-
-                case "Keys.NumberPad9":
-                    return Keys.NumberPad9;
-
-                case "Keys.PageDown":
-                    return Keys.PageDown;
-
-                case "Keys.PageUp":
-                    return Keys.PageUp;
-
-                case "Keys.Pause":
-                    return Keys.Pause;
-
-                case "Keys.Return":
-                    return Keys.Return;
-
-                case "Keys.Right":
-                    return Keys.Right;
-
-                case "Keys.Semicolon":
-                    return Keys.Semicolon;
-
-                case "Keys.Separator":
-                    return Keys.Separator;
-
-                case "Keys.Shift":
-                    return Keys.Shift;
-
-                case "Keys.Space":
-                    return Keys.Space;
-
-                case "Keys.Subtract":
-                    return Keys.Subtract;
-
-                case "Keys.Tab":
-                    return Keys.Tab;
-
-                case "Keys.Up":
-                    return Keys.Up;
-                default:
-                    return skey;
-
-            }
+                "Keys.Alt" => Keys.Alt,
+                "Keys.ArrowDown" => Keys.ArrowDown,
+                "Keys.ArrowLeft" => Keys.ArrowLeft,
+                "Keys.ArrowRight" => Keys.ArrowRight,
+                "Keys.ArrowUp" => Keys.ArrowUp,
+                "Keys.Backspace" => Keys.Backspace,
+                "Keys.Cancel" => Keys.Cancel,
+                "Keys.Clear" => Keys.Clear,
+                "Keys.Command" => Keys.Command,
+                "Keys.Control" => Keys.Control,
+                "Keys.Decimal" => Keys.Decimal,
+                "Keys.Delete" => Keys.Delete,
+                "Keys.Divide" => Keys.Divide,
+                "Keys.Down" => Keys.Down,
+                "Keys.End" => Keys.End,
+                "Keys.Enter" => Keys.Enter,
+                "Keys.Equal" => Keys.Equal,
+                "Keys.Escape" => Keys.Escape,
+                "Keys.F1" => Keys.F1,
+                "Keys.F10" => Keys.F10,
+                "Keys.F11" => Keys.F11,
+                "Keys.F12" => Keys.F12,
+                "Keys.F2" => Keys.F2,
+                "Keys.F3" => Keys.F3,
+                "Keys.F4" => Keys.F4,
+                "Keys.F5" => Keys.F5,
+                "Keys.F6" => Keys.F6,
+                "Keys.F7" => Keys.F7,
+                "Keys.F8" => Keys.F8,
+                "Keys.F9" => Keys.F9,
+                "Keys.Help" => Keys.Help,
+                "Keys.Home" => Keys.Home,
+                "Keys.Insert" => Keys.Insert,
+                "Keys.Left" => Keys.Left,
+                "Keys.LeftAlt" => Keys.LeftAlt,
+                "Keys.LeftControl" => Keys.LeftControl,
+                "Keys.LeftShift" => Keys.LeftShift,
+                "Keys.Meta" => Keys.Meta,
+                "Keys.Multiply" => Keys.Multiply,
+                "Keys.Null" => Keys.Null,
+                "Keys.NumberPad0" => Keys.NumberPad0,
+                "Keys.NumberPad1" => Keys.NumberPad1,
+                "Keys.NumberPad2" => Keys.NumberPad2,
+                "Keys.NumberPad3" => Keys.NumberPad3,
+                "Keys.NumberPad4" => Keys.NumberPad4,
+                "Keys.NumberPad5" => Keys.NumberPad5,
+                "Keys.NumberPad6" => Keys.NumberPad6,
+                "Keys.NumberPad7" => Keys.NumberPad7,
+                "Keys.NumberPad8" => Keys.NumberPad8,
+                "Keys.NumberPad9" => Keys.NumberPad9,
+                "Keys.PageDown" => Keys.PageDown,
+                "Keys.PageUp" => Keys.PageUp,
+                "Keys.Pause" => Keys.Pause,
+                "Keys.Return" => Keys.Return,
+                "Keys.Right" => Keys.Right,
+                "Keys.Semicolon" => Keys.Semicolon,
+                "Keys.Separator" => Keys.Separator,
+                "Keys.Shift" => Keys.Shift,
+                "Keys.Space" => Keys.Space,
+                "Keys.Subtract" => Keys.Subtract,
+                "Keys.Tab" => Keys.Tab,
+                "Keys.Up" => Keys.Up,
+                _ => skey,
+            };
         }
         private void ActRadioButtonHandler(ActRadioButton actRadioButton)
         {
@@ -3374,51 +3258,43 @@ namespace GingerCore.Drivers
             IWebElement e = LocateElement(actButton);
             if (e == null)
             {
-                actButton.Error = "Error: Element not found - " + actButton.LocateBy + " " + actButton.LocateValue;
+                actButton.Error = $"Error: Element not found - {actButton.LocateBy} {actButton.LocateValue}";
                 return;
             }
-            if (actButton.ButtonAction == ActButton.eButtonAction.GetValue)
+
+            switch (actButton.ButtonAction)
             {
-                actButton.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("Value"));
-                return;
-            }
-            else if (actButton.ButtonAction == ActButton.eButtonAction.IsDisabled)
-            {
-                actButton.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("Disabled"));
-                return;
-            }
-            else if (actButton.ButtonAction == ActButton.eButtonAction.GetFont)
-            {
-                actButton.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("font"));
-                return;
-            }
-            else if (actButton.ButtonAction == ActButton.eButtonAction.IsDisplayed)
-            {
-                actButton.AddOrUpdateReturnParamActual("Actual", e.Displayed.ToString());
-                return;
-            }
-            else if (actButton.ButtonAction == ActButton.eButtonAction.GetStyle)
-            {
-                try
-                {
-                    actButton.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("style"));
-                }
-                catch
-                {
-                    actButton.AddOrUpdateReturnParamActual("Actual", "no such attribute");
-                }
-            }
-            else if (actButton.ButtonAction == ActButton.eButtonAction.GetHeight)
-            {
-                actButton.AddOrUpdateReturnParamActual("Actual", e.Size.Height.ToString());
-            }
-            else if (actButton.ButtonAction == ActButton.eButtonAction.GetWidth)
-            {
-                actButton.AddOrUpdateReturnParamActual("Actual", e.Size.Width.ToString());
-            }
-            else
-            {
-                ClickButton(actButton);
+                case ActButton.eButtonAction.GetValue:
+                    actButton.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("Value"));
+                    break;
+                case ActButton.eButtonAction.IsDisabled:
+                    actButton.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("Disabled"));
+                    break;
+                case ActButton.eButtonAction.GetFont:
+                    actButton.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("font"));
+                    break;
+                case ActButton.eButtonAction.IsDisplayed:
+                    actButton.AddOrUpdateReturnParamActual("Actual", e.Displayed.ToString());
+                    break;
+                case ActButton.eButtonAction.GetStyle:
+                    try
+                    {
+                        actButton.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("style"));
+                    }
+                    catch
+                    {
+                        actButton.AddOrUpdateReturnParamActual("Actual", "no such attribute");
+                    }
+                    break;
+                case ActButton.eButtonAction.GetHeight:
+                    actButton.AddOrUpdateReturnParamActual("Actual", e.Size.Height.ToString());
+                    break;
+                case ActButton.eButtonAction.GetWidth:
+                    actButton.AddOrUpdateReturnParamActual("Actual", e.Size.Width.ToString());
+                    break;
+                default:
+                    ClickButton(actButton);
+                    break;
             }
         }
 
@@ -3763,11 +3639,10 @@ namespace GingerCore.Drivers
                 locateValue = ValidationElementLocateValue;
             }
 
-            if (act is ActUIElement && (ValidationElementLocateBy == null || ValidationElementLocateValue == null))
+            if (act is ActUIElement actUIElement && (ValidationElementLocateBy == null || ValidationElementLocateValue == null))
             {
-                ActUIElement aev = (ActUIElement)act;
-                Enum.TryParse<eLocateBy>(aev.ElementLocateBy.ToString(), true, out locateBy);
-                locateValue = aev.ElementLocateValueForDriver;
+                Enum.TryParse<eLocateBy>(actUIElement.ElementLocateBy.ToString(), true, out locateBy);
+                locateValue = actUIElement.ElementLocateValueForDriver;
             }
 
             if (locateBy == eLocateBy.POMElement)
@@ -3892,12 +3767,12 @@ namespace GingerCore.Drivers
                 {
                     IWebElement targetElement = null;
 
-                    foreach (ElementLocator FLocator in currentPOMElementInfo.FriendlyLocators.Where(x => x.Active == true).ToList())
+                    foreach (ElementLocator FLocator in currentPOMElementInfo.FriendlyLocators.Where(x => x.Active))
                     {
                         if (!FLocator.IsAutoLearned)
                         {
                             ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
-                            ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                            ValueExpression VE = new(this.Environment, this.BusinessFlow);
                             FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
                         }
 
@@ -3998,27 +3873,40 @@ namespace GingerCore.Drivers
                 try
                 {
                     Protractor.NgWebDriver ngDriver = null;
-                    if (locator.LocateBy == eLocateBy.ByngRepeat || locator.LocateBy == eLocateBy.ByngSelectedOption || locator.LocateBy == eLocateBy.ByngBind || locator.LocateBy == eLocateBy.ByngModel)
+
+                    // Check if the locator requires interaction with Angular elements
+                    if (locator.LocateBy == eLocateBy.ByngRepeat ||
+                        locator.LocateBy == eLocateBy.ByngSelectedOption ||
+                        locator.LocateBy == eLocateBy.ByngBind ||
+                        locator.LocateBy == eLocateBy.ByngModel)
                     {
+                        // Initialize NgWebDriver and wait for Angular
                         ngDriver = new Protractor.NgWebDriver(Driver);
                         ngDriver.WaitForAngular();
                     }
-                    if (locator.LocateBy == eLocateBy.ByngRepeat && ngDriver != null)
+
+                    // Perform element location based on NgBy types
+                    if (ngDriver != null)
                     {
-                        elem = ngDriver.FindElement(Protractor.NgBy.Repeater(locator.LocateValue));
+                        switch (locator.LocateBy)
+                        {
+                            case eLocateBy.ByngRepeat:
+                                elem = ngDriver.FindElement(Protractor.NgBy.Repeater(locator.LocateValue));
+                                break;
+                            case eLocateBy.ByngSelectedOption:
+                                elem = ngDriver.FindElement(Protractor.NgBy.SelectedOption(locator.LocateValue));
+                                break;
+                            case eLocateBy.ByngBind:
+                                elem = ngDriver.FindElement(Protractor.NgBy.Binding(locator.LocateValue));
+                                break;
+                            case eLocateBy.ByngModel:
+                                elem = ngDriver.FindElement(Protractor.NgBy.Model(locator.LocateValue));
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                    if (locator.LocateBy == eLocateBy.ByngSelectedOption && ngDriver != null)
-                    {
-                        elem = ngDriver.FindElement(Protractor.NgBy.SelectedOption(locator.LocateValue));
-                    }
-                    if (locator.LocateBy == eLocateBy.ByngBind && ngDriver != null)
-                    {
-                        elem = ngDriver.FindElement(Protractor.NgBy.Binding(locator.LocateValue));
-                    }
-                    if (locator.LocateBy == eLocateBy.ByngModel && ngDriver != null)
-                    {
-                        elem = ngDriver.FindElement(Protractor.NgBy.Model(locator.LocateValue));
-                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -4039,223 +3927,31 @@ namespace GingerCore.Drivers
                 switch (locator.LocateBy)
                 {
                     case eLocateBy.ByID:
-                        if (locator.LocateValue.IndexOf("{RE:") >= 0)
-                        {
-                            elem = FindElementReg(locator.LocateBy, locator.LocateValue);
-                        }
-                        else
-                        {
-                            if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                            {
-                                By by = By.Id(locator.LocateValue) as By;
-                                elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-                            }
-                            elem ??= searchContext.FindElement(By.Id(locator.LocateValue));
-                        }
-                        break;
-
                     case eLocateBy.ByName:
-                        if (locator.LocateValue.IndexOf("{RE:") >= 0)
-                        {
-                            elem = FindElementReg(locator.LocateBy, locator.LocateValue);
-                        }
-                        else
-                        {
-                            if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                            {
-                                By by = By.Name(locator.LocateValue) as By;
-                                elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-                            }
-                            elem ??= searchContext.FindElement(By.Name(locator.LocateValue));
-                        }
+                    case eLocateBy.ByValue:
+                    case eLocateBy.ByAutomationID:
+                    case eLocateBy.ByCSS:
+                    case eLocateBy.ByClassName:
+                    case eLocateBy.ByTagName:
+                        elem = LocateElementBySingleProperty(locator, friendlyLocatorElements, searchContext);
                         break;
 
                     case eLocateBy.ByHref:
-                        string pattern = @".+:\/\/[^\/]+";
-                        string sel = "//a[contains(@href, '@RREEPP')]";
-                        sel = sel.Replace("@RREEPP", new Regex(pattern).Replace(locator.LocateValue, ""));
-                        try
-                        {
-                            if (locator.LocateValue.IndexOf("{RE:") >= 0)
-                            {
-                                elem = FindElementReg(locator.LocateBy, locator.LocateValue);
-                            }
-                            else
-                            {
-                                if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                                {
-                                    By by = By.XPath(sel) as By;
-                                    elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-                                }
-
-                                if (searchContext is ShadowRoot)
-                                {
-                                    elem ??= searchContext.FindElement(By.CssSelector($"a[href='{sel}']"));
-                                }
-                                else
-                                {
-                                    elem ??= searchContext.FindElement(By.XPath(sel));
-                                }
-
-                            }
-
-                        }
-                        catch (NoSuchElementException ex)
-                        {
-                            sel = "//a[href='@']";
-                            sel = sel.Replace("@", locator.LocateValue);
-                            elem = searchContext.FindElement(By.XPath(sel));
-                            locator.StatusError = ex.Message;
-                        }
+                        elem = LocateElementByHref(locator, friendlyLocatorElements, searchContext, shadowDOM);
                         break;
 
                     case eLocateBy.ByLinkText:
-                        locator.LocateValue = locator.LocateValue.Trim();
-                        try
-                        {
-                            if (locator.LocateValue.IndexOf("{RE:") >= 0)
-                            {
-                                elem = FindElementReg(locator.LocateBy, locator.LocateValue);
-                            }
-                            else
-                            {
-                                if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                                {
-                                    By by = By.LinkText(locator.LocateValue) as By;
-                                    elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-                                }
-                                elem ??= searchContext.FindElement(By.LinkText(locator.LocateValue));
-                                if (elem == null)
-                                {
-                                    if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                                    {
-                                        By by = By.XPath("//*[text()='" + locator.LocateValue + "']") as By;
-                                        elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-                                    }
-                                    elem ??= searchContext.FindElement(By.XPath("//*[text()='" + locator.LocateValue + "']"));
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            try
-                            {
-                                if (ex.GetType() == typeof(NoSuchElementException))
-                                {
-                                    elem = searchContext.FindElement(By.XPath("//*[text()='" + locator.LocateValue + "']"));
-
-                                }
-                            }
-                            catch (Exception ex2)
-                            {
-                                locator.StatusError = ex2.Message;
-                            }
-                        }
+                        elem = LocateElementByLinkText(locator, friendlyLocatorElements, searchContext);
                         break;
 
                     case eLocateBy.ByXPath:
                     case eLocateBy.ByRelXPath:
-                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                        {
-                            By by = By.XPath(locator.LocateValue) as By;
-                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-                        }
-                        if (searchContext is ShadowRoot)
-                        {
-                            if (locator.LocateBy.Equals(eLocateBy.ByXPath))
-                            {
-
-                                string cssSelector = shadowDOM.ConvertXPathToCssSelector(locator.LocateValue);
-                                elem ??= searchContext.FindElement(By.CssSelector(cssSelector));
-                            }
-                        }
-                        else
-                        {
-                            elem ??= searchContext.FindElement(By.XPath(locator.LocateValue));
-                        }
-
-                        break;
-
-                    case eLocateBy.ByValue:
-                        if (locator.LocateValue.IndexOf("{RE:") >= 0)
-                        {
-                            elem = FindElementReg(locator.LocateBy, locator.LocateValue);
-                        }
-                        else
-                        {
-                            if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                            {
-                                By by = By.XPath("//*[@value=\"" + locator.LocateValue + "\"]") as By;
-                                elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-                            }
-                            if (searchContext is ShadowRoot)
-                            {
-                                elem ??= searchContext.FindElement(By.CssSelector($"[value='{locator.LocateValue}']"));
-                            }
-                            else
-                            {
-                                elem ??= searchContext.FindElement(By.XPath("//*[@value=\"" + locator.LocateValue + "\"]"));
-                            }
-
-                        }
-                        break;
-                    case eLocateBy.ByAutomationID:
-                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                        {
-                            By by = By.XPath("//*[@data-automation-id=\"" + locator.LocateValue + "\"]") as By;
-                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-                        }
-
-                        if (searchContext is ShadowRoot)
-                        {
-                            elem ??= searchContext.FindElement(By.CssSelector($"[data-automation-id={locator.LocateValue}]"));
-                        }
-                        else
-                        {
-                            elem ??= searchContext.FindElement(By.XPath("//*[@data-automation-id=\"" + locator.LocateValue + "\"]"));
-                        }
-                        break;
-                    case eLocateBy.ByCSS:
-                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                        {
-                            By by = By.CssSelector(locator.LocateValue) as By;
-                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-                        }
-                        elem ??= searchContext.FindElement(By.CssSelector(locator.LocateValue));
-                        break;
-
-                    case eLocateBy.ByClassName:
-                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                        {
-                            By by = By.ClassName(locator.LocateValue) as By;
-                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-                        }
-
-                        elem ??= searchContext.FindElement(By.ClassName(locator.LocateValue));
+                        elem = LocateElementByXPath(locator, friendlyLocatorElements, searchContext, shadowDOM);
                         break;
 
                     case eLocateBy.ByMulitpleProperties:
                         elem = GetElementByMutlipleAttributes(locator.LocateValue, searchContext);
                         break;
-
-                    case eLocateBy.ByTagName:
-                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
-                        {
-                            By by = By.TagName(locator.LocateValue) as By;
-                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
-
-                        }
-                        if (searchContext is ShadowRoot)
-                        {
-                            elem = searchContext.FindElement(By.CssSelector(locator.LocateValue));
-                        }
-
-                        else
-                        {
-                            elem = searchContext.FindElement(By.TagName(locator.LocateValue));
-                        }
-                        break;
-
                 }
             }
             catch (System.Net.Sockets.SocketException ex)
@@ -4294,8 +3990,192 @@ namespace GingerCore.Drivers
 
             return elem;
         }
+        private IWebElement LocateElementBySingleProperty(ElementLocator locator, IList<FriendlyLocatorElement> friendlyLocatorElements, ISearchContext searchContext)
+        {
+            IWebElement elem = null;
 
-        private IWebElement GetElementByFriendlyLocatorlist(List<FriendlyLocatorElement> friendlyLocatorElements, By by)
+            // Check for regular or regex-based search
+            if (locator.LocateValue.Contains("{RE:"))
+            {
+                elem = FindElementReg(locator.LocateBy, locator.LocateValue);
+            }
+            else
+            {
+                // Create appropriate By locator
+                By by = null;
+                switch (locator.LocateBy)
+                {
+                    case eLocateBy.ByID:
+                        by = By.Id(locator.LocateValue);
+                        break;
+                    case eLocateBy.ByName:
+                        by = By.Name(locator.LocateValue);
+                        break;
+                    case eLocateBy.ByValue:
+                        by = By.XPath("//*[@value=\"" + locator.LocateValue + "\"]");
+                        break;
+                    case eLocateBy.ByAutomationID:
+                        by = By.XPath("//*[@data-automation-id=\"" + locator.LocateValue + "\"]");
+                        break;
+                    case eLocateBy.ByCSS:
+                        by = By.CssSelector(locator.LocateValue);
+                        break;
+                    case eLocateBy.ByClassName:
+                        by = By.ClassName(locator.LocateValue);
+                        break;
+                    case eLocateBy.ByTagName:
+                        by = By.TagName(locator.LocateValue);
+                        break;
+                }
+
+                // Use friendly locator if enabled and available
+                if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                {
+                    elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                }
+                else
+                {
+                    // Find element using the By locator
+                    elem = searchContext.FindElement(by);
+                }
+            }
+
+            return elem;
+        }
+
+        private IWebElement LocateElementByHref(ElementLocator locator, IList<FriendlyLocatorElement> friendlyLocatorElements, ISearchContext searchContext, ShadowDOM shadowDOM)
+        {
+            IWebElement elem = null;
+
+            string pattern = @".+:\/\/[^\/]+";
+            string sel = "//a[contains(@href, '@RREEPP')]";
+            sel = sel.Replace("@RREEPP", new Regex(pattern).Replace(locator.LocateValue, ""));
+            try
+            {
+                if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                {
+                    elem = FindElementReg(locator.LocateBy, locator.LocateValue);
+                }
+                else
+                {
+                    // Use friendly locator if enabled and available
+                    if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                    {
+                        By by = By.XPath(sel);
+                        elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                    }
+
+                    // Handling for Shadow DOM elements
+                    if (searchContext is ShadowRoot)
+                    {
+                        elem ??= searchContext.FindElement(By.CssSelector($"a[href='{sel}']"));
+                    }
+                    else
+                    {
+                        elem ??= searchContext.FindElement(By.XPath(sel));
+                    }
+                }
+            }
+            catch (NoSuchElementException ex)
+            {
+                sel = "//a[href='@']";
+                sel = sel.Replace("@", locator.LocateValue);
+                elem = searchContext.FindElement(By.XPath(sel));
+                locator.StatusError = ex.Message;
+            }
+
+            return elem;
+        }
+
+        private IWebElement LocateElementByLinkText(ElementLocator locator, IList<FriendlyLocatorElement> friendlyLocatorElements, ISearchContext searchContext)
+        {
+            IWebElement elem = null;
+
+            locator.LocateValue = locator.LocateValue.Trim();
+            try
+            {
+                if (locator.LocateValue.Contains("{RE:"))
+                {
+                    elem = FindElementReg(locator.LocateBy, locator.LocateValue);
+                }
+                else
+                {
+                    // Use friendly locator if enabled and available
+                    if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                    {
+                        By by = By.LinkText(locator.LocateValue);
+                        elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                    }
+                    elem ??= searchContext.FindElement(By.LinkText(locator.LocateValue));
+
+                    if (elem == null)
+                    {
+                        // Try finding by text content if not found by link text
+                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                        {
+                            By by = By.XPath("//*[text()='" + locator.LocateValue + "']");
+                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                        }
+                        elem ??= searchContext.FindElement(By.XPath("//*[text()='" + locator.LocateValue + "']"));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    if (ex.GetType() == typeof(NoSuchElementException))
+                    {
+                        elem = searchContext.FindElement(By.XPath("//*[text()='" + locator.LocateValue + "']"));
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    locator.StatusError = ex2.Message;
+                }
+            }
+
+            return elem;
+        }
+
+        private IWebElement LocateElementByXPath(ElementLocator locator, IList<FriendlyLocatorElement> friendlyLocatorElements, ISearchContext searchContext, ShadowDOM shadowDOM)
+        {
+            IWebElement elem = null;
+
+            string _locatorValue = locator.LocateValue;
+
+            // Adjust locator value for case-insensitive matching if necessary
+            if (locator.LocateBy.Equals(eLocateBy.ByRelXPath) && locator.IsAutoLearned && _locatorValue.Contains("text()"))
+            {
+                _locatorValue = _locatorValue.ToLower().Replace("text()", TRANSLATOR_FOR_CASE_INSENSITIVE_MATCH);
+            }
+
+            // Use friendly locators if enabled and available
+            if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+            {
+                By by = By.XPath(_locatorValue);
+                elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+            }
+
+            // Handling for Shadow DOM elements
+            if (searchContext is ShadowRoot)
+            {
+                if (locator.LocateBy.Equals(eLocateBy.ByXPath))
+                {
+                    // Convert XPath to CSS selector for Shadow DOM
+                    string cssSelector = shadowDOM.ConvertXPathToCssSelector(_locatorValue);
+                    elem ??= searchContext.FindElement(By.CssSelector(cssSelector));
+                }
+            }
+            else
+            {
+                // Regular search context, find element by XPath
+                elem ??= searchContext.FindElement(By.XPath(_locatorValue));
+            }
+
+            return elem;
+        }
+        private IWebElement GetElementByFriendlyLocatorlist(IList<FriendlyLocatorElement> friendlyLocatorElements, By by)
         {
             Dictionary<string, object> dictionary = new Dictionary<string, object>();
             List<object> filters = new List<object>();
@@ -4738,8 +4618,6 @@ namespace GingerCore.Drivers
                         ElementInfo elementInfo = list[i];
                         if (elementInfo.FriendlyLocators.Count > 0)
                         {
-                            //int FriendlyLocatorsCount = elementInfo.FriendlyLocators.Count;
-
                             for (int j = 0; j < elementInfo.FriendlyLocators.Count; j++)
                             {
                                 ElementLocator felementLocator = elementInfo.FriendlyLocators[j];
@@ -4754,6 +4632,16 @@ namespace GingerCore.Drivers
                                     elementInfo.FriendlyLocators.Remove(felementLocator);
                                     j--;
                                 }
+                            }
+                        }
+
+                        // If no friendly locators are found, disable the By Tag name locator if its not the only one
+                        if (elementInfo.FriendlyLocators.Count == 0 && elementInfo.Locators.Count > 1)
+                        {
+                            var tagLocator = elementInfo.Locators.FirstOrDefault(f => f.LocateBy == eLocateBy.ByTagName);
+                            if (tagLocator != null)
+                            {
+                                tagLocator.Active = false;
                             }
                         }
                     }
@@ -4772,9 +4660,9 @@ namespace GingerCore.Drivers
         }
 
         // Define a collection of excluded element names
-        internal static HashSet<string> excludedElementNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        internal static HashSet<string> excludedElementNames = new(StringComparer.OrdinalIgnoreCase)
         {
-            "noscript", "script", "style", "meta", "head", "link"
+            "noscript", "script", "style", "meta", "head", "link", "html", "body"
         };
 
         private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null)
@@ -4803,12 +4691,6 @@ namespace GingerCore.Drivers
                     {
                         return foundElementsList;
                     }
-
-                    // Skip elements inside <noscript> tags
-                    //if (htmlElemNode.Name.Equals("noscript", StringComparison.OrdinalIgnoreCase) || htmlElemNode.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase))
-                    //{
-                    //    continue;
-                    //}
 
                     // Determine element type
                     Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: htmlElemNode);
@@ -4943,8 +4825,8 @@ namespace GingerCore.Drivers
                 }
             }
 
-            // Element Screenshot
-            if (pomSetting.LearnScreenshotsOfElements)
+            // Element Screenshot only mapped elements
+            if (pomSetting.LearnScreenshotsOfElements && pomSetting.filteredElementType.Contains(elementTypeEnum))
             {
                 foundElementInfo.ScreenShotImage = TakeElementScreenShot(webElement);
             }
@@ -5134,22 +5016,18 @@ namespace GingerCore.Drivers
             if (!string.IsNullOrEmpty(innerText))
             {
                 //relative xpath with Innertext Exact Match
-                if (innerText.Length < 20)
+                var relXpathwithExactTextMatch = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, isExactMatch: true);
+                if (!string.IsNullOrEmpty(relXpathwithExactTextMatch) && CheckElementLocateStatus(relXpathwithExactTextMatch))
                 {
-                    var relXpathwithExactTextMatch = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, isExactMatch: true);
-                    if (!string.IsNullOrEmpty(relXpathwithExactTextMatch) && CheckElementLocateStatus(relXpathwithExactTextMatch))
+                    var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithExactTextMatch, IsAutoLearned = true };
+                    foundElemntInfo.Locators.Add(elementLocator);
+                    //relative xpath with Contains Innertext, skip checkelemtlocatestatus as it is already checked in exact match
+                    var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, isExactMatch: false);
+                    if (!string.IsNullOrEmpty(relXpathwithContainsText))
                     {
-                        var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithExactTextMatch, IsAutoLearned = true };
+                        elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithContainsText, IsAutoLearned = true };
                         foundElemntInfo.Locators.Add(elementLocator);
                     }
-                }
-
-                //relative xpath with Contains Innertext
-                var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, isExactMatch: false);
-                if (!string.IsNullOrEmpty(relXpathwithContainsText) && CheckElementLocateStatus(relXpathwithContainsText))
-                {
-                    var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithContainsText, IsAutoLearned = true };
-                    foundElemntInfo.Locators.Add(elementLocator);
                 }
             }
 
@@ -10461,6 +10339,7 @@ namespace GingerCore.Drivers
         {
             try
             {
+                act.Artifacts = new ObservableList<ArtifactDetails>();
                 if (isNetworkLogMonitoringStarted)
                 {
                     await interceptor.StopMonitoring();
@@ -10492,6 +10371,9 @@ namespace GingerCore.Drivers
                     act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
                     act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
 
+                    Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
+                    
+                    Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);                    
                 }
                 else
                 {

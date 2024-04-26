@@ -1,3 +1,17 @@
+$colors: (
+    "blue": #2196F3,
+    "green": #4caf50,
+    "yellow": #FBC02D,
+    "cyan": #00BCD4,
+    "pink": #E91E63,
+    "indigo": #3F51B5,
+    "teal": #009688,
+    "orange": #F57C00,
+    "bluegray": #607D8B,
+    "purple": #9C27B0,
+    "primary": $primaryColor
+) !default;
+
 //reused color variables
 $shade000:#ffffff !default;    //surface
 $shade100:#f8f9fa !default;    //header background
@@ -225,6 +239,7 @@ $radiobuttonActiveHoverBorderColor:$primaryDarkerColor !default;
 $colorPickerPreviewWidth:2rem !default;
 $colorPickerPreviewHeight:2rem !default;
 $colorPickerBg:#323232 !default;
+$colorPickerBorder:1px solid #191919 !default;
 $colorPickerBorderColor:#191919 !default;
 $colorPickerHandleColor:$shade000 !default;
 
@@ -289,6 +304,7 @@ $calendarHeaderBorder:1px solid $shade300 !default;
 $calendarHeaderTextColor:$shade700 !default;
 $calendarHeaderFontWeight:600 !default;
 $calendarHeaderCellPadding:.5rem !default;
+$calendarMonthYearHeaderHoverTextColor: $primaryColor !default;
 
 $calendarCellDatePadding:.5rem !default;
 $calendarCellDateWidth:2.5rem !default;
@@ -339,6 +355,7 @@ $panelHeaderTextHoverColor:$shade700 !default;
 $panelContentBorderColor: $shade300 !default;
 $panelContentBorder:1px solid $shade300 !default;
 $panelContentBg:$shade000 !default;
+$panelContentEvenRowBg:scale-color($panelContentBg, $lightness: -1%) !default;
 $panelContentTextColor:$shade700 !default;
 $panelContentPadding:1rem !default;
 
@@ -619,6 +636,7 @@ $progressBarHeight:1.5rem !default;
 $progressBarBorder:0 none !default;
 $progressBarBg:$shade300 !default;
 $progressBarValueBg:$primaryColor !default;
+$progressBarValueTextColor:$primaryTextColor !default;
 
 //menu (e.g. menu, menubar, tieredmenu)
 $menuWidth:12.5rem !default;
@@ -794,6 +812,20 @@ $dockBorder: 1px solid rgba(255,255,255,0.2) !default;
 $dockPadding: .5rem .5rem !default;
 $dockBorderRadius: .5rem !default;
 
+//image
+$imageMaskBg:rgba(0,0,0,0.9) !default;
+$imagePreviewToolbarPadding:1rem !default;
+$imagePreviewIndicatorColor:#f8f9fa !default;
+$imagePreviewIndicatorBg:rgba(0,0,0,0.5) !default;
+$imagePreviewActionIconBg:transparent !default;
+$imagePreviewActionIconColor:#f8f9fa !default;
+$imagePreviewActionIconHoverBg:rgba(255,255,255,0.1) !default;
+$imagePreviewActionIconHoverColor:#f8f9fa !default;
+$imagePreviewActionIconWidth:3rem !default;
+$imagePreviewActionIconHeight:3rem !default;
+$imagePreviewActionIconFontSize:1.5rem !default;
+$imagePreviewActionIconBorderRadius:50% !default;
+
 :root {
     --surface-a:#{$shade000};
     --surface-b:#{$shade100};
@@ -806,4 +838,36 @@ $dockBorderRadius: .5rem !default;
     --primary-color:#{$primaryColor};
     --primary-color-text:#{$primaryTextColor};
     --font-family:#{$fontFamily};
+    --surface-0: #ffffff;
+    --surface-50: #FAFAFA;
+    --surface-100: #F5F5F5;
+    --surface-200: #EEEEEE;
+    --surface-300: #E0E0E0;
+    --surface-400: #BDBDBD;
+    --surface-500: #9E9E9E;
+    --surface-600: #757575;
+    --surface-700: #616161;
+    --surface-800: #424242;
+    --surface-900: #212121;
+    --gray-50: #FAFAFA;
+    --gray-100: #F5F5F5;
+    --gray-200: #EEEEEE;
+    --gray-300: #E0E0E0;
+    --gray-400: #BDBDBD;
+    --gray-500: #9E9E9E;
+    --gray-600: #757575;
+    --gray-700: #616161;
+    --gray-800: #424242;
+    --gray-900: #212121;
+    --content-padding:#{$panelContentPadding};
+    --inline-spacing:#{$inlineSpacing};
+    --border-radius:#{$borderRadius};
+    --surface-ground:#f8f9fa;
+    --surface-section:#ffffff;
+    --surface-card:#ffffff;
+    --surface-overlay:#ffffff;
+    --surface-border:#dee2e6;
+    --surface-hover: #e9ecef;
+    --maskbg: #{$maskBg};
+    --focus-ring: #{$focusShadow};
 }

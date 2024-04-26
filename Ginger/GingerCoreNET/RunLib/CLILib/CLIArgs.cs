@@ -58,6 +58,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             options.PasswordEncrypted = cliHelper.sourceControlPassEncrypted;
             options.SCMType = cliHelper.sourceControlType;
 
+            options.SourceApplication = cliHelper.SourceApplication;
+            options.SourceApplicationUser = cliHelper.SourceApplicationUser;
+            if (string.IsNullOrEmpty(options.SourceApplication))
+            {
+                options.SourceApplication = "Ginger CLI";
+            }
+            if (string.IsNullOrEmpty(options.SourceApplicationUser))
+            {
+                options.SourceApplicationUser = System.Environment.UserName;
+            }
+
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl)
             {
 

@@ -301,7 +301,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public override void RunAction(Act act)
         {
             //TODO: add func to Act + Enum for switch
-
+            act.Artifacts = new ObservableList<ArtifactDetails>();
             if (act is ActWebService)
             {
                 mActWebService = (ActWebService)act;
@@ -481,6 +481,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             act.Error = actWebAPI.Error;
             act.ExInfo = actWebAPI.ExInfo;
             act.RawResponseValues = actWebAPI.RawResponseValues;
+            act.Artifacts = actWebAPI.Artifacts;
         }
 
 
@@ -744,7 +745,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 if (SaveRequestXML)
                 {
-                    mActWebService.AddOrUpdateReturnParamActual("Saved Request File Name", createRequestOrResponseXML("Request", mRequest));
+                    string FilePath = createRequestOrResponseXML("Request", mRequest);
+                    mActWebService.AddOrUpdateReturnParamActual("Saved Request File Name", Path.GetFileName(FilePath));
+                    Act.AddArtifactToAction(Path.GetFileName(FilePath), mActWebService, FilePath);                   
                 }
 
 
@@ -768,7 +771,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 if (SaveResponseXML)
                 {
-                    mActWebService.AddOrUpdateReturnParamActual("Saved Response File Name", createRequestOrResponseXML("Response", resp));
+                    string FilePath = createRequestOrResponseXML("Response", resp);
+                    mActWebService.AddOrUpdateReturnParamActual("Saved Response File Name", Path.GetFileName(FilePath));
+                    Act.AddArtifactToAction(Path.GetFileName(FilePath), mActWebService, FilePath);                   
                 }
                 try
                 {
@@ -799,7 +804,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public String createRequestOrResponseXML(string fileType, string fileContent)
         {
             XmlDocument xmlDoc = new XmlDocument();
-            String fileName = null;
+            String xmlFileName = null;
             xmlDoc.LoadXml(fileContent);
             string xmlFilesDir = "";
             try
@@ -813,14 +818,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 }
 
                 String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss") + "_" + Guid.NewGuid();
-                xmlDoc.Save(xmlFilesDir + @"\" + mActWebService.Description + "_" + timeStamp + "_" + fileType + ".xml");
-                fileName = mActWebService.Description + "_" + timeStamp + "_" + fileType + ".xml";
+                xmlFileName = xmlFilesDir + @"\" + mActWebService.Description + "_" + timeStamp + "_" + fileType + ".xml";
+                xmlDoc.Save(xmlFileName);                           
             }
             catch (Exception e)
             {
                 Reporter.ToUser(eUserMsgKey.FailedToCreateRequestResponse, e.Message);
             }
-            return fileName;
+            return xmlFileName;
         }
 
         public void SetStatus(string Status)
