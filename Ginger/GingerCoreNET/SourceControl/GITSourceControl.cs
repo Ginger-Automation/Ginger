@@ -55,7 +55,7 @@ namespace GingerCore.SourceControl
         public override List<string> GetSourceControlmConflict { get { return null; } }
 
         private string CheckinComment { get; set; }
-        
+
         private string GitIgnoreFilePath => Path.Combine(RepositoryRootFolder, ".gitignore");
 
         public override bool AddFile(string Path, ref string error)
@@ -66,7 +66,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
                 return false;
             }
             return true;
@@ -78,10 +78,19 @@ namespace GingerCore.SourceControl
 
         public override bool CommitChanges(string Comments, ref string error)
         {
-            return false;
+            bool result = false;
+            try
+            {
+                result = Commit(Comments) != null;
+            }
+            catch (Exception e)
+            {
+                error = HandleGitExceptions(e);
+            }
+            return result;
         }
 
-        public override bool CommitChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false)
+        public override bool CommitAndCheckinChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false)
         {
             if (TestConnection(ref error))
             {
@@ -93,9 +102,7 @@ namespace GingerCore.SourceControl
                 }
                 catch (Exception e)
                 {
-                    error = e.Message + Environment.NewLine + e.InnerException;
-                    Reporter.ToLog(eLogLevel.ERROR, error, e);
-
+                    error = HandleGitExceptions(e);
                 }
                 finally
                 {
@@ -110,8 +117,8 @@ namespace GingerCore.SourceControl
                     }
                     catch (Exception e)
                     {
+                        error = HandleGitExceptions(e);
 
-                        error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
                         if (e.Message.Contains("403"))
                         {
                             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Check-In Failed, please check if user has Write Permission for this repository");
@@ -120,7 +127,6 @@ namespace GingerCore.SourceControl
                         {
                             Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, e.Message);
                         }
-                        Reporter.ToLog(eLogLevel.ERROR, error, e);
                         try
                         {
                             Pull();
@@ -190,7 +196,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
                 return false;
             }
             return true;
@@ -286,7 +292,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
             }
             return remoteURL;
         }
@@ -571,7 +577,7 @@ namespace GingerCore.SourceControl
 
             try
             {
-                File.WriteAllText(GitIgnoreFilePath, gitIgnoreFileContent); 
+                File.WriteAllText(GitIgnoreFilePath, gitIgnoreFileContent);
                 _lastGitIgnoreCheckTimeUtc = File.GetLastWriteTimeUtc(GitIgnoreFilePath);
             }
             catch(Exception ex)
@@ -980,7 +986,7 @@ namespace GingerCore.SourceControl
                 string ConflictsPathsError = string.Empty;
                 string ResolveConflictError = string.Empty;
                 bool result = true;
-                
+
                 List<string> conflictPaths = GetConflictPaths();
                 foreach (string conflictPath in conflictPaths)
                 {
@@ -992,7 +998,7 @@ namespace GingerCore.SourceControl
 
                     Stage(conflictPath);
                 }
-                
+
                 return true;
             }
             catch (Exception ex)
@@ -1067,10 +1073,17 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
                 return false;
             }
             return true;
+        }
+
+        private static string HandleGitExceptions(Exception e)
+        {
+            string error = e.Message + Environment.NewLine + e.InnerException;
+            Reporter.ToLog(eLogLevel.ERROR, error, e);
+            return error;
         }
 
         public override bool TestConnection(ref string error)
@@ -1309,23 +1322,23 @@ namespace GingerCore.SourceControl
             MergeResult mergeResult = null;
             //Pull = Fetch + Merge
             Task.Run(() =>
-             {
-                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-                 {
+            {
+                using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                {
 
-                     PullOptions PullOptions = new PullOptions();
-                     PullOptions.FetchOptions = new FetchOptions();
-                     PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
-                     if (!IsRepositoryPublic())
-                     {
-                         mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
-                     }
-                     else
-                     {
-                         mergeResult = Commands.Pull(repo, new Signature("dummy", "dummy", new DateTimeOffset(DateTime.Now)), PullOptions);
-                     }
-                 }
-             }).Wait();
+                    PullOptions PullOptions = new PullOptions();
+                    PullOptions.FetchOptions = new FetchOptions();
+                    PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+                    if (!IsRepositoryPublic())
+                    {
+                        mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
+                    }
+                    else
+                    {
+                        mergeResult = Commands.Pull(repo, new Signature("dummy", "dummy", new DateTimeOffset(DateTime.Now)), PullOptions);
+                    }
+                }
+            }).Wait();
             return mergeResult;
         }
 
@@ -1339,6 +1352,30 @@ namespace GingerCore.SourceControl
                 Signature committer = author;
                 // Commit to the repository
                 return repo.Commit(Comments, author, committer);
+            }
+        }
+
+        public override ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommits()
+        {
+            using (var repo = new Repository(RepositoryRootFolder))
+            {
+                var localBranch = repo.Branches[SourceControlBranch];
+                var trackingBranch = localBranch.TrackedBranch;
+
+                var filter = new CommitFilter
+                {
+                    IncludeReachableFrom = localBranch.Tip,
+                    ExcludeReachableFrom = trackingBranch.Tip
+                };
+
+                var unpushedCommits = repo.Commits.QueryBy(filter).ToList();
+                ObservableList<SourceControlChangesetDetails> commits = new ObservableList<SourceControlChangesetDetails>();
+                foreach (var commit in unpushedCommits)
+                {
+                    commits.Add(new SourceControlChangesetDetails() { Author = commit.Committer.Name, Date = commit.Committer.When, ID = commit.Id.Sha, Message = commit.MessageShort });
+                }
+
+                return commits;
             }
         }
 
