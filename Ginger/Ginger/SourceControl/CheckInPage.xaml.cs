@@ -665,7 +665,7 @@ namespace Ginger.SourceControl
                         bool CommitSuccess = CommitChanges(WorkSpace.Instance.Solution.SourceControl, Comments);
 
 
-                        Dispatcher.BeginInvoke(delegate ()
+                        Dispatcher.BeginInvoke(() =>
                         {
                             if (!CommitSuccess)
                             {
