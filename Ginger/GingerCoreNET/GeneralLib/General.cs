@@ -509,9 +509,9 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
-        public static void DownloadImage(string ImageURL, Act act)
+        public static void DownloadImage(string ImageURL, Act act, bool IsAddToArtifact= false, string artifactName = "")
         {
-            String currImagePath = Act.GetScreenShotRandomFileName();
+            String currImagePath = Act.GetScreenShotRandomFileName();           
             try
             {
                 HttpResponseMessage response = SendRequest(ImageURL);
@@ -525,7 +525,10 @@ namespace GingerCoreNET.GeneralLib
                     });
                     act.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
                     act.ScreenShots.Add(currImagePath);
-
+                    if(IsAddToArtifact)
+                    {
+                        Act.AddArtifactToAction(artifactName, act, currImagePath);                                               
+                    }
                 }
             }
             catch (Exception ex)
