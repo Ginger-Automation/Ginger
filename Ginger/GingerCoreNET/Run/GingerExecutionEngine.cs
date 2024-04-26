@@ -2746,7 +2746,7 @@ namespace Ginger.Run
             }
         }
 
-        private void RunWithoutAgent(Act act)
+        private async void RunWithoutAgent(Act act)
         {
             //TODO: add handling for action time out
 

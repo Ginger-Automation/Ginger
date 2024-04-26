@@ -22,12 +22,12 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" >
-            <Label x:Name="ScriptInterpreterLabel" Style="{StaticResource @InputFieldLabelStyle}"  Width="250" Height="35">File Path:</Label>
-            <Actions:UCFileBrowser HorizontalAlignment="Left" x:Name="ScriptInterPreter" Width="370"/>
+            <Label x:Name="FilePathLabel" Style="{StaticResource @InputFieldLabelStyle}"  Width="250" Height="35">File Path:</Label>
+            <Actions:UCFileBrowser HorizontalAlignment="Left" x:Name="FilePath" Width="370"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" >
             <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="250" VerticalAlignment="Center" >Wait for Process:</Label>
-            <CheckBox x:Name="WaitForProcess" VerticalAlignment="Center" Margin="0,0,0,0" Checked="WaitForProcessChecked" Unchecked="WaitForProcessUnChecked" />
+            <CheckBox x:Name="WaitForProcessToFinish" VerticalAlignment="Center" Margin="0,0,0,0" Checked="WaitForProcessToFinishChecked" Unchecked="WaitForProcessToFinishUnChecked" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="3" >
             <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="250" VerticalAlignment="Center" >Parse the Result:</Label>
@@ -35,7 +35,7 @@
         </StackPanel>
         <StackPanel Grid.Row="4" x:Name="xPanelDelimiter" Orientation="Horizontal">
             <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}">Delimiter:</Label>
-            <Actions:UCValueExpression Grid.Column="1" Margin="175,0,0,0" Width="300" x:Name="xDelimiterTextBox" />
+            <Actions:UCValueExpression Grid.Column="1" Margin="175,0,0,0" Width="150" x:Name="xDelimiterTextBox" />
         </StackPanel>
 
     </Grid>

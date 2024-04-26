@@ -1,27 +1,32 @@
-﻿using GingerCore.Actions;
+﻿#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using Applitools.Utils;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static GingerCore.Actions.ActCLIOrchestration;
 using CliWrap;
-using DocumentFormat.OpenXml.Office.Word;
-using CliWrap.Buffered;
-using CliWrap.EventStream;
-using System.Text.RegularExpressions;
 using System.IO;
-using Applitools;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow;
-using System.Diagnostics;
-using GingerExternal;
 
 namespace GingerCore.Actions
 {
@@ -55,29 +60,22 @@ namespace GingerCore.Actions
 
         public override string ActionEditPage { get { return "ActCLIOrchestrationEditPage"; } }
 
-        public override string ActionUserDescription { get { return "Perform File operations like Check if File Exists, Execute a file "; } }
+        public override string ActionUserDescription { get { return "Perform CLI Orchestration Execute a file, parse output if required "; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action to perform File operations ");
+            TBH.AddText("Use this action to perform CLI Orchestration");
 
-        }
-
-        public new static partial class Fields
-        {
-            public static string SourceFilePath = "SourceFilePath";
-            public static string FileOperationMode = "FileOperationMode";
-            public static string DestinationFolder = "DestinationFolder";
         }
 
         [IsSerializedForLocalRepository]
-        public string ScriptInterpreter { get; set; }
+        public string FilePath { get; set; }
 
         [IsSerializedForLocalRepository]
         public string ScriptPath { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool WaitForProcess { get; set; }
+        public bool WaitForProcessToFinish { get; set; }
 
         [IsSerializedForLocalRepository]
         public bool ParseResult { get; set; }
@@ -85,19 +83,21 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Delimiter { get; set; }
 
-        String DataBuffer;
+        StringBuilder DataBuffer;
         public override async void Execute()
         {
-            DataBuffer = string.Empty;
+            DataBuffer = new StringBuilder();
             if (ParseResult && string.IsNullOrEmpty(ValueExpression.Calculate(Delimiter)))
             {
                 Error = "Delimiter is Empty";
                 return;
             }
 
-            if(WaitForProcess)
+            if(WaitForProcessToFinish)
             {
-                await ExecuteCliProcess();
+                Task.Run(() =>
+                ExecuteCliProcess()
+                ).Wait();
             }
             else
             {
@@ -107,21 +107,21 @@ namespace GingerCore.Actions
 
         private async Task ExecuteCliProcess()
         {
-            StringBuilder argumentsstring = new StringBuilder();
+            StringBuilder arguments = new ();
             foreach (var p in this.InputValues)
             {
-                argumentsstring.Append(p.Param).Append(" ");
+                arguments.Append(p.Param).Append(" ");
                 if (!string.IsNullOrEmpty(p.ValueForDriver))
                 {
-                    argumentsstring.Append(p.ValueForDriver).Append(" ");
+                    arguments.Append(p.ValueForDriver).Append(" ");
                 }
             }
 
-            if (!string.IsNullOrEmpty(this.ScriptInterpreter))
+            if (!string.IsNullOrEmpty(this.FilePath))
             {
                 string path = String.Empty;
                 Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-                if (WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder != null)
+                if (WorkSpace.Instance.Solution.Folder != null)
                 {
                     string folderPath = $"{WorkSpace.Instance.Solution.Folder}{Path.DirectorySeparatorChar}Documents{Path.DirectorySeparatorChar}CLIOrchestration";
                     if (!Directory.Exists(folderPath))
@@ -131,36 +131,59 @@ namespace GingerCore.Actions
                     string DatetimeFormate = DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
                     string Filename = $"{ItemName}_{DatetimeFormate}.txt";
                     path = $"{folderPath}{Path.DirectorySeparatorChar}{Filename}";
-                    AddOrUpdateReturnParamActual(ParamName: "CLIOrchestration LogFile", ActualValue: path);
+                    AddOrUpdateReturnParamActual(ParamName: "Output logfile", ActualValue: path);
                 }
-
-                var cmd = Cli.Wrap(this.ScriptInterpreter)
-                                .WithArguments(argumentsstring.ToString()) | (PipeTarget.ToDelegate(parseRcwithDelimiter));
+                
                 try
                 {
-                    var Result = await cmd.ExecuteAsync();
-                    if (Result.ExitCode == 0)
+                    if(ParseResult)
                     {
-                        Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                        var cmd = Cli.Wrap(this.FilePath)
+                                .WithArguments(arguments.ToString()) | (PipeTarget.ToDelegate(parseRcwithDelimiter));
+                        CommandResult Result = await cmd.ExecuteAsync();
+                        if (WaitForProcessToFinish)
+                        {
+                            UpdateActionStatus(Result);
+                        }
                     }
                     else
                     {
-                        Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        var cmd = Cli.Wrap(this.FilePath)
+                                .WithArguments(arguments.ToString()) | PipeTarget.ToStringBuilder(DataBuffer);
+                        CommandResult Result = await cmd.ExecuteAsync();
+                        if(WaitForProcessToFinish)
+                        {
+                            UpdateActionStatus(Result);
+                        }
+                        
                     }
                     WriteTofile(path, DataBuffer);
-                    ExInfo += $"ExitCode: {Result.ExitCode}";
+                    
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Action failed due some invalid arguments", ex);
+                    Error = "Error: during CLI Orchestration:" + ex.Message;
+                    Reporter.ToLog(eLogLevel.ERROR, "Error: during CLI Orchestration", ex);
                     Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    ExInfo += $"ExitCode: 1 { ex.Message}";
+                    return;
                 }
-
             }
         }
 
-        private void WriteTofile(string filepath,string data)
+        private void UpdateActionStatus(CommandResult result)
+        {
+            if (result.ExitCode == 0)
+            {
+                Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+            }
+            else
+            {
+                Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+            }
+            ExInfo += $"ExitCode: {result.ExitCode}";
+        }
+
+        private void WriteTofile(string filepath,StringBuilder data)
         {
             using (var writer = new StreamWriter(filepath, true))
             {
@@ -170,7 +193,7 @@ namespace GingerCore.Actions
 
         private void parseRcwithDelimiter(string sRC)
         {
-            DataBuffer += $"{sRC}{Environment.NewLine}";
+            DataBuffer.Append($"{sRC}{Environment.NewLine}");
             string[] RCValues = sRC.Split('\n');
             foreach (string RCValue in RCValues)
             {

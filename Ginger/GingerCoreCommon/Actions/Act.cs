@@ -1252,7 +1252,7 @@ namespace GingerCore.Actions
         public void AddOrUpdateReturnParamActual(string ParamName, string ActualValue, string ExpectedValue = "dummy")
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = (from arc in ReturnValues where arc.ParamCalculated == ParamName select arc).FirstOrDefault();
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc => arc.ParamCalculated == ParamName);
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
                 ARC = new ActReturnValue();

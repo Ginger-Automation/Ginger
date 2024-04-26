@@ -1,33 +1,27 @@
-﻿using amdocs.ginger.GingerCoreNET;
+﻿#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Actions;
-using Amdocs.Ginger.Repository;
-using DocumentFormat.OpenXml.Math;
-using DocumentFormat.OpenXml.Wordprocessing;
-using Ginger.UserControls;
-using Ginger.UserControlsLib.ActionInputValueUserControlLib;
-using Ginger.UserControlsLib.TextEditor;
 using GingerCore.Actions;
-using Microsoft.TeamFoundation.SourceControl.WebApi.Legacy;
-using Microsoft.VisualStudio.Services.FormInput;
-using NPOI.HPSF;
-using NPOI.OpenXmlFormats.Shared;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace Ginger.Actions
 {
@@ -37,22 +31,22 @@ namespace Ginger.Actions
     public partial class ActCLIOrchestrationEditPage : Page
     {
         private ActCLIOrchestration mAct;
-        string SHFilesPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\Scripts\");
+        string SHFilesPath = $"{WorkSpace.Instance.Solution.Folder}{System.IO.Path.DirectorySeparatorChar}Documents{System.IO.Path.DirectorySeparatorChar}Scripts{System.IO.Path.DirectorySeparatorChar}";
         public ActCLIOrchestrationEditPage(ActCLIOrchestration act)
         {
             InitializeComponent();
             mAct = act;
             Context mContext = new Context();
-            ScriptInterPreter.FileExtensions.Add(".*");
-            ScriptInterPreter.Init(act, nameof(mAct.ScriptInterpreter), true);
-            ScriptInterPreter.FilePathTextBox.TextChanged += FilePathTextBox_TextChanged;
+            FilePath.FileExtensions.Add(".*");
+            FilePath.Init(act, nameof(mAct.FilePath), true);
+            FilePath.FilePathTextBox.TextChanged += FilePathTextBox_TextChanged;
             mAct.ScriptPath = SHFilesPath;
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WaitForProcess, System.Windows.Controls.CheckBox.IsCheckedProperty, act, nameof(mAct.WaitForProcess));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WaitForProcessToFinish, System.Windows.Controls.CheckBox.IsCheckedProperty, act, nameof(mAct.WaitForProcessToFinish));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ParseResult, System.Windows.Controls.CheckBox.IsCheckedProperty, act, nameof(mAct.ParseResult));
+            xDelimiterTextBox.Init(mContext, act, nameof(mAct.Delimiter));
             if (mAct.ParseResult)
             {
                 xPanelDelimiter.Visibility = Visibility.Visible;
-                xDelimiterTextBox.Init(mContext, act, nameof(mAct.Delimiter));
                 xDelimiterTextBox.ValueTextBox.TextChanged += DelimiterTextBox_TextChanged;
             }
             else
@@ -74,23 +68,23 @@ namespace Ginger.Actions
 
         private void FilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (string.IsNullOrEmpty(ScriptInterPreter.FilePathTextBox.Text))
+            if (string.IsNullOrEmpty(FilePath.FilePathTextBox.Text))
             {
                 return;
             }
-            mAct.ScriptInterpreter = ScriptInterPreter.FilePathTextBox.Text;
+            mAct.FilePath = FilePath.FilePathTextBox.Text;
             mAct.InvokPropertyChanngedForAllFields();
         }
 
-        private void WaitForProcessChecked(object sender, RoutedEventArgs e)
+        private void WaitForProcessToFinishChecked(object sender, RoutedEventArgs e)
         {
-            mAct.WaitForProcess = true;
+            mAct.WaitForProcessToFinish = true;
             mAct.InvokPropertyChanngedForAllFields();
         }
 
-        private void WaitForProcessUnChecked(object sender, RoutedEventArgs e)
+        private void WaitForProcessToFinishUnChecked(object sender, RoutedEventArgs e)
         {
-            mAct.WaitForProcess = false;
+            mAct.WaitForProcessToFinish = false;
             mAct.InvokPropertyChanngedForAllFields();
 
         }
