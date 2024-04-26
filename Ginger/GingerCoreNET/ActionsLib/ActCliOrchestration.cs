@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using CliWrap;
 using System.IO;
 using GingerCoreNET.GeneralLib;
+using System.Runtime.InteropServices;
 
 namespace GingerCore.Actions
 {
@@ -85,7 +86,7 @@ namespace GingerCore.Actions
         public string Delimiter { get; set; }
 
         StringBuilder DataBuffer;
-        public override async void Execute()
+        public override void Execute()
         {
             DataBuffer = new StringBuilder();
             if (ParseResult && string.IsNullOrEmpty(ValueExpression.Calculate(Delimiter)))
@@ -94,7 +95,7 @@ namespace GingerCore.Actions
                 return;
             }
 
-            var task = Task.Factory.StartNew(() =>
+            var task = Task.Run(() =>
                 ExecuteCliProcess()
                 );
 
@@ -106,7 +107,13 @@ namespace GingerCore.Actions
 
         private async Task ExecuteCliProcess()
         {
+            bool isVBSScript = false;
             StringBuilder arguments = new ();
+            if ((Path.GetExtension(this.FilePath)).Equals(".vbs"))
+            {
+                arguments.Append(this.FilePath);
+                isVBSScript = true;
+            }
             foreach (var p in this.InputValues)
             {
                 arguments.Append(p.Param).Append(" ");
@@ -133,18 +140,23 @@ namespace GingerCore.Actions
 
                 try
                 {
+                    string filePath = this.FilePath;
+                    if(isVBSScript)
+                    {
+                        filePath = GetSystemDirectory() + $"{Path.DirectorySeparatorChar}cscript.exe";
+                    }
                     if (WaitForProcessToFinish)
                     {
                         if (ParseResult)
                         {
-                            var cmd = Cli.Wrap(this.FilePath)
+                            var cmd = Cli.Wrap(filePath)
                                 .WithArguments(arguments.ToString()) | (PipeTarget.ToDelegate(parseRcwithDelimiter));
                             CommandResult Result = await cmd.ExecuteAsync();
                             UpdateActionStatus(Result);
                         }
                         else
                         {
-                            var cmd = Cli.Wrap(this.FilePath)
+                            var cmd = Cli.Wrap(filePath)
                                 .WithArguments(arguments.ToString()) | PipeTarget.ToStringBuilder(DataBuffer);
                             CommandResult Result = await cmd.ExecuteAsync();
                             UpdateActionStatus(Result);
@@ -152,7 +164,7 @@ namespace GingerCore.Actions
                     }
                     else
                     {
-                        var cmd = Cli.Wrap(this.FilePath)
+                        var cmd = Cli.Wrap(filePath)
                             .WithArguments(arguments.ToString());
                         cmd.ExecuteAsync();
                     }
@@ -211,6 +223,16 @@ namespace GingerCore.Actions
                     
                 }
             }
+        }
+
+        [DllImport("shell32.dll")]
+        public static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, [Out] StringBuilder lpszPath, int nFolder, bool fCreate);
+
+        private string GetSystemDirectory()
+        {
+            StringBuilder path = new StringBuilder(260);
+            SHGetSpecialFolderPath(IntPtr.Zero, path, 0x0029, false);
+            return path.ToString();
         }
     }
 }
