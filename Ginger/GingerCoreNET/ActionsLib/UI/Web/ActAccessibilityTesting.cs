@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
@@ -476,7 +477,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
             doc.DocumentNode.SelectSingleNode("//script").InnerHtml = EmbeddedResourceProvider.ReadEmbeddedFile("htmlReporterElements.js");
 
-            doc.Save(destination, Encoding.UTF8);
+            doc.Save(destination, Encoding.UTF8);            
         }
 
         private static void GetReadableAxeResults(AxeResultItem[] results, ResultType type, HtmlDocument doc, HtmlNode body)
@@ -719,6 +720,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             AxeBuilder axeBuilder = null;
             try
             {
+                Artifacts = new ObservableList<ArtifactDetails>();
                 axeBuilder = CreateAxeBuilder(Driver);
                 if(Status == eRunStatus.Failed && !string.IsNullOrEmpty(Error))
                 {
@@ -748,6 +750,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     string DatetimeFormate = DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
                     string reportname = $"{ItemName}_AccessibilityReport_{DatetimeFormate}.html";
                     path = $"{folderPath}{Path.DirectorySeparatorChar}{reportname}";
+                    Act.AddArtifactToAction(Path.GetFileName(path), this, path);                    
                 }
 
                 CreateAxeHtmlReport(Driver, axeResult, path, ActAccessibilityTesting.ReportTypes.All);
@@ -779,6 +782,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 if (StandardList != null && StandardList.Any())
                 {
                     string[] Tag_array = StandardList.Select(i => i.Value.ToString()).ToArray();
+                    for(int i=0;i<Tag_array.Length;i++)
+                    {
+                        if (Tag_array[i].Equals("bestpractice",StringComparison.OrdinalIgnoreCase))
+                        {
+                            Tag_array[i] = "best-practice";
+                        }
+                    }
                     axeBuilder.WithTags(Tag_array);
                 }
                 else if (StandardList == null || !StandardList.Any())

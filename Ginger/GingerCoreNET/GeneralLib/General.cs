@@ -508,9 +508,9 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
-        public static void DownloadImage(string ImageURL, Act act)
+        public static void DownloadImage(string ImageURL, Act act, bool IsAddToArtifact= false, string artifactName = "")
         {
-            String currImagePath = Act.GetScreenShotRandomFileName();
+            String currImagePath = Act.GetScreenShotRandomFileName();           
             try
             {
                 HttpResponseMessage response = SendRequest(ImageURL);
@@ -524,7 +524,10 @@ namespace GingerCoreNET.GeneralLib
                     });
                     act.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
                     act.ScreenShots.Add(currImagePath);
-
+                    if(IsAddToArtifact)
+                    {
+                        Act.AddArtifactToAction(artifactName, act, currImagePath);                                               
+                    }
                 }
             }
             catch (Exception ex)
@@ -532,6 +535,34 @@ namespace GingerCoreNET.GeneralLib
                 act.Error += ex.Message;
             }
         }
+
+        public static string DownloadBaselineImage(string ImageURL, Act act)
+        { 
+            String currImagePath = Act.GetScreenShotRandomFileName();
+            try
+            {
+                HttpResponseMessage response = SendRequest(ImageURL);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    using (var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        response.Content.CopyToAsync(fs).ContinueWith(
+                            (discard) =>
+                            {
+                                fs.Close();
+                            });
+                    }
+                    
+                   return currImagePath;
+                }
+            }
+            catch (Exception ex)
+            {
+                act.Error += ex.Message;
+            }
+            return currImagePath;
+        }
+
         public static HttpResponseMessage SendRequest(string URL)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, URL);

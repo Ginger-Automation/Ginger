@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -634,7 +634,8 @@ namespace GingerCore.Actions
         public ObservableList<String> ScreenShots { get; set; } = new ObservableList<String>();
         public ObservableList<String> ScreenShotsNames = new ObservableList<String>();
 
-
+        public ObservableList<ArtifactDetails> Artifacts { get; set; } = new ObservableList<ArtifactDetails>();
+        
         // No need to back because the list is saved to backup
         [DoNotBackup]
         public string Value
@@ -1077,6 +1078,19 @@ namespace GingerCore.Actions
                 Directory.CreateDirectory(ScreenshotTempFolder);
             }
             return filePath;
+        }
+
+        public static void AddArtifactToAction(string artifactName, Act action, string artifactPath)
+        {
+            string ext = Path.GetExtension(artifactPath);      
+            
+            var randomFileName = string.Concat("Artifact_", action.Guid, "_", DateTime.Now.ToString("hhmmss.fff"), "_", ext);
+
+            ArtifactDetails artifact = new ArtifactDetails();
+            artifact.ArtifactName = artifactName;
+            artifact.ArtifactOriginalPath = artifactPath;
+            artifact.ArtifactNewPath = randomFileName;
+            action.Artifacts.Add(artifact);            
         }
 
         public override string GetNameForFileName()
