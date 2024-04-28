@@ -18,10 +18,11 @@
     <Authors>Amdocs</Authors>
     <Company>Amdocs</Company>
     <Product>Ginger by Amdocs</Product>
-    <Copyright>Copyright © 2014-2022 European Support Limited</Copyright>
+    <Copyright>Copyright © 2014-2024 European Support Limited</Copyright>
 
     <Version>24.2.0.0</Version>
     <Title>Ginger Core Common</Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
