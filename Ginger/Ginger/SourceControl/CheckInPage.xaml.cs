@@ -116,11 +116,11 @@ namespace Ginger.SourceControl
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
 
-                 await Task.Run(() =>
-                 {
-                     mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);
-                     //set items name and type
-                     Parallel.ForEach(mFiles, SCFI =>
+                await Task.Run(() =>
+                {
+                    mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);
+                    //set items name and type
+                    Parallel.ForEach(mFiles, SCFI =>
                      {
                          try
                          {
@@ -138,7 +138,7 @@ namespace Ginger.SourceControl
                          }
                          catch (Exception ex)
                          {
-                              
+
                              //TODO: fix the path changes 
                              if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
                              {
@@ -239,7 +239,6 @@ namespace Ginger.SourceControl
             }
             CheckInFilesGrid.DataSourceList = mFiles;
         }
-
         private async void CommitAndCheckinButton_Click(object sender, RoutedEventArgs e)
         {
             if (WorkSpace.Instance.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
@@ -304,7 +303,6 @@ namespace Ginger.SourceControl
                         SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
                         List<string> pathsToCommit = StageTheFilesToCommit(SelectedFiles);
 
-
                         bool conflictHandled = false;
                         bool CommitSuccess = false;
                         CommitSuccess = CommitAndCheckinChanges(WorkSpace.Instance.Solution.SourceControl, pathsToCommit, Comments, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
@@ -334,7 +332,6 @@ namespace Ginger.SourceControl
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
             }
         }
-
         private static bool CommitAndCheckinChanges(SourceControlBase SourceControl, ICollection<string> pathsToCommit, string Comments, bool includeLocks, ref bool conflictHandled)
         {
             string error = string.Empty;
