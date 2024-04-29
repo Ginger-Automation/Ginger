@@ -261,13 +261,14 @@ namespace Ginger.SourceControl
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
                 List<SourceControlFileInfo> SelectedFiles = mFiles.Where(x => x.Selected == true).ToList();
 
-                ObservableList<SourceControlChangesetDetails> unpushedLocalCommits = null;
+                int unpushedLocalCommitsCount = 0;
                 if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    unpushedLocalCommits = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
+                    ObservableList<SourceControlChangesetDetails> unpushedLocalCommits = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
+                    unpushedLocalCommitsCount = unpushedLocalCommits.Count;
                 }
 
-                if ((SelectedFiles == null || SelectedFiles.Count == 0) && (unpushedLocalCommits == null || unpushedLocalCommits.Count == 0))
+                if ((SelectedFiles == null || SelectedFiles.Count == 0) && (unpushedLocalCommitsCount == 0))
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlMissingSelectionToCheckIn);
                     return;
@@ -278,9 +279,9 @@ namespace Ginger.SourceControl
                     return;
                 }
 
-                if ((SelectedFiles == null || SelectedFiles.Count == 0) && unpushedLocalCommits != null && unpushedLocalCommits.Count > 0)
+                if ((SelectedFiles == null || SelectedFiles.Count == 0) && unpushedLocalCommitsCount > 0)
                 {
-                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommit, unpushedLocalCommits) == eUserMsgSelection.No)
+                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommit, unpushedLocalCommitsCount) == eUserMsgSelection.No)
                     {
                         return;
                     }
@@ -768,7 +769,7 @@ namespace Ginger.SourceControl
         private void InitLocalCommitGrid()
         {
             LocalCommitedFilesGrid.DataSourceList = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
-            LocalCommitedFilesGrid.Title = $"Pending Local Commits for Check-In {{{LocalCommitedFilesGrid.DataSourceList.Count}}}";
+            LocalCommitedFilesGrid.Title = $"Pending Local Commits for Check-In ({LocalCommitedFilesGrid.DataSourceList.Count})";
         }
 
         private void SetLocalCommitGridView()
