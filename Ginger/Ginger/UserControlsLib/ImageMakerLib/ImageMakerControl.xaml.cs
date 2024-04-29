@@ -199,7 +199,8 @@ namespace Amdocs.Ginger.UserControls
                     SetAsStaticImage("save-regular-amdocs-gradient.svg");
                     break;
                 case eImageType.Environment:
-                    SetAsStaticImage("Environment.ico");
+                    //SetAsStaticImage("Environment.ico");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_LayerGroup);
                     break;
                 #endregion
 
@@ -207,6 +208,8 @@ namespace Amdocs.Ginger.UserControls
                 #region Repository Items Images
                 //############################## Repository Items Images:
                 case eImageType.Solution:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Flask);
+                    break;
                 case eImageType.ApplicationModel:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TableCellsLarge);
                     break;
@@ -271,7 +274,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Building:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Building);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Building);
                     break;
                 #endregion
 
@@ -431,7 +434,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Paste);
                     break;
                 case eImageType.Delete:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Trash);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TrashCan);
                     break;
                 case eImageType.DeleteSingle:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Minus);
