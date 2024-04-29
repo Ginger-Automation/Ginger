@@ -116,91 +116,91 @@ namespace Ginger.SourceControl
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
 
-                await Task.Run(() =>
-                {
-                    mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);
-                    //set items name and type
-                    Parallel.ForEach(mFiles, SCFI =>
-                    {
-                        try
-                        {
-                            if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML") && SCFI.Status != SourceControlFileInfo.eRepositoryItemStatus.Deleted)
-                            {
-                                NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
-                                //unserialize the item
-                                RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
-                                SCFI.Name = item.ItemName;
-                            }
-                            else
-                            {
-                                SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
+                 await Task.Run(() =>
+                 {
+                     mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);
+                     //set items name and type
+                     Parallel.ForEach(mFiles, SCFI =>
+                     {
+                         try
+                         {
+                             if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML") && SCFI.Status != SourceControlFileInfo.eRepositoryItemStatus.Deleted)
+                             {
+                                 NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+                                 //unserialize the item
+                                 RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
+                                 SCFI.Name = item.ItemName;
+                             }
+                             else
+                             {
+                                 SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
+                             }
+                         }
+                         catch (Exception ex)
+                         {
+                              
+                             //TODO: fix the path changes 
+                             if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
+                             {
+                                 SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
+                             }
 
-                            //TODO: fix the path changes 
-                            if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
-                            {
-                                SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
-                            }
+                             Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                         }
 
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                        }
-
-                        if (string.IsNullOrEmpty(SCFI.Path))
-                        {
-                            SCFI.FileType = "";
-                        }
-                        else if (SCFI.Path.ToUpper().Contains("AGENTS"))
-                        {
-                            SCFI.FileType = "Agent";
-                        }
-                        else if (SCFI.Path.ToUpper().Contains("BUSINESSFLOWS"))
-                        {
-                            SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-                        }
-                        else if (SCFI.Path.ToUpper().Contains("DOCUMENTS"))
-                        {
-                            SCFI.FileType = "Document";
-                        }
-                        else if (SCFI.Path.ToUpper().Contains("ENVIRONMENTS"))
-                        {
-                            SCFI.FileType = "Environment";
-                        }
-                        else if (SCFI.Path.ToUpper().Contains("EXECUTIONRESULTS"))
-                        {
-                            SCFI.FileType = "Execution Result";
-                        }
-                        else if (SCFI.Path.ToUpper().Contains("RUNSET"))
-                        {
-                            SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.RunSet);
-                        }
-                        else if (SCFI.Path.ToUpper().Contains("ACTIONS"))
-                        {
-                            SCFI.FileType = "Action";
-                        }
-                        else if (SCFI.Path.ToUpper().Contains("ACTIVITIESGROUPS"))
-                        {
-                            SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
-                        }
-                        else if (SCFI.Path.ToUpper().Contains("ACTIVITIES"))
-                        {
-                            SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Activity);
-                        }
-                        else if (SCFI.Path.ToUpper().Contains("VARIABLES"))
-                        {
-                            SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
-                        }
-                        else if (SCFI.Path.Contains("ApplicationAPIModel"))
-                        {
-                            SCFI.FileType = "Application API Model";
-                        }
-                        else if (SCFI.Path.Contains("GlobalAppModelParameter"))
-                        {
-                            SCFI.FileType = "Global Applications Model Parameter";
-                        }
-                    });
+                         if (string.IsNullOrEmpty(SCFI.Path))
+                         {
+                             SCFI.FileType = "";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("AGENTS"))
+                         {
+                             SCFI.FileType = "Agent";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("BUSINESSFLOWS"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("DOCUMENTS"))
+                         {
+                             SCFI.FileType = "Document";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ENVIRONMENTS"))
+                         {
+                             SCFI.FileType = "Environment";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("EXECUTIONRESULTS"))
+                         {
+                             SCFI.FileType = "Execution Result";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("RUNSET"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.RunSet);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ACTIONS"))
+                         {
+                             SCFI.FileType = "Action";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIESGROUPS"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIES"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Activity);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("VARIABLES"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
+                         }
+                         else if (SCFI.Path.Contains("ApplicationAPIModel"))
+                         {
+                             SCFI.FileType = "Application API Model";
+                         }
+                         else if (SCFI.Path.Contains("GlobalAppModelParameter"))
+                         {
+                             SCFI.FileType = "Global Applications Model Parameter";
+                         }
+                     });
                 });
 
                 CheckInFilesGrid.DataSourceList = mFiles;
