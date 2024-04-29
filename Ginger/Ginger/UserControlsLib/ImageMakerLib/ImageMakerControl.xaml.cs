@@ -726,6 +726,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.ExcelFile:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileExcel);
                     break;
+                case eImageType.WordFile:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FileWord);
+                    break;
+                case eImageType.FilePowerpoint:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FilePowerpoint);
+                    break;
+                case eImageType.FileArchive:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileArchive);
+                    break;
                 case eImageType.PlusSquare:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_SquarePlus);
                     break;
@@ -758,7 +767,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Website:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Laptop);
-                    break;
+                    break;               
                 case eImageType.Beta:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Android, Brushes.Orange);
                     break;
@@ -1101,7 +1110,7 @@ namespace Amdocs.Ginger.UserControls
             if (SetAsFontImageWithSize > 0)
             {
                 xFAFont.Visibility = Visibility.Visible;
-                xFAFont.FontSize = SetAsFontImageWithSize;
+                xFAFont.FontSize = SetAsFontImageWithSize;                
             }
             else
             {

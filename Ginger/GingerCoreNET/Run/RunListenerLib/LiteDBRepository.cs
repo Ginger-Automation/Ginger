@@ -19,6 +19,7 @@ limitations under the License.
 using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
@@ -70,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             //save screenshots
             string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
             string completeSSPath = string.Empty;
-            int screenShotCountPerAction = 0;
+            int screenShotCountPerAction = 0;            
             for (var s = 0; s < action.ScreenShots.Count; s++)
             {
                 try
@@ -104,8 +105,37 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     screenShotCountPerAction--;
                 }
             }
+            SaveArtifacts(action, executionLogFolder, executedFrom);
             MapActionToLiteDb(action, context, executedFrom);
             return GetActionReportData(action, context, executedFrom);//Returning ActionReport so we will get execution info on the console
+        }
+
+        private void SaveArtifacts(GingerCore.Actions.Act action, string executionLogFolder, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
+        {            
+            string artifactFullPath = string.Empty;        
+            for (var s = 0; s < action.Artifacts.Count; s++)
+            {
+                try
+                {                                        
+                    string artifactFolderName = Path.Combine(executionLogFolder, "Artifacts");                                     
+                    artifactFullPath = Path.Combine(artifactFolderName, action.Artifacts[s].ArtifactNewPath);
+                   
+                    if (!System.IO.Directory.Exists(artifactFolderName))
+                    {
+                        System.IO.Directory.CreateDirectory(artifactFolderName);
+                    }
+                    if (File.Exists(artifactFullPath))
+                    {
+                        continue;
+                    }
+                    File.Copy(action.Artifacts[s].ArtifactOriginalPath, artifactFullPath, true);
+                    action.Artifacts[s].ArtifactNewPath = artifactFullPath;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to move artifact with path: " + artifactFullPath + " of the action:'" + action.Description + "' to the Execution Logger folder", ex);                    
+                }
+            }
         }
 
         private object MapActionToLiteDb(GingerCore.Actions.Act action, Context context, eExecutedFrom executedFrom)
@@ -133,7 +163,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
 
             liteDbAction.ScreenShots = action.ScreenShots.ToList();
-
+            liteDbAction.Artifacts =  new List<AccountReport.Contracts.Helpers.DictObject>();          
+            foreach (ArtifactDetails a in action.Artifacts)
+            {               
+                liteDbAction.Artifacts.Add(new AccountReport.Contracts.Helpers.DictObject
+                { Key = a.ArtifactName, Value = a.ArtifactOriginalPath });
+            }
             if (liteDbActionList.All(liteAct => !ObjectId.Equals(liteAct._id, liteDbAction._id)))
             {
                 liteDbActionList.Add(liteDbAction);

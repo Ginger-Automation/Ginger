@@ -55,12 +55,14 @@ namespace GingerCore.Actions.VisualTesting
 
         private void CreateVRTConfig()
         {
+            ValueExpression VE = new ValueExpression(null, null);
+
             config = new VisualRegressionTracker.Config
             {
-                BranchName = WorkSpace.Instance.Solution.VRTConfiguration.BranchName,
-                Project = WorkSpace.Instance.Solution.VRTConfiguration.Project,
-                ApiUrl = WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl,
-                ApiKey = WorkSpace.Instance.Solution.VRTConfiguration.ApiKey,
+                BranchName = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.BranchName),
+                Project = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.Project),
+                ApiUrl = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl),
+                ApiKey = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey),
                 EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes ? false : true
             };
         }
@@ -299,7 +301,7 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.AddOrUpdateReturnParamActual("Image URL", result.ImageUrl + "");
                 mAct.AddOrUpdateReturnParamActual("Baseline URL", result.BaselineUrl + "");
                 mAct.AddOrUpdateReturnParamActual("Difference URL", result.DiffUrl + "");
-                mAct.AddOrUpdateReturnParamActual("URL", result.Url + "");
+                mAct.AddOrUpdateReturnParamActual("URL", result.Url + "");               
 
 
                 //Calculate the action status based on the results
@@ -320,7 +322,7 @@ namespace GingerCore.Actions.VisualTesting
 
                             //Add difference image to act screenshots
                             if(result.DiffUrl != null){
-                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{ Path.GetFileName(result.DiffUrl)}", mAct);
+                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{ Path.GetFileName(result.DiffUrl)}", mAct, true, "Difference_Image");
                             }
                             
 
@@ -328,7 +330,7 @@ namespace GingerCore.Actions.VisualTesting
                             if(result.BaselineUrl != null)
                             {
                                 mAct.previewBaselineImageName = Path.GetFileName(result.BaselineUrl);
-                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.BaselineUrl)}", mAct);
+                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.BaselineUrl)}", mAct, true, "BaseLine_Image");
                             }
                             
 

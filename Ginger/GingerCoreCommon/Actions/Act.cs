@@ -634,7 +634,8 @@ namespace GingerCore.Actions
         public ObservableList<String> ScreenShots { get; set; } = new ObservableList<String>();
         public ObservableList<String> ScreenShotsNames = new ObservableList<String>();
 
-
+        public ObservableList<ArtifactDetails> Artifacts { get; set; } = new ObservableList<ArtifactDetails>();
+        
         // No need to back because the list is saved to backup
         [DoNotBackup]
         public string Value
@@ -1079,6 +1080,19 @@ namespace GingerCore.Actions
             return filePath;
         }
 
+        public static void AddArtifactToAction(string artifactName, Act action, string artifactPath)
+        {
+            string ext = Path.GetExtension(artifactPath);      
+            
+            var randomFileName = string.Concat("Artifact_", action.Guid, "_", DateTime.Now.ToString("hhmmss.fff"), "_", ext);
+
+            ArtifactDetails artifact = new ArtifactDetails();
+            artifact.ArtifactName = artifactName;
+            artifact.ArtifactOriginalPath = artifactPath;
+            artifact.ArtifactNewPath = randomFileName;
+            action.Artifacts.Add(artifact);            
+        }
+
         public override string GetNameForFileName()
         {
             //TODO: replace name with a unique ID?
@@ -1252,7 +1266,7 @@ namespace GingerCore.Actions
         public void AddOrUpdateReturnParamActual(string ParamName, string ActualValue, string ExpectedValue = "dummy")
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = (from arc in ReturnValues where arc.ParamCalculated == ParamName select arc).FirstOrDefault();
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc => arc.ParamCalculated == ParamName);
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
                 ARC = new ActReturnValue();

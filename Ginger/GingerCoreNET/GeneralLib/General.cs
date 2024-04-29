@@ -122,6 +122,7 @@ namespace GingerCoreNET.GeneralLib
         #endregion ENUM
 
        static Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        static string GetDatetimeFormat() => DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
         public static T ParseEnum<T>(string value)
         {
             return (T)Enum.Parse(typeof(T), value, true);
@@ -508,9 +509,9 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
-        public static void DownloadImage(string ImageURL, Act act)
+        public static void DownloadImage(string ImageURL, Act act, bool IsAddToArtifact= false, string artifactName = "")
         {
-            String currImagePath = Act.GetScreenShotRandomFileName();
+            String currImagePath = Act.GetScreenShotRandomFileName();           
             try
             {
                 HttpResponseMessage response = SendRequest(ImageURL);
@@ -524,7 +525,10 @@ namespace GingerCoreNET.GeneralLib
                     });
                     act.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
                     act.ScreenShots.Add(currImagePath);
-
+                    if(IsAddToArtifact)
+                    {
+                        Act.AddArtifactToAction(artifactName, act, currImagePath);                                               
+                    }
                 }
             }
             catch (Exception ex)
@@ -591,6 +595,15 @@ namespace GingerCoreNET.GeneralLib
             {
                 return false;
             }
+        }
+
+        public static string GenerateFilePath(string folderPath, string ItemName)
+        {
+            string path;
+            
+            string Filename = $"{ItemName}_{GetDatetimeFormat()}.txt";
+            path = $"{folderPath}{Path.DirectorySeparatorChar}{Filename}";
+            return path;
         }
     }
 
