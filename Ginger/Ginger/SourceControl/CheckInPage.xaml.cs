@@ -118,92 +118,92 @@ namespace Ginger.SourceControl
 
                 await Task.Run(() =>
                 {
-                    mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);                    
+                    mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);
                     //set items name and type
                     Parallel.ForEach(mFiles, SCFI =>
-                     {
-                         try
-                         {
-                             if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML") && SCFI.Status != SourceControlFileInfo.eRepositoryItemStatus.Deleted)
-                             {
-                                 NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
-                                 //unserialize the item
-                                 RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
-                                 SCFI.Name = item.ItemName;
-                             }
-                             else
-                             {
-                                 SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
-                             }
-                         }
-                         catch (Exception ex)
-                         {
+                    {
+                        try
+                        {
+                            if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML") && SCFI.Status != SourceControlFileInfo.eRepositoryItemStatus.Deleted)
+                            {
+                                NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+                                //unserialize the item
+                                RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
+                                SCFI.Name = item.ItemName;
+                            }
+                            else
+                            {
+                                SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
 
-                             //TODO: fix the path changes 
-                             if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
-                             {
-                                 SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
-                             }
+                            //TODO: fix the path changes 
+                            if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
+                            {
+                                SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
+                            }
 
-                             Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                         }
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        }
 
-                         if (string.IsNullOrEmpty(SCFI.Path))
-                         {
-                             SCFI.FileType = "";
-                         }
-                         else if (SCFI.Path.ToUpper().Contains("AGENTS"))
-                         {
-                             SCFI.FileType = "Agent";
-                         }
-                         else if (SCFI.Path.ToUpper().Contains("BUSINESSFLOWS"))
-                         {
-                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-                         }
-                         else if (SCFI.Path.ToUpper().Contains("DOCUMENTS"))
-                         {
-                             SCFI.FileType = "Document";
-                         }
-                         else if (SCFI.Path.ToUpper().Contains("ENVIRONMENTS"))
-                         {
-                             SCFI.FileType = "Environment";
-                         }
-                         else if (SCFI.Path.ToUpper().Contains("EXECUTIONRESULTS"))
-                         {
-                             SCFI.FileType = "Execution Result";
-                         }
-                         else if (SCFI.Path.ToUpper().Contains("RUNSET"))
-                         {
-                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.RunSet);
-                         }
-                         else if (SCFI.Path.ToUpper().Contains("ACTIONS"))
-                         {
-                             SCFI.FileType = "Action";
-                         }
-                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIESGROUPS"))
-                         {
-                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
-                         }
-                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIES"))
-                         {
-                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Activity);
-                         }
-                         else if (SCFI.Path.ToUpper().Contains("VARIABLES"))
-                         {
-                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
-                         }
-                         else if (SCFI.Path.Contains("ApplicationAPIModel"))
-                         {
-                             SCFI.FileType = "Application API Model";
-                         }
-                         else if (SCFI.Path.Contains("GlobalAppModelParameter"))
-                         {
-                             SCFI.FileType = "Global Applications Model Parameter";
-                         }
-                     });
+                        if (string.IsNullOrEmpty(SCFI.Path))
+                        {
+                            SCFI.FileType = "";
+                        }
+                        else if (SCFI.Path.ToUpper().Contains("AGENTS"))
+                        {
+                            SCFI.FileType = "Agent";
+                        }
+                        else if (SCFI.Path.ToUpper().Contains("BUSINESSFLOWS"))
+                        {
+                            SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                        }
+                        else if (SCFI.Path.ToUpper().Contains("DOCUMENTS"))
+                        {
+                            SCFI.FileType = "Document";
+                        }
+                        else if (SCFI.Path.ToUpper().Contains("ENVIRONMENTS"))
+                        {
+                            SCFI.FileType = "Environment";
+                        }
+                        else if (SCFI.Path.ToUpper().Contains("EXECUTIONRESULTS"))
+                        {
+                            SCFI.FileType = "Execution Result";
+                        }
+                        else if (SCFI.Path.ToUpper().Contains("RUNSET"))
+                        {
+                            SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.RunSet);
+                        }
+                        else if (SCFI.Path.ToUpper().Contains("ACTIONS"))
+                        {
+                            SCFI.FileType = "Action";
+                        }
+                        else if (SCFI.Path.ToUpper().Contains("ACTIVITIESGROUPS"))
+                        {
+                            SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
+                        }
+                        else if (SCFI.Path.ToUpper().Contains("ACTIVITIES"))
+                        {
+                            SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Activity);
+                        }
+                        else if (SCFI.Path.ToUpper().Contains("VARIABLES"))
+                        {
+                            SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
+                        }
+                        else if (SCFI.Path.Contains("ApplicationAPIModel"))
+                        {
+                            SCFI.FileType = "Application API Model";
+                        }
+                        else if (SCFI.Path.Contains("GlobalAppModelParameter"))
+                        {
+                            SCFI.FileType = "Global Applications Model Parameter";
+                        }
+                    });
                 });
 
-                CheckInFilesGrid.DataSourceList = mFiles;                
+                CheckInFilesGrid.DataSourceList = mFiles;
             }
             finally
             {
@@ -239,7 +239,7 @@ namespace Ginger.SourceControl
             }
             CheckInFilesGrid.DataSourceList = mFiles;
         }
-        
+
         private async void CommitAndCheckinButton_Click(object sender, RoutedEventArgs e)
         {
             if (WorkSpace.Instance.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
@@ -304,7 +304,7 @@ namespace Ginger.SourceControl
                         SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
                         List<string> pathsToCommit = StageTheFilesToCommit(SelectedFiles);
 
-                        
+
                         bool conflictHandled = false;
                         bool CommitSuccess = false;
                         CommitSuccess = CommitAndCheckinChanges(WorkSpace.Instance.Solution.SourceControl, pathsToCommit, Comments, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
@@ -334,7 +334,7 @@ namespace Ginger.SourceControl
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
             }
         }
-                
+
         private static bool CommitAndCheckinChanges(SourceControlBase SourceControl, ICollection<string> pathsToCommit, string Comments, bool includeLocks, ref bool conflictHandled)
         {
             string error = string.Empty;
@@ -562,6 +562,11 @@ namespace Ginger.SourceControl
                 LocalCommit.Content = "Commit Locally";
                 LocalCommit.Click += LocalCommitButton_Click;
                 windowBtnsList.Add(LocalCommit);
+
+                Button UndoLocalChanges = new Button();
+                UndoLocalChanges.Content = "Undo Changes";
+                UndoLocalChanges.Click += LocalUndoChanges_Click;
+                windowBtnsList.Add(UndoLocalChanges);
             }
 
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, windowBtnsList, true, "Close", CloseWindow);
@@ -784,6 +789,95 @@ namespace Ginger.SourceControl
 
             LocalCommitedFilesGrid.SetAllColumnsDefaultView(view);
             LocalCommitedFilesGrid.InitViewItems();
+        }
+
+        private async void LocalUndoChanges_Click(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+            {
+                Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "Please provide Author Name and Email in source control connection details page.");
+                return;
+            }
+
+            try
+            {
+                xProcessingIcon.Visibility = Visibility.Visible;
+                if (SourceControlIntegration.BusyInProcessWhileDownloading)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
+                    return;
+                }
+                SourceControlIntegration.BusyInProcessWhileDownloading = true;
+                List<SourceControlFileInfo> SelectedFiles = mFiles.Where(x => x.Selected == true).ToList();
+                if (SelectedFiles == null || SelectedFiles.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.SourceControlMissingSelectionToLocalCommit);
+                    return;
+                }
+                if (Reporter.ToUser(eUserMsgKey.SourceControlUndoLocalChanges, SelectedFiles.Count) == eUserMsgSelection.No)
+                {
+
+                    return;
+                }
+
+                // Performing on another thread 
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        App.MainWindow.Dispatcher.Invoke(() =>
+                        {
+                            SaveAllDirtyFiles(SelectedFiles);
+                        });
+
+                        //performing cleanup for the solution folder to clean old locks left by faild check ins
+                        SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
+                        // Undo changes for selected filest
+                        WorkSpace.Instance.Solution.SourceControl.UndoUncommitedChanges(SelectedFiles);
+                        Dispatcher.BeginInvoke(() =>
+                        {
+                            CloseWindow();
+                        });
+                        //Reload of Solution
+                        ReloadSolution();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Undo Changes", ex);
+                    }
+                });
+
+                xProcessingIcon.Visibility = Visibility.Collapsed;
+                if (SourceControlIntegration.conflictFlag)
+                {
+                    SourceControlIntegration.conflictFlag = false;
+                }
+            }
+            finally
+            {
+                xProcessingIcon.Visibility = Visibility.Collapsed;
+                SourceControlIntegration.BusyInProcessWhileDownloading = false;
+            }
+        }
+        private void ReloadSolution()
+        {
+            string path = WorkSpace.Instance.Solution.ContainingFolderFullPath;
+            CloseSolution();
+            OpenSolution(path);
+        }
+        private void CloseSolution()
+        {
+            App.MainWindow.Dispatcher.Invoke(WorkSpace.Instance.CloseSolution);
+        }
+
+        private void OpenSolution(string folder)
+        {
+            App.MainWindow.Dispatcher.Invoke(() =>
+            {
+                // TODO: do it like user with open solution page
+                WorkSpace.Instance.OpenSolution(folder);
+            });
         }
     }
 }
