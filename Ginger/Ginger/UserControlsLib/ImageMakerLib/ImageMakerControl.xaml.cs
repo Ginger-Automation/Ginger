@@ -199,7 +199,8 @@ namespace Amdocs.Ginger.UserControls
                     SetAsStaticImage("save-regular-amdocs-gradient.svg");
                     break;
                 case eImageType.Environment:
-                    SetAsStaticImage("Environment.ico");
+                    //SetAsStaticImage("Environment.ico");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_LayerGroup);
                     break;
                 #endregion
 
