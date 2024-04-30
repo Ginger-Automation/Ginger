@@ -28,7 +28,7 @@
             <Label x:Name="FilePathLabel" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"  Width="150" Height="35">Application/File Path:</Label>
             <Label x:Name="FilePathLabelValidation" Content="*"  Grid.Column="0"  Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="10" Margin="0,0,20,0"/>
             <Actions:UCFileBrowser  Grid.Column="2" HorizontalAlignment="Left" x:Name="FilePath" Width="370"/>
-            <usercontrols:ImageMakerControl Grid.Column="3" x:Name="FilePathNote" ToolTip="Note - supported file .Vbs,.js,.sh,.exe." SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,10,5,0"/>
+            <usercontrols:ImageMakerControl Grid.Column="3" x:Name="FilePathNote" ToolTip="Note - supported file *.vbs,*.js,*.sh,*.bat,*.exe." SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,10,5,0"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" x:Name="xPanelWaitForProcessToFinish">
             <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="150" VerticalAlignment="Center" >Wait for Process:</Label>
