@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using GingerCore.Environments;
 using GingerCoreNET.GeneralLib;
 using System;
 using System.Drawing;
@@ -45,19 +46,12 @@ namespace GingerCore.Actions.VisualTesting
         VisualRegressionTracker.VisualRegressionTracker vrt;
         VisualRegressionTracker.Config config;
 
-        public VRTAnalyzer()
-        {
-            if (vrt == null)
-            {
-                CreateVRTConfig();
-            }
-        }
 
         private void CreateVRTConfig()
         {
-            ValueExpression VE = new ValueExpression(null, null);
+            ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), null);
 
-            config = new VisualRegressionTracker.Config
+            config = new Config
             {
                 BranchName = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.BranchName),
                 Project = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.Project),
@@ -65,6 +59,19 @@ namespace GingerCore.Actions.VisualTesting
                 ApiKey = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey),
                 EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes ? false : true
             };
+        }
+
+        private ProjEnvironment GetCurrentProjectEnvironment()
+        {
+            foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+            {
+                if (env.Name.Equals(mDriver.GetEnvironment()))
+                {
+                    return env;
+                }
+            }
+
+            return null;
         }
 
         public enum eVRTAction
@@ -188,7 +195,7 @@ namespace GingerCore.Actions.VisualTesting
             {
             }
 
-        }
+        }        
         private void TrackVRT()
         {
 
