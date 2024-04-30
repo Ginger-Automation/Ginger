@@ -239,7 +239,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             AccountReportAction accountReportAction = AccountReportEntitiesDataMapping.MapActionEndData(action, mContext);
             foreach (ArtifactDetails artifact in action.Artifacts)
             {
-                artifactList.Add(artifact.ArtifactOriginalPath);
+                artifactList.Add(artifact.ArtifactNewPath);
             }
             await AccountReportApiHandler.SendScreenShotsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.ScreenShots.ToList());
             await AccountReportApiHandler.SendArtifactsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, artifactList);
