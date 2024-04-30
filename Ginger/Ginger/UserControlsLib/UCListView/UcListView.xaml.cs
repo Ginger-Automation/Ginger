@@ -192,7 +192,7 @@ namespace Ginger.UserControlsLib.UCListView
                         filteredView.Filter = LVItemFilter;
                     }
 
-                    if (Dispatcher.Thread == Thread.CurrentThread)
+                    if (Dispatcher.CheckAccess())
                     {
                         xListView.ItemsSource = mObjList;
                     }
