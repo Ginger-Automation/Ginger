@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
+using log4net.Plugin;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -85,6 +86,7 @@ namespace Amdocs.Ginger.Repository
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while downloading/updating the Ginger Plugins packages", ex);
+                throw;
             }
         }
 
