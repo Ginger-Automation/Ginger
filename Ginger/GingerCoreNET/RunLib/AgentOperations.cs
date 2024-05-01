@@ -845,7 +845,7 @@ namespace GingerCore
         public void WaitForAgentToBeReady()
         {
             int Counter = 0;
-            while (Status != Agent.eStatus.Running && String.IsNullOrEmpty(Driver.ErrorMessageFromDriver))
+            while (Status != Agent.eStatus.Running && String.IsNullOrEmpty(Driver?.ErrorMessageFromDriver))
             {
                 // TODO: run on another thread?? !!!!!!!!!!!!!!!!!!!!
                 //GingerCore.General.DoEvents ();

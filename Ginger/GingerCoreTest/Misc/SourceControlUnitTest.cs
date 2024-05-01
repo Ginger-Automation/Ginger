@@ -148,7 +148,7 @@ namespace UnitTests.NonUITests
             List<string> conflictsPaths = new List<string>();
 
             //Act
-            checkin = SourceControl.CommitChanges(pathsToCommit, "aaa", ref error, ref conflictsPaths, false);
+            checkin = SourceControl.CommitAndCheckinChanges(pathsToCommit, "aaa", ref error, ref conflictsPaths, false);
 
             //Assert
             Assert.AreEqual(checkin, true);

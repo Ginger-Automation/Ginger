@@ -260,7 +260,15 @@ namespace GingerCore.ALM
                             {
                                 if ((result == null) || (result == string.Empty))
                                 {
-                                    result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} - {BizFlow.Name} - Error when uploading to ALM.{Environment.NewLine}";
+                                    if(BizFlow.ALMTestSetLevel == "RunSet")
+                                    {
+                                        result = $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)} - {BizFlow.Name} - Error when uploading to ALM.{Environment.NewLine}";
+                                    }
+                                    else
+                                    {
+                                        result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} - {BizFlow.Name} - Error when uploading to ALM.{Environment.NewLine}";
+                                    }
+                                    
                                 }
                                 BizFlow.PublishStatus = BusinessFlow.ePublishStatus.PublishFailed;
                             }
@@ -269,7 +277,15 @@ namespace GingerCore.ALM
                         else
                         {
                             BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
-                            result = $"{result}{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} - {BizFlow.Name} - doesn't have ExternalID, cannot execute publish to ALM RunSet Action {Environment.NewLine}";
+                            if(BizFlow.ALMTestSetLevel == "RunSet")
+                            {
+                                result = $"{result}{GingerDicser.GetTermResValue(eTermResKey.RunSet)} - {BizFlow.Name} - doesn't have ExternalID, cannot execute publish to ALM RunSet Action {Environment.NewLine}";
+                            }
+                            else
+                            {
+                                result = $"{result}{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} - {BizFlow.Name} - doesn't have ExternalID, cannot execute publish to ALM RunSet Action {Environment.NewLine}";
+                            }
+                            
                             Reporter.ToLog(eLogLevel.INFO, $"{BizFlow.Name} - doesn't have ExternalID, cannot execute publish to ALM RunSet Action");
                         }
                     }

@@ -3,14 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:fa="http://schemas.fontawesome.com/icons/"
+             xmlns:fa="http://schemas.fontawesome.com/icons/svg"
+             xmlns:foa="http://schemas.fontawesome.com/icons/fonts"
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="150">
     <Border BorderThickness="0" CornerRadius="90" x:Name="ImageMakerBorder" Background="Transparent" BorderBrush="Transparent">
         <Grid>
             <fa:ImageAwesome x:Name="xFAImage" Visibility="Collapsed" Icon="Regular_AddressBook" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-            <fa:FontAwesome x:Name="xFAFont" Visibility="Collapsed" Icon="Regular_AddressBook" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <foa:FontAwesome x:Name="xFAFont" Visibility="Collapsed" Icon="Regular_AddressBook" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
             <Image x:Name="xStaticImage" Visibility="Collapsed"></Image>
 

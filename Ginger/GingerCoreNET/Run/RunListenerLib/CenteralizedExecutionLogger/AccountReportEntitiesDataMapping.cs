@@ -79,6 +79,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             AccountReportAction accountReportAction = new AccountReportAction();
             List<string> newScreenShotsList = new List<string>();
+            Dictionary<string, string> newArtifactList = new Dictionary<string, string>();           
             accountReportAction.Id = action.ExecutionId;
             accountReportAction.EntityId = action.Guid;
             accountReportAction.AccountReportDbActivityId = action.ParentExecutionId;
@@ -99,9 +100,19 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 newScreenShotsList.Add(newScreenshotPath);
             }
             accountReportAction.ScreenShots = newScreenShotsList;
-
+            
+            accountReportAction.Artifacts = new List<AccountReport.Contracts.Helpers.DictObject>();
+          
+            foreach(ArtifactDetails artifact in action.Artifacts)
+            {                                   
+                string newArtifactPath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + "/" +  Path.GetFileName(artifact.ArtifactNewPath);
+                newArtifactList.Add(artifact.ArtifactName, newArtifactPath);
+                accountReportAction.Artifacts.Add(new AccountReport.Contracts.Helpers.DictObject
+                { Key = artifact.ArtifactName, Value = newArtifactPath });                                 
+            }           
             return accountReportAction;
         }
+
         public static AccountReportActivity MapActivityStartData(Activity activity, Context context)
         {
             activity.ExecutionId = Guid.NewGuid();// check incase of rerun / flow control 
@@ -220,8 +231,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportBusinessFlow.ExternalID2 = businessFlow.ExternalID2;
 
             int ChildExecutableItemsCountAction = 0;
-            string Actions = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString();
-            string Actvities = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString();
+            string Actions = nameof(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions);
+            string Actvities = nameof(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities);
             foreach (Activity activity in businessFlow.Activities)
             {
                 ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active);
@@ -261,8 +272,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Stopped || x.Status == eRunStatus.Completed);
                 ChildPassedItemsCountAction = ChildPassedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed);
             }
-            string Actvities = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString();
-            string Actions = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString();
+            string Actvities = nameof(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities);
+            string Actions = nameof(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions);
 
             accountReportBusinessFlow.ChildExecutableItemsCount = new List<AccountReport.Contracts.Helpers.DictObject>();
             accountReportBusinessFlow.ChildExecutableItemsCount.Add(new AccountReport.Contracts.Helpers.DictObject
@@ -345,6 +356,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             GingerCore.ValueExpression valueExpression = new(context.Environment, context, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
 
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet();
+
+            //updating source application and user
+            accountReportRunSet.SourceApplication = runSetConfig.SourceApplication;
+            accountReportRunSet.SourceApplicationUser = runSetConfig.SourceApplicationUser;
+            
             accountReportRunSet.Id = (Guid)runSetConfig.ExecutionID;
             accountReportRunSet.ExecutionId = (Guid)runSetConfig.ExecutionID;
             accountReportRunSet.EntityId = runSetConfig.Guid;
@@ -370,6 +386,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             valueExpression.Value = runSetConfig.RunDescription;
             accountReportRunSet.RunDescription = valueExpression.ValueCalculated;
             accountReportRunSet.IsPublished = runSetConfig.Publish;
+            accountReportRunSet.ExternalID = runSetConfig.ExternalID;
             SetRunSetChildCounts(runSetConfig, accountReportRunSet, true);
             return accountReportRunSet;
         }
@@ -441,8 +458,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             int ChildExecutableItemsCountAction = 0;
             int ChildExecutedItemsCountAction = 0;
             int ChildPassedItemsCountAction = 0;
-            string Actvities = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString();
-            string Actions = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString();
+            string Actvities = nameof(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities);
+            string Actions = nameof(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions);
 
             foreach (BusinessFlow businessFlow in runner.BusinessFlows)
             {
@@ -505,8 +522,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             int ChildExecutableItemsCountAction = 0;
             int ChildExecutedItemsCountAction = 0;
             int ChildPassedItemsCountAction = 0;
-            string Actvities = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString();
-            string Actions = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString();
+            string Actvities = nameof(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities);
+            string Actions = nameof(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions);
             foreach (GingerRunner runner in runSet.GingerRunners)
             {
                 foreach (BusinessFlow businessFlow in runner.Executor.BusinessFlows)

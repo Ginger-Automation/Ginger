@@ -15,6 +15,7 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="40"/>
             <RowDefinition/>
+            <RowDefinition/>
             <RowDefinition Height="62.5"/>
             <RowDefinition Height="53.5"/>
         </Grid.RowDefinitions>
@@ -28,12 +29,13 @@
             <Label x:Name="xSourceControlBranchLabel" Content="" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center"/>
         </StackPanel>
         <Ginger:ucGrid x:Name="CheckInFilesGrid" Grid.Row="2" Title="Pending Check-In Items" IsReadOnly="False" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" />
+        <Ginger:ucGrid x:Name="LocalCommitedFilesGrid" Grid.Row="3" Title="Pending Local Commits for Check-In" IsReadOnly="False" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" />
 
-        <StackPanel Grid.Row="3">
+        <StackPanel Grid.Row="4">
             <Label  Content="Check-In Comments:"  Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Height="28"/>
             <TextBox x:Name="CommentsTextBox" Text="" Style="{StaticResource @MultiRowsTextBoxStyle}" HorizontalAlignment="Stretch" Height="50"/>
         </StackPanel>
-        <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing" Grid.Row="4" Margin="10,10,0,22" HorizontalAlignment="Left" Width="29" Visibility="Visible" RenderTransformOrigin="0.314,-0.045"/>
+        <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing" Grid.Row="5" Margin="10,10,0,22" HorizontalAlignment="Left" Width="29" Visibility="Visible" RenderTransformOrigin="0.314,-0.045"/>
         
     </Grid>
 </Page>
