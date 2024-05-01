@@ -34,8 +34,6 @@ namespace GingerCoreNET.Application_Models
 
         public string Name { get { return ElementProperty.Name; } }
         public string Value { get { return ElementProperty.Value; } }
-
-        //public string UpdatedValue { get; set; }        
-
+        public string Category { get { return ElementProperty.Category; } }
     }
 }

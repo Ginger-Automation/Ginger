@@ -106,7 +106,8 @@ namespace GingerCoreNET.Application_Models
         public enum eMappingStatus
         {
             DeletedElement,
-            ReplaceExistingElement
+            ReplaceExistingElement,
+            MergeExistingElement
         }
 
 
