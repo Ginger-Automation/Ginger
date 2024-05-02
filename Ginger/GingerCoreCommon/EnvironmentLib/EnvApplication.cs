@@ -150,7 +150,9 @@ namespace GingerCore.Environments
                     var variablePassword = new VariablePasswordString()
                     {
                         Description = generalParam.Description,
-                        Name = generalParam.Name
+                        Name = generalParam.Name,
+                        SetAsInputValue = false,
+                        SetAsOutputValue = false
                     };
 
                     variablePassword.SetInitialValue(generalParam.Value);
@@ -163,7 +165,9 @@ namespace GingerCore.Environments
                          {
                              Name = generalParam.Name,
                              Description = generalParam.Description,
-                             ValueExpression = generalParam.Value
+                             ValueExpression = generalParam.Value,
+                             SetAsInputValue = false,
+                             SetAsOutputValue = false
                          }
                         );
                 }

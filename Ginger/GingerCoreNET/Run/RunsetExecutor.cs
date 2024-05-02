@@ -430,6 +430,8 @@ namespace Ginger.Run
         {
             var result = await Task.Run(async () =>
             {
+                RunSetConfig.SourceApplication = "Ginger Desktop";
+                RunSetConfig.SourceApplicationUser = System.Environment.UserName;
                 await RunRunset(doContinueRun);
                 return 1;
             });
@@ -533,7 +535,7 @@ namespace Ginger.Run
 
                         Task t = new Task(() =>
                         {
-                        if (!doContinueRun)
+                            if (!doContinueRun)
                         {
                             GR.Executor.RunRunner();
                         }

@@ -73,6 +73,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public bool ReRunFailed;
         public string ReferenceExecutionID;
         public string RerunLevel;
+        public string SourceApplication;
+        public string SourceApplicationUser;
 
         public bool SelfHealingCheckInConfigured;
 
@@ -118,6 +120,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 mGlobalVariableConfiguration = value;
                 OnPropertyChanged(nameof(GlobalVariableConfiguration));
+            }
+        }
+
+
+        bool mSetEnvironmentDetails;
+        public bool SetEnvironmentDetails
+        {
+            get
+            {
+                return mSetEnvironmentDetails;
+            }
+            set
+            {
+                mSetEnvironmentDetails = value;
+                OnPropertyChanged(nameof(SetEnvironmentDetails));
             }
         }
 
@@ -852,5 +869,23 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 SealightsTestRecommendations = (bool)value;
             }
         }
+
+        /// <summary>
+        /// Sets the source application and user in the RunSetConfig object.
+        /// If the SourceApplication property is empty, it sets it to "Ginger CLI".
+        /// If the SourceApplicationUser property is empty, it sets it to the current user's username.
+        /// </summary>
+        internal void SetSourceAppAndUser()
+        {
+            if (string.IsNullOrEmpty(mRunSetConfig.SourceApplication))
+            {
+                mRunSetConfig.SourceApplication = string.IsNullOrEmpty(this.SourceApplication) ? "Ginger CLI" : this.SourceApplication;
+            }
+            if (string.IsNullOrEmpty(mRunSetConfig.SourceApplicationUser))
+            {
+                mRunSetConfig.SourceApplicationUser = string.IsNullOrEmpty(this.SourceApplicationUser) ? System.Environment.UserName : this.SourceApplicationUser;
+            }
+        }
+
     }
 }

@@ -488,6 +488,12 @@ namespace Ginger.Run
         public void RunRunner(bool doContinueRun = false)
         {
             bool runnerExecutionSkipped = false;
+
+            if (!string.IsNullOrEmpty(mGingerRunner.SpecificEnvironmentName))
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Selected Environment for {mGingerRunner.Name} is {mGingerRunner.SpecificEnvironmentName}");
+            }
+
             try
             {
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || !BusinessFlows.Any(x => x.Active))
@@ -2313,8 +2319,8 @@ namespace Ginger.Run
                                     if (string.IsNullOrEmpty(screenShotAction.Error))//make sure the screen shot succeed
                                     {
                                         foreach (string screenShot in screenShotAction.ScreenShots)
-                                        {
-                                            act.ScreenShots.Add(screenShot);
+                                        {                                            
+                                            SaveArtifactsScreenshot(act, screenShot);
                                         }
                                         foreach (string screenShotName in screenShotAction.ScreenShotsNames)
                                         {
@@ -2327,7 +2333,6 @@ namespace Ginger.Run
                                     }
                                 }
                                 else if (a.AgentType == Agent.eAgentType.Service)
-
                                 {
                                     ExecuteOnPlugin.ExecutesScreenShotActionOnAgent(a, act);
                                 }
@@ -2348,6 +2353,14 @@ namespace Ginger.Run
             }
         }
 
+        private void SaveArtifactsScreenshot(Act act, string screenshot)
+        {
+            act.ScreenShots.Add(screenshot);
+            if (act.GetType() == typeof(ActVisualTesting))
+            {                            
+               Act.AddArtifactToAction("Image", act, screenshot);                              
+            }                
+        }
         private void TakeDesktopScreenShotIntoAction(Act act)
         {
             string msg = string.Empty;

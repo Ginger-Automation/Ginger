@@ -137,7 +137,7 @@ namespace Amdocs.Ginger.Repository
             }
 
             //Special handling for Shared Repository item to be in sub folder
-            if (s == "ActivitiesGroups" || s == "Activities" || s == "Actions" || s == "Variables" || s == "Validations")
+            if (s is "ActivitiesGroups" or "Activities" or "Actions" or "Variables" or "Validations")
             {
                 s = @"SharedRepository\" + s;
             }
@@ -153,7 +153,7 @@ namespace Amdocs.Ginger.Repository
 
 
         // TypeName cache
-        private static ConcurrentDictionary<string, string> ShortNameDictionary = new ConcurrentDictionary<string, string>();
+        private static ConcurrentDictionary<string, string> ShortNameDictionary = new();
 
 
 
@@ -164,8 +164,7 @@ namespace Amdocs.Ginger.Repository
             //TODO: make it generic using RS classes dic
             // For speed and in order to to waste mem by creating everytime obj to get name we cache it
 
-            string ShortName = null;
-            ShortNameDictionary.TryGetValue(ClassName, out ShortName);
+            ShortNameDictionary.TryGetValue(ClassName, out var ShortName);
             if (ShortName == null)
             {
                 RepositoryItemBase obj = (RepositoryItemBase)(t.Assembly.CreateInstance(ClassName));

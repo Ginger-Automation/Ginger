@@ -19,12 +19,14 @@ limitations under the License.
 using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Run;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 
@@ -233,8 +235,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         private async Task SendDataOnActionEndTask(Act action)
         {
+            List<string> artifactList = new List<string>();           
             AccountReportAction accountReportAction = AccountReportEntitiesDataMapping.MapActionEndData(action, mContext);
+            foreach (ArtifactDetails artifact in action.Artifacts)
+            {
+                artifactList.Add(artifact.ArtifactNewPath);
+            }
             await AccountReportApiHandler.SendScreenShotsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.ScreenShots.ToList());
+            await AccountReportApiHandler.SendArtifactsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, artifactList);
             await AccountReportApiHandler.SendActionExecutionDataToCentralDBAsync(accountReportAction, true);
         }
 
