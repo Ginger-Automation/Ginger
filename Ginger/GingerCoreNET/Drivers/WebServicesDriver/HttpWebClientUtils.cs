@@ -157,12 +157,14 @@ namespace GingerCore.Actions.WebAPI
                     }
                 }
             }
-            catch (Exception Ex)
+            catch (FormatException Ex)
             {
                 if (Ex.Message.Equals("The format of value '' is invalid."))
                 {
-                    throw new Exception($"Value of '{param}' header is Null or Empty, please set some value to Header.");
+                    throw new Exception($"Value of '{param}' header is Null or Empty, please set some value to Header.", Ex);
                 }
+
+                throw;
             }
         }
 
