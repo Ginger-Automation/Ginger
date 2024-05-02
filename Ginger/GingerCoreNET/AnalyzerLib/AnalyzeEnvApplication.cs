@@ -83,7 +83,12 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                         Severity = eSeverity.High,
                         Selected = false,
                         CanAutoFix = eCanFix.No,
-                        HowToFix= $"Please go to the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Tab and add a new {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} then add it in the used environment"
+                        HowToFix = $"""
+                        Add this application in the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}.
+                        
+                        Note :- That if you want to add the application with the same name as in environment then please delete the existing application from the environment 
+                        and add a new one.
+                        """
                     };
                     issues.Add(AB);
                 }
