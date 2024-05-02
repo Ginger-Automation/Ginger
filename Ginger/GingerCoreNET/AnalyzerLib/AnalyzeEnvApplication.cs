@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                         Impact = "Execution probably will fail due to missing input value.",
                         ItemClass = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
                         Severity = eSeverity.Critical,
-                        Selected = true,
+                        Selected = false,
                         FixItHandler = null
                     };
                     issues.Add(AB);
@@ -66,13 +66,13 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                 ApplicationPlatform? ExistingApplication = WorkSpace.Instance.Solution.ApplicationPlatforms
                     .FirstOrDefault(applicationPlatform => applicationPlatform.Guid.Equals(application.ParentGuid) || applicationPlatform.AppName.Equals(application.Name));
 
-                if (ExistingApplication == null || ExistingApplication.Platform.Equals(ePlatformType.NA))
+                if (ExistingApplication == null)
                 {
                     AnalyzeEnvApplication AB = new()
                     {
-                        Description = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Platform cannot be 'NA'",
+                        Description = $"Environment Application does not exist in the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} of the Solution",
                         UTDescription = "MissingApplicationInTargetApplication",
-                        Details = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Platform cannot be 'NA'",
+                        Details = $"Environment Application does not exist in the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} of the Solution",
                         FixItHandler = null,
                         Status = eStatus.NeedFix,
                         IssueType = eType.Error,
@@ -81,8 +81,9 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                         Impact = "Execution probably will fail due to missing input value.",
                         ItemClass = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
                         Severity = eSeverity.High,
-                        Selected = true,
-                        CanAutoFix = eCanFix.No
+                        Selected = false,
+                        CanAutoFix = eCanFix.No,
+                        HowToFix= $"Please go to the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Tab and add a new {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} then add it in the used environment"
                     };
                     issues.Add(AB);
                 }
