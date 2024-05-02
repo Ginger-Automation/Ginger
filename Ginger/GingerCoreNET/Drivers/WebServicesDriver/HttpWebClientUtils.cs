@@ -123,6 +123,7 @@ namespace GingerCore.Actions.WebAPI
         private void AddHeadersToClient()
         {
             string param = string.Empty;
+            string value = string.Empty;
             try
             {
                 //Add request headers
@@ -133,7 +134,7 @@ namespace GingerCore.Actions.WebAPI
 
                         var specialCharactersReg = new Regex("^[a-zA-Z0-9 ]*$");
                         param = mAct.HttpHeaders[i].Param;
-                        string value = mAct.HttpHeaders[i].ValueForDriver;
+                        value = mAct.HttpHeaders[i].ValueForDriver;
                         if (!string.IsNullOrEmpty(param))
                         {
                             if (param == "Content-Type")
@@ -159,11 +160,15 @@ namespace GingerCore.Actions.WebAPI
             }
             catch (FormatException Ex)
             {
-                if (Ex.Message.Equals("The format of value '' is invalid."))
+                if (Ex.Message.Equals($"The format of value '{value}' is invalid."))
                 {
-                    throw new Exception($"Value of '{param}' header is Null or Empty, please set some value to Header.", Ex);
+                    throw new Exception($"Value of '{param}' header is Invalid, please set valid value to header.", Ex);
                 }
 
+                throw;
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }
