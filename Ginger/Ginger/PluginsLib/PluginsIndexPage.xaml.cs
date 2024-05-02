@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -170,16 +171,25 @@ namespace Ginger.PlugInsWindows
             }
             Task.Factory.StartNew(() =>
             {
-                WorkSpace.Instance.PlugInsManager.InstallPluginPackage(onlinePluginPackage, release);
-                onlinePluginPackage.Status = "Installed";
-            }).ContinueWith((a) =>
-            {
-                Dispatcher.Invoke(() =>
+                try
                 {
-                    xProcessingImage.Visibility = Visibility.Collapsed;
-                    xInstallButton.ButtonText = "Install";
-                    xInstalledVersion.Text = onlinePluginPackage.CurrentPackage;
-                });
+                    WorkSpace.Instance.PlugInsManager.InstallPluginPackage(onlinePluginPackage, release);
+                    onlinePluginPackage.Status = "Installed";
+                }
+                catch (Exception ex)
+                {
+                    onlinePluginPackage.Status = "Error in installation,Please check error logs";
+                    throw;
+                }
+                finally
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        xProcessingImage.Visibility = Visibility.Collapsed;
+                        xInstallButton.ButtonText = "Install";
+                        xInstalledVersion.Text = onlinePluginPackage.CurrentPackage;
+                    });
+                }
             });
             xInstalledSection.Visibility = Visibility.Visible;
 
