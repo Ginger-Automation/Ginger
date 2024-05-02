@@ -369,7 +369,7 @@ namespace Ginger.Actions.VisualTesting
                     b = GetFreeBitmapCopy(FileName);
                 }
                 // send with null bitmap will show image not found
-                ScreenShotViewPage p = new ScreenShotViewPage("preview Baseline Image", b);
+                ScreenShotViewPage p = new ScreenShotViewPage("Preview Baseline Image", b);
                 VRTPreviewBaselineImageFrame.ClearAndSetContent(p);
             }
             catch(Exception ex) 
