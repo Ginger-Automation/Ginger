@@ -89,11 +89,20 @@ namespace GingerCore.Actions
         public override void Execute()
         {
             DataBuffer = new StringBuilder();
+
+            if(string.IsNullOrEmpty(ValueExpression.Calculate(this.FilePath)))
+            {
+                Error = "Application/File path is Empty";
+                return;
+            }
+
             if (ParseResult && string.IsNullOrEmpty(ValueExpression.Calculate(Delimiter)))
             {
                 Error = "Delimiter is Empty";
                 return;
             }
+
+
 
             var task = Task.Run(() =>
                 ExecuteCliProcess()
@@ -175,11 +184,15 @@ namespace GingerCore.Actions
                         var cmd = Cli.Wrap(actualApplicationPath)
                             .WithArguments(arguments.ToString());
                         cmd.ExecuteAsync();
-                    }                }
+                    }                
+                }
                 catch(Exception ex)
                 {
                     Error = "Error: during CLI Orchestration:" + ex.Message;
                     Reporter.ToLog(eLogLevel.ERROR, "Error: during CLI Orchestration", ex);
+                    DataBuffer.Append($"Error: during CLI Orchestration {ex.Message} {ex.InnerException}");
+                    WriteTofile(path, DataBuffer);
+                    Act.AddArtifactToAction(Path.GetFileName(path), this, path);
                     Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     return;
                 }
