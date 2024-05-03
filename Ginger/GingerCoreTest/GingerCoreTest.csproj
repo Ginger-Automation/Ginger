@@ -635,14 +635,9 @@
     <None Update="TestResources\XML\BATCH_FILE.BAT">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Resource Include="TestResources\keys\privatekey_jack.txt" />
-    <Resource Include="TestResources\keys\Privatekey.txt" />
     <Resource Include="TestResources\ASCF\GingerASCFRecordQueueCommands.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="TestResources\AutoPilot\JSONTemplates\login.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="TestResources\AutoPilot\Swagger\swagger.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
