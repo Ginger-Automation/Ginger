@@ -361,16 +361,23 @@ namespace Ginger.Actions.VisualTesting
         {
             try
             {
-                string previewBaselineImage = GingerCoreNET.GeneralLib.General.DownloadBaselineImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{mAct.previewBaselineImageName}", mAct);
-                string FileName = General.GetFullFilePath(previewBaselineImage);
-                BitmapImage b = null;
-                if (File.Exists(FileName) && new FileInfo(FileName).Length > 0)
+                if (!string.IsNullOrEmpty(mAct.previewBaselineImageName))
                 {
-                    b = GetFreeBitmapCopy(FileName);
+                    string previewBaselineImage = GingerCoreNET.GeneralLib.General.DownloadBaselineImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{mAct.previewBaselineImageName}", mAct);
+                    string FileName = General.GetFullFilePath(previewBaselineImage);
+                    BitmapImage b = null;
+                    if (File.Exists(FileName) && new FileInfo(FileName).Length > 0)
+                    {
+                        b = GetFreeBitmapCopy(FileName);
+                    }
+                    // send with null bitmap will show image not found
+                    ScreenShotViewPage p = new ScreenShotViewPage("Preview Baseline Image", b);
+                    VRTPreviewBaselineImageFrame.ClearAndSetContent(p);
                 }
-                // send with null bitmap will show image not found
-                ScreenShotViewPage p = new ScreenShotViewPage("Preview Baseline Image", b);
-                VRTPreviewBaselineImageFrame.ClearAndSetContent(p);
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "unable to fetch the baseline image");
+                }
             }
             catch(Exception ex) 
             {
