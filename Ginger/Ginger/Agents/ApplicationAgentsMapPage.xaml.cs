@@ -97,6 +97,11 @@ namespace Ginger.Agents
                     }
                     if (mRunner.SolutionApplications?.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
                     {
+                        if(Apag.Agent == null && Apag.PossibleAgents.Any())
+                        {
+                            Apag.Agent = Apag.PossibleAgents[0] as Agent;
+                        }
+
                         ApplicationAgents.Add(Apag);
                     }
                 }
