@@ -733,7 +733,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FilePowerpoint);
                     break;
                 case eImageType.FileArchive:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileArchive);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FileZipper);
                     break;
                 case eImageType.PlusSquare:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_SquarePlus);
