@@ -238,6 +238,12 @@ namespace GingerWPF.DragDropLib
             DragDropControl.Drop += DragSource_Drop;
             DragDropControl.DragEnter += DragTarget_DragEnter;
             DragDropControl.GiveFeedback += DragSource_GiveFeedback;
+            DragDropControl.DragLeave += DragDropControl_DragLeave;
+        }
+
+        private static void DragDropControl_DragLeave(object sender, DragEventArgs e)
+        {
+            DDW.SetDragIcon(DragDropLib.DragInfo.eDragIcon.DoNotDrop);
         }
 
         public static void UnHookEventHandlers(UIElement DragDropControl)
@@ -247,6 +253,7 @@ namespace GingerWPF.DragDropLib
             DragDropControl.Drop -= DragSource_Drop;
             DragDropControl.DragEnter -= DragTarget_DragEnter;
             DragDropControl.GiveFeedback -= DragSource_GiveFeedback;
+            DragDropControl.DragLeave -= DragDropControl_DragLeave;
         }
 
         private static void DragDropControl_DragOver(object sender, DragEventArgs e)

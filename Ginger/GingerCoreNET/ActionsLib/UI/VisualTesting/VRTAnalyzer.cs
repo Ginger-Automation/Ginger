@@ -308,8 +308,11 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.AddOrUpdateReturnParamActual("Image URL", result.ImageUrl + "");
                 mAct.AddOrUpdateReturnParamActual("Baseline URL", result.BaselineUrl + "");
                 mAct.AddOrUpdateReturnParamActual("Difference URL", result.DiffUrl + "");
-                mAct.AddOrUpdateReturnParamActual("URL", result.Url + "");               
-
+                mAct.AddOrUpdateReturnParamActual("URL", result.Url + "");
+                if (result.BaselineUrl != null)
+                {
+                    mAct.previewBaselineImageName = Path.GetFileName(result.BaselineUrl);
+                }
 
                 //Calculate the action status based on the results
                 if (WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes && result.Status != TestRunStatus.Ok)
@@ -336,7 +339,6 @@ namespace GingerCore.Actions.VisualTesting
                             //Add baseline image to act screenshots
                             if(result.BaselineUrl != null)
                             {
-                                mAct.previewBaselineImageName = Path.GetFileName(result.BaselineUrl);
                                 General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.BaselineUrl)}", mAct, true, "BaseLine_Image");
                             }
                             
