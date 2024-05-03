@@ -122,36 +122,54 @@ namespace GingerCore.Actions.WebAPI
 
         private void AddHeadersToClient()
         {
-            //Add request headers
-            if (mAct.HttpHeaders.Any())
+            string param = string.Empty;
+            string value = string.Empty;
+            try
             {
-                for (int i = 0; i < mAct.HttpHeaders.Count(); i++)
+                //Add request headers
+                if (mAct.HttpHeaders.Any())
                 {
-
-                    var specialCharactersReg = new Regex("^[a-zA-Z0-9 ]*$");
-                    string param = mAct.HttpHeaders[i].Param;
-                    string value = mAct.HttpHeaders[i].ValueForDriver;
-                    if (!string.IsNullOrEmpty(param))
+                    for (int i = 0; i < mAct.HttpHeaders.Count(); i++)
                     {
-                        if (param == "Content-Type")
-                        {
-                            ContentType = value;
-                        }
-                        else if (param.ToUpper() == "DATE")
-                        {
 
-                            Client.DefaultRequestHeaders.Date = System.DateTime.Parse(value);
-                        }
-                        else if (!specialCharactersReg.IsMatch(value))
+                        var specialCharactersReg = new Regex("^[a-zA-Z0-9 ]*$");
+                        param = mAct.HttpHeaders[i].Param;
+                        value = mAct.HttpHeaders[i].ValueForDriver;
+                        if (!string.IsNullOrEmpty(param))
                         {
-                            Client.DefaultRequestHeaders.TryAddWithoutValidation(param, value);
-                        }
-                        else
-                        {
-                            Client.DefaultRequestHeaders.Add(param, value);
+                            if (param == "Content-Type")
+                            {
+                                ContentType = value;
+                            }
+                            else if (param.ToUpper() == "DATE")
+                            {
+
+                                Client.DefaultRequestHeaders.Date = System.DateTime.Parse(value);
+                            }
+                            else if (!specialCharactersReg.IsMatch(value))
+                            {
+                                Client.DefaultRequestHeaders.TryAddWithoutValidation(param, value);
+                            }
+                            else
+                            {
+                                Client.DefaultRequestHeaders.Add(param, value);
+                            }
                         }
                     }
                 }
+            }
+            catch (FormatException Ex)
+            {
+                if (Ex.Message.Equals($"The format of value '{value}' is invalid."))
+                {
+                    throw new Exception($"Value of '{param}' header is Invalid, please set valid value to header.", Ex);
+                }
+
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
