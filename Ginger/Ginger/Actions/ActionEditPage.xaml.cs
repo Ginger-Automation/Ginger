@@ -587,8 +587,8 @@ namespace Ginger.Actions
             foreach (ArtifactDetails a in mAction.Artifacts)
             {
                 UCArtifact artifact = new UCArtifact();                
-                artifact.ArtifactPath = a.ArtifactOriginalPath;
-                artifact.ArtifactName = a.ArtifactName;                
+                artifact.ArtifactPath = a.ArtifactReportStoragePath;
+                artifact.ArtifactName = a.ArtifactOriginalName;                
                 artifact.IntiArtifact();
                 ArtifactsItems.Add(artifact);
             }
@@ -1667,10 +1667,12 @@ namespace Ginger.Actions
                 if (mAction.ReturnValues.Any())
                 {
                     xOutputValuesTabTextBlock.Text = string.Format("Validations / Assignments ({0})", mAction.ReturnValues.Count());
+                    xOutputValuesTabHeaderTextBlock.Text = string.Format("Output Values ({0})", mAction.ReturnValues.Count());
                 }
                 else
                 {
                     xOutputValuesTabTextBlock.Text = "Validations / Assignments";
+                    xOutputValuesTabHeaderTextBlock.Text = "Output Values";
                 }
             });
         }
@@ -2217,13 +2219,13 @@ namespace Ginger.Actions
             {
                 string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(mAction.RawResponseValues);
                 if (System.IO.File.Exists(tempFilePath))
-                {
+                {                    
                     DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
                     docPage.Width = 800;
                     docPage.Height = 800;
                     docPage.ShowAsWindow("Raw Output Values");
                     System.IO.File.Delete(tempFilePath);
-                    return;
+                    return;                  
                 }
             }
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw response view, see log for details.");

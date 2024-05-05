@@ -103,7 +103,7 @@ namespace Ginger.Reports
                 xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish), xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
-
+            xUploadArtifactsButton.Init(typeof(ExecutionLoggerConfiguration.eUploadExecutionArtifactsToCentralizedReport), xUploadArtifactsPanel, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.UploadArtifactsToCentralizedReport));
 
         }
 

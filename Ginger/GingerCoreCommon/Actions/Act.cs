@@ -1082,14 +1082,15 @@ namespace GingerCore.Actions
 
         public static void AddArtifactToAction(string artifactName, Act action, string artifactPath)
         {
-            string ext = Path.GetExtension(artifactPath);      
-            
-            var randomFileName = string.Concat("Artifact_", action.Guid, "_", DateTime.Now.ToString("hhmmss.fff"), "_", ext);
+            string ext = Path.GetExtension(artifactPath);
+            string artifactOriginalName = artifactName.Length <= 15 ? artifactName : artifactName.Substring(0, 15);
+            var randomFileName = string.Concat(artifactOriginalName, "_", action.Guid, "_", DateTime.Now.ToString("hhmmss.fff"), "_", ext);
 
             ArtifactDetails artifact = new ArtifactDetails();
-            artifact.ArtifactName = artifactName;
+            artifact.ArtifactOriginalName = artifactName;
             artifact.ArtifactOriginalPath = artifactPath;
-            artifact.ArtifactNewPath = randomFileName;
+            artifact.ArtifactReportStoragePath = artifactPath;
+            artifact.ArtifactReportStorageName = randomFileName;
             action.Artifacts.Add(artifact);            
         }
 
@@ -1772,7 +1773,7 @@ namespace GingerCore.Actions
                 }
                 this.ScreenShots.Clear();
                 this.ScreenShotsNames.Clear();
-
+                this.Artifacts.Clear();
                 // remove return vals which don't have expected or store to var
                 // it is not needed since it will return back after we get results
                 // if i.e the SQL changed we want to reflect the latest changes and output what we got
