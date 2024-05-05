@@ -20,6 +20,7 @@ using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
 using GingerCore.Drivers.Selenium.SeleniumBMP;
@@ -364,11 +365,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             }
         }
 
-        public async Task SendArtifactsToCentralDBAsync(Guid executionId, List<string> filePaths)
+        public async Task SendArtifactsToCentralDBAsync(Guid executionId, ObservableList<ArtifactDetails> artifactDetails)
         {
             if (restClient != null)
             {
-                if (filePaths != null && filePaths.Count > 0)
+                if (artifactDetails != null && artifactDetails.Count > 0)
                 {
                     try
                     {
@@ -376,17 +377,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
                         long fileSize = 0;
 
-                        List<string> temp = new List<string>();
+                        List<ArtifactDetails> temp = new List<ArtifactDetails>();
 
-                        foreach (string artifact in filePaths)
+                        foreach (ArtifactDetails artifact in artifactDetails)
                         {
-                            fileSize += new System.IO.FileInfo(artifact).Length;
-                            temp.Add(artifact);
-                            if ((5 * 1000000) < fileSize) // 5 MB
+                            if(File.Exists(artifact.ArtifactReportStoragePath))
                             {
-                                await UploadArtifactsAsync(executionId, temp);
-                                temp = new List<string>();
-                                fileSize = 0;
+                                fileSize += new System.IO.FileInfo(artifact.ArtifactReportStoragePath).Length;
+                                temp.Add(artifact);
+                                if ((5 * 1000000) < fileSize) // 5 MB
+                                {
+                                    await UploadArtifactsAsync(executionId, temp);
+                                    temp = new List<ArtifactDetails>();
+                                    fileSize = 0;
+                                } 
                             }
 
                         }
@@ -395,6 +399,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                         {
                             await UploadArtifactsAsync(executionId, temp);
                         }
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Exception occurred during uploading artifacts", ex);
                     }
                     finally
                     {
@@ -405,7 +413,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         }
 
 
-        public async Task UploadArtifactsAsync(Guid executionId, List<string> filePaths)
+        public async Task UploadArtifactsAsync(Guid executionId, List<ArtifactDetails> artifactDetails)
         {
             if (restClient != null)
             {
@@ -416,9 +424,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     restRequest.AddHeader("Content-Type", "multipart/form-data");
                     restRequest.AddHeader("ExecutionId", executionId.ToString());
 
-                    foreach (string item in filePaths)
+                    foreach (ArtifactDetails artifact in artifactDetails)
                     {
-                        restRequest.AddFile(Path.GetFileName(item), item);
+                        restRequest.AddFile(artifact.ArtifactReportStorageName, artifact.ArtifactReportStoragePath);
                     }
                     RestResponse response = await restClient.ExecuteAsync(restRequest);
 

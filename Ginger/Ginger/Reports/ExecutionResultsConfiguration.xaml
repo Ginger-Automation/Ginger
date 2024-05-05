@@ -236,6 +236,10 @@
                             <StackPanel x:Name="xDeleteLocalDataOnPublishPanel" Margin="-15,0,0,0" Orientation="Horizontal" Grid.Row="4" Grid.Column="1" >
                                 <UserControlsLib:UCRadioButtons x:Name="xDeleteLocalDataRadioButton" ></UserControlsLib:UCRadioButtons>
                             </StackPanel>
+                            <Label x:Name="xUploadArtifacts" Content="Upload execution artifacts to centralized report"  Grid.Column="0" Grid.Row="4" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
+                            <StackPanel x:Name="xUploadArtifactsPanel" Margin="-15,0,0,0" Orientation="Horizontal" Grid.Row="4" Grid.Column="1" >
+                                <UserControlsLib:UCRadioButtons x:Name="xUploadArtifactsButton" ></UserControlsLib:UCRadioButtons>
+                            </StackPanel>
                         </Grid>
 
                     </StackPanel>

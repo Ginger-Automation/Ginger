@@ -321,8 +321,13 @@ namespace GingerCore.Actions.VisualTesting
                             mAct.Error += $"Differences from baseline was found.{System.Environment.NewLine}{result.DiffUrl}";
 
                             //Add difference image to act screenshots
-                            if(result.DiffUrl != null){
-                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{ Path.GetFileName(result.DiffUrl)}", mAct, true, "Difference_Image");
+                            if(result.DiffUrl != null)
+                            {
+                                string DiffrenceImage = General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{ Path.GetFileName(result.DiffUrl)}", mAct);
+                                if(!string.IsNullOrEmpty(DiffrenceImage) && File.Exists(DiffrenceImage))
+                                {
+                                    Act.AddArtifactToAction("Difference_Image", mAct, DiffrenceImage);
+                                }                                
                             }
                             
 
@@ -330,7 +335,11 @@ namespace GingerCore.Actions.VisualTesting
                             if(result.BaselineUrl != null)
                             {
                                 mAct.previewBaselineImageName = Path.GetFileName(result.BaselineUrl);
-                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.BaselineUrl)}", mAct, true, "BaseLine_Image");
+                                string BaseLineImage = General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.BaselineUrl)}", mAct);
+                                if(!string.IsNullOrEmpty(BaseLineImage) && File.Exists(BaseLineImage))
+                                {
+                                    Act.AddArtifactToAction("Baseline_Image", mAct, BaseLineImage);
+                                }                                
                             }
                             
 

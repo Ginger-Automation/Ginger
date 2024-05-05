@@ -617,7 +617,7 @@ namespace GingerCore.Actions
             }
             baseImage.Save(FullPath);
 
-            Act.AddArtifactToAction("Image", this, FullPath);                       
+            Act.AddArtifactToAction("Baseline_Image", this, FullPath);                       
         }
 
         // TODO: move from here to general or use general
