@@ -488,6 +488,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     {
                         TVI.Items.Clear();
                         TVI.IsExpanded = true;
+                        _ = SetTreeNodeItemChilds(TVI);
                     }
                 });
             }

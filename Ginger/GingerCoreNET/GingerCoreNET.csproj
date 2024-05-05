@@ -257,7 +257,7 @@
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.6" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.5" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.6" />
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     

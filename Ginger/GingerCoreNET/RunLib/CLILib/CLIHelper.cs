@@ -870,18 +870,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        /// <summary>
+        /// Sets the source application and user in the RunSetConfig object.
+        /// If the SourceApplication property is empty, it sets it to "Ginger CLI".
+        /// If the SourceApplicationUser property is empty, it sets it to the current user's username.
+        /// </summary>
         internal void SetSourceAppAndUser()
         {
-            if (string.IsNullOrEmpty(this.SourceApplication))
+            if (string.IsNullOrEmpty(mRunSetConfig.SourceApplication))
             {
-                this.SourceApplication = "Ginger CLI";
+                mRunSetConfig.SourceApplication = string.IsNullOrEmpty(this.SourceApplication) ? "Ginger CLI" : this.SourceApplication;
             }
-            if (string.IsNullOrEmpty(this.SourceApplicationUser))
+            if (string.IsNullOrEmpty(mRunSetConfig.SourceApplicationUser))
             {
-                this.SourceApplicationUser = System.Environment.UserName;
+                mRunSetConfig.SourceApplicationUser = string.IsNullOrEmpty(this.SourceApplicationUser) ? System.Environment.UserName : this.SourceApplicationUser;
             }
-            mRunSetConfig.SourceApplication = this.SourceApplication;
-            mRunSetConfig.SourceApplicationUser = this.SourceApplicationUser;
         }
+
     }
 }

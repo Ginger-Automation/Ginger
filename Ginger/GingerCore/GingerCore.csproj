@@ -563,7 +563,7 @@
     <PackageReference Include="Freeware.Pdf2Png">
       <Version>1.0.1</Version>
     </PackageReference>
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.5" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.6" />
     <PackageReference Include="Google.Protobuf">
       <Version>3.15.0</Version>
     </PackageReference>
