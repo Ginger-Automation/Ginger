@@ -1049,7 +1049,9 @@ namespace Ginger.Run.RunSetActions
             var columnHeaderName = fieldsNamesHTMLTableCellsRowOne;
             var columnValue = fieldsValuesHTMLTableCellsRowOne;
             var columnCount = 0;
-            foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
+            //TODO : Remove SourceApplication & SourceApplicationUser from if condition when need to add in report.
+            foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true && 
+            x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && x.FieldKey !="SourceApplication" && x.FieldKey !="SourceApplicationUser")))
             {
                 // change row from one to two
                 if (totalColumnCount > 6 && ++columnCount > 6)

@@ -94,8 +94,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         if (File.Exists(completeSSPath))
                         {
                             continue;
-                        }                        
+                        }
+
                         File.Move(action.ScreenShots[s], completeSSPath, true);
+
+                        //Replace artifact new path.
+                        ArtifactDetails a = action.Artifacts.FirstOrDefault(x => x.ArtifactOriginalPath == action.ScreenShots[s]);
+                        if(a != null)
+                        {                           
+                           a.ArtifactOriginalPath = completeSSPath;
+                        }
+                                                                     
                         action.ScreenShots[s] = completeSSPath; 
                     }
                 }
@@ -111,15 +120,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
 
         private void SaveArtifacts(GingerCore.Actions.Act action, string executionLogFolder, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
-        {            
-            string artifactFullPath = string.Empty;        
+        {
+            string artifactFullPath = string.Empty;
             for (var s = 0; s < action.Artifacts.Count; s++)
-            {
+            {               
                 try
-                {                                        
-                    string artifactFolderName = Path.Combine(executionLogFolder, "Artifacts");                                     
-                    artifactFullPath = Path.Combine(artifactFolderName, action.Artifacts[s].ArtifactNewPath);
-                   
+                {
+                    string artifactFolderName = Path.Combine(executionLogFolder, "Artifacts");
+                    artifactFullPath = Path.Combine(artifactFolderName, action.Artifacts[s].ArtifactReportStorageName);
+
                     if (!System.IO.Directory.Exists(artifactFolderName))
                     {
                         System.IO.Directory.CreateDirectory(artifactFolderName);
@@ -128,12 +137,19 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     {
                         continue;
                     }
-                    File.Copy(action.Artifacts[s].ArtifactOriginalPath, artifactFullPath, true);
-                    action.Artifacts[s].ArtifactNewPath = artifactFullPath;
+                    if(File.Exists(action.Artifacts[s].ArtifactOriginalPath))
+                    {
+                        File.Copy(action.Artifacts[s].ArtifactOriginalPath, artifactFullPath, true);
+                        action.Artifacts[s].ArtifactReportStoragePath = artifactFullPath;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Artifact file not found : " + action.Artifacts[s].ArtifactOriginalPath);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to move artifact with path: " + artifactFullPath + " of the action:'" + action.Description + "' to the Execution Logger folder", ex);                    
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to copy artifact with path: " + artifactFullPath + " of the action:'" + action.Description + "' to the Execution Logger folder", ex);
                 }
             }
         }
@@ -167,7 +183,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             foreach (ArtifactDetails a in action.Artifacts)
             {               
                 liteDbAction.Artifacts.Add(new AccountReport.Contracts.Helpers.DictObject
-                { Key = a.ArtifactName, Value = a.ArtifactOriginalPath });
+                { Key = a.ArtifactOriginalName, Value = a.ArtifactOriginalPath });
             }
             if (liteDbActionList.All(liteAct => !ObjectId.Equals(liteAct._id, liteDbAction._id)))
             {

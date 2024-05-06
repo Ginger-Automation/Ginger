@@ -37,7 +37,19 @@ namespace Ginger.Actions.UserControls
         public string ArtifactName { get; set; }
 
         public string ArtifactPath { get; set; }
-       
+        public string ArtifactFileName 
+        {
+            get
+            {
+                string FileName = string.Empty;
+                if(!string.IsNullOrEmpty(ArtifactPath))
+                {
+                    FileName = System.IO.Path.GetFileName(ArtifactPath);
+                }
+                return FileName;
+            }            
+        }
+
         public UCArtifact()
         {
             InitializeComponent();
@@ -82,18 +94,49 @@ namespace Ginger.Actions.UserControls
         }
        
         private void ViewContent(object sender, System.Windows.RoutedEventArgs e)
-        {
-            
-            string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(ArtifactPath);
-            if (System.IO.File.Exists(tempFilePath))
+        {                        
+            string FileExtention = string.Empty;
+            FileExtention = System.IO.Path.GetExtension(ArtifactPath).ToLower().Remove(0, 1);
+            eFileTypes fileType;
+            Enum.TryParse(FileExtention, out fileType);
+            if(System.IO.File.Exists(ArtifactPath))
             {
-                DocumentEditorPage docPage = new DocumentEditorPage(ArtifactPath, enableEdit: false, UCTextEditorTitle: string.Empty);
-                docPage.Width = 800;
-                docPage.Height = 800;
-                docPage.ShowAsWindow(ArtifactName);                
-                return;
-            }          
-            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load file content, see log for details.");
+                switch (fileType)
+                {
+                    
+                    case eFileTypes.bmp:
+                    case eFileTypes.gif:
+                    case eFileTypes.jpeg:
+                    case eFileTypes.jpg:
+                    case eFileTypes.png:
+                        ViewImage(ArtifactPath);                        
+                        break;                    
+                    case eFileTypes.None:
+                    default:
+                        ViewDocument(ArtifactPath);
+                        break;
+                }
+            }    
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load file content, see log for details.");
+            }            
+        }
+
+        private void ViewDocument(string fileName)
+        {
+            DocumentEditorPage docPage = new DocumentEditorPage(fileName, enableEdit: false, UCTextEditorTitle: string.Empty);
+            docPage.Width = 800;
+            docPage.Height = 800;
+            docPage.ShowAsWindow(ArtifactName);            
+        }
+
+        private void ViewImage(string fileName)
+        {
+            ScreenShotViewPage screenShotPage = new ScreenShotViewPage(ArtifactName, fileName, 0.5);
+            screenShotPage.Width = 800;
+            screenShotPage.Height = 800;
+            screenShotPage.ShowAsWindow(ArtifactName, false);            
         }
 
         public void OpenBySystem()
@@ -143,16 +186,16 @@ namespace Ginger.Actions.UserControls
                 case eFileTypes.xlsx :
                 case eFileTypes.csv:
                     ArtifactImage = eImageType.ExcelFile;
-                    Foreground = new SolidColorBrush(Colors.Green);
+                    Foreground = new SolidColorBrush(Colors.Black);
                     break;
                 case eFileTypes.ppt:
                     ArtifactImage= eImageType.FilePowerpoint;
-                    Foreground = new SolidColorBrush(Colors.Orange);
+                    Foreground = new SolidColorBrush(Colors.Black);
                     break;
                 case eFileTypes.docx:
                 case eFileTypes.doc:
                     ArtifactImage = eImageType.WordFile;
-                    Foreground = new SolidColorBrush(Colors.Blue);
+                    Foreground = new SolidColorBrush(Colors.Black);
                     break;
                 case eFileTypes.bmp:
                 case eFileTypes.gif:
@@ -160,20 +203,36 @@ namespace Ginger.Actions.UserControls
                 case eFileTypes.jpg:
                 case eFileTypes.png:
                     ArtifactImage = eImageType.Image;
-                    Foreground = new SolidColorBrush(Colors.Green);
+                    Foreground = new SolidColorBrush(Colors.Black);
                     break;
                 case eFileTypes.htm:
                 case eFileTypes.html:
                     ArtifactImage = eImageType.HtmlReport;
-                    Foreground = new SolidColorBrush(Colors.Orange);
+                    Foreground = new SolidColorBrush(Colors.Black);
                     break;
                 case eFileTypes.pdf:
                     ArtifactImage = eImageType.PDFFile;
-                    Foreground = new SolidColorBrush(Colors.Red);
+                    Foreground = new SolidColorBrush(Colors.Black);
                     break;
                 case eFileTypes.txt:
                     ArtifactImage = eImageType.Text;
-                    Foreground = new SolidColorBrush(Colors.Gray);
+                    Foreground = new SolidColorBrush(Colors.Black);
+                    break;
+                case eFileTypes.xml:
+                    ArtifactImage = eImageType.FileXML;
+                    Foreground = new SolidColorBrush(Colors.Black);
+                    break;
+                case eFileTypes.json:
+                    ArtifactImage = eImageType.FileJSON;
+                    Foreground = new SolidColorBrush(Colors.Black);
+                    break;
+                case eFileTypes.zip:
+                    ArtifactImage = eImageType.FileArchive;
+                    Foreground = new SolidColorBrush(Colors.Black);
+                    break;
+                case eFileTypes.js:
+                    ArtifactImage = eImageType.FileJavascript;
+                    Foreground = new SolidColorBrush(Colors.Black);
                     break;
                 case eFileTypes.None:
                 default:
