@@ -850,7 +850,16 @@
     <None Update="Reports\Ginger-Web-Client\assets\layout\images\bars.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\assets\layout\images\javascript.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\assets\layout\images\json.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\layout\images\maximize_black.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\assets\layout\images\xml.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\assets\loaders.css">
@@ -1150,6 +1159,9 @@
     <None Update="Reports\Ginger-Web-Client\main.38bb56b87fd01368.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.4a6e5def8906895a.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.53bcca0065aceb0defb0.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1188,6 +1200,9 @@
     </None>
     <None Update="Reports\Ginger-Web-Client\main.e76244f45a5a7b7b107d.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.f7cb1b55c32902c7.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main.fffc10dee05b7289f76b.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

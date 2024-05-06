@@ -509,11 +509,12 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
-        public static void DownloadImage(string ImageURL, Act act, bool IsAddToArtifact= false, string artifactName = "")
+        public static string DownloadImage(string ImageURL, Act act)
         {
-            String currImagePath = Act.GetScreenShotRandomFileName();           
+            String currImagePath = string.Empty; 
             try
             {
+                currImagePath = Act.GetScreenShotRandomFileName();
                 HttpResponseMessage response = SendRequest(ImageURL);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -524,17 +525,15 @@ namespace GingerCoreNET.GeneralLib
                         fs.Close();
                     });
                     act.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
-                    act.ScreenShots.Add(currImagePath);
-                    if(IsAddToArtifact)
-                    {
-                        Act.AddArtifactToAction(artifactName, act, currImagePath);                                               
-                    }
+                    act.ScreenShots.Add(currImagePath);                   
                 }
             }
             catch (Exception ex)
             {
                 act.Error += ex.Message;
+                currImagePath = string.Empty;
             }
+            return currImagePath;
         }
 
         public static string DownloadBaselineImage(string ImageURL, Act act)
