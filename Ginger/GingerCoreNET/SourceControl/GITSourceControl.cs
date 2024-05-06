@@ -1378,6 +1378,44 @@ namespace GingerCore.SourceControl
                 return commits;
             }
         }
+        
+
+        public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
+        {
+            try
+            {
+                using (var repo = new Repository(RepositoryRootFolder))
+                {
+                    List<string> filesPathsToUndo = [];
+                    foreach (var file in selectedFiles)
+                    {
+                        if (file.Status == SourceControlFileInfo.eRepositoryItemStatus.New)
+                        {
+                            if (File.Exists(file.Path))
+                            {
+                                File.Delete(file.Path);
+                            }
+                        }
+                        else if (file.Status == SourceControlFileInfo.eRepositoryItemStatus.Modified ||
+                                 file.Status == SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved ||
+                                 file.Status == SourceControlFileInfo.eRepositoryItemStatus.Deleted)
+                        {
+                            filesPathsToUndo.Add(file.Path);
+                        }
+                    }
+                    if (filesPathsToUndo.Count > 0)
+                    {
+                        CheckoutOptions options = new CheckoutOptions() { CheckoutModifiers = CheckoutModifiers.Force };
+                        repo.Checkout(repo.Head.Tip.Tree, filesPathsToUndo, options);
+                    }
+                    return true;
+                }
+            } catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Undo Changes", ex);
+                return false;
+            }
+        }
 
         private void Stage(string Path)
         {

@@ -95,8 +95,8 @@ namespace Amdocs.Ginger.Common
         ItemNameExistsInRepository, ItemExistsInRepository, ItemExternalExistsInRepository, ItemParentExistsInRepository, AskIfWantsToUpdateRepoItemInstances, AskIfWantsToChangeeRepoItem, AskIfWantsToUpdateAllLinkedRepoItem, AskIfWantsToChangeLinkedRepoItem, GetRepositoryItemUsagesFailed, UpdateRepositoryItemUsagesSuccess, FailedToAddItemToSharedRepository, FailedToAddItemsToSharedRepository, OfferToUploadAlsoTheActivityGroupToRepository,
         ConnectionCloseWarning,
         InvalidCharactersWarning,
-        InvalidValueExpression,
-        FolderExistsWithName, DownloadedSolutionFromSourceControl, SourceControlFileLockedByAnotherUser,
+        InvalidValueExpression,        
+        FolderExistsWithName, DownloadedSolutionFromSourceControl, SourceControlFileLockedByAnotherUser, SourceControlUndoLocalChanges,
         SourceControlUpdateFailed, SourceControlCommitFailed, SourceControlChkInSucss, SourceControlChkInConflictHandledFailed, SourceControlGetLatestConflictHandledFailed, SourceControlCheckInLockedByAnotherUser, SourceControlCheckInLockedByMe, SourceControlCheckInUnsavedFileChecked, FailedToUnlockFileDuringCheckIn, SourceControlChkInConfirmtion, SourceControlChkInConfirmtionForLocalCommit, SourceControlMissingSelectionToCheckIn, SourceControlMissingSelectionToLocalCommit, SourceControlResolveConflict, SureWantToDoRevert, SureWantToDoCheckIn,
         NoOptionalAgent, MissingActivityAppMapping,
         SettingsChangeRequireRestart, ChangesRequireRestart, UnsupportedFileFormat, WarnRegradingMissingVariablesUse, NotAllMissingVariablesWereAdded, UpdateApplicationNameChangeInSolution,
@@ -304,6 +304,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToAddCheckInComment, new UserMsg(eUserMsgType.WARN, "Check-In Changes", "Please enter check-in comments.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToAddLocalCommitComment, new UserMsg(eUserMsgType.WARN, "Local Commit Changes", "Please enter local commit comments.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToGetProjectsListFromSVN, new UserMsg(eUserMsgType.ERROR, "Source Control Error", "Failed to get the solutions list from the source control." + Environment.NewLine + "Error Details: '{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlUndoLocalChanges, new UserMsg(eUserMsgType.WARN, "Check-In Warning", "Undo Changes Will force Ginger to Reload solution." + Environment.NewLine + Environment.NewLine + "Do you want to Undo Local Changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToSelectSolution, new UserMsg(eUserMsgType.WARN, "Select Solution", "Please select solution.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlFileLockedByAnotherUser, new UserMsg(eUserMsgType.WARN, "Source Control File Locked", "The file '{0}' was locked by: {1} " + Environment.NewLine + "Locked comment {2}." + Environment.NewLine + Environment.NewLine + " Are you sure you want to unlock the file?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DownloadedSolutionFromSourceControl, new UserMsg(eUserMsgType.INFO, "Download Solution", "The solution '{0}' was downloaded successfully." + Environment.NewLine + "Do you want to open the downloaded Solution?", eUserMsgOption.YesNo, eUserMsgSelection.No));
