@@ -110,9 +110,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             if(WorkSpace.Instance.Solution.LoggerConfigurations.UploadArtifactsToCentralizedReport == eUploadExecutionArtifactsToCentralizedReport.Yes)
             {
+                string basePath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + Path.DirectorySeparatorChar;
                 foreach (ArtifactDetails artifact in action.Artifacts)
                 {
-                    string newArtifactPath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + "/" +  Path.GetFileName(artifact.ArtifactReportStoragePath);
+                    string newArtifactPath = basePath +  Path.GetFileName(artifact.ArtifactReportStoragePath);
                     newArtifactList.Add(artifact.ArtifactOriginalName, newArtifactPath);
                     accountReportAction.Artifacts.Add(new AccountReport.Contracts.Helpers.DictObject
                     { Key = artifact.ArtifactReportStorageName, Value = newArtifactPath });
@@ -167,7 +168,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
             accountReportActivity.ExternalID = activity.ExternalID;
             accountReportActivity.ExternalID2 = activity.ExternalID2;
-            if (activity.ParentGuid != Guid.Empty)
+            if(activity.ParentGuid != Guid.Empty)
             {
                 accountReportActivity.ParentID = activity.ParentGuid;
             }
@@ -214,6 +215,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivityGroup.RunStatus = activitiesGroup.RunStatus.ToString();
             accountReportActivityGroup.ExternalID = GetCalculatedValue(context, activitiesGroup.ExternalID);
             accountReportActivityGroup.ExternalID2 = activitiesGroup.ExternalID2;
+            if(activitiesGroup.ParentGuid != Guid.Empty)
+            {
+                accountReportActivityGroup.ParentID = activitiesGroup.ParentGuid;
+            }
             return accountReportActivityGroup;
         }
 

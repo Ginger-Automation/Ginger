@@ -1082,14 +1082,14 @@ namespace GingerCore.Actions
 
         public static void AddArtifactToAction(string artifactName, Act action, string artifactPath)
         {
-            string ext = Path.GetExtension(artifactPath);
+            string extension = Path.GetExtension(artifactPath);
             string artifactOriginalName = artifactName.Length <= 15 ? artifactName : artifactName.Substring(0, 15);
-            var randomFileName = string.Concat(artifactOriginalName, "_", action.Guid, "_", DateTime.Now.ToString("hhmmss.fff"), "_", ext);
+            var randomFileName = string.Concat(artifactOriginalName, "_", action.Guid, "_", DateTime.UtcNow.ToString("hhmmss.fff"), "_", extension);
 
             ArtifactDetails artifact = new ArtifactDetails();
             artifact.ArtifactOriginalName = artifactName;
-            artifact.ArtifactOriginalPath = artifactPath;
-            artifact.ArtifactReportStoragePath = artifactPath;
+            artifact.ArtifactOriginalPath = Path.GetFullPath(artifactPath);
+            artifact.ArtifactReportStoragePath = Path.GetFullPath(artifactPath);
             artifact.ArtifactReportStorageName = randomFileName;
             action.Artifacts.Add(artifact);            
         }

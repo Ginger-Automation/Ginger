@@ -99,8 +99,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         File.Move(action.ScreenShots[s], completeSSPath, true);
 
                         //Replace artifact new path.
-                        ArtifactDetails a = action.Artifacts.Where(x => x.ArtifactOriginalPath == action.ScreenShots[s]).FirstOrDefault();
-                        if (a != null)
+                        ArtifactDetails a = action.Artifacts.FirstOrDefault(x => x.ArtifactOriginalPath == action.ScreenShots[s]);
+                        if(a != null)
                         {                           
                            a.ArtifactOriginalPath = completeSSPath;
                         }
