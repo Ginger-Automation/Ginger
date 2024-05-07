@@ -1047,36 +1047,24 @@ namespace GingerWPF.BusinessFlowsLib
 
                 mContext.BusinessFlow.CurrentActivity = activityToExecute;
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
-                
-                foreach (Activity activity in mBusinessFlow.Activities)
+
+                if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    if (activity == activityToExecute)
+                    foreach (Activity activity in mBusinessFlow.Activities)
                     {
-                        break;
+                        if (activity == activityToExecute)
+                        {
+                            break;
+                        }
+                        foreach (Act action in activity.Acts.Cast<Act>())
+                        {
+                            mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                        }
+                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
                     }
-                    foreach (Act action in activity.Acts.Cast<Act>())
-                    {
-                        mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
-                    }
-                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
                 }
 
                 await mExecutionEngine.RunActivityAsync((Activity)activityToExecute, false, true, resetErrorHandlerExecutedFlag: true).ConfigureAwait(false);
-
-                bool reachedCurrentActivity = false;
-                foreach (Activity activity in mBusinessFlow.Activities)
-                {
-                    reachedCurrentActivity = activity == activityToExecute || reachedCurrentActivity;
-                    if (!reachedCurrentActivity || activity == activityToExecute)
-                    {
-                        continue;
-                    }
-                    foreach (Act action in activity.Acts.Cast<Act>())
-                    {
-                        mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
-                    }
-                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
-                }
 
                 //When running Runactivity as standalone from GUI, SetActionSkipStatus is not called. Handling it here for now.
                 foreach (Act act in activityToExecute.Acts)
@@ -1086,8 +1074,23 @@ namespace GingerWPF.BusinessFlowsLib
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
                 }
+
                 if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
+                    bool reachedCurrentActivity = false;
+                    foreach (Activity activity in mBusinessFlow.Activities)
+                    {
+                        reachedCurrentActivity = activity == activityToExecute || reachedCurrentActivity;
+                        if (!reachedCurrentActivity || activity == activityToExecute)
+                        {
+                            continue;
+                        }
+                        foreach (Act action in activity.Acts.Cast<Act>())
+                        {
+                            mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                        }
+                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                    }
                     mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
                     ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
                 }
@@ -1169,32 +1172,34 @@ namespace GingerWPF.BusinessFlowsLib
 
                 mExecutionEngine.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
 
-                bool reachedCurrentAction = false;
-                foreach(Activity activity in mBusinessFlow.Activities)
+                if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    foreach(Act action in activity.Acts.Cast<Act>())
+                    bool reachedCurrentAction = false;
+                    foreach (Activity activity in mBusinessFlow.Activities)
                     {
-                        if (activity == parentActivity && action == actionToExecute)
+                        foreach (Act action in activity.Acts.Cast<Act>())
                         {
-                            reachedCurrentAction = true;
+                            if (activity == parentActivity && action == actionToExecute)
+                            {
+                                reachedCurrentAction = true;
+                                break;
+                            }
+                            mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                        }
+                        if (reachedCurrentAction)
+                        {
                             break;
                         }
-                        mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
                     }
-                    if (reachedCurrentAction)
-                    {
-                        break;
-                    }
-                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
                 }
 
                 var result = await mExecutionEngine.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, moveToNextAction).ConfigureAwait(false);
 
                 if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    //mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, parentActivity);
                     bool reachedCurrentActivity = false;
-                    reachedCurrentAction = false;
+                    bool reachedCurrentAction = false;
                     foreach (Activity activity in mBusinessFlow.Activities)
                     {
                         reachedCurrentActivity = activity == parentActivity || reachedCurrentActivity;
