@@ -170,8 +170,7 @@ namespace GingerCore.ALM
                     defectsToExport.Add(CreateDefectData(defectsForOpening));
                     foreach (var defect in defectsToExport)
                     {
-
-                        defectsOpeningResults.Add(Guid.NewGuid(), defect.Id.ToString());
+                        defectsOpeningResults.Add(defectForOpening.Key, defect.Id.ToString());
                     }
                 }
                 return defectsOpeningResults;
@@ -219,7 +218,7 @@ namespace GingerCore.ALM
 
 
                 Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, "Bug").Result;
-
+               
                 return newWorkItem;
             }
             catch (Exception ex)
