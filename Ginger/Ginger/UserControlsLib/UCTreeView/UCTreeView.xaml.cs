@@ -670,6 +670,27 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return header;
         }
 
+        /// <summary>
+        /// Return if the current tree items support new filter by text functionality using <see cref="FilterItemsByTextNew(IEnumerable{ITreeViewItem}, string)"/> method.
+        /// </summary>
+        /// <returns>Returns <see langword="true"/> if <see cref="FilterItemsByTextNew(IEnumerable{ITreeViewItem}, string)"/> is supported, <see langword="false"/> otherwise.</returns>
+        public bool SupportNewFilterMethod()
+        {
+            if (Tree.Items.Count <= 0 || ((TreeViewItem)Tree.Items[0]).Items == null)
+            {
+                return false;
+            }
+
+            foreach (TreeViewItem tvi in ((TreeViewItem)Tree.Items[0]).Items)
+            {
+                if (tvi.Tag is ITreeViewItem)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void FilterItemsByTextNew(string text)
         {
             long startTime = DateTime.UtcNow.Ticks;
