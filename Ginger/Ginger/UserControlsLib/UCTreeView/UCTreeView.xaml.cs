@@ -676,7 +676,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         /// <returns>Returns <see langword="true"/> if <see cref="FilterItemsByTextNew(IEnumerable{ITreeViewItem}, string)"/> is supported, <see langword="false"/> otherwise.</returns>
         public bool SupportNewFilterMethod()
         {
-            if (((TreeViewItem)Tree.Items[0]).Items == null)
+            if (Tree.Items.Count <= 0 || ((TreeViewItem)Tree.Items[0]).Items == null)
             {
                 return false;
             }
