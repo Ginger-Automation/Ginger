@@ -488,8 +488,16 @@ namespace GingerCore.ALM.RQM
 
                     if (string.IsNullOrEmpty(TestCaseVersionUrl))
                     {
-                        result = $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}";
-                        Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}");
+                        if (businessFlow.ALMTestSetLevel == "RunSet")
+                        {
+                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}";
+                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}");
+                        }
+                        else
+                        {
+                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}";
+                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}");
+                        }
                         return null;
                     }
                     RQMConnect.Instance.GetExecutionRecordsByTestCase(loginData, reader, currentRQMProjectMapping, RQMCore.ALMProjectGroupName, RQMCore.ALMProjectGuid, testPlan.URLPathVersioned, TestCaseVersionUrl, ref exeRecordId);
