@@ -502,7 +502,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedLocator != null)
             {
-                Clipboard.SetText(mSelectedLocator.LocateValue);
+                 GingerCore.General.SetClipboardText(mSelectedLocator.LocateValue);
             }
         }
 

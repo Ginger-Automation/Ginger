@@ -121,7 +121,7 @@ namespace Ginger.SolutionWindows
         {
             if (xTargetApplicationsGrid.Grid.SelectedItem != null)
             {
-                Clipboard.SetText(((RepositoryItemBase)xTargetApplicationsGrid.Grid.SelectedItem).Guid.ToString());
+                 GingerCore.General.SetClipboardText(((RepositoryItemBase)xTargetApplicationsGrid.Grid.SelectedItem).Guid.ToString());
             }
             else
             {
