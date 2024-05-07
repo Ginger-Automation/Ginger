@@ -4,14 +4,14 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-      d:DesignHeight="400" d:DesignWidth="800"
-      Height="400"
+      d:DesignHeight="420" d:DesignWidth="800"
+      Height="420"
       Title="Add Database">
 
     <StackPanel Background="{StaticResource $BackgroundColor_White}" Margin="10,10,10,10" Orientation="Vertical">
 
         <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25"  VerticalAlignment="Top" Margin="0,10,0,0" >
-            <Label Style="{StaticResource $LabelStyle}" Width="120" Content="Database Type:"/>
+            <Label Style="{StaticResource $LabelStyle}" Width="120" FontSize="13" Content="Database Type:"/>
             <StackPanel Orientation="Vertical">
                 <ComboBox Name="xDatabaseComboBox" Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="150" SelectionChanged="xDatabaseComboBox_SelectionChanged" ></ComboBox>
                 <TextBlock Text="Name is mandatory" Name="xDatabaseTypeError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
@@ -21,7 +21,7 @@
         <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
                 <Label Style="{StaticResource $LabelStyle}" Width="120" Content="Database Name:" />
             <StackPanel Orientation="Vertical">
-                <TextBox Style="{StaticResource $TextBoxStyle}"  x:Name="xDatabaseName" Width="150" Height="25"></TextBox>
+                <TextBox Style="{StaticResource $MultiRowsTextBoxStyle}"  x:Name="xDatabaseName" Width="150" Height="25"></TextBox>
                 <TextBlock Text="Name is mandatory" Name="xDatabaseNameError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
             </StackPanel>
         </StackPanel>

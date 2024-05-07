@@ -70,11 +70,10 @@ namespace Ginger.Environments
 
             Database db = GetDatabase();
 
-            // Should I wait?? The result of this task is not required
             Task.Run(() =>
             {
                 this.appDataBasesPage.TestDatabase(db);
-            });
+            }).GetAwaiter().GetResult();
 
         }
 
@@ -126,11 +125,11 @@ namespace Ginger.Environments
             if (string.IsNullOrEmpty(xDatabaseTNS.Text))
             {
                 xDatabaseTNSError.Text = "TNS/File Path/Host is mandatory";
-                xDatabaseUserNameError.Visibility = Visibility.Visible;
+                xDatabaseTNSError.Visibility = Visibility.Visible;
                 return false;
             }
 
-            xDatabaseUserNameError.Visibility = Visibility.Collapsed;
+            xDatabaseTNSError.Visibility = Visibility.Collapsed;
 
 
             return true;
