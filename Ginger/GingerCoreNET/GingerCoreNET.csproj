@@ -372,6 +372,12 @@
     <Reference Include="QCRestClientStd">
       <HintPath>DLLS\QCRestClientStd.dll</HintPath>
     </Reference>
+    <Reference Include="RQMExportStd">
+      <HintPath>DLLS\RQMExportStd.dll</HintPath>
+    </Reference>
+    <Reference Include="RQM_RepositoryStd">
+      <HintPath>DLLS\RQM_RepositoryStd.dll</HintPath>
+    </Reference>
     <Reference Include="SikuliStandardNet">
       <HintPath>DLLS\SikuliStandardNet.dll</HintPath>
     </Reference>
