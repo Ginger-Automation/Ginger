@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
+using log4net.Plugin;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -69,16 +70,24 @@ namespace Amdocs.Ginger.Repository
 
         public void AddPluginPackage(string folder)
         {
-            // Verify folder exist
-            if (!System.IO.Directory.Exists(folder))
+            try
             {
-                throw new Exception("Plugin folder not found: " + folder);
-            }
+                // Verify folder exist
+                if (!System.IO.Directory.Exists(folder))
+                {
+                    throw new Exception("Plugin folder not found: " + folder);
+                }
 
-            PluginPackage pluginPackage = new PluginPackage(folder);
-            pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
-            pluginPackage.PluginPackageOperations.LoadPluginPackage(folder);
-            mSolutionRepository.AddRepositoryItem(pluginPackage);
+                PluginPackage pluginPackage = new PluginPackage(folder);
+                pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+                pluginPackage.PluginPackageOperations.LoadPluginPackage(folder);
+                mSolutionRepository.AddRepositoryItem(pluginPackage);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while downloading/updating the Ginger Plugins packages", ex);
+                throw;
+            }
         }
 
         private void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
@@ -253,11 +262,11 @@ namespace Amdocs.Ginger.Repository
             Reporter.ToLog(eLogLevel.DEBUG, "Getting Plugins list from " + url);
 
             ObservableList<OnlinePluginPackage> list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
-            Reporter.ToLog(eLogLevel.DEBUG, "Online Plugins count=" + list.Count);
+            Reporter.ToLog(eLogLevel.DEBUG, "Online Plugins count=" + list?.Count);
             ObservableList<PluginPackage> installedPlugins = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
             foreach (OnlinePluginPackage onlinePluginPackage in list)
             {
-                PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).FirstOrDefault();
+                PluginPackage pluginPackage = installedPlugins.FirstOrDefault(x=> x.PluginId == onlinePluginPackage.Id);
                 if (pluginPackage != null)
                 {
                     onlinePluginPackage.CurrentPackage = pluginPackage.PluginPackageVersion;

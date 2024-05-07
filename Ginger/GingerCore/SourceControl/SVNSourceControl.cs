@@ -379,7 +379,7 @@ namespace GingerCore.SourceControl
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override bool CommitChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false)
+        public override bool CommitAndCheckinChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false)
         {
             //Commit Changes
             SvnCommitArgs ca = new SvnCommitArgs();
@@ -1183,6 +1183,11 @@ namespace GingerCore.SourceControl
         public override bool IsRepositoryPublic()
         {
             return false;
+        }
+
+        public override ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommits()
+        {
+            throw new NotImplementedException("GetUnpushedLocalCommits not Implemented");
         }
     }
 }

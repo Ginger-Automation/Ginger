@@ -14,16 +14,12 @@
   <ItemGroup>
     <Compile Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <Compile Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <Compile Remove="UserControlsLib\NewFolder\**" />
     <EmbeddedResource Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <EmbeddedResource Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <EmbeddedResource Remove="UserControlsLib\NewFolder\**" />
     <None Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <None Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <None Remove="UserControlsLib\NewFolder\**" />
     <Page Remove="Reports\GingerExecutionReport\HTMLReports\**" />
     <Page Remove="SolutionWindows\TreeViewItems\NewFolder\**" />
-    <Page Remove="UserControlsLib\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -606,6 +602,10 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\ios.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\javascript.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\javascript.svg" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\json.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\json.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-n.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-new.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />
@@ -616,6 +616,8 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\xml.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\xml.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -690,7 +692,7 @@
     <PackageReference Include="EPPlus" Version="6.0.4" />
     <PackageReference Include="FontAwesome5" Version="2.1.11" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.3" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.6" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
@@ -2461,14 +2463,31 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\iosWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey.png" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-regular-amdocs-gradient.svg" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\javascript.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\json.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-regular-amdocs-gradient.svg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\VRTLogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\xml.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
