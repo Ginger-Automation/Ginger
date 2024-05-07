@@ -159,7 +159,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             if (xModelsGlobalParamsGrid.Grid.SelectedItem != null)
             {
-                Clipboard.SetText(((RepositoryItemBase)xModelsGlobalParamsGrid.Grid.SelectedItem).Guid.ToString());
+                 GingerCore.General.SetClipboardText(((RepositoryItemBase)xModelsGlobalParamsGrid.Grid.SelectedItem).Guid.ToString());
             }
             else
             {
