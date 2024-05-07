@@ -54,7 +54,7 @@ namespace JsonViewerDemo.JsonViewer
             var tb = sender as TextBlock;
             if (tb != null)
             {
-                Clipboard.SetText(tb.Text); 
+                 GingerCore.General.SetClipboardText(tb.Text); 
             }
         }
 
