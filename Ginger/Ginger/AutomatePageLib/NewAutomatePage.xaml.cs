@@ -72,6 +72,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -1032,7 +1033,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public async Task RunAutomatePageActivity(Activity activity)
+        public async Task RunAutomatePageActivity(Activity activityToExecute)
         {
             if (CheckIfExecutionIsInProgress())
             {
@@ -1044,13 +1045,41 @@ namespace GingerWPF.BusinessFlowsLib
                 //mExecutionIsInProgress = true;
                 //SetUIElementsBehaverDuringExecution();
 
-                mContext.BusinessFlow.CurrentActivity = activity;
+                mContext.BusinessFlow.CurrentActivity = activityToExecute;
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+                
+                foreach (Activity activity in mBusinessFlow.Activities)
+                {
+                    if (activity == activityToExecute)
+                    {
+                        break;
+                    }
+                    foreach (Act action in activity.Acts.Cast<Act>())
+                    {
+                        mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                    }
+                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                }
 
-                await mExecutionEngine.RunActivityAsync((Activity)activity, false, true, resetErrorHandlerExecutedFlag: true).ConfigureAwait(false);
+                await mExecutionEngine.RunActivityAsync((Activity)activityToExecute, false, true, resetErrorHandlerExecutedFlag: true).ConfigureAwait(false);
+
+                bool reachedCurrentActivity = false;
+                foreach (Activity activity in mBusinessFlow.Activities)
+                {
+                    reachedCurrentActivity = activity == activityToExecute || reachedCurrentActivity;
+                    if (!reachedCurrentActivity || activity == activityToExecute)
+                    {
+                        continue;
+                    }
+                    foreach (Act action in activity.Acts.Cast<Act>())
+                    {
+                        mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                    }
+                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                }
 
                 //When running Runactivity as standalone from GUI, SetActionSkipStatus is not called. Handling it here for now.
-                foreach (Act act in activity.Acts)
+                foreach (Act act in activityToExecute.Acts)
                 {
                     if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
                     {
@@ -1065,9 +1094,9 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                if (activity.CurrentAgent != null)
+                if (activityToExecute.CurrentAgent != null)
                 {
-                    ((AgentOperations)((Agent)activity.CurrentAgent).AgentOperations).IsFailedToStart = false;
+                    ((AgentOperations)((Agent)activityToExecute.CurrentAgent).AgentOperations).IsFailedToStart = false;
                 }
             }
         }
@@ -1140,11 +1169,50 @@ namespace GingerWPF.BusinessFlowsLib
 
                 mExecutionEngine.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
 
+                bool reachedCurrentAction = false;
+                foreach(Activity activity in mBusinessFlow.Activities)
+                {
+                    foreach(Act action in activity.Acts.Cast<Act>())
+                    {
+                        if (activity == parentActivity && action == actionToExecute)
+                        {
+                            reachedCurrentAction = true;
+                            break;
+                        }
+                        mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                    }
+                    if (reachedCurrentAction)
+                    {
+                        break;
+                    }
+                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                }
+
                 var result = await mExecutionEngine.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, moveToNextAction).ConfigureAwait(false);
 
                 if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, parentActivity);
+                    //mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, parentActivity);
+                    bool reachedCurrentActivity = false;
+                    reachedCurrentAction = false;
+                    foreach (Activity activity in mBusinessFlow.Activities)
+                    {
+                        reachedCurrentActivity = activity == parentActivity || reachedCurrentActivity;
+                        if (!reachedCurrentActivity)
+                        {
+                            continue;
+                        }
+                        foreach (Act action in activity.Acts.Cast<Act>())
+                        {
+                            reachedCurrentAction = action == actionToExecute || reachedCurrentAction;
+                            if (!reachedCurrentAction || action == actionToExecute)
+                            {
+                                continue;
+                            }
+                            mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                        }
+                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                    }
                     mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
                     ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
                 }
