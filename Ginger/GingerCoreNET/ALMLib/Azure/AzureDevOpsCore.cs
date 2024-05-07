@@ -282,67 +282,67 @@ namespace GingerCore.ALM
                 return false;
             }
             LoginDTO login = GetLoginDTO();
-                
 
             try
             {
-                VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
-
+                // Establishing connection
+                var connection = AzureDevOpsRepository.LoginAzure(login);
                 var testClient = connection.GetClient<TestManagementHttpClient>();
 
-                if (Int32.TryParse(bizFlow.ExternalID, out int testPlanId) && Int32.TryParse(bizFlow.ExternalID2, out int suiteId))
+                // Parsing external IDs
+                if (!int.TryParse(bizFlow.ExternalID, out int testPlanId) || !int.TryParse(bizFlow.ExternalID2, out int suiteId))
                 {
-                    string projectName = login.Project;
-
-                    var testPoints = testClient.GetPointsAsync(projectName, testPlanId, suiteId).Result;
-                    if (testPoints != null)
-                    {
-                        foreach (var item in testPoints)
-                        {
-                            int testpointid = item.Id;
-                            var matchingTC = bizFlow.ActivitiesGroups.FirstOrDefault(p => p.ExternalID == item.TestCase.Id);
-                           
-                            if (matchingTC != null)
-                            {
-                                RunCreateModel run = new RunCreateModel(name: item.TestCase.Name, plan: new Microsoft.TeamFoundation.TestManagement.WebApi.ShallowReference(bizFlow.ExternalID), pointIds: [testpointid]);
-                                TestRun testrun = testClient.CreateTestRunAsync(run, projectName).Result;
-
-                                TestCaseResult caseResult = new() { State = "Completed", Outcome = matchingTC.RunStatus.ToString(), Id = 100000 };
-
-                                var testResults = testClient.UpdateTestResultsAsync([caseResult], projectName, testrun.Id).Result;
-                                RunUpdateModel runmodel = new(state: "Completed");
-                                TestRun testRunResult = testClient.UpdateTestRunAsync(runmodel, projectName, testrun.Id, runmodel).Result;
-                            }
-                            else
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, $"No Matching TestCase(ActivityGroup) found for TestPointId: {testpointid}");
-                            }
-
-                        }
-                        
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"No TestPoint found for given ProjectName: {projectName}, TestPlanId: {testPlanId}, SuiteId: {suiteId} or BusinessFlow: {bizFlow.Name}");
-                    }
-
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.ERROR,$"Unable to convert ExternalId: {bizFlow.ExternalID} of the BusinessFlow : {bizFlow.Name}  to TestPlanId/SuiteId");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Unable to convert ExternalId: {bizFlow.ExternalID} of the BusinessFlow: {bizFlow.Name} to TestPlanId/SuiteId");
                     return false;
                 }
 
+                string projectName = login.Project;
+
+                // Fetching test points
+                var testPoints = testClient.GetPointsAsync(projectName, testPlanId, suiteId).Result;
+                if (testPoints == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"No TestPoint found for given ProjectName: {projectName}, TestPlanId: {testPlanId}, SuiteId: {suiteId} or BusinessFlow: {bizFlow.Name}");
+                    return false;
+                }
+
+                foreach (var item in testPoints)
+                {
+                    int testpointid = item.Id;
+                    var matchingTC = bizFlow.ActivitiesGroups.FirstOrDefault(p => p.ExternalID == item.TestCase.Id);
+
+                    if (matchingTC != null)
+                    {
+                        // Creating test run
+                        var runModel = new RunCreateModel(name: item.TestCase.Name, plan: new Microsoft.TeamFoundation.TestManagement.WebApi.ShallowReference(bizFlow.ExternalID), pointIds: new[] { testpointid });
+                        var testrun = testClient.CreateTestRunAsync(runModel, projectName).Result;
+
+                        // Updating test results
+                        var caseResult = new TestCaseResult { State = "Completed", Outcome = matchingTC.RunStatus.ToString(), Id = 100000 };
+                        testClient.UpdateTestResultsAsync(new[] { caseResult }, projectName, testrun.Id);
+
+                        // Updating test run
+                        var runUpdateModel = new RunUpdateModel(state: "Completed");
+                        testClient.UpdateTestRunAsync(runUpdateModel, projectName, testrun.Id, runUpdateModel);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"No Matching TestCase(ActivityGroup) found for TestPointId: {testpointid}");
+                        Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID, "ExternalId of ActivityGroup is either Null or Incorrect");
+                        return false;
+                    }
+                }
+
+                result = "Export has been finished Successfully";
                 return true;
-
             }
-            catch (AggregateException e)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,e.InnerException.Message);
-
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID, ex.Message);
+                return false;
             }
-            return false;
-            
+
         }
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)

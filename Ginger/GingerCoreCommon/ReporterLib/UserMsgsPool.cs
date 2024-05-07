@@ -103,7 +103,7 @@ namespace Amdocs.Ginger.Common
         ShareEnvAppWithAllEnvs, ShareEnvAppParamWithAllEnvs, CtrlSsaveEnvApp, CtrlSMissingItemToSave, FailedToSendEmail, FailedToExportBF,
         ReportTemplateNotFound, DriverNotSupportingWindowExplorer, AgentNotRunningAfterWaiting,
         FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, StaticQuestionsMessage, ApplicationAgentNotMapped,
-        ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport,
+        ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport, ALMIncorrectExternalID,
         BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, AskIfSureWantToCloseWithoutNote, AskIfSureWantToRestart, AskIfSureWantToRestartWithoutNote , AskIfSureWantToRestartInAdminMode, WindowClosed, TargetWindowNotSelected,
         ChangingEnvironmentParameterValue, IFSaveChangesOfBF, AskIfToLoadExternalFields, WhetherToOpenSolution,
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
@@ -544,6 +544,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportItemToALMFailed, new UserMsg(eUserMsgType.ERROR, "Export to ALM Failed", "The {0} ' {1}' failed to be exported to ALM." + Environment.NewLine + Environment.NewLine + "Error Details: {2}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToSaveBFAfterExport, new UserMsg(eUserMsgType.QUESTION, "Save Links to QC/ALM Items", "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '{0}' must be saved for keeping the links to QC/ALM items." + Environment.NewLine + "To perform the save now?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToLoadExternalFields, new UserMsg(eUserMsgType.QUESTION, "Load/Refresh ALM External Fields", "The activity will run in the background for several hours." + Environment.NewLine + "Please do not close Ginger until operation is complete." + Environment.NewLine + "Would you like to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ALMIncorrectExternalID, new UserMsg(eUserMsgType.INFO, "Export to ALM Failed", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion QC
 
