@@ -191,7 +191,8 @@ namespace Amdocs.Ginger.Common
         NoActionAvailable,
         PublishApplicationToOtherEnv,
         NoApplicationPlatformLeft,
-        ShareApplicationToEnvironment
+        ShareApplicationToEnvironment,
+        SaveSolution
     }
 
     public static class UserMsgsPool
@@ -233,6 +234,8 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticErrorMessage, new UserMsg(eUserMsgType.ERROR, "Error", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticWarnMessage, new UserMsg(eUserMsgType.WARN, "Warning", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveSolution, new UserMsg(eUserMsgType.INFO, "Saved Solution", "Changes got saved succefully", eUserMsgOption.OK, eUserMsgSelection.None));
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticInfoMessage, new UserMsg(eUserMsgType.INFO, "Info", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticQuestionsMessage, new UserMsg(eUserMsgType.QUESTION, "Question", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + $"Note: Unsaved and {ISolution.CacheDirectoryName} folder file changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
