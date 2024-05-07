@@ -191,7 +191,8 @@ namespace Amdocs.Ginger.Common
         NoActionAvailable,
         PublishApplicationToOtherEnv,
         NoApplicationPlatformLeft,
-        ShareApplicationToEnvironment
+        ShareApplicationToEnvironment,
+        SaveSolution
     }
 
     public static class UserMsgsPool
@@ -233,6 +234,8 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticErrorMessage, new UserMsg(eUserMsgType.ERROR, "Error", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticWarnMessage, new UserMsg(eUserMsgType.WARN, "Warning", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveSolution, new UserMsg(eUserMsgType.INFO, "Saved Solution", "Changes got saved succefully", eUserMsgOption.OK, eUserMsgSelection.None));
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticInfoMessage, new UserMsg(eUserMsgType.INFO, "Info", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticQuestionsMessage, new UserMsg(eUserMsgType.QUESTION, "Question", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + $"Note: Unsaved and {ISolution.CacheDirectoryName} folder file changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -321,7 +324,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlConnMissingLocalFolderInput, new UserMsg(eUserMsgType.WARN, "Download Solution", "Missing local folder input, please select local folder to download the solution into.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlUpdateFailed, new UserMsg(eUserMsgType.ERROR, "Update Solution", "Failed to update the solution from source control." + Environment.NewLine + "Error Details: '{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlCommitFailed, new UserMsg(eUserMsgType.ERROR, "Commit Solution", "Failed to commit the solution from source control." + Environment.NewLine + "Error Details: '{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInSucss, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Check-in process ended successfully." + Environment.NewLine + Environment.NewLine + "Do you want to do another check-in?", eUserMsgOption.YesNo, eUserMsgSelection.No));            
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInSucss, new UserMsg(eUserMsgType.INFO, "Check-In Solution", "Check-in process ended successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConflictHandledFailed, new UserMsg(eUserMsgType.WARN, "Check-In Results", "Check in process ended with unhandled conflict please notice that you must handled them prior to the next check in of those items", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlGetLatestConflictHandledFailed, new UserMsg(eUserMsgType.WARN, "Get Latest Results", "Get latest process encountered conflicts which must be resolved for successful Solution loading", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, new UserMsg(eUserMsgType.WARN, "Locked Item Check-In", "The item: '{0}'" + Environment.NewLine + "is locked by the user: '{1}'" + Environment.NewLine + "The locking comment is: '{2}' ." + Environment.NewLine + Environment.NewLine + "Do you want to unlock the item and proceed with check in process?", eUserMsgOption.YesNo, eUserMsgSelection.No));

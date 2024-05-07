@@ -99,7 +99,6 @@ namespace Ginger.Environments
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Active), WidthWeight = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Platform), Header="Platform Type",WidthWeight = 100 });
