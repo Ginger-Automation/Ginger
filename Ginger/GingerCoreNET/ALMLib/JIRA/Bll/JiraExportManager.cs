@@ -330,7 +330,7 @@ namespace GingerCore.ALM.JIRA.Bll
                 {
                     var testExecutionData = CreateTestRunData(actGroup);
                     var relevantTcRun = testExecutionData.FirstOrDefault(a => a.TestExecutionId == bizFlow.AlmData);
-                    if (!string.IsNullOrEmpty(relevantTcRun.TestCaseRunId))
+                    if (relevantTcRun !=null && !string.IsNullOrEmpty(relevantTcRun.TestCaseRunId))
                     {
                         List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == actGroup.Name)).Select(a => a).ToList();
                         JiraRunStatus runs = new JiraRunStatus();
@@ -370,6 +370,10 @@ namespace GingerCore.ALM.JIRA.Bll
                             }
                         }
                     }
+                    else
+                    {
+                        resultFlag = false;
+                    }
                 }
             }
             if (resultFlag)
@@ -378,7 +382,7 @@ namespace GingerCore.ALM.JIRA.Bll
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM);
+                Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM,"Incorrect ExternalID of BF, Please check if BF already exported as Test Set/Plan");
             }
 
             return resultFlag;
