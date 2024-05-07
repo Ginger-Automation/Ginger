@@ -110,10 +110,8 @@ namespace GingerCore.SourceControl
                     {
                         Push();
                         Pull();
-                        using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-                        {
-                            Reporter.ToUser(eUserMsgKey.CommitedToRevision, repo.Head.Tip.Sha);
-                        }
+                        using var repo = new Repository(RepositoryRootFolder);
+                        Reporter.ToUser(eUserMsgKey.SourceControlChkInSucss);
                     }
                     catch (Exception e)
                     {
