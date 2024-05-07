@@ -160,12 +160,10 @@ namespace Ginger.Environments
             }
         }
 
-        #region Events
-        private void TestDBConnection(object sender, RoutedEventArgs e)
+        public void TestDatabase(Database db)
         {
             try
             {
-                Database db = (Database)grdAppDbs.grdMain.SelectedItem;
                 if (db == null)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);
@@ -202,6 +200,12 @@ namespace Ginger.Environments
 
                 Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
             }
+        }
+
+        #region Events
+        private void TestDBConnection(object sender, RoutedEventArgs e)
+        {
+            TestDatabase((Database)grdAppDbs.grdMain.SelectedItem);
         }
         #endregion Events
 
@@ -246,13 +250,18 @@ namespace Ginger.Environments
         }
         private void AddNewDB(object sender, RoutedEventArgs e)
         {
-            Database db = new Database();
-            db.Name = "New";
-            db.PropertyChanged += db_PropertyChanged;
-            grdAppDbs.DataSourceList.Add(db);
+            /*            Database db = new Database();
+                        db.Name = "New";
+                        db.PropertyChanged += db_PropertyChanged;
+                        grdAppDbs.DataSourceList.Add(db);
 
-            DatabaseOperations databaseOperations = new DatabaseOperations(db);
-            db.DatabaseOperations = databaseOperations;
+                        DatabaseOperations databaseOperations = new DatabaseOperations(db);
+                        db.DatabaseOperations = databaseOperations;
+            */
+            AddNewDatabasePage addNewDatabasePage = new(grdAppDbs.DataSourceList, this);
+
+            addNewDatabasePage.ShowAsWindow();
+        
         }
 
         private void SetGridData()
@@ -268,7 +277,7 @@ namespace Ginger.Environments
         }
         #endregion Functions
 
-        private void db_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public void db_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Database db = (Database)sender;
             if (db.DBType != Database.eDBTypes.Cassandra && db.DBType != Database.eDBTypes.Couchbase && db.DBType != Database.eDBTypes.MongoDb)
