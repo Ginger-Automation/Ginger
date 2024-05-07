@@ -8,8 +8,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
 {
     public class ArtifactDetails
     {
-        public string ArtifactName { get; set; }
+        public string ArtifactOriginalName { get; set; }
+        public string ArtifactReportStorageName { get; set; }
         public string ArtifactOriginalPath { get; set; }
-        public string ArtifactNewPath { get; set; }
+        public string ArtifactReportStoragePath { get; set; }        
     }
 }

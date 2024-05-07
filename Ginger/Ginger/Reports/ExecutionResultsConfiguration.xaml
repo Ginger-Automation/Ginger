@@ -220,6 +220,7 @@
                                 <RowDefinition  Height="30"/>
                                 <RowDefinition  Height="10"/>
                                 <RowDefinition  Height="30"/>
+                                <RowDefinition  Height="30"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="250"/>
@@ -235,6 +236,10 @@
                             <Label x:Name="xDeleteLocalData" Content="Delete Local Data on successful publish:"  Grid.Column="0" Grid.Row="4" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
                             <StackPanel x:Name="xDeleteLocalDataOnPublishPanel" Margin="-15,0,0,0" Orientation="Horizontal" Grid.Row="4" Grid.Column="1" >
                                 <UserControlsLib:UCRadioButtons x:Name="xDeleteLocalDataRadioButton" ></UserControlsLib:UCRadioButtons>
+                            </StackPanel>
+                            <Label x:Name="xUploadArtifacts" Content="Upload execution artifacts:"  Grid.Column="0" Grid.Row="5" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
+                            <StackPanel x:Name="xUploadArtifactsPanel" Margin="-15,0,0,0" Orientation="Horizontal" Grid.Row="5" Grid.Column="1" >
+                                <UserControlsLib:UCRadioButtons x:Name="xUploadArtifactsButton" ></UserControlsLib:UCRadioButtons>
                             </StackPanel>
                         </Grid>
 

@@ -26,6 +26,7 @@ namespace Amdocs.Ginger.Common.EnumsLib
        xml,
        pdf,
        gif,
-       zip       
+       zip,
+       js
     }
 }
