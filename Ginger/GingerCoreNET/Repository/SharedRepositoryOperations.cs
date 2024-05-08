@@ -520,6 +520,7 @@ namespace Ginger.Repository
                     try
                     {
                         ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                        Dictionary<BusinessFlow, List<Activity>> linkedActivitiesGroupedByBF = [];
                         Parallel.ForEach(BizFlows, BF =>
                         {
                             try
@@ -530,21 +531,37 @@ namespace Ginger.Repository
                                     {
                                         if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
                                         {
-                                            mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
-                                            BF.MapTAToBF(eUserMsgSelection.None, BF.Activities[i], WorkSpace.Instance.Solution.ApplicationPlatforms, silently: true);
+                                            if (!linkedActivitiesGroupedByBF.ContainsKey(BF))
+                                            {
+                                                linkedActivitiesGroupedByBF.Add(BF, new List<Activity>());
+                                            }
+                                            linkedActivitiesGroupedByBF[BF].Add(BF.Activities[i]);
                                         }
                                     }
-                                    lock (saveLock)
-                                    {
-                                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
-                                    }
                                 }
-
                             }
                             catch (Exception ex)
                             {
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow " + BF.Name, ex);
                             }
+                        });
+                        Parallel.ForEach(linkedActivitiesGroupedByBF, bfAndAcitivies =>
+                        {
+                            try
+                            {
+                                BusinessFlow bf = bfAndAcitivies.Key;
+                                List<Activity> linkedActivities = bfAndAcitivies.Value;
+                                foreach (Activity activity in linkedActivities)
+                                {
+                                    mActivity.UpdateInstance(activity, eItemParts.All.ToString(), bf);
+                                    bf.MapTAToBF(eUserMsgSelection.None, activity, WorkSpace.Instance.Solution.ApplicationPlatforms, silently: true);
+                                }
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf);
+                            }
+                            catch(Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to update the activity in business flow " + bfAndAcitivies.Key.Name, ex);
+                            } 
                         });
                     }
                     catch (Exception ex)
