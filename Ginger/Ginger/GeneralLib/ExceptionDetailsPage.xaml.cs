@@ -135,7 +135,7 @@ namespace Ginger.GeneralLib
 
         private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(GetFullErrorText());
+             GingerCore.General.SetClipboardText(GetFullErrorText());
         }
 
         private void ViewLogBtn_Click(object sender, RoutedEventArgs e)

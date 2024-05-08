@@ -1591,7 +1591,7 @@ namespace Ginger.WindowExplorer
 
         private void xCopyPageSrc_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(mWindowExplorerDriver.GetCurrentPageSourceString());
+             GingerCore.General.SetClipboardText(mWindowExplorerDriver.GetCurrentPageSourceString());
         }
     }
 }
