@@ -245,24 +245,32 @@ namespace GingerCore.ALM
 
                 foreach (var attachmentPath in attachmentPathsArray)
                 {
-                    var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
+                    try
+                    {
 
-                    patchDocument.Add(
-                        new JsonPatchOperation()
-                        {
-                            Operation = Operation.Add,
-                            Path = "/relations/-",
-                            Value = new
+                        var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
+
+                        patchDocument.Add(
+                            new JsonPatchOperation()
                             {
-                                rel = "AttachedFile",
-                                url = attachment.Url,
-                                attributes = new
+                                Operation = Operation.Add,
+                                Path = "/relations/-",
+                                Value = new
                                 {
-                                    comment = "Attached Screenshot"
+                                    rel = "AttachedFile",
+                                    url = attachment.Url,
+                                    attributes = new
+                                    {
+                                        comment = "Attached Screenshot"
+                                    }
                                 }
                             }
-                        }
-                    );
+                        );
+                    }
+                    catch(Exception ex) 
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}");
+                    }
                 }
             
             return patchDocument;
