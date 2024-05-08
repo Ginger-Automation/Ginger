@@ -43,6 +43,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -922,18 +923,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 else if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Web))
                 {
-                    var htmlElementInfo = new HTMLElementInfo() { 
-                        Path = testElement.Path, 
-                        Locators = testElement.Locators, 
+                    var htmlElementInfo = new HTMLElementInfo() {
+                        Path = testElement.Path,
+                        Locators = testElement.Locators,
                         Properties = ((HTMLElementInfo)CurrentEI).Properties,
                     };
 
                     htmlElementInfo.FriendlyLocators = testElement.FriendlyLocators;
-                    testElement = htmlElementInfo; 
+                    testElement = htmlElementInfo;
                 }
-
-
-                mWinExplorer.TestElementLocators(testElement, false, mPOM);
+                
+                Task.Run(() => {
+                    mWinExplorer.TestElementLocators(testElement, false, mPOM);
+                });
             }
         }
 
