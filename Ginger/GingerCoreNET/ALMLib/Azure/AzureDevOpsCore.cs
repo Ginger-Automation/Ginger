@@ -241,7 +241,7 @@ namespace GingerCore.ALM
                 return patchDocument;
             }
             
-            var attachmentPathsArray = attachmentPaths.ToString().Split(',');
+            var attachmentPathsArray = attachmentPaths.Split(',');
 
                 foreach (var attachmentPath in attachmentPathsArray)
                 {
