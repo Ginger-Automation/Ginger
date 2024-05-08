@@ -203,6 +203,8 @@ namespace Ginger.Actions.VisualTesting
                     {
                         xBaselineImage.Visibility = Visibility.Visible;
                         xBaselineImageRadioButtonPnl.Visibility = Visibility.Visible;
+                        VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Collapsed;
+                        xPreviewBaselineImage.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
