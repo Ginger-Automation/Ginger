@@ -213,12 +213,13 @@ namespace GingerCore.ALM
 
                         }
                     );
+
                 }
 
 
 
                 Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, "Bug").Result;
-               
+                AddAttachmentsToDefect(login.Project, newWorkItem.Id.ToString(),defectForOpening,workItemTrackingClient);
                 return newWorkItem;
             }
             catch (Exception ex)
@@ -227,6 +228,42 @@ namespace GingerCore.ALM
                 return null;
             }
         }
+
+        public static void AddAttachmentsToDefect(string project, string workItemId, Dictionary<Guid, Dictionary<string, string>> defectForOpening, WorkItemTrackingHttpClient wit)
+        {
+            var workItem = wit.GetWorkItemAsync(project, Int32.Parse(workItemId)).Result;
+
+            foreach (var attachmentPaths in defectForOpening.Values.Select(d => d["screenshots"]).Where(s => !string.IsNullOrEmpty(s)))
+            {
+                var attachmentPathsArray = attachmentPaths.Split(',');
+
+                foreach (var attachmentPath in attachmentPathsArray)
+                {
+                    var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
+
+                    JsonPatchDocument patchDocument = new JsonPatchDocument();
+                    patchDocument.Add(
+                        new JsonPatchOperation()
+                        {
+                            Operation = Operation.Add,
+                            Path = "/relations/-",
+                            Value = new
+                            {
+                                rel = "AttachedFile",
+                                url = attachment.Url,
+                                attributes = new
+                                {
+                                    comment = "Attached Screenshot"
+                                }
+                            }
+                        }
+                    );
+
+                    var updatedWorkItem = wit.UpdateWorkItemAsync(patchDocument, Int32.Parse(workItemId)).Result;
+                }
+            }
+        }
+
 
         private static string CheckIfDefectExist(string summaryValue)
         {
