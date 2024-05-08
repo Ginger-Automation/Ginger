@@ -147,8 +147,7 @@ namespace GingerCore.ALM
             {
 
                 Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
-                List<WorkItem> defectsToExport = new List<WorkItem>();
-                List<string> screenshots = new List<string>();
+                List<string> screenshots = new();
                 foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
                 {
                     string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
@@ -166,12 +165,9 @@ namespace GingerCore.ALM
                             screenshots.Add(paths);
                         }
                     }
-                    //if no then add into list to open new defect
-                    defectsToExport.Add(CreateDefectData(defectsForOpening));
-                    foreach (var defect in defectsToExport)
-                    {
-                        defectsOpeningResults.Add(defectForOpening.Key, defect.Id.ToString());
-                    }
+                   
+                 defectsOpeningResults.Add(defectForOpening.Key, CreateDefectData(defectForOpening).Id.ToString());
+                    
                 }
                 return defectsOpeningResults;
             }
@@ -183,7 +179,7 @@ namespace GingerCore.ALM
             }
         }
 
-        private static WorkItem CreateDefectData(Dictionary<Guid, Dictionary<string, string>> defectForOpening)
+        private static WorkItem CreateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening)
         {
             try
             {
@@ -197,28 +193,36 @@ namespace GingerCore.ALM
 
                 WorkItemTrackingHttpClient workItemTrackingClient = connection.GetClient<WorkItemTrackingHttpClient>();
 
-                JsonPatchDocument patchDocument = new JsonPatchDocument();
+                JsonPatchDocument patchDocument = new();
+
+                 patchDocument.Add(
+                     new JsonPatchOperation()
+                     {
+                         Operation = Operation.Add,
+                         Path = "/fields/System.Title",
+                         Value = defectForOpening.Value.TryGetValue("Summary", out string value) ? value : string.Empty,
+                        
+
+                     }
+                 );
+
+                patchDocument.Add(
+                  new JsonPatchOperation()
+                  {
+                      Operation = Operation.Add,
+                      Path = "/fields/Microsoft.VSTS.TCM.SystemInfo",
+                      Value = defectForOpening.Value.TryGetValue("description", out string systeminfo) ? systeminfo : string.Empty,
 
 
-                foreach (var item in defectForOpening)
-                {
+                  });
+                 
 
+                 patchDocument = AddAttachmentsToDefect(patchDocument, defectForOpening, workItemTrackingClient);
 
-                    patchDocument.Add(
-                        new JsonPatchOperation()
-                        {
-                            Operation = Operation.Add,
-                            Path = "/fields/System.Title",
-                            Value = item.Value.TryGetValue("Summary", out string value) ? value : string.Empty
-
-                        }
-                    );
-                }
-
-
+                
 
                 Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, "Bug").Result;
-               
+
                 return newWorkItem;
             }
             catch (Exception ex)
@@ -227,6 +231,51 @@ namespace GingerCore.ALM
                 return null;
             }
         }
+
+        private static JsonPatchDocument AddAttachmentsToDefect(JsonPatchDocument patchDocument, KeyValuePair<Guid, Dictionary<string, string>> defectForOpening, WorkItemTrackingHttpClient wit)
+        {
+            var attachmentPaths = defectForOpening.Value.TryGetValue("screenshots", out string picspath) ? picspath :string.Empty;
+
+            if (string.IsNullOrEmpty(attachmentPaths))
+            {
+                return patchDocument;
+            }
+            
+            var attachmentPathsArray = attachmentPaths.Split(',');
+
+                foreach (var attachmentPath in attachmentPathsArray)
+                {
+                    try
+                    {
+
+                        var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
+
+                        patchDocument.Add(
+                            new JsonPatchOperation()
+                            {
+                                Operation = Operation.Add,
+                                Path = "/relations/-",
+                                Value = new
+                                {
+                                    rel = "AttachedFile",
+                                    url = attachment.Url,
+                                    attributes = new
+                                    {
+                                        comment = "Attached Screenshot"
+                                    }
+                                }
+                            }
+                        );
+                    }
+                    catch(Exception ex) 
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}");
+                    }
+                }
+            
+            return patchDocument;
+        }
+
 
         private static string CheckIfDefectExist(string summaryValue)
         {
