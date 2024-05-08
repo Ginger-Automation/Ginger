@@ -228,7 +228,7 @@
                                     </Expander.Content>
                                 </Expander>
 
-                                <Expander x:Name="xOutputValuesExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" VerticalAlignment="Top">
+                                <Expander x:Name="xOutputValuesExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" VerticalAlignment="Top">
                                     <Expander.Header>
                                         <Label Content="Output Values" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                                     </Expander.Header>
