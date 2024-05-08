@@ -321,7 +321,7 @@ namespace GingerCore.Actions.VisualTesting
                         case TestRunStatus.New:
                             if(mAct.CreateBaselineImage)
                             {
-                                mAct.ExInfo += $"Baseline uploaded, Please approve it on VRT dashboard to create baseline.{System.Environment.NewLine}{result.Url}";
+                                mAct.ExInfo += $"Baseline uploaded, Please approve it on VRT dashboard.{System.Environment.NewLine}{result.Url}";
                             }
                             else
                             {
