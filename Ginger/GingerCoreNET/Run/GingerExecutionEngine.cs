@@ -3202,8 +3202,8 @@ namespace Ginger.Run
                 sharedActivityInstance.Active = true;
                 sharedActivityInstance.AddDynamicly = true;
                 sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;
-                CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
-
+                eUserMsgSelection userSelection = eUserMsgSelection.None;
+                CurrentBusinessFlow.MapTAToBF(userSelection, sharedActivityInstance, WorkSpace.Instance.Solution.ApplicationPlatforms,true);
 
                 int index = CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity) + 1;
                 ActivitiesGroup activitiesGroup = CurrentBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID);
