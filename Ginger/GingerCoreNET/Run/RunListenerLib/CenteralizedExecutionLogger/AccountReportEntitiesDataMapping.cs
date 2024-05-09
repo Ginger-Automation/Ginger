@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             if(WorkSpace.Instance.Solution.LoggerConfigurations.UploadArtifactsToCentralizedReport == eUploadExecutionArtifactsToCentralizedReport.Yes)
             {
-                string basePath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + Path.DirectorySeparatorChar;
+                string basePath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + "/";
                 foreach (ArtifactDetails artifact in action.Artifacts)
                 {
                     string newArtifactPath = basePath +  Path.GetFileName(artifact.ArtifactReportStoragePath);
