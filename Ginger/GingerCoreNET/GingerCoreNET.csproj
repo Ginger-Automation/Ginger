@@ -298,7 +298,7 @@
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Npgsql" Version="4.0.7" />
+    <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="NPOI" Version="2.5.3" />
     <PackageReference Include="NUglify" Version="1.9.7" />
     <PackageReference Include="protobuf-net" Version="3.2.26" />
