@@ -52,6 +52,7 @@ using Microsoft.VisualStudio.Services.Common;
 using System.Xml;
 using System.Text.RegularExpressions;
 using System.Web;
+using DocumentFormat.OpenXml.Drawing;
 
 
 namespace GingerCore.ALM
@@ -210,7 +211,7 @@ namespace GingerCore.ALM
                   new JsonPatchOperation()
                   {
                       Operation = Operation.Add,
-                      Path = "/fields/Microsoft.VSTS.TCM.SystemInfo",
+                      Path = "/fields/Microsoft.VSTS.TCM.ReproSteps",
                       Value = defectForOpening.Value.TryGetValue("description", out string systeminfo) ? systeminfo : string.Empty,
 
 
@@ -306,7 +307,7 @@ namespace GingerCore.ALM
                     {
                         if (workItem.Fields["System.Title"].ToString().Equals(summaryValue))
                         {
-                            return summaryValue;
+                            return workItem.Id.ToString();
                         }
 
                     }
@@ -677,6 +678,7 @@ namespace GingerCore.ALM
 
         public void CreateNewTestCase(ActivitiesGroup ag, string fatherId, ObservableList<ExternalItemFieldBase> testcasefields, List<string> step)
         {
+           
             TestBaseHelper helper = new TestBaseHelper();
             ITestBase testBase = helper.Create();
             testBase = CreateTestStep(step,testBase);
@@ -939,26 +941,34 @@ namespace GingerCore.ALM
 
             TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
             List<TestPlan> plans = testPlanClient.GetTestPlansAsync(logincred.Project).Result;
-            
 
-           if(Int32.TryParse(tsId, out int testplanId))
+
+            if (Int32.TryParse(tsId, out int testplanId))
             {
-                int suiteId = testplanId + 1;
-                TestSuite testsuite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
-
-                ALMTestSetData aLMTestSetData = new()
+                try
                 {
-                    Id = testsuite.Id.ToString(),
-                    Name = testsuite.Name,
-                    ParentId = testplanId.ToString()
+                    int suiteId = testplanId + 1;
+                    TestSuite testsuite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
 
-                };
+                    ALMTestSetData aLMTestSetData = new()
+                    {
+                        Id = testsuite.Id.ToString(),
+                        Name = testsuite.Name,
+                        ParentId = testplanId.ToString()
 
-                return aLMTestSetData;
+                    };
+
+                    return aLMTestSetData;
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID,$"{ex.InnerException.Message}");
+                    return null;
+                }
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Unable to parse ExternalId to test suite id");
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to parse ExternalId to test suite id");
                 return null;
             }
             
