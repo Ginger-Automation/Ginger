@@ -1450,14 +1450,6 @@ namespace GingerCore
             return lst;
         }
 
-        public void SetActivityTargetApplication(Activity activity)
-        {
-            if (TargetApplications.FirstOrDefault(x => x.Name == activity.TargetApplication) == null)
-            {
-                //activity.TargetApplication = this.MainApplication;
-
-            }
-        }
 
         public override string ItemName
         {
