@@ -169,6 +169,66 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         }
 
+        public override void DeleteAllTreeItems()
+        {
+            if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+                childNodes.Reverse();
+                foreach (ITreeViewItem node in childNodes)
+                {
+                    if (node == null)
+                    {
+                        continue;
+                    }
+
+                    if (node.NodeObject() != null)
+                    {
+                        if (node.NodeObject() is RepositoryFolderBase)
+                        {
+                            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
+                        }
+                        else if (node.NodeObject() is RepositoryItemBase)
+                        {
+                            ((NewTreeViewItemBase)node).DeleteTreeItem(node.NodeObject(), true, false);
+                        }
+                        else if (node.NodeObject() is string)
+                        {
+                            string filepath = System.IO.Path.Combine(WorkSpace.Instance.Solution.ContainingFolderFullPath, "Documents", (string)node.NodeObject());
+                            if (File.Exists(filepath))
+                            {
+                                try
+                                {
+                                    File.Delete(filepath);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, $"Error while deleting file '{filepath}'", ex);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, $"cannot delete item, unknown type - {node.NodeObject().GetType().FullName}");
+                        }
+                    }
+                    else
+                    {
+                        if (Directory.Exists(this.NodePath()))
+                        {
+                            String[] DocFolderChildItems = Directory.GetDirectories(this.NodePath());
+                            foreach (String path in DocFolderChildItems)
+                            {
+                                Directory.Delete(path, true);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            mTreeView.Tree.RefreshSelectedTreeNodeParent();
+        }
+
         private void AddImportsAndCreateDocumentsOptions()
         {
             //Creating the Generic menus
