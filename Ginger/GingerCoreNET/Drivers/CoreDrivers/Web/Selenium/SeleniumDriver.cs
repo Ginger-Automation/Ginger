@@ -3724,15 +3724,8 @@ namespace GingerCore.Drivers
                 string[] iframesPathes = spliter.Split(EI.Path);
                 foreach (string iframePath in iframesPathes)
                 {
-                    try
-                    {
-                        Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(iframePath)));
-                    }
-                    catch (NoSuchElementException)
-                    {
-                        EI.Locators.ForEach((locator) => locator.LocateStatus = ElementLocator.eLocateStatus.Failed);
-                        throw;
-                    }
+                    
+                    Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(iframePath)));
                 }
             }
         }
@@ -9858,6 +9851,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
+                EI.Locators.ForEach((locator) => locator.LocateStatus = ElementLocator.eLocateStatus.Failed);
                 Reporter.ToLog(eLogLevel.DEBUG, ex.Message, ex);
                 return false;
             }

@@ -895,12 +895,24 @@ namespace Ginger.ApplicationModelsLib.POMModels
             Row2.Height = new GridLength(35);
         }
 
+        private static bool IsTestBtnClicked = false;
         private void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
+
+            if (IsTestBtnClicked)
+            {
+                Reporter.ToUser(eUserMsgKey.LocatorTestInProgress);
+                return;
+            }
+
             if (!ValidateDriverAvalability())
             {
                 return;
             }
+
+
+            IsTestBtnClicked = true;
+
 
             ElementInfo CurrentEI = (ElementInfo)MainElementsGrid.CurrentItem;
 
@@ -932,14 +944,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     htmlElementInfo.FriendlyLocators = testElement.FriendlyLocators;
                     testElement = htmlElementInfo;
                 }
-                
-                Task.Run(() => {
-                    mWinExplorer.TestElementLocators(testElement, false, mPOM);
+
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        mWinExplorer.TestElementLocators(testElement, false, mPOM);
+                    }
+                    finally
+                    {
+                        IsTestBtnClicked = false;
+                    }
                 });
             }
         }
 
-        private void TestAllElementsLocators(object sender, RoutedEventArgs e)
+            private void TestAllElementsLocators(object sender, RoutedEventArgs e)
         {
             if (!ValidateDriverAvalability())
             {
