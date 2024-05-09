@@ -525,13 +525,12 @@ namespace GingerCore.Actions.VisualTesting
         private void DownloadImages(int numOfImages, TestResults testResults)
         {
             for (int i = 0; i < numOfImages; i++)
-            {
-                int j = i+1;
+            {                
                 if(testResults.StepsInfo[i].IsDifferent)
                 {
                     String currImagePath = Act.GetScreenShotRandomFileName();
                     currImagePath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(currImagePath), "Applitools_" + DateTime.Now.ToString("ddmmyyyyss.mm") + ".png");
-                    String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + j.ToString() + "/images/diff?ApiKey=" + mDriver.GetApplitoolKey();// ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                    String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + (i+1).ToString() + "/images/diff?ApiKey=" + mDriver.GetApplitoolKey();// ((SeleniumDriver)mDriver).ApplitoolsViewKey;
                     try
                     {
                         HttpResponseMessage response = runLongRequest(currImageURL);
