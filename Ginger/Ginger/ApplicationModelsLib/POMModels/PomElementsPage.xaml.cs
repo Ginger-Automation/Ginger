@@ -895,7 +895,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             Row2.Height = new GridLength(35);
         }
 
-        private static bool IsTestBtnClicked = false;
+        private bool IsTestBtnClicked = false;
         private void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
 
@@ -909,8 +909,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 return;
             }
-
-
+            
             IsTestBtnClicked = true;
 
 
