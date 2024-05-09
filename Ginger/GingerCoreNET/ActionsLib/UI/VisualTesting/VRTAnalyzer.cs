@@ -325,7 +325,7 @@ namespace GingerCore.Actions.VisualTesting
                             }
                             else
                             {
-                                mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline.{System.Environment.NewLine}{result.Url}";
+                                mAct.Error += $"No baseline found or exsiting baseline not approved, Please approve it on VRT dashboard.{System.Environment.NewLine}{result.Url}";
                             }
                             mAct.CreateBaselineImage = false;//unchecked create Base line image after creation
                             //Add baseline image to act screenshots
