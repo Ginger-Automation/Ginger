@@ -48,6 +48,7 @@ using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -5030,9 +5031,26 @@ namespace Ginger.Run
                             bfsTargetApplications.Add(TA);
                         }
                     }
-
-
                 }
+
+                bfsTargetApplications
+                    .Where(bfta=>bfta is TargetApplication)
+                    .ForEach((bfTB) =>
+                    {
+                        var bfTA = (TargetApplication)bfTB;
+
+                       var changedTA = WorkSpace.Instance.Solution
+                        .ApplicationPlatforms
+                        .FirstOrDefault((appPlat) =>
+                        {
+                            return string.Equals(appPlat.NameBeforeEdit, bfTA.AppName);
+                        });
+
+                        if (changedTA!=null)
+                        {
+                            bfTA.AppName = changedTA.AppName;
+                        }
+                    });
             }
             else if (CurrentBusinessFlow != null) // Automate Tab
             {

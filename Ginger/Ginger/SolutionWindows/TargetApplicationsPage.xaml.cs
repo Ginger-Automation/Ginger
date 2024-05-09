@@ -191,7 +191,7 @@ namespace Ginger.SolutionWindows
                 {
                     //donot check for TargetPlugins, only for TargetApplications 
 
-                    if (activity.TargetApplication.Equals(app.NameBeforeEdit))
+                    if (!string.IsNullOrEmpty(activity.TargetApplication) && activity.TargetApplication.Equals(app.NameBeforeEdit))
                     {
                         activity.StartDirtyTracking();
                         activity.TargetApplication = app.AppName;
@@ -204,7 +204,7 @@ namespace Ginger.SolutionWindows
             foreach (Activity activity in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>())
             {
                 //update the shared repository activities 
-                if (activity.TargetApplication == app.NameBeforeEdit)
+                if (string.Equals(activity.TargetApplication , app.NameBeforeEdit))
                 {
                     activity.StartDirtyTracking();
                     activity.TargetApplication = app.AppName;
