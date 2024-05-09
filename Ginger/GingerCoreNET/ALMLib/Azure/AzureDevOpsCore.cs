@@ -307,7 +307,7 @@ namespace GingerCore.ALM
                     {
                         if (workItem.Fields["System.Title"].ToString().Equals(summaryValue))
                         {
-                            return summaryValue;
+                            return workItem.Id.ToString();
                         }
 
                     }
