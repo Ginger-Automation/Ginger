@@ -519,7 +519,7 @@ namespace Ginger.Actions
 
             SetActReturnValuesGrid();
 
-            if (mAction.ActReturnValues.Count > 0)
+            if(mAction.ActReturnValues.Count > 0 || mAction.Artifacts.Count > 0)
             {
                 xOutputValuesExpander.IsExpanded = true;
             }
@@ -604,7 +604,7 @@ namespace Ginger.Actions
                 xFilesListView.Visibility = Visibility.Collapsed;
                 xlbl_msg.Visibility = Visibility.Visible;             
             }
-            xFilesTabTextBlock.Text = string.Concat("Artifacts (", ArtifactsItems.Count, ")");         
+            xFilesTabTextBlock.Text = string.Concat("Output Files (", ArtifactsItems.Count, ")");         
         }
         private void RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture captureType)
         {
@@ -665,7 +665,7 @@ namespace Ginger.Actions
             mAction.OnPropertyChanged(nameof(Act.ReturnValuesCount));
             this.Dispatcher.Invoke(() =>
             {
-                if (mAction.ActReturnValues.Count > 0)
+                if(mAction.ActReturnValues.Count > 0 || mAction.Artifacts.Count > 0)
                 {
                     xOutputValuesExpander.IsExpanded = true;
                 }
