@@ -192,7 +192,8 @@ namespace Amdocs.Ginger.Common
         PublishApplicationToOtherEnv,
         NoApplicationPlatformLeft,
         ShareApplicationToEnvironment,
-        SaveSolution
+        SaveSolution,
+        LocatorTestInProgress
     }
 
     public static class UserMsgsPool
@@ -744,7 +745,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlConflictResolveFailed, new UserMsg(eUserMsgType.ERROR, "Resolve Conflict Failed", "Ginger failed to resolve the conflicted file" + Environment.NewLine + "File Path: {0}" + Environment.NewLine + Environment.NewLine + "It seems like the SVN conflict content (e.g. '<<<<<<< .mine') has been updated on the remote repository", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlItemAlreadyLocked, new UserMsg(eUserMsgType.INFO, "Source Control File Locked", "The file is already locked" + Environment.NewLine + "Please do Get info for more details", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SoruceControlItemAlreadyUnlocked, new UserMsg(eUserMsgType.INFO, "Source Control File not Locked", "The file is not locked" + Environment.NewLine + "Please do Get info for more details", eUserMsgOption.OK, eUserMsgSelection.OK));
-
+            Reporter.UserMsgsPool.Add(eUserMsgKey.LocatorTestInProgress, new UserMsg(eUserMsgType.INFO, "Element Locator Test is in Progress", "The Testing of an element locator is already in progress", eUserMsgOption.OK, eUserMsgSelection.OK));
 
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RefreshWholeSolution, new UserMsg(eUserMsgType.QUESTION, "Refresh Solution", "Do you want to Refresh the whole Solution to get the Latest changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
