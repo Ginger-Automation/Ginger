@@ -135,6 +135,10 @@ namespace Ginger.ALM.Repository
                         }
                     }
                 }
+                else
+                {
+                    return false ;
+                }
             }
 
 

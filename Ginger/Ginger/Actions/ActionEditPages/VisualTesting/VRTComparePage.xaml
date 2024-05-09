@@ -78,7 +78,7 @@
         <Label x:Name="xCreateBaseline" Style="{StaticResource $LabelStyle}" Grid.Row="7" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Center" Content="Create Baseline:"/>
         <StackPanel  Grid.Row="7" Grid.Column="1" Orientation="Horizontal">
             <CheckBox x:Name="xCreateBaselineCheckbox" Grid.Column="1" VerticalAlignment="Center" Margin="0,10,0,0" Style="{StaticResource @InputCheckBoxStyle}" Checked="xCreateBaselineCheckbox_CheckChanged" Unchecked="xCreateBaselineCheckbox_CheckChanged"/>
-            <usercontrols:ImageMakerControl Grid.Row="7" Grid.Column="1" x:Name="xCreateBaselineNote" ToolTip="Note - The option to Create Baseline will be unchecked once the baseline is generated." SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,10,5,0"/>
+            <usercontrols:ImageMakerControl Grid.Row="7" Grid.Column="1" x:Name="xCreateBaselineNote" ToolTip="Note - The option to Create Baseline will be unchecked once the baseline is generated.&#x0a;After Baseline uploaded please approve it on VRT dashboard" SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,10,5,0"/>
         </StackPanel>
         
         <Label x:Name="xBaselineImage" Style="{StaticResource $LabelStyle}" Grid.Row="9" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Center" Content="Baseline Image:"/>

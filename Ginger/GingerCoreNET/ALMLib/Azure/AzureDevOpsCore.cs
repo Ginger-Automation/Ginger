@@ -52,6 +52,7 @@ using Microsoft.VisualStudio.Services.Common;
 using System.Xml;
 using System.Text.RegularExpressions;
 using System.Web;
+using DocumentFormat.OpenXml.Drawing;
 
 
 namespace GingerCore.ALM
@@ -147,8 +148,7 @@ namespace GingerCore.ALM
             {
 
                 Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
-                List<WorkItem> defectsToExport = new List<WorkItem>();
-                List<string> screenshots = new List<string>();
+                List<string> screenshots = new();
                 foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
                 {
                     string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
@@ -166,12 +166,9 @@ namespace GingerCore.ALM
                             screenshots.Add(paths);
                         }
                     }
-                    //if no then add into list to open new defect
-                    defectsToExport.Add(CreateDefectData(defectsForOpening));
-                    foreach (var defect in defectsToExport)
-                    {
-                        defectsOpeningResults.Add(defectForOpening.Key, defect.Id.ToString());
-                    }
+                   
+                 defectsOpeningResults.Add(defectForOpening.Key, CreateDefectData(defectForOpening).Id.ToString());
+                    
                 }
                 return defectsOpeningResults;
             }
@@ -183,7 +180,7 @@ namespace GingerCore.ALM
             }
         }
 
-        private static WorkItem CreateDefectData(Dictionary<Guid, Dictionary<string, string>> defectForOpening)
+        private static WorkItem CreateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening)
         {
             try
             {
@@ -197,28 +194,36 @@ namespace GingerCore.ALM
 
                 WorkItemTrackingHttpClient workItemTrackingClient = connection.GetClient<WorkItemTrackingHttpClient>();
 
-                JsonPatchDocument patchDocument = new JsonPatchDocument();
+                JsonPatchDocument patchDocument = new();
+
+                 patchDocument.Add(
+                     new JsonPatchOperation()
+                     {
+                         Operation = Operation.Add,
+                         Path = "/fields/System.Title",
+                         Value = defectForOpening.Value.TryGetValue("Summary", out string value) ? value : string.Empty,
+                        
+
+                     }
+                 );
+
+                patchDocument.Add(
+                  new JsonPatchOperation()
+                  {
+                      Operation = Operation.Add,
+                      Path = "/fields/Microsoft.VSTS.TCM.ReproSteps",
+                      Value = defectForOpening.Value.TryGetValue("description", out string systeminfo) ? systeminfo : string.Empty,
 
 
-                foreach (var item in defectForOpening)
-                {
+                  });
+                 
 
+                 patchDocument = AddAttachmentsToDefect(patchDocument, defectForOpening, workItemTrackingClient);
 
-                    patchDocument.Add(
-                        new JsonPatchOperation()
-                        {
-                            Operation = Operation.Add,
-                            Path = "/fields/System.Title",
-                            Value = item.Value.TryGetValue("Summary", out string value) ? value : string.Empty
-
-                        }
-                    );
-                }
-
-
+                
 
                 Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, "Bug").Result;
-               
+
                 return newWorkItem;
             }
             catch (Exception ex)
@@ -227,6 +232,51 @@ namespace GingerCore.ALM
                 return null;
             }
         }
+
+        private static JsonPatchDocument AddAttachmentsToDefect(JsonPatchDocument patchDocument, KeyValuePair<Guid, Dictionary<string, string>> defectForOpening, WorkItemTrackingHttpClient wit)
+        {
+            var attachmentPaths = defectForOpening.Value.TryGetValue("screenshots", out string picspath) ? picspath :string.Empty;
+
+            if (string.IsNullOrEmpty(attachmentPaths))
+            {
+                return patchDocument;
+            }
+            
+            var attachmentPathsArray = attachmentPaths.Split(',');
+
+                foreach (var attachmentPath in attachmentPathsArray)
+                {
+                    try
+                    {
+
+                        var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
+
+                        patchDocument.Add(
+                            new JsonPatchOperation()
+                            {
+                                Operation = Operation.Add,
+                                Path = "/relations/-",
+                                Value = new
+                                {
+                                    rel = "AttachedFile",
+                                    url = attachment.Url,
+                                    attributes = new
+                                    {
+                                        comment = "Attached Screenshot"
+                                    }
+                                }
+                            }
+                        );
+                    }
+                    catch(Exception ex) 
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}");
+                    }
+                }
+            
+            return patchDocument;
+        }
+
 
         private static string CheckIfDefectExist(string summaryValue)
         {
@@ -257,7 +307,7 @@ namespace GingerCore.ALM
                     {
                         if (workItem.Fields["System.Title"].ToString().Equals(summaryValue))
                         {
-                            return summaryValue;
+                            return workItem.Id.ToString();
                         }
 
                     }
@@ -628,6 +678,7 @@ namespace GingerCore.ALM
 
         public void CreateNewTestCase(ActivitiesGroup ag, string fatherId, ObservableList<ExternalItemFieldBase> testcasefields, List<string> step)
         {
+           
             TestBaseHelper helper = new TestBaseHelper();
             ITestBase testBase = helper.Create();
             testBase = CreateTestStep(step,testBase);
@@ -890,26 +941,34 @@ namespace GingerCore.ALM
 
             TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
             List<TestPlan> plans = testPlanClient.GetTestPlansAsync(logincred.Project).Result;
-            
 
-           if(Int32.TryParse(tsId, out int testplanId))
+
+            if (Int32.TryParse(tsId, out int testplanId))
             {
-                int suiteId = testplanId + 1;
-                TestSuite testsuite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
-
-                ALMTestSetData aLMTestSetData = new()
+                try
                 {
-                    Id = testsuite.Id.ToString(),
-                    Name = testsuite.Name,
-                    ParentId = testplanId.ToString()
+                    int suiteId = testplanId + 1;
+                    TestSuite testsuite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
 
-                };
+                    ALMTestSetData aLMTestSetData = new()
+                    {
+                        Id = testsuite.Id.ToString(),
+                        Name = testsuite.Name,
+                        ParentId = testplanId.ToString()
 
-                return aLMTestSetData;
+                    };
+
+                    return aLMTestSetData;
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID,$"{ex.InnerException.Message}");
+                    return null;
+                }
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Unable to parse ExternalId to test suite id");
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to parse ExternalId to test suite id");
                 return null;
             }
             
