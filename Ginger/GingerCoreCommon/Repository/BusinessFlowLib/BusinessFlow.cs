@@ -1454,7 +1454,8 @@ namespace GingerCore
         {
             if (TargetApplications.FirstOrDefault(x => x.Name == activity.TargetApplication) == null)
             {
-                activity.TargetApplication = this.MainApplication;
+                //activity.TargetApplication = this.MainApplication;
+
             }
         }
 
