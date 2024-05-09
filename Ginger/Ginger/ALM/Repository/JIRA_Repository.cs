@@ -282,7 +282,7 @@ namespace Ginger.ALM.Repository
                         }
                         else
                         {
-                            Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, selectedTS.Name);
+                            Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists,selectedTS.Name);
                             if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                             {
                                 if (File.Exists(existedBF.FilePath))
@@ -301,6 +301,12 @@ namespace Ginger.ALM.Repository
                                     Reporter.ToUser(eUserMsgKey.TestSetsNotExist);
                                 }
 
+
+                                Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
+                            }
+                            else if(userSelection == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                            {
+                                SetImportedTS(jiraImportedTSData, importDestinationPath);
 
                                 Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
                             }
