@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.Common
         InvalidCharactersWarning,
         InvalidValueExpression,
         FolderExistsWithName, DownloadedSolutionFromSourceControl, SourceControlFileLockedByAnotherUser,
-        SourceControlUpdateFailed, SourceControlCommitFailed, SourceControlChkInSucss, SourceControlChkInConflictHandledFailed, SourceControlGetLatestConflictHandledFailed, SourceControlCheckInLockedByAnotherUser, SourceControlCheckInLockedByMe, SourceControlCheckInUnsavedFileChecked, FailedToUnlockFileDuringCheckIn, SourceControlChkInConfirmtion, SourceControlChkInConfirmtionForLocalCommit, SourceControlMissingSelectionToCheckIn, SourceControlMissingSelectionToLocalCommit, SourceControlResolveConflict, SureWantToDoRevert, SureWantToDoCheckIn,
+        SourceControlUpdateFailed, SourceControlCommitFailed, SourceControlChkInSucss, SourceControlChkInConflictHandledFailed, SourceControlGetLatestConflictHandledFailed, SourceControlCheckInLockedByAnotherUser, SourceControlCheckInLockedByMe, SourceControlCheckInUnsavedFileChecked, FailedToUnlockFileDuringCheckIn, SourceControlChkInConfirmtionForLocalFiles, SourceControlChkInConfirmtionForLocalCommit, SourceControlChkInConfirmtionForLocalCommitAndFiles, SourceControlMissingSelectionToCheckIn, SourceControlMissingSelectionToLocalCommit, SourceControlResolveConflict, SureWantToDoRevert, SureWantToDoCheckIn,
         NoOptionalAgent, MissingActivityAppMapping,
         SettingsChangeRequireRestart, ChangesRequireRestart, UnsupportedFileFormat, WarnRegradingMissingVariablesUse, NotAllMissingVariablesWereAdded, UpdateApplicationNameChangeInSolution,
         ShareEnvAppWithAllEnvs, ShareEnvAppParamWithAllEnvs, CtrlSsaveEnvApp, CtrlSMissingItemToSave, FailedToSendEmail, FailedToExportBF,
@@ -173,15 +173,15 @@ namespace Amdocs.Ginger.Common
         NoPublishRepositoryInfo,
         NotAllowedForMappedRuntimeValue,
         HandleConflictsBeforeMovingForward,
-        HasUnhandledConflicts, 
+        HasUnhandledConflicts,
         HasUnhandledMandatoryIssues,
         UncommitedChangesPreventCheckout,
-        ExportToBPMNSuccessful, 
+        ExportToBPMNSuccessful,
         MultipleExportToBPMNSuccessful,
         GingerEntityToBPMNConversionError,
         IssueWhileAnalyzingConflict,
         ConflictsResolvedCount,
-        AddActivityGroupsToSharedRepositoryForBPMNConversion, 
+        AddActivityGroupsToSharedRepositoryForBPMNConversion,
         AddActivitiesToSharedRepositoryForBPMNConversion,
         AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport,
         FailedToDownloadDriver,
@@ -332,9 +332,10 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlCheckInLockedByMe, new UserMsg(eUserMsgType.WARN, "Locked Item Check-In", "The item: '{0}'" + Environment.NewLine + "is locked by you please noticed that during check in the lock will need to be removed please confirm to continue", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlCheckInUnsavedFileChecked, new UserMsg(eUserMsgType.QUESTION, "Unsaved Item Checkin", "The item: '{0}' contains unsaved changes which must be saved prior to the check in process." + Environment.NewLine + Environment.NewLine + "Do you want to save the item and proceed with check in process?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToUnlockFileDuringCheckIn, new UserMsg(eUserMsgType.QUESTION, "Locked Item Check-In Failure", "The item: '{0}' unlock operation failed on the URL: '{1}'." + Environment.NewLine + Environment.NewLine + "Do you want to proceed with the check in  process for rest of the items?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConfirmtion, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Checking in changes will effect all project users, are you sure you want to continue and check in those {0} changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommit, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Checking in changes will effect all project users, are you sure you want to continue and check in those {0} Local Commit changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlMissingSelectionToCheckIn, new UserMsg(eUserMsgType.WARN, "Check-In Changes", "Please select items to check-in.", eUserMsgOption.OK, eUserMsgSelection.None));            
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConfirmtionForLocalFiles, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Check-in changes will affect all project users. Are you sure you want to continue and check in those {0} local file changes ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommit, new UserMsg(eUserMsgType.QUESTION, "Check-In Local Commits", "Check-in changes will affect all project users. Are you sure you want to continue and check in those {0} Local Commit changes ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommitAndFiles, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Check-in changes will affect all project users. Are you sure you want to continue and check in those {0} local file changes and {1} Local Commit ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlMissingSelectionToCheckIn, new UserMsg(eUserMsgType.WARN, "Check-In Changes", "Please select items to check-in.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlMissingSelectionToLocalCommit, new UserMsg(eUserMsgType.WARN, "Local Commit Changes", "Please select items to Commit.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlResolveConflict, new UserMsg(eUserMsgType.QUESTION, "Source Control Conflicts", "Source control conflicts has been identified for the path: '{0}'." + Environment.NewLine + "You probably won't be able to use the item which in the path till conflicts will be resolved." + Environment.NewLine + Environment.NewLine + "Do you want to automatically resolve the conflicts and keep your local changes for all conflicts?" + Environment.NewLine + Environment.NewLine + "Select 'No' for accepting server updates for all conflicts or select 'Cancel' for canceling the conflicts handling.", eUserMsgOption.YesNoCancel, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDoRevert, new UserMsg(eUserMsgType.QUESTION, "Undo Changes", "Are you sure you want to revert changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -421,7 +422,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.IFSaveChangesOfBF, new UserMsg(eUserMsgType.WARN, "Save Current" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Before Change?", "Do you want to save the changes made in the '{0}' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RecordingStopped, new UserMsg(eUserMsgType.ERROR, "Recording Stopped", "Recording Stopped for the {0} agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToDownloadDriver, new UserMsg(eUserMsgType.ERROR, "Failed to Download the Driver",
                 "Oh no! The {0} Driver couldn't be downloaded because we're currently offline.Check your internet connection or update the proxy settings in the Agent config for automatic downloads." + Environment.NewLine +
                 $"If that feels like a puzzle, You can also grab the driver yourself and set its location in the DriverFilePath in the Agent Configuration." + Environment.NewLine +"Cheers to problem-solving."
@@ -681,7 +682,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.LoseChangesWarn, new UserMsg(eUserMsgType.WARN, "Save Changes", "The operation may result with lost of un-saved local changes." + Environment.NewLine + "Please make sure all changes were saved before continue." + Environment.NewLine + Environment.NewLine + "To perform the operation?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.CompilationErrorOccured, new UserMsg(eUserMsgType.ERROR, "Compilation Error Occurred", "Compilation error occurred." + Environment.NewLine + "Error Details: " + Environment.NewLine + " '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.CopiedVariableSuccessfully, new UserMsg(eUserMsgType.INFO, "Info Message", "'{0}'" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " Affected." + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RenameItemError, new UserMsg(eUserMsgType.ERROR, "Rename", "Failed to rename the Item. Error: '{0}'?", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfShareVaribalesInRunner, new UserMsg(eUserMsgType.QUESTION, "Share" + GingerDicser.GetTermResValue(eTermResKey.Variables), "Are you sure you want to share selected " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Values to all the similar " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " across all Runners?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -778,7 +779,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnEditLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "Any updates to linked shared repository auto update the shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " and all it's usage in other flows." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to proceed with Edit?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnSaveLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "Any updates to linked shared repository auto update the shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " and all it's usage in other flows." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to proceed with Save?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            
+
 
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.EditLinkSharedActivities, new UserMsg(eUserMsgType.INFO, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities), "Linked shared repository " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " are read only by default." + System.Environment.NewLine + System.Environment.NewLine + "If you want to update, open it in edit mode.", eUserMsgOption.OK, eUserMsgSelection.None));
