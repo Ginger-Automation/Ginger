@@ -1619,6 +1619,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             publishToQCRunSetOperation.VariableForTCRunName = publishToALMOperationExecConfig.UserVariableInRunInstance;
                         }
+                        publishToQCRunSetOperation.SearchALMEntityByName = publishToALMOperationExecConfig.SearchByName;
 
                         if (publishToALMOperationExecConfig.AlmFieldsConfig != null && publishToALMOperationExecConfig.AlmFieldsConfig.Count > 0)
                         {
