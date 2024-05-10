@@ -37,6 +37,7 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.UserControlsLib.UCTreeView;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -881,7 +882,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
+
+                try
+                {
                     mWinExplorer.HighLightElement(mSelectedElement, true, mPOM?.MappedUIElements);
+                }
+                catch (Exception ex)
+                {
+                    if(ex is NoSuchElementException)
+                    {
+                        Reporter.ToUser(eUserMsgKey.ElementNotFound);
+                        Reporter.ToLog(eLogLevel.INFO, ex.Message, ex);
+                    }
+                }
             }
         }
 
