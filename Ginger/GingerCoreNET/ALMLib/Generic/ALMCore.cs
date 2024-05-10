@@ -244,8 +244,8 @@ namespace GingerCore.ALM
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, $"Executing RunSet Action Publish to ALM for { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {BizFlow.Name}");
                             Reporter.ToStatus(eStatusMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
-
-                            if (publishToALMConfig.ToAttachActivitiesGroupReport)
+                            
+                            if (BizFlow.ALMTestSetLevel != "RunSet" && publishToALMConfig.ToAttachActivitiesGroupReport)
                             {
                                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(null, BizFlow);//need to find a way to specify the releveant environment 
                             }

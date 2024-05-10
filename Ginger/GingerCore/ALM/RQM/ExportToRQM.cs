@@ -490,13 +490,13 @@ namespace GingerCore.ALM.RQM
                     {
                         if (businessFlow.ALMTestSetLevel == "RunSet")
                         {
-                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}";
-                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}");
+                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: Cannot find test case with id {testCaseId} under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}";
+                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: Cannot find test case with id {testCaseId} under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}");
                         }
                         else
                         {
-                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}";
-                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}");
+                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: Cannot find test case with id {testCaseId} under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}";
+                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: Cannot find test case with id {testCaseId} under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}");
                         }
                         return null;
                     }
@@ -515,8 +515,17 @@ namespace GingerCore.ALM.RQM
 
                 if (string.IsNullOrEmpty(exeRecordId) || exeRecordId.Equals("0"))
                 {
-                    result = $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}, cannot export RQM TestPlan execution results without it. Please check configured External Id.";
-                    Reporter.ToLog(eLogLevel.ERROR, $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}, cannot export RQM TestPlan execution results without it. Please check configured External Id.");
+                    if (businessFlow.ALMTestSetLevel == "RunSet")
+                    {
+                        result = $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name}, cannot export RQM TestPlan execution results without it. Please check configured External Id.";
+                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name}, cannot export RQM TestPlan execution results without it. Please check configured External Id.");
+                    }
+                    else
+                    {
+                        result = $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}, cannot export RQM TestPlan execution results without it. Please check configured External Id.";
+                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}, cannot export RQM TestPlan execution results without it. Please check configured External Id.");
+                    }
+                        
                     return null;
                 }
 

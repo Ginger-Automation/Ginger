@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Reports;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
@@ -201,8 +202,12 @@ namespace Ginger.Run.RunSetActions
                         virtualBF.AddActivitiesGroup(virtualAG);
                         foreach (Activity runSetAct in runSetBF.Activities)
                         {
-                            Activity activitycopy = (Activity)runSetAct.CreateCopy(false);
+                            Activity activitycopy = (Activity)runSetAct.CreateCopy(true);
                             activitycopy.Status = runSetAct.Status;
+                            foreach(Act act in activitycopy.Acts)
+                            {
+                                act.Status = runSetAct.Status;
+                            }
                             virtualBF.AddActivity(activitycopy, virtualAG, -1, false);
                         }
                     }
