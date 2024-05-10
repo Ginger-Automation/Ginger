@@ -278,15 +278,21 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKey.AskToAddCheckInComment);
                     return;
                 }
-
-                if ((SelectedFiles == null || SelectedFiles.Count == 0) && unpushedLocalCommitsCount > 0)
+                if (SelectedFiles != null && SelectedFiles.Count>0 && unpushedLocalCommitsCount >0)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommitAndFiles, unpushedLocalCommitsCount, SelectedFiles.Count) == eUserMsgSelection.No)
+                    {
+                        return;
+                    }
+                }
+                else if ((SelectedFiles == null || SelectedFiles.Count == 0) && unpushedLocalCommitsCount > 0)
                 {
                     if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommit, unpushedLocalCommitsCount) == eUserMsgSelection.No)
                     {
                         return;
                     }
                 }
-                else if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtion, SelectedFiles.Count) == eUserMsgSelection.No)
+                else if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalFiles, SelectedFiles.Count) == eUserMsgSelection.No)
                 {
                     return;
                 }
