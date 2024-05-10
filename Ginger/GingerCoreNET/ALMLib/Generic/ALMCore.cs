@@ -242,12 +242,19 @@ namespace GingerCore.ALM
                     {
                         if (BizFlow.ExternalIdCalCulated != "0" && !String.IsNullOrEmpty(BizFlow.ExternalIdCalCulated))
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Executing RunSet Action Publish to ALM for { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {BizFlow.Name}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Executing RunSet Action Publish to ALM for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {BizFlow.Name}");
                             Reporter.ToStatus(eStatusMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
-
+                            
                             if (publishToALMConfig.ToAttachActivitiesGroupReport)
                             {
-                                Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(null, BizFlow);//need to find a way to specify the releveant environment 
+                                if(BizFlow.ALMTestSetLevel != "RunSet")
+                                {
+                                    Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(null, BizFlow);//need to find a way to specify the releveant environment
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.DEBUG, $"Exclude the attach Activities group report from the RunSet level.");
+                                }
                             }
                            
                             isExportSucc = ExportExecutionDetailsToALM(BizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig,projEnvironment);
