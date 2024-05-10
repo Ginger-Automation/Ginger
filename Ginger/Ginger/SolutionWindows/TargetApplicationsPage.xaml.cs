@@ -204,9 +204,9 @@ namespace Ginger.SolutionWindows
 
                 foreach (TargetApplication bfTargetApp in bf.TargetApplications.Where((targetApp)=>targetApp is TargetApplication))
                 {
-                    bfTargetApp.StartDirtyTracking();
                     if (string.Equals(bfTargetApp.AppName, app.NameBeforeEdit))
                     {
+                        bfTargetApp.StartDirtyTracking();
                         bfTargetApp.AppName = app.AppName;
                     }
                 }
