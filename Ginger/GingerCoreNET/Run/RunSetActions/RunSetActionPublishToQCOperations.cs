@@ -202,7 +202,7 @@ namespace Ginger.Run.RunSetActions
                         virtualBF.AddActivitiesGroup(virtualAG);
                         foreach (Activity runSetAct in runSetBF.Activities)
                         {
-                            Activity activitycopy = (Activity)runSetAct.CreateCopy(true);
+                            Activity activitycopy = (Activity)runSetAct.CreateCopy(false);
                             activitycopy.Status = runSetAct.Status;
                             foreach(Act act in activitycopy.Acts)
                             {
