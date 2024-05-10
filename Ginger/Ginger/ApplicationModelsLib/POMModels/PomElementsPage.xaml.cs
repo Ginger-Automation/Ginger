@@ -892,8 +892,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     if(ex is NoSuchElementException)
                     {
                         Reporter.ToUser(eUserMsgKey.ElementNotFound);
-                        Reporter.ToLog(eLogLevel.INFO, ex.Message, ex);
                     }
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+
                 }
             }
         }
