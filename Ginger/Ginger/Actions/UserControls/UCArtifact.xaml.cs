@@ -44,7 +44,7 @@ namespace Ginger.Actions.UserControls
                 string FileName = string.Empty;
                 if(!string.IsNullOrEmpty(ArtifactPath))
                 {
-                    FileName = System.IO.Path.GetFileName(ArtifactPath);
+                    FileName = ArtifactName + " (" + System.IO.Path.GetFileName(ArtifactPath) +")";
                 }
                 return FileName;
             }            

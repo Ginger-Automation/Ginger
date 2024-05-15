@@ -728,13 +728,13 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FileWord);
                     break;
                 case eImageType.FileXML:
-                    SetAsStaticImage("xml.png");
+                    SetAsStaticImage("xml.png" , null, 50);                    
                     break;
                 case eImageType.FileJSON:
-                    SetAsStaticImage("json.png");
+                    SetAsStaticImage("json.png", null, 50);
                     break;
                 case eImageType.FileJavascript:
-                    SetAsStaticImage("javascript.png");
+                    SetAsStaticImage("javascript.png", null, 50);
                     break;
                 case eImageType.FilePowerpoint:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FilePowerpoint);
@@ -1205,9 +1205,17 @@ namespace Amdocs.Ginger.UserControls
             return null;
         }
 
-        private void SetAsStaticImage(string imageName = "", BitmapImage imageBitMap = null)
+        private void SetAsStaticImage(string imageName = "", BitmapImage imageBitMap = null, double Width = 0, double Height = 0)
         {
             xStaticImage.Visibility = Visibility.Visible;
+            if(Width > 0)
+            {
+                xStaticImage.Width = Width;
+            }            
+            if(Height > 0)
+            {
+                xStaticImage.Height = Height;
+            }
             if (imageBitMap != null)
             {
                 xStaticImage.Source = imageBitMap;
