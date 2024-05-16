@@ -490,13 +490,13 @@ namespace GingerCore.ALM.RQM
                     {
                         if (businessFlow.ALMTestSetLevel == "RunSet")
                         {
-                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: Cannot find test case with id {testCaseId} under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}";
-                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: Cannot find test case with id {testCaseId} under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}");
+                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: Test case with id {testCaseId} is not available under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}, Hence execution result is not published for this execution";
+                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: Test case with id {testCaseId} is not available under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}, Hence execution result is not published for this execution");
                         }
                         else
                         {
-                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: Cannot find test case with id {testCaseId} under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}";
-                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: Cannot find test case with id {testCaseId} under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}");
+                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: Test case with id {testCaseId} is not available under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}, Hence execution result is not published for this execution";
+                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: Test case with id {testCaseId} is not available under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}, Hence execution result is not published for this execution");
                         }
                         return null;
                     }
