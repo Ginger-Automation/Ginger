@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.GeneralLib;
@@ -109,6 +110,8 @@ namespace Ginger
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
                 case eDriverType.SeleniumEdge:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
+                case eDriverType.Playwright:
+                    return new PlaywrightDriver();
 
                 case eDriverType.Appium:
                     return new GenericAppiumDriver(zAgent.BusinessFlow);
@@ -153,6 +156,8 @@ namespace Ginger
                 case eDriverType.SeleniumRemoteWebDriver:
                 case eDriverType.SeleniumEdge:
                     return (typeof(SeleniumDriver));
+                case eDriverType.Playwright:
+                    return typeof(PlaywrightDriver);
                 case eDriverType.ASCF:
                     return (typeof(ASCFDriver));
                 case eDriverType.DOSConsole:
