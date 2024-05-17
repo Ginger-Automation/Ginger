@@ -327,7 +327,7 @@ namespace GingerCore.Actions.VisualTesting
                             {
                                 mAct.Error += $"No baseline found or exsiting baseline not approved, Please approve it on VRT dashboard.{System.Environment.NewLine}{result.Url}";
                             }
-                            mAct.CreateBaselineImage = false;//unchecked create Base line image after creation
+                            
                             //Add baseline image to act screenshots
                             if (result.ImageUrl != null)
                             {
@@ -365,7 +365,9 @@ namespace GingerCore.Actions.VisualTesting
                         default:
                             mAct.ExInfo = $"TestRun Results Status: {result.Status}";
                             break;
+                     
                     }
+                    mAct.CreateBaselineImage = false;//unchecked create Base line image after creation
                 }
             }
             catch (AggregateException ae)
