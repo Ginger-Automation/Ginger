@@ -76,6 +76,8 @@ namespace GingerCore
             SeleniumEdge,
             [Description("PhantomJS Browser(Selenium)")]
             SeleniumPhantomJS,//Not been used any more, leaving here to avoid exception on solution load
+            [Description("Playwright")]
+            Playwright,
 
             //Java
             [Description("Amdocs Smart Client Framework(ASCF)")]
@@ -334,6 +336,7 @@ namespace GingerCore
                 case eDriverType.SeleniumIE:
                 case eDriverType.SeleniumRemoteWebDriver:
                 case eDriverType.SeleniumEdge:
+                case eDriverType.Playwright:
                     return ePlatformType.Web;
                 case eDriverType.ASCF:
                     return ePlatformType.ASCF;

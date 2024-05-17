@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.Repository;
@@ -41,6 +42,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Drawing;
 using System.Linq;
+using static GingerCore.Agent;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
@@ -155,6 +157,8 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 case Agent.eDriverType.SeleniumRemoteWebDriver:
                 case Agent.eDriverType.SeleniumEdge:
                     return (typeof(SeleniumDriver));
+                case eDriverType.Playwright:
+                    return typeof(PlaywrightDriver);
 
                 case Agent.eDriverType.Appium:
                     return (typeof(GenericAppiumDriver));
@@ -183,6 +187,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
                 case Agent.eDriverType.SeleniumEdge:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
+
+                case Agent.eDriverType.Playwright:
+                    return new PlaywrightDriver();
 
                 case Agent.eDriverType.Appium:
                     return new GenericAppiumDriver(zAgent.BusinessFlow);
