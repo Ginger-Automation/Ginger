@@ -41,6 +41,8 @@ namespace GingerCoreNET.Application_Models
         public eLocateBy LocateBy { get { return ElementLocator.LocateBy; } }
         public string LocateValue { get { return ElementLocator.LocateValue; } }
 
+        public string Category { get { return ElementLocator.Category; } }
+
         public string ReferanceElement { get { return ElementLocator.ReferanceElement; } }
         public bool IsAutoLearned { get { return ElementLocator.IsAutoLearned; } }
         public ElementLocator.eLocateStatus LocateStatus { get { return ElementLocator.LocateStatus; } }
