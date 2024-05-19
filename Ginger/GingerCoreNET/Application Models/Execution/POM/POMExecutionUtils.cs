@@ -69,15 +69,36 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         }
 
-        public ElementInfo GetCurrentPOMElementInfo()
+        public ElementInfo GetCurrentPOMElementInfo(string category=null)
         {
             Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
-            ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.FirstOrDefault(z => z.Guid == currentPOMElementInfoGUID);
+            ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.FirstOrDefault(z => z.Guid == currentPOMElementInfoGUID);            
 
             if (selectedPOMElementInfo == null)
             {
                 mAct.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", currentPOMElementInfoGUID.ToString());
                 return null;
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(category))
+                {
+                    //pull only Properties and Locators which match to the Driver Category
+                    foreach (var prop in selectedPOMElementInfo.Properties)
+                    {
+                        if (string.IsNullOrEmpty(prop.Category) == false && prop.Category.ToLower() != category)
+                        {
+                            selectedPOMElementInfo.Properties.Remove(prop);
+                        }             
+                    }
+                    foreach (var locator in selectedPOMElementInfo.Locators)
+                    {
+                        if (string.IsNullOrEmpty(locator.Category) == false && locator.Category.ToLower() != category)
+                        {
+                            selectedPOMElementInfo.Locators.Remove(locator);
+                        }
+                    }
+                }
             }
 
             return selectedPOMElementInfo;

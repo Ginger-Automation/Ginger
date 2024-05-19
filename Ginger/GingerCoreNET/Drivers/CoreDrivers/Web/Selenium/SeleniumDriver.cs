@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
@@ -329,6 +330,23 @@ namespace GingerCore.Drivers
         private List<ElementInfo> allReadElem = new List<ElementInfo>();
 
         private string CurrentFrame;
+
+        public override string PomCategory
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(base.PomCategory))
+                {
+                    return "Web";
+                }
+                else
+                {   
+                    return base.PomCategory;
+                }
+            }
+
+            set => base.PomCategory = value;
+        }
 
         public SeleniumDriver()
         {
@@ -3653,8 +3671,8 @@ namespace GingerCore.Drivers
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
                 if (currentPOM != null)
-                {
-                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                { 
+                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo(this.PomCategory);
                     if (currentPOMElementInfo != null)
                     {
                         if (HandelIFramShiftAutomaticallyForPomElement)
@@ -4713,6 +4731,9 @@ namespace GingerCore.Drivers
                         }
 
                         HTMLElementInfo foundElementInfo = CreateHTMLElementInfo(webElement, path, htmlElemNode, elementTypeEnum.Item1, elementTypeEnum.Item2, ParentGUID, pomSetting, foundElementsList.Count.ToString());
+
+                        //set the POM category
+                        foundElementInfo.SetLocatorsAndPropertiesCategory(this.PomCategory);
 
                         // Add element to found elements list
                         foundElementsList.Add(foundElementInfo);

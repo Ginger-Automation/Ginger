@@ -237,6 +237,7 @@ namespace GingerCore.Drivers
             BusinessFlow = context.BusinessFlow;
         }
 
+        public virtual string PomCategory { get; set; }
 
         #region VirtualDrivers
 

@@ -175,6 +175,23 @@ namespace Amdocs.Ginger.CoreNET//check
             get => LoadDeviceWindow;
         }
 
+        public override string PomCategory 
+        {
+            get
+            {
+                if (AppType == eAppType.NativeHybride)
+                {
+                    return DevicePlatformType.ToString();
+                }
+                else
+                {
+                    return eAppType.Web.ToString();
+                }
+            }
+
+            set => base.PomCategory = value;
+        }
+
         private AppiumDriver Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
         public override bool StopProcess
@@ -266,6 +283,7 @@ namespace Amdocs.Ginger.CoreNET//check
                     mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
                     mSeleniumDriver.StopProcess = this.StopProcess;
                     mSeleniumDriver.BusinessFlow = this.BusinessFlow;
+                    mSeleniumDriver.PomCategory = this.PomCategory;
 
                     if (AppType == eAppType.Web && mDefaultURL != null)
                     {
@@ -1839,19 +1857,15 @@ namespace Amdocs.Ginger.CoreNET//check
                         }
                     }
 
+                    //set the POM category
+                    EI.SetLocatorsAndPropertiesCategory(this.PomCategory);
+
                     if (pomSetting.filteredElementType == null ||
                         (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
-                    {
+                    {                        
                         foundElementsList.Add(EI);
                     }
-                }
-
-
-                //Add Locators and Properties Category
-                foreach (ElementInfo element in foundElementsList)
-                {
-                    element.SetLocatorsAndPropertiesCategory(DevicePlatformType.ToString());
-                }
+                }            
 
                 return foundElementsList.ToList();
             }
