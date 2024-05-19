@@ -2502,7 +2502,24 @@ namespace Amdocs.Ginger.CoreNET//check
                 originalList.Select(e => { e.ElementStatus = ElementInfo.eElementStatus.Pending; return e; }).ToList();
                 foreach (ElementInfo EI in originalList)
                 {
-                    EI.ElementStatus = ElementInfo.eElementStatus.Pending;
+                    try
+                    {
+                        object e = LocateElementByLocators(EI.Locators);
+                        if (e != null)
+                        {
+                            EI.ElementObject = e;
+                            EI.ElementStatus = ElementInfo.eElementStatus.Passed;
+                        }
+                        else
+                        {
+                            EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                        Console.WriteLine("CollectOriginalElementsDataForDeltaCheck error: " + ex.Message);
+                    }
                 }
             }
             finally

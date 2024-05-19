@@ -71,10 +71,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementName), Header = "Deleted Element Name", AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementName), Header = "Deleted Element", AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
 
             GetNewAddedElementComboBoxItem();
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappedElementInfo), Header = "New Added Element", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = NewAddedElementComboList, ComboboxDisplayMemberField = nameof(NewAddedComboboxItem.DisplayValue), ComboboxSelectedValueField = nameof(NewAddedComboboxItem.InternalValue), BindingMode = BindingMode.TwoWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappedElementInfo), Header = "Mapped Added Element", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = NewAddedElementComboList, ComboboxDisplayMemberField = nameof(NewAddedComboboxItem.DisplayValue), ComboboxSelectedValueField = nameof(NewAddedComboboxItem.InternalValue), BindingMode = BindingMode.TwoWay });
             view.GridColsView.Add(new GridColView() { Field = " ", Header = " ", WidthWeight = 15, BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingElementTemplate"] });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappingElementStatus), Header = "Element Status", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GetElementStatusComoList() });
@@ -127,8 +127,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         private List<ComboEnumItem> GetElementStatusComoList()
         {
             List<ComboEnumItem> elementStatus = new List<ComboEnumItem>();
-            elementStatus.Add(new ComboEnumItem() { text = "Deleted Element", Value = DeltaElementInfo.eMappingStatus.DeletedElement });
+            elementStatus.Add(new ComboEnumItem() { text = "Delete Element", Value = DeltaElementInfo.eMappingStatus.DeletedElement });
             elementStatus.Add(new ComboEnumItem() { text = "Replace Existing Element", Value = DeltaElementInfo.eMappingStatus.ReplaceExistingElement });
+            elementStatus.Add(new ComboEnumItem() { text = "Merge Existing Element", Value = DeltaElementInfo.eMappingStatus.MergeExistingElement });
             return elementStatus;
         }
 
@@ -170,7 +171,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             if (selectedElement != null)
             {
                 currentItem.MappedElementInfo = selectedElement.ElementInfo.Guid.ToString();
-                currentItem.MappingElementStatus = DeltaElementInfo.eMappingStatus.ReplaceExistingElement;
+                currentItem.MappingElementStatus = selectedElement.MappingElementStatus;
                 RemoveSelectedElementFromCombobox(selectedElement);
             }
         }
