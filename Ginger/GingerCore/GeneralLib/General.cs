@@ -482,7 +482,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Unknown Type for GetItemType ", ex);                
+                Reporter.ToLog(eLogLevel.ERROR, "Unknown Type for GetItemType ", ex);
             }
 
             return false;
@@ -1331,6 +1331,18 @@ namespace GingerCore
         public static string GetClipboardText()
         {
             return ClipboardService.GetText();
+        }
+
+        public static void SetClipboardText(string TextToCopy)
+        {
+            try
+            {
+                ClipboardService.SetText(TextToCopy);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Failed to copy text to Clipboard",ex);
+            }
         }
         public static bool IsAdmin()
         {

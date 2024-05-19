@@ -41,6 +41,7 @@ using GingerCoreNET.Drivers.CommonLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
 using InputSimulatorStandard;
+using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -3723,6 +3724,7 @@ namespace GingerCore.Drivers
                 string[] iframesPathes = spliter.Split(EI.Path);
                 foreach (string iframePath in iframesPathes)
                 {
+                    
                     Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(iframePath)));
                 }
             }
@@ -9846,6 +9848,12 @@ namespace GingerCore.Drivers
                 {
                     return false;
                 }
+            }
+            catch (Exception ex)
+            {
+                EI.Locators.ForEach((locator) => locator.LocateStatus = ElementLocator.eLocateStatus.Failed);
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message, ex);
+                return false;
             }
             finally
             {

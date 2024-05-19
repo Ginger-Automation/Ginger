@@ -729,6 +729,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.WordFile:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FileWord);
                     break;
+                case eImageType.FileXML:
+                    SetAsStaticImage("xml.png");
+                    break;
+                case eImageType.FileJSON:
+                    SetAsStaticImage("json.png");
+                    break;
+                case eImageType.FileJavascript:
+                    SetAsStaticImage("javascript.png");
+                    break;
                 case eImageType.FilePowerpoint:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FilePowerpoint);
                     break;

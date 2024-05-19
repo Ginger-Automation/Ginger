@@ -519,7 +519,7 @@ namespace Ginger.Actions
 
             SetActReturnValuesGrid();
 
-            if (mAction.ActReturnValues.Count > 0)
+            if(mAction.ActReturnValues.Count > 0 || mAction.Artifacts.Count > 0)
             {
                 xOutputValuesExpander.IsExpanded = true;
             }
@@ -587,8 +587,8 @@ namespace Ginger.Actions
             foreach (ArtifactDetails a in mAction.Artifacts)
             {
                 UCArtifact artifact = new UCArtifact();                
-                artifact.ArtifactPath = a.ArtifactOriginalPath;
-                artifact.ArtifactName = a.ArtifactName;                
+                artifact.ArtifactPath = a.ArtifactReportStoragePath;
+                artifact.ArtifactName = a.ArtifactOriginalName;                
                 artifact.IntiArtifact();
                 ArtifactsItems.Add(artifact);
             }
@@ -604,7 +604,7 @@ namespace Ginger.Actions
                 xFilesListView.Visibility = Visibility.Collapsed;
                 xlbl_msg.Visibility = Visibility.Visible;             
             }
-            xFilesTabTextBlock.Text = string.Concat("Artifacts (", ArtifactsItems.Count, ")");         
+            xFilesTabTextBlock.Text = string.Concat("Output Files (", ArtifactsItems.Count, ")");         
         }
         private void RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture captureType)
         {
@@ -665,7 +665,7 @@ namespace Ginger.Actions
             mAction.OnPropertyChanged(nameof(Act.ReturnValuesCount));
             this.Dispatcher.Invoke(() =>
             {
-                if (mAction.ActReturnValues.Count > 0)
+                if(mAction.ActReturnValues.Count > 0 || mAction.Artifacts.Count > 0)
                 {
                     xOutputValuesExpander.IsExpanded = true;
                 }
@@ -1667,10 +1667,12 @@ namespace Ginger.Actions
                 if (mAction.ReturnValues.Any())
                 {
                     xOutputValuesTabTextBlock.Text = string.Format("Validations / Assignments ({0})", mAction.ReturnValues.Count());
+                    xOutputValuesTabHeaderTextBlock.Text = string.Format("Output Values ({0})", mAction.ReturnValues.Count());
                 }
                 else
                 {
                     xOutputValuesTabTextBlock.Text = "Validations / Assignments";
+                    xOutputValuesTabHeaderTextBlock.Text = "Output Values";
                 }
             });
         }
@@ -2217,13 +2219,13 @@ namespace Ginger.Actions
             {
                 string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(mAction.RawResponseValues);
                 if (System.IO.File.Exists(tempFilePath))
-                {
+                {                    
                     DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
                     docPage.Width = 800;
                     docPage.Height = 800;
                     docPage.ShowAsWindow("Raw Output Values");
                     System.IO.File.Delete(tempFilePath);
-                    return;
+                    return;                  
                 }
             }
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw response view, see log for details.");

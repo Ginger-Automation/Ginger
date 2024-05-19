@@ -37,6 +37,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace GingerCoreNET.GeneralLib
@@ -509,11 +510,12 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
-        public static void DownloadImage(string ImageURL, Act act, bool IsAddToArtifact= false, string artifactName = "")
+        public static string DownloadImage(string ImageURL, Act act)
         {
-            String currImagePath = Act.GetScreenShotRandomFileName();           
+            String currImagePath = string.Empty; 
             try
             {
+                currImagePath = Act.GetScreenShotRandomFileName();
                 HttpResponseMessage response = SendRequest(ImageURL);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -524,20 +526,18 @@ namespace GingerCoreNET.GeneralLib
                         fs.Close();
                     });
                     act.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
-                    act.ScreenShots.Add(currImagePath);
-                    if(IsAddToArtifact)
-                    {
-                        Act.AddArtifactToAction(artifactName, act, currImagePath);                                               
-                    }
+                    act.ScreenShots.Add(currImagePath);                   
                 }
             }
             catch (Exception ex)
             {
                 act.Error += ex.Message;
+                currImagePath = string.Empty;
             }
+            return currImagePath;
         }
 
-        public static string DownloadBaselineImage(string ImageURL, Act act)
+        public static async Task<string> DownloadBaselineImage(string ImageURL, Act act)
         { 
             String currImagePath = Act.GetScreenShotRandomFileName();
             try
@@ -547,19 +547,15 @@ namespace GingerCoreNET.GeneralLib
                 {
                     using (var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
-                        response.Content.CopyToAsync(fs).ContinueWith(
-                            (discard) =>
-                            {
-                                fs.Close();
-                            });
+                        await response.Content.CopyToAsync(fs);
+                        fs.Close();
                     }
-                    
-                   return currImagePath;
                 }
             }
             catch (Exception ex)
             {
-                act.Error += ex.Message;
+                act.Error += ex.Message; 
+                Reporter.ToLog(eLogLevel.ERROR, "unable to fetch the baseline image");
             }
             return currImagePath;
         }

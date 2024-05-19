@@ -18,6 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.Configurations;
+using Ginger.ValidationRules;
 using GingerCore.Actions;
 using System.Windows;
 using System.Windows.Controls;
@@ -63,8 +65,23 @@ namespace Ginger.Actions
                 xPanelParseResult.Visibility = Visibility.Collapsed;
                 xPanelDelimiter.Visibility = Visibility.Collapsed;
             }
-            
-            
+            ApplyValidationRules();
+
+        }
+
+        private void ApplyValidationRules()
+        {
+            // check if fields have been populated (font-end validation)
+            FilePath.FilePathTextBox.AddValidationRule(new ValidateEmptyValue("Application/File path cannot be empty"));
+            xDelimiterTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Delimiter cannot be empty"));
+
+            CallPropertyChange();
+        }
+
+        private void CallPropertyChange()
+        {
+            mAct.OnPropertyChanged(nameof(mAct.FilePath));
+            mAct.OnPropertyChanged(nameof(mAct.Delimiter));
         }
 
         private void DelimiterTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -91,7 +108,14 @@ namespace Ginger.Actions
         {
             mAct.WaitForProcessToFinish = true;
             xPanelParseResult.Visibility = Visibility.Visible;
-            xPanelDelimiter.Visibility = Visibility.Visible;
+            if (mAct.ParseResult)
+            {
+                xPanelDelimiter.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xPanelDelimiter.Visibility = Visibility.Collapsed;
+            }
             mAct.InvokPropertyChanngedForAllFields();
         }
 

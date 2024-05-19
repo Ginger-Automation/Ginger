@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using GingerCore.Environments;
 using GingerCoreNET.GeneralLib;
 using System;
 using System.Drawing;
@@ -45,19 +46,12 @@ namespace GingerCore.Actions.VisualTesting
         VisualRegressionTracker.VisualRegressionTracker vrt;
         VisualRegressionTracker.Config config;
 
-        public VRTAnalyzer()
-        {
-            if (vrt == null)
-            {
-                CreateVRTConfig();
-            }
-        }
 
         private void CreateVRTConfig()
         {
-            ValueExpression VE = new ValueExpression(null, null);
+            ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), null);
 
-            config = new VisualRegressionTracker.Config
+            config = new Config
             {
                 BranchName = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.BranchName),
                 Project = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.Project),
@@ -65,6 +59,19 @@ namespace GingerCore.Actions.VisualTesting
                 ApiKey = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey),
                 EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes ? false : true
             };
+        }
+
+        private ProjEnvironment GetCurrentProjectEnvironment()
+        {
+            foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+            {
+                if (env.Name.Equals(mDriver.GetEnvironment()))
+                {
+                    return env;
+                }
+            }
+
+            return null;
         }
 
         public enum eVRTAction
@@ -188,7 +195,7 @@ namespace GingerCore.Actions.VisualTesting
             {
             }
 
-        }
+        }        
         private void TrackVRT()
         {
 
@@ -215,7 +222,6 @@ namespace GingerCore.Actions.VisualTesting
                             string baselinefilename = mAct.GetInputParamCalculatedValue(VRTSavedBaseImageFilenameString);
                             image = GetBaseLineImage(baselinefilename);
                         }
-                        mAct.CreateBaselineImage = false;//unchecked create Base line image after creation
                     }
                     else
                     {
@@ -301,8 +307,11 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.AddOrUpdateReturnParamActual("Image URL", result.ImageUrl + "");
                 mAct.AddOrUpdateReturnParamActual("Baseline URL", result.BaselineUrl + "");
                 mAct.AddOrUpdateReturnParamActual("Difference URL", result.DiffUrl + "");
-                mAct.AddOrUpdateReturnParamActual("URL", result.Url + "");               
-
+                mAct.AddOrUpdateReturnParamActual("URL", result.Url + "");
+                if (result.BaselineUrl != null)
+                {
+                    mAct.previewBaselineImageName = Path.GetFileName(result.BaselineUrl);
+                }
 
                 //Calculate the action status based on the results
                 if (WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes && result.Status != TestRunStatus.Ok)
@@ -310,7 +319,15 @@ namespace GingerCore.Actions.VisualTesting
                     switch (result.Status)
                     {
                         case TestRunStatus.New:
-                            mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline.{System.Environment.NewLine}{result.Url}";
+                            if(mAct.CreateBaselineImage)
+                            {
+                                mAct.ExInfo += $"Baseline uploaded, Please approve it on VRT dashboard.{System.Environment.NewLine}{result.Url}";
+                            }
+                            else
+                            {
+                                mAct.Error += $"No baseline found or exsiting baseline not approved, Please approve it on VRT dashboard.{System.Environment.NewLine}{result.Url}";
+                            }
+                            
                             //Add baseline image to act screenshots
                             if (result.ImageUrl != null)
                             {
@@ -321,8 +338,13 @@ namespace GingerCore.Actions.VisualTesting
                             mAct.Error += $"Differences from baseline was found.{System.Environment.NewLine}{result.DiffUrl}";
 
                             //Add difference image to act screenshots
-                            if(result.DiffUrl != null){
-                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{ Path.GetFileName(result.DiffUrl)}", mAct, true, "Difference_Image");
+                            if(result.DiffUrl != null)
+                            {
+                                string DiffrenceImage = General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{ Path.GetFileName(result.DiffUrl)}", mAct);
+                                if(!string.IsNullOrEmpty(DiffrenceImage) && File.Exists(DiffrenceImage))
+                                {
+                                    Act.AddArtifactToAction("Difference_Image", mAct, DiffrenceImage);
+                                }                                
                             }
                             
 
@@ -330,7 +352,11 @@ namespace GingerCore.Actions.VisualTesting
                             if(result.BaselineUrl != null)
                             {
                                 mAct.previewBaselineImageName = Path.GetFileName(result.BaselineUrl);
-                                General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.BaselineUrl)}", mAct, true, "BaseLine_Image");
+                                string BaseLineImage = General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.BaselineUrl)}", mAct);
+                                if(!string.IsNullOrEmpty(BaseLineImage) && File.Exists(BaseLineImage))
+                                {
+                                    Act.AddArtifactToAction("Baseline_Image", mAct, BaseLineImage);
+                                }                                
                             }
                             
 
@@ -339,7 +365,9 @@ namespace GingerCore.Actions.VisualTesting
                         default:
                             mAct.ExInfo = $"TestRun Results Status: {result.Status}";
                             break;
+                     
                     }
+                    mAct.CreateBaselineImage = false;//unchecked create Base line image after creation
                 }
             }
             catch (AggregateException ae)

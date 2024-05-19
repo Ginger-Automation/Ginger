@@ -98,7 +98,10 @@ namespace GingerCore.SourceControl
                 bool result = true;
                 try
                 {
-                    Commit(Comments);
+                    if (AnyLocalChangesPendingtoCommit())
+                    {
+                        Commit(Comments);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -110,10 +113,8 @@ namespace GingerCore.SourceControl
                     {
                         Push();
                         Pull();
-                        using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-                        {
-                            Reporter.ToUser(eUserMsgKey.CommitedToRevision, repo.Head.Tip.Sha);
-                        }
+                        using var repo = new Repository(RepositoryRootFolder);
+                        Reporter.ToUser(eUserMsgKey.SourceControlChkInSucss);
                     }
                     catch (Exception e)
                     {
@@ -144,6 +145,14 @@ namespace GingerCore.SourceControl
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to connect to repository");
                 return false;
             }
+        }
+
+        public bool AnyLocalChangesPendingtoCommit()
+        {
+            using var repo = new Repository(RepositoryRootFolder);
+            RepositoryStatus status = repo.RetrieveStatus();
+
+            return status.IsDirty;
         }
 
         private List<string> GetConflictsPathsforGetLatestConflict(string path)

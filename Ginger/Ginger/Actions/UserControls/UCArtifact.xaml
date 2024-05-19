@@ -6,7 +6,7 @@
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="60" d:DesignWidth="60">
-    <Grid Name="pageGrid" Margin="0" Background="{StaticResource $BackgroundColor_White}" Width="100">
+    <Grid Name="pageGrid" Margin="0" Background="{StaticResource $BackgroundColor_White}" Width="100" ToolTip="{Binding Path=ArtifactFileName}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="40*"/>
         </Grid.ColumnDefinitions>
@@ -14,10 +14,10 @@
             <RowDefinition Height="50*"/>
         </Grid.RowDefinitions>
         <StackPanel>
-            <usercontrols:ImageMakerControl ImageType="{Binding Path=ArtifactImage}" ToolTip="{Binding Path=ArtifactName}"
+            <usercontrols:ImageMakerControl ImageType="{Binding Path=ArtifactImage}" 
             SetAsFontImageWithSize="50" HorizontalAlignment="Center" MouseDoubleClick="ImageMakerControl_MouseDoubleClick"/>
             <Label x:Name="xArtifactName">
-                <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Path=ArtifactName}"></TextBlock>
+                <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Path=ArtifactFileName}"></TextBlock>
             </Label>
         </StackPanel>
     </Grid>

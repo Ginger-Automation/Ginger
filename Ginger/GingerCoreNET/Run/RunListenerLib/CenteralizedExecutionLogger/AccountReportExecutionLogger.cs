@@ -234,15 +234,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         }
 
         private async Task SendDataOnActionEndTask(Act action)
-        {
-            List<string> artifactList = new List<string>();           
-            AccountReportAction accountReportAction = AccountReportEntitiesDataMapping.MapActionEndData(action, mContext);
-            foreach (ArtifactDetails artifact in action.Artifacts)
-            {
-                artifactList.Add(artifact.ArtifactOriginalPath);
-            }
-            await AccountReportApiHandler.SendScreenShotsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.ScreenShots.ToList());
-            await AccountReportApiHandler.SendArtifactsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, artifactList);
+        {                   
+            AccountReportAction accountReportAction = AccountReportEntitiesDataMapping.MapActionEndData(action, mContext);           
+            await AccountReportApiHandler.SendScreenShotsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.ScreenShots.ToList());               
+            await AccountReportApiHandler.SendArtifactsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.Artifacts);            
             await AccountReportApiHandler.SendActionExecutionDataToCentralDBAsync(accountReportAction, true);
         }
 
