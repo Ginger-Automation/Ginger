@@ -143,6 +143,7 @@ namespace Ginger.SolutionWindows
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
             mSolution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.GeneralDetails);
+            Reporter.ToUser(eUserMsgKey.SaveSolution);
         }
 
         public bool ShowAsWindow(Solution solution, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)

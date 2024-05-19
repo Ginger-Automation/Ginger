@@ -191,14 +191,23 @@ namespace GingerCore.ALM
                 {
                     lock (fileLock)
                     {
+
                         XmlDocument RQMSettingsXML = new XmlDocument();
                         string RQMSettingsXMLFilePath = Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml");
                         RQMSettingsXML.Load(RQMSettingsXMLFilePath);
 
-                        //Set Path of Export_Settings.xml file inside RQMSettings.xml file
-                        XmlNode Export_SettingsFile_Location = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/Export_SettingsFile_Location");
-                        Export_SettingsFile_Location.InnerText = Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Export");
-                        RQMSettingsXML.Save(RQMSettingsXMLFilePath);
+                        try
+                        {
+                            //Set Path of Export_Settings.xml file inside RQMSettings.xml file
+                            XmlNode Export_SettingsFile_Location = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/Export_SettingsFile_Location");
+                            Export_SettingsFile_Location.InnerText = Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Export");
+                            RQMSettingsXML.Save(RQMSettingsXMLFilePath);
+                        }
+                        catch(Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Error witring ALM RQMConfigPackage at RQM/GeneralData/Export_SettingsFile_Location: {Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml")}", ex);
+                        }
+
 
                         //Extract end return ServerURL value from RQM/GeneralData/ServerURL node
                         XmlNode ServerURLNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/ServerURL");

@@ -861,7 +861,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     operationConfigPublishToALM.RunAt = (OperationExecConfigBase.eOperationRunAt?)publishToQCAction.RunAt;
                     operationConfigPublishToALM.AlmTestSetLevel = (AlmPublishOperationExecConfig.eAlmTestSetLevel?)publishToQCAction.ALMTestSetLevel;
                     operationConfigPublishToALM.ExportType = (AlmPublishOperationExecConfig.eExportType?)Enum.Parse(typeof(AlmPublishOperationExecConfig.eExportType), publishToQCAction.ExportType.ToString());
-                    operationConfigPublishToALM.SearchALMEntityByName = publishToQCAction.SearchALMEntityByName != null ? publishToQCAction.SearchALMEntityByName : false;
+                    operationConfigPublishToALM.SearchByName = publishToQCAction.SearchALMEntityByName != null ? publishToQCAction.SearchALMEntityByName : false;
                     operationConfigPublishToALM.TestsetExportDestination = publishToQCAction.TestSetFolderDestination;
                     operationConfigPublishToALM.TestcasesExportDestination = publishToQCAction.TestCaseFolderDestination;
                     operationConfigPublishToALM.TestCasesResultsToExport = (AlmPublishOperationExecConfig.eTestCasesResultsToExport?)Enum.Parse(typeof(AlmPublishOperationExecConfig.eTestCasesResultsToExport), publishToQCAction.FilterStatus.ToString());
@@ -1216,6 +1216,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         if (sharedActivity.InstanceID != null)
                                         {
                                             shActivity.Guid = (Guid)sharedActivity.InstanceID;
+                                        }
+                                        if(sharedActivity.SharedActivityID != null)
+                                        {
+                                            shActivity.ParentGuid = sharedActivity.SharedActivityID.Value;
                                         }
                                         bf.AddActivity(shActivity, actGrp);
                                     }
@@ -1619,6 +1623,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             publishToQCRunSetOperation.VariableForTCRunName = publishToALMOperationExecConfig.UserVariableInRunInstance;
                         }
+                        publishToQCRunSetOperation.SearchALMEntityByName = publishToALMOperationExecConfig.SearchByName;
 
                         if (publishToALMOperationExecConfig.AlmFieldsConfig != null && publishToALMOperationExecConfig.AlmFieldsConfig.Count > 0)
                         {

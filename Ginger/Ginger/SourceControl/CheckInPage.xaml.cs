@@ -239,6 +239,7 @@ namespace Ginger.SourceControl
             }
             CheckInFilesGrid.DataSourceList = mFiles;
         }
+
         private async void CommitAndCheckinButton_Click(object sender, RoutedEventArgs e)
         {
             if (WorkSpace.Instance.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
@@ -260,13 +261,14 @@ namespace Ginger.SourceControl
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
                 List<SourceControlFileInfo> SelectedFiles = mFiles.Where(x => x.Selected == true).ToList();
 
-                ObservableList<SourceControlChangesetDetails> unpushedLocalCommits = null;
+                int unpushedLocalCommitsCount = 0;
                 if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    unpushedLocalCommits = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
+                    ObservableList<SourceControlChangesetDetails> unpushedLocalCommits = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
+                    unpushedLocalCommitsCount = unpushedLocalCommits.Count;
                 }
 
-                if ((SelectedFiles == null || SelectedFiles.Count == 0) && (unpushedLocalCommits == null || unpushedLocalCommits.Count == 0))
+                if ((SelectedFiles == null || SelectedFiles.Count == 0) && (unpushedLocalCommitsCount == 0))
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlMissingSelectionToCheckIn);
                     return;
@@ -276,15 +278,21 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKey.AskToAddCheckInComment);
                     return;
                 }
-
-                if ((SelectedFiles == null || SelectedFiles.Count == 0) && unpushedLocalCommits != null && unpushedLocalCommits.Count > 0)
+                if (SelectedFiles != null && SelectedFiles.Count > 0 && unpushedLocalCommitsCount > 0)
                 {
-                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommit, unpushedLocalCommits) == eUserMsgSelection.No)
+                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommitAndFiles, SelectedFiles.Count, unpushedLocalCommitsCount) == eUserMsgSelection.No)
                     {
                         return;
                     }
                 }
-                else if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtion, SelectedFiles.Count) == eUserMsgSelection.No)
+                else if ((SelectedFiles == null || SelectedFiles.Count == 0) && unpushedLocalCommitsCount > 0)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommit, unpushedLocalCommitsCount) == eUserMsgSelection.No)
+                    {
+                        return;
+                    }
+                }
+                else if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalFiles, SelectedFiles.Count) == eUserMsgSelection.No)
                 {
                     return;
                 }
@@ -302,6 +310,7 @@ namespace Ginger.SourceControl
                         //performing cleanup for the solution folder to clean old locks left by faild check ins
                         SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
                         List<string> pathsToCommit = StageTheFilesToCommit(SelectedFiles);
+
 
                         bool conflictHandled = false;
                         bool CommitSuccess = false;
@@ -770,7 +779,7 @@ namespace Ginger.SourceControl
         private void InitLocalCommitGrid()
         {
             LocalCommitedFilesGrid.DataSourceList = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
-            LocalCommitedFilesGrid.Title = $"Pending Local Commits for Check-In {{{LocalCommitedFilesGrid.DataSourceList.Count}}}";
+            LocalCommitedFilesGrid.Title = $"Pending Local Commits for Check-In ({LocalCommitedFilesGrid.DataSourceList.Count})";
         }
 
         private void SetLocalCommitGridView()

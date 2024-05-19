@@ -52,6 +52,7 @@ using Microsoft.VisualStudio.Services.Common;
 using System.Xml;
 using System.Text.RegularExpressions;
 using System.Web;
+using DocumentFormat.OpenXml.Drawing;
 
 
 namespace GingerCore.ALM
@@ -147,8 +148,7 @@ namespace GingerCore.ALM
             {
 
                 Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
-                List<WorkItem> defectsToExport = new List<WorkItem>();
-                List<string> screenshots = new List<string>();
+                List<string> screenshots = new();
                 foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
                 {
                     string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
@@ -166,13 +166,9 @@ namespace GingerCore.ALM
                             screenshots.Add(paths);
                         }
                     }
-                    //if no then add into list to open new defect
-                    defectsToExport.Add(CreateDefectData(defectsForOpening));
-                    foreach (var defect in defectsToExport)
-                    {
-
-                        defectsOpeningResults.Add(Guid.NewGuid(), defect.Id.ToString());
-                    }
+                   
+                 defectsOpeningResults.Add(defectForOpening.Key, CreateDefectData(defectForOpening).Id.ToString());
+                    
                 }
                 return defectsOpeningResults;
             }
@@ -184,7 +180,7 @@ namespace GingerCore.ALM
             }
         }
 
-        private static WorkItem CreateDefectData(Dictionary<Guid, Dictionary<string, string>> defectForOpening)
+        private static WorkItem CreateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening)
         {
             try
             {
@@ -198,25 +194,33 @@ namespace GingerCore.ALM
 
                 WorkItemTrackingHttpClient workItemTrackingClient = connection.GetClient<WorkItemTrackingHttpClient>();
 
-                JsonPatchDocument patchDocument = new JsonPatchDocument();
+                JsonPatchDocument patchDocument = new();
+
+                 patchDocument.Add(
+                     new JsonPatchOperation()
+                     {
+                         Operation = Operation.Add,
+                         Path = "/fields/System.Title",
+                         Value = defectForOpening.Value.TryGetValue("Summary", out string value) ? value : string.Empty,
+                        
+
+                     }
+                 );
+
+                patchDocument.Add(
+                  new JsonPatchOperation()
+                  {
+                      Operation = Operation.Add,
+                      Path = "/fields/Microsoft.VSTS.TCM.ReproSteps",
+                      Value = defectForOpening.Value.TryGetValue("description", out string systeminfo) ? systeminfo : string.Empty,
 
 
-                foreach (var item in defectForOpening)
-                {
+                  });
+                 
 
+                 patchDocument = AddAttachmentsToDefect(patchDocument, defectForOpening, workItemTrackingClient);
 
-                    patchDocument.Add(
-                        new JsonPatchOperation()
-                        {
-                            Operation = Operation.Add,
-                            Path = "/fields/System.Title",
-                            Value = item.Value.TryGetValue("Summary", out string value) ? value : string.Empty
-
-                        }
-                    );
-                }
-
-
+                
 
                 Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, "Bug").Result;
 
@@ -228,6 +232,51 @@ namespace GingerCore.ALM
                 return null;
             }
         }
+
+        private static JsonPatchDocument AddAttachmentsToDefect(JsonPatchDocument patchDocument, KeyValuePair<Guid, Dictionary<string, string>> defectForOpening, WorkItemTrackingHttpClient wit)
+        {
+            var attachmentPaths = defectForOpening.Value.TryGetValue("screenshots", out string picspath) ? picspath :string.Empty;
+
+            if (string.IsNullOrEmpty(attachmentPaths))
+            {
+                return patchDocument;
+            }
+            
+            var attachmentPathsArray = attachmentPaths.Split(',');
+
+                foreach (var attachmentPath in attachmentPathsArray)
+                {
+                    try
+                    {
+
+                        var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
+
+                        patchDocument.Add(
+                            new JsonPatchOperation()
+                            {
+                                Operation = Operation.Add,
+                                Path = "/relations/-",
+                                Value = new
+                                {
+                                    rel = "AttachedFile",
+                                    url = attachment.Url,
+                                    attributes = new
+                                    {
+                                        comment = "Attached Screenshot"
+                                    }
+                                }
+                            }
+                        );
+                    }
+                    catch(Exception ex) 
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}");
+                    }
+                }
+            
+            return patchDocument;
+        }
+
 
         private static string CheckIfDefectExist(string summaryValue)
         {
@@ -258,7 +307,7 @@ namespace GingerCore.ALM
                     {
                         if (workItem.Fields["System.Title"].ToString().Equals(summaryValue))
                         {
-                            return summaryValue;
+                            return workItem.Id.ToString();
                         }
 
                     }
@@ -282,67 +331,67 @@ namespace GingerCore.ALM
                 return false;
             }
             LoginDTO login = GetLoginDTO();
-                
 
             try
             {
-                VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
-
+                // Establishing connection
+                var connection = AzureDevOpsRepository.LoginAzure(login);
                 var testClient = connection.GetClient<TestManagementHttpClient>();
 
-                if (Int32.TryParse(bizFlow.ExternalID, out int testPlanId) && Int32.TryParse(bizFlow.ExternalID2, out int suiteId))
+                // Parsing external IDs
+                if (!int.TryParse(bizFlow.ExternalID, out int testPlanId) || !int.TryParse(bizFlow.ExternalID2, out int suiteId))
                 {
-                    string projectName = login.Project;
-
-                    var testPoints = testClient.GetPointsAsync(projectName, testPlanId, suiteId).Result;
-                    if (testPoints != null)
-                    {
-                        foreach (var item in testPoints)
-                        {
-                            int testpointid = item.Id;
-                            var matchingTC = bizFlow.ActivitiesGroups.FirstOrDefault(p => p.ExternalID == item.TestCase.Id);
-                           
-                            if (matchingTC != null)
-                            {
-                                RunCreateModel run = new RunCreateModel(name: item.TestCase.Name, plan: new Microsoft.TeamFoundation.TestManagement.WebApi.ShallowReference(bizFlow.ExternalID), pointIds: [testpointid]);
-                                TestRun testrun = testClient.CreateTestRunAsync(run, projectName).Result;
-
-                                TestCaseResult caseResult = new() { State = "Completed", Outcome = matchingTC.RunStatus.ToString(), Id = 100000 };
-
-                                var testResults = testClient.UpdateTestResultsAsync([caseResult], projectName, testrun.Id).Result;
-                                RunUpdateModel runmodel = new(state: "Completed");
-                                TestRun testRunResult = testClient.UpdateTestRunAsync(runmodel, projectName, testrun.Id, runmodel).Result;
-                            }
-                            else
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, $"No Matching TestCase(ActivityGroup) found for TestPointId: {testpointid}");
-                            }
-
-                        }
-                        
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"No TestPoint found for given ProjectName: {projectName}, TestPlanId: {testPlanId}, SuiteId: {suiteId} or BusinessFlow: {bizFlow.Name}");
-                    }
-
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.ERROR,$"Unable to convert ExternalId: {bizFlow.ExternalID} of the BusinessFlow : {bizFlow.Name}  to TestPlanId/SuiteId");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Unable to convert ExternalId: {bizFlow.ExternalID} of the BusinessFlow: {bizFlow.Name} to TestPlanId/SuiteId");
                     return false;
                 }
 
+                string projectName = login.Project;
+
+                // Fetching test points
+                var testPoints = testClient.GetPointsAsync(projectName, testPlanId, suiteId).Result;
+                if (testPoints == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"No TestPoint found for given ProjectName: {projectName}, TestPlanId: {testPlanId}, SuiteId: {suiteId} or BusinessFlow: {bizFlow.Name}");
+                    return false;
+                }
+
+                foreach (var item in testPoints)
+                {
+                    int testpointid = item.Id;
+                    var matchingTC = bizFlow.ActivitiesGroups.FirstOrDefault(p => p.ExternalID == item.TestCase.Id);
+
+                    if (matchingTC != null)
+                    {
+                        // Creating test run
+                        var runModel = new RunCreateModel(name: item.TestCase.Name, plan: new Microsoft.TeamFoundation.TestManagement.WebApi.ShallowReference(bizFlow.ExternalID), pointIds: new[] { testpointid });
+                        var testrun = testClient.CreateTestRunAsync(runModel, projectName).Result;
+
+                        // Updating test results
+                        var caseResult = new TestCaseResult { State = "Completed", Outcome = matchingTC.RunStatus.ToString(), Id = 100000 };
+                        testClient.UpdateTestResultsAsync(new[] { caseResult }, projectName, testrun.Id);
+
+                        // Updating test run
+                        var runUpdateModel = new RunUpdateModel(state: "Completed");
+                        testClient.UpdateTestRunAsync(runUpdateModel, projectName, testrun.Id, runUpdateModel);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"No Matching TestCase(ActivityGroup) found for TestPointId: {testpointid}");
+                        Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID, "ExternalId of ActivityGroup is either Null or Incorrect");
+                        return false;
+                    }
+                }
+
+                result = "Export has been finished Successfully";
                 return true;
-
             }
-            catch (AggregateException e)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,e.InnerException.Message);
-
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID, ex.Message);
+                return false;
             }
-            return false;
-            
+
         }
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
@@ -629,6 +678,7 @@ namespace GingerCore.ALM
 
         public void CreateNewTestCase(ActivitiesGroup ag, string fatherId, ObservableList<ExternalItemFieldBase> testcasefields, List<string> step)
         {
+           
             TestBaseHelper helper = new TestBaseHelper();
             ITestBase testBase = helper.Create();
             testBase = CreateTestStep(step,testBase);
@@ -891,26 +941,34 @@ namespace GingerCore.ALM
 
             TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
             List<TestPlan> plans = testPlanClient.GetTestPlansAsync(logincred.Project).Result;
-            
 
-           if(Int32.TryParse(tsId, out int testplanId))
+
+            if (Int32.TryParse(tsId, out int testplanId))
             {
-                int suiteId = testplanId + 1;
-                TestSuite testsuite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
-
-                ALMTestSetData aLMTestSetData = new()
+                try
                 {
-                    Id = testsuite.Id.ToString(),
-                    Name = testsuite.Name,
-                    ParentId = testplanId.ToString()
+                    int suiteId = testplanId + 1;
+                    TestSuite testsuite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
 
-                };
+                    ALMTestSetData aLMTestSetData = new()
+                    {
+                        Id = testsuite.Id.ToString(),
+                        Name = testsuite.Name,
+                        ParentId = testplanId.ToString()
 
-                return aLMTestSetData;
+                    };
+
+                    return aLMTestSetData;
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID,$"{ex.InnerException.Message}");
+                    return null;
+                }
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Unable to parse ExternalId to test suite id");
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to parse ExternalId to test suite id");
                 return null;
             }
             

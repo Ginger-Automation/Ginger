@@ -225,7 +225,7 @@ namespace Ginger.GeneralLib
 
         private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(mTextBlockHelper.GetText());
+             GingerCore.General.SetClipboardText(mTextBlockHelper.GetText());
         }
 
         private void ViewLogBtn_Click(object sender, RoutedEventArgs e)

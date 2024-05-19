@@ -34,6 +34,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -69,7 +71,25 @@ namespace Ginger.Actions.VisualTesting
             VRTCurrentBaselineImagePathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTSavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "png", BaseLineFileSelected_Click);
             WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: VRTCurrentBaselineImagePathTxtBox.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);
             UpdateBaseLineImage();
-            GetBaseLineImage();
+            Task.Run(async () =>
+            {
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        VRTPreviewBaselineImageFrame.ClearAndSetContent(new LoadingPage(
+                            loadingLabel: "loading baseline image...", 
+                            width: 40, 
+                            height: 40,
+                            fontSize: 15));
+                    });
+                    await LoadBaseLineImageAsync();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error while loading baseline image", ex);
+                }
+            });
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCreateBaselineCheckbox, CheckBox.IsCheckedProperty, mAct, nameof(mAct.CreateBaselineImage));
 
             InitLayout();
@@ -203,6 +223,8 @@ namespace Ginger.Actions.VisualTesting
                     {
                         xBaselineImage.Visibility = Visibility.Visible;
                         xBaselineImageRadioButtonPnl.Visibility = Visibility.Visible;
+                        VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Collapsed;
+                        xPreviewBaselineImage.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
@@ -357,25 +379,49 @@ namespace Ginger.Actions.VisualTesting
             VRTBaseImageFrame.ClearAndSetContent(p);
         }
 
-        private void GetBaseLineImage()
+        private async Task LoadBaseLineImageAsync()
         {
             try
             {
-                string previewBaselineImage = GingerCoreNET.GeneralLib.General.DownloadBaselineImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{mAct.previewBaselineImageName}", mAct);
-                string FileName = General.GetFullFilePath(previewBaselineImage);
-                BitmapImage b = null;
-                if (File.Exists(FileName) && new FileInfo(FileName).Length > 0)
+                if (string.IsNullOrEmpty(mAct.previewBaselineImageName))
                 {
-                    b = GetFreeBitmapCopy(FileName);
+                    Reporter.ToLog(eLogLevel.ERROR, "unable to fetch the baseline image");
+                    return;
                 }
-                // send with null bitmap will show image not found
-                ScreenShotViewPage p = new ScreenShotViewPage("preview Baseline Image", b);
-                VRTPreviewBaselineImageFrame.ClearAndSetContent(p);
+
+                string imagePath = await GetBaseLineImageAsync();
+                Dispatcher.Invoke(() => SetBaseLineImage(imagePath));
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "unable to fetch the baseline image",ex);
-            } 
+                Reporter.ToLog(eLogLevel.ERROR, "Error while loading baseline image", ex);
+            }
+        }
+
+        private Task<string> GetBaseLineImageAsync()
+        {
+            return GingerCoreNET.GeneralLib.General.DownloadBaselineImage(
+                ImageURL: $"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{mAct.previewBaselineImageName}", 
+                mAct);
+        }
+
+        private void SetBaseLineImage(string imagePath)
+        {
+            if(string.IsNullOrEmpty(imagePath))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "unable to fetch the baseline image");
+                return;
+            }
+
+            string FileName = General.GetFullFilePath(imagePath);
+            BitmapImage? b = null;
+            if (File.Exists(FileName) && new FileInfo(FileName).Length > 0)
+            {
+                b = GetFreeBitmapCopy(FileName);
+            }
+            // send with null bitmap will show image not found
+            ScreenShotViewPage p = new ScreenShotViewPage("Preview Baseline Image", b);
+            VRTPreviewBaselineImageFrame.ClearAndSetContent(p);
         }
 
         private BitmapImage GetFreeBitmapCopy(String filePath)
