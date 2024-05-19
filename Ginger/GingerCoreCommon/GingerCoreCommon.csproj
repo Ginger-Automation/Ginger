@@ -11,17 +11,18 @@
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Amdocs.Ginger.Common</RootNamespace>
 
-    <AssemblyVersion>24.2.1.1</AssemblyVersion>
-    <FileVersion>24.2.1.1</FileVersion>
+    <AssemblyVersion>24.2.0.0</AssemblyVersion>
+    <FileVersion>24.2.0.0</FileVersion>
 
     <PackageId>Ginger.Core.Common</PackageId>
     <Authors>Amdocs</Authors>
     <Company>Amdocs</Company>
     <Product>Ginger by Amdocs</Product>
-    <Copyright>Copyright © 2014-2022 European Support Limited</Copyright>
+    <Copyright>Copyright © 2014-2024 European Support Limited</Copyright>
 
-    <Version>24.2.1.1</Version>
+    <Version>24.2.0.0</Version>
     <Title>Ginger Core Common</Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -17,13 +17,18 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Cassandra;
 using GingerCore.Actions;
 using GingerCore.NoSqlBase.DataAccess;
+using HBaseNet.Const;
+using Microsoft.Graph;
+using Microsoft.Graph.SecurityNamespace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -37,32 +42,72 @@ namespace GingerCore.NoSqlBase
         dynamic myclass = null;
         string mUDTName = null;
 
-
-
         public override bool Connect()
         {
             try
             {
-                string queryTimeoutString = "querytimeout=";
+                const string queryTimeoutString = "querytimeout=";
+                const string sslString = "ssl=";
                 int queryTimeout = 20000;//default timeout (20 seconds).
-                if (Db.DatabaseOperations.TNSCalculated.ToLower().Contains(queryTimeoutString.ToLower()))
+                string[] queryArray = Db.DatabaseOperations.TNSCalculated.ToLower().Split(';');
+                SSLOptions sslOptions = null;
+                for (int i = 1; i < queryArray.Length; i++)
                 {
-                    string queryTimeoutValue = Db.DatabaseOperations.TNSCalculated.Substring(Db.DatabaseOperations.TNSCalculated.ToLower().IndexOf(queryTimeoutString.ToLower()) + queryTimeoutString.Length);
-                    queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
-                }
+                    switch (queryArray[i])
+                    {
+                        case var str when str.Contains(queryTimeoutString):
+                            string queryTimeoutValue = str.Substring(str.IndexOf(queryTimeoutString) + queryTimeoutString.Length);
+                            if (!int.TryParse(queryTimeoutValue, out int timeout))
+                            {
+                                throw new ArgumentException("Query timeout value is not a valid integer.");
+                            }
+                            queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
+                            break;
 
-                string[] HostKeySpace = Db.DatabaseOperations.TNSCalculated.Split('/');
+                        case var str when str.Contains(sslString):
+                            string sslValue = str.Substring(str.IndexOf(sslString) + sslString.Length);
+                            sslOptions = SetupSslOptions(sslValue);
+                            break;
+                        default:
+                            throw new ArgumentException("Please check connection string.");
+                    }
+                }
+                string[] HostKeySpace = queryArray[0].ToLower().Replace("http://", "").Replace("https://", "").Split('/');
                 string[] HostPort = HostKeySpace[0].Split(':');
 
                 if (HostPort.Length == 2)
                 {
                     if (string.IsNullOrEmpty(Db.Pass) && string.IsNullOrEmpty(Db.User))
                     {
-                        cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
+                        if (sslOptions ==null)
+                        {
+                            cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
+                        }
+                        else
+                        {
+                            cluster = Cluster.Builder()
+                                .AddContactPoint(HostPort[0])
+                                .WithPort(Int32.Parse(HostPort[1]))
+                                .WithSSL(sslOptions)
+                                .WithQueryTimeout(queryTimeout)
+                                .Build();
+                        }
                     }
                     else
                     {
-                        cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
+                        if (sslOptions == null) {
+                            cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
+                        }
+                        else
+                        {
+                            cluster = Cluster.Builder()
+                                .AddContactPoint(HostPort[0])
+                                .WithPort(Int32.Parse(HostPort[1]))
+                                .WithAuthProvider(new PlainTextAuthProvider(Db.User, Db.Pass))
+                                .WithSSL(sslOptions)
+                                .WithQueryTimeout(queryTimeout)
+                                .Build();
+                        }
                     }
                 }
                 else
@@ -85,8 +130,8 @@ namespace GingerCore.NoSqlBase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Cassandra DB", e);
-                throw (e);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Cassandra DB. Please check Connection String", e);
+                throw;
             }
         }
 
@@ -94,7 +139,7 @@ namespace GingerCore.NoSqlBase
         {
             try
             {
-                if (session != null)
+                if (session != null && !session.IsDisposed)
                 {
                     Metadata m = cluster.Metadata;
                     ICollection<string> Keyspaces = m.GetKeyspaces();
@@ -182,8 +227,15 @@ namespace GingerCore.NoSqlBase
 
         private void Disconnect()
         {
-            session.Dispose();
-            cluster.Dispose();
+            try
+            {
+                session.Dispose();
+                cluster.Dispose();
+            }
+            finally
+            {
+                session = null;
+            }
         }
 
         public Type TypeConverter(RowSet RS, string Type1)
@@ -787,6 +839,21 @@ namespace GingerCore.NoSqlBase
                     }
                 }
                 i++;
+            }
+        }
+
+        public static SSLOptions SetupSslOptions(string sslParamValue)
+        {
+            try
+            {
+                var sslProtocol = Enum.Parse<SslProtocols>(sslParamValue, ignoreCase: true);
+                return new SSLOptions(sslProtocol, false, (_, _, _, _) => true);
+            }
+            catch (ArgumentException e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "SSL value not correct. Please enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Note - Also try removing ssl= parameter from connection string", e);
+                throw new ArgumentException("SSL value not correct. Please enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13.");
             }
         }
     }

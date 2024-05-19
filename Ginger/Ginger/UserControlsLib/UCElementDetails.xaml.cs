@@ -256,13 +256,13 @@ namespace Ginger
         {
             if (!string.IsNullOrEmpty((sender as ControlProperty).Value))
             {
-                Clipboard.SetText((sender as ControlProperty).Value);
+                 GingerCore.General.SetClipboardText((sender as ControlProperty).Value);
             }
         }
 
         private void XLocatorsGrid_RowDoubleClick(object sender, EventArgs e)
         {
-            Clipboard.SetText((sender as ElementLocator).LocateValue);
+             GingerCore.General.SetClipboardText((sender as ElementLocator).LocateValue);
         }
 
         bool LocatorsGridInitialized = false;
@@ -400,7 +400,7 @@ namespace Ginger
 
         private void XFriendlyLocatorsGrid_RowDoubleClick(object sender, EventArgs e)
         {
-            Clipboard.SetText((sender as ElementLocator).LocateValue);
+             GingerCore.General.SetClipboardText((sender as ElementLocator).LocateValue);
         }
 
         bool FriendlyLocatorsGridInitialized = false;
@@ -1118,7 +1118,7 @@ namespace Ginger
 
             if (mSelectedLocator != null)
             {
-                Clipboard.SetText(mSelectedLocator.LocateValue);
+                 GingerCore.General.SetClipboardText(mSelectedLocator.LocateValue);
             }
         }
 

@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -191,7 +192,14 @@ namespace Ginger.UserControlsLib.UCListView
                         filteredView.Filter = LVItemFilter;
                     }
 
-                    xListView.ItemsSource = mObjList;
+                    if (Dispatcher.CheckAccess())
+                    {
+                        xListView.ItemsSource = mObjList;
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() => xListView.ItemsSource = mObjList);
+                    }
 
                     if(value is ObservableList<VariableBase>)
                     {
@@ -502,6 +510,19 @@ namespace Ginger.UserControlsLib.UCListView
             set
             {
                 SelectionTitle.Content = value;
+            }
+        }
+
+        public FontWeight SelectTitleFontWeight
+        {
+            get
+            {
+                return SelectionTitle.FontWeight;
+            }
+
+            set
+            {
+                SelectionTitle.FontWeight = value;
             }
         }
         public void ScrollToViewCurrentItem()

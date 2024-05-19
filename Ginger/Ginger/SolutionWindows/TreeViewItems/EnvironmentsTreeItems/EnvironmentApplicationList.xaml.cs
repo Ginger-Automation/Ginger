@@ -25,6 +25,7 @@ using System.Windows.Controls.Primitives;
 using GingerCore.Environments;
 using GingerTest.WizardLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
 {
@@ -56,10 +57,48 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
 
             AppsGrid.SetAllColumnsDefaultView(view);
             AppsGrid.InitViewItems();
+            AppsGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Applications", new RoutedEventHandler(CheckUnCheckAllApplications));
 
             xAddApplicationToSolution.ButtonTextSize = 12;
             AppsGrid.DataSourceList = FilteredListToBeDisplayed;
         }
+        private void CheckUnCheckAllApplications(object sender, RoutedEventArgs e)
+        {
+            IObservableList filteringEnvApplication = AppsGrid.DataSourceList;
+
+
+            int selectedItems = CountSelectedItems();
+            if (selectedItems < AppsGrid.DataSourceList.Count)
+            {
+                foreach (ApplicationPlatform ApplicationPlatform in filteringEnvApplication)
+                {
+                    ApplicationPlatform.Selected = true;
+                }
+            }
+            else if (selectedItems == AppsGrid.DataSourceList.Count)
+            {
+                foreach (ApplicationPlatform ApplicationPlatform in filteringEnvApplication)
+                {
+                    ApplicationPlatform.Selected = false;
+                }
+            }
+
+            AppsGrid.DataSourceList = filteringEnvApplication;
+        }
+
+        private int CountSelectedItems()
+        {
+            int counter = 0;
+            foreach (ApplicationPlatform ApplicationPlatform in AppsGrid.DataSourceList)
+            {
+                if (ApplicationPlatform.Selected)
+                {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool ShowCancelButton = true)
         {
 
@@ -81,10 +120,11 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
         {
             AddApplicationPage applicationPage = new(WorkSpace.Instance.Solution, false);
 
-            applicationPage.ShowAsWindow();
+            ApplicationPlatform? selectedApp = null;
+            applicationPage.ShowAsWindow(ref selectedApp);
 
-            foreach (ApplicationPlatform selectedApp in applicationPage.SelectApplicationGrid.Grid.SelectedItems)
-            {
+            if(selectedApp!=null)
+            { 
                 AppsGrid.DataSourceList.Add(selectedApp);
             }
 

@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
@@ -40,6 +58,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
             if (runset != null && runset.IsVirtual)
             {
+                runset.Guid = runsetId;
                 runset.Description = $"ExecutionId: {runsetReport.GUID}\nExecutionTime: {runsetReport.StartTimeStamp.ToString("O")}";
             }
 
@@ -116,6 +135,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
         {
             RunSetConfig runset = DynamicExecutionManager.LoadRunsetFromExecutionConfig(executionConfig);
             runset.IsVirtual = true;
+            runset.AllowAutoSave = false;
 
             runset.Name = GetUniqueRunsetName(runset.Name);
 
@@ -130,10 +150,12 @@ namespace Amdocs.Ginger.CoreNET.Reports
             foreach (BusinessFlowRun bfRun in bfRuns)
             {
                 BusinessFlow bf = GetBusinessFlowById(bfRun.BusinessFlowGuid);
+                bf.AllowAutoSave = false;
                 MoveRepositoryItemToFolder(bf, bfCacheRunsetFolder.FolderFullPath);
                 bf.DynamicPostSaveHandler = () =>
                 {
                     RepositoryFolderBase bfRunsetFolder = GetOrCreateRepositoryFolder(runset.Name, bfFolder);
+                    bf.AllowAutoSave = true;
                     MoveRepositoryItemToFolder(bf, bfRunsetFolder.FolderFullPath);
                 };
                 bf.DirtyStatus = eDirtyStatus.Modified;
@@ -147,6 +169,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
             {
                 MoveRepositoryItemToFolder(runset, runsetFolder.FolderFullPath);
                 runset.IsVirtual = false;
+                runset.AllowAutoSave = true;
             };
             runset.DirtyStatus = eDirtyStatus.Modified;
 
@@ -155,7 +178,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
         private string GetUniqueRunsetName(string runsetName)
         {
-            bool SolutionRepositoryContainsRunsetWithName(string runsetName)
+            bool RunsetExist(string runsetName)
             {
                 return WorkSpace
                     .Instance
@@ -164,21 +187,28 @@ namespace Amdocs.Ginger.CoreNET.Reports
                     .Any(runset => string.Equals(runset.Name, runsetName));
             }
 
-            int copyCount = 1;
-            while (SolutionRepositoryContainsRunsetWithName(runsetName))
+            int copyCount = 0;
+            string copyIdentifier = string.Empty;
+            const int MaxAttempts = 10_000;
+            while (RunsetExist($"{runsetName}{copyIdentifier}") && copyCount < MaxAttempts)
             {
-                string copyIdentifier;
+                copyCount++;
                 if (copyCount == 1)
                 {
-                    copyIdentifier = "Copy";
+                    copyIdentifier = "-Copy";
                 }
                 else
                 {
-                    copyIdentifier = $"Copy{copyCount}";
+                    copyIdentifier = $"-Copy{copyCount}";
                 }
-                runsetName = $"{runsetName}-{copyIdentifier}";
             }
-            return runsetName;
+
+            if (copyCount >= MaxAttempts)
+            {
+                throw new Exception($"Too many {GingerDicser.GetTermResValue(eTermResKey.RunSets)} with similar name, remove/delete them first.");
+            }
+
+            return $"{runsetName}{copyIdentifier}";
         }
 
         private RepositoryFolderBase GetRootRepositoryFolder<T>() where T : RepositoryItemBase

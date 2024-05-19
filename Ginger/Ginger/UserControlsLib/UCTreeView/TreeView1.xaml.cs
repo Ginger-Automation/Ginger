@@ -145,8 +145,28 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             xTreeViewTree.ItemSelected += xTreeViewTree_ItemSelected;
             xTreeViewTree.ItemAdded += XTreeViewTree_ItemAdded;
+            xTreeViewTree.ChildrenLoadEvent += XTreeViewTree_ChildrenLoadEvent;
         }
 
+        private void XTreeViewTree_ChildrenLoadEvent(UCTreeView.ChildrenLoadState state)
+        {
+            if (state == UCTreeView.ChildrenLoadState.Started)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xSearchTextBox.IsEnabled = false;
+                    Reporter.ToStatus(eStatusMsgKey.LoadingTreeViewChildren);
+                });
+            }
+            else
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xSearchTextBox.IsEnabled = true;
+                    Reporter.HideStatusMessage();
+                });
+            }
+        }
 
         public bool IsSearchRunning()
         {
@@ -264,7 +284,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             xSearchClearBtn.Visibility = Visibility.Collapsed;
             xSearchBtn.Visibility = Visibility.Visible;
-
+            if (xTreeViewTree.SupportNewFilterMethod())
+            {
+                xTreeViewTree.FilterItemsByTextNew(string.Empty);
+            }
 
             if (mSearchTask?.IsCompleted == false && mSearchTask?.IsCanceled == false)
             {
@@ -351,7 +374,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             SearchStarted.Invoke(Tree, new EventArgs());
                         }
                         Mouse.OverrideCursor = Cursors.Wait;
-                        xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token);
+                        if (xTreeViewTree.SupportNewFilterMethod())
+                        {
+                            xTreeViewTree.FilterItemsByTextNew(mSearchString);
+                        }
+                        else
+                        {
+                             xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token);
+                        }
                     }
                     catch (Exception ex)
                     {

@@ -320,7 +320,7 @@ namespace Ginger.Run
             SetNonSpecificRunSetEventsTracking();
             SetBusinessFlowsChangesLisener();
         }
-        string allProperties = string.Empty;
+        private string allProperties = string.Empty;
         private void SetNonSpecificRunSetEventsTracking()
         {
             WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
@@ -888,7 +888,8 @@ namespace Ginger.Run
             BindingOperations.ClearBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
             xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
-            PropertyChangedEventManager.AddHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: string.Empty);
+            PropertyChangedEventManager.RemoveHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: allProperties);
+            PropertyChangedEventManager.AddHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: allProperties);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ForegroundProperty, mRunSetConfig, nameof(RunSetConfig.IsVirtual), new BoolToRunsetLabelColorValueConverter());
             if (WorkSpace.Instance.SourceControl == null || !WorkSpace.Instance.UserProfile.ShowSourceControlStatusIcon)
             {
@@ -918,9 +919,17 @@ namespace Ginger.Run
 
         private void mRunSetConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (string.Equals(nameof(RunSetConfig.Name), e.PropertyName))
+            if (sender != null && sender is RunSetConfig senderRunset && senderRunset != mRunSetConfig)
             {
-                xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
+                PropertyChangedEventManager.RemoveHandler(senderRunset, mRunSetConfig_PropertyChanged, propertyName: allProperties);
+                return;
+            }
+            if (string.Equals(nameof(RunSetConfig.IsVirtual), e.PropertyName))
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
+                });
             }
         }
 
@@ -1637,7 +1646,8 @@ namespace Ginger.Run
                 //show current Run set UI
                 xRunsetPageGrid.Visibility = Visibility.Visible;
 
-                bool isSolutionSame = mRunSetConfig != null && mRunSetConfig.ContainingFolderFullPath != null && mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName);
+                bool isSolutionSame = 
+                    mRunSetConfig != null && WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(mRunSetConfig.Guid) != null;
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {
@@ -1696,7 +1706,10 @@ namespace Ginger.Run
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    mRunSetConfig.AllowAutoSave = true;
+                    if (!mRunSetConfig.IsVirtual)
+                    {
+                        mRunSetConfig.AllowAutoSave = true;
+                    }
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
                     if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null)

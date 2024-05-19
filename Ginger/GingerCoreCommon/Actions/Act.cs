@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -634,7 +634,8 @@ namespace GingerCore.Actions
         public ObservableList<String> ScreenShots { get; set; } = new ObservableList<String>();
         public ObservableList<String> ScreenShotsNames = new ObservableList<String>();
 
-
+        public ObservableList<ArtifactDetails> Artifacts { get; set; } = new ObservableList<ArtifactDetails>();
+        
         // No need to back because the list is saved to backup
         [DoNotBackup]
         public string Value
@@ -1079,6 +1080,20 @@ namespace GingerCore.Actions
             return filePath;
         }
 
+        public static void AddArtifactToAction(string artifactName, Act action, string artifactPath)
+        {
+            string extension = Path.GetExtension(artifactPath);
+            string artifactOriginalName = artifactName.Length <= 15 ? artifactName : artifactName.Substring(0, 15);
+            var randomFileName = string.Concat(artifactOriginalName, "_", action.Guid, "_", DateTime.UtcNow.ToString("hhmmss.fff"), "_", extension);
+
+            ArtifactDetails artifact = new ArtifactDetails();
+            artifact.ArtifactOriginalName = artifactName;
+            artifact.ArtifactOriginalPath = Path.GetFullPath(artifactPath);
+            artifact.ArtifactReportStoragePath = Path.GetFullPath(artifactPath);
+            artifact.ArtifactReportStorageName = randomFileName;
+            action.Artifacts.Add(artifact);            
+        }
+
         public override string GetNameForFileName()
         {
             //TODO: replace name with a unique ID?
@@ -1252,7 +1267,7 @@ namespace GingerCore.Actions
         public void AddOrUpdateReturnParamActual(string ParamName, string ActualValue, string ExpectedValue = "dummy")
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = (from arc in ReturnValues where arc.ParamCalculated == ParamName select arc).FirstOrDefault();
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc => arc.ParamCalculated == ParamName);
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
                 ARC = new ActReturnValue();
@@ -1758,7 +1773,7 @@ namespace GingerCore.Actions
                 }
                 this.ScreenShots.Clear();
                 this.ScreenShotsNames.Clear();
-
+                this.Artifacts.Clear();
                 // remove return vals which don't have expected or store to var
                 // it is not needed since it will return back after we get results
                 // if i.e the SQL changed we want to reflect the latest changes and output what we got

@@ -446,6 +446,7 @@ namespace Ginger.Run
                     BusinessFlowIsMandatory = bf.Mandatory,
                     BusinessFlowInstanceGuid = bf.InstanceGuid,
                     BusinessFlowRunDescription = bf.RunDescription,
+                    ExternalID = bf.ExternalID,
                     BFFlowControls = bf.BFFlowControls
                 };
 
@@ -487,6 +488,12 @@ namespace Ginger.Run
         public void RunRunner(bool doContinueRun = false)
         {
             bool runnerExecutionSkipped = false;
+
+            if (!string.IsNullOrEmpty(mGingerRunner.SpecificEnvironmentName))
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Selected Environment for {mGingerRunner.Name} is {mGingerRunner.SpecificEnvironmentName}");
+            }
+
             try
             {
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || !BusinessFlows.Any(x => x.Active))
@@ -1924,7 +1931,7 @@ namespace Ginger.Run
                                 try
                                 {
                                     string valueToEvaluate = EvaluateWebApiModelParameterValue(IV.Value, subList);
-                                    if (valueToEvaluate!= null)
+                                    if (!string.IsNullOrEmpty(valueToEvaluate))
                                     {
                                         IV.ValueForDriver = act.ValueExpression.Calculate(valueToEvaluate);
                                     }
@@ -2313,7 +2320,7 @@ namespace Ginger.Run
                                     {
                                         foreach (string screenShot in screenShotAction.ScreenShots)
                                         {
-                                            act.ScreenShots.Add(screenShot);
+                                            act.ScreenShots.Add(screenShot);                                            
                                         }
                                         foreach (string screenShotName in screenShotAction.ScreenShotsNames)
                                         {
@@ -2326,7 +2333,6 @@ namespace Ginger.Run
                                     }
                                 }
                                 else if (a.AgentType == Agent.eAgentType.Service)
-
                                 {
                                     ExecuteOnPlugin.ExecutesScreenShotActionOnAgent(a, act);
                                 }
@@ -3196,8 +3202,8 @@ namespace Ginger.Run
                 sharedActivityInstance.Active = true;
                 sharedActivityInstance.AddDynamicly = true;
                 sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;
-                CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
-
+                eUserMsgSelection userSelection = eUserMsgSelection.None;
+                CurrentBusinessFlow.MapTAToBF(userSelection, sharedActivityInstance, WorkSpace.Instance.Solution.ApplicationPlatforms,true);
 
                 int index = CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity) + 1;
                 ActivitiesGroup activitiesGroup = CurrentBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID);

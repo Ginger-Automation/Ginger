@@ -18,12 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.SolutionWindows;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,9 +50,49 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Platform), Header = "Platform Type", WidthWeight = 40 });
 
+            SelectApplicationGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Applications", new RoutedEventHandler(CheckUnCheckAllApplications));
+
             SelectApplicationGrid.SetAllColumnsDefaultView(view);
             SelectApplicationGrid.InitViewItems();
         }
+
+        private void CheckUnCheckAllApplications(object sender, RoutedEventArgs e)
+        {
+            IObservableList filteringEnvApplication = SelectApplicationGrid.DataSourceList;
+
+
+            int selectedItems = CountSelectedItems();
+            if (selectedItems < SelectApplicationGrid.DataSourceList.Count)
+            {
+                foreach (EnvApplication EnvApp in filteringEnvApplication)
+                {
+                    EnvApp.Active = true;
+                }
+            }
+            else if (selectedItems == SelectApplicationGrid.DataSourceList.Count)
+            {
+                foreach (EnvApplication EnvApp in filteringEnvApplication)
+                {
+                    EnvApp.Active = false;
+                }
+            }
+
+            SelectApplicationGrid.DataSourceList = filteringEnvApplication;
+        }
+
+        private int CountSelectedItems()
+        {
+            int counter = 0;
+            foreach (EnvApplication EnvApplication in SelectApplicationGrid.DataSourceList)
+            {
+                if (EnvApplication.Active)
+                {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
@@ -95,11 +137,11 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         private void AddApplicationToSolution(object sender, RoutedEventArgs e)
         {
             AddApplicationPage applicationPage = new(WorkSpace.Instance.Solution, false);
+            ApplicationPlatform? selectedApp = null;
+            applicationPage.ShowAsWindow(ref selectedApp);
 
-            applicationPage.ShowAsWindow();
-
-            foreach (ApplicationPlatform selectedApp in applicationPage.SelectApplicationGrid.Grid.SelectedItems)
-            {
+            if (selectedApp!=null) 
+            { 
                 EnvApplication envApp = new EnvApplication() { Name = selectedApp.AppName, Platform = selectedApp.Platform, ParentGuid = selectedApp.Guid};
                 envApp.Active = true;
                 mWizard.apps.Add(envApp);

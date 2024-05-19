@@ -29,9 +29,9 @@
                 <Label Style="{StaticResource @LabelStyle}">Export Type:</Label>
                 <UserControlsLib:UCComboBox x:Name="xExportTypeCbx" ContextMenu="{x:Null}" Margin="155,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                    <Label Style="{StaticResource @LabelStyle}">Search ALM Entity By Name:</Label>
-                    <CheckBox x:Name="SearchALMEntityByName" Style="{StaticResource @CheckBoxStyle}" Margin="70,5,0,0">
+                <StackPanel x:Name="SearchALMEntityByNamePnl" Orientation="Horizontal">
+                    <Label Style="{StaticResource @LabelStyle}">Search By Name:</Label>
+                    <CheckBox x:Name="SearchALMEntityByName" Style="{StaticResource @CheckBoxStyle}" Margin="130,5,0,0">
                     </CheckBox>
             </StackPanel>
             

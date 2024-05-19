@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -239,6 +239,12 @@ namespace Amdocs.Ginger.Common.Enums
         ArrowDown,
         ArrowRight,
         ExcelFile,
+        WordFile,
+        FilePowerpoint,
+        FileXML,
+        FileJSON,
+        FileJavascript,
+        FileArchive,
         User,
         UserProfile,
         Forum,

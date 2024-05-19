@@ -27,6 +27,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace GingerCore.Actions
 {
@@ -98,7 +99,22 @@ namespace GingerCore.Actions
 
                 LiteDBSQLTranslator liteDBSQLTranslator = new (this);
                 this.ValueExp = liteDBSQLTranslator.CreateValueExpression();
-                string Query = ValueExp.Substring(ValueExp.IndexOf("QUERY=") + 6, ValueExp.Length - (ValueExp.IndexOf("QUERY=") + 7));
+
+                string Querystring = this.ValueExp;
+                Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+                MatchCollection matcheslist = rxvarPattern.Matches(ValueExp);
+                for (int i = 0; i < matcheslist.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(matcheslist[i].ToString()))
+                    {
+                        ValueExpression mValueExpression = new(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, RunOnBusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+                        mValueExpression.Value = matcheslist[i].ToString();
+                        string ValueUCdata = mValueExpression.ValueCalculated;
+                        Querystring = Querystring.Replace(matcheslist[i].ToString(), ValueUCdata);
+                    }
+                }
+
+                string Query = Querystring.Substring(Querystring.IndexOf("QUERY=") + 6, Querystring.Length - (Querystring.IndexOf("QUERY=") + 7));
                 liteDB.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
 
                 if (this.ExcelConfig != null)

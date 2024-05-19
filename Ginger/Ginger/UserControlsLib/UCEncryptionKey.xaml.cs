@@ -99,7 +99,7 @@ namespace Ginger.UserControlsLib
 
         public void CopyToClipBoard()
         {
-            Clipboard.SetText(EncryptionKeyPasswordBox.Password);
+             GingerCore.General.SetClipboardText(EncryptionKeyPasswordBox.Password);
         }
         public void ChangeLabel(string newLabel)
         {

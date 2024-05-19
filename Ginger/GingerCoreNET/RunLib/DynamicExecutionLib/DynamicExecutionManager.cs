@@ -19,8 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
@@ -46,9 +44,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using ZephyrEntStdSDK.Models;
 using static Ginger.Configurations.SealightsConfiguration;
-using static Ginger.Run.GingerRunner;
 using eReRunLevel = Ginger.ExecuterService.Contracts.eReRunLevel;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
@@ -410,7 +406,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             //Create execution object
             GingerExecConfig executionConfig = GetGingerExecConfigurationObject(solution, runsetExecutor, cliHelper);
-
+            executionConfig.SourceApplication = "Ginger CLI";
+            executionConfig.SourceApplicationUser = System.Environment.UserName;
             //serilize object to JSON String
             return SerializeDynamicExecutionToJSON(executionConfig);
         }
@@ -555,7 +552,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
             executionConfig.EncryptionKey = solution.EncryptionKey;
 
-
+            if (cliHelper.SetEnvironmentDetails && runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
+            {
+                executionConfig.Environments = EnvironmentConfigOperations.ConvertToEnvironmentRunsetConfig(runsetExecutor.RunsetExecutionEnvironment, runsetExecutor.RunSetConfig.GingerRunners);
+            }
 
             RunsetExecConfig runset = new RunsetExecConfig();
             runset.Exist = true;
@@ -569,6 +569,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runset.RunAnalyzer = cliHelper.RunAnalyzer;
             runset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
             runset.StopRunnersOnFailure = runsetExecutor.RunSetConfig.StopRunnersOnFailure;
+            if (!string.IsNullOrEmpty(runsetExecutor.RunSetConfig.ExternalID))
+            {
+                runset.ExternalID = runsetExecutor.RunSetConfig.ExternalID;
+            }
             ///////////////
             ///
             RerunConfig rerunconfiguration = new RerunConfig()
@@ -659,6 +663,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     businessFlow.Name = businessFlowRun.BusinessFlowName;
                     businessFlow.ID = businessFlowRun.BusinessFlowGuid;
                     businessFlow.InstanceID = businessFlowRun.BusinessFlowInstanceGuid;
+                    if (!string.IsNullOrEmpty(businessFlowRun.ExternalID))
+                    { 
+                        businessFlow.ExternalID = businessFlowRun.ExternalID; 
+                    }
+
                     businessFlow.Exist = true;
                     if (gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlowRun.BusinessFlowGuid).ToList().Count > 1)
                     {
@@ -852,7 +861,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     operationConfigPublishToALM.RunAt = (OperationExecConfigBase.eOperationRunAt?)publishToQCAction.RunAt;
                     operationConfigPublishToALM.AlmTestSetLevel = (AlmPublishOperationExecConfig.eAlmTestSetLevel?)publishToQCAction.ALMTestSetLevel;
                     operationConfigPublishToALM.ExportType = (AlmPublishOperationExecConfig.eExportType?)Enum.Parse(typeof(AlmPublishOperationExecConfig.eExportType), publishToQCAction.ExportType.ToString());
-                    operationConfigPublishToALM.SearchALMEntityByName = publishToQCAction.SearchALMEntityByName != null ? publishToQCAction.SearchALMEntityByName : false;
+                    operationConfigPublishToALM.SearchByName = publishToQCAction.SearchALMEntityByName != null ? publishToQCAction.SearchALMEntityByName : false;
                     operationConfigPublishToALM.TestsetExportDestination = publishToQCAction.TestSetFolderDestination;
                     operationConfigPublishToALM.TestcasesExportDestination = publishToQCAction.TestCaseFolderDestination;
                     operationConfigPublishToALM.TestCasesResultsToExport = (AlmPublishOperationExecConfig.eTestCasesResultsToExport?)Enum.Parse(typeof(AlmPublishOperationExecConfig.eTestCasesResultsToExport), publishToQCAction.FilterStatus.ToString());
@@ -1002,6 +1011,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 runSetConfig.Description = gingerExecConfig.Runset.Description;
             }
+            if (!string.IsNullOrEmpty(gingerExecConfig.SourceApplication))
+            {
+                runSetConfig.SourceApplication = gingerExecConfig.SourceApplication;
+            }
+            if (!string.IsNullOrEmpty(gingerExecConfig.SourceApplicationUser))
+            {
+                runSetConfig.SourceApplicationUser = gingerExecConfig.SourceApplicationUser;
+            }
+
+            if(!String.IsNullOrEmpty(gingerExecConfig.Runset.ExternalID))
+            {
+                runSetConfig.ExternalID = gingerExecConfig.Runset.ExternalID;
+            }
 
             if (dynamicRunsetConfigs.RunAnalyzer != null)
             {
@@ -1016,6 +1038,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             if (dynamicRunsetConfigs.StopRunnersOnFailure != null)
             {
                 runSetConfig.StopRunnersOnFailure = (bool)dynamicRunsetConfigs.StopRunnersOnFailure;
+            }
+
+            if (gingerExecConfig.Environments?.Count > 0)
+            {
+                EnvironmentConfigOperations.CheckIfNameIsUnique<EnvironmentConfig>(gingerExecConfig.Environments);
+
+                var ExistingEnvironments = gingerExecConfig.Environments.Where((env) => !env.Exist.HasValue || env.Exist.Value);
+                var NewlyAddedEnvironments = gingerExecConfig.Environments.Where((env) => env.Exist.HasValue && !env.Exist.Value);
+
+                var AllEnvironmentsInGinger = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+
+                EnvironmentConfigOperations.UpdateExistingEnvironmentDetails(ExistingEnvironments, AllEnvironmentsInGinger);
+
+                EnvironmentConfigOperations.AddNewEnvironmentDetails(NewlyAddedEnvironments, AllEnvironmentsInGinger);
             }
 
             //Add or Update Runners
@@ -1160,7 +1196,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             else
                             {
                                 //using Virtual BF
-                                bf = new BusinessFlow() { Name = businessFlowConfig.Name };
+                                bf = new BusinessFlow() { Name = businessFlowConfig.Name,ExternalID = businessFlowConfig.ExternalID };
                                 ///Add Shared Activities 
                                 if (businessFlowConfig.SharedActivities != null && businessFlowConfig.SharedActivities.Count > 0)
                                 {
@@ -1180,6 +1216,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         if (sharedActivity.InstanceID != null)
                                         {
                                             shActivity.Guid = (Guid)sharedActivity.InstanceID;
+                                        }
+                                        if(sharedActivity.SharedActivityID != null)
+                                        {
+                                            shActivity.ParentGuid = sharedActivity.SharedActivityID.Value;
                                         }
                                         bf.AddActivity(shActivity, actGrp);
                                     }
@@ -1583,6 +1623,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             publishToQCRunSetOperation.VariableForTCRunName = publishToALMOperationExecConfig.UserVariableInRunInstance;
                         }
+                        publishToQCRunSetOperation.SearchALMEntityByName = publishToALMOperationExecConfig.SearchByName;
 
                         if (publishToALMOperationExecConfig.AlmFieldsConfig != null && publishToALMOperationExecConfig.AlmFieldsConfig.Count > 0)
                         {
@@ -1659,7 +1700,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             return runSetConfig;
         }
 
-        public static T FindItemByIDAndName<T>(Tuple<string, Guid?> id, Tuple<string, string> name, ObservableList<T> repoLibrary)
+        public static T FindItemByIDAndName<T>(Tuple<string, Guid?> id, Tuple<string, string> name, ObservableList<T> repoLibrary, bool throwException = true)
         {
             T item = default(T);
 
@@ -1696,7 +1737,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 else
                 {
                     string error = string.Format("Failed to find {0} with the details '{1}/{2}'", typeof(T), name.Item2.ToLower(), id.Item2);
-                    throw new Exception(error);
+
+                    if (throwException)
+                    {
+                        throw new Exception(error);
+                    }
+
+                    else
+                    {
+                        return item;
+                    }
                 }
             }
             catch (Exception ex)

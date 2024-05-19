@@ -468,7 +468,8 @@ namespace GingerCore.Drivers
 
                         //list All Windows except PB windows - FNW
 
-                        if (!window.Current.ClassName.StartsWith("FNW"))
+                        bool isPowerBuilderWindow = window.Current.ClassName.StartsWith("FNW");
+                        if (!isPowerBuilderWindow)
                         {
                             string WindowTitle = GetWindowInfo(window);
                             if (String.IsNullOrEmpty(WindowTitle))
@@ -481,12 +482,15 @@ namespace GingerCore.Drivers
                                 Process p = Process.GetProcessById(window.Current.ProcessId);
                                 if (p.ProcessName == "AcroRd32")
                                 {
-                                    WindowTitle = Process.GetProcessById(window.Current.ProcessId).MainWindowTitle;
+                                    WindowTitle = p.MainWindowTitle;
+                                }
+                                else if (p.ProcessName != "explorer" || p.ProcessName != "OUTLOOK")
+                                {
+                                    WindowTitle = p.ProcessName;
                                 }
                             }
                             if (!String.IsNullOrEmpty(WindowTitle))
                             {
-
                                 list.Add(GetAppWinodowForElement(window, WindowTitle, AppWindow.eWindowType.Windows));
                             }
 

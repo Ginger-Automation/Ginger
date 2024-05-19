@@ -36,6 +36,8 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Security;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace GingerCoreNET.GeneralLib
@@ -120,7 +122,8 @@ namespace GingerCoreNET.GeneralLib
 
         #endregion ENUM
 
-
+       static Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        static string GetDatetimeFormat() => DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
         public static T ParseEnum<T>(string value)
         {
             return (T)Enum.Parse(typeof(T), value, true);
@@ -357,6 +360,7 @@ namespace GingerCoreNET.GeneralLib
                     EA.CoreProductName = AP.Core;
                     EA.CoreVersion = AP.CoreVersion;
                     EA.Active = true;
+                    EA.ParentGuid = AP.Guid;
                     newEnv.Applications.Add(EA);
                 }
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
@@ -506,11 +510,12 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
-        public static void DownloadImage(string ImageURL, Act act)
+        public static string DownloadImage(string ImageURL, Act act)
         {
-            String currImagePath = Act.GetScreenShotRandomFileName();
+            String currImagePath = string.Empty; 
             try
             {
+                currImagePath = Act.GetScreenShotRandomFileName();
                 HttpResponseMessage response = SendRequest(ImageURL);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -521,15 +526,40 @@ namespace GingerCoreNET.GeneralLib
                         fs.Close();
                     });
                     act.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
-                    act.ScreenShots.Add(currImagePath);
-
+                    act.ScreenShots.Add(currImagePath);                   
                 }
             }
             catch (Exception ex)
             {
                 act.Error += ex.Message;
+                currImagePath = string.Empty;
             }
+            return currImagePath;
         }
+
+        public static async Task<string> DownloadBaselineImage(string ImageURL, Act act)
+        { 
+            String currImagePath = Act.GetScreenShotRandomFileName();
+            try
+            {
+                HttpResponseMessage response = SendRequest(ImageURL);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    using (var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        await response.Content.CopyToAsync(fs);
+                        fs.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                act.Error += ex.Message; 
+                Reporter.ToLog(eLogLevel.ERROR, "unable to fetch the baseline image");
+            }
+            return currImagePath;
+        }
+
         public static HttpResponseMessage SendRequest(string URL)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, URL);
@@ -548,6 +578,28 @@ namespace GingerCoreNET.GeneralLib
                 arg = streamReader.ReadToEnd();
             }
             return arg;
+        }
+
+        public static bool isVariableUsed(string variablestring)
+        {
+            MatchCollection matcheslist = rxvarPattern.Matches(variablestring);
+            if (matcheslist.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static string GenerateFilePath(string folderPath, string ItemName)
+        {
+            string path;
+            
+            string Filename = $"{ItemName}_{GetDatetimeFormat()}.txt";
+            path = $"{folderPath}{Path.DirectorySeparatorChar}{Filename}";
+            return path;
         }
     }
 

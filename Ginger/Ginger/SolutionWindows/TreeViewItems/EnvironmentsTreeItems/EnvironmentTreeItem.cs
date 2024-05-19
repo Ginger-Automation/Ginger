@@ -82,7 +82,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mTreeView != null) //TODO: add handling to make sure this will never be Null and won't be set only on SetTools
             {
-                mTreeView.Tree.RefreshTreeNodeChildrens(this);
+                if (TreeViewItem != null)
+                {
+                    //we collapse the TreeViewItem so that when it will be expanded, it will be updated automatically
+                    TreeViewItem.IsExpanded = false;
+                }
             }
         }
 
@@ -118,9 +122,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void AddApplication(object sender, RoutedEventArgs e)
         {
             var ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !ProjEnvironment.CheckIfApplicationPlatformExists(app.Guid , app.AppName))?.ToList();
-
-
-
+            
+            
+            
             string appName = string.Empty;
             ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
 
@@ -130,6 +134,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             IEnumerable<ApplicationPlatform> SelectedApplications = DisplayedApplicationPlatforms.Where((displayedApp) => displayedApp.Selected);
 
             ProjEnvironment.AddApplications(SelectedApplications);
+            ProjEnvironment.OnPropertyChanged(nameof(ProjEnvironment.Applications));
 
             if (SelectedApplications.Any())
             {
@@ -146,6 +151,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                             if (!env.Guid.Equals(ProjEnvironment.Guid) && !SelectedApplications.Any((app)=>env.CheckIfApplicationPlatformExists(app.Guid , app.AppName)))
                             {
                                 env.AddApplications(SelectedApplications);
+                                env.OnPropertyChanged(nameof(env.Applications));
                             }
                         });
                     }

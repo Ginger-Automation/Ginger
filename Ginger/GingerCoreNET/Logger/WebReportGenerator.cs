@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts.Helpers;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -94,6 +95,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 }
                 IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "Execution_Data"));
                 IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "screenshots"));
+                IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "artifacts"));
                 LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
                 lightDbRunSet = dbManager.GetLatestExecutionRunsetData(runSetGuid);
                 lightDbRunSet.SetAllIterationElementsRecursively(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().First(r => r.IsDefault).ShowAllIterationsElements);
@@ -197,6 +199,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
 
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");
+            string artifactFolderPath = Path.Combine(clientAppPath, "assets", "artifacts");
             List<string> runSetEnv = new List<string>();
 
             liteDbRunSet.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
@@ -251,6 +254,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                         foreach (LiteDbAction liteDbAction in liteDbActivity.ActionsColl)
                         {
                             List<string> newScreenShotsList = new List<string>();
+                            List<AccountReport.Contracts.Helpers.DictObject> artifactsList = new List<AccountReport.Contracts.Helpers.DictObject>();
                             if (liteDbAction.Elapsed.HasValue)
                             {
                                 liteDbAction.Elapsed = Math.Round(liteDbAction.Elapsed.Value / 1000, 4);
@@ -271,7 +275,20 @@ namespace Amdocs.Ginger.CoreNET.Logger
                                     newScreenShotsList.Add(fileName);
                                 }
                             }
+
+                            foreach(var artifact in liteDbAction.Artifacts)
+                            {
+                                string fileName = Path.GetFileName(artifact.Value);
+                                string newArtifactPath = Path.Combine(artifactFolderPath, fileName);
+                                if (File.Exists(artifact.Value))
+                                {
+                                    System.IO.File.Copy(artifact.Value, newArtifactPath, true);
+                                    artifactsList.Add(new DictObject() { Key = artifact.Key, Value = newArtifactPath });
+                                }
+                            }
+
                             liteDbAction.ScreenShots = newScreenShotsList;
+                            liteDbAction.Artifacts = artifactsList;
                         }
                     }
                 }
