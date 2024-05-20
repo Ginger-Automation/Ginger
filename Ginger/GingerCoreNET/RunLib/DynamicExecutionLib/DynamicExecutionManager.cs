@@ -1217,6 +1217,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         {
                                             shActivity.Guid = (Guid)sharedActivity.InstanceID;
                                         }
+                                        if(sharedActivity.SharedActivityID != null)
+                                        {
+                                            shActivity.ParentGuid = sharedActivity.SharedActivityID.Value;
+                                        }
                                         bf.AddActivity(shActivity, actGrp);
                                     }
                                 }
