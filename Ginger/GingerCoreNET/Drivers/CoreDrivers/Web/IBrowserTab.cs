@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 {
     internal interface IBrowserTab
     {
         public delegate Task OnTabClose(IBrowserTab closedTab);
 
         public bool IsClosed { get; }
+
+        public IEnumerable<IBrowserDialog> UnhandledDialogs { get; }
 
         public Task<string> GetURLAsync();
 

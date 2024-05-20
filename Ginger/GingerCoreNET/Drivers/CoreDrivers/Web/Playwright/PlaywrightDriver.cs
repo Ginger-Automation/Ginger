@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
 using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
+using IPlaywrightDialog = Microsoft.Playwright.IDialog;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -103,7 +104,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         BusinessFlow = BusinessFlow,
                         Environment = Environment,
                     });
-                    handler.HandleAsync().Wait();
+                    Task handleTask = handler.HandleAsync();
+
                     break;
                 default:
                     act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
@@ -151,6 +153,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 ThrowIfClosed();
 
+                //getting stuck at below line when Driver gets started because of action execution
                 IPlaywrightBrowserContext context = await _playwrightBrowser.NewContextAsync(new BrowserNewContextOptions()
                 {
                     ViewportSize = ViewportSize.NoViewport,
@@ -208,7 +211,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 await _playwrightBrowser.CloseAsync();
                 await _playwrightBrowser.DisposeAsync();
-                
+                await _onBrowserClose.Invoke(closedBrowser: this);
             }
 
             private void ThrowIfClosed()
@@ -338,14 +341,30 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             private readonly IPlaywrightPage _playwrightPage;
             private readonly IBrowserTab.OnTabClose _onTabClose;
+            private readonly LinkedList<IBrowserDialog> _unhandledDialogs = [];
             private bool _isClosed = false;
 
             public bool IsClosed => _isClosed;
+
+            public IEnumerable<IBrowserDialog> UnhandledDialogs => _unhandledDialogs;
 
             internal PlaywrightBrowserTab(IPlaywrightPage playwrightPage, IBrowserTab.OnTabClose onTabClose)
             {
                 _playwrightPage = playwrightPage;
                 _onTabClose = onTabClose;
+                //_playwrightPage.Dialog += OnDialog;
+            }
+
+            private void OnDialog(object? sender, IPlaywrightDialog playwrightDialog)
+            {
+                PlaywrightBrowserDialog dialog = new(playwrightDialog, OnDialogHandle);
+                _unhandledDialogs.AddLast(dialog);
+            }
+
+            private Task OnDialogHandle(IBrowserDialog handledDialog)
+            {
+                _unhandledDialogs.Remove(handledDialog);
+                return Task.CompletedTask;
             }
 
             public Task<string> ExecuteJavascriptAsync(string script)
@@ -403,6 +422,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     return;
                 }
                 _isClosed = true;
+                //_playwrightPage.Dialog -= OnDialog;
                 await _playwrightPage.CloseAsync();
                 await _onTabClose.Invoke(closedTab: this);
             }
@@ -416,37 +436,32 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
-        public sealed class ActHandleContext
+        private sealed class PlaywrightBrowserDialog : IBrowserDialog
         {
-            public required ProjEnvironment Environment { get; init; }
+            private readonly IPlaywrightDialog _playwrightDialog;
+            private readonly IBrowserDialog.OnDialogHandle _onDialogHandle;
 
-            public required BusinessFlow BusinessFlow { get; init; }
-            
-            public required IPlaywrightBrowser Browser { get; init; }
-
-            public IPlaywrightBrowserContext? CurrentBrowserContext { get; private set; }
-
-            public IPlaywrightPage? CurrentPage { get; private set; }
-
-            public ActHandleContext() { }
-
-            public async Task<IPlaywrightPage> CreatePageAsync()
+            internal PlaywrightBrowserDialog(IPlaywrightDialog playwrightDialog, IBrowserDialog.OnDialogHandle onDialogHandle)
             {
-                if (CurrentBrowserContext == null)
-                {
-                    await CreateBrowserContextAsync();
-                }
-                CurrentPage = await CurrentBrowserContext!.NewPageAsync();
-                return CurrentPage;
+                _playwrightDialog = playwrightDialog;
+                _onDialogHandle = onDialogHandle;
             }
 
-            public async Task<IPlaywrightBrowserContext> CreateBrowserContextAsync()
+            public Task<string> GetMessageAsync()
             {
-                CurrentBrowserContext = await Browser.NewContextAsync(new BrowserNewContextOptions()
-                {
-                    ViewportSize = ViewportSize.NoViewport
-                });
-                return CurrentBrowserContext;
+                return Task.FromResult(_playwrightDialog.Message);
+            }
+
+            public async Task AcceptAsync()
+            {
+                await _playwrightDialog.AcceptAsync();
+                await _onDialogHandle.Invoke(handledDialog: this);
+            }
+
+            public async Task DismissAsync()
+            {
+                await _playwrightDialog.DismissAsync();
+                await _onDialogHandle.Invoke(handledDialog: this);
             }
         }
     }
