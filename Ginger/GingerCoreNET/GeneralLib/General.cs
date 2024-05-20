@@ -37,6 +37,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace GingerCoreNET.GeneralLib
@@ -536,7 +537,7 @@ namespace GingerCoreNET.GeneralLib
             return currImagePath;
         }
 
-        public static string DownloadBaselineImage(string ImageURL, Act act)
+        public static async Task<string> DownloadBaselineImage(string ImageURL, Act act)
         { 
             String currImagePath = Act.GetScreenShotRandomFileName();
             try
@@ -546,19 +547,15 @@ namespace GingerCoreNET.GeneralLib
                 {
                     using (var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
-                        response.Content.CopyToAsync(fs).ContinueWith(
-                            (discard) =>
-                            {
-                                fs.Close();
-                            });
+                        await response.Content.CopyToAsync(fs);
+                        fs.Close();
                     }
-                    
-                   return currImagePath;
                 }
             }
             catch (Exception ex)
             {
-                act.Error += ex.Message;
+                act.Error += ex.Message; 
+                Reporter.ToLog(eLogLevel.ERROR, "unable to fetch the baseline image");
             }
             return currImagePath;
         }

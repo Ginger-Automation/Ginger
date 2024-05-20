@@ -23,6 +23,8 @@ using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore;
+using GingerCore.Environments;
+using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
 using System.Linq;
@@ -187,11 +189,12 @@ namespace Ginger.SolutionWindows
             foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
             {
                 //update the BF target applications 
+                bf.StartDirtyTracking();
                 foreach (var activity in bf.Activities)
                 {
                     //donot check for TargetPlugins, only for TargetApplications 
 
-                    if (activity.TargetApplication.Equals(app.NameBeforeEdit))
+                    if (string.Equals(activity.TargetApplication, app.NameBeforeEdit))
                     {
                         activity.StartDirtyTracking();
                         activity.TargetApplication = app.AppName;
@@ -199,7 +202,17 @@ namespace Ginger.SolutionWindows
                         numOfAfectedItems++;
                     }
                 }
+
+                foreach (TargetApplication bfTargetApp in bf.TargetApplications.Where((targetApp)=>targetApp is TargetApplication))
+                {
+                    if (string.Equals(bfTargetApp.AppName, app.NameBeforeEdit))
+                    {
+                        bfTargetApp.StartDirtyTracking();
+                        bfTargetApp.AppName = app.AppName;
+                    }
+                }
             }
+
 
             foreach (Activity activity in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>())
             {
@@ -210,6 +223,19 @@ namespace Ginger.SolutionWindows
                     activity.TargetApplication = app.AppName;
                     numOfAfectedItems++;
                 }                             
+            }
+
+            foreach(ProjEnvironment projEnv in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+            {
+                foreach (EnvApplication envApplication in projEnv.Applications)
+                {
+
+                    if(string.Equals(envApplication.Name, app.NameBeforeEdit))
+                    {
+                        projEnv.StartDirtyTracking();
+                        envApplication.Name = app.AppName;
+                    }
+                }
             }
 
             if(numOfAfectedItems > 0 && OnActivityUpdate!=null)

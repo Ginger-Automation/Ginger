@@ -239,7 +239,7 @@ namespace Ginger.SourceControl
             }
             CheckInFilesGrid.DataSourceList = mFiles;
         }
-        
+
         private async void CommitAndCheckinButton_Click(object sender, RoutedEventArgs e)
         {
             if (WorkSpace.Instance.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
@@ -278,9 +278,9 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKey.AskToAddCheckInComment);
                     return;
                 }
-                if (SelectedFiles != null && SelectedFiles.Count>0 && unpushedLocalCommitsCount >0)
+                if (SelectedFiles != null && SelectedFiles.Count > 0 && unpushedLocalCommitsCount > 0)
                 {
-                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommitAndFiles, unpushedLocalCommitsCount, SelectedFiles.Count) == eUserMsgSelection.No)
+                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommitAndFiles, SelectedFiles.Count, unpushedLocalCommitsCount) == eUserMsgSelection.No)
                     {
                         return;
                     }
@@ -311,7 +311,7 @@ namespace Ginger.SourceControl
                         SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
                         List<string> pathsToCommit = StageTheFilesToCommit(SelectedFiles);
 
-                        
+
                         bool conflictHandled = false;
                         bool CommitSuccess = false;
                         CommitSuccess = CommitAndCheckinChanges(WorkSpace.Instance.Solution.SourceControl, pathsToCommit, Comments, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
