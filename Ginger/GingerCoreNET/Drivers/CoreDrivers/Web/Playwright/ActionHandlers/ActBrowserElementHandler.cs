@@ -7,6 +7,7 @@ using GingerCore.Actions;
 using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -75,6 +76,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActBrowserElement.eControlAction.CloseTabExcept:
                         operationTask = HandleCloseTabExceptOperationAsync();
                         break;
+                    case ActBrowserElement.eControlAction.CloseAll:
+                        operationTask = HandleCloseAllOperationAsync();
+                        break;
+                    case ActBrowserElement.eControlAction.GetBrowserLog:
+                        operationTask = HandleGetBrowserLogOperationAsync();
+                        break;
+                    //case ActBrowserElement.eControlAction.GetMessageBoxText:
+                    //    operationTask = HandleGetMessageBoxTextAsync();
+                    //    break;
                     default:
                         _act.Error = $"Unknown operation type - {_act.ControlAction}";
                         break;
@@ -270,7 +280,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                 foreach (IBrowserTab tab in window.Tabs)
                 {
                     string tabTitle = await tab.GetTitleAsync();
-                    if (!string.IsNullOrEmpty(tabTitle) && tabTitle.Contains(excludedWindowTitle))
+                    if (!string.IsNullOrEmpty(tabTitle) && tabTitle.Contains(excludedWindowTitle, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
@@ -284,6 +294,33 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                 tabCloseTasks[index] = tabsToClose[index].CloseAsync();
             }
             await Task.WhenAll(tabCloseTasks);
+        }
+
+        private Task HandleCloseAllOperationAsync()
+        {
+            List<IBrowserWindow> windows = new(_browser.Windows);
+            Task[] closeWindowTasks = new Task[windows.Count];
+            for (int index = 0; index < windows.Count; index++)
+            {
+                IBrowserWindow window = windows[index];
+                closeWindowTasks[index] = window.CloseAsync();
+            }
+            return Task.WhenAll(closeWindowTasks);
+        }
+
+        private Task HandleGetBrowserLogOperationAsync()
+        {
+        }
+
+        private async Task HandleGetMessageBoxTextAsync()
+        {
+            IBrowserDialog? dialog = _browser.CurrentWindow.CurrentTab.UnhandledDialogs.FirstOrDefault();
+            string message = string.Empty;
+            if (dialog != null)
+            {
+                message = await dialog.GetMessageAsync();
+            }
+            _act.AddOrUpdateReturnParamActual("Actual", message);
         }
     }
 }
