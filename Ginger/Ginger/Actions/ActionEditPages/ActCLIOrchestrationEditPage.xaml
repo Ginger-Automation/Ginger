@@ -40,7 +40,7 @@
             <CheckBox x:Name="ParseResult" VerticalAlignment="Center" Margin="30,0,0,0" Checked="ParseResultChecked" Unchecked="ParseResultUnChecked" />
         </StackPanel>
         <StackPanel Grid.Row="4" Height="50" x:Name="xPanelDelimiter" Orientation="Horizontal">
-            <Label x:Name="DelimiterLabel" Grid.Column="0" Width="80" Style="{StaticResource @InputFieldLabelStyle}" ToolTip="Delimiter: The character or sequence used to separate values">Delimiter:</Label>
+            <Label x:Name="DelimiterLabel" Grid.Column="0" Width="80" Style="{StaticResource @InputFieldLabelStyle}" ToolTip="The character or sequence used to separate values">Delimiter:</Label>
             <Label x:Name="DelimiterLabelValidation" Grid.Column="1" Content="*" Margin="-12,0,8,15" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
             <Actions:UCValueExpression Grid.Column="2" Margin="85,0,0,20" Width="150" x:Name="xDelimiterTextBox" />
         </StackPanel>

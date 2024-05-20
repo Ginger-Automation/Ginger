@@ -23,6 +23,7 @@ using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
@@ -222,6 +223,19 @@ namespace Ginger.SolutionWindows
                     activity.TargetApplication = app.AppName;
                     numOfAfectedItems++;
                 }                             
+            }
+
+            foreach(ProjEnvironment projEnv in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+            {
+                foreach (EnvApplication envApplication in projEnv.Applications)
+                {
+
+                    if(string.Equals(envApplication.Name, app.NameBeforeEdit))
+                    {
+                        projEnv.StartDirtyTracking();
+                        envApplication.Name = app.AppName;
+                    }
+                }
             }
 
             if(numOfAfectedItems > 0 && OnActivityUpdate!=null)
