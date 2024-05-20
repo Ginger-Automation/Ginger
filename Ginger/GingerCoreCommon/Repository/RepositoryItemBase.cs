@@ -904,10 +904,13 @@ namespace Amdocs.Ginger.Repository
             string containingFolder = string.Empty;
             try
             {
-                int startIndx = this.FileName.ToUpper().IndexOf(this.ObjFolderName.ToUpper());
-                int endIndx = this.FileName.LastIndexOf('\\');
-                if (endIndx > startIndx)
-                    containingFolder = this.FileName.Substring(startIndx, endIndx - startIndx) + "\\";
+                if (!string.IsNullOrWhiteSpace(this.FileName))
+                {
+                    int startIndx = this.FileName.ToUpper().IndexOf(this.ObjFolderName.ToUpper());
+                    int endIndx = this.FileName.LastIndexOf('\\');
+                    if (endIndx > startIndx)
+                        containingFolder = this.FileName.Substring(startIndx, endIndx - startIndx) + "\\";
+                }
                 return containingFolder;
             }
             catch (Exception ex)
