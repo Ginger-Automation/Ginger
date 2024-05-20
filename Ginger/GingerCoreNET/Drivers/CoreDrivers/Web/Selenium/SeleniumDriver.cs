@@ -201,7 +201,7 @@ namespace GingerCore.Drivers
         [UserConfigured]
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Provide the path to the browser executable.")]
-        public string BrowserExcutablePath { get; set; }
+        public string BrowserExecutablePath { get; set; }
         //"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
 
         [UserConfigured]
@@ -567,24 +567,25 @@ namespace GingerCore.Drivers
                     #endregion
 
                     #region Brave
+                        //checking the windows 32 and 64 bit version exists or not. if not then user can provide the path mannually.
                     case eBrowserType.Brave:
                         ChromeOptions brave_options = new ChromeOptions();
                         var braveBrowser32 = "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
                         var braveBrowser64 = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
-                        if (BrowserExcutablePath != null && BrowserExcutablePath.Trim().Length > 0 && File.Exists(BrowserExcutablePath)) { 
-        
-                            brave_options.BinaryLocation = BrowserExcutablePath;
-                        }
-                        else if (File.Exists(braveBrowser64)) {
-                            brave_options.BinaryLocation = braveBrowser64;
-                        }
-                        else if (File.Exists(braveBrowser32)) {
-                            brave_options.BinaryLocation = braveBrowser32;
-                        }
-                        else { 
-                        throw new Exception("Brave browser valid executable path required!");
+                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath)) { 
 
-                        }
+                             brave_options.BinaryLocation = BrowserExecutablePath;
+                         }
+                         else if (File.Exists(braveBrowser64)) {
+                             brave_options.BinaryLocation = braveBrowser64;
+                         }
+                         else if (File.Exists(braveBrowser32)) {
+                             brave_options.BinaryLocation = braveBrowser32;
+                         }
+                         else { 
+                         throw new Exception("Brave browser valid executable path required!");
+
+                         }
                         chromeDriverconfig(brave_options);
 
                         break;
@@ -819,6 +820,7 @@ namespace GingerCore.Drivers
                 }
             }
         }
+        //created common method for Chrome and Brave browser because both support ChromeDriver
         private void chromeDriverconfig(ChromeOptions options)
         {
            
@@ -837,10 +839,8 @@ namespace GingerCore.Drivers
                 options.AddExtensions(extensionPaths);
             }
 
-            //setting proxy
             SetProxy(options);
 
-            //DownloadFolderPath
             if (!string.IsNullOrEmpty(DownloadFolderPath))
             {
                 if (!System.IO.Directory.Exists(DownloadFolderPath))
@@ -908,7 +908,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                //If the os is alpine linux
+                
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && ex.Message.ToLower().Contains("no such file or directory"))
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Chrome binary isn't found at default location, checking for Chromium...");
