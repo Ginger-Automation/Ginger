@@ -258,7 +258,7 @@ namespace Ginger.Environments
                         DatabaseOperations databaseOperations = new DatabaseOperations(db);
                         db.DatabaseOperations = databaseOperations;
             */
-            AddNewDatabasePage addNewDatabasePage = new(grdAppDbs.DataSourceList, this);
+            AddNewDatabasePage addNewDatabasePage = new(grdAppDbs.DataSourceList, this, mContext);
 
             addNewDatabasePage.ShowAsWindow();
         

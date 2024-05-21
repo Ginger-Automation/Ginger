@@ -1,22 +1,12 @@
 ﻿using Amdocs.Ginger.Common;
+using Ginger.ValidationRules;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static GingerCore.Environments.Database;
 
 namespace Ginger.Environments
@@ -29,26 +19,45 @@ namespace Ginger.Environments
         GenericWindow _pageGenericWin = null;
         private readonly IObservableList dataSourceList;
         private readonly AppDataBasesPage appDataBasesPage;
+        private readonly Database database;
+        private readonly Button testConnectionButton = new();
+        private readonly Button okBtn = new ();
 
-        public AddNewDatabasePage(IObservableList dataSourceList, AppDataBasesPage appDataBasesPage)
+
+        public AddNewDatabasePage(IObservableList dataSourceList, AppDataBasesPage appDataBasesPage, Context context)
         {
             this.dataSourceList = dataSourceList;
             this.appDataBasesPage = appDataBasesPage;
             InitializeComponent();
+            xDatabaseComboBox.ItemsSource = GingerCore.General
+                                            .GetEnumValuesForCombo(typeof(Database.eDBTypes))
+                                            .Select((db) => (eDBTypes)db.Value)
+                                            .Where((dbType) => dbType.Equals(eDBTypes.MSSQL)
+                                            || dbType.Equals(eDBTypes.MSAccess) || dbType.Equals(eDBTypes.Oracle)
+                                            || dbType.Equals(eDBTypes.MySQL) || dbType.Equals(eDBTypes.PostgreSQL)
+                                            || dbType.Equals(eDBTypes.DB2));
+            this.database = new();
+            this.database.DatabaseOperations = new DatabaseOperations(database);
+            xDatabaseUserName.Init(context , database, nameof(Database.User));
+            xDatabasePassword.Init(context, database, nameof(Database.Pass));
+            xDatabaseTNS.Init(context, database, nameof(Database.TNS));
 
-            xDatabaseComboBox.ItemsSource = GingerCore.General.GetEnumValuesForCombo(typeof(Database.eDBTypes));
+            xDatabaseConnectionString.Init(context, database, nameof(Database.ConnectionString));
+            BindingHandler.ObjFieldBinding(xDatabaseName, TextBox.TextProperty, database, nameof(Database.Name));
+            BindingHandler.ObjFieldBinding(xDatabaseDescription, TextBox.TextProperty, database, nameof(Database.Description));
+            BindingHandler.ObjFieldBinding(xDatabaseComboBox, ComboBox.SelectedValueProperty, database, nameof(Database.DBType));
+            BindingHandler.ObjFieldBinding(xKeepConnectOpen, CheckBox.IsCheckedProperty, database, nameof(Database.KeepConnectionOpen));
+
+            xDatabaseComboBox.AddValidationRule(new ValidateEmptyValue("Database Type is mandatory"));
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool ShowCancelButton = true)
         {
 
-            Button okBtn = new Button();
             okBtn.Content = "Add Database";
 
 
-            Button testConnectionButton = new Button();
             testConnectionButton.Content = "Test DB Connection";
-
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(okBtn);
             winButtons.Add(testConnectionButton);
@@ -66,72 +75,56 @@ namespace Ginger.Environments
             {
                 return;
             }
-
-
-            Database db = GetDatabase();
+            this.testConnectionButton.IsEnabled = false;
 
             Task.Run(() =>
             {
-                this.appDataBasesPage.TestDatabase(db);
-            }).GetAwaiter().GetResult();
+                
+
+                this.appDataBasesPage.TestDatabase(database);
+
+                Dispatcher.Invoke(() =>
+                {
+                    this.testConnectionButton.IsEnabled = true;
+                });
+                
+            });
 
         }
 
         private bool DatabaseValueValidation()
         {
-            var comboBoxItem = xDatabaseComboBox.SelectedValue as ComboEnumItem;
-
-            if(comboBoxItem == null || xDatabaseComboBox.SelectedIndex == -1)
-            {
-                xDatabaseTypeError.Visibility = Visibility.Visible;
-                xDatabaseTypeError.Text = "Database Type is mandatory";
-                return false;
-            }
-
-            xDatabaseTypeError.Visibility = Visibility.Collapsed;
-
 
 
             if (string.IsNullOrEmpty(xDatabaseName.Text))
             {
                 xDatabaseNameError.Text = "Database Name is mandatory";
                 xDatabaseNameError.Visibility = Visibility.Visible;
-                return false;
             }
 
-            xDatabaseNameError.Visibility = Visibility.Collapsed;
-
-
-            if (string.IsNullOrEmpty(xDatabasePassword.Text))
+            if (xConnectionStrCheckBox.IsChecked.HasValue && xConnectionStrCheckBox.IsChecked.Value)
             {
-                xDatabaseUserPassError.Text = "Password is mandatory";
-                xDatabaseUserPassError.Visibility = Visibility.Visible;
-                return false;
+                if (string.IsNullOrEmpty(xDatabaseConnectionString.ValueTextBox.Text))
+                {
+                    xDBConnectionStrError.Text = "Connection String is mandatory";
+                    xDBConnectionStrError.Visibility = Visibility.Visible;
+                    return false;
+                }
+             
+                xDBConnectionStrError.Visibility = Visibility.Collapsed;
             }
-
-            xDatabaseUserPassError.Visibility = Visibility.Collapsed;
-
-
-            if (string.IsNullOrEmpty(xDatabaseUserName.Text))
+            else
             {
-                xDatabaseUserNameError.Text = "User Name is mandatory";
-                xDatabaseUserNameError.Visibility = Visibility.Visible;
-                return false;
+
+                if (string.IsNullOrEmpty(xDatabaseTNS.ValueTextBox.Text))
+                {
+                    xDatabaseTNSError.Text = "TNS/File Path/Host is mandatory";
+                    xDatabaseTNSError.Visibility = Visibility.Visible;
+                    return false;
+                }
+
+                xDatabaseTNSError.Visibility = Visibility.Collapsed;
             }
-
-            xDatabaseUserNameError.Visibility = Visibility.Collapsed;
-
-
-            if (string.IsNullOrEmpty(xDatabaseTNS.Text))
-            {
-                xDatabaseTNSError.Text = "TNS/File Path/Host is mandatory";
-                xDatabaseTNSError.Visibility = Visibility.Visible;
-                return false;
-            }
-
-            xDatabaseTNSError.Visibility = Visibility.Collapsed;
-
-
             return true;
         }
 
@@ -144,76 +137,172 @@ namespace Ginger.Environments
                 return;
             }
 
+            ConvertDetailsToConnectionString();
 
-            Database db = GetDatabase();
-            dataSourceList.Add(db);
-            db.PropertyChanged += appDataBasesPage.db_PropertyChanged;
+            dataSourceList.Add(database);
+            database.PropertyChanged += appDataBasesPage.db_PropertyChanged;
 
-            _pageGenericWin?.Close();
-        }
-
-        private Database GetDatabase()
-        {
-            Database db = new Database();
-            db.Name = xDatabaseName.Text;
-            db.TNS = xDatabaseTNS.Text;
-            db.Pass = xDatabasePassword.Text;
-            db.User = xDatabaseUserName.Text;
-            db.ConnectionString = xDatabaseConnectionString.Text;
-            db.DBType = (eDBTypes)(xDatabaseComboBox.SelectedValue as ComboEnumItem).Value;
-            DatabaseOperations databaseOperations = new DatabaseOperations(db);
-            db.DatabaseOperations = databaseOperations;
-
-            return db;
-        }
-
-        private void Db_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if(sender == null)
+            okBtn.IsEnabled = false;
+            Task.Run(() =>
             {
-                return;
-            }
+                this.appDataBasesPage.TestDatabase(database);
+
+                Dispatcher.Invoke(() =>
+                {
+                    okBtn.IsEnabled = true;
+                    _pageGenericWin?.Close();
+
+                });
+            });
             
-            Database db = (Database)sender;
+        }
 
+        private void ConvertDetailsToConnectionString()
+        {
 
-            if (db.DBType != Database.eDBTypes.Cassandra && db.DBType != Database.eDBTypes.Couchbase && db.DBType != Database.eDBTypes.MongoDb)
+            if (database.DBType != Database.eDBTypes.Cassandra && database.DBType != Database.eDBTypes.Couchbase && database.DBType != Database.eDBTypes.MongoDb)
             {
-                if (e.PropertyName == nameof(Database.TNS))
+                if (!string.IsNullOrEmpty(database.TNS) && database.DatabaseOperations.CheckUserCredentialsInTNS())
                 {
-                    if (db.DatabaseOperations.CheckUserCredentialsInTNS())
-                    {
-                        db.DatabaseOperations.SplitUserIdPassFromTNS();
-                    }
+                    database.DatabaseOperations.SplitUserIdPassFromTNS();
                 }
-                if (e.PropertyName == nameof(Database.TNS) || e.PropertyName == nameof(Database.User) || e.PropertyName == nameof(Database.Pass))
+
+                if (!xConnectionStrCheckBox.IsChecked.HasValue || (xConnectionStrCheckBox.IsChecked.HasValue && !xConnectionStrCheckBox.IsChecked.Value))
                 {
-                    db.DatabaseOperations.CreateConnectionString();
+                    database.DatabaseOperations.CreateConnectionString();
                 }
             }
         }
 
+        private eDBTypes? GetDBType()
+        {
+            var comboEnumItem = xDatabaseComboBox.SelectedValue;
+            if(comboEnumItem == null)
+            {
+                return null;
+            }
+            return (eDBTypes)comboEnumItem;
+        }
         private void xDatabaseComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            var comboEnumItem = xDatabaseComboBox.SelectedValue as ComboEnumItem;
+            eDBTypes? databaseType = GetDBType();
 
-            if(comboEnumItem == null)
+            if(databaseType == null)
             {
                 return;
             }
 
-
-            eDBTypes databaseType = (eDBTypes)comboEnumItem.Value;
-
             if(!databaseType.Equals(eDBTypes.Couchbase) && !databaseType.Equals(eDBTypes.Cassandra) && !databaseType.Equals(eDBTypes.Hbase))
             {
-                xDBConnectionStringPanel.Visibility = Visibility.Visible;
+                xConnectionStrStackPanel.Visibility = Visibility.Visible;
             }
             else
             {
-                xDBConnectionStringPanel.Visibility = Visibility.Collapsed;
+                xConnectionStrStackPanel.Visibility = Visibility.Collapsed;
             }
+
+
+            if (databaseType.Equals(eDBTypes.Oracle))
+            {
+                xVersionStackPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xVersionStackPanel.Visibility = Visibility.Collapsed;
+            }
+
+
+            if (databaseType.Equals(eDBTypes.MSSQL) || databaseType.Equals(eDBTypes.Oracle))
+            {
+                xDatabaseTNSName.Content = "Data Source:";
+            }            
+
+            else if (databaseType.Equals(eDBTypes.MySQL))
+            {
+                xDatabaseTNSName.Content = "Server:";
+            }
+
+
+            if (databaseType.Equals(eDBTypes.MSAccess))
+            {
+                xDatabaseTNS.SetBrowserBtn();
+            }
+            else
+            {
+                xDatabaseTNS.HideBrowserBTN();
+            }
+        }
+
+        private void ConnectionString_Checked(object sender, RoutedEventArgs e)
+        {
+            xDBConnectionStringPanel.Visibility = Visibility.Visible;
+            xDatabaseDetailsPanel.Visibility = Visibility.Collapsed;
+            
+            eDBTypes? dBType = GetDBType();
+            if(dBType == null)
+            {
+                return;
+            }
+
+            if (dBType.Equals(eDBTypes.Oracle))
+            {
+                xVersionStackPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ConnectionString_UnChnecked(object sender, RoutedEventArgs e)
+        {
+            xDBConnectionStringPanel.Visibility = Visibility.Collapsed;
+            xDatabaseDetailsPanel.Visibility = Visibility.Visible;
+
+            eDBTypes? dBType = GetDBType();
+            if (dBType == null)
+            {
+                return;
+            }
+
+            if (dBType.Equals(eDBTypes.Oracle))
+            {
+                xVersionStackPanel.Visibility = Visibility.Visible;
+            }
+
+        }
+
+        private void SQL_Selected(object sender, RoutedEventArgs e)
+        {
+
+            if(xDatabaseComboBox != null)
+            {
+                xDatabaseComboBox.ItemsSource = GingerCore.General
+                                .GetEnumValuesForCombo(typeof(Database.eDBTypes))
+                                .Select((db) => (eDBTypes)db.Value)
+                                .Where((dbType) => dbType.Equals(eDBTypes.MSSQL)
+                                || dbType.Equals(eDBTypes.MSAccess) || dbType.Equals(eDBTypes.Oracle)
+                                || dbType.Equals(eDBTypes.MySQL) || dbType.Equals(eDBTypes.PostgreSQL)
+                                || dbType.Equals(eDBTypes.DB2));
+                xDatabaseComboBox.SelectedIndex = 0;
+            }
+        }
+        private void NoSQL_Selected(object sender, RoutedEventArgs e)
+        {
+
+            if (xDatabaseComboBox != null)
+            {
+                xDatabaseComboBox.ItemsSource = GingerCore.General
+                                .GetEnumValuesForCombo(typeof(Database.eDBTypes))
+                                .Select((db)=>(eDBTypes)db.Value)
+                                .Where((dbType) =>
+                                dbType.Equals(eDBTypes.Couchbase) || dbType.Equals(eDBTypes.Cassandra)
+                                || dbType.Equals(eDBTypes.CosmosDb) || dbType.Equals(eDBTypes.MongoDb)
+                                || dbType.Equals(eDBTypes.Hbase));
+
+                xDatabaseComboBox.SelectedIndex = 0;
+                xDatabaseDetailsPanel.Visibility = Visibility.Visible;
+            }
+
+
+
         }
     }
 }
