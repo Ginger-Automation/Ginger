@@ -91,7 +91,9 @@ namespace GingerCore.Drivers
         private const string EDGE_DRIVER_NAME = "msedgedriver";
         private const string FIREFOX_DRIVER_NAME = "geckodriver";
         private const string TRANSLATOR_FOR_CASE_INSENSITIVE_MATCH = "translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')";
-        
+        private const string BRAVE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
+        private const string BRAVE_64BIT_BINARY_PATH = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
+
         String[] SeleniumUserArgs = null;
         DriverService driverService = null;
         private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
@@ -570,17 +572,15 @@ namespace GingerCore.Drivers
                         //checking the windows 32 and 64 bit version exists or not. if not then user can provide the path mannually.
                     case eBrowserType.Brave:
                         ChromeOptions brave_options = new ChromeOptions();
-                        var braveBrowser32 = "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
-                        var braveBrowser64 = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
                         if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath)) { 
 
                              brave_options.BinaryLocation = BrowserExecutablePath;
                          }
-                         else if (File.Exists(braveBrowser64)) {
-                             brave_options.BinaryLocation = braveBrowser64;
+                         else if (File.Exists(BRAVE_64BIT_BINARY_PATH)) {
+                             brave_options.BinaryLocation = BRAVE_64BIT_BINARY_PATH;
                          }
-                         else if (File.Exists(braveBrowser32)) {
-                             brave_options.BinaryLocation = braveBrowser32;
+                         else if (File.Exists(BRAVE_32BIT_BINARY_PATH)) {
+                             brave_options.BinaryLocation = BRAVE_32BIT_BINARY_PATH;
                          }
                          else { 
                          throw new Exception("Brave browser valid executable path required!");
