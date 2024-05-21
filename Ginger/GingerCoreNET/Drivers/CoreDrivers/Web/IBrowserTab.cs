@@ -12,8 +12,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public bool IsClosed { get; }
 
-        public IEnumerable<IBrowserDialog> UnhandledDialogs { get; }
-
         public Task<string> GetURLAsync();
 
         public Task GoToURLAsync(string url);
@@ -29,6 +27,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<string> GetPageSourceAsync();
 
         public Task<string> ExecuteJavascriptAsync(string script);
+
+        public Task WaitTillLoadedAsync();
+
+        public Task<string> GetConsoleLogs();
 
         public Task CloseAsync();
     }

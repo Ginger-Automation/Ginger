@@ -105,7 +105,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         Environment = Environment,
                     });
                     Task handleTask = handler.HandleAsync();
-
+                    handleTask.Wait();
                     break;
                 default:
                     act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
@@ -341,30 +341,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             private readonly IPlaywrightPage _playwrightPage;
             private readonly IBrowserTab.OnTabClose _onTabClose;
-            private readonly LinkedList<IBrowserDialog> _unhandledDialogs = [];
+            private readonly LinkedList<string> _consoleMessages = [];
             private bool _isClosed = false;
 
             public bool IsClosed => _isClosed;
-
-            public IEnumerable<IBrowserDialog> UnhandledDialogs => _unhandledDialogs;
 
             internal PlaywrightBrowserTab(IPlaywrightPage playwrightPage, IBrowserTab.OnTabClose onTabClose)
             {
                 _playwrightPage = playwrightPage;
                 _onTabClose = onTabClose;
-                //_playwrightPage.Dialog += OnDialog;
+                _playwrightPage.Console += OnConsoleMessage;
             }
 
-            private void OnDialog(object? sender, IPlaywrightDialog playwrightDialog)
+            private void OnConsoleMessage(object? sender, IConsoleMessage e)
             {
-                PlaywrightBrowserDialog dialog = new(playwrightDialog, OnDialogHandle);
-                _unhandledDialogs.AddLast(dialog);
-            }
-
-            private Task OnDialogHandle(IBrowserDialog handledDialog)
-            {
-                _unhandledDialogs.Remove(handledDialog);
-                return Task.CompletedTask;
+                _consoleMessages.AddLast(e.Text);
             }
 
             public Task<string> ExecuteJavascriptAsync(string script)
@@ -413,6 +404,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 ThrowIfClosed();
                 return _playwrightPage.ReloadAsync();
+            }
+
+            public Task WaitTillLoadedAsync()
+            {
+                return _playwrightPage.WaitForLoadStateAsync(LoadState.Load);
+            }
+
+            public Task<string> GetConsoleLogs()
+            {
+                return Task.FromResult(string.Join('\n', _consoleMessages));
             }
 
             public async Task CloseAsync()
