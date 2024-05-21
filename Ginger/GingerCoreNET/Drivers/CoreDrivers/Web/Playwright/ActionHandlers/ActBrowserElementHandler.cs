@@ -79,12 +79,50 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActBrowserElement.eControlAction.CloseAll:
                         operationTask = HandleCloseAllOperationAsync();
                         break;
-                    case ActBrowserElement.eControlAction.GetBrowserLog:
-                        operationTask = HandleGetBrowserLogOperationAsync();
+                    case ActBrowserElement.eControlAction.CheckPageLoaded:
+                        operationTask = HandleCheckPageLoadedOperationAsync();
                         break;
-                    //case ActBrowserElement.eControlAction.GetMessageBoxText:
-                    //    operationTask = HandleGetMessageBoxTextAsync();
-                    //    break;
+                    case ActBrowserElement.eControlAction.GetConsoleLog:
+                        operationTask = HandleGetConsoleLogOperationAsync();
+                        break;
+                    case ActBrowserElement.eControlAction.GetMessageBoxText:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.AcceptMessageBox:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.DismissMessageBox:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.SetAlertBoxText:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.GetBrowserLog:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.GetNetworkLog:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.InitializeBrowser:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.InjectJS:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.SetBlockedUrls:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.UnblockeUrls:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.SwitchFrame:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.SwitchToDefaultDOM:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.SwitchToDefaultFrame:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.SwitchToDefaultWindow:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.SwitchToParentFrame:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.SwitchToShadowDOM:
+                        throw new NotImplementedException();
+                    case ActBrowserElement.eControlAction.SwitchWindow:
+                        throw new NotImplementedException();
                     default:
                         _act.Error = $"Unknown operation type - {_act.ControlAction}";
                         break;
@@ -308,19 +346,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             return Task.WhenAll(closeWindowTasks);
         }
 
-        private Task HandleGetBrowserLogOperationAsync()
+        private Task HandleCheckPageLoadedOperationAsync()
         {
+            return _browser.CurrentWindow.CurrentTab.WaitTillLoadedAsync();
         }
 
-        private async Task HandleGetMessageBoxTextAsync()
+        private async Task HandleGetConsoleLogOperationAsync()
         {
-            IBrowserDialog? dialog = _browser.CurrentWindow.CurrentTab.UnhandledDialogs.FirstOrDefault();
-            string message = string.Empty;
-            if (dialog != null)
-            {
-                message = await dialog.GetMessageAsync();
-            }
-            _act.AddOrUpdateReturnParamActual("Actual", message);
+            string logs = await _browser.CurrentWindow.CurrentTab.GetConsoleLogs();
+            _act.AddOrUpdateReturnParamActual("Console logs", logs);
         }
     }
 }
