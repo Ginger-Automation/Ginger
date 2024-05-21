@@ -30,7 +30,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task WaitTillLoadedAsync();
 
-        public Task<string> GetConsoleLogs();
+        public Task<string> GetConsoleLogsAsync();
+
+        public Task<string> GetBrowserLogsAsync();
 
         public Task CloseAsync();
     }
