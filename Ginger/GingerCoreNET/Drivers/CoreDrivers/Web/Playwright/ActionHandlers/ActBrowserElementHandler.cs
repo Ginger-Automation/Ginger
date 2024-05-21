@@ -8,6 +8,8 @@ using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -85,6 +87,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActBrowserElement.eControlAction.GetConsoleLog:
                         operationTask = HandleGetConsoleLogOperationAsync();
                         break;
+                    case ActBrowserElement.eControlAction.GetBrowserLog:
+                        operationTask = HandleGetBrowserLogOperationAsync();
+                        break;
                     case ActBrowserElement.eControlAction.GetMessageBoxText:
                         throw new NotImplementedException();
                     case ActBrowserElement.eControlAction.AcceptMessageBox:
@@ -92,8 +97,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActBrowserElement.eControlAction.DismissMessageBox:
                         throw new NotImplementedException();
                     case ActBrowserElement.eControlAction.SetAlertBoxText:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.GetBrowserLog:
                         throw new NotImplementedException();
                     case ActBrowserElement.eControlAction.GetNetworkLog:
                         throw new NotImplementedException();
@@ -353,8 +356,61 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
 
         private async Task HandleGetConsoleLogOperationAsync()
         {
-            string logs = await _browser.CurrentWindow.CurrentTab.GetConsoleLogs();
+            string logs = await _browser.CurrentWindow.CurrentTab.GetConsoleLogsAsync();
             _act.AddOrUpdateReturnParamActual("Console logs", logs);
+        }
+
+        private async Task HandleGetBrowserLogOperationAsync()
+        {
+            string logs = await _browser.CurrentWindow.CurrentTab.GetBrowserLogsAsync();
+            if (string.IsNullOrEmpty(logs))
+            {
+                return;
+            }
+            
+            _act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(logs));
+            
+            JsonNode? jsonLogs = JsonNode.Parse(logs);
+            if (jsonLogs == null || jsonLogs.GetValueKind() != JsonValueKind.Array)
+            {
+                return;
+            }
+
+            JsonArray jsonArray = jsonLogs.AsArray();
+            foreach(JsonNode? item in jsonArray)
+            {
+                if (item == null || item.GetValueKind() != JsonValueKind.Object)
+                {
+                    continue;
+                }
+
+                JsonObject jsonObject = item.AsObject();
+                if (!jsonObject.TryGetPropertyValue("name", out JsonNode? nameProperty) || nameProperty == null || nameProperty.GetValueKind() != JsonValueKind.String)
+                {
+                    continue;
+                }    
+
+                var urlArray = nameProperty.GetValue<string>().Split('/');
+                var urlString = string.Empty;
+                if (urlArray.Length <= 0)
+                {
+                    continue;
+                }
+
+                urlString = urlArray[urlArray.Length - 1];
+                if (string.IsNullOrEmpty(urlString) && urlArray.Length > 1)
+                {
+                    urlString = urlArray[urlArray.Length - 2];
+                }
+                foreach (var property in jsonObject)
+                {
+                    if (property.Value == null)
+                    {
+                        continue;
+                    }
+                    _act.AddOrUpdateReturnParamActual($"{urlString}:[{property.Key}]", property.Value.ToString());
+                }
+            }
         }
     }
 }

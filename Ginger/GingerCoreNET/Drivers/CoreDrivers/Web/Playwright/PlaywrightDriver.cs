@@ -17,6 +17,11 @@ using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
 using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
 using IPlaywrightDialog = Microsoft.Playwright.IDialog;
+using OpenQA.Selenium;
+using System.Collections.ObjectModel;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using Newtonsoft.Json;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -355,6 +360,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             private void OnConsoleMessage(object? sender, IConsoleMessage e)
             {
+                //TODO: Playwright - Selenium console logs contain timestamp and level. Try adding those in these as well so that we can have similar log structure
                 _consoleMessages.AddLast(e.Text);
             }
 
@@ -411,9 +417,40 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return _playwrightPage.WaitForLoadStateAsync(LoadState.Load);
             }
 
-            public Task<string> GetConsoleLogs()
+            public Task<string> GetConsoleLogsAsync()
             {
                 return Task.FromResult(string.Join('\n', _consoleMessages));
+            }
+
+            public async Task<string> GetBrowserLogsAsync()
+            {
+                string script = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; network;";
+
+                JsonElement? logs = await _playwrightPage.EvaluateAsync(script);
+                string rawLogs = string.Empty;
+                if (logs.HasValue)
+                {
+                    JsonNode? jsonLogs = JsonNode.Parse(logs.Value.ToString());
+
+                    if (jsonLogs != null && jsonLogs.GetValueKind() == JsonValueKind.Array)
+                    {
+                        JsonArray jsonArray = jsonLogs.AsArray();
+                        foreach (JsonNode? item in jsonArray)
+                        {
+                            if (item == null || item.GetValueKind() != JsonValueKind.Object)
+                            {
+                                continue;
+                            }
+                        ((JsonObject)item).Remove("$id");
+                        }
+                    }    
+                    
+                    if (jsonLogs != null)
+                    {
+                        rawLogs = jsonLogs.ToJsonString();
+                    }
+                }
+                return rawLogs;
             }
 
             public async Task CloseAsync()
