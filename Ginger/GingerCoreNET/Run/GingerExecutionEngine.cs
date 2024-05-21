@@ -5011,6 +5011,7 @@ namespace Ginger.Run
 
             //Get the TargetApplication list
             ObservableList<TargetBase> bfsTargetApplications = new ObservableList<TargetBase>();
+            HashSet<string> activitiesTargetApplication = new();
 
             //we will trigger property change only if bTargetAppListModified=true
             bool bTargetAppListModified = false;
@@ -5031,7 +5032,10 @@ namespace Ginger.Run
                         }
                     }
 
-
+                    foreach (Activity act in BF.Activities)
+                    {
+                        activitiesTargetApplication.Add(act.TargetApplication);
+                    }
                 }
             }
             else if (CurrentBusinessFlow != null) // Automate Tab
@@ -5042,6 +5046,11 @@ namespace Ginger.Run
                     {
                         bfsTargetApplications.Add(TA);
                     }
+                }
+
+                foreach (Activity act in CurrentBusinessFlow.Activities)
+                {
+                    activitiesTargetApplication.Add(act.TargetApplication);
                 }
             }
 
@@ -5111,7 +5120,7 @@ namespace Ginger.Run
             foreach (TargetBase TA in bfsTargetApplications)
             {
                 // make sure GR got it covered
-                if (!mGingerRunner.ApplicationAgents.Any(x => x.AppName == TA.Name))
+                if (!mGingerRunner.ApplicationAgents.Any(x => x.AppName == TA.Name) && activitiesTargetApplication.Contains(TA.Name))
                 {
                     ApplicationAgent ag = new ApplicationAgent();
                     ag.AppName = TA.Name;
