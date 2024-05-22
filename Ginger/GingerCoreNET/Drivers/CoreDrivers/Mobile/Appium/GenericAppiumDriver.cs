@@ -1616,7 +1616,15 @@ namespace Amdocs.Ginger.CoreNET//check
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    var detail= ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier");
+                    if (detail != null)
+                    {
+                        return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    }
+                    else
+                    {
+                        return "Package | Activity";
+                    }
                 }
                 else
                 {

@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
         public ElementInfo GetCurrentPOMElementInfo(string category=null)
         {
             Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
-            ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.FirstOrDefault(z => z.Guid == currentPOMElementInfoGUID);            
+            ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.FirstOrDefault(z => z.Guid == currentPOMElementInfoGUID);
 
             if (selectedPOMElementInfo == null)
             {
@@ -83,21 +83,32 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             {
                 if (!string.IsNullOrEmpty(category))
                 {
+                    //copy original element info for not impacting the original element info
+                    ElementInfo selectedPOMElementInfoCopy = (ElementInfo)selectedPOMElementInfo.CreateCopy(setNewGUID: false, deepCopy:true);
+                    selectedPOMElementInfoCopy.Properties = new ObservableList<ControlProperty>(selectedPOMElementInfo.Properties);
+                    selectedPOMElementInfoCopy.Locators = new ObservableList<ElementLocator>(selectedPOMElementInfo.Locators);
+
                     //pull only Properties and Locators which match to the Driver Category
-                    foreach (var prop in selectedPOMElementInfo.Properties)
+                    //foreach (var prop in selectedPOMElementInfo.Properties)
+                    for (int i = selectedPOMElementInfoCopy.Properties.Count - 1; i >= 0; i--)
                     {
-                        if (string.IsNullOrEmpty(prop.Category) == false && prop.Category.ToLower() != category)
+                        var prop = selectedPOMElementInfoCopy.Properties[i];
+                        if (string.IsNullOrEmpty(prop.Category) == false && prop.Category.ToLower() != category.ToLower())
                         {
-                            selectedPOMElementInfo.Properties.Remove(prop);
-                        }             
-                    }
-                    foreach (var locator in selectedPOMElementInfo.Locators)
-                    {
-                        if (string.IsNullOrEmpty(locator.Category) == false && locator.Category.ToLower() != category)
-                        {
-                            selectedPOMElementInfo.Locators.Remove(locator);
+                            selectedPOMElementInfoCopy.Properties.RemoveAt(i);
                         }
                     }
+
+                    for (int i = selectedPOMElementInfoCopy.Locators.Count - 1; i >= 0; i--)
+                    {
+                        var locator = selectedPOMElementInfoCopy.Locators[i];
+                        if (string.IsNullOrEmpty(locator.Category) == false && locator.Category.ToLower() != category.ToLower())
+                        {
+                            selectedPOMElementInfoCopy.Locators.RemoveAt(i);
+                        }
+                    }
+
+                    return selectedPOMElementInfoCopy;
                 }
             }
 
