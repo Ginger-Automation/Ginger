@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Amdocs.Ginger.Common.UIElement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,6 +34,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<string> GetConsoleLogsAsync();
 
         public Task<string> GetBrowserLogsAsync();
+
+        public Task<bool> SwitchFrame(eLocateBy locatyBy, string value);
 
         public Task CloseAsync();
     }
