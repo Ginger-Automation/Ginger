@@ -416,6 +416,27 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
+
+                var allTargetAppInActivities = new HashSet<string>();
+                foreach (var Activity in mBusinessFlow.Activities)
+                {
+                    allTargetAppInActivities.Add(Activity.TargetApplication);
+                }
+
+                for (int indx = 0; indx < mBusinessFlow.TargetApplications.Count;)
+                {
+                    if (!allTargetAppInActivities.Contains(mBusinessFlow.TargetApplications[indx].Name))
+                    {
+                        mBusinessFlow.TargetApplications.RemoveAt(indx);
+                    }
+                    else
+                    {
+                        indx++;
+                    }
+                }
+                
+
+                
                 CurrentItemToSave = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
@@ -560,7 +581,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             UpdateContextWithActivityDependencies();
-
+            OnTargetApplicationChanged(null, null);
             SetActivityEditPage();
         }
 

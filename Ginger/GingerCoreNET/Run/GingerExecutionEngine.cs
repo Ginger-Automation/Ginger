@@ -5011,7 +5011,7 @@ namespace Ginger.Run
             // Make it based on current if we run from automate tab
 
             //Get the TargetApplication list
-            HashSet<string> bfsTargetApplications = new ();
+            ObservableList<TargetBase> bfsTargetApplications = new ObservableList<TargetBase>();
 
             //we will trigger property change only if bTargetAppListModified=true
             bool bTargetAppListModified = false;
@@ -5019,17 +5019,30 @@ namespace Ginger.Run
             {
                 foreach (BusinessFlow BF in BusinessFlows)
                 {
-                    foreach (Activity activity in BF.Activities)
+                    foreach (TargetBase TA in BF.TargetApplications)
                     {
-                        bfsTargetApplications.Add(activity.TargetApplication);
+                        if (TA is TargetPlugin)
+                        {
+                            continue;//FIX ME: workaround to avoid adding Plugin mapping till dev of it will be completed
+                        }
+
+                        if (bfsTargetApplications.FirstOrDefault(x => x.Name == TA.Name) == null)
+                        {
+                            bfsTargetApplications.Add(TA);
+                        }
                     }
+
+
                 }
             }
             else if (CurrentBusinessFlow != null) // Automate Tab
             {
-                foreach (Activity activity in CurrentBusinessFlow.Activities)
+                foreach (TargetBase TA in CurrentBusinessFlow.TargetApplications)
                 {
-                        bfsTargetApplications.Add(activity.TargetApplication);
+                    if (bfsTargetApplications.FirstOrDefault(x => x.Name == TA.Name) == null)
+                    {
+                        bfsTargetApplications.Add(TA);
+                    }
                 }
             }
 
@@ -5040,7 +5053,7 @@ namespace Ginger.Run
             {
                 ApplicationAgent applicationAgent = (ApplicationAgent)mGingerRunner.ApplicationAgents[indx];
 
-                bool appNotMappedInBF = bfsTargetApplications.All(x => !string.Equals(x,applicationAgent.AppName));
+                bool appNotMappedInBF = bfsTargetApplications.All(x => x.Name != applicationAgent.AppName);
 
                 if (!appNameToAgentMapping.TryGetValue(applicationAgent.AppName, out Agent availableAgentForApp))
                 {
@@ -5096,13 +5109,13 @@ namespace Ginger.Run
             }
 
             //Set the ApplicationAgents
-            foreach (string TA in bfsTargetApplications)
+            foreach (TargetBase TA in bfsTargetApplications)
             {
                 // make sure GR got it covered
-                if (!mGingerRunner.ApplicationAgents.Any(x => string.Equals(x.AppName ,TA)))
+                if (!mGingerRunner.ApplicationAgents.Any(x => x.AppName == TA.Name))
                 {
                     ApplicationAgent ag = new ApplicationAgent();
-                    ag.AppName = TA;
+                    ag.AppName = TA.Name;
                     Agent agentForApp;
                     if (!appNameToAgentMapping.TryGetValue(ag.AppName, out agentForApp))
                     {
