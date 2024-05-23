@@ -22,6 +22,9 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
+using System.Reflection;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -347,6 +350,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             private readonly IPlaywrightPage _playwrightPage;
             private readonly IBrowserTab.OnTabClose _onTabClose;
             private readonly LinkedList<string> _consoleMessages = [];
+            private IFrame _currentFrame;
             private bool _isClosed = false;
 
             public bool IsClosed => _isClosed;
@@ -355,6 +359,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 _playwrightPage = playwrightPage;
                 _onTabClose = onTabClose;
+                _currentFrame = _playwrightPage.MainFrame;
                 _playwrightPage.Console += OnConsoleMessage;
             }
 
@@ -443,14 +448,73 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                             }
                         ((JsonObject)item).Remove("$id");
                         }
-                    }    
-                    
+                    }
+
                     if (jsonLogs != null)
                     {
                         rawLogs = jsonLogs.ToJsonString();
                     }
                 }
                 return rawLogs;
+            }
+
+            public async Task<bool> SwitchFrame(eLocateBy locateBy, string value)
+            {
+                IFrameLocator? frameLocator = null;
+                IFrame? frame = null;
+                switch (locateBy)
+                {
+                    case eLocateBy.ByID:
+                        frameLocator = _playwrightPage.FrameLocator($"#{value}");
+                        break;
+                    case eLocateBy.ByTitle:
+                        frameLocator = _playwrightPage.FrameLocator($"iframe[title='{value}']");
+                        break;
+                    case eLocateBy.ByUrl:
+                        frame = _playwrightPage.FrameByUrl(value);
+                        break;
+                    default:
+                        throw new ArgumentException($"Frame locator '{locateBy}' is not supported for frames.");
+                }
+
+                bool isFrameVisible = frameLocator != null && await frameLocator.Owner.IsVisibleAsync();
+                if (isFrameVisible)
+                {
+                    frame = GetFrameFromFrameLocator(frameLocator!);
+                }
+
+                if (frame == null)
+                {
+                    return false;
+                }
+                
+                _currentFrame = frame;
+
+                return true;
+            }
+
+            private static IFrame? GetFrameFromFrameLocator(IFrameLocator frameLocator)
+            {
+                FieldInfo? _frameField = frameLocator.GetType().GetField("_frame", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (_frameField == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Field '_frame' not found in IFrameLocator");
+                    return null;
+                }
+
+                object? frameFieldValue = _frameField.GetValue(frameLocator);
+                if (frameFieldValue == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Field '_frame' is null in IFrameLocator");
+                    return null;
+                }
+                if (frameFieldValue is not IFrame)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Field '_frame' value is not IFrame");
+                    return null;
+                }
+
+                return (IFrame)frameFieldValue;
             }
 
             public async Task CloseAsync()

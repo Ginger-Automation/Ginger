@@ -90,6 +90,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActBrowserElement.eControlAction.GetBrowserLog:
                         operationTask = HandleGetBrowserLogOperationAsync();
                         break;
+                    case ActBrowserElement.eControlAction.SwitchFrame:
+                        operationTask = HandleSwitchFrameOperationAsync();
+                        break;
                     case ActBrowserElement.eControlAction.GetMessageBoxText:
                         throw new NotImplementedException();
                     case ActBrowserElement.eControlAction.AcceptMessageBox:
@@ -111,8 +114,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActBrowserElement.eControlAction.SetBlockedUrls:
                         throw new NotImplementedException();
                     case ActBrowserElement.eControlAction.UnblockeUrls:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.SwitchFrame:
                         throw new NotImplementedException();
                     case ActBrowserElement.eControlAction.SwitchToDefaultDOM:
                         throw new NotImplementedException();
@@ -410,6 +411,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     }
                     _act.AddOrUpdateReturnParamActual($"{urlString}:[{property.Key}]", property.Value.ToString());
                 }
+            }
+        }
+
+        private async Task HandleSwitchFrameOperationAsync()
+        {
+            bool wasSwitched = await _browser.CurrentWindow.CurrentTab.SwitchFrame(_act.LocateBy, _act.LocateValueCalculated);
+            if (!wasSwitched)
+            {
+                _act.Error = $"Failed to switch with locate '{_act.LocateBy}' and value '{_act.LocateValueCalculated}'";
             }
         }
     }
