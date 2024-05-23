@@ -326,7 +326,7 @@ namespace GingerCore.ALM.RQM
                             try //skip result incase of error, defect #5164
                             {
                                 XmlDocument doc = new XmlDocument();
-                                doc.LoadXml(!string.IsNullOrEmpty(responseData.responseText) ? responseData.responseText : string.Empty);
+                                doc.LoadXml(responseData.responseText);
                                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(reader.NameTable);
                                 currentRQMProjectMapping.RQMTestPlansListMapping.RQMNameSpaces.RQMNameSpaceList.ForEach(y => nsmgr.AddNamespace(y.RQMNameSpacePrefix, y.RQMNameSpaceName));
                                 XmlNode responseDataNode = doc.DocumentElement;
