@@ -396,16 +396,11 @@ namespace GingerWPF.TreeViewItemsLib
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
                     if (e.NewItems != null && e.NewItems.Count > 0)
                     {
-                        List<ITreeViewItem> newItems = new(e.NewItems.Count);
-                        foreach(object item in e.NewItems)
-                        {
-                            ITreeViewItem treeItem = GetTreeItem(item);
-                            newItems.Add(treeItem);
-                            _children.Add(treeItem);
-                        }
+                        ITreeViewItem treeItem = GetTreeItem(e.NewItems[0]!);
+                        _children.Add(treeItem);
                         mTreeView.Tree.Dispatcher.Invoke(() =>
                         {
-                            mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, newItems[0]);
+                            mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, treeItem);
                         });
                     }
                     break;
@@ -413,13 +408,10 @@ namespace GingerWPF.TreeViewItemsLib
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
                     if (e.OldItems != null && e.OldItems.Count > 0)
                     {
-                        foreach (object item in e.OldItems)
+                        ITreeViewItem? matchingOldTreeItem = _children.FirstOrDefault(treeItem => treeItem.NodeObject() == e.OldItems[0]);
+                        if (matchingOldTreeItem != null)
                         {
-                            ITreeViewItem? matchingOldTreeItem = _children.FirstOrDefault(treeItem => treeItem.NodeObject() == item);
-                            if (matchingOldTreeItem != null)
-                            {
-                                _children.Remove(matchingOldTreeItem);
-                            }
+                            _children.Remove(matchingOldTreeItem);
                         }
                         mTreeView.Tree.Dispatcher.Invoke(() =>
                         {
