@@ -470,15 +470,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     case eLocateBy.ByTitle:
                         frameLocator = _playwrightPage.FrameLocator($"iframe[title='{value}']");
                         break;
+                    case eLocateBy.ByXPath:
+                        frameLocator = _playwrightPage.FrameLocator($"xpath={value}");
+                        break;
                     case eLocateBy.ByUrl:
-                        frame = _playwrightPage.FrameByUrl(value);
+                        frameLocator = _playwrightPage.FrameLocator($"iframe[src='{value}']");
                         break;
                     default:
                         throw new ArgumentException($"Frame locator '{locateBy}' is not supported for frames.");
                 }
 
-                bool isFrameVisible = frameLocator != null && await frameLocator.Owner.IsVisibleAsync();
-                if (isFrameVisible)
+                bool wasLocated = frameLocator != null && await frameLocator.Owner.CountAsync() > 0;
+                if (wasLocated)
                 {
                     frame = GetFrameFromFrameLocator(frameLocator!);
                 }
