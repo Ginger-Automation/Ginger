@@ -4,8 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:businessflowwindows="clr-namespace:Ginger.BusinessFlowWindows"
       mc:Ignorable="d" 
-      d:DesignHeight="530" d:DesignWidth="800"
-      Height="530"
+      d:DesignHeight="600" d:DesignWidth="800"
+      Height="600"
       Title="Add Database">
 
     <StackPanel Background="{StaticResource $BackgroundColor_White}" Margin="10,10,10,10" Orientation="Vertical">
@@ -69,6 +69,25 @@
 
         </StackPanel>
 
+        <StackPanel Name="xCosmosDetailsPanel" Visibility="Collapsed">
+            
+            <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
+                <Label Style="{StaticResource $LabelStyle}" Width="120" Content="Account End Point:" />
+                <StackPanel Orientation="Vertical">
+                    <businessflowwindows:UCValueExpression  x:Name="xDBAccEndPoint" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                    <TextBlock  Name="xDBAccEndPointError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
+                <Label Style="{StaticResource $LabelStyle}" Width="120" Content="Account Key:" />
+                <StackPanel Orientation="Vertical">
+                    <businessflowwindows:UCValueExpression  x:Name="xDBAccKey" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                    <TextBlock  Name="xDBAccKeyError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
 
         <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0" Name="xDBConnectionStringPanel" Visibility="Collapsed">
             <Label Style="{StaticResource $LabelStyle}" Width="120" Content="Connection String:"/>
@@ -86,7 +105,7 @@
 
         <StackPanel Orientation="Horizontal" Name="xVersionStackPanel" Visibility="Collapsed" Margin="0,10,0,0">
             <Label Style="{StaticResource $LabelStyle}" Width="auto" Content="Is DB Version lower than 10.2:"/>
-            <CheckBox VerticalAlignment="Center"></CheckBox>
+            <CheckBox VerticalAlignment="Center" Name="xOracleVersion"></CheckBox>
         </StackPanel>
         
         

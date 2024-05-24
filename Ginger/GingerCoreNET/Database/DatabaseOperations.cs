@@ -265,31 +265,27 @@ namespace GingerCore.Environments
                         break;
                     case eDBTypes.Oracle:
                         //TODO: Oracle connection is deprecated use another method - Switched to ODP.NET
-                        //Try Catch for Connecting DB Which having Oracle Version Less then 10.2                         
                         try
                         {
 
-                            oConn = WorkSpace.Instance.TargetFrameworkHelper.GetOracleConnection(connectConnectionString);
-                            oConn.Open();
-                            break;
-                        }
-                        catch (Exception e)
-                        {
-                            String Temp = e.Message;
-                            //if (Temp.Contains ("ORA-03111"))
-                            if (Temp.Contains("ORA-03111"))
+                            if (!Database.IsOracleVersionLow)
                             {
 
-
-                                oConn = SqlClientFactory.Instance.CreateConnection();
-                                oConn.ConnectionString = "Provider=msdaora;" + connectConnectionString;
+                                oConn = WorkSpace.Instance.TargetFrameworkHelper.GetOracleConnection(connectConnectionString);
                                 oConn.Open();
-                                break;
                             }
                             else
                             {
-                                throw e;
+                                oConn = SqlClientFactory.Instance.CreateConnection();
+                                oConn.ConnectionString = "Provider=msdaora;" + connectConnectionString;
+                                oConn.Open();
                             }
+
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                           throw;
                         }
 
                     case eDBTypes.MSAccess:

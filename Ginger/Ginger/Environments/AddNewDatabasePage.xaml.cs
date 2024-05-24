@@ -1,5 +1,4 @@
 ﻿using Amdocs.Ginger.Common;
-using Ginger.ValidationRules;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using System.Linq;
@@ -41,14 +40,16 @@ namespace Ginger.Environments
             xDatabaseUserName.Init(context , database, nameof(Database.User));
             xDatabasePassword.Init(context, database, nameof(Database.Pass));
             xDatabaseTNS.Init(context, database, nameof(Database.TNS));
+            xDBAccEndPoint.Init(context, database, nameof(Database.User));
+            xDBAccKey.Init(context, database, nameof(Database.Pass));
 
             xDatabaseConnectionString.Init(context, database, nameof(Database.ConnectionString));
             BindingHandler.ObjFieldBinding(xDatabaseName, TextBox.TextProperty, database, nameof(Database.Name));
             BindingHandler.ObjFieldBinding(xDatabaseDescription, TextBox.TextProperty, database, nameof(Database.Description));
             BindingHandler.ObjFieldBinding(xDatabaseComboBox, ComboBox.SelectedValueProperty, database, nameof(Database.DBType));
             BindingHandler.ObjFieldBinding(xKeepConnectOpen, CheckBox.IsCheckedProperty, database, nameof(Database.KeepConnectionOpen));
-
-            xDatabaseComboBox.AddValidationRule(new ValidateEmptyValue("Database Type is mandatory"));
+            BindingHandler.ObjFieldBinding(xOracleVersion, CheckBox.IsCheckedProperty, database, nameof(Database.IsOracleVersionLow));
+            
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool ShowCancelButton = true)
@@ -113,18 +114,7 @@ namespace Ginger.Environments
              
                 xDBConnectionStrError.Visibility = Visibility.Collapsed;
             }
-            else
-            {
 
-                if (string.IsNullOrEmpty(xDatabaseTNS.ValueTextBox.Text))
-                {
-                    xDatabaseTNSError.Text = "TNS/File Path/Host is mandatory";
-                    xDatabaseTNSError.Visibility = Visibility.Visible;
-                    return false;
-                }
-
-                xDatabaseTNSError.Visibility = Visibility.Collapsed;
-            }
             return true;
         }
 
@@ -192,6 +182,7 @@ namespace Ginger.Environments
             {
                 return;
             }
+            xConnectionStrCheckBox.IsChecked = false;
 
             if(!databaseType.Equals(eDBTypes.Couchbase) && !databaseType.Equals(eDBTypes.Cassandra) && !databaseType.Equals(eDBTypes.Hbase))
             {
@@ -232,12 +223,26 @@ namespace Ginger.Environments
             {
                 xDatabaseTNS.HideBrowserBTN();
             }
+
+
+
+            if (databaseType.Equals(eDBTypes.CosmosDb))
+            {
+                xCosmosDetailsPanel.Visibility = Visibility.Visible;
+                xDatabaseDetailsPanel.Visibility = Visibility.Collapsed;
+            }
+
+            else
+            {
+                xCosmosDetailsPanel.Visibility = Visibility.Collapsed;
+                xDatabaseDetailsPanel.Visibility = Visibility.Visible;
+            }
+
         }
 
         private void ConnectionString_Checked(object sender, RoutedEventArgs e)
         {
             xDBConnectionStringPanel.Visibility = Visibility.Visible;
-            xDatabaseDetailsPanel.Visibility = Visibility.Collapsed;
             
             eDBTypes? dBType = GetDBType();
             if(dBType == null)
@@ -249,12 +254,21 @@ namespace Ginger.Environments
             {
                 xVersionStackPanel.Visibility = Visibility.Collapsed;
             }
+
+
+            if (dBType.Equals(eDBTypes.CosmosDb))
+            {
+                xCosmosDetailsPanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+               xDatabaseDetailsPanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void ConnectionString_UnChnecked(object sender, RoutedEventArgs e)
         {
             xDBConnectionStringPanel.Visibility = Visibility.Collapsed;
-            xDatabaseDetailsPanel.Visibility = Visibility.Visible;
 
             eDBTypes? dBType = GetDBType();
             if (dBType == null)
@@ -265,6 +279,15 @@ namespace Ginger.Environments
             if (dBType.Equals(eDBTypes.Oracle))
             {
                 xVersionStackPanel.Visibility = Visibility.Visible;
+            }
+
+            if (dBType.Equals(eDBTypes.CosmosDb))
+            {
+                xCosmosDetailsPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xDatabaseDetailsPanel.Visibility = Visibility.Visible;
             }
 
         }

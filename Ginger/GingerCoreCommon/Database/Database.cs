@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -134,6 +134,9 @@ namespace GingerCore.Environments
         private string mPass;
         [IsSerializedForLocalRepository]
         public string Pass { get { return mPass; } set { if (mPass != value) { mPass = value; OnPropertyChanged(nameof(Pass)); } } }
+
+        // checks if oracle version is lower than 10.2
+        public bool IsOracleVersionLow { get; set; } = false;
 
         public static List<string> DbTypes
         {
