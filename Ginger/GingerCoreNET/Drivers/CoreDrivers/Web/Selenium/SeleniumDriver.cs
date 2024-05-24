@@ -43,9 +43,11 @@ using HtmlAgilityPack;
 using InputSimulatorStandard;
 using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.ExpressionGraph.FunctionCompilers;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
+using OpenQA.Selenium.Common;
 using OpenQA.Selenium.DevTools;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
@@ -1427,7 +1429,7 @@ namespace GingerCore.Drivers
 
             DoRunAction(act);
         }
-
+// Gokul-- need to make changes in below method for newSmart sync action
         private void DoRunAction(Act act)
         {
             Type ActType = act.GetType();
@@ -1452,6 +1454,11 @@ namespace GingerCore.Drivers
             if (ActType == typeof(ActSmartSync))
             {
                 SmartSyncHandler((ActSmartSync)act);
+                return;
+            }
+            if (ActType == typeof(ActNewSmartSync))
+            {
+                NewSmartSyncHandler((ActNewSmartSync)act);
                 return;
             }
             if (ActType == typeof(ActTextBox))
@@ -1983,7 +1990,122 @@ namespace GingerCore.Drivers
                 actPassword.AddOrUpdateReturnParamActual("Actual", e.Size.Width.ToString());
             }
         }
+        //Gokul---need to create this kind of method for new smart sync action with new operation 
+        public void NewSmartSyncHandler(ActNewSmartSync act)
+        {
+            By elementLocator = null;
+            if (act.NewSmartSyncAction != ActNewSmartSync.eNewSmartSyncAction.AlertIsPresent && act.NewSmartSyncAction != ActNewSmartSync.eNewSmartSyncAction.PageHasBeenLoaded)
+            {
+                switch (act.LocateBy)
+                {
+                    case eLocateBy.ByXPath:
+                        elementLocator = By.XPath(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByID:
+                        elementLocator = By.Id(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByName:
+                        elementLocator = By.Name(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByClassName:
+                        elementLocator = By.ClassName(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByCSSSelector:
+                        elementLocator = By.CssSelector(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByLinkText:
+                        elementLocator = By.LinkText(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByTagName:
+                        elementLocator = By.TagName(act.LocateValueCalculated);
+                        break;
+                    default:
+                        act.Error = "Supported locate by value-> ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText and ByTagName.";
+                        return;
+                }
+            }
+            int MaxTimeout = NewSmartSyncGetMaxTimeout(act);
+            WebDriverWait wait = null;
+            switch (act.NewSmartSyncAction){
+                case ActNewSmartSync.eNewSmartSyncAction.ElementIsVisible:
+                    wait = new(Driver, timeout: TimeSpan.FromSeconds(MaxTimeout))
+                    {
+                        PollingInterval = TimeSpan.FromMilliseconds(100)
+                    };
+                    try
+                    {
+                        wait.Until(ExpectedConditions.ElementIsVisible(elementLocator));
+                    }
+                    catch(WebDriverTimeoutException)
+                    {
+                        act.Error = "Element was not visible in the "+MaxTimeout+" seconds time.";
+                    }
+                    break;
+                case ActNewSmartSync.eNewSmartSyncAction.ElementExists:
+                    wait = new(Driver, timeout: TimeSpan.FromSeconds(MaxTimeout))
+                    {
+                        PollingInterval = TimeSpan.FromMilliseconds(100)
+                    };
+                    try
+                    {
+                        wait.Until(ExpectedConditions.ElementExists(elementLocator));
+                    }
+                    catch (WebDriverTimeoutException)
+                    {
+                        act.Error = "Element was not Exists in the " + MaxTimeout + " seconds time.";
+                    }
+                    break;
+                case ActNewSmartSync.eNewSmartSyncAction.AlertIsPresent:
+                    wait = new(Driver, timeout: TimeSpan.FromSeconds(MaxTimeout))
+                    {
+                        PollingInterval = TimeSpan.FromMilliseconds(100)
+                    };
+                    try
+                    {
+                        wait.Until(ExpectedConditions.AlertIsPresent());
+                    }
+                    catch (WebDriverTimeoutException)
+                    {
+                        act.Error = "Alert was not present in the " + MaxTimeout + " seconds time.";
+                    }
+                    break;
+                case ActNewSmartSync.eNewSmartSyncAction.ElementIsSelected:
+                    wait = new(Driver, timeout: TimeSpan.FromSeconds(MaxTimeout))
+                    {
+                        PollingInterval = TimeSpan.FromMilliseconds(100)
+                    };
+                    try
+                    {
+                        wait.Until(ExpectedConditions.ElementIsSelected(elementLocator));
+                    }
+                    catch (WebDriverTimeoutException)
+                    {
+                        act.Error = "Element was not Selected in the " + MaxTimeout + " seconds time.";
+                    }
+                    break;
+                case ActNewSmartSync.eNewSmartSyncAction.PageHasBeenLoaded:
+                    wait = new(Driver, timeout: TimeSpan.FromSeconds(MaxTimeout))
+                    {
+                        PollingInterval = TimeSpan.FromMilliseconds(100)
+                    };
+                    try
+                    {
+                        wait.Until(ExpectedConditions.PageHasBeenLoaded());
+                    }
+                    catch (WebDriverTimeoutException)
+                    {
+                        act.Error = "Page was not Loaded in the " + MaxTimeout + " seconds time.";
+                    }
+                    break;
+                default:
+                    act.Error = "Unable to perform this operation.";
+                    return;
+                    
 
+                    
+            }
+        }
+  
         public void SmartSyncHandler(ActSmartSync act)
         {
             int MaxTimeout = GetMaxTimeout(act);
