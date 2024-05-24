@@ -332,7 +332,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (TVI.Tag is ITreeViewItem ITVI)
             {
-                List<ITreeViewItem> Childs = ITVI.Childrens();
+                List<ITreeViewItem> Childs = new(ITVI.Childrens());
 
                 TVI.Items.Clear();
                 if (Childs != null)
@@ -692,6 +692,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 List<ITreeViewItem>? oldChildren = itvi.Childrens();
                 List<ITreeViewItem>? newChildren = itvi.Childrens();
                 if (oldChildren == null || newChildren == null)
+                {
+                    continue;
+                }
+
+                if (oldChildren.Count <= 0 || newChildren.Count <= 0)
                 {
                     continue;
                 }
