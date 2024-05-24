@@ -350,7 +350,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             private readonly IPlaywrightPage _playwrightPage;
             private readonly IBrowserTab.OnTabClose _onTabClose;
             private readonly LinkedList<string> _consoleMessages = [];
-            private IFrame _currentFrame;
+            private IFrameLocator? _currentFrame;
             private bool _isClosed = false;
 
             public bool IsClosed => _isClosed;
@@ -359,7 +359,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 _playwrightPage = playwrightPage;
                 _onTabClose = onTabClose;
-                _currentFrame = _playwrightPage.MainFrame;
+                _currentFrame = null;
                 _playwrightPage.Console += OnConsoleMessage;
             }
 
@@ -460,8 +460,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             public async Task<bool> SwitchFrame(eLocateBy locateBy, string value)
             {
-                IFrameLocator? frameLocator = null;
-                IFrame? frame = null;
+                IFrameLocator frameLocator;
                 switch (locateBy)
                 {
                     case eLocateBy.ByID:
@@ -480,18 +479,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         throw new ArgumentException($"Frame locator '{locateBy}' is not supported for frames.");
                 }
 
-                bool wasLocated = frameLocator != null && await frameLocator.Owner.CountAsync() > 0;
+                bool wasLocated = await frameLocator.Owner.CountAsync() > 0;
                 if (wasLocated)
                 {
-                    frame = GetFrameFromFrameLocator(frameLocator!);
+                    _currentFrame = frameLocator;
                 }
-
-                if (frame == null)
-                {
-                    return false;
-                }
-                
-                _currentFrame = frame;
 
                 return true;
             }
