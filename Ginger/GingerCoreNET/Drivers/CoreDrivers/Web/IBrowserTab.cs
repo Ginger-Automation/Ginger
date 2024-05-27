@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 {
     internal interface IBrowserTab
@@ -35,7 +36,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<string> GetBrowserLogsAsync();
 
-        public Task<bool> SwitchFrame(eLocateBy locatyBy, string value);
+        public Task<bool> SwitchFrame(eLocateBy locatyBy, string locateValue);
+
+        public Task ClickAsync(eLocateBy locateBy, string locateValue);
+
+        public Task DoubleClickAsync(eLocateBy locateBy, string locateValue);
+
+        public Task HoverAsync(eLocateBy locateBy, string locateValue);
+
+        public Task<bool> IsVisibleAsync(eLocateBy locateBy, string locateValue);
+
+        public Task<bool> IsEnabledAsync(eLocateBy locateBy, string locateValue);
+
+        public Task<string?> GetAttributeValueAsync(eLocateBy locateBy, string locateValue, string attributeName);
+
+        public Task RightClickAsync(eLocateBy locateBy, string locateValue);
 
         public Task CloseAsync();
     }
