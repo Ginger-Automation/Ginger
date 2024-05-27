@@ -17,7 +17,7 @@ using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
 using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
 using IPlaywrightDialog = Microsoft.Playwright.IDialog;
-using OpenQA.Selenium;
+using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -25,6 +25,8 @@ using Newtonsoft.Json;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using GingerCore.Actions.Common;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -107,13 +109,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             switch (act)
             {
                 case ActBrowserElement actBrowserElement:
-                    ActBrowserElementHandler handler = new(actBrowserElement, _browser!, new ActBrowserElementHandler.Context
+                    ActBrowserElementHandler actBrowserElementHandler = new(actBrowserElement, _browser!, new ActBrowserElementHandler.Context
                     {
                         BusinessFlow = BusinessFlow,
                         Environment = Environment,
                     });
-                    Task handleTask = handler.HandleAsync();
-                    handleTask.Wait();
+                    actBrowserElementHandler.HandleAsync().Wait();
+                    break;
+                case ActUIElement actUIElement:
+                    ActUIElementHandler actUIElementHandler = new(actUIElement, _browser);
+                    actUIElementHandler.HandleAsync().Wait();
                     break;
                 default:
                     act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
@@ -458,22 +463,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return rawLogs;
             }
 
-            public async Task<bool> SwitchFrame(eLocateBy locateBy, string value)
+            public async Task<bool> SwitchFrame(eLocateBy locateBy, string locateValue)
             {
                 IFrameLocator frameLocator;
                 switch (locateBy)
                 {
                     case eLocateBy.ByID:
-                        frameLocator = _playwrightPage.FrameLocator($"#{value}");
+                        frameLocator = _playwrightPage.FrameLocator($"css=#{locateValue}");
                         break;
                     case eLocateBy.ByTitle:
-                        frameLocator = _playwrightPage.FrameLocator($"iframe[title='{value}']");
+                        frameLocator = _playwrightPage.FrameLocator($"css=iframe[title='{locateValue}']");
                         break;
                     case eLocateBy.ByXPath:
-                        frameLocator = _playwrightPage.FrameLocator($"xpath={value}");
+                        frameLocator = _playwrightPage.FrameLocator($"xpath={locateValue}");
                         break;
                     case eLocateBy.ByUrl:
-                        frameLocator = _playwrightPage.FrameLocator($"iframe[src='{value}']");
+                        frameLocator = _playwrightPage.FrameLocator($"css=iframe[src='{locateValue}']");
                         break;
                     default:
                         throw new ArgumentException($"Frame locator '{locateBy}' is not supported for frames.");
@@ -488,28 +493,134 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return true;
             }
 
-            private static IFrame? GetFrameFromFrameLocator(IFrameLocator frameLocator)
+            public async Task ClickAsync(eLocateBy locateBy, string locateValue)
             {
-                FieldInfo? _frameField = frameLocator.GetType().GetField("_frame", BindingFlags.Instance | BindingFlags.NonPublic);
-                if (_frameField == null)
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                bool wasFound = await DoesLocatorExistsAsync(locator);
+                if (!wasFound)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Field '_frame' not found in IFrameLocator");
-                    return null;
+                    throw new NotFoundException($"No element found by locator '{locateBy}' and value '{locateValue}'");
                 }
 
-                object? frameFieldValue = _frameField.GetValue(frameLocator);
-                if (frameFieldValue == null)
+                await locator.ClickAsync(new LocatorClickOptions
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Field '_frame' is null in IFrameLocator");
-                    return null;
-                }
-                if (frameFieldValue is not IFrame)
+                    Button = MouseButton.Left
+                });
+            }
+
+            public async Task DoubleClickAsync(eLocateBy locateBy, string locateValue)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                bool wasFound = await DoesLocatorExistsAsync(locator);
+                if (!wasFound)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Field '_frame' value is not IFrame");
-                    return null;
+                    throw NewElementNotFoundException(locateBy, locateValue);
                 }
 
-                return (IFrame)frameFieldValue;
+                await locator.DblClickAsync();
+            }
+
+            public async Task HoverAsync(eLocateBy locateBy, string locateValue)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                bool wasFound = await DoesLocatorExistsAsync(locator);
+                if (!wasFound)
+                {
+                    throw NewElementNotFoundException(locateBy, locateValue);
+                }
+
+                await locator.HoverAsync();
+            }
+
+            public async Task<bool> IsVisibleAsync(eLocateBy locateBy, string locateValue)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                return await locator.IsVisibleAsync();
+            }
+
+            public async Task<bool> IsEnabledAsync(eLocateBy locateBy, string locateValue)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                return await locator.IsEnabledAsync();
+            }
+
+            public async Task<string?> GetAttributeValueAsync(eLocateBy locateBy, string locateValue, string attributeName)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                bool wasFound = await DoesLocatorExistsAsync(locator);
+                if (!wasFound)
+                {
+                    throw NewElementNotFoundException(locateBy, locateValue);
+                }
+
+                return await locator.GetAttributeAsync(attributeName);
+            }
+
+            public async Task RightClickAsync(eLocateBy locateBy, string locateValue)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                bool wasFound = await DoesLocatorExistsAsync(locator);
+                if (!wasFound)
+                {
+                    throw NewElementNotFoundException(locateBy, locateValue);
+                }
+
+                await locator.ClickAsync(new LocatorClickOptions()
+                {
+                    Button = MouseButton.Right
+                });
+            }
+
+            private Task<IPlaywrightLocator> LocateElementAsync(eLocateBy locateBy, string value)
+            {
+                if (_currentFrame == null)
+                {
+                    return LocateElementInMainFrameAsync(locateBy, value);
+                }
+                else
+                {
+                    return LocateElementInCurrentFrameAsync(locateBy, value);
+                }
+            }
+
+            private Task<IPlaywrightLocator> LocateElementInMainFrameAsync(eLocateBy locateBy, string value)
+            {
+                IPlaywrightLocator locator;
+                switch (locateBy)
+                {
+                    case eLocateBy.ByID:
+                        locator = _playwrightPage.MainFrame.Locator($"css=#{value}");
+                        break;
+                    default:
+                        throw new ArgumentException($"Element locator '{locateBy}' is not supported.");
+                }
+
+                return Task.FromResult(locator);
+            }
+
+            private Task<IPlaywrightLocator> LocateElementInCurrentFrameAsync(eLocateBy locateBy, string value)
+            {
+                if (_currentFrame == null)
+                {
+                    throw new InvalidOperationException("Current frame is null");
+                }
+
+                IPlaywrightLocator locator;
+                switch (locateBy)
+                {
+                    case eLocateBy.ByID:
+                        locator = _currentFrame.Locator($"css=#{value}");
+                        break;
+                    default:
+                        throw new ArgumentException($"Element locator '{locateBy}' is not supported.");
+                }
+
+                return Task.FromResult(locator);
+            }
+
+            private static async Task<bool> DoesLocatorExistsAsync(IPlaywrightLocator locator)
+            {
+                return await locator.CountAsync() > 0;
             }
 
             public async Task CloseAsync()
@@ -530,6 +641,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 {
                     throw new InvalidOperationException("Cannot perform operation, tab is already closed.");
                 }
+            }
+
+            private static NotFoundException NewElementNotFoundException(eLocateBy locateBy, string value)
+            {
+                return new NotFoundException($"No element found by locator '{locateBy}' and value '{value}'");
             }
         }
 
