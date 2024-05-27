@@ -307,7 +307,7 @@ namespace Ginger.Variables
                 {
                     filteredApp.StartDirtyTracking();
 
-                    filteredApp.Variables.Add(varToAdd);
+                    filteredApp.Variables.Add((VariableBase)varToAdd.CreateCopy());
                 });
             });
 
