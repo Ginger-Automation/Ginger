@@ -662,9 +662,9 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             // Remove the target applications from mBusinessFlow.TargetApplications
-            foreach (var agentToRemove in TargetApplicationsToRemove)
+            foreach (var TargetAppToRemove in TargetApplicationsToRemove)
             {
-                mBusinessFlow.TargetApplications.Remove(agentToRemove);
+                mBusinessFlow.TargetApplications.Remove(TargetAppToRemove);
             }
 
         }
