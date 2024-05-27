@@ -647,22 +647,22 @@ namespace GingerWPF.BusinessFlowsLib
 
 
             // Create a list to store the items to be removed
-            List<TargetBase> agentsToRemove = [];
+            List<TargetBase> TargetApplicationsToRemove = [];
             var userTA = mBusinessFlow.Activities.Select(f => f.TargetApplication);
 
-            // Iterate through the ApplicationAgents
+            // Iterate through the Business Flow Target Application
             foreach (var existingTargetApp in mBusinessFlow.TargetApplications.OfType<TargetApplication>())
             {
-                // Check if the existing agent is not present in mBusinessFlow.TargetApplications
+                // Check if the existing target application is not present in mBusinessFlow.TargetApplications
                 if (!userTA.Contains((existingTargetApp as TargetApplication).AppName))
                 {
                     // If not present, add to the removal list
-                    agentsToRemove.Add(existingTargetApp);
+                    TargetApplicationsToRemove.Add(existingTargetApp);
                 }
             }
 
-            // Remove the agents from mExecutionEngine.GingerRunner.ApplicationAgents
-            foreach (var agentToRemove in agentsToRemove)
+            // Remove the target applications from mBusinessFlow.TargetApplications
+            foreach (var agentToRemove in TargetApplicationsToRemove)
             {
                 mBusinessFlow.TargetApplications.Remove(agentToRemove);
             }
