@@ -124,6 +124,11 @@ namespace GingerCore.Drivers
         public string ProxyAutoConfigUrl { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDescription("By Pass Proxy URLs || Set multiple URLs separated with ';'")]
+        public string ByPassingAddress { get; set; }
+
+
+        [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("EnableNativeEvents(true) so as to perform native events smoothly on IE ")]
         public bool EnableNativeEvents { get; set; }
@@ -439,6 +444,12 @@ namespace GingerCore.Drivers
                 {
                     mProxy.IsAutoDetect = AutoDetect;
                 }
+            }
+
+            if (!string.IsNullOrEmpty(ByPassingAddress))
+            {
+                mProxy ??= new Proxy();
+                mProxy.AddBypassAddresses(ByPassingAddress.Split(";"));
             }
 
             if (ImplicitWait == 0)
@@ -1059,7 +1070,15 @@ namespace GingerCore.Drivers
                 return;
             }
 
-            options.Proxy = new Proxy();
+            var proxy = new Proxy();
+            
+            if(!string.IsNullOrEmpty(ByPassingAddress))
+            {
+                proxy.AddBypassAddresses(ByPassingAddress.Split(';'));
+            }
+
+            options.Proxy = proxy;
+
             switch (mProxy.Kind)
             {
                 case ProxyKind.Manual:
