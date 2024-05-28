@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.GenAIServices
 {
-    public class BrainServiceSettings
+    public class GenAIServiceSettings
     {
-        private static readonly BrainServiceSettings _instance = new BrainServiceSettings();
-        public BrainServiceData BrainSettingsObj { set; get; }
+        private static readonly GenAIServiceSettings _instance = new GenAIServiceSettings();
+        public GenAIServiceData GenAIServiceSettingsData { set; get; }
 
-        public static BrainServiceSettings Instance
+        public static GenAIServiceSettings Instance
         {
             get
             {
@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             }
         }
 
-        public BrainServiceSettings()
+        public GenAIServiceSettings()
         {
             LoadData();
         }
@@ -35,20 +35,22 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             
             try
             {
-                //string settingsFile = "BrainApiSettings.json";
-                //string jsonSettingsPath = File.ReadAllText(settingsFile);
-
-                using (StreamReader r = new StreamReader("BrainApiSettings.json"))
+                using (StreamReader r = new StreamReader("GenAIServiceSettings.json"))
                 {
                    string json = r.ReadToEnd();
-                   this.BrainSettingsObj = JsonConvert.DeserializeObject<BrainServiceData>(json);
+                   this.GenAIServiceSettingsData = JsonConvert.DeserializeObject<GenAIServiceData>(json);
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "BrainApiSetting.json not found/unable to read", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "GenAIServiceSettings.json not found/unable to read", ex);
                 return;
             }
         }
+
+        //public bool IsChatEnabled()
+        //{
+        //    return _instance.GenAIServiceSettingsData.EnableChat;
+        //}
     }
 }

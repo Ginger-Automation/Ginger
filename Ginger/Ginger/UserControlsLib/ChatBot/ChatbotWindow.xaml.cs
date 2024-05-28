@@ -19,12 +19,12 @@ namespace Amdocs.Ginger.UserControls
 {
     public partial class ChatbotWindow : UserControl
     {
-        BrainAIServices brainAIServices;
+        GenAIServiceHelper genAIServiceHelper;
         static List<(string, string)> messages = [];
         public ChatbotWindow()
         {
             InitializeComponent();
-            brainAIServices = new BrainAIServices();
+            genAIServiceHelper = new GenAIServiceHelper();
             xProfileImageImgBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/Lisa.jpg", UriKind.RelativeOrAbsolute));
             //string introMessage = "Hello I'm Lisa, the Ginger AI Assistent. How can i help you today?";
             // AddMessage("Lisa", introMessage, false);
@@ -77,11 +77,11 @@ namespace Amdocs.Ginger.UserControls
                 if (chatPanel.Children.Count == 1)
                 {
                    
-                    answer = await brainAIServices.StartNewChat(userInput);
+                    answer = await genAIServiceHelper.StartNewChat(userInput);
                 }
                 else
                 {
-                    answer = await brainAIServices.ContinueChat(userInput);
+                    answer = await genAIServiceHelper.ContinueChat(userInput);
                 }
 
                 if(answer == null)

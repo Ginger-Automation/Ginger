@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.SourceControlLib;
+using Amdocs.Ginger.CoreNET.GenAIServices;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
@@ -181,7 +182,15 @@ namespace Ginger
                     xAdminModeIcon.Foreground = (SolidColorBrush)FindResource("$HighlightColor_Yellow"); 
                 }
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
-                xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
+
+                var genAIService = new GenAIServiceSettings();
+                if (genAIService!=null && genAIService.GenAIServiceSettingsData!=null && genAIService.GenAIServiceSettingsData.EnableChat)
+                {
+                    xChatPanel.Visibility = Visibility.Visible;
+                    xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
+                }
+                
+
             }
             catch (Exception ex)
             {
