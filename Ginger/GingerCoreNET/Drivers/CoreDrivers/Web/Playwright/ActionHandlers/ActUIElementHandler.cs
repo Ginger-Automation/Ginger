@@ -52,6 +52,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActUIElement.eElementAction.MouseRightClick:
                         operationTask = HandleRightClickOperationAsync();
                         break;
+                    case ActUIElement.eElementAction.IsValuePopulated:
+                        operationTask = HandleIsValuePopulatedOperationAsync();
+                        break;
                     default:
                         _act.Error = $"Unknown operation type - {_act.ElementAction}";
                         break;
@@ -130,14 +133,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
         {
             try
             {
-                string? text = await _browser.CurrentWindow.CurrentTab.GetAttributeValueAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver, attributeName: "textContent");
+                string? text = await _browser.CurrentWindow.CurrentTab.GetTextContentAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
                 if (string.IsNullOrEmpty(text))
                 {
-                    text = await _browser.CurrentWindow.CurrentTab.GetAttributeValueAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver, attributeName: "innerText");
+                    text = await _browser.CurrentWindow.CurrentTab.GetInnerTextAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
                 }
                 if (string.IsNullOrEmpty(text))
                 {
-                    text = await _browser.CurrentWindow.CurrentTab.GetAttributeValueAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver, attributeName: "value");
+                    text = await _browser.CurrentWindow.CurrentTab.GetInputValueAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
                 }
                 if (text == null)
                 {
@@ -162,6 +165,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                 _act.Error = ex.Message;
             }
 
+        }
+
+        private async Task HandleIsValuePopulatedOperationAsync()
+        {
+            try
+            {
+                await _browser.CurrentWindow.CurrentTab.
+            }
+            catch (NotFoundException ex)
+            {
+                _act.Error = ex.Message;
+            }
         }
     }
 }
