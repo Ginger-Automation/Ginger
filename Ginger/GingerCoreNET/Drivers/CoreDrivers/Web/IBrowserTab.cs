@@ -50,6 +50,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<string?> GetAttributeValueAsync(eLocateBy locateBy, string locateValue, string attributeName);
 
+        public Task<string?> GetTextContentAsync(eLocateBy locateBy, string locateValue);
+
+        public Task<string?> GetInnerTextAsync(eLocateBy locateBy, string locateValue);
+
+        public Task<string?> GetInputValueAsync(eLocateBy locateBy, string locateValue);
+
+        public Task<string?> GetSelectValue(eLocateBy locateBy, string locateValue);
+
         public Task RightClickAsync(eLocateBy locateBy, string locateValue);
 
         public Task CloseAsync();

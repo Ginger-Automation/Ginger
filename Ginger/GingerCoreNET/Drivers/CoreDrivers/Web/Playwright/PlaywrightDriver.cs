@@ -27,6 +27,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using GingerCore.Actions.Common;
+using OpenQA.Selenium.DevTools.V119.DOM;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -556,6 +557,41 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return await locator.GetAttributeAsync(attributeName);
             }
 
+            public async Task<string?> GetTextContentAsync(eLocateBy locateBy, string locateValue)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                bool wasFound = await DoesLocatorExistsAsync(locator);
+                if (!wasFound)
+                {
+                    throw NewElementNotFoundException(locateBy, locateValue);
+                }
+
+                return await locator.TextContentAsync();
+            }
+
+            public async Task<string?> GetInnerTextAsync(eLocateBy locateBy, string locateValue)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                bool wasFound = await DoesLocatorExistsAsync(locator);
+                if (!wasFound)
+                {
+                    throw NewElementNotFoundException(locateBy, locateValue);
+                }
+
+                return await locator.InnerTextAsync();
+            }
+
+            public async Task<string?> GetInputValueAsync(eLocateBy locateBy, string locateValue)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                bool wasFound = await DoesLocatorExistsAsync(locator);
+                if (!wasFound)
+                {
+                    throw NewElementNotFoundException(locateBy, locateValue);
+                }
+                return await locator.InputValueAsync();
+            }
+
             public async Task RightClickAsync(eLocateBy locateBy, string locateValue)
             {
                 IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
@@ -569,6 +605,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 {
                     Button = MouseButton.Right
                 });
+            }
+
+            public async Task<string?> GetSelectValue(eLocateBy locateBy, string locateValue)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                bool wasFound = await DoesLocatorExistsAsync(locator);
+                if (!wasFound)
+                {
+                    throw NewElementNotFoundException(locateBy, locateValue);
+                }
+
+                return await locator.EvaluateAsync<string>("elem => elem.options[elem.selectedIndex].text");
             }
 
             private Task<IPlaywrightLocator> LocateElementAsync(eLocateBy locateBy, string value)
