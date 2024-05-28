@@ -45,6 +45,7 @@ namespace Ginger.BusinessFlowWindows
         {
 
             InitializeComponent();
+            AppsGrid.SelectionMode = DataGridSelectionMode.Single;
 
             this.Title = $"Edit {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} { GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}";
 
@@ -58,7 +59,6 @@ namespace Ginger.BusinessFlowWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = "Selected", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
@@ -74,7 +74,7 @@ namespace Ginger.BusinessFlowWindows
                 AP1.Guid = AP.Guid;
 
                 // If this App was selected before then mark it 
-                TargetApplication APS = (TargetApplication)(from x in mBusinessFlow.TargetApplications where x.Name == AP.AppName select x).FirstOrDefault();
+                TargetApplication APS = (TargetApplication)(from x in mBusinessFlow.TargetApplications where x?.Name == AP.AppName select x).FirstOrDefault();
 
                 if (APS != null)
                 {
@@ -156,16 +156,16 @@ namespace Ginger.BusinessFlowWindows
             }
 
             //add new
-            foreach (ApplicationPlatform TA in mApplicationsPlatforms.Where(x => x.Selected))
+
+            ApplicationPlatform TA = (ApplicationPlatform)AppsGrid.GetSelectedItem();
+
+            if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == TA.AppName) == null)
             {
-                if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == TA.AppName) == null)
-                {
-                    TargetApplication tt = new TargetApplication();
-                    tt.AppName = TA.AppName;
-                    tt.TargetGuid = TA.Guid;
-                    tt.Selected = true;
-                    mBusinessFlow.TargetApplications.Add(tt);
-                }
+                TargetApplication tt = new TargetApplication();
+                tt.AppName = TA.AppName;
+                tt.TargetGuid = TA.Guid;
+                tt.Selected = true;
+                mBusinessFlow.TargetApplications.Add(tt);
             }
         }
     }

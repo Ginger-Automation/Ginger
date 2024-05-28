@@ -23,10 +23,10 @@ using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,6 +40,10 @@ namespace Ginger.SolutionWindows
     {
         Solution mSolution;
         string AppName;
+
+        public delegate void OnActivityTargetApplicationUpdate();
+
+        public static event OnActivityTargetApplicationUpdate OnActivityUpdate;
 
         public TargetApplicationsPage()
         {
@@ -72,7 +76,6 @@ namespace Ginger.SolutionWindows
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), Header = "Description", WidthWeight = 40 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.CoreVersion), Header = "Version", WidthWeight = 15 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Guid), Header = "ID", WidthWeight = 15, ReadOnly = true });
 
             xTargetApplicationsGrid.SetAllColumnsDefaultView(view);
@@ -120,7 +123,7 @@ namespace Ginger.SolutionWindows
         {
             if (xTargetApplicationsGrid.Grid.SelectedItem != null)
             {
-                Clipboard.SetText(((RepositoryItemBase)xTargetApplicationsGrid.Grid.SelectedItem).Guid.ToString());
+                 GingerCore.General.SetClipboardText(((RepositoryItemBase)xTargetApplicationsGrid.Grid.SelectedItem).Guid.ToString());
             }
             else
             {
@@ -135,7 +138,7 @@ namespace Ginger.SolutionWindows
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
-            AddApplicationPage AAP = new AddApplicationPage(WorkSpace.Instance.Solution);
+            AddApplicationPage AAP = new AddApplicationPage(WorkSpace.Instance.Solution, false);
             AAP.ShowAsWindow();
         }
 
@@ -186,29 +189,30 @@ namespace Ginger.SolutionWindows
             foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
             {
                 //update the BF target applications 
-                foreach (var bfApp in bf.TargetApplications)
+                bf.StartDirtyTracking();
+                foreach (var activity in bf.Activities)
                 {
                     //donot check for TargetPlugins, only for TargetApplications 
-                    if (bfApp.GetType() == typeof(TargetApplication))
-                    {
-                        if (((TargetApplication)bfApp).AppName == app.NameBeforeEdit)
-                        {
-                            ((TargetApplication)bfApp).AppName = app.AppName;
 
-                            //update the bf activities 
-                            foreach (Activity activity in bf.Activities)
-                            {
-                                if (activity.TargetApplication == app.NameBeforeEdit)
-                                {
-                                    activity.TargetApplication = app.AppName;                                    
-                                }
-                            }
-                            numOfAfectedItems++;
-                            break;
-                        }
+                    if (string.Equals(activity.TargetApplication, app.NameBeforeEdit))
+                    {
+                        activity.StartDirtyTracking();
+                        activity.TargetApplication = app.AppName;
+
+                        numOfAfectedItems++;
+                    }
+                }
+
+                foreach (TargetApplication bfTargetApp in bf.TargetApplications.Where((targetApp)=>targetApp is TargetApplication))
+                {
+                    if (string.Equals(bfTargetApp.AppName, app.NameBeforeEdit))
+                    {
+                        bfTargetApp.StartDirtyTracking();
+                        bfTargetApp.AppName = app.AppName;
                     }
                 }
             }
+
 
             foreach (Activity activity in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>())
             {
@@ -219,6 +223,24 @@ namespace Ginger.SolutionWindows
                     activity.TargetApplication = app.AppName;
                     numOfAfectedItems++;
                 }                             
+            }
+
+            foreach(ProjEnvironment projEnv in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+            {
+                foreach (EnvApplication envApplication in projEnv.Applications)
+                {
+
+                    if(string.Equals(envApplication.Name, app.NameBeforeEdit))
+                    {
+                        projEnv.StartDirtyTracking();
+                        envApplication.Name = app.AppName;
+                    }
+                }
+            }
+
+            if(numOfAfectedItems > 0 && OnActivityUpdate!=null)
+            {
+                OnActivityUpdate();
             }
             Reporter.ToUser(eUserMsgKey.StaticInfoMessage, string.Format("{0} items were updated successfully, please remember to Save All change.", numOfAfectedItems));
         }

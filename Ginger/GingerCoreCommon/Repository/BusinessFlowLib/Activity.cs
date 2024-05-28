@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -30,6 +30,7 @@ using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
+using GingerCore.FlowControlLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -849,6 +850,34 @@ namespace GingerCore
             }
         }
 
+        public static Activity CopySharedRepositoryActivity(Activity srActivity, bool originFromSharedRepository = false)
+        {
+            Activity copy = (Activity)srActivity.CreateInstance(originFromSharedRepository, setNewGUID: false);
+            copy.Guid = Guid.NewGuid();
+            List<KeyValuePair<Guid, Guid>> oldNewActionGuidList = [];
+            foreach (Act action in copy.Acts.Cast<Act>())
+            {
+                action.ParentGuid = action.Guid;
+                action.Guid = Guid.NewGuid();
+                oldNewActionGuidList.Add(new(action.ParentGuid, action.Guid));
+            }
+            foreach (VariableBase variable in copy.Variables)
+            {
+                variable.ParentGuid = variable.Guid;
+                variable.Guid = Guid.NewGuid();
+            }
+            foreach(FlowControl fc in copy.Acts.SelectMany(a => a.FlowControls))
+            {
+                Guid targetGuid = fc.GetGuidFromValue();
+                if (oldNewActionGuidList.Any(oldNew => oldNew.Key == targetGuid))
+                {
+                    Guid newTargetGuid = oldNewActionGuidList.First(oldNew => oldNew.Key == targetGuid).Value;
+                    fc.Value = fc.Value.Replace(targetGuid.ToString(), newTargetGuid.ToString());
+                }
+            }
+            return copy;
+        }
+
         public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
         {
             Activity activityInstance = (Activity)instance;
@@ -857,7 +886,7 @@ namespace GingerCore
 
             if (activityInstance.Type == eSharedItemType.Link)
             {
-                newInstance = (Activity)this.CreateInstance(true);
+                newInstance = CopySharedRepositoryActivity(this, originFromSharedRepository: true);
                 newInstance.Guid = activityInstance.Guid;
                 newInstance.ActivitiesGroupID = activityInstance.ActivitiesGroupID;
                 newInstance.Type = activityInstance.Type;
@@ -866,14 +895,13 @@ namespace GingerCore
                 {
                     //replace old instance object with new
                     int originalIndex = ((BusinessFlow)hostItem).Activities.IndexOf(activityInstance);
-                    ((BusinessFlow)hostItem).Activities.Remove(activityInstance);
-                    ((BusinessFlow)hostItem).Activities.Insert(originalIndex, newInstance);
+                    ((BusinessFlow)hostItem).Activities.ReplaceItem(originalIndex, newInstance);
                 }
                 return;
             }
             else
             {
-                newInstance = (Activity)this.CreateInstance();
+                newInstance = CopySharedRepositoryActivity(this, originFromSharedRepository: false);
             }
 
 

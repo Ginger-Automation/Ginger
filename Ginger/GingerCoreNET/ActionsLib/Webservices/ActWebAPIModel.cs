@@ -203,6 +203,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
 
             actWebAPIBase.ReturnValues = actWebAPIModel.ReturnValues;
             actWebAPIBase.Context = actWebAPIModel.Context;
+
         }
         private ObservableList<ActInputValue> ConvertAPIModelKeyValueToActInputValues(ObservableList<APIModelKeyValue> GingerCoreNETHttpHeaders, ActWebAPIModel actWebAPIModel)
         {
@@ -214,6 +215,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
                 {
                     ActInputValue AIV = new ActInputValue();
                     AIV.Param = AMKV.Param;
+                    AIV.Value = AMKV.Value;
                     AIV.ValueForDriver = ReplacePlaceHolderParameneterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue);
                     GingerCoreHttpHeaders.Add(AIV);
                 }

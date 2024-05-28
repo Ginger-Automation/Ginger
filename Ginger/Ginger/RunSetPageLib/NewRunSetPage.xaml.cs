@@ -51,6 +51,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -319,7 +320,7 @@ namespace Ginger.Run
             SetNonSpecificRunSetEventsTracking();
             SetBusinessFlowsChangesLisener();
         }
-        string allProperties = string.Empty;
+        private string allProperties = string.Empty;
         private void SetNonSpecificRunSetEventsTracking()
         {
             WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
@@ -886,8 +887,10 @@ namespace Ginger.Run
         {
             BindingOperations.ClearBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
-            BindingOperations.ClearBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ToolTipProperty);
-            BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ToolTipProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
+            PropertyChangedEventManager.RemoveHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: allProperties);
+            PropertyChangedEventManager.AddHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: allProperties);
+            BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ForegroundProperty, mRunSetConfig, nameof(RunSetConfig.IsVirtual), new BoolToRunsetLabelColorValueConverter());
             if (WorkSpace.Instance.SourceControl == null || !WorkSpace.Instance.UserProfile.ShowSourceControlStatusIcon)
             {
                 xRunSetUcLabel.xSourceControlIcon.Visibility = Visibility.Collapsed;
@@ -903,6 +906,7 @@ namespace Ginger.Run
 
             UpdateDescription();
             xRunDescritpion.Init(mContext, mRunSetConfig, nameof(RunSetConfig.RunDescription));
+            xExternalId.Init(mContext, mRunSetConfig, nameof(RunSetConfig.ExternalID));
             if (mSolutionCategoriesPage == null)
             {
                 mSolutionCategoriesPage = new SolutionCategoriesPage();
@@ -911,6 +915,34 @@ namespace Ginger.Run
             mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.CategoriesDefinitions);
             PropertyChangedEventManager.AddHandler(source: mRunSetConfig, handler: RunSetConfig_PropertyChanged, propertyName: allProperties);
             CollectionChangedEventManager.AddHandler(source: mRunSetConfig.Tags, handler: RunSetTags_CollectionChanged);
+        }
+
+        private void mRunSetConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (sender != null && sender is RunSetConfig senderRunset && senderRunset != mRunSetConfig)
+            {
+                PropertyChangedEventManager.RemoveHandler(senderRunset, mRunSetConfig_PropertyChanged, propertyName: allProperties);
+                return;
+            }
+            if (string.Equals(nameof(RunSetConfig.IsVirtual), e.PropertyName))
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
+                });
+            }
+        }
+
+        private string GetToolTipForRunSetLabel()
+        {
+            if (mRunSetConfig.IsVirtual)
+            {
+                return $"{mRunSetConfig.Name} (Virtual)";
+            }
+            else
+            {
+                return mRunSetConfig.Name;
+            }
         }
 
         private void RunSetTags_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -1606,6 +1638,7 @@ namespace Ginger.Run
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunnersCombo, ComboBox.SelectedItemProperty, mRunSetConfig.GingerRunners, nameof(GingerRunner.Guid));
             }
         }
+
         public async void LoadRunSetConfig(RunSetConfig runSetConfig, bool runAsync = true, bool ViewMode = false)
         {
             try
@@ -1613,7 +1646,8 @@ namespace Ginger.Run
                 //show current Run set UI
                 xRunsetPageGrid.Visibility = Visibility.Visible;
 
-                bool isSolutionSame = mRunSetConfig != null && mRunSetConfig.ContainingFolderFullPath != null && mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName);
+                bool isSolutionSame = 
+                    mRunSetConfig != null && WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(mRunSetConfig.Guid) != null;
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {
@@ -1672,10 +1706,12 @@ namespace Ginger.Run
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    mRunSetConfig.AllowAutoSave = true;
+                    if (!mRunSetConfig.IsVirtual)
+                    {
+                        mRunSetConfig.AllowAutoSave = true;
+                    }
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
-                    mRunSetConfig.DirtyStatus = eDirtyStatus.NoChange;
                     if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null)
                     {
                         General.DoEvents();
@@ -1722,6 +1758,12 @@ namespace Ginger.Run
             }
 
             UpdateRunsetExecutionHistoryTabHeader();
+        }
+
+        public void RunSetExecutionHistoryPage_LoadRunset(RunSetConfig runset)
+        {
+            LoadRunSetConfig(runset);
+            RunTab.SelectedItem = xRunnersTab;
         }
 
         private void InitALMDefectsOpeningSection()
@@ -2334,8 +2376,8 @@ namespace Ginger.Run
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");
 
             int totalRunners = liteDbRunSet.RunnersColl.Count;
-            int totalPassed = liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Passed.ToString()).Count();
-            int totalExecuted = totalRunners - liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Pending.ToString() || runner.RunStatus == eRunStatus.Skipped.ToString() || runner.RunStatus == eRunStatus.Blocked.ToString()).Count();
+            int totalPassed = liteDbRunSet.RunnersColl.Count(runner => runner.RunStatus == eRunStatus.Passed.ToString());
+            int totalExecuted = totalRunners - liteDbRunSet.RunnersColl.Count(runner => runner.RunStatus == eRunStatus.Pending.ToString() || runner.RunStatus == eRunStatus.Skipped.ToString() || runner.RunStatus == eRunStatus.Blocked.ToString());
 
             liteDbRunSet.ExecutionRate = (totalExecuted * 100 / totalRunners).ToString();
             liteDbRunSet.PassRate = (totalPassed * 100 / totalRunners).ToString();
@@ -2344,8 +2386,8 @@ namespace Ginger.Run
             {
 
                 int totalBFs = liteDbRunner.BusinessFlowsColl.Count;
-                int totalPassedBFs = liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Passed.ToString()).Count();
-                int totalExecutedBFs = totalBFs - liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Pending.ToString() || bf.RunStatus == eRunStatus.Skipped.ToString() || bf.RunStatus == eRunStatus.Blocked.ToString()).Count();
+                int totalPassedBFs = liteDbRunner.BusinessFlowsColl.Count(bf => bf.RunStatus == eRunStatus.Passed.ToString());
+                int totalExecutedBFs = totalBFs - liteDbRunner.BusinessFlowsColl.Count(bf => bf.RunStatus == eRunStatus.Pending.ToString() || bf.RunStatus == eRunStatus.Skipped.ToString() || bf.RunStatus == eRunStatus.Blocked.ToString());
 
                 liteDbRunner.ExecutionRate = (totalExecutedBFs * 100 / totalBFs).ToString();
                 liteDbRunner.PassRate = (totalPassedBFs * 100 / totalExecutedBFs).ToString();
@@ -2353,8 +2395,8 @@ namespace Ginger.Run
                 foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
                 {
                     int totalActivities = liteDbBusinessFlow.ActivitiesColl.Count;
-                    int totalPassedActivities = liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
-                    int totalExecutedActivities = totalActivities - liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString()).Count();
+                    int totalPassedActivities = liteDbBusinessFlow.ActivitiesColl.Count(ac => ac.RunStatus == eRunStatus.Passed.ToString());
+                    int totalExecutedActivities = totalActivities - liteDbBusinessFlow.ActivitiesColl.Count(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString());
 
                     liteDbBusinessFlow.ExecutionRate = (totalExecutedActivities * 100 / totalActivities).ToString();
                     liteDbBusinessFlow.PassRate = (totalPassedActivities * 100 / totalExecutedActivities).ToString();
@@ -2362,8 +2404,8 @@ namespace Ginger.Run
                     foreach (LiteDbActivity liteDbActivity in liteDbBusinessFlow.ActivitiesColl)
                     {
                         int totalActions = liteDbActivity.ActionsColl.Count;
-                        int totalPassedActions = liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
-                        int totalExecutedActions = totalActions - liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString()).Count();
+                        int totalPassedActions = liteDbActivity.ActionsColl.Count(ac => ac.RunStatus == eRunStatus.Passed.ToString());
+                        int totalExecutedActions = totalActions - liteDbActivity.ActionsColl.Count(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString());
 
                         liteDbActivity.ExecutionRate = (totalExecutedActions * 100 / totalActions).ToString();
                         liteDbActivity.PassRate = (totalPassedActions * 100 / totalExecutedActions).ToString();
@@ -3249,6 +3291,26 @@ namespace Ginger.Run
 
             GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration(mRunSetConfig);
             selfHealingConfiguration.ShowAsWindow();
+        }
+
+        private sealed class BoolToRunsetLabelColorValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value is bool boolValue && boolValue)
+                {
+                    return (SolidColorBrush)Application.Current.Resources["$HighlightColor_LightBlue"];
+                }
+                else
+                {
+                    return (SolidColorBrush)Application.Current.Resources["$SelectionColor_Pink"];
+                }
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

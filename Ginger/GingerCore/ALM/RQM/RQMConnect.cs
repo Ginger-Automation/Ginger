@@ -216,7 +216,7 @@ namespace GingerCore.ALM.RQM
                     {
                         XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
 
-                        FileStream fs = new FileStream(importConfigTemplate, FileMode.Open);
+                        FileStream fs = new FileStream(importConfigTemplate, FileMode.Open,FileAccess.Read);
                         reader = XmlReader.Create(fs);
                         RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
                         fs.Close();
@@ -326,7 +326,7 @@ namespace GingerCore.ALM.RQM
                             try //skip result incase of error, defect #5164
                             {
                                 XmlDocument doc = new XmlDocument();
-                                doc.LoadXml(!string.IsNullOrEmpty(responseData.responseText) ? responseData.responseText : string.Empty);
+                                doc.LoadXml(responseData.responseText);
                                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(reader.NameTable);
                                 currentRQMProjectMapping.RQMTestPlansListMapping.RQMNameSpaces.RQMNameSpaceList.ForEach(y => nsmgr.AddNamespace(y.RQMNameSpacePrefix, y.RQMNameSpaceName));
                                 XmlNode responseDataNode = doc.DocumentElement;

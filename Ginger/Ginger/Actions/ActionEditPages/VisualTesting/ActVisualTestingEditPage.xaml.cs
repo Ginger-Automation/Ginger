@@ -301,10 +301,6 @@ namespace Ginger.Actions.VisualTesting
                     EngineConfigFrame.ClearAndSetContent(mVRtComparisonPage);
                     xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
 
-                    if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl) || string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey) || string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.Project))
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please check VRT configuration. From Configurations -> External Integrations -> VRT configurations");
-                    }
                     break;
                 default:
                     EngineConfigFrame.ClearAndSetContent(null);

@@ -327,7 +327,7 @@ namespace Ginger.BusinessFlowPages
                     Activity activityIns = null;
                     if (!IsPomActivity)
                     {
-                        activityIns = (Activity)sharedActivity.CreateInstance(true);
+                        activityIns = Activity.CopySharedRepositoryActivity(sharedActivity, originFromSharedRepository: true);
                         if (copyAsLink)
                         {
                             activityIns.Type = eSharedItemType.Link;
@@ -335,14 +335,13 @@ namespace Ginger.BusinessFlowPages
                     }
                     else
                     {
-                        activityIns = (Activity)sharedActivity.CreateInstance(false);
+                        activityIns = Activity.CopySharedRepositoryActivity(sharedActivity, originFromSharedRepository: false);
                         activityIns.IsAutoLearned = true;
                     }
                     activityIns.Active = true;
 
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
-                    businessFlow.SetActivityTargetApplication(activityIns);
                     if (insertIndex >= 0 && insertIndex < businessFlow.ActivitiesGroups.Count)
                     {
                         //QUESTION: Why do we have to move activity group?

@@ -273,25 +273,51 @@ namespace Ginger.ALM.Repository
                     try
                     {
                         BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == selectedTS.Key);
-                        if (existedBF != null)
+                        JiraTestSet jiraImportedTSData = ((JiraCore)this.AlmCore).GetJiraTestSetData(selectedTS);
+                        if (existedBF == null)
                         {
-                            Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, selectedTS.Name);
+
+                            Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, selectedTS.Name);
+                            SetImportedTS(jiraImportedTSData, importDestinationPath);
+                        }
+                        else
+                        {
+                            Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists,selectedTS.Name);
                             if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                             {
-                                File.Delete(existedBF.FileName);
+                                if (File.Exists(existedBF.FilePath))
+                                {
+
+                                    File.Delete(existedBF.FilePath);
+
+
+                                    Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, selectedTS.Name);
+
+                                    SetImportedTS(jiraImportedTSData, importDestinationPath);
+
+                                }
+                                else
+                                {
+                                    Reporter.ToUser(eUserMsgKey.TestSetsNotExist);
+                                }
+
+
+                                Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
+                            }
+                            else if(userSelection == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                            {
+                                SetImportedTS(jiraImportedTSData, importDestinationPath);
+
+                                Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
                             }
                         }
-                        Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, selectedTS.Name);
-                        JiraTestSet jiraImportedTSData = ((JiraCore)this.AlmCore).GetJiraTestSetData(selectedTS);
 
-                        SetImportedTS(jiraImportedTSData, importDestinationPath);
                     }
                     catch (Exception ex)
                     {
                         Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, selectedTS.Name, ex.Message);
                     }
                 }
-                Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
                 return true;
             }
             return false;

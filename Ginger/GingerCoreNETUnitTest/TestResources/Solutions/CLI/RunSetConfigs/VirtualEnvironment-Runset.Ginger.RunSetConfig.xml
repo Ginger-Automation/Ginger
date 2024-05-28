@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="3256a43f-9ab0-42ec-82a1-0259cc895230" ItemType="RunSetConfig" CreatedBy="manaska" Created="202404211553" GingerVersion="3.6.0.0" Version="3" LastUpdateBy="manaska" LastUpdate="202404211641" />
+<RunSetConfig Guid="3256a43f-9ab0-42ec-82a1-0259cc895230" Name="VirtualEnvironment-Runset" ParentGuid="00000000-0000-0000-0000-000000000000" SealightsTestRecommendations="No">
+<CategoriesDefinitions>
+<SolutionCategoryDefinition Category="Product" Guid="f3243358-cb22-4a9f-98b1-545529e834fe" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="TestType" Guid="100b04aa-ea3f-4a62-87a3-22425d80ae95" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="Release" Guid="40f1743f-6c56-4230-a42d-37b4957a86dc" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="Iteration" Guid="4deeca39-ffa8-4396-83a3-7038a8cb1e73" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="BusinessProcessTag" Guid="30c76952-9cd2-4ebb-b611-ac2851286d48" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="SubBusinessProcessTag" Guid="6cecf935-34c3-400a-9324-9b6f204bd188" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="UserCategory1" Guid="e66b6665-7322-45c8-908e-c8c18ff11c22" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="UserCategory2" Guid="f0773a69-7969-4297-911d-89631d91d75c" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="UserCategory3" Guid="c67e0556-05b4-4440-8bb4-ac1f49d60ffe" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+</CategoriesDefinitions>
+
+<GingerRunners>
+<GingerRunner Guid="f144d56a-23f4-43d0-b7e6-d50af2746f47" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
+<ApplicationAgents>
+<ApplicationAgent AgentID="bdcdb5d7-4166-4cb8-a937-8789d58e8e2f" AgentName="IE" AppID="e514fcc7-9e32-40c4-badf-845930479277" AppName="app1" Guid="9e1a6c2e-89c5-45ef-ae18-ffb835fc2c01" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="d83ba6ac-29a3-4664-8d2a-17a6164e0f1e" BusinessFlowInstanceGuid="fedcba0f-4d0e-4d70-ac6c-2d7ca32d1eaa" BusinessFlowIsActive="True" BusinessFlowName="RDBMS_Flow" Guid="8115376e-3689-4119-afba-25f40cb1da7b" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</BusinessFlowsRunList>
+</GingerRunner>
+</GingerRunners>
+
+<SelfHealingConfiguration>
+<SelfHealingConfig EnableSelfHealing="True" Guid="9793cedc-9529-4620-9fd4-c82392652547" ParentGuid="00000000-0000-0000-0000-000000000000" ReprioritizePOMLocators="True" />
+</SelfHealingConfiguration>
+</RunSetConfig></GingerRepositoryItem>

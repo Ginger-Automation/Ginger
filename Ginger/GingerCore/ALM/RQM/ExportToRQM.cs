@@ -111,12 +111,28 @@ namespace GingerCore.ALM.RQM
             string bfExportedID = GetExportedIDString(businessFlow.ExternalIdCalCulated, "RQMID");
             if (string.IsNullOrEmpty(bfExportedID) || bfExportedID.Equals("0"))
             {
-                result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} is missing ExternalID, cannot export RQM TestPlan execution results without External ID";
+                if(businessFlow.ALMTestSetLevel == "RunSet")
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name} is missing ExternalID, cannot export RQM TestPlan execution results without External ID";
+                }
+                else
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} is missing ExternalID, cannot export RQM TestPlan execution results without External ID";
+                }
+                
                 return false;
             }
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
-                result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
+                if(businessFlow.ALMTestSetLevel == "RunSet")
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name} Must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
+                }
+                else
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
+                }
+                
                 return false;
             }
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };            
@@ -321,12 +337,28 @@ namespace GingerCore.ALM.RQM
 
                         if (resultInfo.ErrorCode == 0)
                         {
-                            result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Execution results published to RQM successfully.";
+                            if(businessFlow.ALMTestSetLevel == "RunSet")
+                            {
+                                result = $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name} Execution results published to RQM successfully.";
+                            }
+                            else
+                            {
+                                result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Execution results published to RQM successfully.";
+                            }
+                            
                             return true;
                         }
                         else
                         {
-                            result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Execution results failed to publist to RQM due to {resultInfo.ErrorDesc}";
+                            if (businessFlow.ALMTestSetLevel == "RunSet")
+                            {
+                                result = $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name} Execution results failed to publist to RQM due to {resultInfo.ErrorDesc}";
+                            }
+                            else
+                            {
+                                result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Execution results failed to publist to RQM due to {resultInfo.ErrorDesc}";
+                            }
+                                
                             Reporter.ToLog(eLogLevel.ERROR, $"Failed to export execution details to RQM/ALM due to {resultInfo.ErrorDesc}");
                             return false;
                         }
@@ -456,8 +488,16 @@ namespace GingerCore.ALM.RQM
 
                     if (string.IsNullOrEmpty(TestCaseVersionUrl))
                     {
-                        result = $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}";
-                        Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}");
+                        if (businessFlow.ALMTestSetLevel == "RunSet")
+                        {
+                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: Test case with id {testCaseId} is not available under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}, Hence execution result is not published for this execution";
+                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: Test case with id {testCaseId} is not available under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}, Hence execution result is not published for this execution");
+                        }
+                        else
+                        {
+                            result = $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: Test case with id {testCaseId} is not available under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}, Hence execution result is not published for this execution";
+                            Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: Test case with id {testCaseId} is not available under Test Plan {businessFlow.Name} Test Plan Id: {businessFlow.ExternalID}, Hence execution result is not published for this execution");
+                        }
                         return null;
                     }
                     RQMConnect.Instance.GetExecutionRecordsByTestCase(loginData, reader, currentRQMProjectMapping, RQMCore.ALMProjectGroupName, RQMCore.ALMProjectGuid, testPlan.URLPathVersioned, TestCaseVersionUrl, ref exeRecordId);
@@ -475,8 +515,17 @@ namespace GingerCore.ALM.RQM
 
                 if (string.IsNullOrEmpty(exeRecordId) || exeRecordId.Equals("0"))
                 {
-                    result = $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}, cannot export RQM TestPlan execution results without it. Please check configured External Id.";
-                    Reporter.ToLog(eLogLevel.ERROR, $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}, cannot export RQM TestPlan execution results without it. Please check configured External Id.");
+                    if (businessFlow.ALMTestSetLevel == "RunSet")
+                    {
+                        result = $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name}, cannot export RQM TestPlan execution results without it. Please check configured External Id.";
+                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {businessFlow.Name}, cannot export RQM TestPlan execution results without it. Please check configured External Id.");
+                    }
+                    else
+                    {
+                        result = $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}, cannot export RQM TestPlan execution results without it. Please check configured External Id.";
+                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}, cannot export RQM TestPlan execution results without it. Please check configured External Id.");
+                    }
+                        
                     return null;
                 }
 
@@ -702,7 +751,19 @@ namespace GingerCore.ALM.RQM
 
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
-                throw new Exception($"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}");
+                if(businessFlow.ALMTestSetLevel == "RunSet")
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)} must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
+                    Reporter.ToLog(eLogLevel.ERROR, $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)} must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}");
+                    return false;
+                }
+                else
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
+                    Reporter.ToLog(eLogLevel.ERROR, $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}");
+                    return false;
+                }
+                
             }
 
             ResultInfo resultInfo;
@@ -728,8 +789,17 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                result = $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} to RQM/ALM {ex.Message}";
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} to RQM/ALM", ex);
+                if(businessFlow.ALMTestSetLevel == "RunSet")
+                {
+                    result = $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.RunSet)} to RQM/ALM {ex.Message}";
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.RunSet)} to RQM/ALM", ex);
+                }
+                else
+                {
+                    result = $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} to RQM/ALM {ex.Message}";
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} to RQM/ALM", ex);
+                }
+                
                 return false;
             }
 
@@ -746,6 +816,10 @@ namespace GingerCore.ALM.RQM
                     else
                     {
                         businessFlow.ExternalIdCalCulated = $"RQMID={plan.ExportedID.ToString()}";
+                        if(plan.ALMTestSetLevel == "RunSet")
+                        {
+                            businessFlow.ExternalID = $"RQMID={plan.ExportedID.ToString()}";
+                        }
                     }
 
                     int ActivityGroupCounter = 0;
@@ -783,6 +857,10 @@ namespace GingerCore.ALM.RQM
                             else
                             {
                                 businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalIdCalculated = ActivityGroupID;
+                                if (plan.ALMTestSetLevel == "RunSet")
+                                {
+                                    businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
+                                }
                             }
                             foreach (ACL_Data_Contract.ActivityStep activityStep in act.ActivityData.ActivityStepsColl)
                             {
@@ -800,8 +878,17 @@ namespace GingerCore.ALM.RQM
             }
             else
             {
-                result = $"Failed to export the{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} to RQM/ALM, {resultInfo.ErrorDesc}";
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} to RQM/ALM, {resultInfo.ErrorDesc}");
+                if(businessFlow.ALMTestSetLevel == "RunSet")
+                {
+                    result = $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.RunSet)} to RQM/ALM, {resultInfo.ErrorDesc}";
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.RunSet)} to RQM/ALM, {resultInfo.ErrorDesc}");
+                }
+                else
+                {
+                    result = $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} to RQM/ALM, {resultInfo.ErrorDesc}";
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to export the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} to RQM/ALM, {resultInfo.ErrorDesc}");
+                }
+                
                 return false;
             }
             return false;
@@ -832,7 +919,8 @@ namespace GingerCore.ALM.RQM
 
             testPlan.EntityName = businessFlow.Name;
             testPlan.EntityDesc = businessFlow.Description == null ? "" : businessFlow.Description;
-
+            testPlan.IsEntitySearchByName = businessFlow.IsEntitySearchByName;
+            testPlan.ALMTestSetLevel = businessFlow.ALMTestSetLevel;
             List<TestSuite> testSuites = new List<TestSuite>();
             if (ALMCore.DefaultAlmConfig.IsTestSuite == "True")
             {

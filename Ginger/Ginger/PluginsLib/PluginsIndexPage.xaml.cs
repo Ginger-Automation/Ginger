@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -170,16 +171,25 @@ namespace Ginger.PlugInsWindows
             }
             Task.Factory.StartNew(() =>
             {
-                WorkSpace.Instance.PlugInsManager.InstallPluginPackage(onlinePluginPackage, release);
-                onlinePluginPackage.Status = "Installed";
-            }).ContinueWith((a) =>
-            {
-                Dispatcher.Invoke(() =>
+                try
                 {
-                    xProcessingImage.Visibility = Visibility.Collapsed;
-                    xInstallButton.ButtonText = "Install";
-                    xInstalledVersion.Text = onlinePluginPackage.CurrentPackage;
-                });
+                    WorkSpace.Instance.PlugInsManager.InstallPluginPackage(onlinePluginPackage, release);
+                    onlinePluginPackage.Status = "Installed";
+                }
+                catch (Exception ex)
+                {
+                    onlinePluginPackage.Status = "Error in installation,Please check error logs";
+                    throw;
+                }
+                finally
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        xProcessingImage.Visibility = Visibility.Collapsed;
+                        xInstallButton.ButtonText = "Install";
+                        xInstalledVersion.Text = onlinePluginPackage.CurrentPackage;
+                    });
+                }
             });
             xInstalledSection.Visibility = Visibility.Visible;
 
@@ -210,7 +220,15 @@ namespace Ginger.PlugInsWindows
         private void UninstallPlugin()
         {
             OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
-            WorkSpace.Instance.PlugInsManager.UninstallPluginPackage(pluginPackageInfo);
+            PluginPackage pluginPackage = WorkSpace.Instance.PlugInsManager.GetPluginPackageById(pluginPackageInfo.Id);
+            if (pluginPackage != null)
+            {
+                WorkSpace.Instance.PlugInsManager.UninstallPluginPackage(pluginPackage);
+            }
+            else
+            {
+                GetPluginsList();
+            }
             pluginPackageInfo.Status = string.Empty;
             pluginPackageInfo.CurrentPackage = string.Empty;
         }

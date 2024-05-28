@@ -36,6 +36,7 @@ using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.CodeAnalysis;
 namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
@@ -43,7 +44,7 @@ namespace GingerCore
 
         public BusinessFlow()
         {
-
+            AllowAutoSave = true;
         }
 
         public BusinessFlow(string sName)
@@ -59,6 +60,7 @@ namespace GingerCore
             Activities.Add(a);
             Activities.CurrentItem = a;
             CurrentActivity = a;
+            AllowAutoSave = true;
         }
 
         public override string ToString()
@@ -828,6 +830,12 @@ namespace GingerCore
             {
                 CurrentActivity = activity;
             }
+
+            if (!string.IsNullOrEmpty(activity.TargetApplication) && !TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(activity.TargetApplication)))
+            {                
+                TargetApplications.Add(GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications().FirstOrDefault(f=>f.Name.Equals(activity.TargetApplication)));
+            }
+
         }
 
         public void AddVariable(VariableBase v, int insertIndex = -1)
@@ -1105,7 +1113,7 @@ namespace GingerCore
 
                     if (sharedActivity != null)
                     {
-                        Activity copyItem = (Activity)sharedActivity.CreateInstance(true);
+                        Activity copyItem = Activity.CopySharedRepositoryActivity(sharedActivity, originFromSharedRepository: true);
                         copyItem.Guid = this.Activities[i].Guid;
                         copyItem.ActivitiesGroupID = this.Activities[i].ActivitiesGroupID;
                         copyItem.Type = this.Activities[i].Type;
@@ -1140,7 +1148,9 @@ namespace GingerCore
                 foreach (Act act in a.Acts)
                 {
                     if (act.ReturnValues != null)
-                        i += act.ReturnValues.Select(k => (!string.IsNullOrEmpty(k.Expected))).Count();
+                    {
+                        i += act.ReturnValues.Count(k => !string.IsNullOrEmpty(k.Expected));
+                    }
                 }
             }
 
@@ -1440,13 +1450,6 @@ namespace GingerCore
             return lst;
         }
 
-        public void SetActivityTargetApplication(Activity activity)
-        {
-            if (TargetApplications.FirstOrDefault(x => x.Name == activity.TargetApplication) == null)
-            {
-                activity.TargetApplication = this.MainApplication;
-            }
-        }
 
         public override string ItemName
         {
@@ -1874,6 +1877,14 @@ namespace GingerCore
             }
         }
 
+        public Action DynamicPostSaveHandler;
+
+        public override void PostSaveHandler()
+        {
+            base.PostSaveHandler();
+            DynamicPostSaveHandler?.Invoke();
+        }
+
         public bool MarkActivityAsLink(Guid activityGuid, Guid parentGuid)
         {
             if (Activities.Any(act => act.Guid == activityGuid))
@@ -1922,5 +1933,8 @@ namespace GingerCore
                 ExternalIdCalCulated = ve.ValueCalculated;
             }
         }
+        public string ALMTestSetLevel { get; set; }
+
+        public bool IsEntitySearchByName { get; set; }
     }
 }

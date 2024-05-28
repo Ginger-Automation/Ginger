@@ -93,6 +93,7 @@ namespace Ginger.Reports
             }
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralExecutionLoggerExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExecutionHandlerSettingsExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
 
             if (_selectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
             {
@@ -102,7 +103,7 @@ namespace Ginger.Reports
                 xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish), xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
-
+            xUploadArtifactsButton.Init(typeof(ExecutionLoggerConfiguration.eUploadExecutionArtifactsToCentralizedReport), xUploadArtifactsPanel, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.UploadArtifactsToCentralizedReport));
 
         }
 

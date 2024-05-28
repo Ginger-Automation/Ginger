@@ -20,10 +20,14 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
+using Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.VisualStudio.Services.Common;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,36 +39,42 @@ namespace Ginger.Environments
     /// </summary>
     public partial class AppsListPage : GingerUIPage
     {
-        public ProjEnvironment AppEnvironmnet { get; set; }
+        public ProjEnvironment AppEnvironment { get; set; }
         public AppsListPage(ProjEnvironment env)
         {
             InitializeComponent();
 
-            AppEnvironmnet = env;
-            CurrentItemToSave = AppEnvironmnet;
+            AppEnvironment = env;
+            CurrentItemToSave = AppEnvironment;
             //Set grid look and data
             SetGridView();
             SetGridData();
 
             BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
             EnvNameTextBox.AddValidationRule(new EnvironemntNameValidationRule());
-            xShowIDUC.Init(AppEnvironmnet);
-            BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, AppEnvironmnet, nameof(RepositoryItemBase.Publish));
+            xShowIDUC.Init(AppEnvironment);
+            BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, AppEnvironment, nameof(RepositoryItemBase.Publish));
 
             InitReleaseComboBox();
 
             grdApps.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddApp));
             grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));
 
-            TagsViewer.Init(AppEnvironmnet.Tags);
+            TagsViewer.Init(AppEnvironment.Tags);
         }
 
         private void AddApp(object sender, RoutedEventArgs e)
         {
-            EnvApplication app = new EnvApplication();
-            app.Name = "New";
-            app.Active = true;
-            AppEnvironmnet.Applications.Add(app);
+            var ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !AppEnvironment.CheckIfApplicationPlatformExists(app.Guid, app.AppName))?.ToList();
+
+            ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
+
+            EnvironmentApplicationList applicationList = new(DisplayedApplicationPlatforms);
+            applicationList.ShowAsWindow();
+
+            IEnumerable<ApplicationPlatform> SelectedApplications = DisplayedApplicationPlatforms.Where((displayedApp) => displayedApp.Selected);
+
+            AppEnvironment.AddApplications(SelectedApplications);
         }
 
         #region Functions
@@ -72,13 +82,13 @@ namespace Ginger.Environments
         private void InitReleaseComboBox()
         {
             ObservableList<SolutionCategoryValue> combList = SolutionGeneral.SolutionOperations.GetSolutionReleaseValues();
-            xReleaseCombobox.BindControl(AppEnvironmnet, nameof(ProjEnvironment.ReleaseVersion), combList, nameof(SolutionCategoryValue.Value), nameof(SolutionCategoryValue.Guid));
-            BindingHandler.ObjFieldBinding(xReleaseCombobox, ComboBox.SelectedValueProperty, AppEnvironmnet, nameof(ProjEnvironment.ReleaseVersion));
+            xReleaseCombobox.BindControl(AppEnvironment, nameof(ProjEnvironment.ReleaseVersion), combList, nameof(SolutionCategoryValue.Value), nameof(SolutionCategoryValue.Guid));
+            BindingHandler.ObjFieldBinding(xReleaseCombobox, ComboBox.SelectedValueProperty, AppEnvironment, nameof(ProjEnvironment.ReleaseVersion));
         }
         private void SetGridView()
         {
             //Set the grid name
-            grdApps.Title = $"'{AppEnvironmnet.Name}' Environment Applications";
+            grdApps.Title = $"'{AppEnvironment.Name}' Environment Applications";
             grdApps.SetTitleLightStyle = true;
 
             //Set the Tool Bar look
@@ -89,12 +99,11 @@ namespace Ginger.Environments
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Active), WidthWeight = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Platform), Header="Platform Type",WidthWeight = 100 });
+
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Description), WidthWeight = 200 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Vendor), WidthWeight = 50 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.CoreVersion), WidthWeight = 100, Header = "Core Version" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.CoreProductName), WidthWeight = 150, Header = "Core Product Name" });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.AppVersion), WidthWeight = 150, Header = "Application Version" });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Url), WidthWeight = 100, Header = "URL" });
 
@@ -104,7 +113,8 @@ namespace Ginger.Environments
 
         private void SetGridData()
         {
-            grdApps.DataSourceList = AppEnvironmnet.Applications;
+            AppEnvironment.Applications.ForEach((app) => app.SetDataFromAppPlatform(WorkSpace.Instance.Solution.ApplicationPlatforms));
+            grdApps.DataSourceList = AppEnvironment.Applications;
         }
 
         private void AddAppsToOtherEnvironments(object sender, RoutedEventArgs e)
@@ -118,10 +128,11 @@ namespace Ginger.Environments
                     ObservableList<ProjEnvironment> envs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
                     foreach (ProjEnvironment env in envs)
                     {
-                        if (env != AppEnvironmnet)
+                        if (env != AppEnvironment)
                         {
                             if (env.Applications.FirstOrDefault(x => x.Name == ((EnvApplication)obj).Name) == null)
                             {
+                                env.StartDirtyTracking();
                                 EnvApplication app = (EnvApplication)(((RepositoryItemBase)obj).CreateCopy());
                                 env.Applications.Add(app);
                                 appsWereAdded = true;

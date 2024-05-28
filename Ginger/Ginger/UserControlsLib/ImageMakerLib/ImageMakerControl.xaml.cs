@@ -17,7 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Enums;
-using FontAwesome5;
+using FontAwesome6;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -198,6 +198,10 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.SaveGradient:
                     SetAsStaticImage("save-regular-amdocs-gradient.svg");
                     break;
+                case eImageType.Environment:
+                    //SetAsStaticImage("Environment.ico");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_LayerGroup);
+                    break;
                 case eImageType.Chatbot:
                     SetAsStaticImage("bot.png");
                     break;
@@ -216,8 +220,10 @@ namespace Amdocs.Ginger.UserControls
                 #region Repository Items Images
                 //############################## Repository Items Images:
                 case eImageType.Solution:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Flask);
+                    break;
                 case eImageType.ApplicationModel:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ThLarge);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TableCellsLarge);
                     break;
                 case eImageType.BusinessFlow:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Sitemap);
@@ -235,21 +241,20 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_User);
                     break;
                 case eImageType.RunSet:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_PlayCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CirclePlay);
                     break;
                 case eImageType.APIModel:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExchangeAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowRightArrowLeft);
                     break;
                 case eImageType.Runner:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_PlayCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CirclePlay);
                     break;
                 case eImageType.Operations:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cogs);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Gears);
                     break;
                 case eImageType.Settings:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cogs);//Gears
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Gears);//Gears
                     break;
-                case eImageType.Environment:
                 case eImageType.Globe:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Globe);
                     break;
@@ -281,7 +286,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Building:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Building);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Building);
                     break;
                 #endregion
 
@@ -298,7 +303,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Key);
                     break;
                 case eImageType.Random:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Random);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Shuffle);
                     break;
                 case eImageType.Sequence:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AlignJustify);
@@ -312,13 +317,13 @@ namespace Amdocs.Ginger.UserControls
                 #region Execution Status Images
                 //############################## Execution Status Images:
                 case eImageType.Passed:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0 , "Passed");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleCheck, (SolidColorBrush)FindResource("$PassedStatusColor"), 0 , "Passed");
                     break;
                 case eImageType.Unknown:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_QuestionCircle, null, 0, "Unknown");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleQuestion, null, 0, "Unknown");
                     break;
                 case eImageType.Failed:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleXmark, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
                     break;
                 case eImageType.Pending:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Clock, (SolidColorBrush)FindResource("$PendingStatusColor"), 0, "Pending");
@@ -336,25 +341,25 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ThumbsUp, (SolidColorBrush)FindResource("$PendingStatusColor"));
                     break;
                 case eImageType.Stopped:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_StopCircle, (SolidColorBrush)FindResource("$StoppedStatusColor"), 0, "Stopped");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleStop, (SolidColorBrush)FindResource("$StoppedStatusColor"), 0, "Stopped");
                     break;
                 case eImageType.Blocked:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Ban, (SolidColorBrush)FindResource("$BlockedStatusColor"), 0,"Blocked");
                     break;
                 case eImageType.Skipped:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MinusCircle, (SolidColorBrush)FindResource("$SkippedStatusColor"), 0, "Skipped");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CircleMinus, (SolidColorBrush)FindResource("$SkippedStatusColor"), 0, "Skipped");
                     break;
                 case eImageType.Running:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Spinner, (SolidColorBrush)FindResource("$RunningStatusColor"), 2, "Running");
                     break;
                 case eImageType.Mapped:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleCheck);
                     break;
                 case eImageType.Partial:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TriangleExclamation);
                     break;
                 case eImageType.UnMapped:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_TimesCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleStop);
                     break;
                 #endregion
 
@@ -365,16 +370,16 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Plus);
                     break;
                 case eImageType.Refresh:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SyncAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsRotate);
                     break;
                 case eImageType.Config:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cog);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Gear);
                     break;
                 case eImageType.Edit:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PencilAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Pencil);
                     break;
                 case eImageType.Save:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Save);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FloppyDisk);
                     break;
                 case eImageType.Reply:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Reply);
@@ -384,34 +389,34 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Play);
                     break;
                 case eImageType.RunSingle:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PlayCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CirclePlay);
                     break;
                 case eImageType.RunAll:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_PlayCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CirclePlay);
                     break;
                 case eImageType.Stop:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Stop);
                     break;
                 case eImageType.StopAll:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_StopCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleStop);
                     break;
                 case eImageType.Close:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowClose);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Xmark);
                     break;
                 case eImageType.Close2:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Xmark);
                     break;
                 case eImageType.CloseWhite:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times, Brushes.White);
                     break;
                 case eImageType.Continue:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FastForward);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ForwardFast);
                     break;
                 case eImageType.Open:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FolderOpen);
                     break;
                 case eImageType.New:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Magic);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_WandMagicSparkles);
                     break;
                 case eImageType.Analyze:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Stethoscope);
@@ -426,13 +431,13 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FlagCheckered);
                     break;
                 case eImageType.Cancel:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowClose);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Xmark);
                     break;
                 case eImageType.Reset:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Retweet);
                     break;
                 case eImageType.Undo:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UndoAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_RotateLeft);
                     break;
                 case eImageType.Simulate:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Android);
@@ -441,13 +446,13 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Copy);
                     break;
                 case eImageType.Cut:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cut);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Scissors);
                     break;
                 case eImageType.Paste:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Paste);
                     break;
                 case eImageType.Delete:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TrashAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TrashCan);
                     break;
                 case eImageType.DeleteSingle:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Minus);
@@ -468,7 +473,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowDown);
                     break;
                 case eImageType.MoveUpDown:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsAltV);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsUpDown);
                     break;
                 case eImageType.Reorder:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_FirstOrder);
@@ -477,22 +482,22 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Retweet);
                     break;
                 case eImageType.Automate:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cogs);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Gears);
                     break;
                 case eImageType.Convert:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExchangeAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowRightArrowLeft);
                     break;
                 case eImageType.ParallelExecution:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Random);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Shuffle);
                     break;
                 case eImageType.SequentialExecution:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SortNumericDown);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowDown19);
                     break;
                 case eImageType.Search:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Search);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MagnifyingGlass);
                     break;
                 case eImageType.Duplicate:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_File);
                     break;
                 case eImageType.Merge:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ObjectGroup);
@@ -505,7 +510,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Link, Brushes.Orange);
                     break;
                 case eImageType.UnSync:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Unlink);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_LinkSlash);
                     break;
                 case eImageType.Visible:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Eye);
@@ -518,10 +523,10 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Download:
                 case eImageType.GetLatest:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CloudDownloadAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CloudArrowDown);
                     break;
                 case eImageType.CheckIn:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CloudUploadAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CloudArrowUp);
                     break;
                 case eImageType.Upload:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Upload);
@@ -533,10 +538,10 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ChevronUp);
                     break;
                 case eImageType.ExpandAll:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDoubleDown);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AnglesDown);
                     break;
                 case eImageType.CollapseAll:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDoubleUp);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AnglesUp);
                     break;
                 case eImageType.ActiveAll:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Check);
@@ -545,31 +550,31 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Expand);
                     break;
                 case eImageType.Export:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ShareAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Share);
                     break;
                 case eImageType.ImportFile:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Download);
                     break;
                 case eImageType.Times:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Xmark);
                     break;
                 case eImageType.Times_Red:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times, (SolidColorBrush)FindResource("$HighlightColor_Red"), 0, "ToolTip");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Xmark, (SolidColorBrush)FindResource("$HighlightColor_Red"), 0, "ToolTip");
                     break;
                 case eImageType.Exchange:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExchangeAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowRightArrowLeft);
                     break;
                 case eImageType.Share:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ShareAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Share);
                     break;
                 case eImageType.ShareExternal:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ShareAltSquare);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ShareFromSquare);
                     break;
                 case eImageType.Filter:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Filter);
                     break;
                 case eImageType.Upgrade:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowCircleUp);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CircleUp);
                     break;
                 case eImageType.Recover:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Recycle);
@@ -584,37 +589,37 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Retweet);
                     break;
                 case eImageType.Warn:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TriangleExclamation);
                     break;
                 case eImageType.HighWarn:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle, Brushes.Red);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TriangleExclamation, Brushes.Red);
                     break;
                 case eImageType.MediumWarn:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle, Brushes.Orange);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TriangleExclamation, Brushes.Orange);
                     break;
                 case eImageType.LowWarn:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle, Brushes.Yellow);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TriangleExclamation, Brushes.Yellow);
                     break;
                 case eImageType.EditWindow:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Edit);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PenToSquare);
                     break;
                 case eImageType.CLI:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExternalLinkAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowUpRightFromSquare);
                     break;
                 case eImageType.WindowRestore:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowRestore);
                     break;
                 case eImageType.SelfHealing:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Magic);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_WandMagicSparkles);
                     break;
                 case eImageType.Rules:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Gavel);
                     break;
                 case eImageType.AdminUser:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserCog, Brushes.OrangeRed);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserGear, Brushes.OrangeRed);
                     break;
                 case eImageType.NormalUser:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserCog);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserGear);
                     break;
                 #endregion
 
@@ -635,10 +640,10 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Robot);
                     break;
                 case eImageType.Parameter:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SlidersH);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Sliders);
                     break;
                 case eImageType.File:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_File);
                     break;
                 case eImageType.Folder:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Folder);
@@ -647,7 +652,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FolderOpen);
                     break;
                 case eImageType.EllipsisH:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_EllipsisH);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Ellipsis);
                     break;
                 case eImageType.ListGroup:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ListUl);
@@ -671,13 +676,13 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ToggleOff);
                     break;
                 case eImageType.History:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_History);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ClockRotateLeft);
                     break;
                 case eImageType.ChevronDown:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ChevronCircleDown);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CircleChevronDown);
                     break;
                 case eImageType.Question:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_QuestionCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleQuestion);
                     break;
                 case eImageType.Help:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_LifeRing);
@@ -686,7 +691,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Desktop);
                     break;
                 case eImageType.Info:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_InfoCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CircleInfo);
                     break;
                 case eImageType.Service:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Headphones);
@@ -704,7 +709,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Plus, Brushes.Green, toolTip: "New");
                     break;
                 case eImageType.SourceControlModified:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PencilAlt, Brushes.OrangeRed, toolTip: "Modified");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Pencil, Brushes.OrangeRed, toolTip: "Modified");
                     break;
                 case eImageType.SourceControlDeleted:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Minus, Brushes.Red, toolTip: "Deleted");
@@ -719,10 +724,10 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Lock, Brushes.SaddleBrown, toolTip: "Locked by You");
                     break;
                 case eImageType.SourceControlError:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationCircle, Brushes.Red, toolTip: "Error in checking status");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CircleExclamation, Brushes.Red, toolTip: "Error in checking status");
                     break;
                 case eImageType.Check:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleCheck);
                     break;
                 case eImageType.Bug:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bug);
@@ -739,8 +744,26 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.ExcelFile:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileExcel);
                     break;
+                case eImageType.WordFile:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FileWord);
+                    break;
+                case eImageType.FileXML:
+                    SetAsStaticImage("xml.png");
+                    break;
+                case eImageType.FileJSON:
+                    SetAsStaticImage("json.png");
+                    break;
+                case eImageType.FileJavascript:
+                    SetAsStaticImage("javascript.png");
+                    break;
+                case eImageType.FilePowerpoint:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FilePowerpoint);
+                    break;
+                case eImageType.FileArchive:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FileZipper);
+                    break;
                 case eImageType.PlusSquare:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_PlusSquare);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_SquarePlus);
                     break;
                 case eImageType.Wrench:
                 case eImageType.Fix:
@@ -761,31 +784,31 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowRight);
                     break;
                 case eImageType.User:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_UserCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleUser);
                     break;
                 case eImageType.UserProfile:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserMd);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserDoctor);
                     break;
                 case eImageType.Forum:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Comment);
                     break;
                 case eImageType.Website:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Laptop);
-                    break;
+                    break;               
                 case eImageType.Beta:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Android, Brushes.Orange);
                     break;
                 case eImageType.Error:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_TimesCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleXmark);
                     break;
                 case eImageType.Coffee:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MugHot, Brushes.Red);
                     break;
                 case eImageType.MapSigns:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MapSigns);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SignsPost);
                     break;
                 case eImageType.Elements:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Th);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TableCells);
                     break;
                 case eImageType.LocationPointer:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_LocationArrow);
@@ -794,7 +817,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Github);
                     break;
                 case eImageType.Ping:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExchangeAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Shuffle);
                     break;
                 case eImageType.Database:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Database);
@@ -814,15 +837,15 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Rows:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsAltH);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsLeftRight);
                     break;
 
                 case eImageType.Column:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsAltV);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TableColumns);
                     break;
 
                 case eImageType.Columns:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Columns);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TableColumns);
                     break;
 
                 case eImageType.Browser:
@@ -838,7 +861,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Smile:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_SmileWink);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FaceSmileWink);
                     break;
 
                 case eImageType.Linux:
@@ -850,7 +873,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Mobile:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MobileAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Mobile);
                     break;
 
                 case eImageType.Codepen:
@@ -862,7 +885,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Runing:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Running);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Spinner);
                     break;
 
                 case eImageType.Dos:
@@ -874,11 +897,11 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.MousePointer:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MousePointer);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowPointer);
                     break;
 
                 case eImageType.Target:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MousePointer);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowPointer);
                     break;
 
                 case eImageType.AudioFileOutline:
@@ -922,16 +945,16 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.MinusSquare:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MinusSquare);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SquareMinus);
                     break;
                 case eImageType.Mandatory:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CircleExclamation);
                     break;
                 case eImageType.ALM:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Qrcode);//need to find better image type
                     break;
                 case eImageType.MapALM:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MapSigns);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SignsPost);
                     break;
                 case eImageType.CSV:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FileCsv);
@@ -940,22 +963,22 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Clipboard);
                     break;
                 case eImageType.ID:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_IdCardAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_IdCard);
                     break;
                 case eImageType.RegularExpression:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Registered);
                     break;
                 case eImageType.DataManipulation:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Th);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TableCells);
                     break;
                 case eImageType.General:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Gg);
                     break;
                 case eImageType.SignIn:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SignInAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_RightToBracket);
                     break;
                 case eImageType.SignOut:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SignOutAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_RightFromBracket);
                     break;
                 case eImageType.AngleArrowUp:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleUp);
@@ -982,19 +1005,19 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_HandPointer);
                     break;
                 case eImageType.TextBox:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PenSquare);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PenToSquare);
                     break;
                 case eImageType.Image:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Image);
                     break;
                 case eImageType.CheckBox:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckSquare);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_SquareCheck);
                     break;
                 case eImageType.RadioButton:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_DotCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleDot);
                     break;
                 case eImageType.Link:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExternalLinkAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowUpRightFromSquare);
                     break;
                 case eImageType.Element:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Square);
@@ -1006,7 +1029,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Font);
                     break;
                 case eImageType.DropList:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ListAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_List);
                     break;
                 case eImageType.List:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ListOl);
@@ -1027,7 +1050,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TextWidth);
                     break;
                 case eImageType.LinkSquare:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExternalLinkSquareAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowUpRightFromSquare);
                     break;
                 case eImageType.DatePicker:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Calendar);
@@ -1069,16 +1092,16 @@ namespace Amdocs.Ginger.UserControls
 
                 #region Comparison Status Images
                 case eImageType.Unchanged:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle, toolTip: "Unchanged");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CircleCheck, toolTip: "Unchanged");
                     break;
                 case eImageType.Changed:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle, toolTip: "Changed");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TriangleExclamation, toolTip: "Changed");
                     break;
                 case eImageType.Deleted:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MinusCircle, toolTip: "Deleted");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CircleMinus, toolTip: "Deleted");
                     break;
                 case eImageType.Added:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PlusCircle, toolTip: "Added");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CirclePlus, toolTip: "Added");
                     break;
                 case eImageType.Avoided:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_EyeSlash, toolTip: "Avoided");
@@ -1114,7 +1137,7 @@ namespace Amdocs.Ginger.UserControls
             if (SetAsFontImageWithSize > 0)
             {
                 xFAFont.Visibility = Visibility.Visible;
-                xFAFont.FontSize = SetAsFontImageWithSize;
+                xFAFont.FontSize = SetAsFontImageWithSize;                
             }
             else
             {

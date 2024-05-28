@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -31,7 +31,8 @@ namespace GingerCore.Variables
     {
         BusinessFlow = 0,
         Activity = 1,
-        Solution = 2
+        Solution = 2,
+        EnvApplication = 3
     }
 
 
@@ -77,7 +78,8 @@ namespace GingerCore.Variables
             GlobalVariable,
             OutputVariable,
             ApplicationModelParameter,
-            DataSource
+            DataSource,
+            ActivityOutputVariable
         }
 
         private bool mSetAsInputValue = true;
@@ -202,7 +204,7 @@ namespace GingerCore.Variables
         public abstract bool SupportResetValue { get; }
         public abstract bool SupportAutoValue { get; }
 
-
+        public abstract void SetInitialValue(string InitialValue);
         //all below used to describe the variable owner in a specific Business Flow
         [IsSerializedForLocalRepository]
         public string ParentType { get; set; } //BusinessFlow or Activity
@@ -623,6 +625,9 @@ namespace GingerCore.Variables
                     DiffrentFromOrigin = false;
             }
         }
+
+        public Guid VariableReferenceEntity { get; set; }
+
         public abstract bool SupportSetValue { get; }
 
         public virtual bool SetValue(string value)
@@ -665,7 +670,6 @@ namespace GingerCore.Variables
 
         public virtual void SetInitialSetup()
         {
-            Name = string.Format("New {0}", VariableUIType);
             SetAsInputValue = false;
             SetAsOutputValue = false;
         }

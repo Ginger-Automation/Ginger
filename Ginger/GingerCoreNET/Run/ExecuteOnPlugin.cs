@@ -96,7 +96,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             {
                 gingerNodeInfo = GetGingerNode(serviceID);
 
-                if (gingerNodeInfo == null || WorkSpace.Instance.PlugInsManager.PluginProcesses.Where(x => x.ServiceId == serviceID).Count() == WorkSpace.Instance.PlugInsManager.PluginProcesses.Where(x => x.ServiceId == serviceID && x.IsProcessExited == true).Count())
+                if (gingerNodeInfo == null || WorkSpace.Instance.PlugInsManager.PluginProcesses.Count(x => x.ServiceId == serviceID) == WorkSpace.Instance.PlugInsManager.PluginProcesses.Count(x => x.ServiceId == serviceID && x.IsProcessExited))
                 {
                     // call plugin to start service and wait for ready
                     WorkSpace.Instance.PlugInsManager.StartService(pluginId, serviceID);

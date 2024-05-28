@@ -42,6 +42,8 @@ namespace GingerCore.SourceControl
         private const string IgnoreFileExtension = ".ignore";
         private const string ConflictBackupFileExtension = ".conflictBackup";
 
+        private DateTime _lastGitIgnoreCheckTimeUtc;
+
         public override string Name { get { return "GIT"; } }
 
         public override bool IsSupportingLocks { get { return false; } }
@@ -53,7 +55,7 @@ namespace GingerCore.SourceControl
         public override List<string> GetSourceControlmConflict { get { return null; } }
 
         private string CheckinComment { get; set; }
-        
+
         private string GitIgnoreFilePath => Path.Combine(RepositoryRootFolder, ".gitignore");
 
         public override bool AddFile(string Path, ref string error)
@@ -64,7 +66,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
                 return false;
             }
             return true;
@@ -76,10 +78,19 @@ namespace GingerCore.SourceControl
 
         public override bool CommitChanges(string Comments, ref string error)
         {
-            return false;
+            bool result = false;
+            try
+            {
+                result = Commit(Comments) != null;
+            }
+            catch (Exception e)
+            {
+                error = HandleGitExceptions(e);
+            }
+            return result;
         }
 
-        public override bool CommitChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false)
+        public override bool CommitAndCheckinChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false)
         {
             if (TestConnection(ref error))
             {
@@ -87,13 +98,14 @@ namespace GingerCore.SourceControl
                 bool result = true;
                 try
                 {
-                    Commit(Comments);
+                    if (AnyLocalChangesPendingtoCommit())
+                    {
+                        Commit(Comments);
+                    }
                 }
                 catch (Exception e)
                 {
-                    error = e.Message + Environment.NewLine + e.InnerException;
-                    Reporter.ToLog(eLogLevel.ERROR, error, e);
-
+                    error = HandleGitExceptions(e);
                 }
                 finally
                 {
@@ -101,15 +113,13 @@ namespace GingerCore.SourceControl
                     {
                         Push();
                         Pull();
-                        using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-                        {
-                            Reporter.ToUser(eUserMsgKey.CommitedToRevision, repo.Head.Tip.Sha);
-                        }
+                        using var repo = new Repository(RepositoryRootFolder);
+                        Reporter.ToUser(eUserMsgKey.SourceControlChkInSucss);
                     }
                     catch (Exception e)
                     {
+                        error = HandleGitExceptions(e);
 
-                        error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
                         if (e.Message.Contains("403"))
                         {
                             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Check-In Failed, please check if user has Write Permission for this repository");
@@ -118,7 +128,6 @@ namespace GingerCore.SourceControl
                         {
                             Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, e.Message);
                         }
-                        Reporter.ToLog(eLogLevel.ERROR, error, e);
                         try
                         {
                             Pull();
@@ -136,6 +145,14 @@ namespace GingerCore.SourceControl
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to connect to repository");
                 return false;
             }
+        }
+
+        public bool AnyLocalChangesPendingtoCommit()
+        {
+            using var repo = new Repository(RepositoryRootFolder);
+            RepositoryStatus status = repo.RetrieveStatus();
+
+            return status.IsDirty;
         }
 
         private List<string> GetConflictsPathsforGetLatestConflict(string path)
@@ -188,7 +205,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
                 return false;
             }
             return true;
@@ -284,7 +301,7 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
             }
             return remoteURL;
         }
@@ -360,7 +377,11 @@ namespace GingerCore.SourceControl
                     relativePath = relativePath.Substring(1);
                 }
 
-                if (!File.Exists(GitIgnoreFilePath))
+                if (File.Exists(GitIgnoreFilePath))
+                {
+                    UpdateGitIgnoreFile();
+                }
+                else
                 {
                     CreateGitIgnoreFile();
                 }
@@ -517,6 +538,60 @@ namespace GingerCore.SourceControl
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating .gitignore file.", ex);
+            }
+        }
+
+        public void UpdateGitIgnoreFile()
+        {
+            if (!File.Exists(GitIgnoreFilePath))
+            {
+                throw new InvalidOperationException($"No git ignore file found at path '{GitIgnoreFilePath}'.");
+            }
+
+            DateTime lastWriteTime = File.GetLastWriteTimeUtc(GitIgnoreFilePath);
+            if (lastWriteTime <= _lastGitIgnoreCheckTimeUtc)
+            {
+                //gitignore file wasn't modified until last checked
+                return;
+            }
+
+            string[] gitIgnorePaths = File.ReadAllText(GitIgnoreFilePath)
+                .Split('\n')
+                .ToArray();
+
+            string[] solutionIgnoredPaths = WorkSpace.Instance.SolutionRepository
+                    .GetRelativePathsToAvoidFromSourceControl()
+                    .Select(path => path.Replace(oldValue: @"\", newValue: @"/"))
+                    .ToArray();
+
+            List<string> missingPaths = [];
+            foreach (string solutionIgnoredPath in solutionIgnoredPaths)
+            {
+                if (!gitIgnorePaths.Contains(solutionIgnoredPath))
+                {
+                    missingPaths.Add(solutionIgnoredPath);
+                }
+            }
+
+            if (missingPaths.Count == 0)
+            {
+                _lastGitIgnoreCheckTimeUtc = DateTime.UtcNow;
+                return;
+            }
+
+            string gitIgnoreFileContent = gitIgnorePaths
+                    .Concat(missingPaths)
+                    .Select(path => path.Replace(oldValue: @"\", newValue: @"/"))
+                    .Aggregate((aggContent, path) => $"{aggContent}\n{path}");
+
+            try
+            {
+                File.WriteAllText(GitIgnoreFilePath, gitIgnoreFileContent);
+                _lastGitIgnoreCheckTimeUtc = File.GetLastWriteTimeUtc(GitIgnoreFilePath);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while updating git ignore file at path '{GitIgnoreFilePath}'.", ex);
             }
         }
 
@@ -920,7 +995,7 @@ namespace GingerCore.SourceControl
                 string ConflictsPathsError = string.Empty;
                 string ResolveConflictError = string.Empty;
                 bool result = true;
-                
+
                 List<string> conflictPaths = GetConflictPaths();
                 foreach (string conflictPath in conflictPaths)
                 {
@@ -932,7 +1007,7 @@ namespace GingerCore.SourceControl
 
                     Stage(conflictPath);
                 }
-                
+
                 return true;
             }
             catch (Exception ex)
@@ -1007,10 +1082,17 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                error = e.Message + Environment.NewLine + e.InnerException;
+                error = HandleGitExceptions(e);
                 return false;
             }
             return true;
+        }
+
+        private static string HandleGitExceptions(Exception e)
+        {
+            string error = e.Message + Environment.NewLine + e.InnerException;
+            Reporter.ToLog(eLogLevel.ERROR, error, e);
+            return error;
         }
 
         public override bool TestConnection(ref string error)
@@ -1249,23 +1331,23 @@ namespace GingerCore.SourceControl
             MergeResult mergeResult = null;
             //Pull = Fetch + Merge
             Task.Run(() =>
-             {
-                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-                 {
+            {
+                using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                {
 
-                     PullOptions PullOptions = new PullOptions();
-                     PullOptions.FetchOptions = new FetchOptions();
-                     PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
-                     if (!IsRepositoryPublic())
-                     {
-                         mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
-                     }
-                     else
-                     {
-                         mergeResult = Commands.Pull(repo, new Signature("dummy", "dummy", new DateTimeOffset(DateTime.Now)), PullOptions);
-                     }
-                 }
-             }).Wait();
+                    PullOptions PullOptions = new PullOptions();
+                    PullOptions.FetchOptions = new FetchOptions();
+                    PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+                    if (!IsRepositoryPublic())
+                    {
+                        mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
+                    }
+                    else
+                    {
+                        mergeResult = Commands.Pull(repo, new Signature("dummy", "dummy", new DateTimeOffset(DateTime.Now)), PullOptions);
+                    }
+                }
+            }).Wait();
             return mergeResult;
         }
 
@@ -1279,6 +1361,68 @@ namespace GingerCore.SourceControl
                 Signature committer = author;
                 // Commit to the repository
                 return repo.Commit(Comments, author, committer);
+            }
+        }
+
+        public override ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommits()
+        {
+            using (var repo = new Repository(RepositoryRootFolder))
+            {
+                var localBranch = repo.Branches[SourceControlBranch];
+                var trackingBranch = localBranch.TrackedBranch;
+
+                var filter = new CommitFilter
+                {
+                    IncludeReachableFrom = localBranch.Tip,
+                    ExcludeReachableFrom = trackingBranch.Tip
+                };
+
+                var unpushedCommits = repo.Commits.QueryBy(filter).ToList();
+                ObservableList<SourceControlChangesetDetails> commits = new ObservableList<SourceControlChangesetDetails>();
+                foreach (var commit in unpushedCommits)
+                {
+                    commits.Add(new SourceControlChangesetDetails() { Author = commit.Committer.Name, Date = commit.Committer.When, ID = commit.Id.Sha, Message = commit.MessageShort });
+                }
+
+                return commits;
+            }
+        }
+        
+
+        public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
+        {
+            try
+            {
+                using (var repo = new Repository(RepositoryRootFolder))
+                {
+                    List<string> filesPathsToUndo = [];
+                    foreach (var file in selectedFiles)
+                    {
+                        if (file.Status == SourceControlFileInfo.eRepositoryItemStatus.New)
+                        {
+                            if (File.Exists(file.Path))
+                            {
+                                File.Delete(file.Path);
+                            }
+                        }
+                        else if (file.Status == SourceControlFileInfo.eRepositoryItemStatus.Modified ||
+                                 file.Status == SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved ||
+                                 file.Status == SourceControlFileInfo.eRepositoryItemStatus.Deleted)
+                        {
+                            filesPathsToUndo.Add(file.Path);
+                        }
+                    }
+                    if (filesPathsToUndo.Count > 0)
+                    {
+                        CheckoutOptions options = new CheckoutOptions() { CheckoutModifiers = CheckoutModifiers.Force };
+                        repo.Checkout(repo.Head.Tip.Tree, filesPathsToUndo, options);
+                    }
+                    return true;
+                }
+            } catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Undo Changes", ex);
+                return false;
             }
         }
 
