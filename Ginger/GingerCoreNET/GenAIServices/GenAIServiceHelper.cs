@@ -32,16 +32,23 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
 
         private void InitClient()
         {
-            _httpClient = new HttpClient();
-            var host = _settings.GenAIServiceSettingsData.Host;
-            if (!string.IsNullOrEmpty(host))
+            try
             {
-                host = !host.EndsWith("/") ? $"{host}/" : host;
-                _httpClient.BaseAddress = new Uri(host);
+                _httpClient = new HttpClient();
+                var host = _settings.GenAIServiceSettingsData.Host;
+                if (!string.IsNullOrEmpty(host))
+                {
+                    host = !host.EndsWith("/") ? $"{host}/" : host;
+                    _httpClient.BaseAddress = new Uri(host);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Chat bot service end point is null or empty. pls check configuration");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Chat bot service end point is null or empty. pls check configuration");
+                Reporter.ToLog(eLogLevel.ERROR, "Chat bot service initialization failed", ex); 
             }
 
         }

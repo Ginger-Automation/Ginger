@@ -407,7 +407,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Xmark);
                     break;
                 case eImageType.CloseWhite:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times, Brushes.White);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Xmark, Brushes.White);
                     break;
                 case eImageType.Continue:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ForwardFast);
@@ -776,7 +776,7 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Broom:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Broom);
                     break;
-                    
+
                 case eImageType.ArrowDown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDown);
                     break;
@@ -794,7 +794,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Website:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Laptop);
-                    break;               
+                    break;
                 case eImageType.Beta:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Android, Brushes.Orange);
                     break;
@@ -1137,7 +1137,7 @@ namespace Amdocs.Ginger.UserControls
             if (SetAsFontImageWithSize > 0)
             {
                 xFAFont.Visibility = Visibility.Visible;
-                xFAFont.FontSize = SetAsFontImageWithSize;                
+                xFAFont.FontSize = SetAsFontImageWithSize;
             }
             else
             {
