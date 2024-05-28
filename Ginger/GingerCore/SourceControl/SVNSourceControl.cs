@@ -1189,5 +1189,10 @@ namespace GingerCore.SourceControl
         {
             throw new NotImplementedException("GetUnpushedLocalCommits not Implemented");
         }
+
+        public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
+        {
+            throw new NotImplementedException("UndoUncommitedChanges not Implemented");
+        }
     }
 }
