@@ -10,5 +10,9 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
     {
      public string IsError { get; set; }   
      public string message { get; set; }
+        public string AccessToken { get; set; }
+        public string TokenType { get; set; }
+        public string ExpiresIn { get; set; }
+
     }
 }

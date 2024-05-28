@@ -6,6 +6,7 @@ using Ginger.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core.Tokenizer;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -69,13 +70,23 @@ namespace Amdocs.Ginger.UserControls
             ShowLoader();
             try
             {
-                if (chatPanel.Children.Count == 0)
+                //need to handle as we are getting token everytime
+
+                
+
+                if (chatPanel.Children.Count == 1)
                 {
+                   
                     answer = await brainAIServices.StartNewChat(userInput);
                 }
                 else
                 {
                     answer = await brainAIServices.ContinueChat(userInput);
+                }
+
+                if(answer == null)
+                {                    
+                    answer = "Sorry, seems like there is an issue, i'm not able to reply, please check it with support team.";
                 }
             }
             catch (Exception ex)
@@ -321,7 +332,7 @@ namespace Amdocs.Ginger.UserControls
 
                 foreach (var item in messages)
                 {
-                    sb.Append($"{item.Item1}: {item.Item2} {Environment.NewLine}");
+                    sb.Append($"{item.Item1}: {item.Item2}");
                 }
 
                 Clipboard.SetText(sb.ToString());

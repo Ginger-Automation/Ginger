@@ -22,6 +22,14 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
 
         public string CONTINUE_CHAT { set; get; }
 
+        public string GET_TOKEN { get; set; }
+
+        public string AuthenticationServiceURL { set; get; }
+
+        public string GrantType {set; get; }  
+
+        public string   Client_Id { set; get; }
+        public string Client_Secret { set; get; }
         public BrainServiceData()
         {
 

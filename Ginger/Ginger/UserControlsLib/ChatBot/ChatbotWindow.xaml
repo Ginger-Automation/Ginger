@@ -55,7 +55,7 @@
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5,0,0,0">
                     <!-- User input -->
-                    <TextBox x:Name="xUserInputTextBox" TextChanged="xUserInputTextBox_TextChanged" PreviewKeyDown="TextBox_KeyDown" Width="385" Height="100" Padding="5">
+                    <TextBox x:Name="xUserInputTextBox"  TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" TextChanged="xUserInputTextBox_TextChanged" PreviewKeyDown="TextBox_KeyDown" Width="385" Height="100" Padding="5">
                         <TextBox.Template>
                             <ControlTemplate TargetType="{x:Type TextBox}">
                                 <Grid>

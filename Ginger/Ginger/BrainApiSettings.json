@@ -1,11 +1,15 @@
 {
-	"BrainHost":"",
+  "BrainHost": "",
   "START_NEW_CHAT": "",
-  "CONTINUE_CHAT":"",
-	"account": "",
-	"domainType": "",
-	"temperatureVal": "",
-	"maxTokensVal": "",
-	"dataPath": ""
+  "CONTINUE_CHAT": "",
+  "account": "",
+  "domainType": "",
+  "temperatureVal": "",
+  "maxTokensVal": "",
+  "dataPath": "",
+  "AuthenticationServiceURL": "",
+  "GrantType": "",
+  "Client_Id": "",
+  "Client_Secret": "",
+  "GET_TOKEN": ""
 }
-	
