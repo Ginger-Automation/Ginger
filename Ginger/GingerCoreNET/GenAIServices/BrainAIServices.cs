@@ -28,7 +28,6 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             _settings = new BrainServiceSettings();
             InitClient();
-            //token = await GetToken();
         }
 
         private void InitClient()
@@ -65,10 +64,9 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             {
                 return true;
             }
-            else
-            {
-                return true;
-            }
+            
+          return false;
+            
         }
 
         public bool IsTokenValid()
@@ -77,7 +75,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             var handler = new JwtSecurityTokenHandler();
             var jwtToken = handler.ReadJwtToken(token);
             validTo = jwtToken.ValidTo;
-            if (DateTime.UtcNow.AddMinutes(30) <= validTo)
+            if (DateTime.UtcNow <= validTo)
             {
                 return true;
             }
@@ -144,10 +142,6 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 var response = await httpClient.PostAsync(_settings.BrainSettingsObj.GET_TOKEN, new FormUrlEncodedContent(data));
                 var result = await response.Content.ReadAsAsync<dynamic>();
                 responseInfo = result.ToObject<ChatBotResponseInfo>();
-                if(string.IsNullOrEmpty(responseInfo.AccessToken))
-                {
-                      Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{ex.Message}");
-                }
             }
             catch (Exception ex)
             {
