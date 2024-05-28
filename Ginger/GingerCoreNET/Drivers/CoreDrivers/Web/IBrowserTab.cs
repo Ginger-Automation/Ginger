@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,27 +39,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<bool> SwitchFrame(eLocateBy locatyBy, string locateValue);
 
-        public Task ClickAsync(eLocateBy locateBy, string locateValue);
-
-        public Task DoubleClickAsync(eLocateBy locateBy, string locateValue);
-
-        public Task HoverAsync(eLocateBy locateBy, string locateValue);
-
-        public Task<bool> IsVisibleAsync(eLocateBy locateBy, string locateValue);
-
-        public Task<bool> IsEnabledAsync(eLocateBy locateBy, string locateValue);
-
-        public Task<string?> GetAttributeValueAsync(eLocateBy locateBy, string locateValue, string attributeName);
-
-        public Task<string?> GetTextContentAsync(eLocateBy locateBy, string locateValue);
-
-        public Task<string?> GetInnerTextAsync(eLocateBy locateBy, string locateValue);
-
-        public Task<string?> GetInputValueAsync(eLocateBy locateBy, string locateValue);
-
-        public Task<string?> GetSelectValue(eLocateBy locateBy, string locateValue);
-
-        public Task RightClickAsync(eLocateBy locateBy, string locateValue);
+        public Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string locateValue);
 
         public Task CloseAsync();
     }

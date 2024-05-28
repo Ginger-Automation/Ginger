@@ -28,6 +28,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using GingerCore.Actions.Common;
 using OpenQA.Selenium.DevTools.V119.DOM;
+using System.Drawing;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -494,131 +495,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return true;
             }
 
-            public async Task ClickAsync(eLocateBy locateBy, string locateValue)
+            public async Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string locateValue)
             {
                 IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                bool wasFound = await DoesLocatorExistsAsync(locator);
-                if (!wasFound)
+
+                int matchedElementCount = await locator.CountAsync();
+                IBrowserElement[] elements = new IBrowserElement[matchedElementCount];
+
+                for (int index = 0; index < matchedElementCount; index++)
                 {
-                    throw new NotFoundException($"No element found by locator '{locateBy}' and value '{locateValue}'");
+                    elements[index] = new PlaywrightBrowserElement(locator.Nth(index));
                 }
 
-                await locator.ClickAsync(new LocatorClickOptions
-                {
-                    Button = MouseButton.Left
-                });
+                return elements;
             }
-
-            public async Task DoubleClickAsync(eLocateBy locateBy, string locateValue)
-            {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                bool wasFound = await DoesLocatorExistsAsync(locator);
-                if (!wasFound)
-                {
-                    throw NewElementNotFoundException(locateBy, locateValue);
-                }
-
-                await locator.DblClickAsync();
-            }
-
-            public async Task HoverAsync(eLocateBy locateBy, string locateValue)
-            {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                bool wasFound = await DoesLocatorExistsAsync(locator);
-                if (!wasFound)
-                {
-                    throw NewElementNotFoundException(locateBy, locateValue);
-                }
-
-                await locator.HoverAsync();
-            }
-
-            public async Task<bool> IsVisibleAsync(eLocateBy locateBy, string locateValue)
-            {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                return await locator.IsVisibleAsync();
-            }
-
-            public async Task<bool> IsEnabledAsync(eLocateBy locateBy, string locateValue)
-            {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                return await locator.IsEnabledAsync();
-            }
-
-            public async Task<string?> GetAttributeValueAsync(eLocateBy locateBy, string locateValue, string attributeName)
-            {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                bool wasFound = await DoesLocatorExistsAsync(locator);
-                if (!wasFound)
-                {
-                    throw NewElementNotFoundException(locateBy, locateValue);
-                }
-
-                return await locator.GetAttributeAsync(attributeName);
-            }
-
-            public async Task<string?> GetTextContentAsync(eLocateBy locateBy, string locateValue)
-            {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                bool wasFound = await DoesLocatorExistsAsync(locator);
-                if (!wasFound)
-                {
-                    throw NewElementNotFoundException(locateBy, locateValue);
-                }
-
-                return await locator.TextContentAsync();
-            }
-
-            public async Task<string?> GetInnerTextAsync(eLocateBy locateBy, string locateValue)
-            {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                bool wasFound = await DoesLocatorExistsAsync(locator);
-                if (!wasFound)
-                {
-                    throw NewElementNotFoundException(locateBy, locateValue);
-                }
-
-                return await locator.InnerTextAsync();
-            }
-
-            public async Task<string?> GetInputValueAsync(eLocateBy locateBy, string locateValue)
-            {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                bool wasFound = await DoesLocatorExistsAsync(locator);
-                if (!wasFound)
-                {
-                    throw NewElementNotFoundException(locateBy, locateValue);
-                }
-                return await locator.InputValueAsync();
-            }
-
-            public async Task RightClickAsync(eLocateBy locateBy, string locateValue)
-            {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                bool wasFound = await DoesLocatorExistsAsync(locator);
-                if (!wasFound)
-                {
-                    throw NewElementNotFoundException(locateBy, locateValue);
-                }
-
-                await locator.ClickAsync(new LocatorClickOptions()
-                {
-                    Button = MouseButton.Right
-                });
-            }
-
-            public async Task<string?> GetSelectValue(eLocateBy locateBy, string locateValue)
-            {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
-                bool wasFound = await DoesLocatorExistsAsync(locator);
-                if (!wasFound)
-                {
-                    throw NewElementNotFoundException(locateBy, locateValue);
-                }
-
-                return await locator.EvaluateAsync<string>("elem => elem.options[elem.selectedIndex].text");
-            }
-
+                 
             private Task<IPlaywrightLocator> LocateElementAsync(eLocateBy locateBy, string value)
             {
                 if (_currentFrame == null)
@@ -690,10 +581,110 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     throw new InvalidOperationException("Cannot perform operation, tab is already closed.");
                 }
             }
+        }
 
-            private static NotFoundException NewElementNotFoundException(eLocateBy locateBy, string value)
+        private sealed class PlaywrightBrowserElement : IBrowserElement
+        {
+            private readonly IPlaywrightLocator _locator;
+
+            internal PlaywrightBrowserElement(IPlaywrightLocator locator)
             {
-                return new NotFoundException($"No element found by locator '{locateBy}' and value '{value}'");
+                _locator = locator;
+            }
+
+            public Task ClickAsync()
+            {
+                return _locator.ClickAsync(new LocatorClickOptions
+                {
+                    Button = MouseButton.Left,
+
+                });
+            }
+
+            public Task DoubleClickAsync()
+            {
+                return _locator.DblClickAsync();
+            }
+
+            public Task HoverAsync()
+            {
+                return _locator.HoverAsync();
+            }
+
+            public Task<bool> IsVisibleAsync()
+            {
+                return _locator.IsVisibleAsync();
+            }
+
+            public Task<bool> IsEnabledAsync()
+            {
+                return _locator.IsEnabledAsync();
+            }
+
+            public async Task<string> GetAttributeValueAsync(string attributeName)
+            {
+                string? attributeValue = await _locator.GetAttributeAsync(attributeName);
+                if (attributeValue == null)
+                {
+                    return string.Empty;
+                }
+
+                return attributeValue;
+            }
+
+            public async Task<Size> GetSizeAsync()
+            {
+                LocatorBoundingBoxResult? boundingBox = await _locator.BoundingBoxAsync();
+                if (boundingBox == null)
+                {
+                    return new Size(width: 0, height: 0);
+                }
+
+                return new Size((int)boundingBox.Width, (int)boundingBox.Height);
+            }
+
+            public async Task<string> GetTextContentAsync()
+            {
+                string? content = await _locator.TextContentAsync();
+                if (content == null)
+                {
+                    return string.Empty;
+                }
+
+                return content;
+            }
+
+            public Task<string> ExecuteJavascriptAsync(string script)
+            {
+                return _locator.EvaluateAsync<string>(script);
+            }
+
+            public Task<string> GetInnerTextAsync()
+            {
+                return _locator.InnerTextAsync();
+            }
+
+            public Task<string> GetInputValueAsync()
+            {
+                return _locator.InputValueAsync();
+            }
+
+            public Task RightClickAsync()
+            {
+                return _locator.ClickAsync(new LocatorClickOptions()
+                {
+                    Button = MouseButton.Right
+                });
+            }
+
+            public Task<string> GetTagNameAsync()
+            {
+                return _locator.EvaluateAsync<string>("elem => elem.tagName");
+            }
+
+            public Task ScrollToViewAsync()
+            {
+                return _locator.ScrollIntoViewIfNeededAsync();
             }
         }
 
