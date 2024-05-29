@@ -132,8 +132,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                         break;
                 }
             }
-            catch (Exception ex) when
-            (ex is InvalidActionConfigurationException)
+            catch (Exception ex)
             {
                 _act.Error = ex.Message;
             }

@@ -12,14 +12,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
     {
         public const string AnchorTagName = "a";
         public const string SelectTagName = "select";
+        public const string InputTagName = "input";
+        public const string ButtonTagName = "button";
 
-        public Task<string> GetTagNameAsync();
+        public Task<string> TagNameAsync();
 
-        public Task<Size> GetSizeAsync();
+        public Task<Size> SizeAsync();
 
         public Task ClickAsync();
 
+        public Task ClickAsync(int x, int y);
+
         public Task DoubleClickAsync();
+
+        public Task DoubleClickAsync(int x, int y);
 
         public Task HoverAsync();
 
@@ -27,18 +33,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<bool> IsEnabledAsync();
 
-        public Task<string> GetAttributeValueAsync(string attributeName);
+        public Task<string> AttributeValueAsync(string attributeName);
 
-        public Task<string> GetTextContentAsync();
+        public Task<string> TextContentAsync();
 
-        public Task<string> GetInnerTextAsync();
+        public Task<string> InnerTextAsync();
 
-        public Task<string> GetInputValueAsync();
+        public Task<string> InputValueAsync();
 
         public Task RightClickAsync();
 
         public Task<string> ExecuteJavascriptAsync(string script);
 
         public Task ScrollToViewAsync();
+
+        public Task FocusAsync();
     }
 }

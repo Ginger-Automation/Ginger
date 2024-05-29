@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using System;
 using System.Collections.Generic;
@@ -76,13 +77,30 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActUIElement.eElementAction.ScrollToElement:
                         operationTask = HandleScrollToElementOperationAsync();
                         break;
+                    case ActUIElement.eElementAction.SetFocus:
+                        operationTask = HandleSetFocusOperationAsync();
+                        break;
+                    case ActUIElement.eElementAction.IsDisabled:
+                        operationTask = HandleIsDisabledOperationAsync();
+                        break;
+                    case ActUIElement.eElementAction.Submit:
+                        operationTask = HandleSubmitOperationAsync();
+                        break;
+                    case ActUIElement.eElementAction.MultiClicks:
+                        operationTask = HandleMultiClicksOperationAsync();
+                        break;
+                    case ActUIElement.eElementAction.ClickXY:
+                        operationTask = HandleClickXYOperationAsync();
+                        break;
+                    case ActUIElement.eElementAction.DoubleClickXY:
+                        operationTask = HandleDoubleClickXYOperationAsync();
+                        break;
                     default:
                         _act.Error = $"Unknown operation type - {_act.ElementAction}";
                         break;
                 }
             }
-            catch (Exception ex) when 
-            (ex is NotFoundException)
+            catch (Exception ex)
             {
                 _act.Error = ex.Message;
             }
@@ -144,21 +162,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
         private async Task HandleGetAttributeOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            string attributeValue = await element.GetAttributeValueAsync(_act.ValueForDriver);
+            string attributeValue = await element.AttributeValueAsync(_act.ValueForDriver);
             _act.AddOrUpdateReturnParamActual("Actual", attributeValue);
         }
 
         private async Task HandleGetTextOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            string text = await element.GetTextContentAsync();
+            string text = await element.TextContentAsync();
             if (string.IsNullOrEmpty(text))
             {
-                text = await element.GetInnerTextAsync();
+                text = await element.InnerTextAsync();
             }
             if (string.IsNullOrEmpty(text))
             {
-                text = await element.GetInputValueAsync();
+                text = await element.InputValueAsync();
             }
             if (text == null)
             {
@@ -177,7 +195,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
 
-            string tagName = await element.GetTagNameAsync();
+            string tagName = await element.TagNameAsync();
             if (string.Equals(tagName, IBrowserElement.SelectTagName, StringComparison.OrdinalIgnoreCase))
             {
                 string script = "element => element.options[element.selectedIndex].text";
@@ -186,7 +204,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             }
             else
             {
-                string value = await element.GetInputValueAsync();
+                string value = await element.InputValueAsync();
                 _act.AddOrUpdateReturnParamActual("Actual", value);
             }
         }
@@ -194,48 +212,48 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
         private async Task HandleGetHeightOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            Size size = await element.GetSizeAsync();
+            Size size = await element.SizeAsync();
             _act.AddOrUpdateReturnParamActual("Actual", size.Height.ToString());
         }
 
         private async Task HandleGetWidthOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            Size size = await element.GetSizeAsync();
+            Size size = await element.SizeAsync();
             _act.AddOrUpdateReturnParamActual("Actual", size.Width.ToString());
         }
 
         private  async Task HandleGetSizeOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            Size size = await element.GetSizeAsync();
+            Size size = await element.SizeAsync();
             _act.AddOrUpdateReturnParamActual("Actual", $"{size.Width}x{size.Height}");
         }
 
         private async Task HandleGetValueOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            string tagName = await element.GetTagNameAsync();
+            string tagName = await element.TagNameAsync();
             if (string.Equals(tagName, IBrowserElement.AnchorTagName))
             {
-                string href = await element.GetAttributeValueAsync(attributeName: "href");
+                string href = await element.AttributeValueAsync(attributeName: "href");
                 _act.AddOrUpdateReturnParamActual("Actual", href);
                 return;
             }
-            string value = await element.GetTextContentAsync();
+            string value = await element.TextContentAsync();
             if (!string.IsNullOrEmpty(value))
             {
                 _act.AddOrUpdateReturnParamActual("Actual", value);
                 return;
             }
-            value = await element.GetInputValueAsync();
+            value = await element.InputValueAsync();
             _act.AddOrUpdateReturnParamActual("Actual", value);
         }
 
         private async Task HandleGetStyleOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            string style = await element.GetAttributeValueAsync(attributeName: "style");
+            string style = await element.AttributeValueAsync(attributeName: "style");
             _act.AddOrUpdateReturnParamActual("Actual", style);
         }
 
@@ -249,6 +267,81 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ScrollToViewAsync();
+        }
+
+        private async Task HandleSetFocusOperationAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            await element.FocusAsync();
+        }
+
+        private async Task HandleIsDisabledOperationAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            bool isEnabled = await element.IsEnabledAsync();
+            _act.AddOrUpdateReturnParamActual("Actual", (!isEnabled).ToString());
+        }
+
+        private async Task HandleSubmitOperationAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string tagName = await element.TagNameAsync();
+            bool isInputElement = string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase);
+            bool isButtonElement = string.Equals(tagName, IBrowserElement.ButtonTagName, StringComparison.OrdinalIgnoreCase);
+            bool isTypeSubmit = string.Equals(await element.AttributeValueAsync(attributeName: "type"), "submit", StringComparison.OrdinalIgnoreCase);
+            
+            if ((isInputElement || isButtonElement) && isTypeSubmit)
+            {
+                await element.ClickAsync();
+            }
+            else
+            {
+                throw new InvalidOperationException($"Expected '{IBrowserElement.InputTagName}/{IBrowserElement.ButtonTagName}' element with type 'submit'");
+            }
+        }
+
+        private async Task HandleMultiClicksOperationAsync()
+        {
+            IEnumerable<IBrowserElement> elements = new List<IBrowserElement>(await GetAllMatchingElementsAsync());
+            
+            foreach (IBrowserElement element in elements)
+            {
+                await element.ClickAsync();
+            }
+        }
+
+        private async Task HandleClickXYOperationAsync()
+        {
+            string xString = _act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver;
+            string yString = _act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver;
+            if (!int.TryParse(xString, out int x))
+            {
+                throw new InvalidActionConfigurationException($"X-Coordinate must be a valid integer");
+            }
+            if (!int.TryParse(yString, out int y))
+            {
+                throw new InvalidActionConfigurationException($"X-Coordinate must be a valid integer");
+            }
+
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            await element.ClickAsync(x, y);
+        }
+
+        private async Task HandleDoubleClickXYOperationAsync()
+        {
+            string xString = _act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver;
+            string yString = _act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver;
+            if (!int.TryParse(xString, out int x))
+            {
+                throw new InvalidActionConfigurationException($"X-Coordinate must be a valid integer");
+            }
+            if (!int.TryParse(yString, out int y))
+            {
+                throw new InvalidActionConfigurationException($"X-Coordinate must be a valid integer");
+            }
+
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            await element.DoubleClickAsync(x, y);
         }
     }
 }
