@@ -15,7 +15,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
 
         public string Host { set; get; }
         public string TemperatureLevel { set; get; }
-        public string MaxTolkenValue { set; get; }
+        public string MaxTokenValue { set; get; }
 
         public string DataPath { set; get; }
 

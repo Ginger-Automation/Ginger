@@ -196,7 +196,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             content.Add(new StringContent(_settings.GenAIServiceSettingsData.Account), "account");
             content.Add(new StringContent(_settings.GenAIServiceSettingsData.DomainType), "domainType");
             content.Add(new StringContent(_settings.GenAIServiceSettingsData.TemperatureLevel), "temperatureVal");
-            content.Add(new StringContent(_settings.GenAIServiceSettingsData.MaxTolkenValue), "maxTokensVal");
+            content.Add(new StringContent(_settings.GenAIServiceSettingsData.MaxTokenValue), "maxTokensVal");
             content.Add(new StringContent(_settings.GenAIServiceSettingsData.DataPath), "dataPath");
             return content;
         }
