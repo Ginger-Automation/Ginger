@@ -5,11 +5,11 @@
            xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Value Expression"
       xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
-      Title="Value Expression Editor" Height="600" Width="700">
+      Title="Value Expression Editor" Height="800" Width="1050">
     
     <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="400"/>
             <ColumnDefinition Width="150*"/>
         </Grid.ColumnDefinitions>
 
