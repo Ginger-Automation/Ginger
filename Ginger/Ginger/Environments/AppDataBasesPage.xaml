@@ -25,7 +25,7 @@
             </UserControls:ucButton>
 
             <UserControls:ImageMakerControl Grid.Column="1" SetAsFontImageWithSize="16" ImageType="Variable" HorizontalAlignment="Left" SetBorder="False" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
-            <TextBlock x:Name="xSelectedItemTitleText" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,2,0,0" Text="Action Description" Style="{StaticResource $TextBlockStyle}" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" />
+            <TextBlock x:Name="xSelectedItemTitleText" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,2,0,0" Style="{StaticResource $TextBlockStyle}" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" />
         </Grid>
 
         <Frame x:Name="xMainFrame" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden"/>

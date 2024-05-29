@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.UserControlsLib.UCListView;
+using Ginger.Variables;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using System.Windows;
@@ -34,11 +35,13 @@ namespace Ginger.Environments
 
         private readonly DatabaseListViewHelper dbListViewHelper;
         private UcListView? DatabaseListView = null;
+        private readonly Context mContext;
 
         public AppDataBasesPage(EnvApplication applicationOwner, Context context)
         {
             InitializeComponent();
             AppOwner = applicationOwner;
+            mContext = context;
             dbListViewHelper = new DatabaseListViewHelper(applicationOwner.Dbs, context);
             SetDBListView();
             AddPropertyChangedEventToDbList();
@@ -77,6 +80,8 @@ namespace Ginger.Environments
                 xBackToListGrid.Visibility = Visibility.Visible;
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, database, nameof(Database.Name));
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, database, nameof(Database.Name));
+                EditDatabasePage editDatabasePage = new(database, mContext);
+                xMainFrame.SetContent(editDatabasePage);
             }
             else
             {
