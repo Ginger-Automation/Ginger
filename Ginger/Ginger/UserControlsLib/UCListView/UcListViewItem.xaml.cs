@@ -408,7 +408,7 @@ namespace Ginger.UserControlsLib.UCListView
                         operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
                         operationBtn.ButtonImageType = operation.ImageType;
                         operationBtn.ToolTip = operation.ToolTip;
-                        operationBtn.Margin = new Thickness(-5, 0, -5, 0);
+                        operationBtn.Margin = operation.Margin;
                         operationBtn.ButtonFontImageSize = operation.ImageSize;
                         operationBtn.IsEnabled = operation.IsEnabeled;
 

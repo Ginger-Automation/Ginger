@@ -1,28 +1,34 @@
-    <Page xmlns:Ginger="clr-namespace:Ginger"  x:Class="Ginger.Environments.AppDataBasesPage"
+    <Page 
+        x:Class="Ginger.Environments.AppDataBasesPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-       xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Environment"
+       xmlns:h="clr-namespace:Ginger.Help" xmlns:uclistview="clr-namespace:Ginger.UserControlsLib.UCListView" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+    h:GingerHelpProvider.HelpString="Environment"
       d:DesignHeight="300" d:DesignWidth="600"
 	Title="AppDataBasesWindow">
 
-    <Grid x:Name="appDataBasesWindowGrid">
-        <Ginger:ucGrid x:Name="grdAppDbs" Title="Application Data Bases" ShowRefresh="Collapsed"/>
-        <Grid.Resources>
-            <DataTemplate x:Key="TNSValueExpressionButton">
-                <Button x:Name="GridTNSVEButton" Content="..." Click="GridTNSVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
-            </DataTemplate>
-            <DataTemplate x:Key="UserValueExpressionButton">
-                <Button x:Name="GridUserVEButton" Content="..." Click="GridUserVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
-            </DataTemplate>
-            <DataTemplate x:Key="PswdValueExpressionButton">
-                <Button x:Name="GridPswdVEButton" Content="..." Click="GridPswdVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
-            </DataTemplate>
-            <DataTemplate x:Key="ConnStrValueExpressionButton">
-                <Button x:Name="GridConnStrVEButton" Content="..." Click="GridConnStrVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
-            </DataTemplate>
-        </Grid.Resources>
-    </Grid>
+    <DockPanel Background="{StaticResource $BackgroundColor_White}">
+        <Grid x:Name="xBackToListGrid"  DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40"></ColumnDefinition>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+                <ColumnDefinition Width="200*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <UserControls:ucButton x:Name="xGoToList" Grid.Column="0" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoBack" Click="xGoToList_Click" Foreground="{StaticResource $HighlightColor_LightBlue}" >
+                <UserControls:ucButton.ToolTip>
+                    <GingerCore:ucTextDicResource Text="Back to Database List"></GingerCore:ucTextDicResource>
+                </UserControls:ucButton.ToolTip>
+            </UserControls:ucButton>
+
+            <UserControls:ImageMakerControl Grid.Column="1" SetAsFontImageWithSize="16" ImageType="Variable" HorizontalAlignment="Left" SetBorder="False" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+            <TextBlock x:Name="xSelectedItemTitleText" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,2,0,0" Text="Action Description" Style="{StaticResource $TextBlockStyle}" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" />
+        </Grid>
+
+        <Frame x:Name="xMainFrame" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden"/>
+    </DockPanel>
+
 </Page>

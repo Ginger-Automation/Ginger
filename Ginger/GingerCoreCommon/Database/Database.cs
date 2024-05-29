@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
 
@@ -84,6 +85,13 @@ namespace GingerCore.Environments
             }
         }
 
+        public static eImageType Image
+        {
+            get
+            {
+                return eImageType.Database;
+            }
+        }
 
         private string mName;
         [IsSerializedForLocalRepository]

@@ -42,7 +42,7 @@ namespace Ginger.UserControlsLib.UCListView
         public string AutomationID;
 
         public RoutedEventHandler OperationHandler;
-
+        public Thickness Margin { get; set; } = new Thickness(-5,0,-5,0);
         public List<General.eRIPageViewMode> SupportedViews = new List<General.eRIPageViewMode>();
     }
 }

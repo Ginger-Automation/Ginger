@@ -1,6 +1,8 @@
 ﻿using Amdocs.Ginger.Common;
+using Ginger.BusinessFlowPages.ListHelpers;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,17 +18,15 @@ namespace Ginger.Environments
     public partial class AddNewDatabasePage : Page
     {
         GenericWindow _pageGenericWin = null;
-        private readonly IObservableList dataSourceList;
-        private readonly AppDataBasesPage appDataBasesPage;
+        private readonly ObservableList<IDatabase> dataSourceList;
         private readonly Database database;
         private readonly Button testConnectionButton = new();
         private readonly Button okBtn = new ();
-
-
-        public AddNewDatabasePage(IObservableList dataSourceList, AppDataBasesPage appDataBasesPage, Context context)
+        private readonly DatabaseListViewHelper dbListViewHelper;
+        public AddNewDatabasePage(ObservableList<IDatabase> dataSourceList, Context context, DatabaseListViewHelper dbListViewHelper)
         {
+            this.dbListViewHelper = dbListViewHelper;
             this.dataSourceList = dataSourceList;
-            this.appDataBasesPage = appDataBasesPage;
             InitializeComponent();
             xDatabaseComboBox.ItemsSource = GingerCore.General
                                             .GetEnumValuesForCombo(typeof(Database.eDBTypes))
@@ -82,7 +82,7 @@ namespace Ginger.Environments
             {
                 
 
-                this.appDataBasesPage.TestDatabase(database);
+                this.dbListViewHelper.TestDatabase(database);
 
                 Dispatcher.Invoke(() =>
                 {
@@ -130,12 +130,13 @@ namespace Ginger.Environments
             ConvertDetailsToConnectionString();
 
             dataSourceList.Add(database);
-            database.PropertyChanged += appDataBasesPage.db_PropertyChanged;
+
+            database.PropertyChanged+= this.dbListViewHelper.DbPropertyChanged;
 
             okBtn.IsEnabled = false;
             Task.Run(() =>
             {
-                this.appDataBasesPage.TestDatabase(database);
+                this.dbListViewHelper.TestDatabase(database);
 
                 Dispatcher.Invoke(() =>
                 {
