@@ -596,14 +596,44 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 return _locator.ClickAsync(new LocatorClickOptions
                 {
-                    Button = MouseButton.Left,
-
+                    Button = MouseButton.Left
                 });
+            }
+
+            public Task ClickAsync(int x, int y)
+            {
+                return _locator.ClickAsync(new LocatorClickOptions
+                {
+                    Button = MouseButton.Left,
+                    Position = new()
+                    {
+                        X = x,
+                        Y = y
+                    }
+                });
+
             }
 
             public Task DoubleClickAsync()
             {
-                return _locator.DblClickAsync();
+                return _locator.DblClickAsync(new LocatorDblClickOptions()
+                {
+                    Button = MouseButton.Left
+                });
+            }
+
+            public Task DoubleClickAsync(int x, int y)
+            {
+                return _locator.DblClickAsync(new LocatorDblClickOptions
+                {
+                    Button = MouseButton.Left,
+                    Position = new()
+                    {
+                        X = x,
+                        Y = y
+                    }
+                });
+
             }
 
             public Task HoverAsync()
@@ -621,7 +651,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return _locator.IsEnabledAsync();
             }
 
-            public async Task<string> GetAttributeValueAsync(string attributeName)
+            public async Task<string> AttributeValueAsync(string attributeName)
             {
                 string? attributeValue = await _locator.GetAttributeAsync(attributeName);
                 if (attributeValue == null)
@@ -632,7 +662,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return attributeValue;
             }
 
-            public async Task<Size> GetSizeAsync()
+            public async Task<Size> SizeAsync()
             {
                 LocatorBoundingBoxResult? boundingBox = await _locator.BoundingBoxAsync();
                 if (boundingBox == null)
@@ -643,7 +673,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return new Size((int)boundingBox.Width, (int)boundingBox.Height);
             }
 
-            public async Task<string> GetTextContentAsync()
+            public async Task<string> TextContentAsync()
             {
                 string? content = await _locator.TextContentAsync();
                 if (content == null)
@@ -659,12 +689,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return _locator.EvaluateAsync<string>(script);
             }
 
-            public Task<string> GetInnerTextAsync()
+            public Task<string> InnerTextAsync()
             {
                 return _locator.InnerTextAsync();
             }
 
-            public Task<string> GetInputValueAsync()
+            public Task<string> InputValueAsync()
             {
                 return _locator.InputValueAsync();
             }
@@ -677,7 +707,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 });
             }
 
-            public Task<string> GetTagNameAsync()
+            public Task<string> TagNameAsync()
             {
                 return _locator.EvaluateAsync<string>("elem => elem.tagName");
             }
@@ -685,6 +715,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             public Task ScrollToViewAsync()
             {
                 return _locator.ScrollIntoViewIfNeededAsync();
+            }
+
+            public Task FocusAsync()
+            {
+                return _locator.FocusAsync();
             }
         }
 
