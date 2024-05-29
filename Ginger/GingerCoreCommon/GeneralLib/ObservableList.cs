@@ -362,6 +362,15 @@ namespace Amdocs.Ginger.Common
             base.Remove(obj);
         }
 
+        public void ReplaceItem(int index, T newItem)
+        {
+            if (index < 0 || index >= this.Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            T oldItem = this[index];
+            this.Items[index] = newItem;
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, oldItem, index));
+        }
+
         public List<object> ListItems
         {
             get

@@ -895,8 +895,7 @@ namespace GingerCore
                 {
                     //replace old instance object with new
                     int originalIndex = ((BusinessFlow)hostItem).Activities.IndexOf(activityInstance);
-                    ((BusinessFlow)hostItem).Activities.Remove(activityInstance);
-                    ((BusinessFlow)hostItem).Activities.Insert(originalIndex, newInstance);
+                    ((BusinessFlow)hostItem).Activities.ReplaceItem(originalIndex, newInstance);
                 }
                 return;
             }
