@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
             {
                 ProjEnvironment currentEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((projEnvironment) => projEnvironment.Name.Equals(businessFlow.Environment));
 
-                if(currentEnvironment == null)
+                if (currentEnvironment == null)
                 {
                     return;
                 }
@@ -55,60 +55,63 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
 
                 EnvApplication application = currentEnvironment?.Applications?.FirstOrDefault((appName) => appName.Name.Equals(TargetApplication));
 
+                // Commented it as part of Backward support compatibility
+                //if (application == null || string.IsNullOrEmpty(application.Name))
+                //{
+                //    string EnvApps = string.Join(", ", currentEnvironment.Applications.Select(p => p.Name)?.ToList());
 
-                if (application == null || string.IsNullOrEmpty(application.Name))
+                //    AnalyzeEnvApplication AB = new()
+                //    {
+                //        Description = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)} {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} not found in Environment: {currentEnvironment.Name}",
+                //        UTDescription = "MissingApplicationInEnvironment",
+                //        Details = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)} {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} = '{TargetApplication}' is missing in Environment '{currentEnvironment.Name}'. Curent Environment app(s) are: '{EnvApps}'",
+                //        HowToFix = $"Open the Environment Configurations Page and add/set correct {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}",
+                //        CanAutoFix = eCanFix.No,
+                //        Status = eStatus.NeedFix,
+                //        IssueType = eType.Info,
+                //        ItemParent = currentEnvironment.Name,
+                //        ItemName = TargetApplication,
+                //        Impact = "Execution probably will fail due to missing input value.",
+                //        ItemClass = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
+                //        Severity = eSeverity.High,
+                //        Selected = false,
+                //        FixItHandler = null
+                //    };
+                //    issues.Add(AB);
+                //    return;
+                //}
+
+                if (application != null && !string.IsNullOrEmpty(application.Name))
                 {
-                    string EnvApps = string.Join(";", currentEnvironment.Applications.Select(p => p.Name)?.ToList());
-
-                    AnalyzeEnvApplication AB = new()
-                    {
-                        Description = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)} {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} not found in Environment: {currentEnvironment.Name}",
-                        UTDescription = "MissingApplicationInEnvironment",
-                        Details = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)}  {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} = '{TargetApplication}' while Environment app(s) is: '{EnvApps}'",
-                        HowToFix = $"Open the Environment Configurations Page and add/set correct {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}",
-                        CanAutoFix = eCanFix.No,
-                        Status = eStatus.NeedFix,
-                        IssueType = eType.Error,
-                        ItemParent = currentEnvironment.Name,
-                        ItemName = TargetApplication,
-                        Impact = "Execution probably will fail due to missing input value.",
-                        ItemClass = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
-                        Severity = eSeverity.Critical,
-                        Selected = false,
-                        FixItHandler = null
-                    };
-                    issues.Add(AB);
-                    return;
-                }
-
-                ApplicationPlatform? ExistingApplication = WorkSpace.Instance.Solution.ApplicationPlatforms
+                    ApplicationPlatform? ExistingApplication = WorkSpace.Instance.Solution.ApplicationPlatforms
                     .FirstOrDefault(applicationPlatform => applicationPlatform.Guid.Equals(application.ParentGuid) || applicationPlatform.AppName.Equals(application.Name));
 
-                if (ExistingApplication == null)
-                {
-                    AnalyzeEnvApplication AB = new()
+                    if (ExistingApplication == null)
                     {
-                        Description = $"Environment Application does not exist in the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} of the Solution",
-                        UTDescription = "MissingApplicationInTargetApplication",
-                        Details = $"Environment Application does not exist in the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} of the Solution",
-                        FixItHandler = null,
-                        Status = eStatus.NeedFix,
-                        IssueType = eType.Error,
-                        ItemParent = currentEnvironment?.Name,
-                        ItemName = TargetApplication,
-                        Impact = "Execution probably will fail due to missing input value.",
-                        ItemClass = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
-                        Severity = eSeverity.High,
-                        Selected = false,
-                        CanAutoFix = eCanFix.No,
-                        HowToFix = $"""
+                        AnalyzeEnvApplication AB = new()
+                        {
+                            Description = $"Environment Application does not exist in the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} of the Solution",
+                            UTDescription = "MissingApplicationInTargetApplication",
+                            Details = $"Environment Application does not exist in the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} of the Solution",
+                            FixItHandler = null,
+                            Status = eStatus.NeedFix,
+                            IssueType = eType.Error,
+                            ItemParent = currentEnvironment?.Name,
+                            ItemName = TargetApplication,
+                            Impact = "Execution probably will fail due to missing input value.",
+                            ItemClass = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
+                            Severity = eSeverity.High,
+                            Selected = false,
+                            CanAutoFix = eCanFix.No,
+                            HowToFix = $"""
                         Add this application in the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}.
                         
                         Note :- That if you want to add the application with the same name as in environment then please delete the existing application from the environment 
                         and add a new one.
                         """
-                    };
-                    issues.Add(AB);
+                        };
+                        issues.Add(AB);
+                    }
                 }
             }
 
@@ -145,7 +148,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
 
         private static readonly object lockObject = new();
 
-        public static bool DoesEnvParamOrURLExistInValueExp(string ValueExp , string CurrentEnvironment)
+        public static bool DoesEnvParamOrURLExistInValueExp(string ValueExp, string CurrentEnvironment)
         {
 
             if (string.IsNullOrEmpty(ValueExp))
@@ -155,17 +158,17 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
 
 
 
-           MatchCollection envParamMatches = GingerCore.ValueExpression.rxEnvParamPattern.Matches(ValueExp);
+            MatchCollection envParamMatches = GingerCore.ValueExpression.rxEnvParamPattern.Matches(ValueExp);
 
-            if( envParamMatches == null || envParamMatches.Count == 0)
+            if (envParamMatches == null || envParamMatches.Count == 0)
             {
                 return true;
             }
 
-            ProjEnvironment CurrentProjEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((proj)=>proj.Name.Equals(CurrentEnvironment));
+            ProjEnvironment CurrentProjEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault((proj) => proj.Name.Equals(CurrentEnvironment));
 
 
-            if(CurrentProjEnv == null)
+            if (CurrentProjEnv == null)
             {
                 return true;
             }
@@ -175,9 +178,9 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
             {
                 string AppName = string.Empty, GlobalParamName = string.Empty;
 
-                GingerCore.ValueExpression.GetEnvAppAndParam(envParamMatch.Value, ref AppName , ref GlobalParamName);
+                GingerCore.ValueExpression.GetEnvAppAndParam(envParamMatch.Value, ref AppName, ref GlobalParamName);
 
-                if(string.IsNullOrEmpty(AppName) || string.IsNullOrEmpty(GlobalParamName))
+                if (string.IsNullOrEmpty(AppName) || string.IsNullOrEmpty(GlobalParamName))
                 {
                     return false;
                 }
@@ -189,7 +192,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                     CurrentEnvApp?.ConvertGeneralParamsToVariable();
                 }
 
-                bool doesParamExistInCurrEnv =  CurrentEnvApp?.Variables?.Any((Param)=>Param.Name.Equals(GlobalParamName)) ?? false;
+                bool doesParamExistInCurrEnv = CurrentEnvApp?.Variables?.Any((Param) => Param.Name.Equals(GlobalParamName)) ?? false;
 
                 if (!doesParamExistInCurrEnv)
                 {
@@ -204,10 +207,10 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
                 return true;
             }
 
-            foreach(Match envURLMatch in envURLMatches)
+            foreach (Match envURLMatch in envURLMatches)
             {
                 string AppName = string.Empty;
-                GingerCore.ValueExpression.GetEnvAppFromEnvURL(envURLMatch.Value , ref AppName);
+                GingerCore.ValueExpression.GetEnvAppFromEnvURL(envURLMatch.Value, ref AppName);
 
 
                 if (string.IsNullOrEmpty(AppName))
