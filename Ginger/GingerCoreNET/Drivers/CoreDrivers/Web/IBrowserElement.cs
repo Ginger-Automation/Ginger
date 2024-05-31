@@ -33,7 +33,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<bool> IsEnabledAsync();
 
-        public Task<string> AttributeValueAsync(string attributeName);
+        public Task<string> AttributeValueAsync(string name);
+
+        public Task SetAttributeValueAsync(string name, string value);
 
         public Task<string> TextContentAsync();
 
@@ -48,5 +50,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task ScrollToViewAsync();
 
         public Task FocusAsync();
+
+        public Task ClearAsync();
+
+        public Task SelectByValueAsync(string value);
+
+        public Task SelectByTextAsync(string text);
+
+        public Task SelectByIndexAsync(int index);
+
+        public Task SetCheckboxAsync(bool check);
+
+        public Task SetTextAsync(string text);
     }
 }

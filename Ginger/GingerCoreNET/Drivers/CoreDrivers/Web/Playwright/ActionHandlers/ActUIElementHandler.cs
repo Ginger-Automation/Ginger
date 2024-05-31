@@ -95,6 +95,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActUIElement.eElementAction.DoubleClickXY:
                         operationTask = HandleDoubleClickXYOperationAsync();
                         break;
+                    case ActUIElement.eElementAction.ClearValue:
+                        operationTask = HandleClearValueOperationAsync();
+                        break;
+                    case ActUIElement.eElementAction.Select:
+                        operationTask = HandleSelectOperationAsync();
+                        break;
+                    case ActUIElement.eElementAction.SelectByText:
+                        operationTask = HandleSelectByTextOperationAsync();
+                        break;
+                    case ActUIElement.eElementAction.SelectByIndex:
+                        operationTask = HandleSelectByIndexOperationAsync();
+                        break;
+                    case ActUIElement.eElementAction.SetValue:
+                        operationTask = HandleSetValueOperationAsync();
+                        break;
                     default:
                         _act.Error = $"Unknown operation type - {_act.ElementAction}";
                         break;
@@ -176,7 +191,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             }
             if (string.IsNullOrEmpty(text))
             {
-                text = await element.InputValueAsync();
+                text = await element.InputValueAsync(); //probably only supported for input, textarea, select elements.
             }
             if (text == null)
             {
@@ -236,7 +251,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             string tagName = await element.TagNameAsync();
             if (string.Equals(tagName, IBrowserElement.AnchorTagName))
             {
-                string href = await element.AttributeValueAsync(attributeName: "href");
+                string href = await element.AttributeValueAsync(name: "href");
                 _act.AddOrUpdateReturnParamActual("Actual", href);
                 return;
             }
@@ -253,7 +268,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
         private async Task HandleGetStyleOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            string style = await element.AttributeValueAsync(attributeName: "style");
+            string style = await element.AttributeValueAsync(name: "style");
             _act.AddOrUpdateReturnParamActual("Actual", style);
         }
 
@@ -288,7 +303,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             string tagName = await element.TagNameAsync();
             bool isInputElement = string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase);
             bool isButtonElement = string.Equals(tagName, IBrowserElement.ButtonTagName, StringComparison.OrdinalIgnoreCase);
-            bool isTypeSubmit = string.Equals(await element.AttributeValueAsync(attributeName: "type"), "submit", StringComparison.OrdinalIgnoreCase);
+            bool isTypeSubmit = string.Equals(await element.AttributeValueAsync(name: "type"), "submit", StringComparison.OrdinalIgnoreCase);
             
             if ((isInputElement || isButtonElement) && isTypeSubmit)
             {
@@ -303,10 +318,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
         private async Task HandleMultiClicksOperationAsync()
         {
             IEnumerable<IBrowserElement> elements = new List<IBrowserElement>(await GetAllMatchingElementsAsync());
-            
+
             foreach (IBrowserElement element in elements)
             {
-                await element.ClickAsync();
+                if (await element.IsVisibleAsync() && await element.IsEnabledAsync())
+                {
+                    await element.ClickAsync();
+                }
             }
         }
 
@@ -333,15 +351,86 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             string yString = _act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver;
             if (!int.TryParse(xString, out int x))
             {
-                throw new InvalidActionConfigurationException($"X-Coordinate must be a valid integer");
+                throw new InvalidActionConfigurationException($"X-Coordinate must be a integer");
             }
             if (!int.TryParse(yString, out int y))
             {
-                throw new InvalidActionConfigurationException($"X-Coordinate must be a valid integer");
+                throw new InvalidActionConfigurationException($"X-Coordinate must be a integer");
             }
 
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.DoubleClickAsync(x, y);
+        }
+
+        private async Task HandleClearValueOperationAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            await element.ClearAsync();
+        }
+
+        private async Task HandleSelectOperationAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string value = _act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect);
+            await element.SelectByValueAsync(value);
+        }
+
+        private async Task HandleSelectByTextOperationAsync()
+        {
+
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string text = _act.GetInputParamCalculatedValue(ActUIElement.Fields.Value);
+            await element.SelectByTextAsync(text);
+        }
+
+        private async Task HandleSelectByIndexOperationAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            if (!int.TryParse(_act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect), out int index))
+            {
+                throw new InvalidActionConfigurationException($"Index to select must be a integer");
+            }
+            await element.SelectByIndexAsync(index);
+        }
+
+        private async Task HandleSetValueOperationAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string tagName = await element.TagNameAsync();
+            string type = await element.AttributeValueAsync(name: "type");
+
+            bool isSelectElement = string.Equals(tagName, IBrowserElement.SelectTagName, StringComparison.OrdinalIgnoreCase);
+            if (isSelectElement)
+            {
+                string text = _act.GetInputParamCalculatedValue(ActUIElement.Fields.Value);
+                await element.SelectByTextAsync(text);
+                return;
+            }
+
+            bool isInputElement = string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase);
+            bool isTypeCheckbox = string.Equals(type, "checkbox", StringComparison.OrdinalIgnoreCase);
+            if (isInputElement && isTypeCheckbox)
+            {
+                string checkString = _act.ValueForDriver;
+                if (!bool.TryParse(checkString, out bool check))
+                {
+                    throw new InvalidActionConfigurationException($"Expected value to be 'true/false' for checkbox");
+                }
+                await element.SetCheckboxAsync(check);
+                return;
+            }
+
+            bool isTypeText = string.Equals(type, "text", StringComparison.OrdinalIgnoreCase);
+            if (isInputElement && isTypeText)
+            {
+                await element.ClearAsync();
+                string text = _act.GetInputParamCalculatedValue("Value");
+                await element.SetTextAsync(text);
+                return;
+            }
+
+            string value = _act.GetInputParamCalculatedValue("Value");
+            await element.SetAttributeValueAsync(name: "value", value);
         }
     }
 }

@@ -29,6 +29,7 @@ using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using GingerCore.Actions.Common;
 using OpenQA.Selenium.DevTools.V119.DOM;
 using System.Drawing;
+using NPOI.OpenXmlFormats.Dml.Chart;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -290,6 +291,34 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return tab;
             }
 
+            public async Task SetTabAsync(IBrowserTab tab) 
+            {
+                if (tab == null)
+                {
+                    throw new ArgumentNullException(paramName: nameof(tab));
+                }
+
+                IEnumerable<IBrowserTab> tabs = new List<IBrowserTab>(_tabs);
+                
+                IBrowserTab? tabToSwitch = null;
+                foreach (IBrowserTab currentTab in tabs)
+                {
+                    if (currentTab == tab)
+                    {
+                        tabToSwitch = currentTab;
+                        break;
+                    }
+                }
+
+                if (tabToSwitch == null)
+                {
+                    throw new ArgumentException($"No matching tab found in the list of window tabs");
+                }
+
+                _currentTab = tabToSwitch;
+                await ((PlaywrightBrowserTab)_currentTab).BringToFrontAsync();
+            }
+
             public Task DeleteCookiesAsync()
             {
                 ThrowIfClosed();
@@ -357,7 +386,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             private readonly IPlaywrightPage _playwrightPage;
             private readonly IBrowserTab.OnTabClose _onTabClose;
             private readonly LinkedList<string> _consoleMessages = [];
-            private IFrameLocator? _currentFrame;
+            //private IFrameLocator? _currentFrameLocator;
+            private IFrame _currentFrame;
             private bool _isClosed = false;
 
             public bool IsClosed => _isClosed;
@@ -366,7 +396,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 _playwrightPage = playwrightPage;
                 _onTabClose = onTabClose;
-                _currentFrame = null;
+                //_currentFrameLocator = null;
+                _currentFrame = _playwrightPage.MainFrame;
                 _playwrightPage.Console += OnConsoleMessage;
             }
 
@@ -374,6 +405,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 //TODO: Playwright - Selenium console logs contain timestamp and level. Try adding those in these as well so that we can have similar log structure
                 _consoleMessages.AddLast(e.Text);
+            }
+
+            public Task BringToFrontAsync()
+            {
+                return _playwrightPage.BringToFrontAsync();
             }
 
             public Task<string> ExecuteJavascriptAsync(string script)
@@ -465,39 +501,84 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return rawLogs;
             }
 
-            public async Task<bool> SwitchFrame(eLocateBy locateBy, string locateValue)
+            public async Task<bool> SwitchFrameAsync(eLocateBy locateBy, string value)
             {
                 IFrameLocator frameLocator;
                 switch (locateBy)
                 {
                     case eLocateBy.ByID:
-                        frameLocator = _playwrightPage.FrameLocator($"css=#{locateValue}");
+                        //frameLocator = _playwrightPage.FrameLocator($"css=#{locateValue}");
+                        frameLocator = _currentFrame.FrameLocator($"css=#{value}");
                         break;
                     case eLocateBy.ByTitle:
-                        frameLocator = _playwrightPage.FrameLocator($"css=iframe[title='{locateValue}']");
+                        //frameLocator = _playwrightPage.FrameLocator($"css=iframe[title='{locateValue}']");
+                        frameLocator = _currentFrame.FrameLocator($"css=iframe[title='{value}']");
                         break;
                     case eLocateBy.ByXPath:
-                        frameLocator = _playwrightPage.FrameLocator($"xpath={locateValue}");
+                        //frameLocator = _playwrightPage.FrameLocator($"xpath={locateValue}");
+                        frameLocator = _currentFrame.FrameLocator($"xpath={value}");
                         break;
                     case eLocateBy.ByUrl:
-                        frameLocator = _playwrightPage.FrameLocator($"css=iframe[src='{locateValue}']");
+                        //frameLocator = _playwrightPage.FrameLocator($"css=iframe[src='{locateValue}']");
+                        frameLocator = _currentFrame.FrameLocator($"css=iframe[src='{value}']");
                         break;
                     default:
                         throw new ArgumentException($"Frame locator '{locateBy}' is not supported for frames.");
                 }
 
                 bool wasLocated = await frameLocator.Owner.CountAsync() > 0;
-                if (wasLocated)
+                if (!wasLocated)
                 {
-                    _currentFrame = frameLocator;
+                    return false;
+                    
                 }
+
+                //_currentFrameLocator = frameLocator;
+
+                IJSHandle jsHandle = await frameLocator.Owner.EvaluateHandleAsync("element => element");
+                IElementHandle? elementHandle = jsHandle.AsElement();
+                if (elementHandle == null)
+                {
+                    return false;
+                }
+
+                IFrame? frame = await elementHandle.ContentFrameAsync();
+                if (frame == null)
+                {
+                    return false;
+                }
+
+                _currentFrame = frame;
 
                 return true;
             }
 
-            public async Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string locateValue)
+            public Task SwitchToMainFrameAsync()
             {
-                IPlaywrightLocator locator = await LocateElementAsync(locateBy, locateValue);
+                //_currentFrameLocator = null;
+                _currentFrame = _playwrightPage.MainFrame;
+                return Task.CompletedTask;
+            }
+
+            public Task SwitchToParentFrameAsync()
+            {
+                //if (_currentFrameLocator == null)
+                //{
+                //    return Task.CompletedTask;
+                //}
+
+                IFrame? parentFrame = _currentFrame.ParentFrame;
+                if (parentFrame != null)
+                {
+                    _currentFrame = parentFrame;
+                }
+
+                return Task.CompletedTask;
+            }
+
+            public async Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string value)
+            {
+                IPlaywrightLocator locator = await LocateElementAsync(locateBy, value);
 
                 int matchedElementCount = await locator.CountAsync();
                 IBrowserElement[] elements = new IBrowserElement[matchedElementCount];
@@ -512,14 +593,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                  
             private Task<IPlaywrightLocator> LocateElementAsync(eLocateBy locateBy, string value)
             {
-                if (_currentFrame == null)
-                {
-                    return LocateElementInMainFrameAsync(locateBy, value);
-                }
-                else
-                {
+                //if (_currentFrameLocator == null)
+                //{
+                //    return LocateElementInMainFrameAsync(locateBy, value);
+                //}
+                //else
+                //{
                     return LocateElementInCurrentFrameAsync(locateBy, value);
-                }
+                //}
             }
 
             private Task<IPlaywrightLocator> LocateElementInMainFrameAsync(eLocateBy locateBy, string value)
@@ -530,6 +611,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     case eLocateBy.ByID:
                         locator = _playwrightPage.MainFrame.Locator($"css=#{value}");
                         break;
+                    case eLocateBy.ByCSS:
+                        locator = _playwrightPage.MainFrame.Locator($"css={value}");
+                        break;
                     default:
                         throw new ArgumentException($"Element locator '{locateBy}' is not supported.");
                 }
@@ -539,16 +623,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             private Task<IPlaywrightLocator> LocateElementInCurrentFrameAsync(eLocateBy locateBy, string value)
             {
-                if (_currentFrame == null)
-                {
-                    throw new InvalidOperationException("Current frame is null");
-                }
+                //if (_currentFrameLocator == null)
+                //{
+                //    throw new InvalidOperationException("Current frame is null");
+                //}
 
                 IPlaywrightLocator locator;
                 switch (locateBy)
                 {
                     case eLocateBy.ByID:
+                        //locator = _currentFrameLocator.Locator($"css=#{value}");
                         locator = _currentFrame.Locator($"css=#{value}");
+                        break;
+                    case eLocateBy.ByCSS:
+                        //locator = _currentFrameLocator.Locator($"css={value}");
+                        locator = _currentFrame.Locator($"css={value}");
+                        break;
+                    case eLocateBy.ByXPath:
+                        locator = _currentFrame.Locator($"xpath={value}");
                         break;
                     default:
                         throw new ArgumentException($"Element locator '{locateBy}' is not supported.");
@@ -651,15 +743,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return _locator.IsEnabledAsync();
             }
 
-            public async Task<string> AttributeValueAsync(string attributeName)
+            public async Task<string> AttributeValueAsync(string name)
             {
-                string? attributeValue = await _locator.GetAttributeAsync(attributeName);
+                string? attributeValue = await _locator.GetAttributeAsync(name);
                 if (attributeValue == null)
                 {
                     return string.Empty;
                 }
 
                 return attributeValue;
+            }
+
+            public Task SetAttributeValueAsync(string name, string value)
+            {
+                return _locator.EvaluateAsync<string>($"element => element.setAttribute('{name}', '{value}')");
             }
 
             public async Task<Size> SizeAsync()
@@ -720,6 +817,69 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             public Task FocusAsync()
             {
                 return _locator.FocusAsync();
+            }
+
+            public Task ClearAsync()
+            {
+                return _locator.ClearAsync();
+            }
+
+            public async Task SelectByValueAsync(string value)
+            {
+                await AssertTagNameAsync(IBrowserElement.SelectTagName);
+                await _locator.SelectOptionAsync(new SelectOptionValue()
+                {
+                    Value = value
+                });
+            }
+
+            public async Task SelectByTextAsync(string text)
+            {
+                await AssertTagNameAsync(IBrowserElement.SelectTagName);
+                await _locator.SelectOptionAsync(new SelectOptionValue()
+                {
+                    Label = text
+                });
+            }
+
+            public async Task SelectByIndexAsync(int index)
+            {
+                await AssertTagNameAsync(IBrowserElement.SelectTagName);
+                await _locator.SelectOptionAsync(new SelectOptionValue()
+                {
+                    Index = index
+                });
+            }
+
+            public async Task SetCheckboxAsync(bool check)
+            {
+                await AssertTagNameAsync(IBrowserElement.InputTagName);
+                await AssertTypeAttributeAsync("checkbox");
+
+                await ExecuteJavascriptAsync($"element => element.checked={check.ToString().ToLower()}");
+            }
+
+            public Task SetTextAsync(string text)
+            {
+                return _locator.FillAsync(text);
+            }
+
+            private async Task AssertTagNameAsync(string expected)
+            {
+                string tagName = await TagNameAsync();
+                if (!string.Equals(tagName, expected, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception($"Expected '{expected}' element but found '{tagName}'");
+                }
+            }
+
+            public async Task AssertTypeAttributeAsync(string expected)
+            {
+                string type = await AttributeValueAsync(name: "type");
+                if (!string.Equals(type, expected, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception($"Expected '{expected}' type but found '{type}'");
+                }
             }
         }
 
