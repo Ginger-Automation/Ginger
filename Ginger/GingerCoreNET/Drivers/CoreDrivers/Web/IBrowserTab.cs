@@ -37,7 +37,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<string> GetBrowserLogsAsync();
 
-        public Task<bool> SwitchFrame(eLocateBy locatyBy, string locateValue);
+        public Task<bool> SwitchFrameAsync(eLocateBy locatyBy, string locateValue);
+
+        public Task SwitchToMainFrameAsync();
+
+        public Task SwitchToParentFrameAsync();
 
         public Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string locateValue);
 

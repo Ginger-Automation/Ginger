@@ -93,6 +93,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActBrowserElement.eControlAction.SwitchFrame:
                         operationTask = HandleSwitchFrameOperationAsync();
                         break;
+                    case ActBrowserElement.eControlAction.SwitchToDefaultFrame:
+                        operationTask = HandleSwitchToDefaultFrameOperationAsync();
+                        break;
+                    case ActBrowserElement.eControlAction.SwitchToParentFrame:
+                        operationTask = HandleSwitchToParentFrameOperationAsync(); ;
+                        break;
+                    case ActBrowserElement.eControlAction.SwitchWindow:
+                        operationTask = HandleSwitchWindowOperationAsync();
+                        break;
+                    case ActBrowserElement.eControlAction.SwitchToDefaultWindow:
+                        operationTask = HandleSwitchToDefaultWindowOperationAsync();
+                        break;
                     case ActBrowserElement.eControlAction.GetMessageBoxText:
                         throw new NotImplementedException();
                     case ActBrowserElement.eControlAction.AcceptMessageBox:
@@ -117,15 +129,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                         throw new NotImplementedException();
                     case ActBrowserElement.eControlAction.SwitchToDefaultDOM:
                         throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.SwitchToDefaultFrame:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.SwitchToDefaultWindow:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.SwitchToParentFrame:
-                        throw new NotImplementedException();
                     case ActBrowserElement.eControlAction.SwitchToShadowDOM:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.SwitchWindow:
                         throw new NotImplementedException();
                     default:
                         _act.Error = $"Unknown operation type - {_act.ControlAction}";
@@ -416,11 +420,68 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
 
         private async Task HandleSwitchFrameOperationAsync()
         {
-            bool wasSwitched = await _browser.CurrentWindow.CurrentTab.SwitchFrame(_act.LocateBy, _act.LocateValueCalculated);
+            bool wasSwitched = await _browser.CurrentWindow.CurrentTab.SwitchFrameAsync(_act.LocateBy, _act.LocateValueCalculated);
             if (!wasSwitched)
             {
                 _act.Error = $"Failed to switch with locate '{_act.LocateBy}' and value '{_act.LocateValueCalculated}'";
             }
+        }
+
+        private Task HandleSwitchToDefaultFrameOperationAsync()
+        {
+            return _browser.CurrentWindow.CurrentTab.SwitchToMainFrameAsync();
+        }
+
+        private Task HandleSwitchToParentFrameOperationAsync()
+        {
+            return _browser.CurrentWindow.CurrentTab.SwitchToParentFrameAsync();
+        }
+
+        private async Task HandleSwitchWindowOperationAsync()
+        {
+            string targetTitle = _act.LocateValueCalculated;
+            if (string.IsNullOrEmpty(targetTitle))
+            {
+                targetTitle = _act.ValueForDriver;
+            }
+
+            if (string.IsNullOrEmpty(targetTitle))
+            {
+                _act.Error = "Error: The window title to search for is missing.";
+                return;
+            }
+
+            IBrowserTab? targeTab = null;
+            IEnumerable<IBrowserTab> tabs = new List<IBrowserTab>(_browser.CurrentWindow.Tabs);
+            foreach (IBrowserTab tab in tabs)
+            {
+                string tabTitle = await tab.GetTitleAsync();
+                if (tabTitle != null && tabTitle.Contains(targetTitle, StringComparison.OrdinalIgnoreCase))
+                {
+                    targeTab = tab;
+                    break;
+                }
+            }
+
+            if (targeTab == null)
+            {
+                _act.Error = $"Error: Window with the title '{targetTitle}' was not found.";
+                return;
+            }
+
+            await _browser.CurrentWindow.SetTabAsync(targeTab);
+        }
+
+        private async Task HandleSwitchToDefaultWindowOperationAsync()
+        {
+            IBrowserTab? firstTab = _browser.CurrentWindow.Tabs.FirstOrDefault();
+            if (firstTab == null)
+            {
+                _act.Error = "Unable to find the default tab.";
+                return;
+            }
+
+            await _browser.CurrentWindow.SetTabAsync(firstTab);
         }
     }
 }

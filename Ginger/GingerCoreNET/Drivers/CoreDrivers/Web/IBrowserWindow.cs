@@ -19,6 +19,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<IBrowserTab> NewTabAsync(bool setAsCurrent = true);
 
+        public Task SetTabAsync(IBrowserTab tab);
+
         public Task DeleteCookiesAsync();
 
         public Task CloseAsync();
