@@ -85,10 +85,26 @@ namespace GingerCore.Environments
             }
         }
 
-        public static eImageType Image
+        public eImageType Image
         {
             get
             {
+                /*                switch (DBType)
+                                {
+                                    case eDBTypes.MySQL: return eImageType.MySQL;
+                                    case eDBTypes.MSSQL: return eImageType.MSSQL;
+                                    case eDBTypes.MSAccess: return eImageType.MSAccess;
+                                    case eDBTypes.Oracle: return eImageType.Oracle;
+                                    case eDBTypes.Cassandra: return eImageType.Cassandra;
+                                    case eDBTypes.CosmosDb: return eImageType.CosmosDB;
+                                    case eDBTypes.MongoDb: return eImageType.MongoDB;
+                                    case eDBTypes.Hbase: return eImageType.HBase;
+                                    case eDBTypes.DB2: return eImageType.DB2;
+                                    case eDBTypes.PostgreSQL: return eImageType.PostgreSQL;
+                                    default: return eImageType.Database;
+                                }
+                */
+
                 return eImageType.Database;
             }
         }

@@ -82,7 +82,7 @@ namespace Ginger.Environments
             {
                 
 
-                this.dbListViewHelper.TestDatabase(database);
+                this.dbListViewHelper.TestSingleDatabase(database);
 
                 Dispatcher.Invoke(() =>
                 {
@@ -136,7 +136,7 @@ namespace Ginger.Environments
             okBtn.IsEnabled = false;
             Task.Run(() =>
             {
-                this.dbListViewHelper.TestDatabase(database);
+                this.dbListViewHelper.TestSingleDatabase(database);
 
                 Dispatcher.Invoke(() =>
                 {
@@ -204,16 +204,17 @@ namespace Ginger.Environments
                 xVersionStackPanel.Visibility = Visibility.Collapsed;
             }
 
-
-            if (databaseType.Equals(eDBTypes.MSSQL) || databaseType.Equals(eDBTypes.Oracle))
-            {
-                xDatabaseTNSName.Content = "Data Source:";
-            }            
-
-            else if (databaseType.Equals(eDBTypes.MySQL))
+            if (this.database.DBType.Equals(eDBTypes.MySQL)
+                || this.database.DBType.Equals(eDBTypes.Hbase)
+                || this.database.DBType.Equals(eDBTypes.PostgreSQL)
+                || this.database.DBType.Equals(eDBTypes.DB2))
             {
                 xDatabaseTNSName.Content = "Server:";
             }
+            else
+            {
+                xDatabaseTNSName.Content = "Data Source:";
+            }            
 
 
             if (databaseType.Equals(eDBTypes.MSAccess))

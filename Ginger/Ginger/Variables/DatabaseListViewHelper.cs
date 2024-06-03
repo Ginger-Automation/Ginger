@@ -8,6 +8,7 @@ using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Ginger.BusinessFlowPages.ListHelpers
@@ -16,6 +17,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
     {
         private readonly ObservableList<IDatabase> Databases = new ObservableList<IDatabase>();
         private readonly Context mContext;
+
+        public delegate void DatabaseListItemEventHandler(ListItemEventArgs EventArgs);
+        public event DatabaseListItemEventHandler DatabaseListItemEvent;
+        private void OnActionListItemEvent(ListItemEventArgs.eEventType eventType, Object eventObject = null)
+        {
+            DatabaseListItemEventHandler handler = DatabaseListItemEvent;
+            if (handler != null)
+            {
+                handler(new ListItemEventArgs(eventType, eventObject));
+            }
+        }
+
         public DatabaseListViewHelper(ObservableList<IDatabase> Databases, Context context) 
         {
             this.Databases = Databases;
@@ -129,11 +142,9 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ListItemOperation testDatabase = new ListItemOperation();
             testDatabase.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             testDatabase.AutomationID = "test";
-            testDatabase.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Database;
+            testDatabase.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
             testDatabase.ToolTip = "Test Database";
             testDatabase.OperationHandler = TestDatabase;
-            testDatabase.Margin = new Thickness(-5, 0, -5, 0);
-
             operationsList.Add(testDatabase);
 
             ListItemOperation editDB = new ListItemOperation();
@@ -142,24 +153,63 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             editDB.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
             editDB.ToolTip = "Edit Database";
             editDB.OperationHandler = EditDatabase;
-            editDB.Margin = new Thickness(0,0,20,0);
             operationsList.Add(editDB);
 
-
+            ListItemOperation deleteDB = new ListItemOperation();
+            deleteDB.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            deleteDB.AutomationID = "edit";
+            deleteDB.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+            deleteDB.ToolTip = "Delete Database";
+            deleteDB.OperationHandler = DeleteDatabase;
+            deleteDB.Margin = new Thickness(0, 0, 20, 0);
+            operationsList.Add(deleteDB);
             return operationsList;
+        }
+
+        private void DeleteDatabase(object sender, RoutedEventArgs e)
+        {
+            if(sender == null)
+            {
+                return;
+            }
+
+            Database database = (Database)((ucButton)sender).Tag;
+
+            if(database == null)
+            {
+                return;
+            }
+
+            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteSelectedItems, "Database", database.Name) == eUserMsgSelection.Yes)
+            {
+                Databases.Remove(database);
+            }
+
+
         }
 
         private void EditDatabase(object sender, RoutedEventArgs e)
         {
+            if(sender == null)
+            {
+                return;
+            }
 
 
+            Database? database = (Database)((ucButton)sender).Tag;
+
+            if(database == null)
+            {
+                return;
+            }
+
+            OnActionListItemEvent(ListItemEventArgs.eEventType.ShowEditPage, database);
         }
 
-        private void TestDatabase(object sender, RoutedEventArgs e)
+        public void TestSingleDatabase(Database? db)
         {
             try
             {
-                Database? db = ((ucButton)sender).Tag as Database;
                 if (db == null)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);
@@ -170,13 +220,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 db.BusinessFlow = null;
 
                 db.DatabaseOperations.CloseConnection();
-                if (db.DatabaseOperations.Connect(true))
+                if (Task.Run(() => db.DatabaseOperations.Connect(true)).GetAwaiter().GetResult())
                 {
-                    Reporter.ToUser(eUserMsgKey.DbConnSucceed);
+                    Reporter.ToUser(eUserMsgKey.DbConnSucceed, db.Name);
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.DbConnFailed);
+                    Reporter.ToUser(eUserMsgKey.DbConnFailed, db.Name);
                 }
                 db.DatabaseOperations.CloseConnection();
             }
@@ -196,6 +246,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
                 Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
             }
+        }
+
+        private void TestDatabase(object sender, RoutedEventArgs e)
+        {
+            Database? db = ((ucButton)sender).Tag as Database;
+            TestSingleDatabase(db);
         }
 
         public string GetItemTagsField()
@@ -230,13 +286,31 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             deleteSelected.AutomationID = "deleteSelected";
             deleteSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
             deleteSelected.ToolTip = "Delete Selected Database (Del)";
-            deleteSelected.OperationHandler = DeleteSelectedHandler;
+            deleteSelected.OperationHandler = DeleteDBs;
             operationsList.Add(deleteSelected);
+
+            ListItemOperation testAllDatabases = new ListItemOperation();
+            testAllDatabases.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            testAllDatabases.AutomationID = "testAllDatabases";
+            testAllDatabases.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
+            testAllDatabases.ToolTip = "Test All Databases";
+            testAllDatabases.OperationHandler = TestAllDatabases;
+
+            operationsList.Add(testAllDatabases);
 
             return operationsList;
         }
 
-        private void DeleteSelectedHandler(object sender, RoutedEventArgs e)
+        private void TestAllDatabases(object sender, RoutedEventArgs e)
+        {
+
+            foreach (var database in Databases)
+            {
+                TestSingleDatabase(database as Database);
+            }
+        }
+
+        private void DeleteDBs(object sender, RoutedEventArgs e)
         {
             if (ListView.List.SelectedItems.Count == 0)
             {
@@ -279,49 +353,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 }
             }
         }
-
-        public void TestDatabase(Database db)
-        {
-            try
-            {
-                if (db == null)
-                {
-                    Reporter.ToUser(eUserMsgKey.AskToSelectItem);
-                    return;
-                }
-                db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                db.ProjEnvironment = mContext.Environment;
-                db.BusinessFlow = null;
-
-                db.DatabaseOperations.CloseConnection();
-                if (db.DatabaseOperations.Connect(true))
-                {
-                    Reporter.ToUser(eUserMsgKey.DbConnSucceed);
-                }
-                else
-                {
-                    Reporter.ToUser(eUserMsgKey.DbConnFailed);
-                }
-                db.DatabaseOperations.CloseConnection();
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Oracle.ManagedDataAccess.dll is missing"))
-                {
-                    if (Reporter.ToUser(eUserMsgKey.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                    {
-                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149", UseShellExecute = true });
-                        System.Threading.Thread.Sleep(2000);
-                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html", UseShellExecute = true });
-
-                    }
-                    return;
-                }
-
-                Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
-            }
-        }
-
 
         public void Paste()
         {

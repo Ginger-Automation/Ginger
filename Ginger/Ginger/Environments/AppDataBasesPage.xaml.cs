@@ -17,12 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
+using GingerCore.Variables;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -52,16 +53,26 @@ namespace Ginger.Environments
         {
             
             DatabaseListView = new ();
-            DatabaseListView.Title = "Database";
-            DatabaseListView.ListImageType = eImageType.Database;
+            DatabaseListView.ListTitleVisibility = Visibility.Collapsed;
+            DatabaseListView.ListImageVisibility = Visibility.Collapsed;
 
-            //dbListViewHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
+            dbListViewHelper.DatabaseListItemEvent += ShowEditPageEvent;
             DatabaseListView.SetDefaultListDataTemplate(dbListViewHelper);
             DatabaseListView.ListSelectionMode = SelectionMode.Extended;
 
             DatabaseListView.List.MouseDoubleClick += DBListView_MouseDoubleClick;
             DatabaseListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
             DatabaseListView.DataSourceList = AppOwner.Dbs;
+        }
+
+        private void ShowEditPageEvent(ListItemEventArgs EventArgs)
+        {
+            switch (EventArgs.EventType)
+            {
+                case ListItemEventArgs.eEventType.ShowEditPage:
+                    ShowOrHideEditPage((Database)EventArgs.EventObject);
+                    break;
+            }
         }
 
         private void DBListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)

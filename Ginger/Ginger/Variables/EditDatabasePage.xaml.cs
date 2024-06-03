@@ -1,20 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static GingerCore.Environments.Database;
 
 namespace Ginger.Variables
@@ -28,40 +15,53 @@ namespace Ginger.Variables
         public EditDatabasePage(Database database, Context context)
         {
             this.database = database;
-
-            var DBTypes = GingerCore.General
-                                .GetEnumValuesForCombo(typeof(Database.eDBTypes))
-                                .Select((db) => (eDBTypes)db.Value);
-            int selectedIndex = 0;
-            foreach (var dbType in DBTypes)
-            {
-                if (dbType.Equals(database.DBType))
-                {
-                    break;
-                }
-
-                selectedIndex++;
-            }
-            
             InitializeComponent();
-
-            xDatabaseComboBox.ItemsSource = DBTypes;
-            xDatabaseComboBox.SelectedIndex = selectedIndex;
-
             xDatabaseUserName.Init(context, database, nameof(Database.User));
             xDatabasePassword.Init(context, database, nameof(Database.Pass));
             xDatabaseTNS.Init(context, database, nameof(Database.TNS));
             xDBAccEndPoint.Init(context, database, nameof(Database.User));
             xDBAccKey.Init(context, database, nameof(Database.Pass));
+            xDatabaseConnectionString.Init(context, database, nameof(Database.ConnectionString));
 
-            BindingHandler.ObjFieldBinding(xDatabaseConnectionString, TextBox.TextProperty, database, nameof(Database.ConnectionString));
             BindingHandler.ObjFieldBinding(xDatabaseName, TextBox.TextProperty, database, nameof(Database.Name));
             BindingHandler.ObjFieldBinding(xDatabaseDescription, TextBox.TextProperty, database, nameof(Database.Description));
-            BindingHandler.ObjFieldBinding(xDatabaseComboBox, ComboBox.SelectedValueProperty, database, nameof(Database.DBType));
             BindingHandler.ObjFieldBinding(xKeepConnectOpen, CheckBox.IsCheckedProperty, database, nameof(Database.KeepConnectionOpen));
+            BindingHandler.ObjFieldBinding(xDatabaseType, TextBox.TextProperty, database, nameof(Database.DBType));
+
+            if (database.DBType.Equals(eDBTypes.CosmosDb))
+            {
+                xCosmosDetailsPanel.Visibility = System.Windows.Visibility.Visible;
+                xDatabaseDetailsPanel.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else
+            {
+                xCosmosDetailsPanel.Visibility = System.Windows.Visibility.Collapsed;
+                xDatabaseDetailsPanel.Visibility = System.Windows.Visibility.Visible;
+                ChangeTheTNSName();
+                ShowBrowseBtn();
+            }
+
         }
 
+        private void ShowBrowseBtn()
+        {
+            if (this.database.DBType.Equals(eDBTypes.MSAccess))
+            {
+                xDatabaseTNS.SetBrowserBtn();
+            }
+        }
 
+        private void ChangeTheTNSName()
+        {
 
+            if (this.database.DBType.Equals(eDBTypes.MySQL)
+                || this.database.DBType.Equals(eDBTypes.Hbase)
+                || this.database.DBType.Equals(eDBTypes.PostgreSQL)
+                || this.database.DBType.Equals(eDBTypes.DB2)
+                )
+            {
+                xDatabaseTNSName.Content = "Server";
+            }
+        }
     }
 }
