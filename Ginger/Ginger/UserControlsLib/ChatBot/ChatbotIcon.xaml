@@ -1,0 +1,18 @@
+<UserControl x:Class="Amdocs.Ginger.UserControls.ChatbotIcon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+              xmlns:fa="http://schemas.fontawesome.com/icons/"
+             mc:Ignorable="d" 
+             Height="30" Width="130">
+    <Grid>
+        <Button Style="{StaticResource $RoundTextButtonStyle_ChatbotIcon}" Foreground="White" Background="#824de6">
+            <StackPanel Orientation="Horizontal">
+                <usercontrols:ImageMakerControl ImageType="Chat" Width="16"  Foreground="White"></usercontrols:ImageMakerControl>
+                <TextBlock x:Name="xButtonText" HorizontalAlignment="Center" Margin="9,0,0,0"  FontWeight="Bold" FontSize="14" VerticalAlignment="Center" Text="Ask Lisa" />
+            </StackPanel>
+        </Button>
+    </Grid>
+</UserControl>

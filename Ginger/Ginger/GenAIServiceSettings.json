@@ -1,0 +1,16 @@
+{
+  "EnableChat": false,
+  "Host": "",
+  "StartNewChat": "",
+  "ContinueChat": "",
+  "Account": "",
+  "DomainType": "",
+  "TemperatureLevel": "",
+  "MaxTolkenValue": "",
+  "DataPath": "",
+  "AuthenticationServiceURL": "",
+  "GrantType": "",
+  "ClientId": "",
+  "ClientSecret": "",
+  "GetToken": ""
+}
