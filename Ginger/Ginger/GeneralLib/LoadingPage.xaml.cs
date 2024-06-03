@@ -25,11 +25,14 @@ namespace Ginger
     /// </summary>
     public partial class LoadingPage : Page
     {
-        public LoadingPage(string loadingLabel = "Loading...")
+        public LoadingPage(string loadingLabel = "Loading...", double width = 80, double height = 80, double fontSize = 25)
         {
             InitializeComponent();
 
             xProcessingLabel.Content = loadingLabel;
+            xProcessingLabel.FontSize = fontSize;
+            xProcessingIcon.Width = width;
+            xProcessingIcon.Height = height;
         }
     }
 }

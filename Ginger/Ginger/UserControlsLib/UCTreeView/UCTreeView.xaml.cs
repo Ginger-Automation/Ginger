@@ -332,7 +332,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (TVI.Tag is ITreeViewItem ITVI)
             {
-                List<ITreeViewItem> Childs = ITVI.Childrens();
+                List<ITreeViewItem> Childs = new(ITVI.Childrens());
 
                 TVI.Items.Clear();
                 if (Childs != null)
@@ -668,6 +668,46 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
 
             return header;
+        }
+
+        /// <summary>
+        /// Return if the current tree items support new filter by text functionality using <see cref="FilterItemsByTextNew(IEnumerable{ITreeViewItem}, string)"/> method.
+        /// </summary>
+        /// <returns>Returns <see langword="true"/> if <see cref="FilterItemsByTextNew(IEnumerable{ITreeViewItem}, string)"/> is supported, <see langword="false"/> otherwise.</returns>
+        public bool SupportNewFilterMethod()
+        {
+            if (Tree.Items.Count <= 0 || ((TreeViewItem)Tree.Items[0]).Items == null)
+            {
+                return false;
+            }
+
+            foreach (TreeViewItem tvi in ((TreeViewItem)Tree.Items[0]).Items)
+            {
+                if (tvi.Tag == null || tvi.Tag is not ITreeViewItem)
+                {
+                    return false;
+                }
+
+                ITreeViewItem itvi = (ITreeViewItem)tvi.Tag;
+                List<ITreeViewItem>? oldChildren = itvi.Childrens();
+                List<ITreeViewItem>? newChildren = itvi.Childrens();
+                if (oldChildren == null || newChildren == null)
+                {
+                    continue;
+                }
+
+                if (oldChildren.Count <= 0 || newChildren.Count <= 0)
+                {
+                    continue;
+                }
+
+                if (oldChildren[0] != newChildren[0])
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void FilterItemsByTextNew(string text)

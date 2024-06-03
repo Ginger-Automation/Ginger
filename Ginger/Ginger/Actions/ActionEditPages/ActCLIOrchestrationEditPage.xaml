@@ -13,7 +13,7 @@
     <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="500*"/>
-            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="1"/>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
@@ -25,23 +25,24 @@
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" >
-            <Label x:Name="FilePathLabel" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"  Width="150" Height="35">Application/File Path:</Label>
-            <Label x:Name="FilePathLabelValidation" Content="*"  Grid.Column="0"  Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="10" Margin="0,0,20,0"/>
+
+            <Label x:Name="FilePathLabel" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"  Width="150" Height="35" ToolTip="Specifies the location or route to access the program or file.">Application/File Path:</Label>
+            <Label x:Name="FilePathLabelValidation" Grid.Column="0"  Style="{StaticResource @InputFieldLabelStyle}" Content="*" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="Red" FontWeight="Bold" FontSize="12" Margin="-8,0,20,0"/>
             <Actions:UCFileBrowser  Grid.Column="2" HorizontalAlignment="Left" x:Name="FilePath" Width="370"/>
-            <usercontrols:ImageMakerControl Grid.Column="3" x:Name="FilePathNote" ToolTip="Note - supported file *.vbs,*.js,*.sh,*.bat,*.exe." SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,10,5,0"/>
+            <usercontrols:ImageMakerControl Grid.Column="3" x:Name="FilePathNote" ToolTip="Note - supported file *.vbs,*.js,*.sh,*.bat,*.exe." SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,0,5,0"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" x:Name="xPanelWaitForProcessToFinish">
-            <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="150" VerticalAlignment="Center" >Wait for Process:</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="150" VerticalAlignment="Center" ToolTip="wait for the process to complete" >Wait for Process:</Label>
             <CheckBox x:Name="WaitForProcessToFinish" VerticalAlignment="Center" Margin="30,0,0,0" Checked="WaitForProcessToFinishChecked" Unchecked="WaitForProcessToFinishUnChecked" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="3" x:Name="xPanelParseResult">
-            <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="150" VerticalAlignment="Center" >Parse the Result:</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="150" VerticalAlignment="Center" ToolTip="Result will be parsed based on the specified delimiter for clearer data segmentation and organization" >Parse the Result:</Label>
             <CheckBox x:Name="ParseResult" VerticalAlignment="Center" Margin="30,0,0,0" Checked="ParseResultChecked" Unchecked="ParseResultUnChecked" />
         </StackPanel>
         <StackPanel Grid.Row="4" Height="50" x:Name="xPanelDelimiter" Orientation="Horizontal">
-            <Label x:Name="DelimiterLabel" Grid.Column="0" Width="80" Style="{StaticResource @InputFieldLabelStyle}">Delimiter:</Label>
-            <Label x:Name="DelimiterLabelValidation" Content="*" Margin="0,0,0,20" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
-            <Actions:UCValueExpression Grid.Column="1" Margin="85,0,0,20" Width="150" x:Name="xDelimiterTextBox" />
+            <Label x:Name="DelimiterLabel" Grid.Column="0" Width="80" Style="{StaticResource @InputFieldLabelStyle}" ToolTip="The character or sequence used to separate values">Delimiter:</Label>
+            <Label x:Name="DelimiterLabelValidation" Grid.Column="1" Content="*" Margin="-12,0,8,15" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+            <Actions:UCValueExpression Grid.Column="2" Margin="85,0,0,20" Width="150" x:Name="xDelimiterTextBox" />
         </StackPanel>
     </Grid>
 </Page>

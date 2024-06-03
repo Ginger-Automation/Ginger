@@ -258,31 +258,34 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ClearBindings()
         {
-            WeakEventManager<UcListView, UcListViewEventArgs>.RemoveHandler(source: ParentList, eventName: nameof(UcListView.UcListViewEvent), handler: ParentList_UcListViewEvent);
-            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: ParentList.List, eventName: nameof(Selector.SelectionChanged), handler: ParentList_SelectionChanged);
-            PropertyChangedEventManager.RemoveHandler(source: (RepositoryItemBase)Item, handler: Item_PropertyChanged, propertyName: string.Empty);
+            Dispatcher.Invoke(() =>
+            {
+                WeakEventManager<UcListView, UcListViewEventArgs>.RemoveHandler(source: ParentList, eventName: nameof(UcListView.UcListViewEvent), handler: ParentList_UcListViewEvent);
+                WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: ParentList.List, eventName: nameof(Selector.SelectionChanged), handler: ParentList_SelectionChanged);
+                PropertyChangedEventManager.RemoveHandler(source: (RepositoryItemBase)Item, handler: Item_PropertyChanged, propertyName: string.Empty);
 
-            BindingOperations.ClearAllBindings(xItemIcon);
-            foreach (ImageMakerControl notification in xItemNotificationsPnl.Children)
-            {
-                BindingOperations.ClearAllBindings(notification);
-            }
-            BindingOperations.ClearAllBindings(xItemStatusImage);
-            BindingOperations.ClearAllBindings(xListItemGrid);
-            foreach (ucButton operation in xItemOperationsPnl.Children)
-            {
-                BindingOperations.ClearAllBindings(operation);
-            }
-            foreach (MenuItem extraOperation in xItemExtraOperationsMenu.Items)
-            {
-                BindingOperations.ClearAllBindings(extraOperation);
-            }
-            foreach (ucButton executionOperation in xItemExecutionOperationsPnl.Children)
-            {
-                BindingOperations.ClearAllBindings(executionOperation);
-            }
+                BindingOperations.ClearAllBindings(xItemIcon);
+                foreach (ImageMakerControl notification in xItemNotificationsPnl.Children)
+                {
+                    BindingOperations.ClearAllBindings(notification);
+                }
+                BindingOperations.ClearAllBindings(xItemStatusImage);
+                BindingOperations.ClearAllBindings(xListItemGrid);
+                foreach (ucButton operation in xItemOperationsPnl.Children)
+                {
+                    BindingOperations.ClearAllBindings(operation);
+                }
+                foreach (MenuItem extraOperation in xItemExtraOperationsMenu.Items)
+                {
+                    BindingOperations.ClearAllBindings(extraOperation);
+                }
+                foreach (ucButton executionOperation in xItemExecutionOperationsPnl.Children)
+                {
+                    BindingOperations.ClearAllBindings(executionOperation);
+                }
 
-            this.ClearControlsBindings();
+                this.ClearControlsBindings();
+            });
         }
 
         private void ParentList_UcListViewEvent(object? sender, UcListViewEventArgs EventArgs)

@@ -47,11 +47,9 @@ using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -3202,8 +3200,8 @@ namespace Ginger.Run
                 sharedActivityInstance.Active = true;
                 sharedActivityInstance.AddDynamicly = true;
                 sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;
-                CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
-
+                eUserMsgSelection userSelection = eUserMsgSelection.None;
+                CurrentBusinessFlow.MapTAToBF(userSelection, sharedActivityInstance, WorkSpace.Instance.Solution.ApplicationPlatforms,true);
 
                 int index = CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity) + 1;
                 ActivitiesGroup activitiesGroup = CurrentBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID);

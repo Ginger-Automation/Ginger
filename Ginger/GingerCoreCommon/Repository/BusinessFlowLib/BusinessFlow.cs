@@ -345,6 +345,20 @@ namespace GingerCore
                 {
                     this.TrackObservableList(mActivities);
                 }
+
+                IEnumerable<string> distinctTargetApp =  mActivities.Select((activity) => activity.TargetApplication).Distinct();
+
+                for(int indx=0; indx < TargetApplications.Count;)
+                {
+                    if (!distinctTargetApp.Contains(TargetApplications[indx].Name))
+                    {
+                        TargetApplications.RemoveAt(indx);
+                    }
+                    else
+                    {
+                        indx++;
+                    }
+                }
             }
         }
 
@@ -1450,13 +1464,6 @@ namespace GingerCore
             return lst;
         }
 
-        public void SetActivityTargetApplication(Activity activity)
-        {
-            if (TargetApplications.FirstOrDefault(x => x.Name == activity.TargetApplication) == null)
-            {
-                activity.TargetApplication = this.MainApplication;
-            }
-        }
 
         public override string ItemName
         {

@@ -118,7 +118,7 @@ namespace Ginger.SourceControl
 
                 await Task.Run(() =>
                 {
-                    mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);                    
+                    mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);
                     //set items name and type
                     Parallel.ForEach(mFiles, SCFI =>
                      {
@@ -203,7 +203,7 @@ namespace Ginger.SourceControl
                      });
                 });
 
-                CheckInFilesGrid.DataSourceList = mFiles;                
+                CheckInFilesGrid.DataSourceList = mFiles;
             }
             finally
             {
@@ -239,7 +239,7 @@ namespace Ginger.SourceControl
             }
             CheckInFilesGrid.DataSourceList = mFiles;
         }
-        
+
         private async void CommitAndCheckinButton_Click(object sender, RoutedEventArgs e)
         {
             if (WorkSpace.Instance.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
@@ -278,15 +278,21 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKey.AskToAddCheckInComment);
                     return;
                 }
-
-                if ((SelectedFiles == null || SelectedFiles.Count == 0) && unpushedLocalCommitsCount > 0)
+                if (SelectedFiles != null && SelectedFiles.Count > 0 && unpushedLocalCommitsCount > 0)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommitAndFiles, SelectedFiles.Count, unpushedLocalCommitsCount) == eUserMsgSelection.No)
+                    {
+                        return;
+                    }
+                }
+                else if ((SelectedFiles == null || SelectedFiles.Count == 0) && unpushedLocalCommitsCount > 0)
                 {
                     if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommit, unpushedLocalCommitsCount) == eUserMsgSelection.No)
                     {
                         return;
                     }
                 }
-                else if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtion, SelectedFiles.Count) == eUserMsgSelection.No)
+                else if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalFiles, SelectedFiles.Count) == eUserMsgSelection.No)
                 {
                     return;
                 }
@@ -305,7 +311,7 @@ namespace Ginger.SourceControl
                         SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
                         List<string> pathsToCommit = StageTheFilesToCommit(SelectedFiles);
 
-                        
+
                         bool conflictHandled = false;
                         bool CommitSuccess = false;
                         CommitSuccess = CommitAndCheckinChanges(WorkSpace.Instance.Solution.SourceControl, pathsToCommit, Comments, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
@@ -335,7 +341,6 @@ namespace Ginger.SourceControl
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
             }
         }
-                
         private static bool CommitAndCheckinChanges(SourceControlBase SourceControl, ICollection<string> pathsToCommit, string Comments, bool includeLocks, ref bool conflictHandled)
         {
             string error = string.Empty;
@@ -563,6 +568,11 @@ namespace Ginger.SourceControl
                 LocalCommit.Content = "Commit Locally";
                 LocalCommit.Click += LocalCommitButton_Click;
                 windowBtnsList.Add(LocalCommit);
+
+                Button UndoLocalChanges = new Button();
+                UndoLocalChanges.Content = "Undo Changes";
+                UndoLocalChanges.Click += LocalUndoChanges_Click;
+                windowBtnsList.Add(UndoLocalChanges);
             }
 
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, windowBtnsList, true, "Close", CloseWindow);
@@ -785,6 +795,95 @@ namespace Ginger.SourceControl
 
             LocalCommitedFilesGrid.SetAllColumnsDefaultView(view);
             LocalCommitedFilesGrid.InitViewItems();
+        }
+
+        private async void LocalUndoChanges_Click(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+            {
+                Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "Please provide Author Name and Email in source control connection details page.");
+                return;
+            }
+
+            try
+            {
+                xProcessingIcon.Visibility = Visibility.Visible;
+                if (SourceControlIntegration.BusyInProcessWhileDownloading)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
+                    return;
+                }
+                SourceControlIntegration.BusyInProcessWhileDownloading = true;
+                List<SourceControlFileInfo> SelectedFiles = mFiles.Where(x => x.Selected == true).ToList();
+                if (SelectedFiles == null || SelectedFiles.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.SourceControlMissingSelectionToLocalCommit);
+                    return;
+                }
+                if (Reporter.ToUser(eUserMsgKey.SourceControlUndoLocalChanges, SelectedFiles.Count) == eUserMsgSelection.No)
+                {
+
+                    return;
+                }
+
+                // Performing on another thread 
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        App.MainWindow.Dispatcher.Invoke(() =>
+                        {
+                            SaveAllDirtyFiles(SelectedFiles);
+                        });
+
+                        //performing cleanup for the solution folder to clean old locks left by faild check ins
+                        SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
+                        // Undo changes for selected filest
+                        WorkSpace.Instance.Solution.SourceControl.UndoUncommitedChanges(SelectedFiles);
+                        Dispatcher.BeginInvoke(() =>
+                        {
+                            CloseWindow();
+                        });
+                        //Reload of Solution
+                        ReloadSolution();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Undo Changes", ex);
+                    }
+                });
+
+                xProcessingIcon.Visibility = Visibility.Collapsed;
+                if (SourceControlIntegration.conflictFlag)
+                {
+                    SourceControlIntegration.conflictFlag = false;
+                }
+            }
+            finally
+            {
+                xProcessingIcon.Visibility = Visibility.Collapsed;
+                SourceControlIntegration.BusyInProcessWhileDownloading = false;
+            }
+        }
+        private void ReloadSolution()
+        {
+            string path = WorkSpace.Instance.Solution.ContainingFolderFullPath;
+            CloseSolution();
+            OpenSolution(path);
+        }
+        private void CloseSolution()
+        {
+            App.MainWindow.Dispatcher.Invoke(WorkSpace.Instance.CloseSolution);
+        }
+
+        private void OpenSolution(string folder)
+        {
+            App.MainWindow.Dispatcher.Invoke(() =>
+            {
+                // TODO: do it like user with open solution page
+                WorkSpace.Instance.OpenSolution(folder);
+            });
         }
     }
 }

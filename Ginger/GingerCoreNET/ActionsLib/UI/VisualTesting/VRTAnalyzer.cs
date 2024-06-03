@@ -222,7 +222,6 @@ namespace GingerCore.Actions.VisualTesting
                             string baselinefilename = mAct.GetInputParamCalculatedValue(VRTSavedBaseImageFilenameString);
                             image = GetBaseLineImage(baselinefilename);
                         }
-                        mAct.CreateBaselineImage = false;//unchecked create Base line image after creation
                     }
                     else
                     {
@@ -320,7 +319,15 @@ namespace GingerCore.Actions.VisualTesting
                     switch (result.Status)
                     {
                         case TestRunStatus.New:
-                            mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline.{System.Environment.NewLine}{result.Url}";
+                            if(mAct.CreateBaselineImage)
+                            {
+                                mAct.ExInfo += $"Baseline uploaded, Please approve it on VRT dashboard.{System.Environment.NewLine}{result.Url}";
+                            }
+                            else
+                            {
+                                mAct.Error += $"No baseline found or exsiting baseline not approved, Please approve it on VRT dashboard.{System.Environment.NewLine}{result.Url}";
+                            }
+                            
                             //Add baseline image to act screenshots
                             if (result.ImageUrl != null)
                             {
@@ -358,7 +365,9 @@ namespace GingerCore.Actions.VisualTesting
                         default:
                             mAct.ExInfo = $"TestRun Results Status: {result.Status}";
                             break;
+                     
                     }
+                    mAct.CreateBaselineImage = false;//unchecked create Base line image after creation
                 }
             }
             catch (AggregateException ae)

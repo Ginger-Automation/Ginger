@@ -10,16 +10,13 @@
       Title="Add Application">
 
     <Grid Background="{StaticResource $BackgroundColor_White}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="350*"/>
-        </Grid.RowDefinitions>
-        
-        <UserControls:ucButton 
-                                Grid.Row="0"
-                                x:Name="xAddApplicationToSolution" 
+
+        <Ginger:ucGrid x:Name="AppsGrid"  ShowSearch="Hidden" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowRefresh="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed"/>
+
+        <UserControls:ucButton x:Name="xAddApplicationToSolution" 
                                ButtonType="RoundTextAndImageButton" 
                                VerticalAlignment="Top" 
+                               Margin="0,5,10,0"
                                HorizontalContentAlignment="Right"
                                ButtonText="Add Application" 
                                ButtonImageType="Add" 
@@ -28,10 +25,10 @@
                                ButtonImageHeight="15" 
                                ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" 
                                IsEnabled="True"
-                                Click="AddApplicationToSolution"
+                               Click="AddApplicationToSolution"
                                />
 
-        <Ginger:ucGrid x:Name="AppsGrid" Grid.Row="1"  ShowSearch="Hidden" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowRefresh="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed"/>
+
        
     </Grid>
 </Page>

@@ -98,7 +98,10 @@ namespace GingerCore.SourceControl
                 bool result = true;
                 try
                 {
-                    Commit(Comments);
+                    if (AnyLocalChangesPendingtoCommit())
+                    {
+                        Commit(Comments);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -110,10 +113,8 @@ namespace GingerCore.SourceControl
                     {
                         Push();
                         Pull();
-                        using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-                        {
-                            Reporter.ToUser(eUserMsgKey.CommitedToRevision, repo.Head.Tip.Sha);
-                        }
+                        using var repo = new Repository(RepositoryRootFolder);
+                        Reporter.ToUser(eUserMsgKey.SourceControlChkInSucss);
                     }
                     catch (Exception e)
                     {
@@ -144,6 +145,14 @@ namespace GingerCore.SourceControl
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to connect to repository");
                 return false;
             }
+        }
+
+        public bool AnyLocalChangesPendingtoCommit()
+        {
+            using var repo = new Repository(RepositoryRootFolder);
+            RepositoryStatus status = repo.RetrieveStatus();
+
+            return status.IsDirty;
         }
 
         private List<string> GetConflictsPathsforGetLatestConflict(string path)
@@ -1376,6 +1385,44 @@ namespace GingerCore.SourceControl
                 }
 
                 return commits;
+            }
+        }
+        
+
+        public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
+        {
+            try
+            {
+                using (var repo = new Repository(RepositoryRootFolder))
+                {
+                    List<string> filesPathsToUndo = [];
+                    foreach (var file in selectedFiles)
+                    {
+                        if (file.Status == SourceControlFileInfo.eRepositoryItemStatus.New)
+                        {
+                            if (File.Exists(file.Path))
+                            {
+                                File.Delete(file.Path);
+                            }
+                        }
+                        else if (file.Status == SourceControlFileInfo.eRepositoryItemStatus.Modified ||
+                                 file.Status == SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved ||
+                                 file.Status == SourceControlFileInfo.eRepositoryItemStatus.Deleted)
+                        {
+                            filesPathsToUndo.Add(file.Path);
+                        }
+                    }
+                    if (filesPathsToUndo.Count > 0)
+                    {
+                        CheckoutOptions options = new CheckoutOptions() { CheckoutModifiers = CheckoutModifiers.Force };
+                        repo.Checkout(repo.Head.Tip.Tree, filesPathsToUndo, options);
+                    }
+                    return true;
+                }
+            } catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Undo Changes", ex);
+                return false;
             }
         }
 

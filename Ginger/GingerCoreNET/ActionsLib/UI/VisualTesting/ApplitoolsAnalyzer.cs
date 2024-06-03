@@ -524,34 +524,35 @@ namespace GingerCore.Actions.VisualTesting
 
         private void DownloadImages(int numOfImages, TestResults testResults)
         {
-            for (int i = 1; i <= numOfImages; i++)
-            {
-                String currImagePath = Act.GetScreenShotRandomFileName();
-                currImagePath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(currImagePath), "Applitools_" + DateTime.Now.ToString("ddmmyyyyss.mm") + ".png");
-                String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + i.ToString() + "/images/diff?ApiKey=" + mDriver.GetApplitoolKey();// ((SeleniumDriver)mDriver).ApplitoolsViewKey;
-                try
+            for (int i = 0; i < numOfImages; i++)
+            {                
+                if(testResults.StepsInfo[i].IsDifferent)
                 {
-                    HttpResponseMessage response = runLongRequest(currImageURL);
-                    if (response.StatusCode == HttpStatusCode.OK)
+                    String currImagePath = Act.GetScreenShotRandomFileName();
+                    currImagePath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(currImagePath), "Applitools_" + DateTime.Now.ToString("ddmmyyyyss.mm") + ".png");
+                    String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + (i+1).ToString() + "/images/diff?ApiKey=" + mDriver.GetApplitoolKey();// ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                    try
                     {
-                        var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                        response.Content.CopyToAsync(fs).ContinueWith(
-                        (discard) =>
+                        HttpResponseMessage response = runLongRequest(currImageURL);
+                        if (response.StatusCode == HttpStatusCode.OK)
                         {
-                            fs.Close();
-                        });
-                        mAct.ScreenShotsNames.Add(Path.GetFileName(currImagePath));                       
-                        mAct.ScreenShots.Add(currImagePath);
-                        Act.AddArtifactToAction("Difference_Image", mAct, currImagePath);                        
+                            var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                            response.Content.CopyToAsync(fs).ContinueWith(
+                            (discard) =>
+                            {
+                                fs.Close();
+                            });
+                            mAct.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
+                            mAct.ScreenShots.Add(currImagePath);
+                            Act.AddArtifactToAction("Difference_Image", mAct, currImagePath);
 
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        mAct.Error = mAct.Error + ex.Message;
                     }
                 }
-                catch (Exception ex)
-                {
-                    mAct.Error = mAct.Error + ex.Message;
-                }
-
-
             }
         }
 

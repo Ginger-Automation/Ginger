@@ -45,6 +45,10 @@ namespace Amdocs.Ginger.Common.Enums
         Sealights,
         NormalUser,
         AdminUser,
+        Chatbot,
+        SendArrow,
+        Medical,
+        Chat,
         #endregion
 
 
@@ -82,6 +86,8 @@ namespace Amdocs.Ginger.Common.Enums
         Timer,
         #endregion
 
+        LisaProcessing,
+
         #region Execution Status Images
         Unknown,
         //############################## Execution Status Images:
@@ -116,6 +122,7 @@ namespace Amdocs.Ginger.Common.Enums
         Stop,
         Close,
         Close2,
+        CloseWhite,
         Run,
         RunSingle,
         Continue,

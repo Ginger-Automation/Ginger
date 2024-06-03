@@ -62,7 +62,7 @@ namespace Ginger.UserControlsLib
 
         private void xCopyBtn_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(mRepoItem.Guid.ToString());
+            GingerCore.General.SetClipboardText(mRepoItem.Guid.ToString());
         }
     }
 }
