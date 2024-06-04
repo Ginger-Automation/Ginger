@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using GingerCore;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using System.Windows.Controls;
@@ -62,6 +63,14 @@ namespace Ginger.Variables
             {
                 xDatabaseTNSName.Content = "Server";
             }
+        }
+
+        private void ChangeDatabasePass(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+                if (!EncryptionHandler.IsStringEncrypted(database.Pass))
+                {
+                    database.Pass = EncryptionHandler.EncryptwithKey(database.Pass);
+                }
         }
     }
 }

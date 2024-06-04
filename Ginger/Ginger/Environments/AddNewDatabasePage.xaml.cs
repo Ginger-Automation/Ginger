@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Ginger.BusinessFlowPages.ListHelpers;
+using GingerCore;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using System.Collections.Generic;
@@ -328,6 +329,14 @@ namespace Ginger.Environments
 
 
 
+        }
+
+        private void ChangeDatabasePass(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            if (!EncryptionHandler.IsStringEncrypted(database.Pass))
+            {
+                database.Pass = EncryptionHandler.EncryptwithKey(database.Pass);
+            }
         }
     }
 }
