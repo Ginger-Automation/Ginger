@@ -16,14 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
+using Couchbase.Utils;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using NJsonSchema.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace GingerCore.Actions
 {
@@ -56,27 +61,68 @@ namespace GingerCore.Actions
             }
         }
 
-        public enum eNewSmartSyncAction
+ 
+        public enum eSyncOperation
         {
-            ElementExists = 1,
-            ElementIsVisible = 2,
-            AlertIsPresent = 3,
-            ElementIsSelected=4,
-            PageHasBeenLoaded=5,
+            [EnumValueDescription("Element is Visible")]
+            ElementIsVisible = 1,
 
-            /* EnabilityOfAllElementsLocatedBy = 4,
-             ElementIsSelected = 5,
-             InvisibilityOfElementLocated = 6,
-             InvisibilityOfElementLocated = 7,
-             UrlMatches*/
+            [EnumValueDescription("Element Exists")]
+            ElementExists = 2,
 
+            [EnumValueDescription("Element to be Clickable")]
+            ElementToBeClickable = 3,
+
+            [EnumValueDescription("Invisibility of Element Located By")]
+            InvisibilityOfElementLocated = 4,
+
+            [EnumValueDescription("Text Matches")]
+            TextMatches = 5,
+
+            [EnumValueDescription("Presence of All Elements Located By")]
+            PresenceOfAllElementsLocatedBy = 6,
+
+            [EnumValueDescription("Visibility of All Elements Located By")]
+            VisibilityOfAllElementsLocatedBy = 7,
+
+            [EnumValueDescription("Alert is Present")]
+            AlertIsPresent = 8,
+
+            [EnumValueDescription("Element is Selected")]
+            ElementIsSelected = 9,
+
+            [EnumValueDescription("Invisibility of All Elements Located By")]
+            InvisibilityOfAllElementsLocatedBy = 10,
+
+            [EnumValueDescription("Attribute Matches")]
+            AttributeMatches =11,
+
+            [EnumValueDescription("Frame to be Available and Switch to it")]
+            FrameToBeAvailableAndSwitchToIt = 12,
+
+            [EnumValueDescription("URL Matches")]
+            UrlMatches = 13,
+
+            [EnumValueDescription("Selected of All Elements Located By")]
+            SelectedOfAllElementsLocatedBy = 14,
+
+            [EnumValueDescription("Enability of All Elements Located By")]
+            EnabilityOfAllElementsLocatedBy = 15,
+
+            [EnumValueDescription("Page has been Loaded")]
+            PageHasBeenLoaded = 16,
         }
-        public new static partial class Fields
+
+        public eSyncOperation SyncOperations
         {
-            public static string WaitTime = "WaitTime";
-            public static string NewSmartSyncAction = "NewSmartSyncAction";
-
+            get { return GetOrCreateInputParam<eSyncOperation>(nameof(SyncOperations), eSyncOperation.ElementIsVisible); }
+            set
+            {
+                GetOrCreateInputParam(nameof(SyncOperations)).Value = value.ToString();
+            }
         }
+
+
 
         public int? WaitTime
         {
@@ -85,24 +131,62 @@ namespace GingerCore.Actions
 
 
                 int i;
-                return int.TryParse(GetOrCreateInputParam(Fields.WaitTime).Value, out i) ? i : (int?)null; ;
+                return int.TryParse(GetOrCreateInputParam(nameof(WaitTime)).Value, out i) ? i : (int?)null;
 
             }
             set
             {
-                GetOrCreateInputParam(Fields.WaitTime).Value = value.ToString();
+                GetOrCreateInputParam(nameof(WaitTime)).Value = value.ToString();
             }
         }
 
-        public eNewSmartSyncAction NewSmartSyncAction
+        public string AttributeValue
         {
-            get { return GetOrCreateInputParam<eNewSmartSyncAction>(Fields.NewSmartSyncAction, eNewSmartSyncAction.ElementExists); }
+            get
+            {
+                return GetOrCreateInputParam(nameof(AttributeValue)).Value;
+            }
             set
             {
-                GetOrCreateInputParam(Fields.NewSmartSyncAction).Value = value.ToString();
+                GetOrCreateInputParam(nameof(AttributeValue)).Value = value;
+            }
+        }
+        public string AttributeName
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(AttributeName)).Value;
+            }
+            set
+            {
+                GetOrCreateInputParam(nameof(AttributeName)).Value = value;
+            }
+        }
+        public string TxtMatchInput
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(TxtMatchInput)).Value;
+            }
+            set
+            {
+                GetOrCreateInputParam(nameof(TxtMatchInput)).Value = value;
+            }
+        }
+        public string UrlMatches
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(UrlMatches)).Value;
+            }
+            set
+            {
+                GetOrCreateInputParam(nameof(UrlMatches)).Value = value;
             }
         }
 
+       
+     
         public override String ToString()
         {
             return "NewSmartSync: " + GetInputParamValue("Value");
@@ -118,7 +202,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return "NewSmartSync: " + NewSmartSyncAction.ToString();
+                return "NewSmartSync: " + SyncOperations.ToString();
             }
         }
         public override eImageType Image { get { return eImageType.Refresh; } }

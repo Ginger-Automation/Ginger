@@ -1385,6 +1385,7 @@ namespace GingerCore.Drivers
                 //implicityWait must be done on actual window so need to make sure the driver is pointing on window
                 try
                 {
+                    //it's wait until all page gets load 
                     string aa = Driver.Title;//just to make sure window attributes do not throw exception
                 }
                 catch (Exception ex)
@@ -1990,11 +1991,11 @@ namespace GingerCore.Drivers
                 actPassword.AddOrUpdateReturnParamActual("Actual", e.Size.Width.ToString());
             }
         }
-        //Gokul---need to create this kind of method for new smart sync action with new operation 
+        
         public void NewSmartSyncHandler(ActNewSmartSync act)
         {
             By elementLocator = null;
-            if (act.NewSmartSyncAction != ActNewSmartSync.eNewSmartSyncAction.AlertIsPresent && act.NewSmartSyncAction != ActNewSmartSync.eNewSmartSyncAction.PageHasBeenLoaded)
+            if (act.SyncOperations != ActNewSmartSync.eSyncOperation.AlertIsPresent && act.SyncOperations != ActNewSmartSync.eSyncOperation.PageHasBeenLoaded && act.SyncOperations != ActNewSmartSync.eSyncOperation.UrlMatches)
             {
                 switch (act.LocateBy)
                 {
@@ -2020,92 +2021,130 @@ namespace GingerCore.Drivers
                         elementLocator = By.TagName(act.LocateValueCalculated);
                         break;
                     default:
-                        act.Error = "Supported locate by value-> ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText and ByTagName.";
+                        act.Error = "Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, and ByTagName.";
                         return;
                 }
             }
             int MaxTimeout = NewSmartSyncGetMaxTimeout(act);
-            WebDriverWait wait = null;
-            switch (act.NewSmartSyncAction){
-                case ActNewSmartSync.eNewSmartSyncAction.ElementIsVisible:
-                    wait = new(Driver, timeout: TimeSpan.FromSeconds(MaxTimeout))
-                    {
-                        PollingInterval = TimeSpan.FromMilliseconds(100)
-                    };
-                    try
-                    {
-                        wait.Until(ExpectedConditions.ElementIsVisible(elementLocator));
-                    }
-                    catch(WebDriverTimeoutException)
-                    {
-                        act.Error = "Element was not visible in the "+MaxTimeout+" seconds time.";
-                    }
-                    break;
-                case ActNewSmartSync.eNewSmartSyncAction.ElementExists:
-                    wait = new(Driver, timeout: TimeSpan.FromSeconds(MaxTimeout))
-                    {
-                        PollingInterval = TimeSpan.FromMilliseconds(100)
-                    };
-                    try
-                    {
+            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(MaxTimeout));
+            wait.PollingInterval = TimeSpan.FromMilliseconds(100);
+            try
+            {
+                switch (act.SyncOperations)
+                {
+                    case ActNewSmartSync.eSyncOperation.ElementIsVisible:
+                        
+                        wait.Until(ExpectedConditions.ElementIsVisible(elementLocator));    
+                        break;
+                    case ActNewSmartSync.eSyncOperation.ElementExists:
                         wait.Until(ExpectedConditions.ElementExists(elementLocator));
-                    }
-                    catch (WebDriverTimeoutException)
-                    {
-                        act.Error = "Element was not Exists in the " + MaxTimeout + " seconds time.";
-                    }
-                    break;
-                case ActNewSmartSync.eNewSmartSyncAction.AlertIsPresent:
-                    wait = new(Driver, timeout: TimeSpan.FromSeconds(MaxTimeout))
-                    {
-                        PollingInterval = TimeSpan.FromMilliseconds(100)
-                    };
-                    try
-                    {
+                        break;
+                    case ActNewSmartSync.eSyncOperation.AlertIsPresent:
+                        //no need for locators
                         wait.Until(ExpectedConditions.AlertIsPresent());
-                    }
-                    catch (WebDriverTimeoutException)
-                    {
-                        act.Error = "Alert was not present in the " + MaxTimeout + " seconds time.";
-                    }
-                    break;
-                case ActNewSmartSync.eNewSmartSyncAction.ElementIsSelected:
-                    wait = new(Driver, timeout: TimeSpan.FromSeconds(MaxTimeout))
-                    {
-                        PollingInterval = TimeSpan.FromMilliseconds(100)
-                    };
-                    try
-                    {
+                        break;
+                    case ActNewSmartSync.eSyncOperation.ElementIsSelected:
                         wait.Until(ExpectedConditions.ElementIsSelected(elementLocator));
-                    }
-                    catch (WebDriverTimeoutException)
-                    {
-                        act.Error = "Element was not Selected in the " + MaxTimeout + " seconds time.";
-                    }
-                    break;
-                case ActNewSmartSync.eNewSmartSyncAction.PageHasBeenLoaded:
-                    wait = new(Driver, timeout: TimeSpan.FromSeconds(MaxTimeout))
-                    {
-                        PollingInterval = TimeSpan.FromMilliseconds(100)
-                    };
-                    try
-                    {
-                        wait.Until(ExpectedConditions.PageHasBeenLoaded());
-                    }
-                    catch (WebDriverTimeoutException)
-                    {
-                        act.Error = "Page was not Loaded in the " + MaxTimeout + " seconds time.";
-                    }
-                    break;
-                default:
-                    act.Error = "Unable to perform this operation.";
-                    return;
-                    
-
-                    
+                        break;
+                    case ActNewSmartSync.eSyncOperation.PageHasBeenLoaded:
+                        //wait.Until(ExpectedConditions.PageHasBeenLoaded());
+                        wait.Until(MyPageHasBeenLoaded(TimeSpan.FromSeconds(MaxTimeout)));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.ElementToBeClickable:
+                        wait.Until(ExpectedConditions.ElementToBeClickable(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.TextMatches:
+                        wait.Until(ExpectedConditions.TextMatches(elementLocator, act.TxtMatchInput));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.AttributeMatches:
+                        wait.Until(ExpectedConditions.AttributeMatches(elementLocator, act.AttributeName, act.AttributeValue));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy: 
+                        wait.Until(ExpectedConditions.EnabilityOfAllElementsLocatedBy(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.FrameToBeAvailableAndSwitchToIt:
+                        wait.Until(ExpectedConditions.FrameToBeAvailableAndSwitchToIt(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.InvisibilityOfAllElementsLocatedBy:
+                        wait.Until(ExpectedConditions.InvisibilityOfAllElementsLocatedBy(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.InvisibilityOfElementLocated:
+                        wait.Until(ExpectedConditions.InvisibilityOfElementLocated(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.PresenceOfAllElementsLocatedBy:
+                        wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.SelectedOfAllElementsLocatedBy:
+                        wait.Until(ExpectedConditions.SelectedOfAllElementsLocatedBy(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.UrlMatches:                        
+                        wait.Until(ExpectedConditions.UrlMatches(act.UrlMatches));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
+                        wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(elementLocator));
+                        break;
+                    default:
+                        act.Error = "Unable to complete this operation.";
+                        return;
+                }
+            }
+            catch (ArgumentNullException)
+            {
+                act.Error = $"For {act.SyncOperations} operation input value is missing.";
+            }
+            catch (Exception)
+            {
+                act.Error = $"{act.SyncOperations} was not completed within the allotted {MaxTimeout} seconds.";
             }
         }
-  
+
+     
+        public static Func<IWebDriver, IWebDriver> MyPageHasBeenLoaded(TimeSpan timeout)
+        {
+            return delegate (IWebDriver driver)
+            {
+                if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
+                {
+                    return driver;
+                }
+
+                string text = string.Empty;
+                Task executeScriptTask = Task.Run(() =>
+                {
+                    text = ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState") as string;
+                });
+                executeScriptTask.Wait((int)timeout.TotalMilliseconds);
+                return text.Equals("complete", StringComparison.OrdinalIgnoreCase) ? driver : null;
+            };
+        }
+
+        public static Func<IWebDriver, IWebDriver> PageHasBeenLoaded(TimeSpan timeout, TimeSpan pollingInterval)
+        {
+            return delegate (IWebDriver driver)
+            {
+                var start = DateTime.Now;
+
+                while (DateTime.Now - start < timeout)
+                {
+                    if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return driver;
+                    }
+
+                    string text = ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState") as string;
+                    if (text.Equals("complete", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return driver;
+                    }
+
+                    System.Threading.Thread.Sleep(pollingInterval);  // Wait for the specified polling interval before the next check
+                }
+
+                // Return null if the timeout is reached without the page being fully loaded
+                return null;
+            };
+        }
+
         public void SmartSyncHandler(ActSmartSync act)
         {
             int MaxTimeout = GetMaxTimeout(act);

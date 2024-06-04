@@ -4,17 +4,38 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
-	Title="ActNewSmartSyncEditPage">
+      d:DesignHeight="300" d:DesignWidth="500"
+      Title="ActNewSmartSyncEditPage">
 
-    <Grid>
+    <Grid Margin="10">
         <StackPanel Background="{StaticResource $BackgroundColor_White}">
-            <Label>Action Type</Label>
-            <ComboBox x:Name="ActionNameComboBox"></ComboBox>
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" >
-                <Label Content="WaitTime:"  Width="80"></Label>
-                <TextBox x:Name="WaitTimeTextbox" Style="{StaticResource @TextBoxStyle}"  ToolTip="Action will wait this seconds long before start to run" Width="100" Height="20"></TextBox>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10">
+                <Label Content="Operation Type:" Style="{StaticResource $LabelStyle}"/>
+                <ComboBox x:Name="ActionNameComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="250" HorizontalAlignment="Left" ToolTip="Select the action type to perform" SelectionChanged="ActionNameComboBox_SelectionChanged"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10">
+                <Label Content="Wait Time(s):" Style="{StaticResource $LabelStyle}"/>
+                <TextBox x:Name="WaitTimeTextbox" Style="{StaticResource @TextBoxStyle}" ToolTip="The action will wait this number of seconds before starting to run." Width="100" Height="25" PreviewTextInput="WaitTimeTextbox_PreviewTextInput"/>
+            </StackPanel>
+            <StackPanel  x:Name="TxtMatch_Pnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10">
+                <Label Content="Text to Match:" Style="{StaticResource $LabelStyle}"/>
+                <TextBox x:Name="TxtMatchTextbox" Style="{StaticResource @TextBoxStyle}" ToolTip="Please provide the input to match the text for the specified element." Width="100" Height="25"/>
+            </StackPanel>
+            <StackPanel  x:Name="AttributeMatches_Pnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10">
+                <Label Content="Attribute Name:" Style="{StaticResource $LabelStyle}"/>
+                <TextBox x:Name="AttributeNameTextbox" Style="{StaticResource @TextBoxStyle}" ToolTip="Please provide the Attribute Name for the specified element." Width="100" Height="25"/>
+                <Label Content="Attribute Value:" Margin="10,0,0,0" Style="{StaticResource $LabelStyle}"/>
+                <TextBox x:Name="AttributeValueTextbox" Style="{StaticResource @TextBoxStyle}" ToolTip="Please provide the Attribute Value for the specified Attribute Name." Width="100" Height="25"/>
+            </StackPanel>
+            <StackPanel  x:Name="UrlMatches_Pnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10">
+                <Label Content="URL to Find:" Style="{StaticResource $LabelStyle}"/>
+                <TextBox x:Name="UrlMatchesTextbox" Style="{StaticResource @TextBoxStyle}" ToolTip="Please provide the input value based on the operation." Width="200" Height="25"/>
+            </StackPanel>
+            <StackPanel   Margin="10,50,0,0">
+                <Label Content="Operation Description:" FontWeight="Bold" Style="{StaticResource $LabelStyle}"></Label>
+                <TextBlock x:Name="xOperationDescription" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" TextAlignment="Left"  FontSize="12" Margin="0,0,0,0"></TextBlock>
             </StackPanel>
         </StackPanel>
     </Grid>
 </Page>
+    
