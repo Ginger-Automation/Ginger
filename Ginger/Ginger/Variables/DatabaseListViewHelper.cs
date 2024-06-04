@@ -54,15 +54,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public void CopySelected()
         {
-
+            throw new NotImplementedException();
         }
 
         public void CutSelected()
         {
+            throw new NotImplementedException();
         }
 
         public void DeleteSelected()
         {
+            throw new NotImplementedException();
         }
 
         public string GetItemActiveField()
