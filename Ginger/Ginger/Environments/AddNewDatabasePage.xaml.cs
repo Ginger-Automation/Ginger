@@ -29,6 +29,14 @@ namespace Ginger.Environments
             this.dbListViewHelper = dbListViewHelper;
             this.dataSourceList = dataSourceList;
             InitializeComponent();
+            xConnectionStringInfo.ToolTip = """
+                1. DB2: "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};"
+                2. PostgreSQL: "Server={Server URL};User Id={User Name}; Password={User Password};Database={Database Name};"
+                3. MySQL: "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};"
+                4. CosmosDB: "AccountEndpoint={End Point URL};AccountKey={Account Key};"
+                5. HBase: "Server={Server URL};Port={Port No};User Id={User Name}; Password={Password};Database={Database Name};"
+                6. Other Databases: "Data Source={Data Source};User Id={User Name};Password={User Password};"
+                """;
             xDatabaseComboBox.ItemsSource = GingerCore.General
                                             .GetEnumValuesForCombo(typeof(Database.eDBTypes))
                                             .Select((db) => (eDBTypes)db.Value)
@@ -104,17 +112,6 @@ namespace Ginger.Environments
                 xDatabaseNameError.Visibility = Visibility.Visible;
             }
 
-            if (xConnectionStrCheckBox.IsChecked.HasValue && xConnectionStrCheckBox.IsChecked.Value)
-            {
-                if (string.IsNullOrEmpty(xDatabaseConnectionString.ValueTextBox.Text))
-                {
-                    xDBConnectionStrError.Text = "Connection String is mandatory";
-                    xDBConnectionStrError.Visibility = Visibility.Visible;
-                    return false;
-                }
-             
-                xDBConnectionStrError.Visibility = Visibility.Collapsed;
-            }
 
             return true;
         }
