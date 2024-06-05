@@ -18,7 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
@@ -101,7 +103,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             Agent a = new Agent();
             //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            a.DriverType = Agent.eDriverType.Selenium;
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: WebBrowserType.Chrome.ToString());
+            if (!string.Equals(browserTypeParam.Value, WebBrowserType.Chrome.ToString()))
+            {
+                browserTypeParam.Value = WebBrowserType.Chrome.ToString();
+            }
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
@@ -386,7 +393,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGRForRunset.Name = "Test Runner";
 
             Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            a.DriverType = Agent.eDriverType.Selenium;
 
             ((GingerExecutionEngine)mGRForRunset.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGRForRunset.Executor).SolutionAgents.Add(a);

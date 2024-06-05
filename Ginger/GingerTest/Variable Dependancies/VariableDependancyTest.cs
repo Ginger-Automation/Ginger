@@ -19,7 +19,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
@@ -129,7 +131,12 @@ namespace GingerTest.Variable_Dependancies
             BF1.Environment = environment.Name;
 
             Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            a.DriverType = Agent.eDriverType.Selenium;
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: WebBrowserType.Chrome.ToString());
+            if (!string.Equals(browserTypeParam.Value, WebBrowserType.Chrome.ToString()))
+            {
+                browserTypeParam.Value = WebBrowserType.Chrome.ToString();
+            }
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);

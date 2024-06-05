@@ -51,6 +51,10 @@
                         <Label Style="{StaticResource $LabelStyle}" Content="Driver Type:" Margin="0,0,0,0" VerticalAlignment="Center"/>
                         <ComboBox x:Name="xDriverTypeComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="25,0,0,0" FontWeight="Bold"/>
                     </StackPanel>
+                    <StackPanel x:Name="BrowserTypePanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0" Visibility="Collapsed">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Browser Type:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="BrowserTypeComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="25,0,0,0" FontWeight="Bold" SelectionChanged="BrowserTypeComboBox_SelectionChanged"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0" x:Name="xVirtualAgentsPanel" Visibility="Visible">
                         <StackPanel  Orientation="Horizontal" VerticalAlignment="Center">
                             <Label Style="{StaticResource $LabelStyle}" Content="Support Virtualization:" Margin="0,0,0,0" VerticalAlignment="Center"/>

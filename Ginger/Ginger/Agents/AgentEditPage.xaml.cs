@@ -18,6 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib;
 using GingerCore;
@@ -25,6 +27,7 @@ using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,7 +40,7 @@ namespace Ginger.Agents
     /// </summary>
     public partial class AgentEditPage : GingerUIPage
     {
-        Agent mAgent;
+        private Agent mAgent;
         ePlatformType mOriginalPlatformType;
         string mOriginalDriverType;
         bool IsReadOnly, IsEnabledCheckBox;
@@ -57,6 +60,7 @@ namespace Ginger.Agents
             if (agent != null)
             {
                 mAgent = agent;
+                PropertyChangedEventManager.AddHandler(mAgent, Agent_PropertyChanged, propertyName: string.Empty);
                 CurrentItemToSave = mAgent;
                 xShowIDUC.Init(mAgent);
                 BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
@@ -101,6 +105,29 @@ namespace Ginger.Agents
             }
         }
 
+        private void Agent_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (string.Equals(e.PropertyName, nameof(Agent.DriverType)))
+            {
+                mAgent.AgentOperations.InitDriverConfigs();
+                if (mAgent.Platform == ePlatformType.Web && DriverSupportMultipleBrowsers(mAgent.DriverType))
+                {
+                    PopulateBrowserTypeComboBox();
+                    BrowserTypePanel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    BrowserTypeComboBox.Items.Clear();
+                    BrowserTypePanel.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private bool DriverSupportMultipleBrowsers(eDriverType driverType)
+        {
+            return driverType == eDriverType.Selenium || driverType == eDriverType.Playwright;
+        }
+
         private void ChangeContorlsReadOnly(bool isReadOnly)
         {
             xAgentNameTextBox.IsReadOnly = isReadOnly;
@@ -133,6 +160,16 @@ namespace Ginger.Agents
 
         private void SetDriverInformation()
         {
+            if (mAgent.Platform == ePlatformType.Web && DriverSupportMultipleBrowsers(mAgent.DriverType))
+            {
+                BrowserTypePanel.Visibility = Visibility.Visible;
+                PopulateBrowserTypeComboBox();
+            }
+            else
+            {
+                BrowserTypeComboBox.Items.Clear();
+                BrowserTypePanel.Visibility = Visibility.Collapsed;
+            }
             List<object> lst = new List<object>();
             foreach (eDriverType item in Enum.GetValues(typeof(eDriverType)))
             {
@@ -155,6 +192,33 @@ namespace Ginger.Agents
             {
                 xAgentVirtualSupported.Content = "No";
             }
+        }
+
+        private void PopulateBrowserTypeComboBox()
+        {
+            BrowserTypeComboBox.Items.Clear();
+            
+            foreach (WebBrowserType browser in GingerWebDriver.GetSupportedBrowserTypes(mAgent.DriverType))
+            {
+                BrowserTypeComboBox.Items.Add(new ComboEnumItem()
+                {
+                    text = browser.ToString(),
+                    Value = browser
+                });
+            }
+            BrowserTypeComboBox.SelectedValuePath = nameof(ComboEnumItem.Value);
+            BrowserTypeComboBox.SelectedValue = Enum.Parse<WebBrowserType>(mAgent.GetParamValue(nameof(GingerWebDriver.BrowserType)));
+        }
+
+        private void BrowserTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 0)
+            {
+                return;
+            }
+
+            DriverConfigParam param = mAgent.GetParam(nameof(GingerWebDriver.BrowserType));
+            param.Value = ((WebBrowserType)BrowserTypeComboBox.SelectedValue).ToString();
         }
 
 
@@ -187,7 +251,6 @@ namespace Ginger.Agents
                 else
                 {
                     mOriginalDriverType = xDriverTypeComboBox.SelectedItem.ToString();
-                    mAgent.AgentOperations.InitDriverConfigs();
                 }
             }
         }
