@@ -18,12 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
@@ -74,7 +76,7 @@ using DevToolsDomains = OpenQA.Selenium.DevTools.V121.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
-    public class SeleniumDriver : DriverBase, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
+    public class SeleniumDriver : GingerWebDriver, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
     {
         protected IDevToolsSession Session;
         DevToolsSession devToolsSession;
@@ -105,7 +107,7 @@ namespace GingerCore.Drivers
 
         public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
         {
-            if (driverSubType == Agent.eDriverType.SeleniumRemoteWebDriver)
+            if (BrowserType == WebBrowserType.RemoteWebDriver)
             {
                 return "SeleniumRemoteWebDriverEditPage";
             }
@@ -355,7 +357,7 @@ namespace GingerCore.Drivers
 
         public override void InitDriver(Agent agent)
         {
-            if (agent.DriverType == Agent.eDriverType.SeleniumRemoteWebDriver)
+            if (BrowserType == WebBrowserType.RemoteWebDriver)
             {
                 if (agent.DriverConfiguration == null)
                 {

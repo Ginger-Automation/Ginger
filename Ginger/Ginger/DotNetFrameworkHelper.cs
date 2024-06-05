@@ -100,16 +100,8 @@ namespace Ginger
 
             switch (zAgent.DriverType)
             {
-                case eDriverType.SeleniumFireFox:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.FireFox);
-                case eDriverType.SeleniumChrome:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Chrome);
-                case eDriverType.SeleniumIE:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.IE);
-                case eDriverType.SeleniumRemoteWebDriver:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
-                case eDriverType.SeleniumEdge:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
+                case eDriverType.Selenium:
+                    return new SeleniumDriver();
                 case eDriverType.Playwright:
                     return new PlaywrightDriver();
 
@@ -150,11 +142,7 @@ namespace Ginger
             {
                 case eDriverType.InternalBrowser:
                     return (typeof(InternalBrowser));
-                case eDriverType.SeleniumFireFox:
-                case eDriverType.SeleniumChrome:
-                case eDriverType.SeleniumIE:
-                case eDriverType.SeleniumRemoteWebDriver:
-                case eDriverType.SeleniumEdge:
+                case eDriverType.Selenium:
                     return (typeof(SeleniumDriver));
                 case eDriverType.Playwright:
                     return typeof(PlaywrightDriver);

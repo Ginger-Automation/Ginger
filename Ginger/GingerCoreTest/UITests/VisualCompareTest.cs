@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
@@ -51,7 +53,12 @@ namespace UnitTests.NonUITests
             mGR.Executor.SolutionFolder = TestResources.GetTestTempFolder("");
 
             Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            a.DriverType = Agent.eDriverType.Selenium;
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: WebBrowserType.Chrome.ToString());
+            if (!string.Equals(browserTypeParam.Value, WebBrowserType.Chrome.ToString()))
+            {
+                browserTypeParam.Value = WebBrowserType.Chrome.ToString();
+            }
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
