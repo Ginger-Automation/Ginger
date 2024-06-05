@@ -215,43 +215,6 @@ namespace Amdocs.Ginger.UserControls
                     SetAsStaticImage("chat.png");
                     break;
                 #endregion
-                    /*
-                #region Databases
-                case eImageType.Cassandra:
-                    SetAsStaticImage("cassandra.svg");
-                    break;
-                case eImageType.CosmosDB:
-                    SetAsStaticImage("cosmosdb.svg");
-                    break;
-                case eImageType.Couchbase:
-                    SetAsStaticImage("couchbase.svg");
-                    break;
-                case eImageType.DB2:
-                    SetAsStaticImage("db2.svg");
-                    break;
-                case eImageType.HBase:
-                    SetAsStaticImage("hbase.svg");
-                    break;
-                case eImageType.MongoDB:
-                    SetAsStaticImage("mongodb.svg");
-                    break;
-                case eImageType.MSAccess:
-                    SetAsStaticImage("msaccess.svg");
-                    break;
-                case eImageType.MSSQL:
-                    SetAsStaticImage("mssql.svg");
-                    break;
-                case eImageType.MySQL:
-                    SetAsStaticImage("mysql.svg");
-                    break;
-                case eImageType.Oracle:
-                    SetAsStaticImage("oracle.svg");
-                    break;
-                case eImageType.PostgreSQL:
-                    SetAsStaticImage("postgresql.svg");
-                    break;
-                #endregion
-                    */
                 #region Repository Items Images
                 //############################## Repository Items Images:
                 case eImageType.Solution:

@@ -265,28 +265,20 @@ namespace GingerCore.Environments
                         break;
                     case eDBTypes.Oracle:
                         //TODO: Oracle connection is deprecated use another method - Switched to ODP.NET
-                        try
+                        if (!Database.IsOracleVersionLow)
                         {
 
-                            if (!Database.IsOracleVersionLow)
-                            {
-
-                                oConn = WorkSpace.Instance.TargetFrameworkHelper.GetOracleConnection(connectConnectionString);
-                                oConn.Open();
-                            }
-                            else
-                            {
-                                oConn = SqlClientFactory.Instance.CreateConnection();
-                                oConn.ConnectionString = "Provider=msdaora;" + connectConnectionString;
-                                oConn.Open();
-                            }
-
-                            break;
+                            oConn = WorkSpace.Instance.TargetFrameworkHelper.GetOracleConnection(connectConnectionString);
+                            oConn.Open();
                         }
-                        catch (Exception)
+                        else
                         {
-                           throw;
+                            oConn = SqlClientFactory.Instance.CreateConnection();
+                            oConn.ConnectionString = "Provider=msdaora;" + connectConnectionString;
+                            oConn.Open();
                         }
+
+                        break;
 
                     case eDBTypes.MSAccess:
 

@@ -67,11 +67,9 @@ namespace Ginger.Environments
 
         private void ShowEditPageEvent(ListItemEventArgs EventArgs)
         {
-            switch (EventArgs.EventType)
+            if (EventArgs.EventType.Equals(ListItemEventArgs.eEventType.ShowEditPage))
             {
-                case ListItemEventArgs.eEventType.ShowEditPage:
                     ShowOrHideEditPage((Database)EventArgs.EventObject);
-                    break;
             }
         }
 
