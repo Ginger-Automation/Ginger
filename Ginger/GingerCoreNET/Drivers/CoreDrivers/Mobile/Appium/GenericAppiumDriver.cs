@@ -293,6 +293,7 @@ namespace Amdocs.Ginger.CoreNET//check
                 }
 
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                mSeleniumDriver.isAppiumSession = true;
                 mSeleniumDriver.StopProcess = this.StopProcess;
                 mSeleniumDriver.BusinessFlow = this.BusinessFlow;
                 mSeleniumDriver.PomCategory = this.PomCategory;

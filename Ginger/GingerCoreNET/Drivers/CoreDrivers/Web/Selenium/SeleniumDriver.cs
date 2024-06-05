@@ -347,6 +347,7 @@ namespace GingerCore.Drivers
 
             set => base.PomCategory = value;
         }
+        public bool isAppiumSession { get; set; }
 
         public SeleniumDriver()
         {
@@ -3671,8 +3672,17 @@ namespace GingerCore.Drivers
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
                 if (currentPOM != null)
-                { 
-                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo(this.PomCategory);
+                {
+                    ElementInfo currentPOMElementInfo = null;
+                    if (isAppiumSession)
+                    {
+                        currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo(this.PomCategory);//consider the Category only in case of Mobile flow for now
+                    }
+                    else
+                    {
+                        currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                    }
+
                     if (currentPOMElementInfo != null)
                     {
                         if (HandelIFramShiftAutomaticallyForPomElement)
