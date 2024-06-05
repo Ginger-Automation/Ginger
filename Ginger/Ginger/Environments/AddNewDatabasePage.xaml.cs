@@ -3,7 +3,6 @@ using Ginger.BusinessFlowPages.ListHelpers;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,14 +28,7 @@ namespace Ginger.Environments
             this.dbListViewHelper = dbListViewHelper;
             this.dataSourceList = dataSourceList;
             InitializeComponent();
-            xConnectionStringInfo.ToolTip = """
-                1. DB2: "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};"
-                2. PostgreSQL: "Server={Server URL};User Id={User Name}; Password={User Password};Database={Database Name};"
-                3. MySQL: "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};"
-                4. CosmosDB: "AccountEndpoint={End Point URL};AccountKey={Account Key};"
-                5. HBase: "Server={Server URL};Port={Port No};User Id={User Name}; Password={Password};Database={Database Name};"
-                6. Other Databases: "Data Source={Data Source};User Id={User Name};Password={User Password};"
-                """;
+            xConnectionStringInfo.ToolTip = Database.GetConnectionStringToolTip();
             xDatabaseComboBox.ItemsSource = GingerCore.General
                                             .GetEnumValuesForCombo(typeof(Database.eDBTypes))
                                             .Select((db) => (eDBTypes)db.Value)
@@ -45,6 +37,7 @@ namespace Ginger.Environments
                                             || dbType.Equals(eDBTypes.MySQL) || dbType.Equals(eDBTypes.PostgreSQL)
                                             || dbType.Equals(eDBTypes.DB2));
             this.database = new();
+            
             this.database.DatabaseOperations = new DatabaseOperations(database);
             xDatabaseUserName.Init(context , database, nameof(Database.User));
             xDatabasePassword.Init(context, database, nameof(Database.Pass));
@@ -85,33 +78,21 @@ namespace Ginger.Environments
             {
                 return;
             }
+
             this.testConnectionButton.IsEnabled = false;
+            ReportTestConnection();
 
-            Task.Run(() =>
-            {
-                
-
-                this.dbListViewHelper.TestSingleDatabase(database);
-
-                Dispatcher.Invoke(() =>
-                {
-                    this.testConnectionButton.IsEnabled = true;
-                });
-                
-            });
-
+            this.testConnectionButton.IsEnabled = true;
         }
 
         private bool DatabaseValueValidation()
         {
-
-
             if (string.IsNullOrEmpty(xDatabaseName.Text))
             {
                 xDatabaseNameError.Text = "Database Name is mandatory";
                 xDatabaseNameError.Visibility = Visibility.Visible;
+                return false;
             }
-
 
             return true;
         }
@@ -132,18 +113,27 @@ namespace Ginger.Environments
             database.PropertyChanged+= this.dbListViewHelper.DbPropertyChanged;
 
             okBtn.IsEnabled = false;
-            Task.Run(() =>
+
+            ReportTestConnection();
+
+            okBtn.IsEnabled = true;
+            _pageGenericWin?.Close();
+
+        }
+
+        private void ReportTestConnection()
+        {
+            bool IsConnectionSuccessful = this.dbListViewHelper.TestSingleDatabase(database);
+
+            if (IsConnectionSuccessful)
             {
-                this.dbListViewHelper.TestSingleDatabase(database);
+                Reporter.ToUser(eUserMsgKey.DbConnSucceed, database?.Name);
+            }
 
-                Dispatcher.Invoke(() =>
-                {
-                    okBtn.IsEnabled = true;
-                    _pageGenericWin?.Close();
-
-                });
-            });
-            
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.DbConnFailed, database?.Name);
+            }
         }
 
         private void ConvertDetailsToConnectionString()
@@ -182,7 +172,7 @@ namespace Ginger.Environments
                 return;
             }
             xConnectionStrCheckBox.IsChecked = false;
-
+            ClearDatabaseDetails();
             if(!databaseType.Equals(eDBTypes.Couchbase) && !databaseType.Equals(eDBTypes.Cassandra) && !databaseType.Equals(eDBTypes.Hbase))
             {
                 xConnectionStrStackPanel.Visibility = Visibility.Visible;
@@ -240,6 +230,24 @@ namespace Ginger.Environments
 
         }
 
+        private void ClearDatabaseDetails()
+        {
+            if(database == null)
+            {
+                return;
+            }
+
+            this.database.User = string.Empty;
+            this.database.Pass = string.Empty;
+            this.database.TNS = string.Empty;
+            this.database.ConnectionString = string.Empty;
+            this.database.Name = string.Empty;
+            this.database.Description = string.Empty;
+            this.database.IsOracleVersionLow = false;
+            this.database.KeepConnectionOpen = false;
+        }
+
+
         private void ConnectionString_Checked(object sender, RoutedEventArgs e)
         {
             xDBConnectionStringPanel.Visibility = Visibility.Visible;
@@ -294,7 +302,7 @@ namespace Ginger.Environments
 
         private void SQL_Selected(object sender, RoutedEventArgs e)
         {
-
+            ClearDatabaseDetails();
             if(xDatabaseComboBox != null)
             {
                 xDatabaseComboBox.ItemsSource = GingerCore.General
@@ -309,7 +317,8 @@ namespace Ginger.Environments
         }
         private void NoSQL_Selected(object sender, RoutedEventArgs e)
         {
-
+            ClearDatabaseDetails();
+            
             if (xDatabaseComboBox != null)
             {
                 xDatabaseComboBox.ItemsSource = GingerCore.General

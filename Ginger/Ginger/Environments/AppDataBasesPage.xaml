@@ -24,8 +24,18 @@
                 </UserControls:ucButton.ToolTip>
             </UserControls:ucButton>
 
-            <UserControls:ImageMakerControl Grid.Column="1" SetAsFontImageWithSize="16" ImageType="Variable" HorizontalAlignment="Left" SetBorder="False" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+            <UserControls:ImageMakerControl Grid.Column="1" SetAsFontImageWithSize="16" ImageType="Database" HorizontalAlignment="Left" SetBorder="False" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
             <TextBlock x:Name="xSelectedItemTitleText" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,2,0,0" Style="{StaticResource $TextBlockStyle}" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" />
+
+            <StackPanel x:Name="xEditOperationsPnl" Grid.Column="3" Orientation="Horizontal"  VerticalAlignment="Center" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0 0 10 0">
+                <UserControls:ucButton x:Name="xTestBtn" ButtonType="CircleImageButton" Click="TestDatabase" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Run">
+                    <UserControls:ucButton.ToolTip>
+                        <GingerCore:ucTextDicResource Text="Test Database"/>
+                    </UserControls:ucButton.ToolTip>
+                </UserControls:ucButton>
+            </StackPanel>
+
+
         </Grid>
 
         <Frame x:Name="xMainFrame" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden"/>

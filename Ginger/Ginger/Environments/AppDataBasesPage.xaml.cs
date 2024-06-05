@@ -22,8 +22,6 @@ using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
-using GingerCore.Variables;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -112,6 +110,22 @@ namespace Ginger.Environments
         private void xGoToList_Click(object sender, RoutedEventArgs e)
         {
             ShowOrHideEditPage(null);
+        }
+
+        private void TestDatabase(object sender, RoutedEventArgs e)
+        {
+            Database? database = this.DatabaseListView?.CurrentItem as Database;
+            bool IsConnectionSuccessful = this.dbListViewHelper.TestSingleDatabase(database);
+
+            if (IsConnectionSuccessful)
+            {
+                Reporter.ToUser(eUserMsgKey.DbConnSucceed, database?.Name);
+            }
+
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.DbConnFailed, database?.Name);
+            }
         }
     }
 }

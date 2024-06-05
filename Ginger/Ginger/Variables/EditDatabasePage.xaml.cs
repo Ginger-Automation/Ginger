@@ -1,16 +1,13 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using Microsoft.VisualStudio.Services.Common;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Globalization;
 using System.Windows.Controls;
-using System.Windows.Input;
 using static GingerCore.Environments.Database;
 
 namespace Ginger.Variables
@@ -26,14 +23,7 @@ namespace Ginger.Variables
             this.database = database;
             InitializeComponent();
 
-            xConnectionStringInfo.ToolTip = """
-                1. DB2: "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};"
-                2. PostgreSQL: "Server={Server URL};User Id={User Name}; Password={User Password};Database={Database Name};"
-                3. MySQL: "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};"
-                4. CosmosDB: "AccountEndpoint={End Point URL};AccountKey={Account Key};"
-                5. HBase: "Server={Server URL};Port={Port No};User Id={User Name}; Password={Password};Database={Database Name};"
-                6. Other Databases: "Data Source={Data Source};User Id={User Name};Password={User Password};"
-                """;
+            xConnectionStringInfo.ToolTip = Database.GetConnectionStringToolTip();
 
 
             xDatabaseUserName.Init(context, database, nameof(Database.User));
@@ -49,6 +39,8 @@ namespace Ginger.Variables
             BindingHandler.ObjFieldBinding(xDatabaseDescription, TextBox.TextProperty, database, nameof(Database.Description));
             BindingHandler.ObjFieldBinding(xKeepConnectOpen, CheckBox.IsCheckedProperty, database, nameof(Database.KeepConnectionOpen));
             BindingHandler.ObjFieldBinding(xDatabaseType, TextBox.TextProperty, database, nameof(Database.DBType));
+
+            xDatabaseName.AddValidationRule(new DBNameValidationRule());
 
             xDatabaseName.TextChanged += XDatabaseName_TextChanged;
 
@@ -143,6 +135,22 @@ namespace Ginger.Variables
                 {
                     database.Pass = EncryptionHandler.EncryptwithKey(database.Pass);
                 }
+        }
+    }
+
+    class DBNameValidationRule : ValidationRule
+    {
+        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+        {
+            string dbName = (string)value;
+
+            if (string.IsNullOrWhiteSpace(dbName))
+            {
+                return new ValidationResult(false, "Database Name cannot be empty");
+            }
+
+
+            return new ValidationResult(true, null);
         }
     }
 }

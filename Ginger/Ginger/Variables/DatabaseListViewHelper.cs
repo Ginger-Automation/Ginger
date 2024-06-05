@@ -89,7 +89,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemExecutionStatusField()
         {
-            return null;
+            return nameof(Database.TestConnectionStatus);
         }
 
         public List<ListItemOperation> GetItemExtraOperationsList(object item)
@@ -163,7 +163,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             deleteDB.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
             deleteDB.ToolTip = "Delete Database";
             deleteDB.OperationHandler = DeleteDatabase;
-            deleteDB.Margin = new Thickness(0, 0, 20, 0);
             operationsList.Add(deleteDB);
             return operationsList;
         }
@@ -208,15 +207,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             OnActionListItemEvent(ListItemEventArgs.eEventType.ShowEditPage, database);
         }
 
-        public void TestSingleDatabase(Database? db)
+        public bool TestSingleDatabase(Database? db)
         {
+            if (db == null)
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
+                return false;
+            }
+
             try
             {
-                if (db == null)
-                {
-                    Reporter.ToUser(eUserMsgKey.AskToSelectItem);
-                    return;
-                }
+                
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = mContext.Environment;
                 db.BusinessFlow = null;
@@ -224,13 +225,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 db.DatabaseOperations.CloseConnection();
                 if (Task.Run(() => db.DatabaseOperations.Connect(true)).GetAwaiter().GetResult())
                 {
-                    Reporter.ToUser(eUserMsgKey.DbConnSucceed, db.Name);
+                    db.DatabaseOperations.CloseConnection();
+                    db.TestConnectionStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                    return true;
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.DbConnFailed, db.Name);
+                    db.DatabaseOperations.CloseConnection();
                 }
-                db.DatabaseOperations.CloseConnection();
             }
             catch (Exception ex)
             {
@@ -243,17 +245,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html", UseShellExecute = true });
 
                     }
-                    return;
                 }
-
-                Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR,ex.Message,ex);
             }
+
+            db.TestConnectionStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+
+            return false;
         }
 
         private void TestDatabase(object sender, RoutedEventArgs e)
         {
             Database? db = ((ucButton)sender).Tag as Database;
-            TestSingleDatabase(db);
+            bool IsConnectionSuccessful = TestSingleDatabase(db);
+            if (IsConnectionSuccessful)
+            {
+                Reporter.ToUser(eUserMsgKey.DbConnSucceed, db?.Name);
+            }
+
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.DbConnFailed, db?.Name);
+            }
+
         }
 
         public string GetItemTagsField()
@@ -349,7 +363,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                         db.DatabaseOperations.SplitUserIdPassFromTNS();
                     }
                 }
-                if (e.PropertyName == nameof(Database.TNS) || e.PropertyName == nameof(Database.User) || e.PropertyName == nameof(Database.Pass))
+                if (e.PropertyName == nameof(Database.TNS) 
+                    || e.PropertyName == nameof(Database.User) 
+                    || e.PropertyName == nameof(Database.Pass) 
+                    || e.PropertyName == nameof(Database.Name))
                 {
                     db.DatabaseOperations.CreateConnectionString();
                 }
