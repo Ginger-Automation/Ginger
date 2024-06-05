@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         [UserConfiguredEnumType(typeof(WebBrowserType))]
         [UserConfiguredDefault("Chrome")]
         [UserConfiguredDescription("Browser Type")]
-        public WebBrowserType BrowserType { get; set; }
+        public virtual WebBrowserType BrowserType { get; set; }
 
         public override ePlatformType Platform => ePlatformType.Web;
 

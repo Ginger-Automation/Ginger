@@ -299,6 +299,54 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Use custom browser driver. Provide complete driver path with file extension")]
         public string DriverFilePath { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredEnumType(typeof(WebBrowserType))]
+        [UserConfiguredDefault("Chrome")]
+        [UserConfiguredDescription("Browser Type")]
+        public override WebBrowserType BrowserType
+        {
+            get
+            {
+                switch (mBrowserTpe)
+                {
+                    case eBrowserType.Chrome:
+                        return WebBrowserType.Chrome;
+                    case eBrowserType.FireFox:
+                        return WebBrowserType.FireFox;
+                    case eBrowserType.Edge:
+                        return WebBrowserType.Edge;
+                    case eBrowserType.IE:
+                        return WebBrowserType.InternetExplorer;
+                    case eBrowserType.RemoteWebDriver:
+                        return WebBrowserType.RemoteWebDriver;
+                    default:
+                        throw new Exception($"Unknown browser type '{mBrowserTpe}'");
+                }
+            }
+            set
+            {
+                switch (value)
+                {
+                    case WebBrowserType.Chrome:
+                        mBrowserTpe = eBrowserType.Chrome;
+                        break;
+                    case WebBrowserType.FireFox:
+                        mBrowserTpe = eBrowserType.FireFox;
+                        break;
+                    case WebBrowserType.Edge:
+                        mBrowserTpe = eBrowserType.Edge;
+                        break;
+                    case WebBrowserType.InternetExplorer:
+                        mBrowserTpe = eBrowserType.IE;
+                        break;
+                    case WebBrowserType.RemoteWebDriver:
+                        mBrowserTpe = eBrowserType.RemoteWebDriver;
+                        break;
+                    default:
+                        throw new Exception($"Unknown browser type '{value}'");
+                }
+            }
+        }
 
         protected IWebDriver Driver;
         protected eBrowserType mBrowserTpe;

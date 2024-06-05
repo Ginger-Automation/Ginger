@@ -30,24 +30,93 @@ using GingerCore.Actions.Common;
 using OpenQA.Selenium.DevTools.V119.DOM;
 using System.Drawing;
 using NPOI.OpenXmlFormats.Dml.Chart;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver
     {
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
+        public bool HeadlessBrowserMode { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDescription("Proxy Server:Port")]
+        public string? Proxy { get; set; }
+
         private PlaywrightBrowser? _browser;
 
         public override void StartDriver()
         {
+            ValidateBrowserTypeSupport(BrowserType);
+
             IPlaywright playwright = Microsoft.Playwright.Playwright.CreateAsync().Result;
-            IPlaywrightBrowser playwrightBrowser = playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-            {
-                Args = new[] { "--start-maximized" },
-                Headless = false,
-            }).Result;
+
+            BrowserTypeLaunchOptions launchOptions = BuildLaunchOptions();
+            IPlaywrightBrowser playwrightBrowser = LaunchBrowser(playwright, BrowserType, launchOptions);
 
             _browser = new(playwrightBrowser, OnBrowserClose);
+        }
+
+        private void ValidateBrowserTypeSupport(WebBrowserType browserType)
+        {
+            IEnumerable<WebBrowserType> supportedBrowserTypes = GetSupportedBrowserTypes(Agent.eDriverType.Playwright);
+            if (!supportedBrowserTypes.Contains(browserType))
+            {
+                throw new InvalidOperationException($"Browser type '{browserType}' is not supported for Playwright driver.");
+            }
+        }
+
+        private BrowserTypeLaunchOptions BuildLaunchOptions()
+        {
+            BrowserTypeLaunchOptions launchOptions = new()
+            {
+                Args = new[] { "--start-maximized" },
+                Headless = HeadlessBrowserMode,
+                Timeout = DriverLoadWaitingTime * 1000, //convert to milliseconds
+            };
+
+            if (!string.IsNullOrEmpty(Proxy))
+            {
+                launchOptions.Proxy = new Proxy()
+                {
+                    Server = Proxy
+                };
+            }
+
+            if (BrowserType == WebBrowserType.Chrome)
+            {
+                launchOptions.Channel = "chrome";
+            }
+            else if (BrowserType == WebBrowserType.Edge)
+            {
+                launchOptions.Channel = "msedge";
+            }
+
+            return launchOptions;
+        }
+
+        private IPlaywrightBrowser LaunchBrowser(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
+        {
+            if (browserType == WebBrowserType.Chrome)
+            {
+                return playwright.Chromium.LaunchAsync(launchOptions).Result;
+            }
+            else if (browserType == WebBrowserType.FireFox)
+            {
+                return playwright.Firefox.LaunchAsync(launchOptions).Result;
+            }
+            else if (browserType == WebBrowserType.Edge)
+            {
+                return playwright.Chromium.LaunchAsync(launchOptions).Result;
+            }
+            else
+            {
+                throw new ArgumentException($"Unknown browser type '{BrowserType}'");
+            }
         }
 
         public override bool IsRunning()
@@ -161,25 +230,25 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
                 else
                 {
-                    _currentWindow = NewWindowAsync().Result;
+                    _currentWindow = Task.Run(() =>
+                    {
+                        //this code needs to be executed in a separate Task otherwise, it will cause a deadlock and freeze the calling thread
+                        //check this for an example https://stackoverflow.com/a/43912280/12190808
+                        return NewWindowAsync().Result;
+                    }).Result;
                 }
             }
 
-            public async Task<IBrowserWindow> NewWindowAsync(bool setAsCurrent = true)
+            public async Task<IBrowserWindow> NewWindowAsync()
             {
                 ThrowIfClosed();
 
-                //getting stuck at below line when Driver gets started because of action execution
                 IPlaywrightBrowserContext context = await _playwrightBrowser.NewContextAsync(new BrowserNewContextOptions()
                 {
                     ViewportSize = ViewportSize.NoViewport,
                 });
                 PlaywrightBrowserWindow window = new(context, OnWindowClose);
                 _windows.AddLast(window);
-                if (setAsCurrent)
-                {
-                    _currentWindow = window;
-                }
                 return window;
             }
 
@@ -613,6 +682,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         break;
                     case eLocateBy.ByCSS:
                         locator = _playwrightPage.MainFrame.Locator($"css={value}");
+                        break;
+                    case eLocateBy.ByXPath:
+                        locator = _playwrightPage.MainFrame.Locator($"xpath={value}");
                         break;
                     default:
                         throw new ArgumentException($"Element locator '{locateBy}' is not supported.");
