@@ -57,7 +57,36 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return NewTVItemHeaderStyle(ProjEnvironment);
         }
 
+        private List<ITreeViewItem>? _children = null;
+
         List<ITreeViewItem> ITreeViewItem.Childrens()
+        {
+            if (_children == null)
+            {
+                _children = GetChildrenList();
+            }
+            else
+            {
+                List<ITreeViewItem> updatedChildren = [];
+                List<ITreeViewItem> newChildren = GetChildrenList();
+                foreach (ITreeViewItem child in newChildren)
+                {
+                    ITreeViewItem? oldChild = _children.FirstOrDefault(o => o.NodeObject() == child.NodeObject());
+                    if (oldChild != null)
+                    {
+                        updatedChildren.Add(oldChild);
+                    }
+                    else
+                    {
+                        updatedChildren.Add(child);
+                    }
+                }
+                _children = updatedChildren;
+            }
+            return _children;
+        }
+
+        private List<ITreeViewItem> GetChildrenList()
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 

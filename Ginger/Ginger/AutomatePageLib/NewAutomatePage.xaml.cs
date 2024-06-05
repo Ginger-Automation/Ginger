@@ -416,6 +416,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
+                
                 CurrentItemToSave = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
@@ -560,7 +561,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             UpdateContextWithActivityDependencies();
-
+            OnTargetApplicationChanged(null, null);
             SetActivityEditPage();
         }
 
@@ -646,24 +647,24 @@ namespace GingerWPF.BusinessFlowsLib
 
 
             // Create a list to store the items to be removed
-            List<TargetBase> agentsToRemove = [];
+            List<TargetBase> TargetApplicationsToRemove = [];
             var userTA = mBusinessFlow.Activities.Select(f => f.TargetApplication);
 
-            // Iterate through the ApplicationAgents
+            // Iterate through the Business Flow Target Application
             foreach (var existingTargetApp in mBusinessFlow.TargetApplications.OfType<TargetApplication>())
             {
-                // Check if the existing agent is not present in mBusinessFlow.TargetApplications
+                // Check if the existing target application is not present in mBusinessFlow.TargetApplications
                 if (!userTA.Contains((existingTargetApp as TargetApplication).AppName))
                 {
                     // If not present, add to the removal list
-                    agentsToRemove.Add(existingTargetApp);
+                    TargetApplicationsToRemove.Add(existingTargetApp);
                 }
             }
 
-            // Remove the agents from mExecutionEngine.GingerRunner.ApplicationAgents
-            foreach (var agentToRemove in agentsToRemove)
+            // Remove the target applications from mBusinessFlow.TargetApplications
+            foreach (var TargetAppToRemove in TargetApplicationsToRemove)
             {
-                mBusinessFlow.TargetApplications.Remove(agentToRemove);
+                mBusinessFlow.TargetApplications.Remove(TargetAppToRemove);
             }
 
         }
@@ -1262,10 +1263,66 @@ namespace GingerWPF.BusinessFlowsLib
                         await mExecutionEngine.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.LastStoppedAction);
                         break;
                     case eContinueFrom.SpecificAction:
-                        await mExecutionEngine.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificAction, mBusinessFlow, (Activity)((Tuple<Activity, Act>)executedItem).Item1, (Act)((Tuple<Activity, Act>)executedItem).Item2);
+                        Activity parentActivity = (Activity)((Tuple<Activity, Act>)executedItem).Item1;
+                        Act actionToExecute = (Act)((Tuple<Activity, Act>)executedItem).Item2;
+                        try
+                        {
+                            if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                            {
+                                bool reachedCurrentAction = false;
+                                foreach (Activity activity in mBusinessFlow.Activities)
+                                {
+                                    foreach (Act action in activity.Acts.Cast<Act>())
+                                    {
+                                        if (activity == parentActivity && action == actionToExecute)
+                                        {
+                                            reachedCurrentAction = true;
+                                            break;
+                                        }
+                                        mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                                    }
+                                    if (reachedCurrentAction)
+                                    {
+                                        break;
+                                    }
+                                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error while logging previous activity and actions", ex);
+                        }
+
+                        await mExecutionEngine.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificAction, mBusinessFlow, parentActivity, actionToExecute);
                         break;
                     case eContinueFrom.SpecificActivity:
-                        mBusinessFlow.CurrentActivity = (Activity)executedItem;
+                        Activity activityToExecute = (Activity)executedItem;
+                        try
+                        {
+                            if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                            {
+                                foreach (Activity activity in mBusinessFlow.Activities)
+                                {
+                                    if (activity == activityToExecute)
+                                    {
+                                        break;
+                                    }
+                                    foreach (Act action in activity.Acts.Cast<Act>())
+                                    {
+                                        mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                                    }
+                                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error while logging previous activity and actions", ex);
+                        }
+
+                        mBusinessFlow.CurrentActivity = activityToExecute;
+
                         await mExecutionEngine.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificActivity, mBusinessFlow, (Activity)executedItem);
                         break;
                     default:

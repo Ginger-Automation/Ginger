@@ -332,7 +332,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (TVI.Tag is ITreeViewItem ITVI)
             {
-                List<ITreeViewItem> Childs = ITVI.Childrens();
+                List<ITreeViewItem> Childs = new(ITVI.Childrens());
 
                 TVI.Items.Clear();
                 if (Childs != null)
@@ -683,12 +683,31 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             foreach (TreeViewItem tvi in ((TreeViewItem)Tree.Items[0]).Items)
             {
-                if (tvi.Tag is ITreeViewItem)
+                if (tvi.Tag == null || tvi.Tag is not ITreeViewItem)
                 {
-                    return true;
+                    return false;
+                }
+
+                ITreeViewItem itvi = (ITreeViewItem)tvi.Tag;
+                List<ITreeViewItem>? oldChildren = itvi.Childrens();
+                List<ITreeViewItem>? newChildren = itvi.Childrens();
+                if (oldChildren == null || newChildren == null)
+                {
+                    continue;
+                }
+
+                if (oldChildren.Count <= 0 || newChildren.Count <= 0)
+                {
+                    continue;
+                }
+
+                if (oldChildren[0] != newChildren[0])
+                {
+                    return false;
                 }
             }
-            return false;
+
+            return true;
         }
 
         public void FilterItemsByTextNew(string text)

@@ -1400,7 +1400,7 @@ namespace Ginger.Drivers.DriversWindows
                             xDeviceScreenshotCanvas.Visibility = Visibility.Collapsed;
                             xMessagePnl.Visibility = Visibility.Visible;
                             xMessageImage.ImageType = eImageType.Image;
-                            xMessageLbl.Content = "Failed to get device screenshot";
+                            xMessageLbl.Content = "Failed to retrieve device screenshot " + Environment.NewLine + "due to a lost or failed connection." + Environment.NewLine + "Check the log for details.";
                         }
                         else
                         {
@@ -1444,7 +1444,7 @@ namespace Ginger.Drivers.DriversWindows
                                 xMessagePnl.Visibility = Visibility.Visible;
                                 xMessageImage.ImageType = eImageType.Image;
                                 xMessageImage.ImageForeground = new SolidColorBrush(Colors.OrangeRed);
-                                xMessageLbl.Content = "Failed to get device screenshot";
+                                xMessageLbl.Content = "Failed to retrieve device screenshot " + Environment.NewLine + "due to a lost or failed connection." + Environment.NewLine + "Check the log for details.";
                             });
 
                             if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Live)
