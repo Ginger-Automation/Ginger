@@ -17,6 +17,31 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
 {
     internal sealed class ActBrowserElementHandler
     {
+        private static readonly IEnumerable<ActBrowserElement.eControlAction> SupportedOperations = new List<ActBrowserElement.eControlAction>()
+        {
+            ActBrowserElement.eControlAction.GotoURL,
+            ActBrowserElement.eControlAction.OpenURLNewTab,
+            ActBrowserElement.eControlAction.GetPageURL,
+            ActBrowserElement.eControlAction.GetWindowTitle,
+            ActBrowserElement.eControlAction.Maximize,
+            ActBrowserElement.eControlAction.NavigateBack,
+            ActBrowserElement.eControlAction.Refresh,
+            ActBrowserElement.eControlAction.DeleteAllCookies,
+            ActBrowserElement.eControlAction.RunJavaScript,
+            ActBrowserElement.eControlAction.GetPageSource,
+            ActBrowserElement.eControlAction.Close,
+            ActBrowserElement.eControlAction.CloseTabExcept,
+            ActBrowserElement.eControlAction.CloseAll,
+            ActBrowserElement.eControlAction.CheckPageLoaded,
+            ActBrowserElement.eControlAction.GetConsoleLog,
+            ActBrowserElement.eControlAction.GetBrowserLog,
+            ActBrowserElement.eControlAction.SwitchFrame,
+            ActBrowserElement.eControlAction.SwitchToDefaultFrame,
+            ActBrowserElement.eControlAction.SwitchToParentFrame,
+            ActBrowserElement.eControlAction.SwitchWindow,
+            ActBrowserElement.eControlAction.SwitchToDefaultWindow,
+        };
+
         internal readonly struct Context
         {
             internal required ProjEnvironment Environment { get; init; }
@@ -35,6 +60,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             _context = context;
         }
 
+        public static bool IsOperationSupported(ActBrowserElement.eControlAction operation)
+        {
+            return SupportedOperations.Contains(operation);
+        }
+
         internal Task HandleAsync()
         {
             Task operationTask = Task.CompletedTask;
@@ -49,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                         operationTask = HandleOpenUrlInNewTabOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.GetPageURL:
-                         operationTask = HandleGetPageUrlOperationAsync();
+                        operationTask = HandleGetPageUrlOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.GetWindowTitle:
                         operationTask = HandleGetWindowTitleOperationAsync();
@@ -105,34 +135,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     case ActBrowserElement.eControlAction.SwitchToDefaultWindow:
                         operationTask = HandleSwitchToDefaultWindowOperationAsync();
                         break;
-                    case ActBrowserElement.eControlAction.GetMessageBoxText:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.AcceptMessageBox:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.DismissMessageBox:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.SetAlertBoxText:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.GetNetworkLog:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.InitializeBrowser:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.InjectJS:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.SetBlockedUrls:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.UnblockeUrls:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.SwitchToDefaultDOM:
-                        throw new NotImplementedException();
-                    case ActBrowserElement.eControlAction.SwitchToShadowDOM:
-                        throw new NotImplementedException();
                     default:
-                        _act.Error = $"Unknown operation type - {_act.ControlAction}";
+                        string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), _act.ControlAction);
+                        _act.Error = $"Operation '{operationName}' is not supported";
                         break;
                 }
             }
