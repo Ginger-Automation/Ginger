@@ -571,7 +571,7 @@ namespace Ginger.AnalyzerLib
                 AA.ItemClass = "Action";
                 AA.CanAutoFix = eCanFix.No;
                 AA.Severity = eSeverity.High;
-                AA.HowToFix = "Please select the appropriate Environment or make sure the parameter/URL exists in the used Environment";
+                AA.HowToFix = $"Please ensure that you have selected the appropriate environment and that the parameter/URL exists in the chosen environment: '{businessFlow.Environment}'";
                 issues.Add(AA);
             }
 

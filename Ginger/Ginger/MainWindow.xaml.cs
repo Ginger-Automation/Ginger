@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.SourceControlLib;
+using Amdocs.Ginger.CoreNET.GenAIServices;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
@@ -182,6 +183,14 @@ namespace Ginger
                 }
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
+                var genAIService = new GenAIServiceSettings();
+                if (genAIService!=null && genAIService.GenAIServiceSettingsData!=null && genAIService.GenAIServiceSettingsData.EnableChat)
+                {
+                    xChatPanel.Visibility = Visibility.Visible;
+                    xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
+                }
+                
+
             }
             catch (Exception ex)
             {
@@ -195,6 +204,15 @@ namespace Ginger
                 {
                     AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
                 }
+            }
+
+        }
+
+        private void XChatbotWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if(xChatbotWindow.Visibility == Visibility.Collapsed && xChatbotIcon.Visibility == Visibility.Collapsed)
+            {
+                xChatbotIcon.Visibility = Visibility.Visible;
             }
         }
 
@@ -289,6 +307,7 @@ namespace Ginger
                 if (WorkSpace.Instance.SolutionLoaded)
                 {
                     WorkSpace.Instance.SolutionRepository.ModifiedFiles.CollectionChanged += ModifiedFilesChanged;
+
                 }
             }
 
@@ -627,6 +646,16 @@ namespace Ginger
                     xSolutionSourceControlInitMenuItem.Visibility = Visibility.Visible;
                     xSolutionSourceControlSetMenuItem.Visibility = Visibility.Collapsed;
                 }
+
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    xChatbotIcon.Visibility = Visibility.Visible;
+                }
+                else 
+                {
+                    xChatbotIcon.Visibility = Visibility.Collapsed;
+                }
+                xChatbotWindow.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -1645,6 +1674,43 @@ namespace Ginger
                 mLaunchInAdminMode = true;
                 mRestartApplication = true;
                 App.MainWindow.Close();
+            }
+        }
+
+        private void ChatbotIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if(xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
+            }
+            
+        }
+
+        private void xChatbotIcon_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void xChatbotIcon_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void xChatbotIcon_Click(object sender, RoutedEventArgs e)
+        {
+            if (xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
             }
         }
     }
