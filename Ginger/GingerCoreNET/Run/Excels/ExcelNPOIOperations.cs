@@ -374,11 +374,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         {
             if (DateUtil.IsCellDateFormatted(cell))
             {
-                return cell.DateCellValue.ToString(CultureInfo.InvariantCulture);
+                return cell.DateCellValue.Value.ToString(CultureInfo.InvariantCulture);
             }
             else if (cell.CellStyle.GetDataFormatString().Contains("yy") || cell.CellStyle.GetDataFormatString().Contains("mm") || cell.CellStyle.GetDataFormatString().Contains("dd"))
             {
-                return cell.DateCellValue.ToString(cell.CellStyle.GetDataFormatString().Replace("-mm", "-MM").Replace("h", "H"), CultureInfo.InvariantCulture);
+                return cell.DateCellValue.Value.ToString(cell.CellStyle.GetDataFormatString().Replace("-mm", "-MM").Replace("h", "H"), CultureInfo.InvariantCulture);
             }
             else if ((cell.NumericCellValue.ToString().Length > 15 || String.Equals(cell.CellStyle.GetDataFormatString(), "General", StringComparison.OrdinalIgnoreCase)))
             {
