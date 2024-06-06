@@ -41,64 +41,13 @@ namespace Ginger.Actions
 
             GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.SyncOperations, sortValues: false);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActNewSmartSync.SyncOperations));
-            SetWaitTimeTextBoxBinding(Act);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TxtMatchTextbox, TextBox.TextProperty, Act, nameof(ActNewSmartSync.TxtMatchInput));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttributeValueTextbox, TextBox.TextProperty, Act, nameof(ActNewSmartSync.AttributeValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttributeNameTextbox, TextBox.TextProperty, Act, nameof(ActNewSmartSync.AttributeName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UrlMatchesTextbox, TextBox.TextProperty, Act, nameof(ActNewSmartSync.UrlMatches));
         }
 
- 
-        private void SetWaitTimeTextBoxBinding(ActNewSmartSync act)
-        {
-            Binding waitTimeTextBinding = new()
-            {
-                Source = act,
-                Path = new PropertyPath(nameof(ActNewSmartSync.WaitTime)),
-                Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                NotifyOnValidationError = true,
-                Converter = new WaitTimeTextToIntConverter()
-            };
-            WaitTimeTextbox.SetBinding(TextBox.TextProperty, waitTimeTextBinding);
-        }
-
-        private sealed class WaitTimeTextToIntConverter : IValueConverter
-        {
-            //set act property value to textbox
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                if (value is not int intValue)
-                {
-                    return string.Empty;
-                }
-
-                return intValue.ToString();
-            }
-
-            //set textbox value to act property
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                if (value is not string stringValue)
-                {
-                    return null!;
-                }
-
-                if (string.IsNullOrEmpty(stringValue))
-                {
-                    //if no wait time is provided then set null to Act.WaitTime, to use default wait time.
-                    return null!;
-                }
-
-                if (!int.TryParse(stringValue, out int intValue))
-                {
-                    //if the provided text value is not a valid integer then set null to Act.WaitTime, to use default wait time.
-                    return null!;
-                }
-
-                return intValue;
-            }
-        }
+       
 
         private Visibility GetLocatorVisibility()
         {
@@ -208,30 +157,7 @@ namespace Ginger.Actions
             }
 
         }
-        private void WaitTimeTextbox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-        {
-            bool isEmptyString = string.IsNullOrEmpty(e.Text);
-            if (isEmptyString)
-            {
-                //allow
-                e.Handled = false;
-                return;
-            }
-
-            string currentText = WaitTimeTextbox.Text != null ? WaitTimeTextbox.Text : string.Empty;
-            bool isValidInteger = int.TryParse(currentText + e.Text, out _);
-            if (isValidInteger)
-            {
-                //allow
-                e.Handled = false;
-                return;
-            }
-            else
-            {
-                //don't allow
-                e.Handled = true;
-            }
-        }
+        
     }
 
     public interface IActEditPage : INotifyPropertyChanged

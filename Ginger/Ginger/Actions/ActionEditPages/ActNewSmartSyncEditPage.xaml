@@ -13,10 +13,6 @@
                 <Label Content="Operation Type:" Style="{StaticResource $LabelStyle}"/>
                 <ComboBox x:Name="ActionNameComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="250" HorizontalAlignment="Left" ToolTip="Select the action type to perform" SelectionChanged="ActionNameComboBox_SelectionChanged"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10">
-                <Label Content="Wait Time(s):" Style="{StaticResource $LabelStyle}"/>
-                <TextBox x:Name="WaitTimeTextbox" Style="{StaticResource @TextBoxStyle}" ToolTip="The action will wait this number of seconds before starting to run." Width="100" Height="25" PreviewTextInput="WaitTimeTextbox_PreviewTextInput"/>
-            </StackPanel>
             <StackPanel  x:Name="TxtMatch_Pnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10">
                 <Label Content="Text to Match:" Style="{StaticResource $LabelStyle}"/>
                 <TextBox x:Name="TxtMatchTextbox" Style="{StaticResource @TextBoxStyle}" ToolTip="Please provide the input to match the text for the specified element." Width="100" Height="25"/>

@@ -2025,15 +2025,20 @@ namespace GingerCore.Drivers
                         return;
                 }
             }
+            //get time configured in flow-control, if nothing provided then use 30 seconds
             int MaxTimeout = NewSmartSyncGetMaxTimeout(act);
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(MaxTimeout));
+            //store agent's implicit wait in a variable
+            int val = (int)Driver.Manage().Timeouts().ImplicitWait.TotalSeconds;
+            //set agent's implicit wait to 1 second
+            Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
+
             wait.PollingInterval = TimeSpan.FromMilliseconds(100);
             try
             {
                 switch (act.SyncOperations)
                 {
-                    case ActNewSmartSync.eSyncOperation.ElementIsVisible:
-                        
+                    case ActNewSmartSync.eSyncOperation.ElementIsVisible:                        
                         wait.Until(ExpectedConditions.ElementIsVisible(elementLocator));    
                         break;
                     case ActNewSmartSync.eSyncOperation.ElementExists:
@@ -2047,8 +2052,7 @@ namespace GingerCore.Drivers
                         wait.Until(ExpectedConditions.ElementIsSelected(elementLocator));
                         break;
                     case ActNewSmartSync.eSyncOperation.PageHasBeenLoaded:
-                        //wait.Until(ExpectedConditions.PageHasBeenLoaded());
-                        wait.Until(MyPageHasBeenLoaded(TimeSpan.FromSeconds(MaxTimeout)));
+                        wait.Until(ExpectedConditions.PageHasBeenLoaded());
                         break;
                     case ActNewSmartSync.eSyncOperation.ElementToBeClickable:
                         wait.Until(ExpectedConditions.ElementToBeClickable(elementLocator));
@@ -2085,8 +2089,9 @@ namespace GingerCore.Drivers
                         break;
                     default:
                         act.Error = "Unable to complete this operation.";
-                        return;
+                        break;
                 }
+                return;
             }
             catch (ArgumentNullException)
             {
@@ -2096,29 +2101,26 @@ namespace GingerCore.Drivers
             {
                 act.Error = $"{act.SyncOperations} was not completed within the allotted {MaxTimeout} seconds.";
             }
-        }
-
-     
-        public static Func<IWebDriver, IWebDriver> MyPageHasBeenLoaded(TimeSpan timeout)
-        {
-            return delegate (IWebDriver driver)
+            finally
             {
-                if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
-                {
-                    return driver;
-                }
-
-                string text = string.Empty;
-                Task executeScriptTask = Task.Run(() =>
-                {
-                    text = ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState") as string;
-                });
-                executeScriptTask.Wait((int)timeout.TotalMilliseconds);
-                return text.Equals("complete", StringComparison.OrdinalIgnoreCase) ? driver : null;
-            };
+                //set agent's implicit wait to the original value from the variable above
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)val));
+            }
         }
 
-        public static Func<IWebDriver, IWebDriver> PageHasBeenLoaded(TimeSpan timeout, TimeSpan pollingInterval)
+        private  int NewSmartSyncGetMaxTimeout(ActNewSmartSync act)
+        {
+           if (act.Timeout>0)
+                {
+                    return act.Timeout.GetValueOrDefault();
+                }
+                else
+                {
+                    return 30;
+                }
+          
+        }
+      static Func<IWebDriver, IWebDriver> PageHasBeenLoaded(TimeSpan timeout, TimeSpan pollingInterval)
         {
             return delegate (IWebDriver driver)
             {

@@ -73,44 +73,46 @@ namespace GingerCore.Actions
             [EnumValueDescription("Element to be Clickable")]
             ElementToBeClickable = 3,
 
-            [EnumValueDescription("Invisibility of Element Located By")]
-            InvisibilityOfElementLocated = 4,
-
             [EnumValueDescription("Text Matches")]
-            TextMatches = 5,
-
-            [EnumValueDescription("Presence of All Elements Located By")]
-            PresenceOfAllElementsLocatedBy = 6,
-
-            [EnumValueDescription("Visibility of All Elements Located By")]
-            VisibilityOfAllElementsLocatedBy = 7,
+            TextMatches = 4,
 
             [EnumValueDescription("Alert is Present")]
-            AlertIsPresent = 8,
+            AlertIsPresent = 5,
 
             [EnumValueDescription("Element is Selected")]
-            ElementIsSelected = 9,
-
-            [EnumValueDescription("Invisibility of All Elements Located By")]
-            InvisibilityOfAllElementsLocatedBy = 10,
+            ElementIsSelected = 6,
 
             [EnumValueDescription("Attribute Matches")]
-            AttributeMatches =11,
-
-            [EnumValueDescription("Frame to be Available and Switch to it")]
-            FrameToBeAvailableAndSwitchToIt = 12,
+            AttributeMatches = 7,
 
             [EnumValueDescription("URL Matches")]
-            UrlMatches = 13,
-
-            [EnumValueDescription("Selected of All Elements Located By")]
-            SelectedOfAllElementsLocatedBy = 14,
-
-            [EnumValueDescription("Enability of All Elements Located By")]
-            EnabilityOfAllElementsLocatedBy = 15,
+            UrlMatches = 8,
 
             [EnumValueDescription("Page has been Loaded")]
-            PageHasBeenLoaded = 16,
+            PageHasBeenLoaded = 9,
+
+            [EnumValueDescription("Invisibility of Element Located By")]
+            InvisibilityOfElementLocated = 10,
+
+            [EnumValueDescription("Presence of All Elements Located By")]
+            PresenceOfAllElementsLocatedBy = 11,
+
+            [EnumValueDescription("Visibility of All Elements Located By")]
+            VisibilityOfAllElementsLocatedBy = 12,
+
+            [EnumValueDescription("Invisibility of All Elements Located By")]
+            InvisibilityOfAllElementsLocatedBy = 13,
+
+            [EnumValueDescription("Frame to be Available and Switch to it")]
+            FrameToBeAvailableAndSwitchToIt = 14,
+
+            [EnumValueDescription("Selected of All Elements Located By")]
+            SelectedOfAllElementsLocatedBy = 15,
+
+            [EnumValueDescription("Enability of All Elements Located By")]
+            EnabilityOfAllElementsLocatedBy = 16,
+
+            
         }
 
         public eSyncOperation SyncOperations
