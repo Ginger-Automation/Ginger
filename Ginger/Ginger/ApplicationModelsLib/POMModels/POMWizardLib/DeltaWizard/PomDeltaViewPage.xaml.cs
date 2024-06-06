@@ -110,11 +110,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 elementInfoList.Add(element);
             }
         }
-        public PomDeltaViewPage(PomDeltaUtils pomDeltaUtils, GridColView gridCompareColumn = null, Agent mAgent = null)
+        public PomDeltaViewPage(PomDeltaUtils pomDeltaUtils, GridColView gridCompareColumn = null, Agent mAgent = null, ObservableList<DeltaElementInfo> deltaViewElements = null)
         {
             InitializeComponent();
 
-            mDeltaElements = pomDeltaUtils.DeltaViewElements;
+            if (deltaViewElements != null)
+            {
+                mDeltaElements = deltaViewElements;
+            }
+            else
+            {
+                mDeltaElements = pomDeltaUtils.DeltaViewElements;
+            }
 
             SetElementsInfoList();
             mPOMModel = pomDeltaUtils.POM;
@@ -298,16 +305,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 locateByList.Remove(comboItem);
             }
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 200, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xCopyLocatorButtonTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.EnableFriendlyLocator), Visible = isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = BindingMode.OneWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.Category), Header = nameof(ElementLocator.Category), BindingMode = BindingMode.OneWay, WidthWeight = 50 });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 100, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 300, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 50, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.StatusIcon), Header = "Identification Status", WidthWeight = 100, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 400, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = "", MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xCopyLocatorButtonTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.EnableFriendlyLocator), Visible = isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 100, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.Category), Header = nameof(ElementLocator.Category), BindingMode = BindingMode.OneWay, WidthWeight = 100 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", MaxWidth = 150, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaStatusIcon), Header = "Comparison Status", MaxWidth = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 200, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = "Test", MaxWidth = 200, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.StatusIcon), Header = "Identification Status", MaxWidth = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
             xLocatorsGrid.SetAllColumnsDefaultView(defView);
             xLocatorsGrid.InitViewItems();
 
