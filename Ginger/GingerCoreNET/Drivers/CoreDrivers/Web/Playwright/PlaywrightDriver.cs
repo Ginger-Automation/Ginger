@@ -31,11 +31,12 @@ using OpenQA.Selenium.DevTools.V119.DOM;
 using System.Drawing;
 using NPOI.OpenXmlFormats.Dml.Chart;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.RunLib;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
-    public sealed class PlaywrightDriver : GingerWebDriver
+    public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver
     {
 
         [UserConfigured]
@@ -189,13 +190,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     actBrowserElementHandler.HandleAsync().Wait();
                     break;
                 case ActUIElement actUIElement:
-                    ActUIElementHandler actUIElementHandler = new(actUIElement, _browser);
+                    ActUIElementHandler actUIElementHandler = new(actUIElement, _browser!);
                     actUIElementHandler.HandleAsync().Wait();
                     break;
                 default:
                     act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
                     break;
             }
+        }
+
+        public bool CanStartAnotherInstance(out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            return true;
         }
 
         private sealed class PlaywrightBrowser : IBrowser
@@ -505,10 +512,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return Task.FromResult(_playwrightPage.Url);
             }
 
-            public Task GoToURLAsync(string url)
+            public async Task GoToURLAsync(string url)
             {
                 ThrowIfClosed();
-                return _playwrightPage.GotoAsync(url);
+                await _playwrightPage.GotoAsync(url);
+                _currentFrame = _playwrightPage.MainFrame;
             }
 
             public Task NavigateBackAsync()
