@@ -208,6 +208,7 @@ namespace Ginger.Environments
             if (databaseType.Equals(eDBTypes.MSAccess))
             {
                 xDatabaseTNS.SetBrowserBtn();
+                xDatabaseTNS.Width = 335;
             }
             else
             {
