@@ -36,7 +36,7 @@ using Amdocs.Ginger.CoreNET.RunLib;
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
-    public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver
+    public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver
     {
 
         [UserConfigured]
@@ -203,6 +203,48 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             errorMessage = string.Empty;
             return true;
+        }
+
+        public bool IsActionSupported(Act act, out string message)
+        {
+            if (act is ActWithoutDriver)
+            {
+                message = string.Empty;
+                return true;
+            }
+            if (act is ActUIElement actUIElement)
+            {
+                bool isSupported = ActUIElementHandler.IsOperationSupported(actUIElement.ElementAction);
+                if (!isSupported)
+                {
+                    string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), actUIElement.ElementAction);
+                    message = $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
+                }
+                else
+                {
+                    message = string.Empty;
+                }
+                return isSupported;
+            }
+            else if (act is ActBrowserElement actBrowserElement)
+            {
+                bool isSupported = ActBrowserElementHandler.IsOperationSupported(actBrowserElement.ControlAction);
+                if (!isSupported)
+                {
+                    string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), actBrowserElement.ControlAction);
+                    message = $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
+                }
+                else
+                {
+                    message = string.Empty;
+                }
+                return isSupported;
+            }
+            else
+            {
+                message = $"'{act.ActionType}' is not supported by Playwright driver, use Selenium driver instead.";
+                return false;
+            }
         }
 
         private sealed class PlaywrightBrowser : IBrowser

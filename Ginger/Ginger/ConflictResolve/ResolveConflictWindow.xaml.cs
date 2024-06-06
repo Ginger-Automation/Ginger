@@ -298,7 +298,7 @@ namespace Ginger.ConflictResolve
 
                 Dispatcher.Invoke(() => analyzerPage = new());
 
-                analyzerPage.Init(businessFlow, WorkSpace.Instance.Solution, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
+                analyzerPage.Init(businessFlow, WorkSpace.Instance.Solution, applicationAgents: null, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
                 await analyzerPage.AnalyzeWithoutUI();
                 Dispatcher.Invoke(() => Reporter.HideStatusMessage());
                 Dispatcher.Invoke(() => analyzerPage.ShowAsWindow());

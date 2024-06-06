@@ -21,11 +21,13 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.AnalyzerLib;
+using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.DataSource;
+using GingerCore.Drivers;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -35,6 +37,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+#nullable enable
 namespace Ginger.AnalyzerLib
 {
     public class AnalyzeAction : AnalyzerItemBase
@@ -44,7 +47,7 @@ namespace Ginger.AnalyzerLib
         public Act mAction { get; set; }
         private ePlatformType ActivitySourcePlatform { get; set; }
 
-        public static List<AnalyzerItemBase> Analyze(BusinessFlow BusinessFlow, Activity parentActivity, Act a, ObservableList<DataSourceBase> DSList)
+        public static List<AnalyzerItemBase> Analyze(BusinessFlow BusinessFlow, Activity parentActivity, Act a, ObservableList<DataSourceBase> DSList, DriverBase? driver = null)
         {
             // Put all tests on Action here
             List<string> ActivityUsedVariables = new List<string>();
@@ -473,6 +476,23 @@ namespace Ginger.AnalyzerLib
                         AA.FixItHandler = FixRemoveDuplicateActInputValues;
                         IssuesList.Add(AA);
                     }
+                }
+            }
+
+            if (driver != null && driver is IIncompleteDriver incompleteDriver)
+            {
+                if (!incompleteDriver.IsActionSupported(a, out string message))
+                {
+                    AnalyzeAction issue = CreateNewIssue(BusinessFlow, parentActivity, a);
+                    issue.Description = "Action not supported by Driver";
+                    issue.Details = message;
+                    issue.CanAutoFix = eCanFix.No;
+                    issue.HowToFix = "Please choose a different driver.";
+                    issue.IssueType = eType.Error;
+                    issue.Impact = "Action execution will fail.";
+                    issue.Severity = eSeverity.Critical;
+
+                    IssuesList.Add(issue);
                 }
             }
 

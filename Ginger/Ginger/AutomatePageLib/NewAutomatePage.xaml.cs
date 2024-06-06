@@ -981,7 +981,7 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         AnalyzerPage analyzerPage = new AnalyzerPage();
 
-                        analyzerPage.Init(mBusinessFlow, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
+                        analyzerPage.Init(mBusinessFlow, solution: null, mExecutionEngine.GingerRunner.ApplicationAgents, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
                         await analyzerPage.AnalyzeWithoutUI();
                         Reporter.HideStatusMessage();
                         if (analyzerPage.TotalHighAndCriticalIssues > 0)
@@ -1589,7 +1589,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             AnalyzerPage AP = new AnalyzerPage();
-            AP.Init(mBusinessFlow);
+            AP.Init(mBusinessFlow, solution: null, mExecutionEngine.GingerRunner.ApplicationAgents);
             AP.ShowAsWindow();
         }
 
