@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Ginger.ExecuterService.Contracts;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Drivers;
@@ -51,15 +50,16 @@ namespace Ginger.Agents
 
             if (Agent.GetDriverPlatformType(mAgent.DriverType).Equals(ePlatformType.Web) && !mAgent.DriverConfiguration.Any((driverConfig)=>string.Equals(nameof(SeleniumDriver.ByPassingAddress), driverConfig.Parameter)))
             {
-                MemberInfo memberInfo = typeof(SeleniumDriver).GetMember(nameof(SeleniumDriver.ByPassingAddress))[0];
+               MemberInfo memberInfo = typeof(SeleniumDriver).GetMember(nameof(SeleniumDriver.ByPassingAddress))[0];
                var userConfigDesc =  Attribute.GetCustomAttribute(memberInfo, typeof(UserConfiguredDescriptionAttribute), false) as UserConfiguredDescriptionAttribute;
+               var defaultVal = Attribute.GetCustomAttribute(memberInfo, typeof(UserConfiguredDefaultAttribute), false) as UserConfiguredDefaultAttribute;
 
-                mAgent.DriverConfiguration.Add(new DriverConfigParam()
+                mAgent.DriverConfiguration.Insert(0, new DriverConfigParam()
                 {
 
                     Parameter = nameof(SeleniumDriver.ByPassingAddress),
-                    Value = string.Empty,
-                    Description = userConfigDesc?.Description ?? string.Empty
+                    Value = defaultVal?.DefaultValue ?? string.Empty,
+                    Description = userConfigDesc?.Description ?? string.Empty,
                 });
             }
 
