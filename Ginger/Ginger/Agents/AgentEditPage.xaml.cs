@@ -217,8 +217,12 @@ namespace Ginger.Agents
                 return;
             }
 
-            DriverConfigParam param = mAgent.GetParam(nameof(GingerWebDriver.BrowserType));
-            param.Value = ((WebBrowserType)BrowserTypeComboBox.SelectedValue).ToString();
+            DriverConfigParam browserTypeParam = mAgent.GetParam(nameof(GingerWebDriver.BrowserType));
+            browserTypeParam.Value = ((WebBrowserType)BrowserTypeComboBox.SelectedValue).ToString();
+            if (xAgentConfigFrame.Content is AgentDriverConfigPage driverConfigPage)
+            {
+                driverConfigPage.SetDriverConfigsPageContent();
+            }
         }
 
 

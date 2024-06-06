@@ -105,9 +105,21 @@ namespace GingerCore.Drivers
             RemoteWebDriver,
         }
 
-        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
-            if (BrowserType == WebBrowserType.RemoteWebDriver)
+            if (driverConfigParams == null)
+            {
+                return null;
+            }
+
+            DriverConfigParam browserTypeParam = driverConfigParams.FirstOrDefault(param => string.Equals(param.Parameter, nameof(BrowserType)));
+            
+            if (browserTypeParam == null || !Enum.TryParse(browserTypeParam.Value, out WebBrowserType browserType))
+            {
+                return null;
+            }
+
+            if (browserType == WebBrowserType.RemoteWebDriver)
             {
                 return "SeleniumRemoteWebDriverEditPage";
             }
