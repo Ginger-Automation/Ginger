@@ -103,6 +103,8 @@ namespace Ginger
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.FireFox);
                 case eDriverType.SeleniumChrome:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.Chrome);
+                case eDriverType.SeleniumBrave:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Brave);
                 case eDriverType.SeleniumIE:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.IE);
                 case eDriverType.SeleniumRemoteWebDriver:
@@ -149,6 +151,7 @@ namespace Ginger
                     return (typeof(InternalBrowser));
                 case eDriverType.SeleniumFireFox:
                 case eDriverType.SeleniumChrome:
+                case eDriverType.SeleniumBrave:
                 case eDriverType.SeleniumIE:
                 case eDriverType.SeleniumRemoteWebDriver:
                 case eDriverType.SeleniumEdge:
