@@ -384,19 +384,6 @@ namespace Amdocs.Ginger.Common.Enums
         #endregion
 
 
-        #region Databases
-            Cassandra,
-            CosmosDB,
-            Couchbase,
-            DB2,
-            HBase,
-            MongoDB,
-            MSAccess,
-            MSSQL,
-            MySQL,
-            Oracle,
-            PostgreSQL
-        #endregion
     }
 }
 

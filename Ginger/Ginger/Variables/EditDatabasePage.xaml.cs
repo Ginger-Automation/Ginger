@@ -42,8 +42,6 @@ namespace Ginger.Variables
 
             xDatabaseName.AddValidationRule(new DBNameValidationRule());
 
-            xDatabaseName.TextChanged += XDatabaseName_TextChanged;
-
             if (database.DBType.Equals(eDBTypes.CosmosDb))
             {
                 xCosmosDetailsPanel.Visibility = System.Windows.Visibility.Visible;
@@ -58,8 +56,7 @@ namespace Ginger.Variables
             }
 
         }
-
-        private void XDatabaseName_TextChanged(object sender, TextChangedEventArgs e)
+        private void XDatabaseName_TextChanged(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
 
             string NameBeforeEdit = ((DatabaseOperations)database.DatabaseOperations).NameBeforeEdit;

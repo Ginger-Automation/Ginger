@@ -3,6 +3,7 @@ using Ginger.BusinessFlowPages.ListHelpers;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,14 +28,12 @@ namespace Ginger.Environments
             this.dbListViewHelper = dbListViewHelper;
             this.dataSourceList = dataSourceList;
             InitializeComponent();
-            xDatabaseComboBox.ItemsSource = GingerCore.General
-                                            .GetEnumValuesForCombo(typeof(Database.eDBTypes))
-                                            .Select((db) => (eDBTypes)db.Value)
-                                            .Where((dbType) => dbType.Equals(eDBTypes.MSSQL)
-                                            || dbType.Equals(eDBTypes.MSAccess) || dbType.Equals(eDBTypes.Oracle)
-                                            || dbType.Equals(eDBTypes.MySQL) || dbType.Equals(eDBTypes.PostgreSQL)
-                                            || dbType.Equals(eDBTypes.DB2));
+
+            // Initializes the Database Combobox;
             this.database = new();
+
+            SQL_Selected(null, null);
+
             
             this.database.DatabaseOperations = new DatabaseOperations(database);
             xDatabaseUserName.Init(context , database, nameof(Database.User));
@@ -72,26 +71,32 @@ namespace Ginger.Environments
 
         private void TestConnection_Click(object? sender, RoutedEventArgs e)
         {
-
-            if (!DatabaseValueValidation())
+            try
             {
-                return;
+                if (!DatabaseValueValidation())
+                {
+                    return;
+                }
+
+                this.testConnectionButton.IsEnabled = false;
+
+                bool IsConnectionSuccessful = this.dbListViewHelper.TestSingleDatabase(database);
+
+                if (IsConnectionSuccessful)
+                {
+                    Reporter.ToUser(eUserMsgKey.DbConnSucceed, database?.Name);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.DbConnFailed, database?.Name);
+                }
+
+                this.testConnectionButton.IsEnabled = true;
             }
-
-            this.testConnectionButton.IsEnabled = false;
-
-            bool IsConnectionSuccessful = this.dbListViewHelper.TestSingleDatabase(database);
-
-            if (IsConnectionSuccessful)
+            catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.DbConnSucceed, database?.Name);
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.DbConnFailed, database?.Name);
-            }
-
-            this.testConnectionButton.IsEnabled = true;
         }
 
         private bool DatabaseValueValidation()
@@ -110,40 +115,29 @@ namespace Ginger.Environments
         {
             // validation
 
-            if (!DatabaseValueValidation())
+
+            try
             {
-                return;
-            }
-
-            ConvertDetailsToConnectionString();
-
-            dataSourceList.Add(database);
-
-            okBtn.IsEnabled = false;
-
-            this.dbListViewHelper.TestSingleDatabase(database);
-
-            okBtn.IsEnabled = true;
-            _pageGenericWin?.Close();
-
-        }
-
-        private void ConvertDetailsToConnectionString()
-        {
-
-            if (database.DBType != Database.eDBTypes.Cassandra && database.DBType != Database.eDBTypes.Couchbase && database.DBType != Database.eDBTypes.MongoDb)
-            {
-                if (!string.IsNullOrEmpty(database.TNS) && database.DatabaseOperations.CheckUserCredentialsInTNS())
+                if (!DatabaseValueValidation())
                 {
-                    database.DatabaseOperations.SplitUserIdPassFromTNS();
+                    return;
                 }
 
-                if (!xConnectionStrCheckBox.IsChecked.HasValue || (xConnectionStrCheckBox.IsChecked.HasValue && !xConnectionStrCheckBox.IsChecked.Value))
-                {
-                    database.DatabaseOperations.CreateConnectionString();
-                }
+                dataSourceList.Add(database);
+
+                okBtn.IsEnabled = false;
+
+                this.dbListViewHelper.TestSingleDatabase(database);
+
+                okBtn.IsEnabled = true;
+                _pageGenericWin?.Close();
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
         }
+
 
         private eDBTypes? GetDBType()
         {
