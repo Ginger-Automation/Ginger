@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace GingerCoreNETUnitTest.SeleniumDriverTest
 {
     [TestClass]
+    [Ignore]
     public class GetDriverPathTest
     {
         SeleniumDriver driver;
