@@ -1377,12 +1377,6 @@ namespace GingerCore
                         messageToUser = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to selected {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}. Ginger will map the {GingerDicser.GetTermResValue(eTermResKey.Activity)}'s {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}.{System.Environment.NewLine} ";
                     }
 
-                    if (consumerApplicationsGUIDs.Count > 0 &&
-                         consumerApplicationsGUIDs.Any(ca => !TargetApplications.Any(ta => ta.ParentGuid.Equals(ca))))
-                    {
-                        messageToUser += $"Selected Consumers in activity is not present in the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}, Ginger will add. ";
-
-                    }
                     if (silently)
                     {
                         userSelection = eUserMsgSelection.OK;
@@ -1401,40 +1395,10 @@ namespace GingerCore
                     {
                         this.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName, TargetGuid = appAgent.Guid });
                     }
-
-                    if (consumerApplicationsGUIDs.Count > 0 &&
-                                             consumerApplicationsGUIDs.Any(ca => !TargetApplications.Any(ta => ta.ParentGuid.Equals(ca))))
-                    {
-                        MapCAToBF(activityIns, ApplicationPlatforms);
-                    }
                 }
             }
 
             return userSelection;
-        }
-
-        /// <summary>
-        /// Adds the consumer application related TA in the business flow for shared repository
-        /// </summary>
-        /// <param name="activityIns"></param>
-        /// <param name="ApplicationPlatforms"></param>
-        public void MapCAToBF(Activity activityIns, ObservableList<ApplicationPlatform> ApplicationPlatforms)
-        {
-            foreach (var consumerPlat in activityIns.ConsumerApplications)
-            {
-                // Get the corresponding TargetApplication for the consumerGuid
-                TargetBase targetApp = GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications()
-                    .FirstOrDefault(app => Guid.Equals(app.Guid, consumerPlat.ConsumerGuid));
-
-                if (targetApp != null && !TargetApplications.Any(app => app.ParentGuid == targetApp.Guid))
-                {
-                    this.TargetApplications.Add(new TargetApplication() { AppName = targetApp.Name, TargetGuid = targetApp.Guid });
-                }
-                else
-                {
-                    continue;
-                }
-            }
         }
 
         public object GetValidationsStat(ref bool isValidaionsExist)
