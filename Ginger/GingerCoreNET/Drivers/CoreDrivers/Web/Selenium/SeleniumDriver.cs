@@ -563,7 +563,7 @@ namespace GingerCore.Drivers
                     #region Chrome
                     case eBrowserType.Chrome:
                         ChromeOptions options = new ChromeOptions();
-                        chromeDriverconfig(options);
+                        configChromeDriverAndStart(options);
                         break;
 
                     #endregion
@@ -586,7 +586,7 @@ namespace GingerCore.Drivers
                          throw new Exception("Brave browser valid executable path required!");
 
                          }
-                        chromeDriverconfig(brave_options);
+                        configChromeDriverAndStart(brave_options);
 
                         break;
 
@@ -821,7 +821,7 @@ namespace GingerCore.Drivers
             }
         }
         //created common method for Chrome and Brave browser because both support ChromeDriver
-        private void chromeDriverconfig(ChromeOptions options)
+        private void configChromeDriverAndStart(ChromeOptions options)
         {
            
             options.AddArgument("--start-maximized");
