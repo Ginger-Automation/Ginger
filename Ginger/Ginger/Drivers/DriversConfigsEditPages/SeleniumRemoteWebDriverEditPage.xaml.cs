@@ -197,7 +197,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             string IEDriverFile = "IEDriverServer.exe";
             string EdgeDriverFile = "msedgedriver.exe";
             SeleniumDriver seleniumDriver = new SeleniumDriver();
-            string chromeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Chrome); //System.IO.Path.Combine(assemblyLocation, chromeDriverFile);
+            string chromeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Chrome);
             string chromeDestFile = System.IO.Path.Combine(targetPath, chromeDriverFile);
 
             if(!System.IO.File.Exists(chromeDestFile))
@@ -213,7 +213,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 
             }
 
-            string fireFoxSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.FireFox); //System.IO.Path.Combine(driversSourcePath, fireFoxDriverFile);
+            string fireFoxSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.FireFox);
             string fireFoxDestFile = System.IO.Path.Combine(targetPath, fireFoxDriverFile);
 
             if(!System.IO.File.Exists(fireFoxDestFile))
@@ -229,7 +229,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 }
             }
 
-            string IESourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.IE); //System.IO.Path.Combine(driversSourcePath, IEDriverFile);
+            string IESourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.IE);
             string IEDestFile = System.IO.Path.Combine(targetPath, IEDriverFile);
 
             if(!System.IO.File.Exists(IEDestFile))
@@ -244,7 +244,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 }
             }
 
-            string edgeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Edge); //System.IO.Path.Combine(driversSourcePath, EdgeDriverFile);
+            string edgeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Edge);
             string edgeDestFile = System.IO.Path.Combine(targetPath, EdgeDriverFile);
 
             if(!System.IO.File.Exists(edgeDestFile))
