@@ -345,6 +345,20 @@ namespace GingerCore
                 {
                     this.TrackObservableList(mActivities);
                 }
+
+                IEnumerable<string> distinctTargetApp =  mActivities.Select((activity) => activity.TargetApplication).Distinct();
+
+                for(int indx=0; indx < TargetApplications.Count;)
+                {
+                    if (!distinctTargetApp.Contains(TargetApplications[indx].Name))
+                    {
+                        TargetApplications.RemoveAt(indx);
+                    }
+                    else
+                    {
+                        indx++;
+                    }
+                }
             }
         }
 
