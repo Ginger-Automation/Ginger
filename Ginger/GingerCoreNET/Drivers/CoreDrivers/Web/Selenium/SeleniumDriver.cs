@@ -91,7 +91,11 @@ namespace GingerCore.Drivers
         private const string EDGE_DRIVER_NAME = "msedgedriver";
         private const string FIREFOX_DRIVER_NAME = "geckodriver";
         private const string TRANSLATOR_FOR_CASE_INSENSITIVE_MATCH = "translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')";
+        private const string BRAVE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
+        private const string BRAVE_64BIT_BINARY_PATH = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
 
+        String[] SeleniumUserArgs = null;
+        DriverService driverService = null;
         private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
 
         public enum eBrowserType
@@ -99,6 +103,7 @@ namespace GingerCore.Drivers
             IE,
             FireFox,
             Chrome,
+            Brave,
             Edge,
             RemoteWebDriver,
         }
@@ -194,6 +199,12 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Only if OpenEdgeInIEMode is set to true: location of Edge.exe file in local computer")]
         public string EdgeExcutablePath { get; set; }
         //"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Provide the path to the browser executable.")]
+        public string BrowserExecutablePath { get; set; }
+        //"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
 
         [UserConfigured]
         [UserConfiguredDefault("false")]//"driver is failing to launch when the mode is true"
@@ -401,7 +412,7 @@ namespace GingerCore.Drivers
             //Add localhost to no proxy so that driver service can be started with proxy
             //System.Environment.SetEnvironmentVariable("NO_PROXY", @"http://localhost");
 
-            DriverService driverService = null;
+           
 
             if (StartBMP)
             {
@@ -446,7 +457,7 @@ namespace GingerCore.Drivers
                 ImplicitWait = 30;
             }
 
-            String[] SeleniumUserArgs = null;
+            
             if (!string.IsNullOrEmpty(SeleniumUserArguments))
             {
                 SeleniumUserArgs = SeleniumUserArguments.Split(';');
@@ -506,7 +517,7 @@ namespace GingerCore.Drivers
                         Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
                     #endregion
-
+                   
                     #region Mozilla Firefox
                     case eBrowserType.FireFox:
 
@@ -552,121 +563,30 @@ namespace GingerCore.Drivers
                     #region Chrome
                     case eBrowserType.Chrome:
                         ChromeOptions options = new ChromeOptions();
-                        options.AddArgument("--start-maximized");
-                        SetCurrentPageLoadStrategy(options);
-                        SetBrowserLogLevel(options);
-                        SetUnhandledPromptBehavior(options);
-                        SetBrowserVersion(options);
-                        if (IsUserProfileFolderPathValid())
-                        {
-                            options.AddArguments("user-data-dir=" + UserProfileFolderPath);
-                        }
-                        else if (!string.IsNullOrEmpty(ExtensionPath))
-                        {
-                            string[] extensionPaths = ExtensionPath.Split(';');
-                            options.AddExtensions(extensionPaths);
-                        }
+                        configChromeDriverAndStart(options);
+                        break;
 
-                        //setting proxy
-                        SetProxy(options);
+                    #endregion
 
-                        //DownloadFolderPath
-                        if (!string.IsNullOrEmpty(DownloadFolderPath))
-                        {
-                            if (!System.IO.Directory.Exists(DownloadFolderPath))
-                            {
-                                System.IO.Directory.CreateDirectory(DownloadFolderPath);
-                            }
-                            options.AddUserProfilePreference("download.default_directory", DownloadFolderPath);
-                        }
+                    #region Brave
+                        //checking the windows 32 and 64 bit version exists or not. if not then user can provide the path mannually.
+                    case eBrowserType.Brave:
+                        ChromeOptions brave_options = new ChromeOptions();
+                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath)) { 
 
-                        if (BrowserPrivateMode == true)
-                        {
-                            options.AddArgument("--incognito");
-                        }
+                             brave_options.BinaryLocation = BrowserExecutablePath;
+                         }
+                         else if (File.Exists(BRAVE_64BIT_BINARY_PATH)) {
+                             brave_options.BinaryLocation = BRAVE_64BIT_BINARY_PATH;
+                         }
+                         else if (File.Exists(BRAVE_32BIT_BINARY_PATH)) {
+                             brave_options.BinaryLocation = BRAVE_32BIT_BINARY_PATH;
+                         }
+                         else { 
+                         throw new Exception("Brave browser valid executable path required!");
 
-                        if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                        {
-                            options.AddArgument("--headless=new");
-                        }
-
-                        if (SeleniumUserArgs != null)
-                        {
-                            foreach (string arg in SeleniumUserArgs)
-                            {
-                                options.AddArgument(arg);
-                            }
-                        }
-
-                        if (!string.IsNullOrEmpty(EmulationDeviceName))
-                        {
-                            options.EnableMobileEmulation(EmulationDeviceName);
-                        }
-                        else if (!string.IsNullOrEmpty(BrowserUserAgent))
-                        {
-                            options.AddArgument("--user-agent=" + BrowserUserAgent.Trim());
-                        }
-
-                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
-                        {
-                            options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey);
-                        }
-
-                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
-                        {
-                            options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl);
-                        }
-
-                        if (!string.IsNullOrEmpty(DebugAddress))
-                        {
-                            options.DebuggerAddress = DebugAddress.Trim();
-                        }
-
-                        driverService = ChromeDriverService.CreateDefaultService();
-
-                        AddCustomDriverPath(driverService);
-
-                        if (HideConsoleWindow)
-                        {
-                            driverService.HideCommandPromptWindow = HideConsoleWindow;
-                        }
-
-                        try
-                        {
-                            Driver = new ChromeDriver((ChromeDriverService)driverService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                            this.mDriverProcessId = driverService.ProcessId;
-                        }
-                        catch (Exception ex)
-                        {
-                            //If the os is alpine linux
-                            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && ex.Message.ToLower().Contains("no such file or directory"))
-                            {
-                                Reporter.ToLog(eLogLevel.INFO, "Chrome binary isn't found at default location, checking for Chromium...");
-
-                                if (Directory.GetFiles(@"/usr/bin", "chromium-browser.*").Length > 0 && Directory.GetFiles(@"/usr/lib/chromium", "chromedriver.*").Length > 0)
-                                {
-                                    options.BinaryLocation = @"/usr/bin/chromium-browser";
-
-                                    //List of Chromium Command Line Switches
-                                    //https://peter.sh/experiments/chromium-command-line-switches/
-                                    options.AddArgument("--headless");
-                                    options.AddArgument("--no-sandbox");
-                                    options.AddArgument("--start-maximized");
-                                    options.AddArgument("--disable-dev-shm-usage");
-                                    options.AddArgument("--remote-debugging-port=9222");
-                                    options.AddArgument("--disable-gpu");
-                                    Driver = new ChromeDriver(@"/usr/lib/chromium", options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
-                            else
-                            {
-                                throw ex;
-                            }
-                        }
+                         }
+                        configChromeDriverAndStart(brave_options);
 
                         break;
 
@@ -900,7 +820,124 @@ namespace GingerCore.Drivers
                 }
             }
         }
+        //created common method for Chrome and Brave browser because both support ChromeDriver
+        private void configChromeDriverAndStart(ChromeOptions options)
+        {
+           
+            options.AddArgument("--start-maximized");
+            SetCurrentPageLoadStrategy(options);
+            SetBrowserLogLevel(options);
+            SetUnhandledPromptBehavior(options);
+            SetBrowserVersion(options);
+            if (IsUserProfileFolderPathValid())
+            {
+                options.AddArguments("user-data-dir=" + UserProfileFolderPath);
+            }
+            else if (!string.IsNullOrEmpty(ExtensionPath))
+            {
+                string[] extensionPaths = ExtensionPath.Split(';');
+                options.AddExtensions(extensionPaths);
+            }
 
+            SetProxy(options);
+
+            if (!string.IsNullOrEmpty(DownloadFolderPath))
+            {
+                if (!System.IO.Directory.Exists(DownloadFolderPath))
+                {
+                    System.IO.Directory.CreateDirectory(DownloadFolderPath);
+                }
+                options.AddUserProfilePreference("download.default_directory", DownloadFolderPath);
+            }
+
+            if (BrowserPrivateMode == true)
+            {
+                options.AddArgument("--incognito");
+            }
+
+            if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                options.AddArgument("--headless=new");
+            }
+
+            if (SeleniumUserArgs != null)
+            {
+                foreach (string arg in SeleniumUserArgs)
+                {
+                    options.AddArgument(arg);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(EmulationDeviceName))
+            {
+                options.EnableMobileEmulation(EmulationDeviceName);
+            }
+            else if (!string.IsNullOrEmpty(BrowserUserAgent))
+            {
+                options.AddArgument("--user-agent=" + BrowserUserAgent.Trim());
+            }
+
+            if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+            {
+                options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey);
+            }
+
+            if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+            {
+                options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl);
+            }
+
+            if (!string.IsNullOrEmpty(DebugAddress))
+            {
+                options.DebuggerAddress = DebugAddress.Trim();
+            }
+
+            driverService = ChromeDriverService.CreateDefaultService();
+
+            AddCustomDriverPath(driverService);
+
+            if (HideConsoleWindow)
+            {
+                driverService.HideCommandPromptWindow = HideConsoleWindow;
+            }
+
+            try
+            {
+                Driver = new ChromeDriver((ChromeDriverService)driverService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                this.mDriverProcessId = driverService.ProcessId;
+            }
+            catch (Exception ex)
+            {
+                
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && ex.Message.ToLower().Contains("no such file or directory"))
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "Chrome binary isn't found at default location, checking for Chromium...");
+
+                    if (Directory.GetFiles(@"/usr/bin", "chromium-browser.*").Length > 0 && Directory.GetFiles(@"/usr/lib/chromium", "chromedriver.*").Length > 0)
+                    {
+                        options.BinaryLocation = @"/usr/bin/chromium-browser";
+
+                        //List of Chromium Command Line Switches
+                        //https://peter.sh/experiments/chromium-command-line-switches/
+                        options.AddArgument("--headless");
+                        options.AddArgument("--no-sandbox");
+                        options.AddArgument("--start-maximized");
+                        options.AddArgument("--disable-dev-shm-usage");
+                        options.AddArgument("--remote-debugging-port=9222");
+                        options.AddArgument("--disable-gpu");
+                        Driver = new ChromeDriver(@"/usr/lib/chromium", options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+        }
         private void AddCustomDriverPath(DriverService driverService)
         {
             if (!string.IsNullOrWhiteSpace(DriverFilePath))
@@ -980,7 +1017,7 @@ namespace GingerCore.Drivers
         private static void CloseDriverProcess(DriverService driverService)
         {
             //Close launched driver process as it does not gets closed by Selenium in case of exception
-            if (driverService?.ProcessId != 0)
+            if (driverService != null && driverService.ProcessId != 0)
             {
                 try
                 {
