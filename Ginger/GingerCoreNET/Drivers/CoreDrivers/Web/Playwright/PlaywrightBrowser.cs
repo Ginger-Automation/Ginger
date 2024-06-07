@@ -88,6 +88,34 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return window;
         }
 
+        public async Task SetWindowAsync(IBrowserWindow window)
+        {
+            if (window == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(window));
+            }
+
+            IEnumerable<IBrowserWindow> windows = new List<IBrowserWindow>(_windows);
+
+            IBrowserWindow? windowToSwitch = null;
+            foreach (IBrowserWindow currentWindow in windows)
+            {
+                if (currentWindow == window)
+                {
+                    windowToSwitch = currentWindow;
+                    break;
+                }
+            }
+
+            if (windowToSwitch == null)
+            {
+                throw new ArgumentException($"No matching window found in the list of browser windows");
+            }
+
+            _currentWindow = windowToSwitch;
+            await ((PlaywrightBrowserWindow)_currentWindow).BringToFrontAsync();
+        }
+
         private Task OnWindowClose(IBrowserWindow closedWindow)
         {
             _windows.Remove(closedWindow);

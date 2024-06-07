@@ -5,7 +5,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Environments;
-using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -165,7 +164,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             else if (gotoUrlType == ActBrowserElement.eGotoURLType.NewWindow)
             {
                 await _browser.NewWindowAsync(setAsCurrent: true);
-                await _browser.CurrentWindow.NewTabAsync();
             }
             await _browser.CurrentWindow.CurrentTab.GoToURLAsync(url);
         }
@@ -460,25 +458,40 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                 return;
             }
 
-            IBrowserTab? targeTab = null;
-            IEnumerable<IBrowserTab> tabs = new List<IBrowserTab>(_browser.CurrentWindow.Tabs);
-            foreach (IBrowserTab tab in tabs)
+            IBrowserWindow? targetWindow = null;
+            IBrowserTab? targetTab = null;
+
+            IEnumerable<IBrowserWindow> windows = new List<IBrowserWindow>(_browser.Windows);
+            foreach (IBrowserWindow window in windows)
             {
-                string tabTitle = await tab.GetTitleAsync();
-                if (tabTitle != null && tabTitle.Contains(targetTitle, StringComparison.OrdinalIgnoreCase))
+                IEnumerable<IBrowserTab> tabs = new List<IBrowserTab>(window.Tabs);
+                foreach (IBrowserTab tab in tabs)
                 {
-                    targeTab = tab;
-                    break;
+                    string tabTitle = await tab.GetTitleAsync();
+                    if (tabTitle != null && tabTitle.Contains(targetTitle, StringComparison.OrdinalIgnoreCase))
+                    {
+                        targetWindow = window;
+                        targetTab = tab;
+                        break;
+                    }
                 }
             }
-
-            if (targeTab == null)
+            
+            if (targetWindow == null || targetTab == null)
             {
                 _act.Error = $"Error: Window with the title '{targetTitle}' was not found.";
                 return;
             }
 
-            await _browser.CurrentWindow.SetTabAsync(targeTab);
+            if (targetWindow != _browser.CurrentWindow)
+            {
+                await _browser.SetWindowAsync(targetWindow);
+            }
+
+            if (targetTab != _browser.CurrentWindow.CurrentTab)
+            {
+                await _browser.CurrentWindow.SetTabAsync(targetTab);
+            }
         }
 
         private async Task HandleSwitchToDefaultWindowOperationAsync()

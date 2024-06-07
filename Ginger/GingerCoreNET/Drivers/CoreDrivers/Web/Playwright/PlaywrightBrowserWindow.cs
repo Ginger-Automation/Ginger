@@ -82,7 +82,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return tab;
         }
 
-        public async Task SetTabAsync(IBrowserTab tab)
+        public Task SetTabAsync(IBrowserTab tab)
         {
             if (tab == null)
             {
@@ -107,7 +107,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             _currentTab = tabToSwitch;
-            await ((PlaywrightBrowserTab)_currentTab).BringToFrontAsync();
+            return ((PlaywrightBrowserTab)_currentTab).BringToFrontAsync();
+        }
+
+        public Task BringToFrontAsync()
+        {
+            return ((PlaywrightBrowserTab)_currentTab).BringToFrontAsync();
         }
 
         public Task DeleteCookiesAsync()
