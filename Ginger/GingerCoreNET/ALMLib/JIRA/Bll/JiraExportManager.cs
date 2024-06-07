@@ -380,7 +380,7 @@ namespace GingerCore.ALM.JIRA.Bll
                             if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
                             {
                                 string reportLink = General.CreateReportLinkPerFlow(HtmlReportUrl: publishToALMConfig.HtmlReportUrl, ExecutionId: publishToALMConfig.ExecutionId, BusinessFlowInstanceGuid: bizFlow.InstanceGuid.ToString());
-\                               reportLink = $"[Ginger Report Link|{reportLink}]";
+                               reportLink = $"[Ginger Report Link|{reportLink}]";
 
                                 if (this.jiraRepObj.AddComment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, relevantTcRun.TestExecutionId, reportLink) == null)
                                 {
