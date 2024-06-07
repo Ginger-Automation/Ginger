@@ -322,6 +322,8 @@ namespace GingerCore.Drivers
         public string RemoteVersion { get; set; }
         private bool RestartRetry = true;
         private bool IsRecording = false;
+        public bool IsHealenium = false;
+        public string HealeniumUrl { get; set; }
 
         IWebElement LastHighLightedElement;
         XPathHelper mXPathHelper;
@@ -365,6 +367,11 @@ namespace GingerCore.Drivers
                 RemoteBrowserName = agent.GetParamValue(SeleniumDriver.RemoteBrowserNameParam);
                 RemotePlatform = agent.GetParamValue(SeleniumDriver.RemotePlatformParam);
                 RemoteVersion = agent.GetParamValue(SeleniumDriver.RemoteVersionParam);
+                if(WorkSpace.Instance.BetaFeatures.ShowHealenium)
+                {
+                    IsHealenium = agent.Healenium;
+                    HealeniumUrl = agent.HealeniumURL;
+                }
             }
         }
 
@@ -767,6 +774,10 @@ namespace GingerCore.Drivers
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), ieoptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             }
+                            else if(WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), ieoptions.ToCapabilities());
+                            }
                             else
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), ieoptions.ToCapabilities());
@@ -782,6 +793,10 @@ namespace GingerCore.Drivers
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), fxOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), fxOptions.ToCapabilities());
                             }
                             else
                             {
@@ -799,6 +814,11 @@ namespace GingerCore.Drivers
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), chromeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
+
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), chromeOptions.ToCapabilities());
                             }
                             else
                             {
@@ -825,6 +845,10 @@ namespace GingerCore.Drivers
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             }
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), edgeOptions.ToCapabilities());
+                            }
                             else
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities());
@@ -847,6 +871,10 @@ namespace GingerCore.Drivers
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), (ICapabilities)internetExplorerOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), internetExplorerOptions.ToCapabilities());
                             }
                             else
                             {
@@ -895,7 +923,7 @@ namespace GingerCore.Drivers
                     ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
-                    UpdateDriver();
+                    UpdateDriver(mBrowserTpe);
                     StartDriver();
                 }
             }
@@ -917,29 +945,29 @@ namespace GingerCore.Drivers
             }
         }
 
-        private void UpdateDriver()
+        private string UpdateDriver(eBrowserType browserType)
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, $"Failed to Download latest {mBrowserTpe} driver. Attempting to Update {mBrowserTpe} driver to latest using System Proxy Settings....");
+                Reporter.ToLog(eLogLevel.INFO, $"Failed to Download latest {browserType} driver. Attempting to Update {browserType} driver to latest using System Proxy Settings....");
                 DriverOptions driverOptions = null;
 
-                if (mBrowserTpe == eBrowserType.Chrome)
+                if (browserType == eBrowserType.Chrome)
                 {
                     driverOptions = new ChromeOptions();
                 }
-                else if (mBrowserTpe == eBrowserType.Edge)
+                else if (browserType == eBrowserType.Edge)
                 {
                     driverOptions = new EdgeOptions();
                 }
-                else if (mBrowserTpe == eBrowserType.FireFox)
+                else if (browserType == eBrowserType.FireFox)
                 {
                     driverOptions = new FirefoxOptions();
                 }
                 else
                 {
                     //Other browsers not supported, return without update
-                    return;
+                    return "";
                 }
 
                 //Try get system proxy to send it to Selenium manager to update the driver.
@@ -964,19 +992,26 @@ namespace GingerCore.Drivers
 
                 SetBrowserVersion(driverOptions);
                 var driverpath = SeleniumManager.DriverPath(driverOptions);
-                Reporter.ToLog(eLogLevel.INFO, $"Updated {mBrowserTpe} driver to latest and placed in {driverpath}.");
+                Reporter.ToLog(eLogLevel.INFO, $"Updated {browserType} driver to latest and placed in {driverpath}.");
+                return driverpath;
             }
             catch (Exception ex)
             {
                 if (!WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToDownloadDriver, mBrowserTpe);
+                    Reporter.ToUser(eUserMsgKey.FailedToDownloadDriver, browserType);
                 }
-                Reporter.ToLog(eLogLevel.ERROR, string.Format(Reporter.UserMsgsPool[eUserMsgKey.FailedToDownloadDriver].Message, mBrowserTpe), ex);
+                Reporter.ToLog(eLogLevel.ERROR, string.Format(Reporter.UserMsgsPool[eUserMsgKey.FailedToDownloadDriver].Message, browserType), ex);
                 throw;
             }
         }
 
+        public string GetDriverPath(eBrowserType browserType)
+        {
+            string DriverPath = string.Empty;
+            DriverPath = UpdateDriver(browserType);
+            return DriverPath;
+        }
         private static void CloseDriverProcess(DriverService driverService)
         {
             //Close launched driver process as it does not gets closed by Selenium in case of exception
