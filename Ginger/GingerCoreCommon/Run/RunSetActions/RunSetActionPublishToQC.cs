@@ -45,20 +45,20 @@ namespace Ginger.Run.RunSetActions
         public bool toAttachActivitiesGroupReport { get { return mtoAttachActivitiesGroupReport; } set { if (mtoAttachActivitiesGroupReport != value) { mtoAttachActivitiesGroupReport = value; OnPropertyChanged(nameof(toAttachActivitiesGroupReport)); } } }
 
 
-        private bool mtoExportReportLink;
+        private bool mToExportReportLink;
         [IsSerializedForLocalRepository]
-        public bool toExportReportLink
+        public bool ToExportReportLink
         { 
             get
             {
-                return mtoExportReportLink;
+                return mToExportReportLink;
             }
             set
             {
-                if(mtoExportReportLink != value)
+                if(mToExportReportLink != value)
                 {
-                    mtoExportReportLink = value;
-                    OnPropertyChanged(nameof(toExportReportLink));
+                    mToExportReportLink = value;
+                    OnPropertyChanged(nameof(ToExportReportLink));
                 }
             }
         }

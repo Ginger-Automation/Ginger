@@ -27,6 +27,7 @@ using GingerCore.Activities;
 using GingerCore.ALM.JIRA.Data_Contracts;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
+using GingerCoreNET.GeneralLib;
 using JiraRepositoryStd;
 using JiraRepositoryStd.BLL;
 using JiraRepositoryStd.Data_Contracts;
@@ -378,8 +379,8 @@ namespace GingerCore.ALM.JIRA.Bll
                         {
                             if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
                             {
-                                string reportLink = publishToALMConfig.HtmlReportUrl + "#/BusinessFlow/" + $"{ publishToALMConfig.ExecutionId}/" + bizFlow.InstanceGuid;
-                                reportLink = $"[Ginger Report Link|{reportLink}]";
+                                string reportLink = General.CreateReportLinkPerFlow(HtmlReportUrl: publishToALMConfig.HtmlReportUrl, ExecutionId: publishToALMConfig.ExecutionId, BusinessFlowInstanceGuid: bizFlow.InstanceGuid.ToString());
+\                               reportLink = $"[Ginger Report Link|{reportLink}]";
 
                                 if (this.jiraRepObj.AddComment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, relevantTcRun.TestExecutionId, reportLink) == null)
                                 {

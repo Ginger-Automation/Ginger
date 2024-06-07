@@ -66,7 +66,7 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.VariableForTCRunName));
             BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.isVariableInTCRunUsed));
             BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toAttachActivitiesGroupReport));
-            BindingHandler.ObjFieldBinding(ExportReportLink, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toExportReportLink));
+            BindingHandler.ObjFieldBinding(ExportReportLink, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ToExportReportLink));
             BindingHandler.ObjFieldBinding(SearchALMEntityByName, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.SearchALMEntityByName));
             xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
             xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType),
