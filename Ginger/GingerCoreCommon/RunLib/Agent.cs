@@ -632,6 +632,8 @@ namespace GingerCore
                         Parameter = "BrowserType",
                         Value = browserType,
                     });
+
+                    return true;
                 }
             }
 
