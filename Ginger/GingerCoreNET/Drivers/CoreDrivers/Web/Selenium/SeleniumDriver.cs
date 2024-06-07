@@ -134,13 +134,22 @@ namespace GingerCore.Drivers
             }
         }
 
+
         [UserConfigured]
         [UserConfiguredDescription("Proxy Server:Port")]
         public string Proxy { get; set; }
 
+
+        [UserConfigured]
+        [UserConfiguredDefault("http://127.0.0.1;http://localhost;")]
+        [UserConfiguredDescription("Set multiple By Pass Proxy URLs separated with ';'|| By Pass Proxy works only when Proxy URL is mentioned")]
+        public string ByPassProxy { get; set; }
+
+
         [UserConfigured]
         [UserConfiguredDescription("Proxy Auto Config Url")]
         public string ProxyAutoConfigUrl { get; set; }
+
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -400,6 +409,8 @@ namespace GingerCore.Drivers
         public string RemoteVersion { get; set; }
         private bool RestartRetry = true;
         private bool IsRecording = false;
+        public bool IsHealenium = false;
+        public string HealeniumUrl { get; set; }
 
         IWebElement LastHighLightedElement;
         XPathHelper mXPathHelper;
@@ -443,6 +454,11 @@ namespace GingerCore.Drivers
                 RemoteBrowserName = agent.GetParamValue(SeleniumDriver.RemoteBrowserNameParam);
                 RemotePlatform = agent.GetParamValue(SeleniumDriver.RemotePlatformParam);
                 RemoteVersion = agent.GetParamValue(SeleniumDriver.RemoteVersionParam);
+                if(WorkSpace.Instance.BetaFeatures.ShowHealenium)
+                {
+                    IsHealenium = agent.Healenium;
+                    HealeniumUrl = agent.HealeniumURL;
+                }
             }
         }
 
@@ -502,6 +518,11 @@ namespace GingerCore.Drivers
                 mProxy.SslProxy = Proxy;
                 mProxy.SocksProxy = Proxy;
                 mProxy.SocksVersion = 5;
+
+                if (!string.IsNullOrEmpty(ByPassProxy))
+                {
+                    mProxy.AddBypassAddresses(AddByPassAddress());
+                }
             }
             else if (string.IsNullOrEmpty(Proxy) && AutoDetect != true && string.IsNullOrEmpty(ProxyAutoConfigUrl))
             {
@@ -518,6 +539,7 @@ namespace GingerCore.Drivers
                     mProxy.IsAutoDetect = AutoDetect;
                 }
             }
+
 
             if (ImplicitWait == 0)
             {
@@ -754,6 +776,10 @@ namespace GingerCore.Drivers
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), ieoptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             }
+                            else if(WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), ieoptions.ToCapabilities());
+                            }
                             else
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), ieoptions.ToCapabilities());
@@ -769,6 +795,10 @@ namespace GingerCore.Drivers
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), fxOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), fxOptions.ToCapabilities());
                             }
                             else
                             {
@@ -786,6 +816,11 @@ namespace GingerCore.Drivers
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), chromeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
+
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), chromeOptions.ToCapabilities());
                             }
                             else
                             {
@@ -812,6 +847,10 @@ namespace GingerCore.Drivers
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             }
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), edgeOptions.ToCapabilities());
+                            }
                             else
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities());
@@ -834,6 +873,10 @@ namespace GingerCore.Drivers
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), (ICapabilities)internetExplorerOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            {
+                                Driver = new RemoteWebDriver(new Uri(HealeniumUrl), internetExplorerOptions.ToCapabilities());
                             }
                             else
                             {
@@ -882,7 +925,7 @@ namespace GingerCore.Drivers
                     ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
-                    UpdateDriver();
+                    UpdateDriver(mBrowserTpe);
                     StartDriver();
                 }
             }
@@ -1021,7 +1064,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        private void UpdateDriver()
+        private string UpdateDriver(eBrowserType browserType)
         {
             try
             {
@@ -1043,7 +1086,7 @@ namespace GingerCore.Drivers
                 else
                 {
                     //Other browsers not supported, return without update
-                    return;
+                    return "";
                 }
 
                 //Try get system proxy to send it to Selenium manager to update the driver.
@@ -1069,6 +1112,7 @@ namespace GingerCore.Drivers
                 SetBrowserVersion(driverOptions);
                 var driverpath = SeleniumManager.DriverPath(driverOptions);
                 Reporter.ToLog(eLogLevel.INFO, $"Updated {mBrowserType} driver to latest and placed in {driverpath}.");
+                return driverpath;
             }
             catch (Exception ex)
             {
@@ -1081,6 +1125,12 @@ namespace GingerCore.Drivers
             }
         }
 
+        public string GetDriverPath(eBrowserType browserType)
+        {
+            string DriverPath = string.Empty;
+            DriverPath = UpdateDriver(browserType);
+            return DriverPath;
+        }
         private static void CloseDriverProcess(DriverService driverService)
         {
             //Close launched driver process as it does not gets closed by Selenium in case of exception
@@ -1156,6 +1206,11 @@ namespace GingerCore.Drivers
             }
         }
 
+        private string[] AddByPassAddress()
+        {
+            return ByPassProxy.Split(';');
+        }
+
         private void SetProxy(dynamic options)
         {
             if (mProxy == null)
@@ -1163,7 +1218,11 @@ namespace GingerCore.Drivers
                 return;
             }
 
-            options.Proxy = new Proxy();
+            var proxy = new Proxy();
+            
+
+            options.Proxy = proxy;
+
             switch (mProxy.Kind)
             {
                 case ProxyKind.Manual:
@@ -1171,6 +1230,11 @@ namespace GingerCore.Drivers
                     options.Proxy.HttpProxy = mProxy.HttpProxy;
                     options.Proxy.SslProxy = mProxy.SslProxy;
 
+                    if (!string.IsNullOrEmpty(ByPassProxy))
+                    {
+                        options.Proxy.AddBypassAddresses(AddByPassAddress());
+                    }
+                    
                     //TODO: GETTING ERROR LAUNCHING BROWSER 
                     // options.Proxy.SocksProxy = mProxy.SocksProxy;
                     break;

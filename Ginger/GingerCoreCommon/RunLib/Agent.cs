@@ -638,5 +638,48 @@ namespace GingerCore
             return false;
         }
 
+        bool mHealenium = false;
+        /// <summary>
+        /// Flag used to mark for use healenium as self healing
+        /// </summary>
+        [IsSerializedForLocalRepository]
+        public bool Healenium
+        {
+            get
+            {
+                return mHealenium;
+            }
+            set
+            {
+                if (mHealenium != value)
+                {
+                    mHealenium = value;
+                    OnPropertyChanged(nameof(Healenium));
+                }
+            }
+        }
+
+        private string mHealeniumURL;
+        /// <summary>
+        /// use for Healenium Remot Url
+        /// </summary>
+        [IsSerializedForLocalRepository]
+        public string HealeniumURL
+        {
+            get
+            {
+                return mHealeniumURL;
+            }
+            set
+            {
+                if (mHealeniumURL != value)
+                {
+                    mHealeniumURL = value;
+                    OnPropertyChanged(nameof(HealeniumURL));
+                }
+            }
+        }
+
+
     }
 }

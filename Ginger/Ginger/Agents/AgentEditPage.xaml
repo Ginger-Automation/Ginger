@@ -15,8 +15,8 @@
         <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="160"/>
-                <RowDefinition Height="200"/>
-                <RowDefinition Height="200*"/>
+                <RowDefinition Height="280"/>
+                <RowDefinition Height="240*"/>
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Margin="5,0,0,0">
@@ -69,6 +69,11 @@
                         </StackPanel>-->
                     </StackPanel>
                     <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" HorizontalAlignment="Left" Margin="5,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
+                    <CheckBox x:Name="xHealeniumcheckbox" Content="Healenium" ToolTip="use Healenium from self healing" HorizontalAlignment="Left" Margin="5,10,0,0" Style="{StaticResource $CeckBoxStyle}" Checked="Healeniumcheckbox_Checked" Unchecked="Healeniumcheckbox_UnChecked"/>
+                    <StackPanel x:Name="xHealeniumURLPnl" Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Center">
+                        <Label Style="{StaticResource $LabelStyle}" x:Name="xHealeniumURLLabel" Content="URL:" Margin="5,0,0,0"/>
+                        <TextBox x:Name="xHealeniumURLTextBox" Text="" Width="250" Style="{StaticResource $TextBoxStyle}" Margin="60,0,0,0" ToolTip="Healenium URL" />
+                    </StackPanel>
                 </StackPanel>
 
                 <StackPanel x:Name="xPluginConfigPnl" Visibility="Collapsed" Margin="0,10,0,0" >
