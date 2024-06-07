@@ -115,15 +115,17 @@ namespace GingerCore.Drivers
             }
         }
 
-        [UserConfigured]
-        [UserConfiguredDefault("http://127.0.0.1;http://localhost;")]
-        [UserConfiguredDescription("By Pass Proxy URLs || Set multiple URLs separated with ';'")]
-        public string ByPassingAddress { get; set; }
-
 
         [UserConfigured]
         [UserConfiguredDescription("Proxy Server:Port")]
         public string Proxy { get; set; }
+
+
+        [UserConfigured]
+        [UserConfiguredDefault("http://127.0.0.1;http://localhost;")]
+        [UserConfiguredDescription("Set multiple By Pass Proxy URLs separated with ';'|| By Pass Proxy works only when Proxy URL is mentioned")]
+        public string ByPassProxyAddresses { get; set; }
+
 
         [UserConfigured]
         [UserConfiguredDescription("Proxy Auto Config Url")]
@@ -432,7 +434,7 @@ namespace GingerCore.Drivers
                 mProxy.SocksProxy = Proxy;
                 mProxy.SocksVersion = 5;
 
-                if (!string.IsNullOrEmpty(ByPassingAddress))
+                if (!string.IsNullOrEmpty(ByPassProxyAddresses))
                 {
                     mProxy.AddBypassAddresses(AddByPassAddress());
                 }
@@ -1067,7 +1069,7 @@ namespace GingerCore.Drivers
 
         private string[] AddByPassAddress()
         {
-            return ByPassingAddress.Split(';');
+            return ByPassProxyAddresses.Split(';');
         }
 
         private void SetProxy(dynamic options)
@@ -1089,7 +1091,7 @@ namespace GingerCore.Drivers
                     options.Proxy.HttpProxy = mProxy.HttpProxy;
                     options.Proxy.SslProxy = mProxy.SslProxy;
 
-                    if (!string.IsNullOrEmpty(ByPassingAddress))
+                    if (!string.IsNullOrEmpty(ByPassProxyAddresses))
                     {
                         options.Proxy.AddBypassAddresses(AddByPassAddress());
                     }

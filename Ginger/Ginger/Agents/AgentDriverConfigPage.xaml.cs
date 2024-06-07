@@ -48,16 +48,16 @@ namespace Ginger.Agents
 
             mAgent = agent;
 
-            if (Agent.GetDriverPlatformType(mAgent.DriverType).Equals(ePlatformType.Web) && !mAgent.DriverConfiguration.Any((driverConfig)=>string.Equals(nameof(SeleniumDriver.ByPassingAddress), driverConfig.Parameter)))
+            if (Agent.GetDriverPlatformType(mAgent.DriverType).Equals(ePlatformType.Web) && !mAgent.DriverConfiguration.Any((driverConfig)=>string.Equals(nameof(SeleniumDriver.ByPassProxyAddresses), driverConfig.Parameter)))
             {
-               MemberInfo memberInfo = typeof(SeleniumDriver).GetMember(nameof(SeleniumDriver.ByPassingAddress))[0];
+               MemberInfo memberInfo = typeof(SeleniumDriver).GetMember(nameof(SeleniumDriver.ByPassProxyAddresses))[0];
                var userConfigDesc =  Attribute.GetCustomAttribute(memberInfo, typeof(UserConfiguredDescriptionAttribute), false) as UserConfiguredDescriptionAttribute;
                var defaultVal = Attribute.GetCustomAttribute(memberInfo, typeof(UserConfiguredDefaultAttribute), false) as UserConfiguredDefaultAttribute;
 
-                mAgent.DriverConfiguration.Insert(0, new DriverConfigParam()
+                mAgent.DriverConfiguration.Insert(1, new DriverConfigParam()
                 {
 
-                    Parameter = nameof(SeleniumDriver.ByPassingAddress),
+                    Parameter = nameof(SeleniumDriver.ByPassProxyAddresses),
                     Value = defaultVal?.DefaultValue ?? string.Empty,
                     Description = userConfigDesc?.Description ?? string.Empty,
                 });
