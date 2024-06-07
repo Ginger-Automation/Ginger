@@ -1046,7 +1046,7 @@ namespace GingerCore.Drivers
                 SetBrowserVersion(driverOptions);
                 var driverFinder = new DriverFinder(driverOptions);
                 var driverpath = driverFinder.GetDriverPath();
-                Reporter.ToLog(eLogLevel.INFO, $"Updated {browserType} driver to latest and placed in {driverpath}.")
+                Reporter.ToLog(eLogLevel.INFO, $"Updated {browserType} driver to latest and placed in {driverpath}.");
                 return driverpath;
             }
             catch (Exception ex)
