@@ -151,6 +151,7 @@ namespace GingerCore.Actions
             set
             {
                 GetOrCreateInputParam(nameof(AttributeValue)).Value = value;
+                OnPropertyChanged(nameof(AttributeValue));
             }
         }
         public string AttributeName
@@ -162,6 +163,7 @@ namespace GingerCore.Actions
             set
             {
                 GetOrCreateInputParam(nameof(AttributeName)).Value = value;
+                OnPropertyChanged(nameof(AttributeName));
             }
         }
         public string TxtMatchInput
@@ -173,6 +175,7 @@ namespace GingerCore.Actions
             set
             {
                 GetOrCreateInputParam(nameof(TxtMatchInput)).Value = value;
+                OnPropertyChanged(nameof(TxtMatchInput));
             }
         }
         public string UrlMatches
@@ -184,6 +187,7 @@ namespace GingerCore.Actions
             set
             {
                 GetOrCreateInputParam(nameof(UrlMatches)).Value = value;
+                OnPropertyChanged(nameof(UrlMatches));
             }
         }
 

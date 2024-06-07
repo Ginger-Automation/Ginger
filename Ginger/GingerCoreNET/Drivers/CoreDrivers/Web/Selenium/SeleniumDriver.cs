@@ -1386,7 +1386,10 @@ namespace GingerCore.Drivers
                 try
                 {
                     //it's wait until all page gets load 
-                    string aa = Driver.Title;//just to make sure window attributes do not throw exception
+                    if (act is not ActNewSmartSync { SyncOperations : ActNewSmartSync.eSyncOperation.PageHasBeenLoaded })
+                    {
+                        _ = Driver.Title;//just to make sure window attributes do not throw exception
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1422,7 +1425,7 @@ namespace GingerCore.Drivers
                     string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
                     BMPClient.SaveHAR(filename);
 
-                    Act.AddArtifactToAction(Path.GetFileName(filename), act, filename);                    
+                    Act.AddArtifactToAction(Path.GetFileName(filename), act, filename);
 
                     act.ExInfo += "Action HAR file saved at: " + filename;
                 }
@@ -1430,7 +1433,7 @@ namespace GingerCore.Drivers
 
             DoRunAction(act);
         }
-// Gokul-- need to make changes in below method for newSmart sync action
+        // Gokul-- need to make changes in below method for newSmart sync action
         private void DoRunAction(Act act)
         {
             Type ActType = act.GetType();
@@ -1991,7 +1994,7 @@ namespace GingerCore.Drivers
                 actPassword.AddOrUpdateReturnParamActual("Actual", e.Size.Width.ToString());
             }
         }
-        
+
         public void NewSmartSyncHandler(ActNewSmartSync act)
         {
             By elementLocator = null;
@@ -2029,17 +2032,19 @@ namespace GingerCore.Drivers
             int MaxTimeout = NewSmartSyncGetMaxTimeout(act);
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(MaxTimeout));
             //store agent's implicit wait in a variable
-            int val = (int)Driver.Manage().Timeouts().ImplicitWait.TotalSeconds;
+            int implicitWait = (int)Driver.Manage().Timeouts().ImplicitWait.TotalSeconds;
             //set agent's implicit wait to 1 second
             Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
 
-            wait.PollingInterval = TimeSpan.FromMilliseconds(100);
+            wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+            ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), null);
             try
             {
+                
                 switch (act.SyncOperations)
                 {
-                    case ActNewSmartSync.eSyncOperation.ElementIsVisible:                        
-                        wait.Until(ExpectedConditions.ElementIsVisible(elementLocator));    
+                    case ActNewSmartSync.eSyncOperation.ElementIsVisible:
+                        wait.Until(ExpectedConditions.ElementIsVisible(elementLocator));
                         break;
                     case ActNewSmartSync.eSyncOperation.ElementExists:
                         wait.Until(ExpectedConditions.ElementExists(elementLocator));
@@ -2058,12 +2063,18 @@ namespace GingerCore.Drivers
                         wait.Until(ExpectedConditions.ElementToBeClickable(elementLocator));
                         break;
                     case ActNewSmartSync.eSyncOperation.TextMatches:
-                        wait.Until(ExpectedConditions.TextMatches(elementLocator, act.TxtMatchInput));
+                        VE.Value = act.TxtMatchInput;
+                        string textToMatch = VE.ValueCalculated;
+                        wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
                         break;
                     case ActNewSmartSync.eSyncOperation.AttributeMatches:
-                        wait.Until(ExpectedConditions.AttributeMatches(elementLocator, act.AttributeName, act.AttributeValue));
+                        VE.Value = act.AttributeName;
+                        string attributeName = VE.ValueCalculated;
+                        VE.Value = act.AttributeValue;
+                        string attributeValue= VE.ValueCalculated;
+                        wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
                         break;
-                    case ActNewSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy: 
+                    case ActNewSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.EnabilityOfAllElementsLocatedBy(elementLocator));
                         break;
                     case ActNewSmartSync.eSyncOperation.FrameToBeAvailableAndSwitchToIt:
@@ -2081,8 +2092,10 @@ namespace GingerCore.Drivers
                     case ActNewSmartSync.eSyncOperation.SelectedOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.SelectedOfAllElementsLocatedBy(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.UrlMatches:                        
-                        wait.Until(ExpectedConditions.UrlMatches(act.UrlMatches));
+                    case ActNewSmartSync.eSyncOperation.UrlMatches:
+                        VE.Value = act.UrlMatches;
+                        string urlMatches = VE.ValueCalculated;
+                        wait.Until(ExpectedConditions.UrlMatches(urlMatches));
                         break;
                     case ActNewSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(elementLocator));
@@ -2093,34 +2106,94 @@ namespace GingerCore.Drivers
                 }
                 return;
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException ex)
             {
-                act.Error = $"For {act.SyncOperations} operation input value is missing.";
+                act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 act.Error = $"{act.SyncOperations} was not completed within the allotted {MaxTimeout} seconds.";
+                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
             }
             finally
             {
                 //set agent's implicit wait to the original value from the variable above
-                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)val));
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)implicitWait));
             }
         }
 
-        private  int NewSmartSyncGetMaxTimeout(ActNewSmartSync act)
+        //private void Until(Func<IWebDriver, IWebDriver> condition, int timeout)
+        //{
+        //    long startTime = DateTime.Now.Ticks;
+        //    while (TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds < timeout)
+        //    {
+        //        if (condition(Driver) != null)
+        //        {
+        //            return;
+        //        }
+        //    }
+        //    throw new Exception("until timed-out");
+        //}
+
+        //public static Func<IWebDriver, IWebDriver> PageHasBeenLoaded()
+        //{
+        //    string script = @"
+        //     function getReadyState(timeout) {
+        //        return new Promise((resolve, reject) => {
+        //            const timer = setTimeout(() => {
+        //                reject('');
+        //            }, timeout);
+        
+        //            const state = document.readyState;
+        //            resolve(state);
+        //        });
+        //    }
+
+        //    try {
+        //        const state = await getReadyState(3000);
+        //        return state;
+        //    } catch (error) {
+        //        return error;
+        //    }";
+        //    return delegate (IWebDriver driver)
+        //    {
+        //        if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            return driver;
+        //        }
+
+        //        string text = ((IJavaScriptExecutor)driver).ExecuteScript(script) as string;
+        //        return text.Equals("complete", StringComparison.OrdinalIgnoreCase) ? driver : null;
+        //    };
+        //}
+
+        //public static Func<IWebDriver, IWebDriver> PageHasBeenLoaded()
+        //{
+
+        //        if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            return driver;
+        //        }
+
+        //        string text = ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState") as string;
+        //        return text.Equals("complete", StringComparison.OrdinalIgnoreCase) ? driver : null;
+
+        //}
+
+        private int NewSmartSyncGetMaxTimeout(ActNewSmartSync act)
         {
-           if (act.Timeout>0)
-                {
-                    return act.Timeout.GetValueOrDefault();
-                }
-                else
-                {
-                    return 30;
-                }
-          
+            if (act.Timeout > 0)
+            {
+                return act.Timeout.GetValueOrDefault();
+            }
+            else
+            {
+                return 300;
+            }
+
         }
-      static Func<IWebDriver, IWebDriver> PageHasBeenLoaded(TimeSpan timeout, TimeSpan pollingInterval)
+        static Func<IWebDriver, IWebDriver> PageHasBeenLoaded(TimeSpan timeout, TimeSpan pollingInterval)
         {
             return delegate (IWebDriver driver)
             {
@@ -2147,7 +2220,7 @@ namespace GingerCore.Drivers
             };
         }
 
-        public void SmartSyncHandler(ActSmartSync act)
+             public void SmartSyncHandler(ActSmartSync act)
         {
             int MaxTimeout = GetMaxTimeout(act);
 
@@ -3887,7 +3960,7 @@ namespace GingerCore.Drivers
                 string[] iframesPathes = spliter.Split(EI.Path);
                 foreach (string iframePath in iframesPathes)
                 {
-                    
+
                     Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(iframePath)));
                 }
             }
@@ -10543,8 +10616,8 @@ namespace GingerCore.Drivers
                     act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
 
                     Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
-                    
-                    Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);                    
+
+                    Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
                 }
                 else
                 {

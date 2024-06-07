@@ -17,18 +17,22 @@ limitations under the License.
 #endregion
 
 
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
-using System;
+using GingerCore.GeneralLib;
+using Ginger;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-
+using Ginger.UserControls;
 namespace Ginger.Actions
 {
     public partial class ActNewSmartSyncEditPage : Page, IActEditPage
     {
+        ActNewSmartSync mAct;
         public Visibility LocatorVisibility
         {
             get => GetLocatorVisibility();
@@ -37,17 +41,27 @@ namespace Ginger.Actions
 
         public ActNewSmartSyncEditPage(GingerCore.Actions.ActNewSmartSync Act)
         {
-            InitializeComponent();
-
+            InitializeComponent();     
             GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.SyncOperations, sortValues: false);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActNewSmartSync.SyncOperations));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TxtMatchTextbox, TextBox.TextProperty, Act, nameof(ActNewSmartSync.TxtMatchInput));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttributeValueTextbox, TextBox.TextProperty, Act, nameof(ActNewSmartSync.AttributeValue));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttributeNameTextbox, TextBox.TextProperty, Act, nameof(ActNewSmartSync.AttributeName));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UrlMatchesTextbox, TextBox.TextProperty, Act, nameof(ActNewSmartSync.UrlMatches));
+
+/*
+           // GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TxtMatchTextbox, TextBox.TextProperty, Act, nameof(ActNewSmartSync.TxtMatchInput));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAttributeValueVE, TextBox.TextProperty, Act, nameof(ActNewSmartSync.AttributeValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAttributeNameVE, TextBox.TextProperty, Act, nameof(ActNewSmartSync.AttributeName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUrlMatchesVE, TextBox.TextProperty, Act, nameof(ActNewSmartSync.UrlMatches));
+
+*/
+
+            xTxtMatchVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.TxtMatchInput));
+            xAttributeValueVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.AttributeValue));
+            xAttributeNameVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.AttributeName));
+            xUrlMatchesVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.UrlMatches));
+
+
         }
 
-       
+     
 
         private Visibility GetLocatorVisibility()
         {
