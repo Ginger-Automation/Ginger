@@ -35,6 +35,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
     /// </summary>
     public partial class SeleniumRemoteWebDriverEditPage : Page
     {
+        
         public SeleniumRemoteWebDriverEditPage(GingerCore.Agent mAgent)
         {
             InitializeComponent();
@@ -195,37 +196,68 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             string fireFoxDriverFile = "geckodriver.exe";
             string IEDriverFile = "IEDriverServer.exe";
             string EdgeDriverFile = "msedgedriver.exe";
-
-            string chromeSourceFile = System.IO.Path.Combine(assemblyLocation, chromeDriverFile);
+            SeleniumDriver seleniumDriver = new SeleniumDriver();
+            string chromeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Chrome);
             string chromeDestFile = System.IO.Path.Combine(targetPath, chromeDriverFile);
 
-            if (!System.IO.File.Exists(chromeDestFile))
+            if(!System.IO.File.Exists(chromeDestFile))
             {
-                System.IO.File.Copy(chromeSourceFile, chromeDestFile);
+                if (System.IO.File.Exists(chromeSourceFile))
+                {
+                    System.IO.File.Copy(chromeSourceFile, chromeDestFile);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "chrome Driver not found");
+                }
+                
             }
 
-            string fireFoxSourceFile = System.IO.Path.Combine(driversSourcePath, fireFoxDriverFile);
+            string fireFoxSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.FireFox);
             string fireFoxDestFile = System.IO.Path.Combine(targetPath, fireFoxDriverFile);
 
-            if (!System.IO.File.Exists(fireFoxDestFile))
+            if(!System.IO.File.Exists(fireFoxDestFile))
             {
-                System.IO.File.Copy(fireFoxSourceFile, fireFoxDestFile);
+                
+                if(System.IO.File.Exists(fireFoxSourceFile))
+                {
+                    System.IO.File.Copy(fireFoxSourceFile, fireFoxDestFile);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "firefox Driver not found");
+                }
             }
 
-            string IESourceFile = System.IO.Path.Combine(driversSourcePath, IEDriverFile);
+            string IESourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.IE);
             string IEDestFile = System.IO.Path.Combine(targetPath, IEDriverFile);
 
-            if (!System.IO.File.Exists(IEDestFile))
+            if(!System.IO.File.Exists(IEDestFile))
             {
-                System.IO.File.Copy(IESourceFile, IEDestFile);
+                if(System.IO.File.Exists(IESourceFile))
+                {
+                    System.IO.File.Copy(IESourceFile, IEDestFile);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "IE Driver not found");
+                }
             }
 
-            string edgeSourceFile = System.IO.Path.Combine(driversSourcePath, EdgeDriverFile);
+            string edgeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Edge);
             string edgeDestFile = System.IO.Path.Combine(targetPath, EdgeDriverFile);
 
-            if (!System.IO.File.Exists(edgeDestFile))
+            if(!System.IO.File.Exists(edgeDestFile))
             {
-                System.IO.File.Copy(EdgeDriverFile, edgeDestFile);
+                
+                if(System.IO.File.Exists(edgeSourceFile))
+                {
+                    System.IO.File.Copy(edgeSourceFile, edgeDestFile);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "edge Driver not found");
+                }
             }
 
             //creating startnode.bat file
