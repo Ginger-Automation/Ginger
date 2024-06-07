@@ -68,6 +68,8 @@ namespace GingerCore
             SeleniumFireFox,
             [Description("Chrome Browser(Selenium)")]
             SeleniumChrome,
+            [Description("Brave Browser(Selenium)")]
+            SeleniumBrave,
             [Description("Remote Browser(Selenium)")]
             SeleniumRemoteWebDriver,
             [Description("Edge Browser(Selenium)")]
@@ -219,6 +221,7 @@ namespace GingerCore
             {
                 case eDriverType.SeleniumFireFox:
                 case eDriverType.SeleniumChrome:
+                case eDriverType.SeleniumBrave:
                 case eDriverType.SeleniumIE:
                 case eDriverType.SeleniumRemoteWebDriver:
                 case eDriverType.SeleniumEdge:
@@ -327,6 +330,7 @@ namespace GingerCore
                 case eDriverType.InternalBrowser:
                 case eDriverType.SeleniumFireFox:
                 case eDriverType.SeleniumChrome:
+                case eDriverType.SeleniumBrave:
                 case eDriverType.SeleniumIE:
                 case eDriverType.SeleniumRemoteWebDriver:
                 case eDriverType.SeleniumEdge:
@@ -364,6 +368,7 @@ namespace GingerCore
             {
                 driverTypes.Add(Agent.eDriverType.InternalBrowser);
                 driverTypes.Add(Agent.eDriverType.SeleniumChrome);
+                driverTypes.Add(Agent.eDriverType.SeleniumBrave);
                 driverTypes.Add(Agent.eDriverType.SeleniumFireFox);
                 driverTypes.Add(Agent.eDriverType.SeleniumIE);
                 driverTypes.Add(Agent.eDriverType.SeleniumRemoteWebDriver);
