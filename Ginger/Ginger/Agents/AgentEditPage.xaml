@@ -8,14 +8,14 @@
       xmlns:h="clr-namespace:Ginger.Help"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Agent"
-      d:DesignHeight="600" d:DesignWidth="800"
+      d:DesignHeight="640" d:DesignWidth="800"
 	Title="AgentEditPage">
 
     <ScrollViewer>
         <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="160"/>
-                <RowDefinition Height="160"/>
+                <RowDefinition Height="190"/>
                 <RowDefinition Height="200*"/>
             </Grid.RowDefinitions>
 
