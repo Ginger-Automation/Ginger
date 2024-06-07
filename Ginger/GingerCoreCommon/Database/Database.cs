@@ -31,17 +31,18 @@ namespace GingerCore.Environments
     {
         public IDatabaseOperations DatabaseOperations;
 
-        public static string GetConnectionStringToolTip()
+        public string GetConnectionStringToolTip()
         {
-            return """
-                1. DB2: "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};"
-                2. PostgreSQL: "Server={Server URL};User Id={User Name}; Password={User Password};Database={Database Name};"
-                3. MySQL: "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};"
-                4. CosmosDB: "AccountEndpoint={End Point URL};AccountKey={Account Key};"
-                5. HBase: "Server={Server URL};Port={Port No};User Id={User Name}; Password={Password};Database={Database Name};"
-                6. MongoDB:  mongodb://database_username:password@server_url/DBName
-                7. Other Databases: "Data Source={Data Source};User Id={User Name};Password={User Password};"
-                """;
+            return DBType switch
+            {
+                eDBTypes.DB2 => "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};",
+                eDBTypes.PostgreSQL => "Server={Server URL};User Id={User Name}; Password={User Password};Database={Database Name};",
+                eDBTypes.MySQL => "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};",
+                eDBTypes.CosmosDb => "AccountEndpoint={End Point URL};AccountKey={Account Key};",
+                eDBTypes.Hbase => "Server={Server URL};Port={Port No};User Id={User Name}; Password={Password};Database={Database Name};",
+                eDBTypes.MongoDb => "mongodb://database_username:password@server_url/DBName",
+                _ => "Data Source={Data Source};User Id={User Name};Password={User Password};",
+            };
         }
         public enum eDBTypes
         {

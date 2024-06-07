@@ -4,7 +4,6 @@ using GingerCore;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -28,7 +27,6 @@ namespace Ginger.Environments
             this.dbListViewHelper = dbListViewHelper;
             this.dataSourceList = dataSourceList;
             InitializeComponent();
-            xConnectionStringInfo.ToolTip = Database.GetConnectionStringToolTip();
             xDatabaseComboBox.ItemsSource = GingerCore.General
                                             .GetEnumValuesForCombo(typeof(Database.eDBTypes))
                                             .Select((db) => (eDBTypes)db.Value)
@@ -51,7 +49,8 @@ namespace Ginger.Environments
             BindingHandler.ObjFieldBinding(xDatabaseComboBox, ComboBox.SelectedValueProperty, database, nameof(Database.DBType));
             BindingHandler.ObjFieldBinding(xKeepConnectOpen, CheckBox.IsCheckedProperty, database, nameof(Database.KeepConnectionOpen));
             BindingHandler.ObjFieldBinding(xOracleVersion, CheckBox.IsCheckedProperty, database, nameof(Database.IsOracleVersionLow));
-            
+
+            database.PropertyChanged += this.dbListViewHelper.DbPropertyChanged;
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool ShowCancelButton = true)
@@ -80,7 +79,17 @@ namespace Ginger.Environments
             }
 
             this.testConnectionButton.IsEnabled = false;
-            ReportTestConnection();
+
+            bool IsConnectionSuccessful = this.dbListViewHelper.TestSingleDatabase(database);
+
+            if (IsConnectionSuccessful)
+            {
+                Reporter.ToUser(eUserMsgKey.DbConnSucceed, database?.Name);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.DbConnFailed, database?.Name);
+            }
 
             this.testConnectionButton.IsEnabled = true;
         }
@@ -110,30 +119,13 @@ namespace Ginger.Environments
 
             dataSourceList.Add(database);
 
-            database.PropertyChanged+= this.dbListViewHelper.DbPropertyChanged;
-
             okBtn.IsEnabled = false;
 
-            ReportTestConnection();
+            this.dbListViewHelper.TestSingleDatabase(database);
 
             okBtn.IsEnabled = true;
             _pageGenericWin?.Close();
 
-        }
-
-        private void ReportTestConnection()
-        {
-            bool IsConnectionSuccessful = this.dbListViewHelper.TestSingleDatabase(database);
-
-            if (IsConnectionSuccessful)
-            {
-                Reporter.ToUser(eUserMsgKey.DbConnSucceed, database?.Name);
-            }
-
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.DbConnFailed, database?.Name);
-            }
         }
 
         private void ConvertDetailsToConnectionString()
@@ -173,7 +165,11 @@ namespace Ginger.Environments
             }
             xConnectionStrCheckBox.IsChecked = false;
             ClearDatabaseDetails();
-            if(!databaseType.Equals(eDBTypes.Couchbase) && !databaseType.Equals(eDBTypes.Cassandra) && !databaseType.Equals(eDBTypes.Hbase))
+
+            xConnectionStringInfo.ToolTip = database.GetConnectionStringToolTip();
+
+
+            if (!databaseType.Equals(eDBTypes.Couchbase) && !databaseType.Equals(eDBTypes.Cassandra) && !databaseType.Equals(eDBTypes.Hbase))
             {
                 xConnectionStrStackPanel.Visibility = Visibility.Visible;
             }
@@ -233,7 +229,7 @@ namespace Ginger.Environments
 
         private void ClearDatabaseDetails()
         {
-            if(database == null)
+            if (database == null)
             {
                 return;
             }

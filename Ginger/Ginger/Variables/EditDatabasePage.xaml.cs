@@ -23,7 +23,7 @@ namespace Ginger.Variables
             this.database = database;
             InitializeComponent();
 
-            xConnectionStringInfo.ToolTip = Database.GetConnectionStringToolTip();
+            xConnectionStringInfo.ToolTip = database.GetConnectionStringToolTip();
 
 
             xDatabaseUserName.Init(context, database, nameof(Database.User));
