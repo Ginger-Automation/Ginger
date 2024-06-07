@@ -29,7 +29,7 @@ namespace Ginger.Environments
             this.dataSourceList = dataSourceList;
             InitializeComponent();
 
-            // Initializes the Database Combobox;
+            // Initializes the Database Combobox
             this.database = new();
 
             SQL_Selected(null, null);
