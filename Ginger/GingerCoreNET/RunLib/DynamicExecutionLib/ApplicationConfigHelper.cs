@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         {
             if(ApplicationConfig == null || (string.IsNullOrEmpty(ApplicationConfig.Name)))
             { 
-                throw new ArgumentException("Both Target Application GUID and Applicaition Name cannot be null or empty. Atleast one of them should have a value");
+                throw new ArgumentException("Both Target Application GUID and Application Name cannot be null or empty. Atleast one of them should have a value");
             }
         }
 
@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 });
 
             return TargetApplicationInGinger == null
-                ? throw new InvalidOperationException("The mention Application Platform does not exist in ginger. Please make sure that the mentioned Application Platform exists in ginger")
+                ? throw new InvalidOperationException($"The Application Platform : {application.Name} does not exist in the ginger solution. Please make sure that the Application Platform exists in the ginger solution")
                 : TargetApplicationInGinger.Platform;
         }
 
@@ -68,7 +68,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         {
             ValidateApplicationConfig(App);
 
-            AppFromGinger.Platform = GetTargetAppPlatformFromGinger(App);
+            AppFromGinger.Platform = (AppFromGinger.Platform.Equals(ePlatformType.NA))? ePlatformType.NA  :  GetTargetAppPlatformFromGinger(App);
             AppFromGinger.AppVersion = App.AppVersion;
             AppFromGinger.Url = App.URL;
             AppFromGinger.Name = App.Name;
