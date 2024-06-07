@@ -85,7 +85,7 @@ namespace GingerCore.Environments
         public VariableBase GetVariable(string ParamName)
         {
             ConvertGeneralParamsToVariable();
-            return Variables.FirstOrDefault((variable)=>variable.Name.Equals(ParamName));
+            return Variables.FirstOrDefault((variable) => variable.Name.Equals(ParamName));
 
         }
 
@@ -160,7 +160,9 @@ namespace GingerCore.Environments
                 }
                 else
                 {
-                    Variables.Add(
+                    if (generalParam?.Value != null && generalParam.Value.Contains('{'))
+                    {
+                        Variables.Add(
                          new VariableDynamic()
                          {
                              Name = generalParam.Name,
@@ -170,6 +172,21 @@ namespace GingerCore.Environments
                              SetAsOutputValue = false
                          }
                         );
+                    }
+                    else
+                    {
+                        Variables.Add(
+                             new VariableString()
+                             {
+                                 Name = generalParam.Name,
+                                 Description = generalParam.Description,
+                                 Value = generalParam.Value,
+                                 SetAsInputValue = false,
+                                 SetAsOutputValue = false
+                             }
+                            );
+                    }
+
                 }
             }
             GeneralParams.Clear();
@@ -216,9 +233,9 @@ namespace GingerCore.Environments
 
         public void SetDataFromAppPlatform(ObservableList<ApplicationPlatform> ApplicationPlatforms)
         {
-            ApplicationPlatform applicationPlatform =  ApplicationPlatforms.FirstOrDefault((app)=>app.Guid.Equals(this.ParentGuid) || app.AppName.Equals(this.Name));
-           
-            if(applicationPlatform != null)
+            ApplicationPlatform applicationPlatform = ApplicationPlatforms.FirstOrDefault((app) => app.Guid.Equals(this.ParentGuid) || app.AppName.Equals(this.Name));
+
+            if (applicationPlatform != null)
             {
                 this.Name = applicationPlatform.AppName;
                 this.Platform = applicationPlatform.Platform;

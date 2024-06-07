@@ -33,11 +33,11 @@
                 </TabItem.Header>
                 <userControlsLib1:UcListView x:Name="xPomElementsListView" AllowDrop="True"/>
             </TabItem>
-            <TabItem x:Name="xSuggestedActivitiesTabItem" Style="{StaticResource $RoundedTab}">
+            <TabItem x:Name="xSuggestedActivitiesTabItem" Style="{StaticResource $RoundedTabAI}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <UserControls:ImageMakerControl ImageType="Activity" SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xSharedActivitiesTabTextBlock" VerticalAlignment="Center" Text="Suggested Activities"  Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
+                        <UserControls:ImageMakerControl ImageType="Activity" SetAsFontImageWithSize="18"  Width="18" Height="18"/>
+                        <TextBlock x:Name="xSharedActivitiesTabTextBlock" VerticalAlignment="Center" Text="AI Generated Activities" Margin="5,0,0,0" Foreground="{StaticResource $BackgroundColor_White}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xSharedActivitiesFrame" Content="Frame" NavigationUIVisibility="Hidden"/>

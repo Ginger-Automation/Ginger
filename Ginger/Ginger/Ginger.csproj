@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>GingerIconNew.ico</ApplicationIcon>
@@ -499,6 +499,8 @@
     <None Remove="Images\Lens16x16.png" />
     <None Remove="Images\Lens24x24.png" />
     <None Remove="Images\Lens32x32.png" />
+    <None Remove="Images\Lisa.jpg" />
+    <None Remove="Images\Lisa.png" />
     <None Remove="Images\Load16x16.png" />
     <None Remove="Images\MagicWand32x32.png" />
     <None Remove="Images\Marker16x16.png" />
@@ -591,6 +593,9 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\bot.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\chat.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\comments.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Environment.ico" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Environment.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
@@ -606,6 +611,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\javascript.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\json.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\json.svg" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\medical.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-n.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-new.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />
@@ -615,6 +621,8 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-regular-amdocs-gradient.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\send.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\sendArrow.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\xml.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\xml.svg" />
@@ -672,6 +680,7 @@
     <Resource Include="Images\@Load_Arrow_32x32.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Images\Lisa.jpg" />
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="Resources\GingerDataSource.mdb">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -2434,6 +2443,15 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\bot.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\chat.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\comments.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Environment.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -2470,6 +2488,9 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\json.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\medical.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -2485,6 +2506,12 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\send.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\sendArrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\VRTLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -2498,6 +2525,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="ALMRESTConfiguration\appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="GenAIServiceSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Help\Library\OfflineHelp.htm">

@@ -340,7 +340,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     .ForEach((filteredApp) =>
                     {
 
-                        filteredApp.Variables.Add(varToAdd);
+                        filteredApp.Variables.Add((VariableBase)varToAdd.CreateCopy());
                     });
                 });
             }
