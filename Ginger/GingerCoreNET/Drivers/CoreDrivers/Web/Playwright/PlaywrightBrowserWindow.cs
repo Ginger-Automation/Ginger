@@ -8,6 +8,7 @@ using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
 using IPlaywrightDialog = Microsoft.Playwright.IDialog;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
+using Amdocs.Ginger.Common;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -44,7 +45,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
             else
             {
-                _currentTab = NewTabAsync().Result;
+                IBrowserTab? newTab = Task.Run(() =>
+                {
+                    try
+                    {
+                        return NewTabAsync().Result;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while creating new {nameof(IBrowserTab)}", ex);
+                        return null;
+                    }
+                }).Result;
+
+                if (newTab == null)
+                {
+                    throw new Exception($"Error occurred while creating a new {nameof(IBrowserTab)}");
+                }
+                _currentTab = newTab;
             }
         }
 

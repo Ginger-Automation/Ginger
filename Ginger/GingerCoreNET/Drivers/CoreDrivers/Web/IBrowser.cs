@@ -17,7 +17,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public bool IsClosed { get; }
 
-        public Task<IBrowserWindow> NewWindowAsync();
+        public Task<IBrowserWindow> NewWindowAsync(bool setAsCurrent = true);
 
         public Task CloseAsync();
     }

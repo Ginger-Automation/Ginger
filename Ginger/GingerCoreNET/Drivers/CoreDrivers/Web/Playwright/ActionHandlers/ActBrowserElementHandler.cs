@@ -164,7 +164,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             }
             else if (gotoUrlType == ActBrowserElement.eGotoURLType.NewWindow)
             {
-                await _browser.NewWindowAsync();
+                await _browser.NewWindowAsync(setAsCurrent: true);
                 await _browser.CurrentWindow.NewTabAsync();
             }
             await _browser.CurrentWindow.CurrentTab.GoToURLAsync(url);

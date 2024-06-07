@@ -56,20 +56,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while creating {nameof(PlaywrightBrowserWindow)}", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while creating {nameof(IBrowserWindow)}", ex);
                         return null!;
                     }
                 }).Result;
 
                 if (newWindow == null)
                 {
-                    throw new Exception($"Error occurred while creating {nameof(PlaywrightBrowserWindow)}");
+                    throw new Exception($"Error occurred while creating {nameof(IBrowserWindow)}");
                 }
                 _currentWindow = newWindow;
             }
         }
 
-        public async Task<IBrowserWindow> NewWindowAsync()
+        public async Task<IBrowserWindow> NewWindowAsync(bool setAsCurrent = true)
         {
             ThrowIfClosed();
 
@@ -79,6 +79,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             });
             PlaywrightBrowserWindow window = new(context, OnWindowClose);
             _windows.AddLast(window);
+
+            if (setAsCurrent)
+            {
+                _currentWindow = window;
+            }
+
             return window;
         }
 
