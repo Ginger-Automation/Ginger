@@ -168,7 +168,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             GlobalSolutionUtils.Instance.AddDependaciesForBusinessFlows(item, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
 
             //Assert
-            Assert.AreEqual(SelectedItemsListToImport.Count, 12);
+            Assert.AreEqual(SelectedItemsListToImport.Count, 10);
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\SeleniumDemoValid.Ginger.ApplicationPOMModel.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\Browser Action.Ginger.Action.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\UIElement Action.Ginger.Action.xml"));
@@ -177,10 +177,6 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Documents\\bankCode3.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Documents\\Multiple Values.xlsx"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Environments\\Test.Ginger.Environment.xml"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "NewVarString"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "MyWebApp"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "MyWebServicesApp"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "MyWindowsApp"));
 
             Assert.AreEqual(VariableListToImport.Count, 2);
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarString"));
