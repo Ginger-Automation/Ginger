@@ -120,13 +120,22 @@ namespace GingerCore.Drivers
             }
         }
 
+
         [UserConfigured]
         [UserConfiguredDescription("Proxy Server:Port")]
         public string Proxy { get; set; }
 
+
+        [UserConfigured]
+        [UserConfiguredDefault("http://127.0.0.1;http://localhost;")]
+        [UserConfiguredDescription("Set multiple By Pass Proxy URLs separated with ';'|| By Pass Proxy works only when Proxy URL is mentioned")]
+        public string ByPassProxy { get; set; }
+
+
         [UserConfigured]
         [UserConfiguredDescription("Proxy Auto Config Url")]
         public string ProxyAutoConfigUrl { get; set; }
+
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -442,6 +451,11 @@ namespace GingerCore.Drivers
                 mProxy.SslProxy = Proxy;
                 mProxy.SocksProxy = Proxy;
                 mProxy.SocksVersion = 5;
+
+                if (!string.IsNullOrEmpty(ByPassProxy))
+                {
+                    mProxy.AddBypassAddresses(AddByPassAddress());
+                }
             }
             else if (string.IsNullOrEmpty(Proxy) && AutoDetect != true && string.IsNullOrEmpty(ProxyAutoConfigUrl))
             {
@@ -458,6 +472,7 @@ namespace GingerCore.Drivers
                     mProxy.IsAutoDetect = AutoDetect;
                 }
             }
+
 
             if (ImplicitWait == 0)
             {
@@ -1124,6 +1139,11 @@ namespace GingerCore.Drivers
             }
         }
 
+        private string[] AddByPassAddress()
+        {
+            return ByPassProxy.Split(';');
+        }
+
         private void SetProxy(dynamic options)
         {
             if (mProxy == null)
@@ -1131,7 +1151,11 @@ namespace GingerCore.Drivers
                 return;
             }
 
-            options.Proxy = new Proxy();
+            var proxy = new Proxy();
+            
+
+            options.Proxy = proxy;
+
             switch (mProxy.Kind)
             {
                 case ProxyKind.Manual:
@@ -1139,6 +1163,11 @@ namespace GingerCore.Drivers
                     options.Proxy.HttpProxy = mProxy.HttpProxy;
                     options.Proxy.SslProxy = mProxy.SslProxy;
 
+                    if (!string.IsNullOrEmpty(ByPassProxy))
+                    {
+                        options.Proxy.AddBypassAddresses(AddByPassAddress());
+                    }
+                    
                     //TODO: GETTING ERROR LAUNCHING BROWSER 
                     // options.Proxy.SocksProxy = mProxy.SocksProxy;
                     break;
