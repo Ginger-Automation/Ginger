@@ -487,7 +487,7 @@ namespace Ginger.AnalyzerLib
                     issue.Description = "Action not supported by Driver";
                     issue.Details = message;
                     issue.CanAutoFix = eCanFix.No;
-                    issue.HowToFix = "Please choose a different driver.";
+                    issue.HowToFix = "Please choose a compatible driver or modify the action to ensure it is supported by the current driver.";
                     issue.IssueType = eType.Error;
                     issue.Impact = "Action execution will fail.";
                     issue.Severity = eSeverity.Critical;

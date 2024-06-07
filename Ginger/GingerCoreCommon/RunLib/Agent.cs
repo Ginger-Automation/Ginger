@@ -591,112 +591,47 @@ namespace GingerCore
                 }
                 else if (string.Equals(name, nameof(DriverType)))
                 {
-                    if (string.Equals(value, "SeleniumChrome"))
+                    string browserType = null;
+                    switch (value)
                     {
-                        if (DriverConfiguration == null)
-                        {
-                            DriverConfiguration = [];
-                        }
-                        DriverType = eDriverType.Selenium;
-                        DriverConfiguration.Add(new DriverConfigParam()
-                        {
-                            Parameter = "BrowserType",
-                            Value = nameof(WebBrowserType.Chrome)
-                        });
-                        return true;
+                        case "SeleniumChrome":
+                            browserType = nameof(WebBrowserType.Chrome);
+                            break;
+                        case "SeleniumFireFox":
+                            browserType = nameof(WebBrowserType.FireFox);
+                            break;
+                        case "SeleniumEdge":
+                            browserType = nameof(WebBrowserType.Edge);
+                            break;
+                        case "SeleniumBrave":
+                            browserType = nameof(WebBrowserType.Brave);
+                            break;
+                        case "SeleniumIE":
+                            browserType = nameof(WebBrowserType.InternetExplorer);
+                            break;
+                        case "SeleniumRemoteWebDriver":
+                            browserType = nameof(WebBrowserType.RemoteWebDriver);
+                            break;
+                        case "SeleniumPhantomJS":
+                            browserType = nameof(WebBrowserType.PhantomJS);
+                            break;
                     }
-                    else if (string.Equals(value, "SeleniumFireFox"))
-                    {
-                        if (DriverConfiguration == null)
-                        {
-                            DriverConfiguration = [];
-                        }
-                        DriverType = eDriverType.Selenium;
-                        if (DriverConfiguration == null)
-                        {
-                            DriverConfiguration = [];
-                        }
-                        DriverConfiguration.Add(new DriverConfigParam()
-                        {
-                            Parameter = "BrowserType",
-                            Value = nameof(WebBrowserType.FireFox)
-                        });
-                        return true;
-                    }
-                    else if (string.Equals(value, "SeleniumEdge"))
-                    {
-                        if (DriverConfiguration == null)
-                        {
-                            DriverConfiguration = [];
-                        }
-                        DriverType = eDriverType.Selenium;
-                        DriverConfiguration.Add(new DriverConfigParam()
-                        {
-                            Parameter = "BrowserType",
-                            Value = nameof(WebBrowserType.Edge)
-                        });
-                        return true;
-                    }
-                    else if (string.Equals(value, "SeleniumBrave"))
-                    {
-                        if (DriverConfiguration == null)
-                        {
-                            DriverConfiguration = [];
-                        }
-                        DriverType = eDriverType.Selenium;
-                        DriverConfiguration.Add(new DriverConfigParam()
-                        {
-                            Parameter = "BrowserType",
-                            Value = nameof(WebBrowserType.Brave)
-                        });
-                        return true;
-                    }
-                    else if (string.Equals(value, "SeleniumIE"))
-                    {
-                        if (DriverConfiguration == null)
-                        {
-                            DriverConfiguration = [];
-                        }
-                        DriverType = eDriverType.Selenium;
-                        DriverConfiguration.Add(new DriverConfigParam()
-                        {
-                            Parameter = "BrowserType",
-                            Value = nameof(WebBrowserType.InternetExplorer)
-                        });
-                        return true;
-                    }
-                    else if (string.Equals(value, "SeleniumRemoteWebDriver"))
-                    {
-                        if (DriverConfiguration == null)
-                        {
-                            DriverConfiguration = [];
-                        }
-                        DriverType = eDriverType.Selenium;
-                        DriverConfiguration.Add(new DriverConfigParam()
-                        {
-                            Parameter = "BrowserType",
-                            Value = nameof(WebBrowserType.RemoteWebDriver)
-                        });
-                        return true;
-                    }
-                    else if (string.Equals(value, "SeleniumPhantomJS"))
-                    {
-                        if (DriverConfiguration == null)
-                        {
-                            DriverConfiguration = [];
-                        }
-                        DriverType = eDriverType.Selenium;
-                        DriverConfiguration.Add(new DriverConfigParam()
-                        {
-                            Parameter = "BrowserType",
-                            Value = nameof(WebBrowserType.PhantomJS)
-                        });
-                        return true;
-                    }
-                    else
+                    if (browserType == null)
                     {
                         return false;
                     }
+
+                    if (DriverConfiguration == null)
+                    {
+                        DriverConfiguration = [];
+                    }
+                    DriverType = eDriverType.Selenium;
+                    
+                    DriverConfiguration.Add(new DriverConfigParam()
+                    {
+                        Parameter = "BrowserType",
+                        Value = browserType,
+                    });
                 }
             }
 

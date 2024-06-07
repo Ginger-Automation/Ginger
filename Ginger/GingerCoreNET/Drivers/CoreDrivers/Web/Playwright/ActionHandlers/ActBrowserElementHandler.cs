@@ -5,6 +5,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Environments;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             ActBrowserElement.eControlAction.OpenURLNewTab,
             ActBrowserElement.eControlAction.GetPageURL,
             ActBrowserElement.eControlAction.GetWindowTitle,
-            ActBrowserElement.eControlAction.Maximize,
             ActBrowserElement.eControlAction.NavigateBack,
             ActBrowserElement.eControlAction.Refresh,
             ActBrowserElement.eControlAction.DeleteAllCookies,
@@ -42,11 +42,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             ActBrowserElement.eControlAction.SwitchToDefaultWindow,
         };
 
-        internal readonly struct Context
+        internal readonly struct Context : IEquatable<Context>
         {
             internal required ProjEnvironment Environment { get; init; }
         
             internal required BusinessFlow BusinessFlow { get; init; }
+
+            public bool Equals(Context other)
+            {
+                return
+                    Environment == other.Environment &&
+                    BusinessFlow == other.BusinessFlow;
+            }
         }
 
         private readonly ActBrowserElement _act;
@@ -83,9 +90,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                         break;
                     case ActBrowserElement.eControlAction.GetWindowTitle:
                         operationTask = HandleGetWindowTitleOperationAsync();
-                        break;
-                    case ActBrowserElement.eControlAction.Maximize:
-                        _act.Error = "This operation is not supported via current driver.";
                         break;
                     case ActBrowserElement.eControlAction.NavigateBack:
                         operationTask = HandleNavigateBackOperationAsync();
@@ -127,7 +131,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                         operationTask = HandleSwitchToDefaultFrameOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.SwitchToParentFrame:
-                        operationTask = HandleSwitchToParentFrameOperationAsync(); ;
+                        operationTask = HandleSwitchToParentFrameOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.SwitchWindow:
                         operationTask = HandleSwitchWindowOperationAsync();

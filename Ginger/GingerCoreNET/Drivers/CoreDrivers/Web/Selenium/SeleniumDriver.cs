@@ -330,7 +330,7 @@ namespace GingerCore.Drivers
         {
             get
             {
-                switch (mBrowserTpe)
+                switch (mBrowserType)
                 {
                     case eBrowserType.Chrome:
                         return WebBrowserType.Chrome;
@@ -345,7 +345,7 @@ namespace GingerCore.Drivers
                     case eBrowserType.RemoteWebDriver:
                         return WebBrowserType.RemoteWebDriver;
                     default:
-                        throw new Exception($"Unknown browser type '{mBrowserTpe}'");
+                        throw new Exception($"Unknown browser type '{mBrowserType}'");
                 }
             }
             set
@@ -353,22 +353,22 @@ namespace GingerCore.Drivers
                 switch (value)
                 {
                     case WebBrowserType.Chrome:
-                        mBrowserTpe = eBrowserType.Chrome;
+                        mBrowserType = eBrowserType.Chrome;
                         break;
                     case WebBrowserType.FireFox:
-                        mBrowserTpe = eBrowserType.FireFox;
+                        mBrowserType = eBrowserType.FireFox;
                         break;
                     case WebBrowserType.Edge:
-                        mBrowserTpe = eBrowserType.Edge;
+                        mBrowserType = eBrowserType.Edge;
                         break;
                     case WebBrowserType.Brave:
-                        mBrowserTpe = eBrowserType.Brave;
+                        mBrowserType = eBrowserType.Brave;
                         break;
                     case WebBrowserType.InternetExplorer:
-                        mBrowserTpe = eBrowserType.IE;
+                        mBrowserType = eBrowserType.IE;
                         break;
                     case WebBrowserType.RemoteWebDriver:
-                        mBrowserTpe = eBrowserType.RemoteWebDriver;
+                        mBrowserType = eBrowserType.RemoteWebDriver;
                         break;
                     default:
                         throw new Exception($"Unknown browser type '{value}'");
@@ -377,7 +377,7 @@ namespace GingerCore.Drivers
         }
 
         protected IWebDriver Driver;
-        protected eBrowserType mBrowserTpe;
+        protected eBrowserType mBrowserType;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
 
@@ -423,7 +423,7 @@ namespace GingerCore.Drivers
 
         public SeleniumDriver(eBrowserType BrowserType)
         {
-            mBrowserTpe = BrowserType;
+            mBrowserType = BrowserType;
         }
 
         public SeleniumDriver(object driver)
@@ -453,7 +453,7 @@ namespace GingerCore.Drivers
 
         public eBrowserType GetBrowserType()
         {
-            return mBrowserTpe;
+            return mBrowserType;
         }
 
         /// <summary>
@@ -533,7 +533,7 @@ namespace GingerCore.Drivers
             //TODO: launch the driver/agent per combo selection
             try
             {
-                switch (mBrowserTpe)
+                switch (mBrowserType)
                 {
                     //TODO: refactor closing the extra tabs
                     #region Internet Explorer
@@ -845,7 +845,7 @@ namespace GingerCore.Drivers
                         #endregion
                 }
 
-                if (BrowserMinimized == true && mBrowserTpe != eBrowserType.Edge)
+                if (BrowserMinimized == true && mBrowserType != eBrowserType.Edge)
                 {
                     Driver.Manage().Window.Minimize();
                 }
@@ -1025,18 +1025,18 @@ namespace GingerCore.Drivers
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, $"Failed to Download latest {mBrowserTpe} driver. Attempting to Update {mBrowserTpe} driver to latest using System Proxy Settings....");
+                Reporter.ToLog(eLogLevel.INFO, $"Failed to Download latest {mBrowserType} driver. Attempting to Update {mBrowserType} driver to latest using System Proxy Settings....");
                 DriverOptions driverOptions = null;
 
-                if (mBrowserTpe == eBrowserType.Chrome)
+                if (mBrowserType == eBrowserType.Chrome)
                 {
                     driverOptions = new ChromeOptions();
                 }
-                else if (mBrowserTpe == eBrowserType.Edge)
+                else if (mBrowserType == eBrowserType.Edge)
                 {
                     driverOptions = new EdgeOptions();
                 }
-                else if (mBrowserTpe == eBrowserType.FireFox)
+                else if (mBrowserType == eBrowserType.FireFox)
                 {
                     driverOptions = new FirefoxOptions();
                 }
@@ -1068,15 +1068,15 @@ namespace GingerCore.Drivers
 
                 SetBrowserVersion(driverOptions);
                 var driverpath = SeleniumManager.DriverPath(driverOptions);
-                Reporter.ToLog(eLogLevel.INFO, $"Updated {mBrowserTpe} driver to latest and placed in {driverpath}.");
+                Reporter.ToLog(eLogLevel.INFO, $"Updated {mBrowserType} driver to latest and placed in {driverpath}.");
             }
             catch (Exception ex)
             {
                 if (!WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToDownloadDriver, mBrowserTpe);
+                    Reporter.ToUser(eUserMsgKey.FailedToDownloadDriver, mBrowserType);
                 }
-                Reporter.ToLog(eLogLevel.ERROR, string.Format(Reporter.UserMsgsPool[eUserMsgKey.FailedToDownloadDriver].Message, mBrowserTpe), ex);
+                Reporter.ToLog(eLogLevel.ERROR, string.Format(Reporter.UserMsgsPool[eUserMsgKey.FailedToDownloadDriver].Message, mBrowserType), ex);
                 throw;
             }
         }
@@ -1099,7 +1099,7 @@ namespace GingerCore.Drivers
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                if (Use64Bitbrowser && (mBrowserTpe == eBrowserType.IE || mBrowserTpe == eBrowserType.FireFox))
+                if (Use64Bitbrowser && (mBrowserType == eBrowserType.IE || mBrowserType == eBrowserType.FireFox))
                 {
                     return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Win64");
                 }
@@ -6760,7 +6760,7 @@ namespace GingerCore.Drivers
 
                         catch (Exception ex)
                         {
-                            if (eBrowserType.FireFox.Equals(mBrowserTpe) && ex.Message != null && ex.Message.Contains("did not match a known command"))
+                            if (eBrowserType.FireFox.Equals(mBrowserType) && ex.Message != null && ex.Message.Contains("did not match a known command"))
                             {
                                 continue;
                             }
@@ -6812,7 +6812,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    if (mBrowserTpe == eBrowserType.FireFox && ex.Message != null && ex.Message.Contains("did not match a known command"))
+                    if (mBrowserType == eBrowserType.FireFox && ex.Message != null && ex.Message.Contains("did not match a known command"))
                     {
                         continue;
                     }
@@ -9051,7 +9051,7 @@ namespace GingerCore.Drivers
                 return ScreenshotToImage(screenshot);
             }
             Bitmap bitmapImage = null;
-            switch (mBrowserTpe)
+            switch (mBrowserType)
             {
                 case eBrowserType.FireFox:
                     var screenShot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
@@ -9086,7 +9086,7 @@ namespace GingerCore.Drivers
                 var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
                 act.AddScreenShot(screenshot.AsByteArray, Driver.Title);
             }
-            switch (mBrowserTpe)
+            switch (mBrowserType)
             {
                 case eBrowserType.FireFox:
                     var screenShot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
@@ -10125,7 +10125,7 @@ namespace GingerCore.Drivers
 
         {
 
-            switch (mBrowserTpe)
+            switch (mBrowserType)
             {
 
 

@@ -173,16 +173,6 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
             switch (zAgent.DriverType)
             {
-                //case Agent.eDriverType.SeleniumFireFox:
-                //    return new SeleniumDriver(SeleniumDriver.eBrowserType.FireFox);
-                //case Agent.eDriverType.SeleniumChrome:
-                //    return new SeleniumDriver(SeleniumDriver.eBrowserType.Chrome);
-                //case Agent.eDriverType.SeleniumIE:
-                //    return new SeleniumDriver(SeleniumDriver.eBrowserType.IE);
-                //case Agent.eDriverType.SeleniumRemoteWebDriver:
-                //    return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
-                //case Agent.eDriverType.SeleniumEdge:
-                //    return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
                 case Agent.eDriverType.Selenium:
                     return new SeleniumDriver();
 

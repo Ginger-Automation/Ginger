@@ -85,11 +85,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.Selenium;
-            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: WebBrowserType.Chrome.ToString());
-            if (!string.Equals(browserTypeParam.Value, WebBrowserType.Chrome.ToString()))
-            {
-                browserTypeParam.Value = WebBrowserType.Chrome.ToString();
-            }
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
+            browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);

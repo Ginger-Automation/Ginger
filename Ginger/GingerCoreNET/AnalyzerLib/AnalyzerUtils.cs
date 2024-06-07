@@ -103,6 +103,10 @@ namespace Ginger.AnalyzerLib
                         if (actualBf != null)
                         {
                             IEnumerable<IApplicationAgent> applicationAgents = ((GingerExecutionEngine)GR.Executor).GingerRunner.ApplicationAgents;
+                            if (applicationAgents == null)
+                            {
+                                applicationAgents = [];
+                            }
                             RunBusinessFlowAnalyzer(actualBf, applicationAgents, solution, issuesList, AnalyzeBusinessFlow.Check.All.ExcludeFlags(AnalyzeBusinessFlow.Check.MissingMandatoryInputValues));
                         }
                     }

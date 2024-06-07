@@ -375,7 +375,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             }
             if (!int.TryParse(yString, out int y))
             {
-                throw new InvalidActionConfigurationException($"X-Coordinate must be a valid integer");
+                throw new InvalidActionConfigurationException($"Y-Coordinate must be a valid integer");
             }
 
             IBrowserElement element = await GetFirstMatchingElementAsync();

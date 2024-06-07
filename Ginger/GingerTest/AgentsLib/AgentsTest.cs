@@ -88,11 +88,8 @@ namespace GingerTest
             //Arrange
             string name = "Visual Compare";
             Agent a = new Agent() { Name = name, DriverType = Agent.eDriverType.Selenium };
-            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: WebBrowserType.Chrome.ToString());
-            if (!string.Equals(browserTypeParam.Value, WebBrowserType.FireFox.ToString()))
-            {
-                browserTypeParam.Value = WebBrowserType.FireFox.ToString();
-            }
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
+            browserTypeParam.Value = nameof(WebBrowserType.Chrome);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(a);
 
             //Act            

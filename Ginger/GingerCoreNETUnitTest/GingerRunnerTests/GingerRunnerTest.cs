@@ -104,11 +104,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Agent a = new Agent();
             //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
             a.DriverType = Agent.eDriverType.Selenium;
-            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: WebBrowserType.Chrome.ToString());
-            if (!string.Equals(browserTypeParam.Value, WebBrowserType.Chrome.ToString()))
-            {
-                browserTypeParam.Value = WebBrowserType.Chrome.ToString();
-            }
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
+            browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
@@ -394,6 +391,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.Selenium;
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
+            browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
             ((GingerExecutionEngine)mGRForRunset.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGRForRunset.Executor).SolutionAgents.Add(a);

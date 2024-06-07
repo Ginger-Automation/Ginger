@@ -105,11 +105,8 @@ namespace UnitTests.NonUITests
             a.AgentOperations = agentOperations;
 
             a.DriverType = Agent.eDriverType.Selenium;
-            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: WebBrowserType.Chrome.ToString());
-            if (!string.Equals(browserTypeParam.Value, WebBrowserType.Chrome.ToString()))
-            {
-                browserTypeParam.Value = WebBrowserType.Chrome.ToString();
-            }
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
+            browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);

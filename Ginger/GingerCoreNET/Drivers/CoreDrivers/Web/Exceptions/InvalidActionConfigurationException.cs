@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions
 {
-    internal sealed class InvalidActionConfigurationException : Exception
+    public sealed class InvalidActionConfigurationException : Exception
     {
-        internal InvalidActionConfigurationException(string message) : base(message) { }
+        public InvalidActionConfigurationException(string message) : base(message) { }
     }
 }
