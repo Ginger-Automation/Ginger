@@ -637,6 +637,20 @@ namespace GingerCore
                         });
                         return true;
                     }
+                    else if (string.Equals(value, "SeleniumBrave"))
+                    {
+                        if (DriverConfiguration == null)
+                        {
+                            DriverConfiguration = [];
+                        }
+                        DriverType = eDriverType.Selenium;
+                        DriverConfiguration.Add(new DriverConfigParam()
+                        {
+                            Parameter = "BrowserType",
+                            Value = nameof(WebBrowserType.Brave)
+                        });
+                        return true;
+                    }
                     else if (string.Equals(value, "SeleniumIE"))
                     {
                         if (DriverConfiguration == null)

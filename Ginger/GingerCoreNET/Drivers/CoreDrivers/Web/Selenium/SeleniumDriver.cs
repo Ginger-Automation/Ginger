@@ -338,6 +338,8 @@ namespace GingerCore.Drivers
                         return WebBrowserType.FireFox;
                     case eBrowserType.Edge:
                         return WebBrowserType.Edge;
+                    case eBrowserType.Brave:
+                        return WebBrowserType.Brave;
                     case eBrowserType.IE:
                         return WebBrowserType.InternetExplorer;
                     case eBrowserType.RemoteWebDriver:
@@ -358,6 +360,9 @@ namespace GingerCore.Drivers
                         break;
                     case WebBrowserType.Edge:
                         mBrowserTpe = eBrowserType.Edge;
+                        break;
+                    case WebBrowserType.Brave:
+                        mBrowserTpe = eBrowserType.Brave;
                         break;
                     case WebBrowserType.InternetExplorer:
                         mBrowserTpe = eBrowserType.IE;

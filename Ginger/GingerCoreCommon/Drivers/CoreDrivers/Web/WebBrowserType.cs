@@ -11,6 +11,7 @@ namespace Amdocs.Ginger.Common.Drivers.CoreDrivers.Web
         Chrome,
         FireFox,
         Edge,
+        Brave,
         InternetExplorer,
         RemoteWebDriver,
         PhantomJS

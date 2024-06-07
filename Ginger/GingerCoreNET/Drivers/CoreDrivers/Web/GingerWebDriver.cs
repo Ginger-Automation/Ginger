@@ -17,6 +17,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             WebBrowserType.Chrome,
             WebBrowserType.FireFox,
             WebBrowserType.Edge,
+            WebBrowserType.Brave,
             WebBrowserType.InternetExplorer,
             WebBrowserType.RemoteWebDriver,
         };
