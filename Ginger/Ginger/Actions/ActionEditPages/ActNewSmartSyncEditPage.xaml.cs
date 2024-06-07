@@ -44,15 +44,6 @@ namespace Ginger.Actions
             InitializeComponent();     
             GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.SyncOperations, sortValues: false);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActNewSmartSync.SyncOperations));
-
-/*
-           // GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TxtMatchTextbox, TextBox.TextProperty, Act, nameof(ActNewSmartSync.TxtMatchInput));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAttributeValueVE, TextBox.TextProperty, Act, nameof(ActNewSmartSync.AttributeValue));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAttributeNameVE, TextBox.TextProperty, Act, nameof(ActNewSmartSync.AttributeName));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUrlMatchesVE, TextBox.TextProperty, Act, nameof(ActNewSmartSync.UrlMatches));
-
-*/
-
             xTxtMatchVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.TxtMatchInput));
             xAttributeValueVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.AttributeValue));
             xAttributeNameVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.AttributeName));
@@ -79,8 +70,7 @@ namespace Ginger.Actions
                 return Visibility.Visible;
             }
         }
-       // eSyncOperation operation = EnumHelper.GetEnumValueFromDescription<eSyncOperation>(description);
-
+     
         private void SetPanelVisibility(Panel panel, ActNewSmartSync.eSyncOperation action)
         {
             if (ActionNameComboBox.SelectedValue is not ActNewSmartSync.eSyncOperation selectedSyncAction)

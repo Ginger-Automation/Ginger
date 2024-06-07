@@ -1433,7 +1433,7 @@ namespace GingerCore.Drivers
 
             DoRunAction(act);
         }
-        // Gokul-- need to make changes in below method for newSmart sync action
+
         private void DoRunAction(Act act)
         {
             Type ActType = act.GetType();
@@ -2192,32 +2192,6 @@ namespace GingerCore.Drivers
                 return 300;
             }
 
-        }
-        static Func<IWebDriver, IWebDriver> PageHasBeenLoaded(TimeSpan timeout, TimeSpan pollingInterval)
-        {
-            return delegate (IWebDriver driver)
-            {
-                var start = DateTime.Now;
-
-                while (DateTime.Now - start < timeout)
-                {
-                    if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return driver;
-                    }
-
-                    string text = ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState") as string;
-                    if (text.Equals("complete", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return driver;
-                    }
-
-                    System.Threading.Thread.Sleep(pollingInterval);  // Wait for the specified polling interval before the next check
-                }
-
-                // Return null if the timeout is reached without the page being fully loaded
-                return null;
-            };
         }
 
              public void SmartSyncHandler(ActSmartSync act)
