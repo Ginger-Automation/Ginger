@@ -149,6 +149,8 @@ namespace GingerCoreNET.SourceControl
 
         public abstract ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommits();
 
+        public abstract bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles);
+
         //clear locks
         public abstract void CleanUp(string path);
 
