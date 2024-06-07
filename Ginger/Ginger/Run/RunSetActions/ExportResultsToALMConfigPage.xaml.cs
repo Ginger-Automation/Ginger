@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
+using Ginger.Reports;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.ALM;
@@ -47,6 +48,7 @@ namespace Ginger.Run
         GenericWindow genWin = null;
         ObservableList<BusinessFlow> mBfs = new ObservableList<BusinessFlow>();
         PublishToALMConfig mPublishToALMConfig = new PublishToALMConfig();
+        ExecutionLoggerConfiguration mExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
         public bool IsProcessing = false;
         ImageMakerControl loaderElement;
         ValueExpression mVE = null;
@@ -64,6 +66,7 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.VariableForTCRunName));
             BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.isVariableInTCRunUsed));
             BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toAttachActivitiesGroupReport));
+            BindingHandler.ObjFieldBinding(ExportReportLink, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toExportReportLink));
             BindingHandler.ObjFieldBinding(SearchALMEntityByName, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.SearchALMEntityByName));
             xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
             xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType),
@@ -79,6 +82,7 @@ namespace Ginger.Run
             xALMTypeCbx_SelectionChanged(this, null);
             SetTestLevelComboBoxList(runSetActionPublishToQC.RunAt);
             PropertyChangedEventManager.AddHandler(runSetActionPublishToQC, RunAt_PropertyChanged, string.Empty);
+
         }
 
         private ExportResultsToALMConfigPage()
@@ -93,6 +97,7 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, mPublishToALMConfig, nameof(PublishToALMConfig.VariableForTCRunName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.IsVariableInTCRunUsed));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.ToAttachActivitiesGroupReport));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExportReportLink, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.ToExportReportLink));
             xFilterByStatusDroplist.BindControl(mPublishToALMConfig, nameof(PublishToALMConfig.FilterStatus));
         }
 
@@ -124,7 +129,7 @@ namespace Ginger.Run
                 xALMTypeCbx.IsEnabled = false;
                 mBfs = bfs;
                 mVE = VE;
-                mContext = Context;
+                mContext = Context;  
                 return true;
             }
             else

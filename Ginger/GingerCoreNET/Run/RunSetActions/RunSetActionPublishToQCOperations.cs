@@ -64,6 +64,7 @@ namespace Ginger.Run.RunSetActions
         {
             PublishToALMConfig.IsVariableInTCRunUsed = RunSetActionPublishToQC.isVariableInTCRunUsed;
             PublishToALMConfig.ToAttachActivitiesGroupReport = RunSetActionPublishToQC.toAttachActivitiesGroupReport;
+            PublishToALMConfig.ToExportReportLink = RunSetActionPublishToQC.toExportReportLink;
             PublishToALMConfig.VariableForTCRunName = RunSetActionPublishToQC.VariableForTCRunName;
             PublishToALMConfig.CalculateTCRunName(mVE);
             PublishToALMConfig.FilterStatus = RunSetActionPublishToQC.FilterStatus;

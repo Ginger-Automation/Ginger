@@ -534,12 +534,16 @@ namespace GingerCore.ALM.RQM
                 exeResult.ExecutionRecordExportID = exeRecordId;
                 exeResult.StartDate = businessFlow.StartTimeStamp.ToString("o");
                 exeResult.EndDate = businessFlow.EndTimeStamp.ToString("o");
-                if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
+                if (publishToALMConfig.ToExportReportLink)
                 {
-                    exeResult.HtmlReportUrl = publishToALMConfig.HtmlReportUrl;
-                    exeResult.ExecutionId = publishToALMConfig.ExecutionId;
-                    exeResult.ExecutionInstanceId = businessFlow.InstanceGuid.ToString();
+                    if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
+                    {
+                        exeResult.HtmlReportUrl = publishToALMConfig.HtmlReportUrl;
+                        exeResult.ExecutionId = publishToALMConfig.ExecutionId;
+                        exeResult.ExecutionInstanceId = businessFlow.InstanceGuid.ToString();
+                    }
                 }
+              
                 int i = 1;
                 StringBuilder errors;
                 var relevantActivities = businessFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.FileName);
