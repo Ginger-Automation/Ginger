@@ -79,8 +79,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         public static AccountReportAction MapActionEndData(GingerCore.Actions.Act action, Context context)
         {
             AccountReportAction accountReportAction = new AccountReportAction();
-            List<string> newScreenShotsList = new List<string>();
-            Dictionary<string, string> newArtifactList = new Dictionary<string, string>();           
+            List<string> newScreenShotsList = new List<string>();                     
             accountReportAction.Id = action.ExecutionId;
             accountReportAction.EntityId = action.Guid;
             accountReportAction.AccountReportDbActivityId = action.ParentExecutionId;
@@ -113,10 +112,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 string basePath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + "/";
                 foreach (ArtifactDetails artifact in action.Artifacts)
                 {
-                    string newArtifactPath = basePath +  Path.GetFileName(artifact.ArtifactReportStoragePath);
-                    newArtifactList.Add(artifact.ArtifactOriginalName, newArtifactPath);
+                    string newArtifactPath = basePath +  Path.GetFileName(artifact.ArtifactReportStoragePath);                    
                     accountReportAction.Artifacts.Add(new AccountReport.Contracts.Helpers.DictObject
-                    { Key = artifact.ArtifactReportStorageName, Value = newArtifactPath });
+                    { Key = artifact.ArtifactOriginalName, Value = newArtifactPath });
                 }
             }
             return accountReportAction;
