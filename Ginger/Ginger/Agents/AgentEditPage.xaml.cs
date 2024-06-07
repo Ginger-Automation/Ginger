@@ -33,6 +33,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.ComponentModel;
 using static GingerCore.Agent;
+using System.Linq;
 
 namespace Ginger.Agents
 {
@@ -161,7 +162,19 @@ namespace Ginger.Agents
 
         private void UpdateHealeniumUI()
         {
-            if (mAgent.DriverType == eDriverType.SeleniumRemoteWebDriver)
+            bool isSeleniumDriver = mAgent.DriverType == eDriverType.Selenium;
+            WebBrowserType? browserType = null; 
+            if (mAgent.DriverConfiguration != null)
+            {
+                DriverConfigParam? browserTypeParam = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, nameof(GingerWebDriver.BrowserType)));
+                if (browserTypeParam != null && Enum.TryParse(browserTypeParam.Value, out WebBrowserType result))
+                {
+                    browserType = result;
+                }
+            }
+            bool isRemoteBrowser = browserType.HasValue && browserType.Value == WebBrowserType.RemoteWebDriver;
+
+            if (isSeleniumDriver && isRemoteBrowser)
             {
                 xHealeniumcheckbox.IsEnabled = true;
                 BindingHandler.ObjFieldBinding(xHealeniumcheckbox, CheckBox.IsCheckedProperty, mAgent, nameof(Agent.Healenium));
@@ -278,6 +291,11 @@ namespace Ginger.Agents
             if (xAgentConfigFrame.Content is AgentDriverConfigPage driverConfigPage)
             {
                 driverConfigPage.SetDriverConfigsPageContent();
+            }
+
+            if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
+            {
+                UpdateHealeniumUI();
             }
         }
 

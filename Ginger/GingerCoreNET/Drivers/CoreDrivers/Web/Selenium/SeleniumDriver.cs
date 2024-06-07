@@ -925,7 +925,7 @@ namespace GingerCore.Drivers
                     ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
-                    UpdateDriver(mBrowserTpe);
+                    UpdateDriver(mBrowserType);
                     StartDriver();
                 }
             }
