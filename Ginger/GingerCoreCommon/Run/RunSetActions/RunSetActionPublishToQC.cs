@@ -44,6 +44,25 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public bool toAttachActivitiesGroupReport { get { return mtoAttachActivitiesGroupReport; } set { if (mtoAttachActivitiesGroupReport != value) { mtoAttachActivitiesGroupReport = value; OnPropertyChanged(nameof(toAttachActivitiesGroupReport)); } } }
 
+
+        private bool mToExportReportLink;
+        [IsSerializedForLocalRepository]
+        public bool ToExportReportLink
+        { 
+            get
+            {
+                return mToExportReportLink;
+            }
+            set
+            {
+                if(mToExportReportLink != value)
+                {
+                    mToExportReportLink = value;
+                    OnPropertyChanged(nameof(ToExportReportLink));
+                }
+            }
+        }
+
         private FilterByStatus mFilterStatus;
         [IsSerializedForLocalRepository]
         public FilterByStatus FilterStatus
