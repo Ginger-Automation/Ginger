@@ -258,6 +258,8 @@
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.6" />
   
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.6" />
+  
+    <PackageReference Include="Gravity.Core" Version="2021.9.12.3" />
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
