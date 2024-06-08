@@ -1,0 +1,115 @@
+﻿<Page x:Class="Ginger.Environments.AddNewDatabasePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:businessflowwindows="clr-namespace:Ginger.BusinessFlowWindows" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+      Height="600"
+      Title="Add Database">
+
+    <StackPanel Background="{StaticResource $BackgroundColor_White}" Margin="10,10,10,10" Orientation="Vertical">
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Label Style="{StaticResource $LabelStyle}" Width="180" FontSize="13" Content="Database Type:"/>
+            <RadioButton x:Name="executionResultOnRadioBtnsPnl"  Checked="SQL_Selected" Content="SQL" Padding="5,0,5,0" IsChecked="True" VerticalAlignment="Center"/>
+            <RadioButton x:Name="executionResultOffRadioBtnsPnl" Checked="NoSQL_Selected"    Content="NoSQL" Padding="5,0,0,0" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25"  VerticalAlignment="Top" Margin="0,10,0,0" >
+            <Label Style="{StaticResource $LabelStyle}" Width="180" FontSize="13" Content="Database:"/>
+            <StackPanel Orientation="Vertical">
+                <ComboBox  Name="xDatabaseComboBox" Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="250" SelectionChanged="xDatabaseComboBox_SelectionChanged" ></ComboBox>
+                <TextBlock Name="xDatabaseTypeError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Name="xConnectionStrStackPanel" Visibility="Collapsed" Margin="0,10,0,0">
+            <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Use Connection String:"/>
+            <CheckBox VerticalAlignment="Center" Name="xConnectionStrCheckBox" Checked="ConnectionString_Checked" Unchecked="ConnectionString_UnChnecked"></CheckBox>
+        </StackPanel>
+
+
+        <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
+            <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Database Name:" />
+                <StackPanel Orientation="Vertical">
+                    <TextBox Style="{StaticResource $TextBoxStyle}"  x:Name="xDatabaseName" Width="250" Height="25"></TextBox>
+                    <TextBlock  Name="xDatabaseNameError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
+            </StackPanel>
+        </StackPanel>
+    
+        <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
+            <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Description:"/>
+            <TextBox Style="{StaticResource $TextBoxStyle}"  x:Name="xDatabaseDescription" Width="250"></TextBox>
+        </StackPanel>
+        <StackPanel x:Name="xDatabaseDetailsPanel">
+            <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
+                <Label Style="{StaticResource $LabelStyle}" Width="180" Content="TNS / File Path:"  Name="xDatabaseTNSName"/>
+                <StackPanel Orientation="Vertical">
+                    <businessflowwindows:UCValueExpression x:Name="xDatabaseTNS" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                    <TextBlock  Name="xDatabaseTNSError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" Margin="0,10,0,0">
+                <Label Style="{StaticResource $LabelStyle}" Width="180" Content="User Name:"/>
+                <StackPanel Orientation="Vertical">
+                    <businessflowwindows:UCValueExpression x:Name="xDatabaseUserName" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                    <TextBlock Name="xDatabaseUserNameError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0" >
+                <Label Style="{StaticResource $LabelStyle}" Width="180"  Content="User Password:"/>
+                <StackPanel Orientation="Vertical">
+                    <businessflowwindows:UCValueExpression x:Name="xDatabasePassword" Width="280" Height="25" LostKeyboardFocus="ChangeDatabasePass"></businessflowwindows:UCValueExpression>
+                    <TextBlock Name="xDatabaseUserPassError" Width="250" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
+
+        <StackPanel Name="xCosmosDetailsPanel" Visibility="Collapsed">
+            
+            <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
+                <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Account End Point:" />
+                <StackPanel Orientation="Vertical">
+                    <businessflowwindows:UCValueExpression  x:Name="xDBAccEndPoint" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                    <TextBlock  Name="xDBAccEndPointError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
+                <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Account Key:" />
+                <StackPanel Orientation="Vertical">
+                    <businessflowwindows:UCValueExpression  x:Name="xDBAccKey" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                    <TextBlock  Name="xDBAccKeyError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0" Name="xDBConnectionStringPanel" Visibility="Collapsed">
+            <Label Style="{StaticResource $LabelStyle}" Width="180" Height="25" Content="Connection String:"/>
+            <StackPanel Orientation="Horizontal">
+                <businessflowwindows:UCValueExpression  x:Name="xDatabaseConnectionString" Height="25" Width="280"></businessflowwindows:UCValueExpression>
+                <usercontrols:ImageMakerControl 
+                    VerticalAlignment="Center" 
+                    x:Name="xConnectionStringInfo" SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Name="xKeepConnectOpenPanel" Visibility="Visible" Margin="0,10,0,0">
+            <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Keep Connection Open:"/>
+            <CheckBox VerticalAlignment="Center" Name="xKeepConnectOpen" ></CheckBox>
+        </StackPanel>
+
+
+        <StackPanel Orientation="Horizontal" Name="xVersionStackPanel" Visibility="Collapsed" Margin="0,10,0,0">
+            <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Is DB Version lower than 10.2:"/>
+            <CheckBox VerticalAlignment="Center" Name="xOracleVersion"></CheckBox>
+        </StackPanel>
+        
+        
+    </StackPanel>
+</Page>

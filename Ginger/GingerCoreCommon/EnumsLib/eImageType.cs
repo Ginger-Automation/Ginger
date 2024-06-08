@@ -380,8 +380,10 @@ namespace Amdocs.Ginger.Common.Enums
         LinkSquare,
         DatePicker,
         TreeView,
-        SelfHealing
+        SelfHealing,
         #endregion
+
+
     }
 }
 
