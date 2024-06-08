@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -65,7 +65,6 @@ namespace Amdocs.Ginger.Common
 
         // ALM
         public bool Rally { get { return GetFeature(nameof(Rally)).Selected; } set { UpdateFeature(nameof(Rally), value); } }
-        public bool Octane { get { return GetFeature(nameof(Octane)).Selected; } set { UpdateFeature(nameof(Octane), value); } }
         public bool JiraTestingALM { get { return GetFeature(nameof(JiraTestingALM)).Selected; } set { UpdateFeature(nameof(JiraTestingALM), value); } }
 
         //Gherkin
@@ -73,9 +72,8 @@ namespace Amdocs.Ginger.Common
 
         // CDL
         public bool ShowCDL { get { return GetFeature(nameof(ShowCDL)).Selected; } set { UpdateFeature(nameof(ShowCDL), value); } }
-        
-        //Action 
-        public bool ShowAccessibilityTesting { get { return GetFeature(nameof(ShowAccessibilityTesting)).Selected; } set { UpdateFeature(nameof(ShowAccessibilityTesting), value); } }
+        //Agent 
+        public bool ShowHealenium { get { return GetFeature(nameof(ShowHealenium)).Selected; } set { UpdateFeature(nameof(ShowHealenium), value); } }
 
         public BetaFeatures()
         {
@@ -94,7 +92,6 @@ namespace Amdocs.Ginger.Common
 
             //ALM
             mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });
-            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Octane", ID = nameof(Octane) });
             mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Jira's Testing ALMs", ID = nameof(JiraTestingALM) });
 
             //Gherkin
@@ -106,8 +103,8 @@ namespace Amdocs.Ginger.Common
 
             //CDL            
             mFeatures.Add(new BetaFeature() { Group = "CDL", Description = "Show CDL - Change Definition Language", ID = nameof(ShowCDL) });
-            //Actions
-            mFeatures.Add(new BetaFeature() { Group = "Action", Description = "Show Accessibility Testing", ID = nameof(ShowAccessibilityTesting) });
+            //Agent
+            mFeatures.Add(new BetaFeature() { Group = "Agent", Description = "Show Healenium", ID = nameof(ShowHealenium) });
             //hook prop change
             foreach (BetaFeature f in mFeatures)
             {

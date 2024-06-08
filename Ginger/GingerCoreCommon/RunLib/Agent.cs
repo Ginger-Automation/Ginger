@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
@@ -62,18 +63,10 @@ namespace GingerCore
             //Web
             [Description("Internal Browser")]
             InternalBrowser,
-            [Description("Internet Explorer Browser(Selenium)")]
-            SeleniumIE,
-            [Description("Fire Fox Browser(Selenium)")]
-            SeleniumFireFox,
-            [Description("Chrome Browser(Selenium)")]
-            SeleniumChrome,
-            [Description("Remote Browser(Selenium)")]
-            SeleniumRemoteWebDriver,
-            [Description("Edge Browser(Selenium)")]
-            SeleniumEdge,
-            [Description("PhantomJS Browser(Selenium)")]
-            SeleniumPhantomJS,//Not been used any more, leaving here to avoid exception on solution load
+            [Description("Selenium")]
+            Selenium,
+            [Description("Playwright")]
+            Playwright,
 
             //Java
             [Description("Amdocs Smart Client Framework(ASCF)")]
@@ -217,11 +210,7 @@ namespace GingerCore
             bool isSupport = false;
             switch (DriverType)
             {
-                case eDriverType.SeleniumFireFox:
-                case eDriverType.SeleniumChrome:
-                case eDriverType.SeleniumIE:
-                case eDriverType.SeleniumRemoteWebDriver:
-                case eDriverType.SeleniumEdge:
+                case eDriverType.Selenium:
                 case eDriverType.ASCF:
                 case eDriverType.Appium:
                 case eDriverType.JavaDriver:
@@ -325,11 +314,8 @@ namespace GingerCore
             switch (driver)
             {
                 case eDriverType.InternalBrowser:
-                case eDriverType.SeleniumFireFox:
-                case eDriverType.SeleniumChrome:
-                case eDriverType.SeleniumIE:
-                case eDriverType.SeleniumRemoteWebDriver:
-                case eDriverType.SeleniumEdge:
+                case eDriverType.Selenium:
+                case eDriverType.Playwright:
                     return ePlatformType.Web;
                 case eDriverType.ASCF:
                     return ePlatformType.ASCF;
@@ -363,11 +349,8 @@ namespace GingerCore
             if (platformType == ePlatformType.Web.ToString())
             {
                 driverTypes.Add(Agent.eDriverType.InternalBrowser);
-                driverTypes.Add(Agent.eDriverType.SeleniumChrome);
-                driverTypes.Add(Agent.eDriverType.SeleniumFireFox);
-                driverTypes.Add(Agent.eDriverType.SeleniumIE);
-                driverTypes.Add(Agent.eDriverType.SeleniumRemoteWebDriver);
-                driverTypes.Add(Agent.eDriverType.SeleniumEdge);
+                driverTypes.Add(Agent.eDriverType.Selenium);
+                driverTypes.Add(Agent.eDriverType.Playwright);
             }
             else if (platformType == ePlatformType.Java.ToString())
             {
@@ -441,6 +424,11 @@ namespace GingerCore
 
         public DriverConfigParam GetOrCreateParam(string parameter, string defaultValue = null)
         {
+            if (DriverConfiguration == null)
+            {
+                DriverConfiguration = [];
+            }
+
             DriverConfigParam configParam = DriverConfiguration.FirstOrDefault(x => x.Parameter == parameter);
             if (configParam != null)
             {
@@ -456,11 +444,34 @@ namespace GingerCore
 
         public string GetParamValue(string Parameter)
         {
+            if (DriverConfiguration == null)
+            {
+                return null;
+            }
+
             foreach (DriverConfigParam DCP1 in DriverConfiguration)
             {
                 if (DCP1.Parameter == Parameter)
                 {
                     return DCP1.Value;
+                }
+            }
+
+            return null;
+        }
+
+        public DriverConfigParam GetParam(string parameter)
+        {
+            if (DriverConfiguration == null)
+            {
+                return null;
+            }
+
+            foreach (DriverConfigParam DCP1 in DriverConfiguration)
+            {
+                if (string.Equals(DCP1.Parameter, parameter))
+                {
+                    return DCP1;
                 }
             }
 
@@ -578,10 +589,99 @@ namespace GingerCore
                     }
                     return true;
                 }
+                else if (string.Equals(name, nameof(DriverType)))
+                {
+                    string browserType = null;
+                    switch (value)
+                    {
+                        case "SeleniumChrome":
+                            browserType = nameof(WebBrowserType.Chrome);
+                            break;
+                        case "SeleniumFireFox":
+                            browserType = nameof(WebBrowserType.FireFox);
+                            break;
+                        case "SeleniumEdge":
+                            browserType = nameof(WebBrowserType.Edge);
+                            break;
+                        case "SeleniumBrave":
+                            browserType = nameof(WebBrowserType.Brave);
+                            break;
+                        case "SeleniumIE":
+                            browserType = nameof(WebBrowserType.InternetExplorer);
+                            break;
+                        case "SeleniumRemoteWebDriver":
+                            browserType = nameof(WebBrowserType.RemoteWebDriver);
+                            break;
+                        case "SeleniumPhantomJS":
+                            browserType = nameof(WebBrowserType.PhantomJS);
+                            break;
+                    }
+                    if (browserType == null)
+                    {
+                        return false;
+                    }
+
+                    if (DriverConfiguration == null)
+                    {
+                        DriverConfiguration = [];
+                    }
+                    DriverType = eDriverType.Selenium;
+                    
+                    DriverConfiguration.Add(new DriverConfigParam()
+                    {
+                        Parameter = "BrowserType",
+                        Value = browserType,
+                    });
+
+                    return true;
+                }
             }
 
             return false;
         }
+
+        bool mHealenium = false;
+        /// <summary>
+        /// Flag used to mark for use healenium as self healing
+        /// </summary>
+        [IsSerializedForLocalRepository]
+        public bool Healenium
+        {
+            get
+            {
+                return mHealenium;
+            }
+            set
+            {
+                if (mHealenium != value)
+                {
+                    mHealenium = value;
+                    OnPropertyChanged(nameof(Healenium));
+                }
+            }
+        }
+
+        private string mHealeniumURL;
+        /// <summary>
+        /// use for Healenium Remot Url
+        /// </summary>
+        [IsSerializedForLocalRepository]
+        public string HealeniumURL
+        {
+            get
+            {
+                return mHealeniumURL;
+            }
+            set
+            {
+                if (mHealeniumURL != value)
+                {
+                    mHealeniumURL = value;
+                    OnPropertyChanged(nameof(HealeniumURL));
+                }
+            }
+        }
+
 
     }
 }

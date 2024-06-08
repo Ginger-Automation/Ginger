@@ -8,15 +8,15 @@
       xmlns:h="clr-namespace:Ginger.Help"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Agent"
-      d:DesignHeight="600" d:DesignWidth="800"
+      d:DesignHeight="640" d:DesignWidth="800"
 	Title="AgentEditPage">
 
     <ScrollViewer>
         <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="160"/>
-                <RowDefinition Height="160"/>
-                <RowDefinition Height="200*"/>
+                <RowDefinition Height="260"/>
+                <RowDefinition Height="240*"/>
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Margin="5,0,0,0">
@@ -51,6 +51,10 @@
                         <Label Style="{StaticResource $LabelStyle}" Content="Driver Type:" Margin="0,0,0,0" VerticalAlignment="Center"/>
                         <ComboBox x:Name="xDriverTypeComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="25,0,0,0" FontWeight="Bold"/>
                     </StackPanel>
+                    <StackPanel x:Name="BrowserTypePanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0" Visibility="Collapsed">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Browser Type:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="BrowserTypeComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="25,0,0,0" FontWeight="Bold" SelectionChanged="BrowserTypeComboBox_SelectionChanged"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0" x:Name="xVirtualAgentsPanel" Visibility="Visible">
                         <StackPanel  Orientation="Horizontal" VerticalAlignment="Center">
                             <Label Style="{StaticResource $LabelStyle}" Content="Support Virtualization:" Margin="0,0,0,0" VerticalAlignment="Center"/>
@@ -65,6 +69,11 @@
                         </StackPanel>-->
                     </StackPanel>
                     <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" HorizontalAlignment="Left" Margin="5,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
+                    <CheckBox x:Name="xHealeniumcheckbox" Content="Healenium" ToolTip="use Healenium from self healing" HorizontalAlignment="Left" Margin="5,10,0,0" Style="{StaticResource $CeckBoxStyle}" Checked="Healeniumcheckbox_Checked" Unchecked="Healeniumcheckbox_UnChecked"/>
+                    <StackPanel x:Name="xHealeniumURLPnl" Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Center">
+                        <Label Style="{StaticResource $LabelStyle}" x:Name="xHealeniumURLLabel" Content="URL:" Margin="5,0,0,0"/>
+                        <TextBox x:Name="xHealeniumURLTextBox" Text="" Width="250" Style="{StaticResource $TextBoxStyle}" Margin="60,0,0,0" ToolTip="Healenium URL" />
+                    </StackPanel>
                 </StackPanel>
 
                 <StackPanel x:Name="xPluginConfigPnl" Visibility="Collapsed" Margin="0,10,0,0" >
