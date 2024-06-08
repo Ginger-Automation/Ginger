@@ -1,37 +1,16 @@
-﻿using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandlers;
+﻿using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandlers;
+using Amdocs.Ginger.CoreNET.RunLib;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Drivers.Selenium.SeleniumBMP;
-using GingerCore.Environments;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore.Actions.Common;
 using Microsoft.Playwright;
 using Microsoft.VisualStudio.Services.Common;
-using Microsoft.VisualStudio.Services.Profile;
-using NPOI.OpenXmlFormats.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
-using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
-using IPlaywrightPage = Microsoft.Playwright.IPage;
-using IPlaywrightDialog = Microsoft.Playwright.IDialog;
-using IPlaywrightLocator = Microsoft.Playwright.ILocator;
-using System.Collections.ObjectModel;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using Newtonsoft.Json;
-using System.Reflection;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
-using GingerCore.Actions.Common;
-using OpenQA.Selenium.DevTools.V119.DOM;
-using System.Drawing;
-using NPOI.OpenXmlFormats.Dml.Chart;
-using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
-using Amdocs.Ginger.CoreNET.RunLib;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
