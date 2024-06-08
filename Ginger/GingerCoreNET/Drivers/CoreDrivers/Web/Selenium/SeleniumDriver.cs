@@ -72,7 +72,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V121.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V125.DevToolsSessionDomains;
 
 
 
@@ -924,7 +924,8 @@ namespace GingerCore.Drivers
                 CloseDriverProcess(driverService);
                 //If driver is mismatched, use selenium manager to get the latest driver
                 if (RestartRetry && (ex.Message.Contains("session not created: This version of", StringComparison.InvariantCultureIgnoreCase) ||
-                    ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase)))
+                    ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase) ||
+                    ex.Message.StartsWith("error starting process", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
                     UpdateDriver(mBrowserType);
@@ -1112,8 +1113,9 @@ namespace GingerCore.Drivers
                 }
 
                 SetBrowserVersion(driverOptions);
-                var driverpath = SeleniumManager.DriverPath(driverOptions);
-                Reporter.ToLog(eLogLevel.INFO, $"Updated {mBrowserType} driver to latest and placed in {driverpath}.");
+                var driverFinder = new DriverFinder(driverOptions);
+                var driverpath = driverFinder.GetDriverPath();
+                Reporter.ToLog(eLogLevel.INFO, $"Updated {browserType} driver to latest and placed in {driverpath}.");
                 return driverpath;
             }
             catch (Exception ex)
@@ -10624,9 +10626,9 @@ namespace GingerCore.Drivers
                 try
                 {
                     //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession(121);
+                    devToolsSession = devTools.GetDevToolsSession(125);
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
-                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V121.Network.EnableCommandSettings());
+                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V125.Network.EnableCommandSettings());
                     blockOrUnblockUrls();
                 }
                 catch (Exception ex)
@@ -10652,11 +10654,11 @@ namespace GingerCore.Drivers
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V121.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V125.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V121.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V125.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
                 }
                 Thread.Sleep(300);
             }
@@ -10745,7 +10747,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V121.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V125.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 
