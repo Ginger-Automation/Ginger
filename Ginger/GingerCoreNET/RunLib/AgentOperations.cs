@@ -129,7 +129,10 @@ namespace GingerCore
         public CancellationTokenSource CTS = null;
         BackgroundWorker CancelTask;
 
-
+        public DriverBase CreateDriverInstance()
+        {
+            return (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(Agent);
+        }
 
         public async void StartDriver()
         {
@@ -155,7 +158,7 @@ namespace GingerCore
                         }
                         else
                         {
-                            Driver = (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(Agent);
+                            Driver = CreateDriverInstance();
                         }
                     }
                     catch (Exception e)

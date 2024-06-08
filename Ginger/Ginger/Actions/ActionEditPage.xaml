@@ -104,21 +104,20 @@
                             <DockPanel x:Name="xOperationSettingsPnl" Margin="5">
                                 <Grid x:Name="xActionLocatorPnl" DockPanel.Dock="Top">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="65" />
-                                        <ColumnDefinition Width="200" />
-                                        <ColumnDefinition Width="85" />
-                                        <ColumnDefinition Width="200*" />
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="30" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="330" />
                                     </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="0" Content="Locate By:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
-                                    <ComboBox Grid.Column="1" x:Name="xLocateByCombo" SelectionChanged="cboLocateBy_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" ToolTip="How to Locate the Element on the screen" VerticalAlignment="Center" />
-                                    <Label Grid.Column="2" Content="Locate Value:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                    <Actions:UCValueExpression x:Name="xLocateValueVE" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center"  />
-                                    <usercontrols:ucButton x:Name="xEditLocatorBtn" Grid.Column="4"  ButtonType="ImageButton" Click="btnEditLocator_Click" ToolTip="Edit"  ButtonFontImageSize="15"  ButtonImageType="Edit" VerticalAlignment="Center" />
-                                    <usercontrols:ucButton x:Name="xControlSelectorButton" Grid.Column="5"  ButtonType="ImageButton" Click="ControlSelectorButton_Click" ToolTip="Open Window Explorer to select Element"  ButtonFontImageSize="15"  ButtonImageType="Search" VerticalAlignment="Center" />
-                                    <usercontrols:ucButton x:Name="xHighLightElementButton" Grid.Column="6"  ButtonType="ImageButton" Click="HighLightElementButton_Click" ToolTip="Highlight Element on Application"  ButtonFontImageSize="15"  ButtonImageType="Pointer" VerticalAlignment="Center" />
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="50"></RowDefinition>
+                                        <RowDefinition Height="50"></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Content="Locate By:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="0" Grid.Column="1" x:Name="xLocateByCombo" SelectionChanged="cboLocateBy_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" ToolTip="How to Locate the Element on the screen" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" />
+                                    <Label Grid.Row="1" Grid.Column="0" Content="Locate Value:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
+                                    <Actions:UCValueExpression x:Name="xLocateValueVE" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"   />
+                                    <usercontrols:ucButton x:Name="xEditLocatorBtn" Visibility="Collapsed" Grid.Column="4"  ButtonType="ImageButton" Click="btnEditLocator_Click" ToolTip="Edit"  ButtonFontImageSize="15"  ButtonImageType="Edit" VerticalAlignment="Center" />
+                                    <usercontrols:ucButton x:Name="xControlSelectorButton" Visibility="Collapsed" Grid.Column="5"  ButtonType="ImageButton" Click="ControlSelectorButton_Click" ToolTip="Open Window Explorer to select Element"  ButtonFontImageSize="15"  ButtonImageType="Search" VerticalAlignment="Center" />
+                                    <usercontrols:ucButton x:Name="xHighLightElementButton" Visibility="Collapsed" Grid.Column="6"  ButtonType="ImageButton" Click="HighLightElementButton_Click" ToolTip="Highlight Element on Application"  ButtonFontImageSize="15"  ButtonImageType="Pointer" VerticalAlignment="Center" />
                                 </Grid>
 
                                 <Frame x:Name="xActionPrivateConfigsFrame" DockPanel.Dock="Top" Margin="0,0,0,0"  Content="Action private configurations Frame" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>

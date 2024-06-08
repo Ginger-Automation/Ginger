@@ -269,7 +269,7 @@ namespace GingerCore.Drivers
         /// <summary>
         /// Name of customized edit page for the driver to load on Agent edit page
         /// </summary>
-        public virtual string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        public virtual string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
             return null;
         }
@@ -399,6 +399,7 @@ namespace GingerCore.Drivers
                 return 5;
             }
         }
+        
     }
 }
 
