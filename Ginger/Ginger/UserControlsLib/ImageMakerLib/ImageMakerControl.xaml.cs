@@ -215,8 +215,6 @@ namespace Amdocs.Ginger.UserControls
                     SetAsStaticImage("chat.png");
                     break;
                 #endregion
-
-
                 #region Repository Items Images
                 //############################## Repository Items Images:
                 case eImageType.Solution:
