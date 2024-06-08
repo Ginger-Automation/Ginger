@@ -18,12 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
@@ -5164,7 +5166,18 @@ namespace Ginger.Run
                     {
                         if (appPlatform.Platform == ePlatformType.Web)
                         {
-                            agent = platformAgents.Find(x => x.DriverType == Agent.eDriverType.SeleniumIE);
+                            agent = platformAgents.Find(x =>
+                            {
+                                string browserTypeString = x.GetParamValue(nameof(GingerWebDriver.BrowserType));
+                                if (Enum.TryParse(browserTypeString, out WebBrowserType browserType))
+                                {
+                                    return browserType == WebBrowserType.InternetExplorer;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            });
                         }
 
                         if (agent == null)
