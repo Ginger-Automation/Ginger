@@ -82,17 +82,17 @@ namespace Ginger.Agents
             }
         }
 
-        private void SetDriverConfigsPageContent()
+        public void SetDriverConfigsPageContent()
         {
             DriverBase driver = (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(mAgent);
 
-            if (driver.GetDriverConfigsEditPageName(mAgent.DriverType) != null)
+            if (driver.GetDriverConfigsEditPageName(mAgent.DriverType, mAgent.DriverConfiguration) != null)
             {
                 DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
                 DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
 
                 //Custome edit page
-                string classname = "Ginger.Drivers.DriversConfigsEditPages." + driver.GetDriverConfigsEditPageName(mAgent.DriverType);
+                string classname = "Ginger.Drivers.DriversConfigsEditPages." + driver.GetDriverConfigsEditPageName(mAgent.DriverType, mAgent.DriverConfiguration);
                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                 if (t == null)
                 {

@@ -19,6 +19,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
 using Ginger.Run;
@@ -77,7 +79,9 @@ namespace UnitTests.UITests
             Agent a = new Agent();
             a.Active = true;
             ((AgentOperations)a.AgentOperations).Driver = mDriver;
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            a.DriverType = Agent.eDriverType.Selenium;
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
+            browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
@@ -971,7 +975,7 @@ namespace UnitTests.UITests
             Agent agent = new Agent();
             agent.Active = true;
             ((AgentOperations)agent.AgentOperations).Driver = mDriver;
-            agent.DriverType = Agent.eDriverType.SeleniumChrome;
+            agent.DriverType = Agent.eDriverType.Selenium;
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(agent);
 
             ApplicationAgent AA = new ApplicationAgent();
@@ -1030,7 +1034,7 @@ namespace UnitTests.UITests
             Agent agent = new Agent();
             agent.Active = true;
             ((AgentOperations)agent.AgentOperations).Driver = mDriver;
-            agent.DriverType = Agent.eDriverType.SeleniumChrome;
+            agent.DriverType = Agent.eDriverType.Selenium;
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(agent);
 
             ApplicationAgent AA = new ApplicationAgent();

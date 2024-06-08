@@ -18,12 +18,17 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,6 +55,7 @@ namespace Ginger.Agents.AddAgentWizardLib
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
             mWizard = (AddAgentWizard)WizardEventArgs.Wizard;
+            PropertyChangedEventManager.AddHandler(mWizard.Agent, Agent_PropertyChanged, propertyName: string.Empty);
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
@@ -99,6 +105,28 @@ namespace Ginger.Agents.AddAgentWizardLib
 
         }
 
+        private void Agent_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (string.Equals(e.PropertyName, nameof(Agent.DriverType)))
+            {
+                mWizard.Agent.AgentOperations.InitDriverConfigs();
+                if (mWizard.Agent.Platform == ePlatformType.Web && DriverSupportMultipleBrowsers(mWizard.Agent.DriverType))
+                {
+                    PopulateBrowserTypeComboBox();
+                    BrowserTypePanel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    BrowserTypeComboBox.Items.Clear();
+                    BrowserTypePanel.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private bool DriverSupportMultipleBrowsers(eDriverType driverType)
+        {
+            return driverType == eDriverType.Selenium || driverType == eDriverType.Playwright;
+        }
 
         private void xPlatformTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -121,6 +149,47 @@ namespace Ginger.Agents.AddAgentWizardLib
             {
                 //mWizard.Agent.DriverInfo = DriversforPlatform[0];
                 xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
+            }
+
+            if (mWizard.Agent.Platform == ePlatformType.Web)
+            {
+                PopulateBrowserTypeComboBox();
+                BrowserTypePanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                BrowserTypePanel.Visibility = Visibility.Collapsed;
+                BrowserTypeComboBox.Items.Clear();
+            }
+        }
+
+        private void PopulateBrowserTypeComboBox()
+        {
+            BrowserTypeComboBox.Items.Clear();
+            foreach (WebBrowserType browserType in GingerWebDriver.GetSupportedBrowserTypes(mWizard.Agent.DriverType))
+            {
+                BrowserTypeComboBox.Items.Add(new ComboEnumItem()
+                {
+                    text = browserType.ToString(),
+                    Value = browserType
+                });
+            }
+            BrowserTypeComboBox.SelectedValuePath = nameof(ComboEnumItem.Value);
+            BrowserTypeComboBox.SelectedIndex = 0;
+        }
+
+        private void BrowserTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count <= 0)
+            {
+                return;
+            }
+
+            WebBrowserType selectedBrowserType = (WebBrowserType)BrowserTypeComboBox.SelectedValue;
+            DriverConfigParam browserTypeParam = mWizard.Agent.GetOrCreateParam(nameof(GingerWebDriver.BrowserType));
+            if (!string.Equals(browserTypeParam.Value, selectedBrowserType.ToString()))
+            {
+                browserTypeParam.Value = selectedBrowserType.ToString();
             }
         }
 

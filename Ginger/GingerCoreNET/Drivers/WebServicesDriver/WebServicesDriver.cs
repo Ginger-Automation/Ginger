@@ -44,7 +44,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 {
     public class WebServicesDriver : DriverBase, IVirtualDriver
     {
-        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
             return "WebServicesDriverEditPage";
         }
