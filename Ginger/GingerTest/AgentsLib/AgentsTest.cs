@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -85,7 +87,9 @@ namespace GingerTest
         {
             //Arrange
             string name = "Visual Compare";
-            Agent a = new Agent() { Name = name, DriverType = Agent.eDriverType.SeleniumFireFox };
+            Agent a = new Agent() { Name = name, DriverType = Agent.eDriverType.Selenium };
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
+            browserTypeParam.Value = nameof(WebBrowserType.Chrome);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(a);
 
             //Act            
@@ -110,7 +114,7 @@ namespace GingerTest
             AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
 
             //Act
-            AgentsPOM.CreateAgent(name, ePlatformType.Web, Agent.eDriverType.SeleniumFireFox);
+            AgentsPOM.CreateAgent(name, ePlatformType.Web, Agent.eDriverType.Selenium);
             AgentsPOM.SelectAgent(name);
             Agent agent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == name select x).SingleOrDefault();
 
@@ -129,7 +133,7 @@ namespace GingerTest
             AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
 
             //Act
-            AgentsPOM.CreateAgent(OldName, ePlatformType.Web, Agent.eDriverType.SeleniumFireFox);
+            AgentsPOM.CreateAgent(OldName, ePlatformType.Web, Agent.eDriverType.Selenium);
             AgentsPOM.RenameAgent(OldName, NewName);
             Agent treeNodeAgent = AgentsPOM.SelectAgent(NewName);
 
@@ -193,7 +197,7 @@ namespace GingerTest
             AgentsPOM.AddSubFolder(folderName);
 
             //Act            
-            AgentsPOM.CreateAgent(folderName, name, ePlatformType.Web, Agent.eDriverType.SeleniumIE);
+            AgentsPOM.CreateAgent(folderName, name, ePlatformType.Web, Agent.eDriverType.Selenium);
             bool folderExist = AgentsPOM.AgentsTree.IsItemExist(folderName);
             bool agentExist = AgentsPOM.AgentsTree.IsItemExist(name);
 
@@ -227,8 +231,8 @@ namespace GingerTest
 
 
         [Ignore]
-        [DataRow("Web 1", "Web", "SeleniumChrome")]
-        [DataRow("Web 2", "Web", "SeleniumFireFox")]
+        [DataRow("Web 1", "Web", "Selenium")]
+        [DataRow("Web 2", "Web", "Selenium")]
         [TestMethod]
         [Timeout(60000)]
         public void CreateAgentsbyTestData(string agentName, string platfromType, string driverType)
@@ -258,7 +262,7 @@ namespace GingerTest
             string name = "C1";
             string copy = "C1_Copy";
             AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
-            AgentsPOM.CreateAgent(name, ePlatformType.Web, Agent.eDriverType.SeleniumIE);
+            AgentsPOM.CreateAgent(name, ePlatformType.Web, Agent.eDriverType.Selenium);
 
             //Act                        
             AgentsPOM.AgentsTree.Copy();
@@ -286,7 +290,7 @@ namespace GingerTest
             string name = "Move Me";
             string folderName = "MySubFolder";
             AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
-            Agent MyAgent = AgentsPOM.CreateAgent(name, ePlatformType.Web, Agent.eDriverType.SeleniumChrome);
+            Agent MyAgent = AgentsPOM.CreateAgent(name, ePlatformType.Web, Agent.eDriverType.Selenium);
             AgentsPOM.AgentsTree.SelectRootItem();
             AgentsPOM.AddSubFolder(folderName);
 
@@ -320,7 +324,7 @@ namespace GingerTest
             AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
             AgentsPOM.AgentsTree.SelectRootItem();
             AgentsPOM.AddSubFolder(folderName);
-            Agent MyAgent = AgentsPOM.CreateAgent(folderName, name, ePlatformType.Web, Agent.eDriverType.SeleniumChrome);
+            Agent MyAgent = AgentsPOM.CreateAgent(folderName, name, ePlatformType.Web, Agent.eDriverType.Selenium);
 
             //Act            
             AgentsPOM.AgentsTree.SelectItem(name);
@@ -354,7 +358,7 @@ namespace GingerTest
             AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
             AgentsPOM.AgentsTree.SelectRootItem();
             AgentsPOM.AddSubFolder(folderName);
-            AgentsPOM.CreateAgent(folderName, agentName, ePlatformType.Web, Agent.eDriverType.SeleniumChrome);
+            AgentsPOM.CreateAgent(folderName, agentName, ePlatformType.Web, Agent.eDriverType.Selenium);
             mGingerAutomator.ReloadSolution();
 
             //Act   
