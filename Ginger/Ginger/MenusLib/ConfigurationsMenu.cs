@@ -89,6 +89,7 @@ namespace Ginger.ConfigurationsLib
             externalConfigMenu.Add(eImageType.VRT, "VRT Configuration", GetVRTExteranalConfigsPage, ConsoleKey.X, "Visual Regression Testing External Configurations", "VRT Configuration AID");
             externalConfigMenu.Add(eImageType.Applitools, "Applitools Configuration", GetApplitoolsExteranalConfigsPage, ConsoleKey.X, "Applitools External Configurations", "Applitools Configuration AID");
             externalConfigMenu.Add(eImageType.Sealights, "Sealights Configuration", GetSealightsExteranalConfigsPage, ConsoleKey.X, "Sealights External Configurations", "Sealights Configuration AID");
+            externalConfigMenu.Add(eImageType.Chat, "Ask Lisa Configuration", GetAskLisaConfigsPage, ConsoleKey.X, "Ask Lisa Configurations", "Ask Lisa Configuration AID");
             twoLevelMenu.Add(externalConfigMenu);
 
             return twoLevelMenu;
@@ -145,7 +146,10 @@ namespace Ginger.ConfigurationsLib
         {
             return new SealightsExternalConfigurationsPage();
         }
-
+        private static Page GetAskLisaConfigsPage()
+        {
+            return new AskLisaConfigurationsPage();
+        }
         //Remove when we add other pages
         private static Page OthersPage()
         {

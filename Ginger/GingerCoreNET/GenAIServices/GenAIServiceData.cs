@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amdocs.Ginger.CoreNET.GenAIServices
+namespace GingerCoreNET.GenAIServices
 {
     public class GenAIServiceData
     {
@@ -14,23 +14,23 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         public string DomainType { set; get; }
 
         public string Host { set; get; }
-        public string TemperatureLevel { set; get; }
-        public string MaxTolkenValue { set; get; }
+        public string TemperatureLevel = "0.1";
+        public string MaxTokenValue = "2000";
 
         public string DataPath { set; get; }
 
-        public string StartNewChat { set; get; }
+        public string StartNewChat = "AQEQABot/Lisa/StartNewChat";
 
-        public string ContinueChat { set; get; }
+        public string ContinueChat = "AQEQABot/Lisa/ContinueChat";
 
-        public string GetToken { get; set; }
+        public string Token { get; set; }
 
-        public string AuthenticationServiceURL { set; get; }
+        public string AuthenticationServiceURL = "https://ilrnaaqua03/identityserverms/";
 
-        public string GrantType {set; get; }  
+        public string GrantType = "client_credentials";
 
-        public string   ClientId { set; get; }
-        public string ClientSecret { set; get; }
+        public string ClientId = "BrAIn";
+        public string ClientSecret = "AQEBrAIn_secret";
         public GenAIServiceData()
         {
 

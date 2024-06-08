@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amdocs.Ginger.CoreNET.GenAIServices
+namespace GingerCoreNET.GenAIServices
 {
     public class ChatBotResponseInfo
     {

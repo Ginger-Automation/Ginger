@@ -1,22 +1,11 @@
 ﻿using Amdocs.Ginger.Common;
-using DocumentFormat.OpenXml.Office2013.Excel;
-using Pb;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System;
 using System.Threading.Tasks;
-using System.Reflection;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Web;
 
-namespace Amdocs.Ginger.CoreNET.GenAIServices
+namespace GingerCoreNET.GenAIServices
 {
     public class GenAIServiceHelper
     {
@@ -74,7 +63,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 new KeyValuePair<string, string>("client_id", _settings.GenAIServiceSettingsData.ClientId),
                 new KeyValuePair<string, string>("client_secret",  _settings.GenAIServiceSettingsData.ClientSecret),
                 };
-                var response = await httpClient.PostAsync(_settings.GenAIServiceSettingsData.GetToken, new FormUrlEncodedContent(data));
+                var response = await httpClient.PostAsync(_settings.GenAIServiceSettingsData.Token, new FormUrlEncodedContent(data));
                 var result = await response.Content.ReadAsAsync<dynamic>();
                 responseInfo = result.ToObject<ChatBotResponseInfo>();
                 token = responseInfo.AccessToken;
@@ -196,7 +185,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             content.Add(new StringContent(_settings.GenAIServiceSettingsData.Account), "account");
             content.Add(new StringContent(_settings.GenAIServiceSettingsData.DomainType), "domainType");
             content.Add(new StringContent(_settings.GenAIServiceSettingsData.TemperatureLevel), "temperatureVal");
-            content.Add(new StringContent(_settings.GenAIServiceSettingsData.MaxTolkenValue), "maxTokensVal");
+            content.Add(new StringContent(_settings.GenAIServiceSettingsData.MaxTokenValue), "maxTokensVal");
             content.Add(new StringContent(_settings.GenAIServiceSettingsData.DataPath), "dataPath");
             return content;
         }

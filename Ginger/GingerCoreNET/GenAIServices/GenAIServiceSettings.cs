@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Amdocs.Ginger.CoreNET.GenAIServices
+namespace GingerCoreNET.GenAIServices
 {
     public class GenAIServiceSettings
     {
