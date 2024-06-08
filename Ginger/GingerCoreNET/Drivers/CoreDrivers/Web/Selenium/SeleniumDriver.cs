@@ -18,12 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
@@ -43,9 +45,11 @@ using HtmlAgilityPack;
 using InputSimulatorStandard;
 using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.ExpressionGraph.FunctionCompilers;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
+using OpenQA.Selenium.Common;
 using OpenQA.Selenium.DevTools;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
@@ -68,13 +72,13 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V121.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V125.DevToolsSessionDomains;
 
 
 
 namespace GingerCore.Drivers
 {
-    public class SeleniumDriver : DriverBase, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
+    public class SeleniumDriver : GingerWebDriver, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
     {
         protected IDevToolsSession Session;
         DevToolsSession devToolsSession;
@@ -108,9 +112,21 @@ namespace GingerCore.Drivers
             RemoteWebDriver,
         }
 
-        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
-            if (driverSubType == Agent.eDriverType.SeleniumRemoteWebDriver)
+            if (driverConfigParams == null)
+            {
+                return null;
+            }
+
+            DriverConfigParam browserTypeParam = driverConfigParams.FirstOrDefault(param => string.Equals(param.Parameter, nameof(BrowserType)));
+            
+            if (browserTypeParam == null || !Enum.TryParse(browserTypeParam.Value, out WebBrowserType browserType))
+            {
+                return null;
+            }
+
+            if (browserType == WebBrowserType.RemoteWebDriver)
             {
                 return "SeleniumRemoteWebDriverEditPage";
             }
@@ -317,9 +333,62 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Use custom browser driver. Provide complete driver path with file extension")]
         public string DriverFilePath { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredEnumType(typeof(WebBrowserType))]
+        [UserConfiguredDefault("Chrome")]
+        [UserConfiguredDescription("Browser Type")]
+        public override WebBrowserType BrowserType
+        {
+            get
+            {
+                switch (mBrowserType)
+                {
+                    case eBrowserType.Chrome:
+                        return WebBrowserType.Chrome;
+                    case eBrowserType.FireFox:
+                        return WebBrowserType.FireFox;
+                    case eBrowserType.Edge:
+                        return WebBrowserType.Edge;
+                    case eBrowserType.Brave:
+                        return WebBrowserType.Brave;
+                    case eBrowserType.IE:
+                        return WebBrowserType.InternetExplorer;
+                    case eBrowserType.RemoteWebDriver:
+                        return WebBrowserType.RemoteWebDriver;
+                    default:
+                        throw new Exception($"Unknown browser type '{mBrowserType}'");
+                }
+            }
+            set
+            {
+                switch (value)
+                {
+                    case WebBrowserType.Chrome:
+                        mBrowserType = eBrowserType.Chrome;
+                        break;
+                    case WebBrowserType.FireFox:
+                        mBrowserType = eBrowserType.FireFox;
+                        break;
+                    case WebBrowserType.Edge:
+                        mBrowserType = eBrowserType.Edge;
+                        break;
+                    case WebBrowserType.Brave:
+                        mBrowserType = eBrowserType.Brave;
+                        break;
+                    case WebBrowserType.InternetExplorer:
+                        mBrowserType = eBrowserType.IE;
+                        break;
+                    case WebBrowserType.RemoteWebDriver:
+                        mBrowserType = eBrowserType.RemoteWebDriver;
+                        break;
+                    default:
+                        throw new Exception($"Unknown browser type '{value}'");
+                }
+            }
+        }
 
         protected IWebDriver Driver;
-        protected eBrowserType mBrowserTpe;
+        protected eBrowserType mBrowserType;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
 
@@ -367,7 +436,7 @@ namespace GingerCore.Drivers
 
         public SeleniumDriver(eBrowserType BrowserType)
         {
-            mBrowserTpe = BrowserType;
+            mBrowserType = BrowserType;
         }
 
         public SeleniumDriver(object driver)
@@ -377,7 +446,7 @@ namespace GingerCore.Drivers
 
         public override void InitDriver(Agent agent)
         {
-            if (agent.DriverType == Agent.eDriverType.SeleniumRemoteWebDriver)
+            if (BrowserType == WebBrowserType.RemoteWebDriver)
             {
                 if (agent.DriverConfiguration == null)
                 {
@@ -402,7 +471,7 @@ namespace GingerCore.Drivers
 
         public eBrowserType GetBrowserType()
         {
-            return mBrowserTpe;
+            return mBrowserType;
         }
 
         /// <summary>
@@ -488,7 +557,7 @@ namespace GingerCore.Drivers
             //TODO: launch the driver/agent per combo selection
             try
             {
-                switch (mBrowserTpe)
+                switch (mBrowserType)
                 {
                     //TODO: refactor closing the extra tabs
                     #region Internet Explorer
@@ -821,7 +890,7 @@ namespace GingerCore.Drivers
                         #endregion
                 }
 
-                if (BrowserMinimized == true && mBrowserTpe != eBrowserType.Edge)
+                if (BrowserMinimized == true && mBrowserType != eBrowserType.Edge)
                 {
                     Driver.Manage().Window.Minimize();
                 }
@@ -855,10 +924,11 @@ namespace GingerCore.Drivers
                 CloseDriverProcess(driverService);
                 //If driver is mismatched, use selenium manager to get the latest driver
                 if (RestartRetry && (ex.Message.Contains("session not created: This version of", StringComparison.InvariantCultureIgnoreCase) ||
-                    ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase)))
+                    ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase) ||
+                    ex.Message.StartsWith("error starting process", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
-                    UpdateDriver(mBrowserTpe);
+                    UpdateDriver(mBrowserType);
                     StartDriver();
                 }
             }
@@ -1001,18 +1071,18 @@ namespace GingerCore.Drivers
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, $"Failed to Download latest {browserType} driver. Attempting to Update {browserType} driver to latest using System Proxy Settings....");
+                Reporter.ToLog(eLogLevel.INFO, $"Failed to Download latest {mBrowserType} driver. Attempting to Update {mBrowserType} driver to latest using System Proxy Settings....");
                 DriverOptions driverOptions = null;
 
-                if (browserType == eBrowserType.Chrome)
+                if (mBrowserType == eBrowserType.Chrome)
                 {
                     driverOptions = new ChromeOptions();
                 }
-                else if (browserType == eBrowserType.Edge)
+                else if (mBrowserType == eBrowserType.Edge)
                 {
                     driverOptions = new EdgeOptions();
                 }
-                else if (browserType == eBrowserType.FireFox)
+                else if (mBrowserType == eBrowserType.FireFox)
                 {
                     driverOptions = new FirefoxOptions();
                 }
@@ -1043,7 +1113,8 @@ namespace GingerCore.Drivers
                 }
 
                 SetBrowserVersion(driverOptions);
-                var driverpath = SeleniumManager.DriverPath(driverOptions);
+                var driverFinder = new DriverFinder(driverOptions);
+                var driverpath = driverFinder.GetDriverPath();
                 Reporter.ToLog(eLogLevel.INFO, $"Updated {browserType} driver to latest and placed in {driverpath}.");
                 return driverpath;
             }
@@ -1051,9 +1122,9 @@ namespace GingerCore.Drivers
             {
                 if (!WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToDownloadDriver, browserType);
+                    Reporter.ToUser(eUserMsgKey.FailedToDownloadDriver, mBrowserType);
                 }
-                Reporter.ToLog(eLogLevel.ERROR, string.Format(Reporter.UserMsgsPool[eUserMsgKey.FailedToDownloadDriver].Message, browserType), ex);
+                Reporter.ToLog(eLogLevel.ERROR, string.Format(Reporter.UserMsgsPool[eUserMsgKey.FailedToDownloadDriver].Message, mBrowserType), ex);
                 throw;
             }
         }
@@ -1082,7 +1153,7 @@ namespace GingerCore.Drivers
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                if (Use64Bitbrowser && (mBrowserTpe == eBrowserType.IE || mBrowserTpe == eBrowserType.FireFox))
+                if (Use64Bitbrowser && (mBrowserType == eBrowserType.IE || mBrowserType == eBrowserType.FireFox))
                 {
                     return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Win64");
                 }
@@ -1484,7 +1555,11 @@ namespace GingerCore.Drivers
                 //implicityWait must be done on actual window so need to make sure the driver is pointing on window
                 try
                 {
-                    string aa = Driver.Title;//just to make sure window attributes do not throw exception
+                    //it's wait until all page gets load 
+                    if (act is not ActNewSmartSync { SyncOperations : ActNewSmartSync.eSyncOperation.PageHasBeenLoaded })
+                    {
+                        _ = Driver.Title;//just to make sure window attributes do not throw exception
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1520,7 +1595,7 @@ namespace GingerCore.Drivers
                     string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
                     BMPClient.SaveHAR(filename);
 
-                    Act.AddArtifactToAction(Path.GetFileName(filename), act, filename);                    
+                    Act.AddArtifactToAction(Path.GetFileName(filename), act, filename);
 
                     act.ExInfo += "Action HAR file saved at: " + filename;
                 }
@@ -1553,6 +1628,11 @@ namespace GingerCore.Drivers
             if (ActType == typeof(ActSmartSync))
             {
                 SmartSyncHandler((ActSmartSync)act);
+                return;
+            }
+            if (ActType == typeof(ActNewSmartSync))
+            {
+                NewSmartSyncHandler((ActNewSmartSync)act);
                 return;
             }
             if (ActType == typeof(ActTextBox))
@@ -2085,7 +2165,206 @@ namespace GingerCore.Drivers
             }
         }
 
-        public void SmartSyncHandler(ActSmartSync act)
+        public void NewSmartSyncHandler(ActNewSmartSync act)
+        {
+            By elementLocator = null;
+            if (act.SyncOperations != ActNewSmartSync.eSyncOperation.AlertIsPresent && act.SyncOperations != ActNewSmartSync.eSyncOperation.PageHasBeenLoaded && act.SyncOperations != ActNewSmartSync.eSyncOperation.UrlMatches)
+            {
+                switch (act.LocateBy)
+                {
+                    case eLocateBy.ByXPath:
+                        elementLocator = By.XPath(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByID:
+                        elementLocator = By.Id(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByName:
+                        elementLocator = By.Name(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByClassName:
+                        elementLocator = By.ClassName(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByCSSSelector:
+                        elementLocator = By.CssSelector(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByLinkText:
+                        elementLocator = By.LinkText(act.LocateValueCalculated);
+                        break;
+                    case eLocateBy.ByTagName:
+                        elementLocator = By.TagName(act.LocateValueCalculated);
+                        break;
+                    default:
+                        act.Error = "Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, and ByTagName.";
+                        return;
+                }
+            }
+            //get time configured in flow-control, if nothing provided then use 30 seconds
+            int MaxTimeout = NewSmartSyncGetMaxTimeout(act);
+            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(MaxTimeout));
+            //store agent's implicit wait in a variable
+            int implicitWait = (int)Driver.Manage().Timeouts().ImplicitWait.TotalSeconds;
+            //set agent's implicit wait to 1 second
+            Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
+
+            wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+            ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), null);
+            try
+            {
+                
+                switch (act.SyncOperations)
+                {
+                    case ActNewSmartSync.eSyncOperation.ElementIsVisible:
+                        wait.Until(ExpectedConditions.ElementIsVisible(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.ElementExists:
+                        wait.Until(ExpectedConditions.ElementExists(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.AlertIsPresent:
+                        //no need for locators
+                        wait.Until(ExpectedConditions.AlertIsPresent());
+                        break;
+                    case ActNewSmartSync.eSyncOperation.ElementIsSelected:
+                        wait.Until(ExpectedConditions.ElementIsSelected(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.PageHasBeenLoaded:
+                        wait.Until(ExpectedConditions.PageHasBeenLoaded());
+                        break;
+                    case ActNewSmartSync.eSyncOperation.ElementToBeClickable:
+                        wait.Until(ExpectedConditions.ElementToBeClickable(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.TextMatches:
+                        VE.Value = act.TxtMatchInput;
+                        string textToMatch = VE.ValueCalculated;
+                        wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.AttributeMatches:
+                        VE.Value = act.AttributeName;
+                        string attributeName = VE.ValueCalculated;
+                        VE.Value = act.AttributeValue;
+                        string attributeValue= VE.ValueCalculated;
+                        wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
+                        wait.Until(ExpectedConditions.EnabilityOfAllElementsLocatedBy(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.FrameToBeAvailableAndSwitchToIt:
+                        wait.Until(ExpectedConditions.FrameToBeAvailableAndSwitchToIt(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.InvisibilityOfAllElementsLocatedBy:
+                        wait.Until(ExpectedConditions.InvisibilityOfAllElementsLocatedBy(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.InvisibilityOfElementLocated:
+                        wait.Until(ExpectedConditions.InvisibilityOfElementLocated(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.PresenceOfAllElementsLocatedBy:
+                        wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.SelectedOfAllElementsLocatedBy:
+                        wait.Until(ExpectedConditions.SelectedOfAllElementsLocatedBy(elementLocator));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.UrlMatches:
+                        VE.Value = act.UrlMatches;
+                        string urlMatches = VE.ValueCalculated;
+                        wait.Until(ExpectedConditions.UrlMatches(urlMatches));
+                        break;
+                    case ActNewSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
+                        wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(elementLocator));
+                        break;
+                    default:
+                        act.Error = "Unable to complete this operation.";
+                        break;
+                }
+                return;
+            }
+            catch (ArgumentNullException ex)
+            {
+                act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+            }
+            catch (Exception ex)
+            {
+                act.Error = $"{act.SyncOperations} was not completed within the allotted {MaxTimeout} seconds.";
+                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+            }
+            finally
+            {
+                //set agent's implicit wait to the original value from the variable above
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)implicitWait));
+            }
+        }
+
+        //private void Until(Func<IWebDriver, IWebDriver> condition, int timeout)
+        //{
+        //    long startTime = DateTime.Now.Ticks;
+        //    while (TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds < timeout)
+        //    {
+        //        if (condition(Driver) != null)
+        //        {
+        //            return;
+        //        }
+        //    }
+        //    throw new Exception("until timed-out");
+        //}
+
+        //public static Func<IWebDriver, IWebDriver> PageHasBeenLoaded()
+        //{
+        //    string script = @"
+        //     function getReadyState(timeout) {
+        //        return new Promise((resolve, reject) => {
+        //            const timer = setTimeout(() => {
+        //                reject('');
+        //            }, timeout);
+        
+        //            const state = document.readyState;
+        //            resolve(state);
+        //        });
+        //    }
+
+        //    try {
+        //        const state = await getReadyState(3000);
+        //        return state;
+        //    } catch (error) {
+        //        return error;
+        //    }";
+        //    return delegate (IWebDriver driver)
+        //    {
+        //        if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            return driver;
+        //        }
+
+        //        string text = ((IJavaScriptExecutor)driver).ExecuteScript(script) as string;
+        //        return text.Equals("complete", StringComparison.OrdinalIgnoreCase) ? driver : null;
+        //    };
+        //}
+
+        //public static Func<IWebDriver, IWebDriver> PageHasBeenLoaded()
+        //{
+
+        //        if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            return driver;
+        //        }
+
+        //        string text = ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState") as string;
+        //        return text.Equals("complete", StringComparison.OrdinalIgnoreCase) ? driver : null;
+
+        //}
+
+        private int NewSmartSyncGetMaxTimeout(ActNewSmartSync act)
+        {
+            if (act.Timeout > 0)
+            {
+                return act.Timeout.GetValueOrDefault();
+            }
+            else
+            {
+                return 300;
+            }
+
+        }
+
+             public void SmartSyncHandler(ActSmartSync act)
         {
             int MaxTimeout = GetMaxTimeout(act);
 
@@ -3825,7 +4104,7 @@ namespace GingerCore.Drivers
                 string[] iframesPathes = spliter.Split(EI.Path);
                 foreach (string iframePath in iframesPathes)
                 {
-                    
+
                     Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(iframePath)));
                 }
             }
@@ -6757,7 +7036,7 @@ namespace GingerCore.Drivers
 
                         catch (Exception ex)
                         {
-                            if (eBrowserType.FireFox.Equals(mBrowserTpe) && ex.Message != null && ex.Message.Contains("did not match a known command"))
+                            if (eBrowserType.FireFox.Equals(mBrowserType) && ex.Message != null && ex.Message.Contains("did not match a known command"))
                             {
                                 continue;
                             }
@@ -6809,7 +7088,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    if (mBrowserTpe == eBrowserType.FireFox && ex.Message != null && ex.Message.Contains("did not match a known command"))
+                    if (mBrowserType == eBrowserType.FireFox && ex.Message != null && ex.Message.Contains("did not match a known command"))
                     {
                         continue;
                     }
@@ -9048,7 +9327,7 @@ namespace GingerCore.Drivers
                 return ScreenshotToImage(screenshot);
             }
             Bitmap bitmapImage = null;
-            switch (mBrowserTpe)
+            switch (mBrowserType)
             {
                 case eBrowserType.FireFox:
                     var screenShot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
@@ -9083,7 +9362,7 @@ namespace GingerCore.Drivers
                 var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
                 act.AddScreenShot(screenshot.AsByteArray, Driver.Title);
             }
-            switch (mBrowserTpe)
+            switch (mBrowserType)
             {
                 case eBrowserType.FireFox:
                     var screenShot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
@@ -10122,7 +10401,7 @@ namespace GingerCore.Drivers
 
         {
 
-            switch (mBrowserTpe)
+            switch (mBrowserType)
             {
 
 
@@ -10347,9 +10626,9 @@ namespace GingerCore.Drivers
                 try
                 {
                     //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession(121);
+                    devToolsSession = devTools.GetDevToolsSession(125);
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
-                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V121.Network.EnableCommandSettings());
+                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V125.Network.EnableCommandSettings());
                     blockOrUnblockUrls();
                 }
                 catch (Exception ex)
@@ -10375,11 +10654,11 @@ namespace GingerCore.Drivers
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V121.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V125.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V121.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V125.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
                 }
                 Thread.Sleep(300);
             }
@@ -10468,7 +10747,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V121.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V125.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 
@@ -10481,8 +10760,8 @@ namespace GingerCore.Drivers
                     act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
 
                     Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
-                    
-                    Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);                    
+
+                    Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
                 }
                 else
                 {
