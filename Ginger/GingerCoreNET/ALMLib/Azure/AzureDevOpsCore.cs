@@ -53,6 +53,8 @@ using System.Xml;
 using System.Text.RegularExpressions;
 using System.Web;
 using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Spreadsheet;
+using GingerCoreNET.GeneralLib;
 
 
 namespace GingerCore.ALM
@@ -60,7 +62,7 @@ namespace GingerCore.ALM
     public class AzureDevOpsCore : ALMCore
     {
         protected AzureDevOpsRepository opsRepository;
-        
+
         private static readonly Dictionary<string, string> ExploredApplicationModule = new Dictionary<string, string>();
         public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.Azure;
 
@@ -71,7 +73,7 @@ namespace GingerCore.ALM
                 Password = ALMCore.DefaultAlmConfig.ALMPassword,
                 Server = ALMCore.DefaultAlmConfig.ALMServerURL
             });
-            
+
         }
 
 
@@ -79,11 +81,11 @@ namespace GingerCore.ALM
 
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
         {
-            get 
+            get
             { return _gingerActivitiesGroupsRepo; }
             set
-            { _gingerActivitiesGroupsRepo = value;}
-                 
+            { _gingerActivitiesGroupsRepo = value; }
+
         }
 
 
@@ -99,7 +101,7 @@ namespace GingerCore.ALM
         public override ObservableList<ApplicationPlatform> ApplicationPlatforms { get { return _applicationPlatforms; } set { _applicationPlatforms = value; } }
 
 
-      
+
 
         public override bool ConnectALMProject()
         {
@@ -122,22 +124,22 @@ namespace GingerCore.ALM
             }
         }
 
-        public Dictionary<string,string> AzureProjectList()
+        public Dictionary<string, string> AzureProjectList()
         {
-            dynamic list = AzureDevOpsRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMServerURL,ALMCore.DefaultAlmConfig.ALMPassword);
+            dynamic list = AzureDevOpsRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMPassword);
             Dictionary<string, string> listOfItems = new();
             if (list.DataResult is null)
             {
                 return listOfItems;
             }
 
-            foreach(var item in list.DataResult)
+            foreach (var item in list.DataResult)
             {
                 foreach (var i in item.Projects)
                 {
-                    listOfItems.Add(i.Guid,i.ProjectName);
+                    listOfItems.Add(i.Guid, i.ProjectName);
                 }
-                
+
             }
             return listOfItems;
         }
@@ -166,16 +168,16 @@ namespace GingerCore.ALM
                             screenshots.Add(paths);
                         }
                     }
-                   
-                 defectsOpeningResults.Add(defectForOpening.Key, CreateDefectData(defectForOpening).Id.ToString());
-                    
+
+                    defectsOpeningResults.Add(defectForOpening.Key, CreateDefectData(defectForOpening).Id.ToString());
+
                 }
                 return defectsOpeningResults;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Unable to Create New Defect", ex);
-               
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to Create New Defect", ex);
+
                 return null;
             }
         }
@@ -196,16 +198,16 @@ namespace GingerCore.ALM
 
                 JsonPatchDocument patchDocument = new();
 
-                 patchDocument.Add(
-                     new JsonPatchOperation()
-                     {
-                         Operation = Operation.Add,
-                         Path = "/fields/System.Title",
-                         Value = defectForOpening.Value.TryGetValue("Summary", out string value) ? value : string.Empty,
-                        
+                patchDocument.Add(
+                    new JsonPatchOperation()
+                    {
+                        Operation = Operation.Add,
+                        Path = "/fields/System.Title",
+                        Value = defectForOpening.Value.TryGetValue("Summary", out string value) ? value : string.Empty,
 
-                     }
-                 );
+
+                    }
+                );
 
                 patchDocument.Add(
                   new JsonPatchOperation()
@@ -216,11 +218,11 @@ namespace GingerCore.ALM
 
 
                   });
-                 
 
-                 patchDocument = AddAttachmentsToDefect(patchDocument, defectForOpening, workItemTrackingClient);
 
-                
+                patchDocument = AddAttachmentsToDefect(patchDocument, defectForOpening, workItemTrackingClient);
+
+
 
                 Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem newWorkItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, login.Project, "Bug").Result;
 
@@ -235,45 +237,45 @@ namespace GingerCore.ALM
 
         private static JsonPatchDocument AddAttachmentsToDefect(JsonPatchDocument patchDocument, KeyValuePair<Guid, Dictionary<string, string>> defectForOpening, WorkItemTrackingHttpClient wit)
         {
-            var attachmentPaths = defectForOpening.Value.TryGetValue("screenshots", out string picspath) ? picspath :string.Empty;
+            var attachmentPaths = defectForOpening.Value.TryGetValue("screenshots", out string picspath) ? picspath : string.Empty;
 
             if (string.IsNullOrEmpty(attachmentPaths))
             {
                 return patchDocument;
             }
-            
+
             var attachmentPathsArray = attachmentPaths.Split(',');
 
-                foreach (var attachmentPath in attachmentPathsArray)
+            foreach (var attachmentPath in attachmentPathsArray)
+            {
+                try
                 {
-                    try
-                    {
 
-                        var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
+                    var attachment = wit.CreateAttachmentAsync(attachmentPath.Trim()).Result;
 
-                        patchDocument.Add(
-                            new JsonPatchOperation()
+                    patchDocument.Add(
+                        new JsonPatchOperation()
+                        {
+                            Operation = Operation.Add,
+                            Path = "/relations/-",
+                            Value = new
                             {
-                                Operation = Operation.Add,
-                                Path = "/relations/-",
-                                Value = new
+                                rel = "AttachedFile",
+                                url = attachment.Url,
+                                attributes = new
                                 {
-                                    rel = "AttachedFile",
-                                    url = attachment.Url,
-                                    attributes = new
-                                    {
-                                        comment = "Attached Screenshot"
-                                    }
+                                    comment = "Attached Screenshot"
                                 }
                             }
-                        );
-                    }
-                    catch(Exception ex) 
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}");
-                    }
+                        }
+                    );
                 }
-            
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}");
+                }
+            }
+
             return patchDocument;
         }
 
@@ -319,7 +321,7 @@ namespace GingerCore.ALM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Unable to get data from the Azure", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to get data from the Azure", ex);
             }
             return "";
         }
@@ -362,12 +364,20 @@ namespace GingerCore.ALM
 
                     if (matchingTC != null)
                     {
+
+                        string commentTestRes = string.Empty;
+                        if (publishToALMConfig.ToExportReportLink)
+                        {
+                            string reportLink = General.CreateReportLinkPerFlow(HtmlReportUrl: publishToALMConfig.HtmlReportUrl, ExecutionId: publishToALMConfig.ExecutionId, BusinessFlowInstanceGuid: bizFlow.InstanceGuid.ToString());
+                            commentTestRes = $"[Ginger Report Link]({reportLink})";
+
+                        }
                         // Creating test run
                         var runModel = new RunCreateModel(name: item.TestCase.Name, plan: new Microsoft.TeamFoundation.TestManagement.WebApi.ShallowReference(bizFlow.ExternalID), pointIds: new[] { testpointid });
                         var testrun = testClient.CreateTestRunAsync(runModel, projectName).Result;
 
                         // Updating test results
-                        var caseResult = new TestCaseResult { State = "Completed", Outcome = matchingTC.RunStatus.ToString(), Id = 100000 };
+                        var caseResult = new TestCaseResult { State = "Completed", Outcome = matchingTC.RunStatus.ToString(), Id = 100000, Comment = commentTestRes };
                         testClient.UpdateTestResultsAsync(new[] { caseResult }, projectName, testrun.Id);
 
                         // Updating test run
@@ -411,22 +421,22 @@ namespace GingerCore.ALM
             LoginDTO _loginDto = GetLoginDTO();
 
             string[] witType = ["Test Case", "Test Suite", "Test Plan"];
-            foreach(var i in witType)
+            foreach (var i in witType)
             {
-                List<WorkItemTypeFieldWithReferences> listnodes =  AzureDevOpsRepository.GetListNodes(_loginDto, i);
-               
+                List<WorkItemTypeFieldWithReferences> listnodes = AzureDevOpsRepository.GetListNodes(_loginDto, i);
+
 
                 ExtractFields(fields, i, listnodes);
 
             }
-           
+
             return UpdatedAlmFields(fields);
         }
 
         private void ExtractFields(ObservableList<ExternalItemFieldBase> fields, string resource2, List<WorkItemTypeFieldWithReferences> listnodes)
         {
             fields.Append(AddFieldsValues(resource2, listnodes));
-            
+
         }
 
 
@@ -434,10 +444,10 @@ namespace GingerCore.ALM
         private ObservableList<ExternalItemFieldBase> AddFieldsValues(string entityType, List<WorkItemTypeFieldWithReferences> listnodes)
         {
             ObservableList<ExternalItemFieldBase> fields = [];
-           
+
             if ((listnodes != null))
             {
-                foreach(var field in listnodes)
+                foreach (var field in listnodes)
                 {
 
                     ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
@@ -466,7 +476,7 @@ namespace GingerCore.ALM
             return fields;
         }
 
-       
+
 
         public override bool IsServerConnected()
         {
@@ -481,7 +491,7 @@ namespace GingerCore.ALM
                 Server = ALMCore.DefaultAlmConfig.ALMServerURL,
                 Project = ALMCore.DefaultAlmConfig.ALMProjectName
             };
-            
+
             return loginDTO;
         }
 
@@ -496,11 +506,11 @@ namespace GingerCore.ALM
             return true;
         }
 
-        public Dictionary<string,List<string>> GetTestPlan()
+        public Dictionary<string, List<string>> GetTestPlan()
         {
-            List <TestPlanWebApi.TestPlan> listPlans =  AzureDevOpsManager.GetTestPlans(GetLoginDTO());
+            List<TestPlanWebApi.TestPlan> listPlans = AzureDevOpsManager.GetTestPlans(GetLoginDTO());
             Dictionary<string, List<string>> tempPlan = [];
-            if (listPlans !=null )
+            if (listPlans != null)
             {
                 foreach (var item in listPlans)
                 {
@@ -521,7 +531,7 @@ namespace GingerCore.ALM
             try
             {
                 List<string> step = [];
-              foreach(var item in activitiesGroup.ActivitiesIdentifiers)
+                foreach (var item in activitiesGroup.ActivitiesIdentifiers)
                 {
                     step.Add(item.ActivityName);
                 }
@@ -575,15 +585,15 @@ namespace GingerCore.ALM
             }
         }
 
-        public  void TestCaseEntryInSuite(BusinessFlow bf)
+        public void TestCaseEntryInSuite(BusinessFlow bf)
         {
             try
             {
 
-            
-            LoginDTO login = GetLoginDTO();
-            string projectName = login.Project;
-            VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
+
+                LoginDTO login = GetLoginDTO();
+                string projectName = login.Project;
+                VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
 
 
 
@@ -650,7 +660,7 @@ namespace GingerCore.ALM
 
             // this will be root suite id of the test plan
             bf.ExternalID2 = plan.RootSuite.Id.ToString();
-            
+
         }
 
         public int? UpdateExistingTestSuite(BusinessFlow bf, ALMTestSetData mappedTestSet, string fatherId, ObservableList<ExternalItemFieldBase> testsetfield)
@@ -678,10 +688,10 @@ namespace GingerCore.ALM
 
         public void CreateNewTestCase(ActivitiesGroup ag, string fatherId, ObservableList<ExternalItemFieldBase> testcasefields, List<string> step)
         {
-           
+
             TestBaseHelper helper = new TestBaseHelper();
             ITestBase testBase = helper.Create();
-            testBase = CreateTestStep(step,testBase);
+            testBase = CreateTestStep(step, testBase);
 
             LoginDTO logincred = GetLoginDTO();
             // Get a testplan client instance
@@ -702,7 +712,7 @@ namespace GingerCore.ALM
             // add test steps in json
             // it will update json document based on test steps and attachments
             json = testBase.SaveActions(json);
-            
+
             // create a test case
             var testCaseObject = witclient.CreateWorkItemAsync(json, logincred.Project, "Test Case").Result;
             ag.ExternalID = testCaseObject.Id.ToString();
@@ -748,10 +758,10 @@ namespace GingerCore.ALM
 
                 var ress = _witClient.UpdateWorkItemAsync(patchDocument, Int32.Parse(ag.ExternalID)).Result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Unable to update the test case", ex);
-                
+
             }
         }
 
@@ -760,7 +770,7 @@ namespace GingerCore.ALM
         {
             foreach (var title in step)
             {
-                ITestStep testStep = testBase.CreateTestStep(); 
+                ITestStep testStep = testBase.CreateTestStep();
                 testStep.Title = title;
                 testBase.Actions.Add(testStep);
             }
@@ -769,7 +779,7 @@ namespace GingerCore.ALM
         }
 
 
-        public  string GetLastTestPlanIdFromPath(string path)
+        public string GetLastTestPlanIdFromPath(string path)
         {
             string[] separatePath;
             if (!string.IsNullOrEmpty(path))
@@ -802,7 +812,7 @@ namespace GingerCore.ALM
 
         }
 
-        private  string GetTestLabFolderId(string separateAti, string separateAtIMinusOne)
+        private string GetTestLabFolderId(string separateAti, string separateAtIMinusOne)
         {
             LoginDTO login = GetLoginDTO();
             if (!ExploredApplicationModule.ContainsKey(separateAti))
@@ -818,10 +828,10 @@ namespace GingerCore.ALM
         private static string GetRootFolderId()
         {
             LoginDTO loginDTO = GetLoginDTO();
-            
+
             return Task.Run(() =>
             {
-                
+
                 Wiql wiql = new Wiql()
                 {
                     Query = "Select [System.Id]" +
@@ -892,7 +902,7 @@ namespace GingerCore.ALM
                 azureTestPlanItems.Project = testset.Value[0];
                 testlabPathList.Add(azureTestPlanItems);
             }
-            
+
             return testlabPathList;
         }
         public dynamic GetTSRunStatus(dynamic TSItem)
@@ -914,24 +924,24 @@ namespace GingerCore.ALM
             }
             return TSItem;
         }
-        
+
         public List<TestPlanWebApi.TestPlan> GetTestSuiteRun(string testSuiteId)
         {
             string projectName = ALMCore.DefaultAlmConfig.ALMProjectName;
-            
+
             LoginDTO loginCred = GetLoginDTO();
             // Get a testplan client instance
             VssConnection connection = AzureDevOpsRepository.LoginAzure(loginCred);
             TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
 
-            
+
             // Get test plans
             List<TestPlanWebApi.TestPlan> plans = testPlanClient.GetTestPlansAsync(projectName).Result;
             return plans;
         }
         public ALMTestSetData GetTestSuiteById(string tsId)
         {
-            
+
 
             LoginDTO logincred = GetLoginDTO();
 
@@ -960,9 +970,9 @@ namespace GingerCore.ALM
 
                     return aLMTestSetData;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID,$"{ex.InnerException.Message}");
+                    Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID, $"{ex.InnerException.Message}");
                     return null;
                 }
             }
@@ -971,14 +981,14 @@ namespace GingerCore.ALM
                 Reporter.ToLog(eLogLevel.ERROR, "Unable to parse ExternalId to test suite id");
                 return null;
             }
-            
+
         }
 
         public AzureTestPlan GetAzureTestSetData(AzureTestPlan selectedTS)
         {
             try
             {
-               
+
 
                 int testplanId = Int32.Parse(selectedTS.AzureID);
                 LoginDTO logincred = GetLoginDTO();
@@ -990,7 +1000,7 @@ namespace GingerCore.ALM
                 // In case of  Import from Test Set By d
                 if (string.IsNullOrEmpty(selectedTS.Name) && string.IsNullOrEmpty(selectedTS.Project))
                 {
-                    var itm = testPlanClient.GetTestSuiteByIdAsync(logincred.Project,testplanId, testplanId+1).Result;
+                    var itm = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, testplanId + 1).Result;
                     selectedTS.Name = itm.Name;
                     selectedTS.Project = logincred.Project;
                 }
@@ -1014,9 +1024,9 @@ namespace GingerCore.ALM
 
                 return selectedTS;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Unable to Get the Azure Test Plan Data", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to Get the Azure Test Plan Data", ex);
                 return null;
             }
         }
@@ -1039,7 +1049,7 @@ namespace GingerCore.ALM
                 xmlDoc.LoadXml(testStepValue);
                 if (xmlDoc != null)
                 {
-                   
+
                     var test = xmlDoc.FirstChild.ChildNodes;
                     foreach (var item in test)
                     {
@@ -1057,8 +1067,8 @@ namespace GingerCore.ALM
             {
                 Reporter.ToLog(eLogLevel.INFO, "Test Case may not contains test steps");
             }
-           
-            
+
+
             return testCasesSteps;
         }
 
@@ -1178,7 +1188,7 @@ namespace GingerCore.ALM
             //check if the TC is already exist in repository
             ActivitiesGroup tcActivsGroup;
             ActivitiesGroup repoActivsGroup = null;
-           
+
 
             if (repoActivsGroup != null)
             {
@@ -1209,7 +1219,7 @@ namespace GingerCore.ALM
 
                 tcActivsGroup.ExternalID = tc.TestID;
                 tcActivsGroup.Description = tc.Description;
-                
+
                 busFlow.AddActivitiesGroup(tcActivsGroup);
             }
 
@@ -1231,8 +1241,8 @@ namespace GingerCore.ALM
                     //already in Activities Group so get link to it
                     stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                     // in any case update description/expected/name - even if "step" was taken from repository
-                   
-                    stepActivity.ActivityName =  step.StepName;
+
+                    stepActivity.ActivityName = step.StepName;
                 }
                 else//not in ActivitiesGroup so get instance from repo
                 {

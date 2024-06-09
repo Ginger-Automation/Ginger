@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -24,7 +24,9 @@ using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
+using Ginger.Configurations;
 using Ginger.UserConfig;
+using GingerCoreNET;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using Newtonsoft.Json.Linq;
@@ -691,5 +693,9 @@ namespace Ginger
             }
             return false;
         }
+
+        [IsSerializedForLocalRepository]
+        public AskLisaConfiguration AskLisaConfiguration { get; set; } = new();
+        
     }
 }

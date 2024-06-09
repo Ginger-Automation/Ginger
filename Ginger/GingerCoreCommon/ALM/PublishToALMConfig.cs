@@ -72,6 +72,23 @@ namespace GingerCore.ALM
 
         public bool ToAttachActivitiesGroupReport { get; set; }
 
+        private bool mToExportReportLink;
+        public bool ToExportReportLink
+        {
+            get
+            {
+                return mToExportReportLink;
+            }
+            set
+            {
+                if (mToExportReportLink != value)
+                {
+                    mToExportReportLink = value;
+                    OnPropertyChanged(nameof(ToExportReportLink));
+                }
+            }
+        }
+
         public FilterByStatus FilterStatus { get; set; }
         public eALMType PublishALMType { get; set; }
         public eALMTestSetLevel ALMTestSetLevel { get; set; }

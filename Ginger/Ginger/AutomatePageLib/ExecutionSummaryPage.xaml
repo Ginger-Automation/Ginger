@@ -3,8 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     x:Class="Ginger.BusinessFlowWindows.ExecutionSummaryPage"
-    Height="600" Width="600">
-    
+    Height="600" Width="580">
+
     <Page.Resources>
         <x:ArrayExtension Type="{x:Type Brush}" x:Key="brushes">
             <SolidColorBrush Color="#9F15C3"/>
@@ -19,59 +19,58 @@
     <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="300*"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="250"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        
-        <Viewbox Grid.Row="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <!--Row 0-->
+        <Viewbox Grid.Row="0" Grid.ColumnSpan="2">
             <Label x:Name="lblBizFlowName" Foreground="{StaticResource $SelectionColor_Pink}" FontWeight="ExtraBold" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Biz Flow Name"/>
         </Viewbox>
-
-        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+        <!--Row 1-->
+        <StackPanel Grid.Row="1" VerticalAlignment="Center"  Grid.ColumnSpan="2">
             <Label x:Name="StatusLabel" Content="Status"  FontSize="30" FontWeight="ExtraBold" />
             <Label x:Name="lblElapsed" Content="Elapsed" FontSize="15" Foreground="{StaticResource $PrimaryColor_Black}"/>
         </StackPanel>
-        <StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,0,0,0" >
-            <Label x:Name="Activities" Content="Activities" Background="{StaticResource $BackgroundColor_White}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Center" FontFamily="MS Arial"  FontSize="20" Margin="0,0,0,0"/>
-            <Label x:Name="Actions" Content="Actions" Background="{StaticResource $BackgroundColor_White}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Center" FontFamily="MS Arial" FontSize="20"  Margin="200,0,0,0"/>
+        <!--Row 2-->
+        <Label  Grid.Row="2" Grid.Column="0" x:Name="Activities" Content="Activities" Background="{StaticResource $BackgroundColor_White}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Center" FontFamily="MS Arial" FontSize="20"/>
+        <Label  Grid.Row="2" Grid.Column="1" x:Name="Actions" Content="Actions" Background="{StaticResource $BackgroundColor_White}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Center" FontFamily="MS Arial" FontSize="20"/>
+        <!--Row 3-->
+        <lvc:PieChart  Grid.Row="3" Grid.Column="0" x:Name="ActivityChart" InnerRadius="100" Series="{Binding SeriesActivityCollection}" VerticalAlignment="Center" Width="200" Height="120" Hoverable="False" DataTooltip="{x:Null}"/>
+        <lvc:PieChart  Grid.Row="3" Grid.Column="1" x:Name="ActionChart" InnerRadius="100" Series="{Binding SeriesActionCollection}" VerticalAlignment="Center" Width="200" Height="120"  Hoverable="False" DataTooltip="{x:Null}"/>
+
+        <!--Row 4-->
+        <StackPanel  Grid.Row="4"  Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="top" Orientation="Horizontal" >
+            <StackPanel  HorizontalAlignment="Left" Orientation="Horizontal"  x:Name="Passed"  Visibility="Collapsed" Margin="0,0,0,4">
+                <Rectangle Height="10" Stroke="#54A81B" StrokeThickness="10"  Width="20" VerticalAlignment="Center"/>
+                <Label Content="Passed" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal"  x:Name="Failed" Visibility="Collapsed" Margin="0,0,0,4">
+                <Rectangle Height="10" Stroke="#E31123" StrokeThickness="10"  Width="20" VerticalAlignment="Center" />
+                <Label Content="Failed" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" x:Name="Stopped" Visibility="Collapsed" Margin="0,0,0,4">
+                <Rectangle Height="10" Stroke="#ED5588" StrokeThickness="10"  Width="20" VerticalAlignment="Center"/>
+                <Label Content="Stopped" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal"  x:Name="Other" Visibility="Collapsed" Margin="0,0,0,4">
+                <Rectangle Height="10" Stroke="#333333" StrokeThickness="10"  Width="20" VerticalAlignment="Center"/>
+                <Label Content="Other" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal"  x:Name="Pending" Visibility="Collapsed" Margin="0,0,0,4">
+                <Rectangle Height="10" Stroke="#FF8C00" StrokeThickness="10"  Width="20" VerticalAlignment="Center" />
+                <Label Content="Pending" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" x:Name="Running" Visibility="Collapsed" Margin="0,0,0,4">
+                <Rectangle Height="10" Stroke="#800080" StrokeThickness="10" Width="20" VerticalAlignment="Center"/>
+                <Label Content="Running" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            </StackPanel>
         </StackPanel>
-        <DockPanel Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50,0,0,70">
-            <StackPanel Grid.Row="1" Margin="0,50,0,0">
-                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Orientation="Horizontal"  Height="30" Width="100" Margin="0,0,0,2" x:Name="Passed" Visibility="Collapsed">
-                    <Rectangle Height="10" Stroke="#54A81B" StrokeThickness="10"  Width="20" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Left"/>
-                    <Label Content="Passed" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Orientation="Horizontal"  Height="30" Width="100" Margin="0,0,0,2" x:Name="Failed" Visibility="Collapsed">
-                    <Rectangle Height="10" Stroke="#E31123" StrokeThickness="10"  Width="20" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Left"/>
-                    <Label Content="Failed" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Orientation="Horizontal"  Height="30" Width="100" Margin="0,0,0,2" x:Name="Stopped" Visibility="Collapsed">
-                    <Rectangle Height="10" Stroke="#ED5588" StrokeThickness="10"  Width="20" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Left"/>
-                    <Label Content="Stopped" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                </StackPanel>
-                
-                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Orientation="Horizontal"  Height="30" Width="100" Margin="0,0,0,2" x:Name="Other" Visibility="Collapsed">
-                    <Rectangle Height="10" Stroke="#333333" StrokeThickness="10"  Width="20" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Left"/>
-                    <Label Content="Other" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Orientation="Horizontal"  Height="30" Width="100" Margin="0,0,0,2" x:Name="Pending" Visibility="Collapsed">
-                    <Rectangle Height="10" Stroke="#FF8C00" StrokeThickness="10"  Width="20" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Left"/>
-                    <Label Content="Pending" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Orientation="Horizontal"  Height="30" Width="100" Margin="0,0,0,2" x:Name="Running" Visibility="Collapsed">
-                    <Rectangle Height="10" Stroke="#800080" StrokeThickness="10"  Width="20" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Left"/>
-                    <Label Content="Running" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                </StackPanel>
-            </StackPanel>
-            <StackPanel Grid.Row="1" x:Name="stck" HorizontalAlignment="Center" VerticalAlignment="Center" Height="200" Width="600" Orientation="Horizontal" Margin="100,0,0,0">
-                <lvc:PieChart x:Name="ActivityChart" InnerRadius="80" Series="{Binding SeriesActivityCollection}" VerticalAlignment="Center"  Width="200" Height="100" Hoverable="False" DataTooltip="{x:Null}" Margin="0,30,50,30"  />
-                <lvc:PieChart x:Name="ActionChart" InnerRadius="80" Series="{Binding SeriesActionCollection}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="200" Height="100"  Hoverable="False" DataTooltip="{x:Null}" Margin="0,30,50,30"/>
-
-
-            </StackPanel>
-        </DockPanel>
-
         <!--// TODO: when pie item clicked show in grid the data
         <StackPanel Grid.Row="7" Grid.ColumnSpan="8">
             <Label>Failed Action</Label>

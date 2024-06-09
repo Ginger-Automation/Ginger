@@ -20,7 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.SourceControlLib;
-using Amdocs.Ginger.CoreNET.GenAIServices;
+using GingerCoreNET.GenAIServices;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
@@ -183,14 +183,8 @@ namespace Ginger
                 }
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
-                var genAIService = new GenAIServiceSettings();
-                if (genAIService!=null && genAIService.GenAIServiceSettingsData!=null && genAIService.GenAIServiceSettingsData.EnableChat)
-                {
-                    xChatPanel.Visibility = Visibility.Visible;
-                    xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
-                }
-                
-
+                WorkSpace.Instance.UserProfile.AskLisaConfiguration.PropertyChanged += AskLisaPropertyChanged;
+                EnableChatBot();
             }
             catch (Exception ex)
             {
@@ -206,6 +200,25 @@ namespace Ginger
                 }
             }
 
+        }
+
+        private void AskLisaPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            EnableChatBot();
+        }
+
+        private void EnableChatBot()
+        {
+            if (WorkSpace.Instance.UserProfile.AskLisaConfiguration.EnableChat == Configurations.AskLisaConfiguration.eEnableChatBot.Yes)
+            {
+                xChatPanel.Visibility = Visibility.Visible;
+                xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
+            }
+            else
+            {
+                xChatPanel.Visibility = Visibility.Collapsed;
+                xChatbotWindow.IsVisibleChanged -= XChatbotWindow_IsVisibleChanged;
+            }
         }
 
         private void XChatbotWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -1191,6 +1204,7 @@ namespace Ginger
                 imageMaker.SetAsFontImageWithSize = 16;
                 imageMaker.ImageType = iconType;
                 subMenuItem.Icon = imageMaker;
+                imageMaker.Margin = new Thickness(5,0,-5,0);
             }
             parentMenuItem.Items.Insert(insertIndex, subMenuItem);
         }

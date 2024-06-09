@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.Actions;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
@@ -62,6 +63,7 @@ namespace Ginger.AnalyzerLib
 
         private Solution? mSolution;
         private BusinessFlow businessFlow;
+        private IEnumerable<IApplicationAgent> _applicationAgents;
         private RunSetConfig mRunSetConfig;
         private RunSetConfigAnalyzer.Check _runSetAnalyzerChecks;
         private AnalyzeGingerRunner.Check _runnerAnalyzerChecks;
@@ -137,14 +139,15 @@ namespace Ginger.AnalyzerLib
 
         public void Init(BusinessFlow BusinessFlow, bool selfHealingAutoFixIssue = false)
         {
-            Init(BusinessFlow, solution: null, selfHealingAutoFixIssue);
+            Init(BusinessFlow, solution: null, applicationAgents: null, selfHealingAutoFixIssue);
         }
 
-        public void Init(BusinessFlow businessFlow, Solution? solution, bool selfHealingAutoFixIssue = false)
+        public void Init(BusinessFlow businessFlow, Solution? solution, IEnumerable<IApplicationAgent>? applicationAgents, bool selfHealingAutoFixIssue = false)
         {
             mAnalyzedObject = AnalyzedObject.BusinessFlow;
             mSolution = solution;
             this.businessFlow = businessFlow;
+            _applicationAgents = applicationAgents ?? Array.Empty<IApplicationAgent>();
             AnalyzerItemsGrid.Title = $"'{businessFlow.Name}' {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} Issues";
 
             mAnalyzerUtils.SelfHealingAutoFixIssue = selfHealingAutoFixIssue;
@@ -233,7 +236,7 @@ namespace Ginger.AnalyzerLib
 
                         case AnalyzedObject.BusinessFlow:
                             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name + "...");
-                            mAnalyzerUtils.RunBusinessFlowAnalyzer(businessFlow, mSolution, mIssues);
+                            mAnalyzerUtils.RunBusinessFlowAnalyzer(businessFlow, _applicationAgents, mSolution, mIssues);
                             break;
 
                         case AnalyzedObject.RunSetConfig:

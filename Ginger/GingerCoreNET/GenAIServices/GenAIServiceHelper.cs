@@ -1,32 +1,20 @@
 ﻿using Amdocs.Ginger.Common;
-using DocumentFormat.OpenXml.Office2013.Excel;
-using Pb;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System;
 using System.Threading.Tasks;
-using System.Reflection;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Web;
+using amdocs.ginger.GingerCoreNET;
 
-namespace Amdocs.Ginger.CoreNET.GenAIServices
+namespace GingerCoreNET.GenAIServices
 {
     public class GenAIServiceHelper
     {
 
         HttpClient _httpClient;
-        readonly GenAIServiceSettings _settings;
         private string token = null;
         public GenAIServiceHelper()
         {
-            _settings = new GenAIServiceSettings();
             InitClient();
         }
 
@@ -35,7 +23,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             try
             {
                 _httpClient = new HttpClient();
-                var host = _settings.GenAIServiceSettingsData.Host;
+                var host = WorkSpace.Instance.UserProfile.AskLisaConfiguration.Host;
                 if (!string.IsNullOrEmpty(host))
                 {
                     host = !host.EndsWith("/") ? $"{host}/" : host;
@@ -48,21 +36,20 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Chat bot service initialization failed", ex); 
+                Reporter.ToLog(eLogLevel.ERROR, "Chat bot service initialization failed", ex);
             }
 
         }
 
-      
+
 
         private async Task<bool> GetToken()
         {
-        
             try
             {
                 ChatBotResponseInfo responseInfo = new();
                 var httpClient = new HttpClient();
-                var host = _settings.GenAIServiceSettingsData.AuthenticationServiceURL;
+                var host = WorkSpace.Instance.UserProfile.AskLisaConfiguration.AuthenticationServiceURL;
                 if (!string.IsNullOrEmpty(host))
                 {
                     host = !host.EndsWith("/") ? $"{host}/" : host;
@@ -70,11 +57,11 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 }
                 var data = new[]
                 {
-                new KeyValuePair<string, string>("grant_type", _settings.GenAIServiceSettingsData.GrantType),
-                new KeyValuePair<string, string>("client_id", _settings.GenAIServiceSettingsData.ClientId),
-                new KeyValuePair<string, string>("client_secret",  _settings.GenAIServiceSettingsData.ClientSecret),
+                new KeyValuePair<string, string>("grant_type", WorkSpace.Instance.UserProfile.AskLisaConfiguration.GrantType),
+                new KeyValuePair<string, string>("client_id", WorkSpace.Instance.UserProfile.AskLisaConfiguration.ClientId),
+                new KeyValuePair<string, string>("client_secret",  WorkSpace.Instance.UserProfile.AskLisaConfiguration.ClientSecret),
                 };
-                var response = await httpClient.PostAsync(_settings.GenAIServiceSettingsData.GetToken, new FormUrlEncodedContent(data));
+                var response = await httpClient.PostAsync(WorkSpace.Instance.UserProfile.AskLisaConfiguration.Token, new FormUrlEncodedContent(data));
                 var result = await response.Content.ReadAsAsync<dynamic>();
                 responseInfo = result.ToObject<ChatBotResponseInfo>();
                 token = responseInfo.AccessToken;
@@ -102,7 +89,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             if (string.IsNullOrEmpty(token))
             {
-               return await GetToken();               
+                return await GetToken();
             }
             else if (IsTokenValid())
             {
@@ -133,7 +120,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Error occured in validate token", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured in validate token", ex);
                 return false;
             }
         }
@@ -146,7 +133,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
                 _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
-                var response = await _httpClient.PostAsync(_settings.GenAIServiceSettingsData.ContinueChat, content);
+                var response = await _httpClient.PostAsync(WorkSpace.Instance.UserProfile.AskLisaConfiguration.ContinueChat, content);
                 return await ParseResponse(response);
             }
             else
@@ -158,14 +145,14 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         public async Task<string> StartNewChat(string chatBotRequest)
         {
 
-           bool tokenValid= await GetOrValidateToken();
+            bool tokenValid = await GetOrValidateToken();
 
             if (tokenValid)
             {
                 MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
                 _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
-                var response = await _httpClient.PostAsync(_settings.GenAIServiceSettingsData.StartNewChat, content);
+                var response = await _httpClient.PostAsync(WorkSpace.Instance.UserProfile.AskLisaConfiguration.StartNewChat, content);
                 return await ParseResponse(response);
             }
             else
@@ -174,13 +161,13 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
             }
         }
 
-      
+
 
 
         private static async Task<string> ParseResponse(HttpResponseMessage response)
         {
             var result = await response.Content.ReadAsStringAsync();
-            if(!string.IsNullOrEmpty(result))
+            if (!string.IsNullOrEmpty(result))
             {
                 return result;
             }
@@ -193,11 +180,11 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             var content = new MultipartFormDataContent();
             content.Add(new StringContent(Question), "question");
-            content.Add(new StringContent(_settings.GenAIServiceSettingsData.Account), "account");
-            content.Add(new StringContent(_settings.GenAIServiceSettingsData.DomainType), "domainType");
-            content.Add(new StringContent(_settings.GenAIServiceSettingsData.TemperatureLevel), "temperatureVal");
-            content.Add(new StringContent(_settings.GenAIServiceSettingsData.MaxTolkenValue), "maxTokensVal");
-            content.Add(new StringContent(_settings.GenAIServiceSettingsData.DataPath), "dataPath");
+            content.Add(new StringContent(WorkSpace.Instance.UserProfile.AskLisaConfiguration.Account), "account");
+            content.Add(new StringContent(WorkSpace.Instance.UserProfile.AskLisaConfiguration.DomainType), "domainType");
+            content.Add(new StringContent(WorkSpace.Instance.UserProfile.AskLisaConfiguration.TemperatureLevel), "temperatureVal");
+            content.Add(new StringContent(WorkSpace.Instance.UserProfile.AskLisaConfiguration.MaxTokenValue), "maxTokensVal");
+            content.Add(new StringContent(WorkSpace.Instance.UserProfile.AskLisaConfiguration.DataPath), "dataPath");
             return content;
         }
     }

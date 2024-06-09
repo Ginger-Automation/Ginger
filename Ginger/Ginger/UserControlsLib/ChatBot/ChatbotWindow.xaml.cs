@@ -1,6 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.GenAIServices;
+using GingerCoreNET.GenAIServices;
 using Ginger;
 using Ginger.Extensions;
 using System;

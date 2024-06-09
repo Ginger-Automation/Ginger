@@ -290,11 +290,11 @@ namespace Ginger.BusinessFlowPages
                 mVariabelsListView.DataSourceList = null;
             }
         }
-        private void MVariabelListItemInfo_VariabelListItemEvent(VariabelListItemEventArgs EventArgs)
+        private void MVariabelListItemInfo_VariabelListItemEvent(ListItemEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
             {
-                case VariabelListItemEventArgs.eEventType.ShowVariabelEditPage:
+                case ListItemEventArgs.eEventType.ShowEditPage:
                     ShowHideEditPage((VariableBase)EventArgs.EventObject);
                     break;
             }

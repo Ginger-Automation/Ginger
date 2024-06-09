@@ -868,6 +868,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     operationConfigPublishToALM.AttachActivitiesGroupsReport = publishToQCAction.toAttachActivitiesGroupReport;
                     operationConfigPublishToALM.UseUserVariableInRunInstanceName = publishToQCAction.isVariableInTCRunUsed;
                     operationConfigPublishToALM.UserVariableInRunInstance = publishToQCAction.VariableForTCRunName;
+                    operationConfigPublishToALM.ExportReportLink = publishToQCAction.ToExportReportLink;
 
                     if (publishToQCAction.AlmFields != null && publishToQCAction.AlmFields.Count > 0)
                     {

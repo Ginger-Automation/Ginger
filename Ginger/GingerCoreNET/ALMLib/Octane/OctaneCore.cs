@@ -28,7 +28,9 @@ using GingerCore.ALM.QC;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Graph;
 using OctaneRepositoryStd;
 using OctaneStdSDK.Connector;
 using OctaneStdSDK.Connector.Credentials;
@@ -240,10 +242,10 @@ namespace GingerCore.ALM
                                 try
                                 {
                                     string octaneSettingsFilePath = Path.Combine(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath, "OctaneSettings.json");
-                                    if (File.Exists(octaneSettingsFilePath))
+                                    if (System.IO.File.Exists(octaneSettingsFilePath))
                                     {
                                         Reporter.ToLog(eLogLevel.DEBUG, "Loading Octane extra connection settings");
-                                        OctaneSettings octaneSettings = JsonUtils.DeserializeObject<OctaneSettings>(File.ReadAllText(octaneSettingsFilePath));
+                                        OctaneSettings octaneSettings = JsonUtils.DeserializeObject<OctaneSettings>(System.IO.File.ReadAllText(octaneSettingsFilePath));
                                         if (octaneSettings.IsCertificatePasswordEncrypted)
                                         {
                                             octaneSettings.CertificatePassword = EncryptionHandler.DecryptwithKey(octaneSettings.CertificatePassword);
@@ -530,7 +532,7 @@ namespace GingerCore.ALM
                                     Run runTExport = CrateTestRun(publishToALMConfig, activGroup, tsTest, runSuite.Id, runFields);
 
                                     // Attach ActivityGroup Report if needed
-                                    if (publishToALMConfig.ToAttachActivitiesGroupReport) 
+                                    if (publishToALMConfig.ToAttachActivitiesGroupReport)
                                     {
                                         if ((activGroup.TempReportFolder != null) && (activGroup.TempReportFolder != string.Empty) &&
                                             (System.IO.Directory.Exists(activGroup.TempReportFolder)))
@@ -558,6 +560,19 @@ namespace GingerCore.ALM
                                             }
 
                                             System.IO.File.Delete(zipFileName);
+                                        }
+                                    }
+
+                                    if (publishToALMConfig.ToExportReportLink )
+                                    {
+                                      
+                                        string reportLink = General.CreateReportLinkPerFlow(HtmlReportUrl: publishToALMConfig.HtmlReportUrl, ExecutionId: publishToALMConfig.ExecutionId, BusinessFlowInstanceGuid: bizFlow.InstanceGuid.ToString());
+                                        reportLink = $"<a href='{reportLink}' target='_blank'>Ginger Report Link</a>";
+                                        if (!this.AddCommentForTestRun(runTExport.Id, reportLink))
+                                        {
+
+                                            Reporter.ToLog(eLogLevel.ERROR, "Failed to add comment");
+
                                         }
                                     }
                                 }
@@ -689,6 +704,19 @@ namespace GingerCore.ALM
             }
         }
 
+        private bool AddCommentForTestRun(string TestRunId, string comment)
+        {
+            try
+            {
+                return this.octaneRepository.AddComment(GetLoginDTO(), new Run() { Id = new EntityId(TestRunId) }, comment);
+
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private RunSuite CreateRunSuite(PublishToALMConfig publishToALMConfig, BusinessFlow bizFlow, ALMTestSetData testSet, ObservableList<ExternalItemFieldBase> runFields)
         {
             try
@@ -708,6 +736,8 @@ namespace GingerCore.ALM
                 });
                 AddEntityFieldValues(runFields.ToList(), runSuiteToExport, "run_suite");
                 runSuiteToExport.SetValue("description", publishToALMConfig.VariableForTCRunName);
+
+
                 try
                 {
                     runSuiteToExport = Task.Run(() =>
@@ -806,7 +836,7 @@ namespace GingerCore.ALM
                 return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
             });
             Task.WaitAll(new Task[] { domainsProjectsDataTask });
-           
+
             return domainsProjectsDataTask.Result;
         }
 

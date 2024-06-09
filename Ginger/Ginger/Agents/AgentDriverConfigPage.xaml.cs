@@ -21,7 +21,9 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Drivers;
 using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,6 +47,23 @@ namespace Ginger.Agents
             InitializeComponent();
 
             mAgent = agent;
+
+            if (Agent.GetDriverPlatformType(mAgent.DriverType).Equals(ePlatformType.Web) && !mAgent.DriverConfiguration.Any((driverConfig)=>string.Equals(nameof(SeleniumDriver.ByPassProxy), driverConfig.Parameter)))
+            {
+               MemberInfo memberInfo = typeof(SeleniumDriver).GetMember(nameof(SeleniumDriver.ByPassProxy))[0];
+               var userConfigDesc =  Attribute.GetCustomAttribute(memberInfo, typeof(UserConfiguredDescriptionAttribute), false) as UserConfiguredDescriptionAttribute;
+               var defaultVal = Attribute.GetCustomAttribute(memberInfo, typeof(UserConfiguredDefaultAttribute), false) as UserConfiguredDefaultAttribute;
+
+                mAgent.DriverConfiguration.Insert(1, new DriverConfigParam()
+                {
+
+                    Parameter = nameof(SeleniumDriver.ByPassProxy),
+                    Value = defaultVal?.DefaultValue ?? string.Empty,
+                    Description = userConfigDesc?.Description ?? string.Empty,
+                });
+            }
+
+
             mAgent.PropertyChanged += Agent_PropertyChanged;
             _viewMode = viewMode;
             InitAgentDriverConfigs();
@@ -63,17 +82,17 @@ namespace Ginger.Agents
             }
         }
 
-        private void SetDriverConfigsPageContent()
+        public void SetDriverConfigsPageContent()
         {
             DriverBase driver = (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(mAgent);
 
-            if (driver.GetDriverConfigsEditPageName(mAgent.DriverType) != null)
+            if (driver.GetDriverConfigsEditPageName(mAgent.DriverType, mAgent.DriverConfiguration) != null)
             {
                 DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
                 DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
 
                 //Custome edit page
-                string classname = "Ginger.Drivers.DriversConfigsEditPages." + driver.GetDriverConfigsEditPageName(mAgent.DriverType);
+                string classname = "Ginger.Drivers.DriversConfigsEditPages." + driver.GetDriverConfigsEditPageName(mAgent.DriverType, mAgent.DriverConfiguration);
                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                 if (t == null)
                 {
