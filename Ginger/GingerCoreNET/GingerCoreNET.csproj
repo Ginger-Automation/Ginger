@@ -256,6 +256,8 @@
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.6" />
+  
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.3.1" />
    
     <PackageReference Include="Gravity.Core" Version="2021.9.12.3" />
     
@@ -348,9 +350,6 @@
     </Reference>
     <Reference Include="AzureDevOpsRepo">
       <HintPath>..\..\..\..\ALMInteraction\AzureRepositoryStd\bin\Debug\net8.0\AzureDevOpsRepo.dll</HintPath>
-    </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
