@@ -36,9 +36,9 @@ namespace Ginger.Configurations
         private AskLisaConfiguration userConfig;
         public AskLisaConfigurationsPage()
         {
-          InitializeComponent();
+            InitializeComponent();
 
-          Init();
+            Init();
         }
 
         private void Init()
@@ -47,55 +47,43 @@ namespace Ginger.Configurations
 
             userConfig.StartDirtyTracking();
             SetControls();
-            
+
         }
 
         private void SetControls()
         {
-            Context mContext = new Context();
+            Context mContext = new();
+
+            xEnableChatBotRadioButton.Init(typeof(AskLisaConfiguration.eEnableChatBot), xEnableChatBotPanel, userConfig, nameof(AskLisaConfiguration.EnableChat), xEnableChatBotRadioButton_CheckedHandler);
             xHostLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.Host));
+            xAuthUrlLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.AuthenticationServiceURL));
+            xClientIdLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.ClientId));
+            xClientSecretLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.ClientSecret),);
+
+            xStartNewChatLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.StartNewChat));
+            xContinueChatLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.ContinueChat));
             xAccountLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.Account));
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEnableChatBotCheckBox, CheckBox.IsCheckedProperty, userConfig, nameof(AskLisaConfiguration.EnableChat));
-            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xHostLabelTextBox,TextBox.TextProperty, userConfig, nameof(AskLisaConfiguration.Host));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAccountLabelTextBox, TextBox.TextProperty, userConfig, nameof(AskLisaConfiguration.Account));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDomainTypeLabelTextBox, TextBox.TextProperty, userConfig, nameof(AskLisaConfiguration.DomainType));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStartNewChatLabelTextBox, CheckBox.IsCheckedProperty, userConfig, nameof(AskLisaConfiguration.StartNewChat));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xContinueChatLabelTextBox, TextBox.TextProperty, userConfig, nameof(AskLisaConfiguration.ContinueChat));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTemperatureLevelLabelTextBox, TextBox.TextProperty, userConfig, nameof(AskLisaConfiguration.TemperatureLevel));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMaxTokenValueTextBox, TextBox.TextProperty, userConfig, nameof(AskLisaConfiguration.MaxTokenValue));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDataPathLabelTextBox, TextBox.TextProperty, userConfig, nameof(AskLisaConfiguration.DataPath));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAuthUrlLabelTextBox, CheckBox.IsCheckedProperty, userConfig, nameof(AskLisaConfiguration.AuthenticationServiceURL));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xGrantTypeLabelTextBox, TextBox.TextProperty, userConfig, nameof(AskLisaConfiguration.GrantType));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xClientIdLabelTextBox, TextBox.TextProperty, userConfig, nameof(AskLisaConfiguration.ClientId));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xClientSecretLabelTextBox, TextBox.TextProperty, userConfig, nameof(AskLisaConfiguration.ClientSecret));
+            xDomainTypeLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.DomainType));
+            xTemperatureLevelLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.TemperatureLevel));
+            xMaxTokenValueTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.MaxTokenValue));
+            xDataPathLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.DataPath));
+            xGrantTypeLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.GrantType));
         }
 
-        private void LoadConfigurations()
+        private void xEnableChatBotRadioButton_CheckedHandler(object sender, RoutedEventArgs e)
         {
-            xClientIdLabelTextBox.Content = "BrAIn";
-            xClientSecretLabelTextBox.Content = "AQEBrAIn_secret";
-            xStartNewChatLabelTextBox.Content = "AQEQABot/Lisa/StartNewChat";
-            xContinueChatLabelTextBox.Content = "AQEQABot/Lisa/ContinueNewChat";
-            xAccountLabelTextBox.Content = "Ginger";
-            xDomainTypeLabelTextBox.Content = "Knowledge Management";
-            xTemperatureLevelLabelTextBox.Content = "0.1";
-            xMaxTokenValueTextBox.Content = "2000";
-            xDataPathLabelTextBox.Content = "./Data/Ginger";
-            xGrantTypeLabelTextBox.Content = "client_credentials";
-        }
+            string value = ((RadioButton)sender).Tag?.ToString();
 
-        private void xEnableChatBotCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-           if(xChatBotConfigGrid.Visibility == Visibility.Collapsed)
+            Enum.TryParse(value, out AskLisaConfiguration.eEnableChatBot enableChatBot);
+
+            if (enableChatBot == AskLisaConfiguration.eEnableChatBot.Yes)
             {
-                
                 xChatBotConfigGrid.Visibility = Visibility.Visible;
                 xChabotAdvancedLabelsExpander.Visibility = Visibility.Visible;
             }
             else
             {
-                xChatBotConfigGrid.Visibility= Visibility.Collapsed;
+                xChatBotConfigGrid.Visibility = Visibility.Collapsed;
                 xChabotAdvancedLabelsExpander.Visibility = Visibility.Collapsed;
 
             }

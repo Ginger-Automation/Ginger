@@ -183,14 +183,8 @@ namespace Ginger
                 }
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
-                var genAIService = new GenAIServiceSettings();
-                if (genAIService!=null && genAIService.GenAIServiceSettingsData!=null && genAIService.GenAIServiceSettingsData.EnableChat)
-                {
-                    xChatPanel.Visibility = Visibility.Visible;
-                    xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
-                }
-                
-
+                WorkSpace.Instance.UserProfile.AskLisaConfiguration.PropertyChanged += AskLisaPropertyChanged;
+                //EnableChatBot();
             }
             catch (Exception ex)
             {
@@ -206,6 +200,25 @@ namespace Ginger
                 }
             }
 
+        }
+
+        private void AskLisaPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            EnableChatBot();
+        }
+
+        private void EnableChatBot()
+        {
+            if (WorkSpace.Instance.UserProfile.AskLisaConfiguration.EnableChat == Configurations.AskLisaConfiguration.eEnableChatBot.Yes)
+            {
+                xChatPanel.Visibility = Visibility.Visible;
+                xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
+            }
+            else
+            {
+                xChatPanel.Visibility = Visibility.Collapsed;
+                xChatbotWindow.IsVisibleChanged -= XChatbotWindow_IsVisibleChanged;
+            }
         }
 
         private void XChatbotWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

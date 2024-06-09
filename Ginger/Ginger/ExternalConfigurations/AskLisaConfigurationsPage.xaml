@@ -14,11 +14,11 @@
         <DockPanel Background="{StaticResource $BackgroundColor_White}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="30"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10">
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <Label Content="Ask Lisa Configurations Page" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building" Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" Margin="5,0,0,0"/>
                 </StackPanel>
@@ -26,78 +26,84 @@
                 <StackPanel Orientation="Vertical" Grid.Row="1" Margin="10">
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Enable ChatBot:" Style="{StaticResource @LabelStyle}" FontSize="12"/>
-                        <CheckBox x:Name="xEnableChatBotCheckBox" Checked="xEnableChatBotCheckBox_Checked" Unchecked="xEnableChatBotCheckBox_Checked" VerticalAlignment="Center" Margin="90,0,0,0" Width="18"/>
+                        <StackPanel x:Name="xEnableChatBotPanel" Orientation="Horizontal" ToolTip="Select 'Yes' to Enable Ask Lisa Chatbot." VerticalAlignment="Center" Margin="80,0,0,0">
+                            <UserControlsLib:UCRadioButtons x:Name="xEnableChatBotRadioButton"></UserControlsLib:UCRadioButtons>
+                        </StackPanel>
                     </StackPanel>
 
                     <Grid Margin="0,10,0,0" Visibility="Visible" x:Name="xChatBotConfigGrid">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
                         </Grid.RowDefinitions>
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="300"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="400"/>
                         </Grid.ColumnDefinitions>
 
                         <Label Content="Host URL:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                        <Activities:UCValueExpression x:Name="xHostLabelTextBox" Grid.Row="0" Margin="187,0,0,0"/>
+                        <Activities:UCValueExpression x:Name="xHostLabelTextBox" Grid.Row="0"  Grid.Column="1" VerticalAlignment="Center"/>
 
-                        <Label Content="Authentication Service URL:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="0,0,435,0"/>
-                        <Activities:UCValueExpression x:Name="xAuthUrlLabelTextBox" Margin="187,26,0,26" Grid.RowSpan="3"/>
+                        <Label Content="Authentication Service URL:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                        <Activities:UCValueExpression x:Name="xAuthUrlLabelTextBox" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
 
                         <Label Content="Client Id:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
-                        <Activities:UCValueExpression x:Name="xClientIdLabelTextBox" Grid.Row="2" Margin="187,0,0,0"/>
+                        <Activities:UCValueExpression x:Name="xClientIdLabelTextBox" Grid.Row="2"  Grid.Column="1" VerticalAlignment="Center"/>
 
                         <Label Content="Client Secret:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
-                        <Activities:UCValueExpression x:Name="xClientSecretLabelTextBox" Grid.Row="2" Margin="187,26,0,0" Grid.RowSpan="2"/>
+                        <Activities:UCValueExpression x:Name="xClientSecretLabelTextBox" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"/>
                     </Grid>
 
-                    <Expander Visibility="Visible" x:Name="xChabotAdvancedLabelsExpander" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,20,0,0">
+                    <Expander Visibility="Visible" x:Name="xChabotAdvancedLabelsExpander" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,20,0,0">
                         <Expander.Header>
-                            <Label Content="Ask Lisa Advanced Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                            <Label Content="Advance Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                         </Expander.Header>
                         <Expander.Content>
                             <Grid Margin="0,10,0,0" x:Name="xCentralExecutionLoggerGrid">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
                                 </Grid.RowDefinitions>
 
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="150"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="400"/>
                                 </Grid.ColumnDefinitions>
 
                                 <Label Content="Start New Chat:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                                <Activities:UCValueExpression x:Name="xStartNewChatLabelTextBox" Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Width="400" />
+                                <Activities:UCValueExpression x:Name="xStartNewChatLabelTextBox" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
 
                                 <Label Content="Continue Chat:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-                                <Activities:UCValueExpression x:Name="xContinueChatLabelTextBox" Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" Width="400"/>
+                                <Activities:UCValueExpression x:Name="xContinueChatLabelTextBox" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
 
                                 <Label Content="Account:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
-                                <Activities:UCValueExpression x:Name="xAccountLabelTextBox" Grid.Row="2" Grid.Column="1" Margin="10,0,0,0" Width="400"/>
+                                <Activities:UCValueExpression x:Name="xAccountLabelTextBox" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
 
                                 <Label Content="Domain Type:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
-                                <Activities:UCValueExpression x:Name="xDomainTypeLabelTextBox" Grid.Row="3" Grid.Column="1" Margin="10,0,0,0" Width="400"/>
+                                <Activities:UCValueExpression x:Name="xDomainTypeLabelTextBox" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"/>
 
                                 <Label Content="Temperature Level:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
-                                <Activities:UCValueExpression x:Name="xTemperatureLevelLabelTextBox" Grid.Row="4" Grid.Column="1" Margin="10,0,0,0" Width="400"/>
+                                <Activities:UCValueExpression x:Name="xTemperatureLevelLabelTextBox" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center"/>
 
                                 <Label Content="Max Token Value:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center"/>
-                                <Activities:UCValueExpression x:Name="xMaxTokenValueTextBox" Grid.Row="5" Grid.Column="1" Margin="10,0,0,0" Width="400"/>
+                                <Activities:UCValueExpression x:Name="xMaxTokenValueTextBox" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center"/>
 
                                 <Label Content="Data Path:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center"/>
-                                <Activities:UCValueExpression x:Name="xDataPathLabelTextBox" Grid.Row="6" Grid.Column="1" Margin="10,0,0,0" Width="400"/>
+                                <Activities:UCValueExpression x:Name="xDataPathLabelTextBox" Grid.Row="6" Grid.Column="1" VerticalAlignment="Center"/>
 
                                 <Label Content="Grant Type:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center"/>
-                                <Activities:UCValueExpression x:Name="xGrantTypeLabelTextBox" Grid.Row="7" Grid.Column="1" Margin="10,0,0,0" Width="400" />
+                                <Activities:UCValueExpression x:Name="xGrantTypeLabelTextBox" Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" />
+
+
                             </Grid>
                         </Expander.Content>
                     </Expander>

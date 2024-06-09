@@ -29,10 +29,16 @@ namespace Ginger.Configurations
         public delegate void AskLisaConfigurationChangedEvent();
         public event AskLisaConfigurationChangedEvent AskLisaConfigChanged;
 
-      
-        private bool mEnableChat;
+
+        public enum eEnableChatBot
+        {
+            Yes,
+            No
+        }
+
+        private eEnableChatBot mEnableChat = eEnableChatBot.No;
         [IsSerializedForLocalRepository]
-        public bool EnableChat
+        public eEnableChatBot EnableChat
         {
             get
             {
@@ -65,7 +71,7 @@ namespace Ginger.Configurations
                     OnPropertyChanged(nameof(Host));
                     GingerCoreCommonWorkSpace.Instance.UserProfile.OnPropertyChanged(nameof(AskLisaConfiguration));
                     GingerCoreCommonWorkSpace.Instance.UserProfile.StartDirtyTracking();
-                    
+
                     //OnPropertyChanged(nameof(GingerCoreCommonWorkSpace.Instance.UserProfile));
                 }
             }
@@ -143,7 +149,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mStartNewChat;
+        private string mStartNewChat = "AQEQABot/Lisa/StartNewChat";
         [IsSerializedForLocalRepository]
         public string StartNewChat
         {
@@ -161,7 +167,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mContinueChat;
+        private string mContinueChat = "AQEQABot/Lisa/ContinueChat";
         [IsSerializedForLocalRepository]
         public string ContinueChat
         {
@@ -179,7 +185,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mAccount;
+        private string mAccount = "Ginger";
         [IsSerializedForLocalRepository]
         public string Account
         {
@@ -197,7 +203,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mDomainType;
+        private string mDomainType = "Knowledge Management";
         [IsSerializedForLocalRepository]
         public string DomainType
         {
@@ -215,7 +221,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mTemperatureLevel;
+        private string mTemperatureLevel ="0.1";
         [IsSerializedForLocalRepository]
         public string TemperatureLevel
         {
@@ -233,7 +239,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mMaxTokenValue;
+        private string mMaxTokenValue ="2000";
         [IsSerializedForLocalRepository]
         public string MaxTokenValue
         {
@@ -251,7 +257,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mDataPath;
+        private string mDataPath = "./Data/Ginger";
         [IsSerializedForLocalRepository]
         public string DataPath
         {
@@ -269,7 +275,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mGrantType;
+        private string mGrantType = "client_credentials";
         [IsSerializedForLocalRepository]
         public string GrantType
         {
@@ -286,6 +292,7 @@ namespace Ginger.Configurations
                 }
             }
         }
+        public string Token { get; set; }
 
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     }
