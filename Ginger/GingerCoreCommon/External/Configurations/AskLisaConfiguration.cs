@@ -27,8 +27,6 @@ namespace Ginger.Configurations
     public class AskLisaConfiguration : RepositoryItemBase
     {
         public delegate void AskLisaConfigurationChangedEvent();
-        public event AskLisaConfigurationChangedEvent AskLisaConfigChanged;
-
 
         public enum eEnableChatBot
         {
@@ -71,8 +69,6 @@ namespace Ginger.Configurations
                     OnPropertyChanged(nameof(Host));
                     GingerCoreCommonWorkSpace.Instance.UserProfile.OnPropertyChanged(nameof(AskLisaConfiguration));
                     GingerCoreCommonWorkSpace.Instance.UserProfile.StartDirtyTracking();
-
-                    //OnPropertyChanged(nameof(GingerCoreCommonWorkSpace.Instance.UserProfile));
                 }
             }
         }

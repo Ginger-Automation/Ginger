@@ -12,11 +12,9 @@ namespace GingerCoreNET.GenAIServices
     {
 
         HttpClient _httpClient;
-        readonly GenAIServiceSettings _settings;
         private string token = null;
         public GenAIServiceHelper()
         {
-            //_settings = new GenAIServiceSettings();
             InitClient();
         }
 
@@ -38,16 +36,15 @@ namespace GingerCoreNET.GenAIServices
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Chat bot service initialization failed", ex); 
+                Reporter.ToLog(eLogLevel.ERROR, "Chat bot service initialization failed", ex);
             }
 
         }
 
-      
+
 
         private async Task<bool> GetToken()
         {
-        
             try
             {
                 ChatBotResponseInfo responseInfo = new();
@@ -92,7 +89,7 @@ namespace GingerCoreNET.GenAIServices
         {
             if (string.IsNullOrEmpty(token))
             {
-               return await GetToken();               
+                return await GetToken();
             }
             else if (IsTokenValid())
             {
@@ -123,7 +120,7 @@ namespace GingerCoreNET.GenAIServices
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Error occured in validate token", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured in validate token", ex);
                 return false;
             }
         }
@@ -148,7 +145,7 @@ namespace GingerCoreNET.GenAIServices
         public async Task<string> StartNewChat(string chatBotRequest)
         {
 
-           bool tokenValid= await GetOrValidateToken();
+            bool tokenValid = await GetOrValidateToken();
 
             if (tokenValid)
             {
@@ -164,13 +161,13 @@ namespace GingerCoreNET.GenAIServices
             }
         }
 
-      
+
 
 
         private static async Task<string> ParseResponse(HttpResponseMessage response)
         {
             var result = await response.Content.ReadAsStringAsync();
-            if(!string.IsNullOrEmpty(result))
+            if (!string.IsNullOrEmpty(result))
             {
                 return result;
             }
