@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Reports;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
@@ -63,6 +64,7 @@ namespace Ginger.Run.RunSetActions
         {
             PublishToALMConfig.IsVariableInTCRunUsed = RunSetActionPublishToQC.isVariableInTCRunUsed;
             PublishToALMConfig.ToAttachActivitiesGroupReport = RunSetActionPublishToQC.toAttachActivitiesGroupReport;
+            PublishToALMConfig.ToExportReportLink = RunSetActionPublishToQC.ToExportReportLink;
             PublishToALMConfig.VariableForTCRunName = RunSetActionPublishToQC.VariableForTCRunName;
             PublishToALMConfig.CalculateTCRunName(mVE);
             PublishToALMConfig.FilterStatus = RunSetActionPublishToQC.FilterStatus;
@@ -203,6 +205,10 @@ namespace Ginger.Run.RunSetActions
                         {
                             Activity activitycopy = (Activity)runSetAct.CreateCopy(false);
                             activitycopy.Status = runSetAct.Status;
+                            foreach(Act act in activitycopy.Acts)
+                            {
+                                act.Status = runSetAct.Status;
+                            }
                             virtualBF.AddActivity(activitycopy, virtualAG, -1, false);
                         }
                     }

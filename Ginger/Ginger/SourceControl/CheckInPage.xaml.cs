@@ -73,6 +73,14 @@ namespace Ginger.SourceControl
             CheckInFilesGrid.AddToolbarTool("@CheckAllColumn_16x16.png", "Select All", new RoutedEventHandler(SelectAll));
             CheckInFilesGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Un-Select All", new RoutedEventHandler(UnSelectAll));
             CheckInFilesGrid.RowDoubleClick += CheckInFilesGrid_grdMain_MouseDoubleClick;
+
+            if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                SetLocalCommitGridView();
+                LocalCommitedFilesGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshLocalCommitsGrid));
+                InitLocalCommitGrid();
+            }
+
             CommentsTextBox.Focus();
         }
 
@@ -110,8 +118,6 @@ namespace Ginger.SourceControl
 
                 await Task.Run(() =>
                 {
-
-
                     mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);
                     //set items name and type
                     Parallel.ForEach(mFiles, SCFI =>
@@ -234,7 +240,7 @@ namespace Ginger.SourceControl
             CheckInFilesGrid.DataSourceList = mFiles;
         }
 
-        private async void CheckInButton_Click(object sender, RoutedEventArgs e)
+        private async void CommitAndCheckinButton_Click(object sender, RoutedEventArgs e)
         {
             if (WorkSpace.Instance.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
             {
@@ -254,7 +260,15 @@ namespace Ginger.SourceControl
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
                 List<SourceControlFileInfo> SelectedFiles = mFiles.Where(x => x.Selected == true).ToList();
-                if (SelectedFiles == null || SelectedFiles.Count == 0)
+
+                int unpushedLocalCommitsCount = 0;
+                if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+                {
+                    ObservableList<SourceControlChangesetDetails> unpushedLocalCommits = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
+                    unpushedLocalCommitsCount = unpushedLocalCommits.Count;
+                }
+
+                if ((SelectedFiles == null || SelectedFiles.Count == 0) && (unpushedLocalCommitsCount == 0))
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlMissingSelectionToCheckIn);
                     return;
@@ -264,7 +278,21 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKey.AskToAddCheckInComment);
                     return;
                 }
-                if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtion, SelectedFiles.Count) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                if (SelectedFiles != null && SelectedFiles.Count > 0 && unpushedLocalCommitsCount > 0)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommitAndFiles, SelectedFiles.Count, unpushedLocalCommitsCount) == eUserMsgSelection.No)
+                    {
+                        return;
+                    }
+                }
+                else if ((SelectedFiles == null || SelectedFiles.Count == 0) && unpushedLocalCommitsCount > 0)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommit, unpushedLocalCommitsCount) == eUserMsgSelection.No)
+                    {
+                        return;
+                    }
+                }
+                else if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtionForLocalFiles, SelectedFiles.Count) == eUserMsgSelection.No)
                 {
                     return;
                 }
@@ -276,57 +304,20 @@ namespace Ginger.SourceControl
                     try
                     {
                         App.MainWindow.Dispatcher.Invoke(() =>
-                                  {
-                                      SaveAllDirtyFiles(SelectedFiles);
-                                  });
+                        {
+                            SaveAllDirtyFiles(SelectedFiles);
+                        });
                         //performing cleanup for the solution folder to clean old locks left by faild check ins
                         SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
-                        List<string> pathsToCommit = new List<string>();
-                        foreach (SourceControlFileInfo fi in SelectedFiles)
-                        {
+                        List<string> pathsToCommit = StageTheFilesToCommit(SelectedFiles);
 
-                            switch (fi.Status)
-                            {
-                                case SourceControlFileInfo.eRepositoryItemStatus.New:
-                                    SourceControlIntegration.AddFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
-                                    pathsToCommit.Add(fi.Path);
-                                    break;
-                                case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                                    if (fi.Locked && fi.LockedOwner != WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                                    {
-                                        SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
-                                        pathsToCommit.Add(fi.Path);
-                                    }
-                                    else if (fi.Locked && fi.LockedOwner == WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                                    {
-                                        SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
-                                        pathsToCommit.Add(fi.Path);
-                                    }
-                                    else if (!fi.Locked)
-                                    {
-                                        SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
-                                        pathsToCommit.Add(fi.Path);
-                                    }
-                                    break;
-                                case SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved:
-                                    pathsToCommit.Add(fi.Path);
-                                    SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
-                                    break;
-                                case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
-                                    SourceControlIntegration.DeleteFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
-                                    pathsToCommit.Add(fi.Path);
-                                    break;
-                                default:
-                                    throw new Exception("Unknown file status to check-in - " + fi.Name);
-                            }
-                        }
 
                         bool conflictHandled = false;
                         bool CommitSuccess = false;
-                        CommitSuccess = CommitChanges(WorkSpace.Instance.Solution.SourceControl, pathsToCommit, Comments, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
+                        CommitSuccess = CommitAndCheckinChanges(WorkSpace.Instance.Solution.SourceControl, pathsToCommit, Comments, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
 
 
-                        AfterCommitProcess(CommitSuccess, conflictHandled);
+                        AfterCommitAndCheckinProcess(CommitSuccess, conflictHandled);
 
                         if (CommitSuccess && conflictHandled)
                         {
@@ -350,14 +341,13 @@ namespace Ginger.SourceControl
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
             }
         }
-
-        private static bool CommitChanges(SourceControlBase SourceControl, ICollection<string> pathsToCommit, string Comments, bool includeLocks, ref bool conflictHandled)
+        private static bool CommitAndCheckinChanges(SourceControlBase SourceControl, ICollection<string> pathsToCommit, string Comments, bool includeLocks, ref bool conflictHandled)
         {
             string error = string.Empty;
             bool result = true;
             bool conflict = conflictHandled;
             List<string> conflictsPaths = new List<string>();
-            if (!SourceControl.CommitChanges(pathsToCommit, Comments, ref error, ref conflictsPaths, includeLocks))
+            if (!SourceControl.CommitAndCheckinChanges(pathsToCommit, Comments, ref error, ref conflictsPaths, includeLocks))
             {
                 if (conflictsPaths.Count != 0)
                 {
@@ -474,14 +464,14 @@ namespace Ginger.SourceControl
             }
         }
 
-        private void AfterCommitProcess(bool CommitSuccess, bool conflictHandled)
+        private void AfterCommitAndCheckinProcess(bool CommitSuccess, bool conflictHandled)
         {
             this.Dispatcher.BeginInvoke(
             System.Windows.Threading.DispatcherPriority.Normal,
                 new Action(
                     delegate ()
                     {
-                        if (CommitSuccess && conflictHandled && Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandled) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        if (CommitSuccess && conflictHandled)
                         {
                             Init();
                             CommentsTextBox.Text = string.Empty;
@@ -563,11 +553,29 @@ namespace Ginger.SourceControl
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            Button CheckIn = new Button();
-            CheckIn.Content = "Check-In Selected Changes";
-            CheckIn.Click += CheckInButton_Click;
+            ObservableList<Button> windowBtnsList = new ObservableList<Button>();
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { CheckIn }, true, "Close", CloseWindow);
+            Button CommitAndCheckin = new Button();
+            CommitAndCheckin.Content = "Commit and Push";
+            CommitAndCheckin.Click += CommitAndCheckinButton_Click;
+
+            windowBtnsList.Add(CommitAndCheckin);
+
+
+            if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                Button LocalCommit = new Button();
+                LocalCommit.Content = "Commit Locally";
+                LocalCommit.Click += LocalCommitButton_Click;
+                windowBtnsList.Add(LocalCommit);
+
+                Button UndoLocalChanges = new Button();
+                UndoLocalChanges.Content = "Undo Changes";
+                UndoLocalChanges.Click += LocalUndoChanges_Click;
+                windowBtnsList.Add(UndoLocalChanges);
+            }
+
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, windowBtnsList, true, "Close", CloseWindow);
         }
 
         private void CloseWindow(object sender, EventArgs e)
@@ -620,6 +628,262 @@ namespace Ginger.SourceControl
             {
                 Reporter.ToLog(eLogLevel.ERROR, e.Message);
             }
+        }
+
+        private async void LocalCommitButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+            {
+                Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "Please provide Author Name and Email in source control connection details page.");
+                return;
+            }
+
+            try
+            {
+                xProcessingIcon.Visibility = Visibility.Visible;
+                if (SourceControlIntegration.BusyInProcessWhileDownloading)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
+                    return;
+                }
+                SourceControlIntegration.BusyInProcessWhileDownloading = true;
+                List<SourceControlFileInfo> SelectedFiles = mFiles.Where(x => x.Selected == true).ToList();
+                if (SelectedFiles == null || SelectedFiles.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.SourceControlMissingSelectionToLocalCommit);
+                    return;
+                }
+                if (CommentsTextBox.Text.Length == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.AskToAddLocalCommitComment);
+                    return;
+                }
+
+                string Comments = CommentsTextBox.Text.ToString();
+
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        App.MainWindow.Dispatcher.Invoke(() =>
+                        {
+                            SaveAllDirtyFiles(SelectedFiles);
+                        });
+                        //performing cleanup for the solution folder to clean old locks left by faild check ins
+                        SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
+                        List<string> pathsToCommit = StageTheFilesToCommit(SelectedFiles);
+
+                        bool CommitSuccess = CommitChanges(WorkSpace.Instance.Solution.SourceControl, Comments);
+
+
+                        Dispatcher.BeginInvoke(() =>
+                        {
+                            if (!CommitSuccess)
+                            {
+                                Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandledFailed);
+                            }
+
+                            CloseWindow();
+
+                        });
+
+                        if (CommitSuccess)
+                        {
+                            TriggerSourceControlIconChanged(SelectedFiles);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Check in", ex);
+                    }
+                });
+
+                xProcessingIcon.Visibility = Visibility.Collapsed;
+            }
+            finally
+            {
+                xProcessingIcon.Visibility = Visibility.Collapsed;
+                SourceControlIntegration.BusyInProcessWhileDownloading = false;
+            }
+        }
+
+        private static List<string> StageTheFilesToCommit(List<SourceControlFileInfo> SelectedFiles)
+        {
+            List<string> pathsToCommit = new List<string>();
+            foreach (SourceControlFileInfo fi in SelectedFiles)
+            {
+                switch (fi.Status)
+                {
+                    case SourceControlFileInfo.eRepositoryItemStatus.New:
+                        SourceControlIntegration.AddFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                        pathsToCommit.Add(fi.Path);
+                        break;
+
+                    case SourceControlFileInfo.eRepositoryItemStatus.Modified:
+                        if (fi.Locked && fi.LockedOwner != WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        {
+                            SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                            pathsToCommit.Add(fi.Path);
+                        }
+                        else if (fi.Locked && fi.LockedOwner == WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        {
+                            SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                            pathsToCommit.Add(fi.Path);
+                        }
+                        else if (!fi.Locked)
+                        {
+                            SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                            pathsToCommit.Add(fi.Path);
+                        }
+                        break;
+
+                    case SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved:
+                        pathsToCommit.Add(fi.Path);
+                        SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                        break;
+                    case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
+                        SourceControlIntegration.DeleteFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                        pathsToCommit.Add(fi.Path);
+                        break;
+
+                    default:
+                        throw new Exception("Unknown file status to check-in - " + fi.Name);
+                }
+            }
+
+            return pathsToCommit;
+        }
+
+        private static bool CommitChanges(SourceControlBase SourceControl, string Comments)
+        {
+            string error = string.Empty;
+
+            bool commitSuccess = SourceControl.CommitChanges(Comments, ref error);
+
+            if (!string.IsNullOrEmpty(error))
+            {
+                App.MainWindow.Dispatcher.Invoke(() =>
+                {
+                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                });
+            }
+
+            return commitSuccess;
+        }
+
+        private void RefreshLocalCommitsGrid(object sender, RoutedEventArgs e)
+        {
+            InitLocalCommitGrid();
+        }
+
+        private void InitLocalCommitGrid()
+        {
+            LocalCommitedFilesGrid.DataSourceList = WorkSpace.Instance.Solution.SourceControl.GetUnpushedLocalCommits();
+            LocalCommitedFilesGrid.Title = $"Pending Local Commits for Check-In ({LocalCommitedFilesGrid.DataSourceList.Count})";
+        }
+
+        private void SetLocalCommitGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            view.GridColsView = viewCols;
+
+            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.ID), Header = "ID", WidthWeight = 20, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.Author), Header = "Author", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.Date), Header = "Date", WidthWeight = 20, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.Message), Header = "Message", WidthWeight = 45, AllowSorting = false });
+
+            LocalCommitedFilesGrid.SetAllColumnsDefaultView(view);
+            LocalCommitedFilesGrid.InitViewItems();
+        }
+
+        private async void LocalUndoChanges_Click(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName) || String.IsNullOrEmpty(WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorEmail))
+            {
+                Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "Please provide Author Name and Email in source control connection details page.");
+                return;
+            }
+
+            try
+            {
+                xProcessingIcon.Visibility = Visibility.Visible;
+                if (SourceControlIntegration.BusyInProcessWhileDownloading)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
+                    return;
+                }
+                SourceControlIntegration.BusyInProcessWhileDownloading = true;
+                List<SourceControlFileInfo> SelectedFiles = mFiles.Where(x => x.Selected == true).ToList();
+                if (SelectedFiles == null || SelectedFiles.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.SourceControlMissingSelectionToLocalCommit);
+                    return;
+                }
+                if (Reporter.ToUser(eUserMsgKey.SourceControlUndoLocalChanges, SelectedFiles.Count) == eUserMsgSelection.No)
+                {
+
+                    return;
+                }
+
+                // Performing on another thread 
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        App.MainWindow.Dispatcher.Invoke(() =>
+                        {
+                            SaveAllDirtyFiles(SelectedFiles);
+                        });
+
+                        //performing cleanup for the solution folder to clean old locks left by faild check ins
+                        SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
+                        // Undo changes for selected filest
+                        WorkSpace.Instance.Solution.SourceControl.UndoUncommitedChanges(SelectedFiles);
+                        Dispatcher.BeginInvoke(() =>
+                        {
+                            CloseWindow();
+                        });
+                        //Reload of Solution
+                        ReloadSolution();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Undo Changes", ex);
+                    }
+                });
+
+                xProcessingIcon.Visibility = Visibility.Collapsed;
+                if (SourceControlIntegration.conflictFlag)
+                {
+                    SourceControlIntegration.conflictFlag = false;
+                }
+            }
+            finally
+            {
+                xProcessingIcon.Visibility = Visibility.Collapsed;
+                SourceControlIntegration.BusyInProcessWhileDownloading = false;
+            }
+        }
+        private void ReloadSolution()
+        {
+            string path = WorkSpace.Instance.Solution.ContainingFolderFullPath;
+            CloseSolution();
+            OpenSolution(path);
+        }
+        private void CloseSolution()
+        {
+            App.MainWindow.Dispatcher.Invoke(WorkSpace.Instance.CloseSolution);
+        }
+
+        private void OpenSolution(string folder)
+        {
+            App.MainWindow.Dispatcher.Invoke(() =>
+            {
+                // TODO: do it like user with open solution page
+                WorkSpace.Instance.OpenSolution(folder);
+            });
         }
     }
 }

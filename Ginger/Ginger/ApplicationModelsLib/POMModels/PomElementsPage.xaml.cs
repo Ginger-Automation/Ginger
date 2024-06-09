@@ -37,12 +37,14 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.UserControlsLib.UCTreeView;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -880,7 +882,20 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
+
+                try
+                {
                     mWinExplorer.HighLightElement(mSelectedElement, true, mPOM?.MappedUIElements);
+                }
+                catch (Exception ex)
+                {
+                    if(ex is NoSuchElementException)
+                    {
+                        Reporter.ToUser(eUserMsgKey.ElementNotFound);
+                    }
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+
+                }
             }
         }
 
@@ -894,12 +909,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
             Row2.Height = new GridLength(35);
         }
 
+        private bool IsTestBtnClicked = false;
         private void TestElementButtonClicked(object sender, RoutedEventArgs e)
         {
+
+            if (IsTestBtnClicked)
+            {
+                Reporter.ToUser(eUserMsgKey.LocatorTestInProgress);
+                return;
+            }
+
             if (!ValidateDriverAvalability())
             {
                 return;
             }
+            
+            IsTestBtnClicked = true;
+
 
             ElementInfo CurrentEI = (ElementInfo)MainElementsGrid.CurrentItem;
 
@@ -922,22 +948,31 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
                 else if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Web))
                 {
-                    var htmlElementInfo = new HTMLElementInfo() { 
-                        Path = testElement.Path, 
-                        Locators = testElement.Locators, 
+                    var htmlElementInfo = new HTMLElementInfo() {
+                        Path = testElement.Path,
+                        Locators = testElement.Locators,
                         Properties = ((HTMLElementInfo)CurrentEI).Properties,
                     };
 
                     htmlElementInfo.FriendlyLocators = testElement.FriendlyLocators;
-                    testElement = htmlElementInfo; 
+                    testElement = htmlElementInfo;
                 }
 
-
-                mWinExplorer.TestElementLocators(testElement, false, mPOM);
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        mWinExplorer.TestElementLocators(testElement, false, mPOM);
+                    }
+                    finally
+                    {
+                        IsTestBtnClicked = false;
+                    }
+                });
             }
         }
 
-        private void TestAllElementsLocators(object sender, RoutedEventArgs e)
+            private void TestAllElementsLocators(object sender, RoutedEventArgs e)
         {
             if (!ValidateDriverAvalability())
             {
@@ -959,7 +994,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedLocator != null)
             {
-                System.Windows.Clipboard.SetText(mSelectedLocator.LocateValue);
+                GingerCore.General.SetClipboardText(mSelectedLocator.LocateValue);
             }
         }
 

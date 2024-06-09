@@ -18,12 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
@@ -47,11 +49,9 @@ using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -488,6 +488,12 @@ namespace Ginger.Run
         public void RunRunner(bool doContinueRun = false)
         {
             bool runnerExecutionSkipped = false;
+
+            if (!string.IsNullOrEmpty(mGingerRunner.SpecificEnvironmentName))
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Selected Environment for {mGingerRunner.Name} is {mGingerRunner.SpecificEnvironmentName}");
+            }
+
             try
             {
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || !BusinessFlows.Any(x => x.Active))
@@ -2314,7 +2320,7 @@ namespace Ginger.Run
                                     {
                                         foreach (string screenShot in screenShotAction.ScreenShots)
                                         {
-                                            act.ScreenShots.Add(screenShot);
+                                            act.ScreenShots.Add(screenShot);                                            
                                         }
                                         foreach (string screenShotName in screenShotAction.ScreenShotsNames)
                                         {
@@ -2327,7 +2333,6 @@ namespace Ginger.Run
                                     }
                                 }
                                 else if (a.AgentType == Agent.eAgentType.Service)
-
                                 {
                                     ExecuteOnPlugin.ExecutesScreenShotActionOnAgent(a, act);
                                 }
@@ -3197,8 +3202,8 @@ namespace Ginger.Run
                 sharedActivityInstance.Active = true;
                 sharedActivityInstance.AddDynamicly = true;
                 sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;
-                CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
-
+                eUserMsgSelection userSelection = eUserMsgSelection.None;
+                CurrentBusinessFlow.MapTAToBF(userSelection, sharedActivityInstance, WorkSpace.Instance.Solution.ApplicationPlatforms,true);
 
                 int index = CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity) + 1;
                 ActivitiesGroup activitiesGroup = CurrentBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID);
@@ -5161,7 +5166,18 @@ namespace Ginger.Run
                     {
                         if (appPlatform.Platform == ePlatformType.Web)
                         {
-                            agent = platformAgents.Find(x => x.DriverType == Agent.eDriverType.SeleniumIE);
+                            agent = platformAgents.Find(x =>
+                            {
+                                string browserTypeString = x.GetParamValue(nameof(GingerWebDriver.BrowserType));
+                                if (Enum.TryParse(browserTypeString, out WebBrowserType browserType))
+                                {
+                                    return browserType == WebBrowserType.InternetExplorer;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            });
                         }
 
                         if (agent == null)

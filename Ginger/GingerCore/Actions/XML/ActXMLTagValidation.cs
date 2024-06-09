@@ -292,6 +292,7 @@ namespace GingerCore.Actions.XML
             XmlNamespaceManager nameSpaceManager = null;
 
             XmlAttribute xmlns = GetXmlAttribute(xmlReqDoc);
+            string valueCalculatedBackup = valueCalculated;
             if (xmlns != null)
             {
                 nameSpaceManager = new XmlNamespaceManager(xmlReqDoc.NameTable);
@@ -300,7 +301,14 @@ namespace GingerCore.Actions.XML
                 valueCalculated = GetWithPrefix(valueCalculated, namespacePrefix);
             }
 
-            return xmlReqDoc.SelectSingleNode(valueCalculated, nameSpaceManager);
+            try
+            {
+                return xmlReqDoc.SelectSingleNode(valueCalculated, nameSpaceManager);
+            }
+            catch (Exception)
+            {
+                return xmlReqDoc.SelectSingleNode(valueCalculatedBackup, nameSpaceManager);
+            }
         }
 
         private static XmlAttribute GetXmlAttribute(XmlDocument xmlDocument)

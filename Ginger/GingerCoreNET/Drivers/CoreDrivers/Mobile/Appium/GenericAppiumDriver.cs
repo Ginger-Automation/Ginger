@@ -74,7 +74,7 @@ namespace Amdocs.Ginger.CoreNET
     {
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
 
-        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
             return "AppiumDriverEditPage";
         }
@@ -259,35 +259,39 @@ namespace Amdocs.Ginger.CoreNET
                         break;
                 }
 
-                //If Driver.SessionId is null, it means that the Mobile Agent already in use.
-                
-                if (!(Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device"))
+                if (String.IsNullOrEmpty(Driver.SessionId.ToString()))
                 {
-                    mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                    mSeleniumDriver.StopProcess = this.StopProcess;
-                    mSeleniumDriver.BusinessFlow = this.BusinessFlow;
-
-                    if (AppType == eAppType.Web && mDefaultURL != null)
-                    {
-                        try
-                        {
-                            Driver.Navigate().GoToUrl(mDefaultURL);
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
-                        }
-                    }
-
-                    return true;
+                    string error = "Failed to start Appium session, created Driver not seems to be valid (it SessionId is null), please validate the Appium server URL and capabilities";
+                    Reporter.ToLog(eLogLevel.ERROR, error);
+                    ErrorMessageFromDriver = error;
+                    return false;
                 }
-                else
+                           
+                if (Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device")
                 {
                     string error = string.Format("Failed to start Appium session.{0}Error: Mobile device is already in use. Please close all other sessions and try again.", System.Environment.NewLine);
                     Reporter.ToLog(eLogLevel.ERROR, error);
                     ErrorMessageFromDriver = error;
                     return false;
                 }
+
+                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                mSeleniumDriver.StopProcess = this.StopProcess;
+                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
+
+                if (AppType == eAppType.Web && mDefaultURL != null)
+                {
+                    try
+                    {
+                        Driver.Navigate().GoToUrl(mDefaultURL);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
+                    }
+                }
+
+                return true;
 
             }
             catch (Exception ex)
@@ -332,63 +336,82 @@ namespace Amdocs.Ginger.CoreNET
             //User customized capabilities
             foreach (DriverConfigParam UserCapability in AppiumCapabilities)
             {
-                if (String.IsNullOrWhiteSpace(UserCapability.Parameter) || String.IsNullOrWhiteSpace(UserCapability.Value))
+                try
                 {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("The Appium Capability '{0}'='{1}' is not valid, avoiding it.", UserCapability.Parameter, UserCapability.Value));
-                    continue;
-                }
+                    if (String.IsNullOrWhiteSpace(UserCapability.Parameter) || String.IsNullOrWhiteSpace(UserCapability.Value))
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("The Appium Capability '{0}'='{1}' is not valid, avoiding it.", UserCapability.Parameter, UserCapability.Value));
+                        continue;
+                    }
 
-                if (UserCapability.Parameter.ToLower().Trim() == "defaulturl" || UserCapability.Parameter.ToLower().Trim() == "ginger:defaulturl")
-                {
-                    mDefaultURL = UserCapability.Value;
+                    if (UserCapability.Parameter.ToLower().Trim() == "defaulturl" || UserCapability.Parameter.ToLower().Trim() == "ginger:defaulturl")
+                    {
+                        mDefaultURL = UserCapability.Value;
 
-                    continue;
-                }
+                        continue;
+                    }
 
-                bool boolValue;
-                int intValue = 0;
-                if (bool.TryParse(UserCapability.Value, out boolValue))
-                {
-                    driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, boolValue);
-                }
-                else if (!isContainQuotationMarks(UserCapability) && int.TryParse(UserCapability.Value, out intValue))
-                {
-                    driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, intValue);
-                }
-                else if (UserCapability.Value.Contains("{"))
-                {
-                    try
+                    bool boolValue;
+                    int intValue = 0;
+                    if (bool.TryParse(UserCapability.Value, out boolValue))
                     {
-                        JObject json = JObject.Parse(UserCapability.Value);
-                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, json);//for Json value to work properly, need to convert it into specific object type like: json.ToObject<selector>());
+                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, boolValue);
                     }
-                    catch (Exception)
+                    else if (!isContainQuotationMarks(UserCapability) && int.TryParse(UserCapability.Value, out intValue))
                     {
-                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, UserCapability.Value);
+                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, intValue);
                     }
-                }
-                else
-                {
-                    if (UserCapability.Parameter == "platformName" || UserCapability.Parameter == "appium:platformName")
+                    else if (UserCapability.Value.Contains("{"))
                     {
-                        driverOptions.PlatformName = UserCapability.Value;
-                    }
-                    else if (UserCapability.Parameter == "automationName" || UserCapability.Parameter == "appium:automationName")
-                    {
-                        driverOptions.AutomationName = UserCapability.Value;
-                    }
-                    else if (UserCapability.Parameter == "deviceName" || UserCapability.Parameter == "appium:deviceName")
-                    {
-                        driverOptions.DeviceName = UserCapability.Value;
-                    }
-                    else if (UserCapability.Parameter == "browserName" || UserCapability.Parameter == "appium:browserName")
-                    {
-                        driverOptions.BrowserName = UserCapability.Value;
+                        try
+                        {
+                            JObject json = JObject.Parse(UserCapability.Value);
+                            driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, json);//for Json value to work properly, need to convert it into specific object type like: json.ToObject<selector>());
+                        }
+                        catch (Exception)
+                        {
+                            driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, UserCapability.Value);
+                        }
                     }
                     else
                     {
-                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, UserCapability.Value);
+                        if (UserCapability.Parameter.Trim().ToLower() == "automationName".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:automationName".ToLower())
+                        {
+                            driverOptions.AutomationName = UserCapability.Value;
+                        }
+                        else if (UserCapability.Parameter.Trim().ToLower() == "platformName".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:platformName".ToLower())
+                        {
+                            driverOptions.PlatformName = UserCapability.Value;
+                        }
+                        else if (UserCapability.Parameter.Trim().ToLower() == "platformVersion".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:platformVersion".ToLower())
+                        {
+                            driverOptions.PlatformVersion = UserCapability.Value;
+                        }                        
+                        else if (UserCapability.Parameter.Trim().ToLower() == "deviceName".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:deviceName".ToLower())
+                        {
+                            driverOptions.DeviceName = UserCapability.Value;
+                        }
+                        else if (UserCapability.Parameter.Trim().ToLower() == "app".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:app".ToLower())
+                        {
+                            driverOptions.App = UserCapability.Value;
+                        }
+                        else if (UserCapability.Parameter.Trim().ToLower() == "browserName".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:browserName".ToLower())
+                        {
+                            driverOptions.BrowserName = UserCapability.Value;
+                        }
+                        else if (UserCapability.Parameter.Trim().ToLower() == "browserVersion".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:browserVersion".ToLower())
+                        {
+                            driverOptions.BrowserVersion = UserCapability.Value;
+                        }
+                        else
+                        {
+                            driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, UserCapability.Value);
+                        }
                     }
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to set Appium capability '{0}'='{1}'", UserCapability.Parameter, UserCapability.Value), ex);
                 }
             }
 

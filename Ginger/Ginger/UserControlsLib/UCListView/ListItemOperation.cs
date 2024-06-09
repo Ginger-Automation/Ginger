@@ -42,7 +42,6 @@ namespace Ginger.UserControlsLib.UCListView
         public string AutomationID;
 
         public RoutedEventHandler OperationHandler;
-
         public List<General.eRIPageViewMode> SupportedViews = new List<General.eRIPageViewMode>();
     }
 }

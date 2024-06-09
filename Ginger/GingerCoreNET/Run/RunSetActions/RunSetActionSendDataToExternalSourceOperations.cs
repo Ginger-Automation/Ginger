@@ -58,9 +58,15 @@ namespace Ginger.Run.RunSetActions
             string JsonOutput = mValueExpression.ValueCalculated;
 
             Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Sending Execution data to External Source");
-
-            RestClient restClient = new RestClient(RunSetActionSendDataToExternalSource.EndPointUrl);
-            restClient.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+            var options = new RestClientOptions(RunSetActionSendDataToExternalSource.EndPointUrl)
+            {
+                ThrowOnAnyError = false,
+                RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true,
+                FailOnDeserializationError = false,
+                ThrowOnDeserializationError = false
+            };
+            RestClient restClient = new RestClient(options);
+            
             RestRequest restRequest = new RestRequest();
             restRequest.Method = Method.Post;
             restRequest.RequestFormat = RestSharp.DataFormat.Json;

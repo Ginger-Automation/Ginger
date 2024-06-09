@@ -708,6 +708,11 @@ namespace amdocs.ginger.GingerCoreNET
                 Solution = null;
             }
 
+            if (RunsetExecutor != null && RunsetExecutor.RunSetConfig != null)
+            {
+                RunsetExecutor.RunSetConfig.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
+            }
+
             EventHandler.SolutionClosed();
         }
 

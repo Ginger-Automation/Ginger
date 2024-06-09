@@ -137,7 +137,7 @@ namespace Amdocs.Ginger.Repository
             }
 
             //Special handling for Shared Repository item to be in sub folder
-            if (s == "ActivitiesGroups" || s == "Activities" || s == "Actions" || s == "Variables" || s == "Validations")
+            if (s is "ActivitiesGroups" or "Activities" or "Actions" or "Variables" or "Validations")
             {
                 s = @"SharedRepository\" + s;
             }
@@ -153,7 +153,7 @@ namespace Amdocs.Ginger.Repository
 
 
         // TypeName cache
-        private static ConcurrentDictionary<string, string> ShortNameDictionary = new ConcurrentDictionary<string, string>();
+        private static ConcurrentDictionary<string, string> ShortNameDictionary = new();
 
 
 
@@ -164,8 +164,7 @@ namespace Amdocs.Ginger.Repository
             //TODO: make it generic using RS classes dic
             // For speed and in order to to waste mem by creating everytime obj to get name we cache it
 
-            string ShortName = null;
-            ShortNameDictionary.TryGetValue(ClassName, out ShortName);
+            ShortNameDictionary.TryGetValue(ClassName, out var ShortName);
             if (ShortName == null)
             {
                 RepositoryItemBase obj = (RepositoryItemBase)(t.Assembly.CreateInstance(ClassName));
@@ -905,10 +904,13 @@ namespace Amdocs.Ginger.Repository
             string containingFolder = string.Empty;
             try
             {
-                int startIndx = this.FileName.ToUpper().IndexOf(this.ObjFolderName.ToUpper());
-                int endIndx = this.FileName.LastIndexOf('\\');
-                if (endIndx > startIndx)
-                    containingFolder = this.FileName.Substring(startIndx, endIndx - startIndx) + "\\";
+                if (!string.IsNullOrWhiteSpace(this.FileName))
+                {
+                    int startIndx = this.FileName.ToUpper().IndexOf(this.ObjFolderName.ToUpper());
+                    int endIndx = this.FileName.LastIndexOf('\\');
+                    if (endIndx > startIndx)
+                        containingFolder = this.FileName.Substring(startIndx, endIndx - startIndx) + "\\";
+                }
                 return containingFolder;
             }
             catch (Exception ex)
@@ -1042,7 +1044,7 @@ namespace Amdocs.Ginger.Repository
                         // check that path is really valid path to a file contaning both drive at the start & a target with extension, also in order to keep the list unique, check if the value has already been added to the list.
                         if (!String.IsNullOrEmpty(FilePath) && Path.IsPathFullyQualified(FilePath) && !GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Contains(this))
                         {
-                            GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Add(this);
+                            GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Add(this); 
                         }
                     }
                     OnPropertyChanged(nameof(DirtyStatus));

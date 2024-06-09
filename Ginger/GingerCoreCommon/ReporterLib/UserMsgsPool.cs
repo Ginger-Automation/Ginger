@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.Common
     {
         GeneralErrorOccured, MissingImplementation, MissingImplementation2, ApplicationInitError, PageLoadError, UserProfileLoadError, ItemToSaveWasNotSelected, ToSaveChanges, SaveLocalChanges, LooseLocalChanges,
         RegistryValuesCheckFailed, AddRegistryValue, AddRegistryValueSucceed, AddRegistryValueFailed,
-        NoItemWasSelected, AskToAddCheckInComment, FailedToGetProjectsListFromSVN, AskToSelectSolution, UpdateToRevision, CommitedToRevision, GitUpdateState, SourceControlConnFaild, SourceControlRemoteCannotBeAccessed, SourceControlUnlockFaild, SourceControlConnSucss, SourceControlLockSucss, SourceControlUnlockSucss, SourceControlConnMissingConnInputs, SourceControlConnMissingLocalFolderInput,
+        NoItemWasSelected, AskToAddCheckInComment, AskToAddLocalCommitComment, FailedToGetProjectsListFromSVN, AskToSelectSolution, UpdateToRevision, CommitedToRevision, GitUpdateState, SourceControlConnFaild, SourceControlRemoteCannotBeAccessed, SourceControlUnlockFaild, SourceControlConnSucss, SourceControlLockSucss, SourceControlUnlockSucss, SourceControlConnMissingConnInputs, SourceControlConnMissingLocalFolderInput,
         PleaseStartAgent, AskToSelectValidation,
         EnvironmentItemLoadError, MissingUnixCredential,
         ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbTableNameError, DbTableNameEmpty, DbQueryError, DbConnSucceed, DbConnFailed,
@@ -96,14 +96,14 @@ namespace Amdocs.Ginger.Common
         ConnectionCloseWarning,
         InvalidCharactersWarning,
         InvalidValueExpression,
-        FolderExistsWithName, DownloadedSolutionFromSourceControl, SourceControlFileLockedByAnotherUser,
-        SourceControlUpdateFailed, SourceControlCommitFailed, SourceControlChkInSucss, SourceControlChkInConflictHandledFailed, SourceControlGetLatestConflictHandledFailed, SourceControlChkInConflictHandled, SourceControlCheckInLockedByAnotherUser, SourceControlCheckInLockedByMe, SourceControlCheckInUnsavedFileChecked, FailedToUnlockFileDuringCheckIn, SourceControlChkInConfirmtion, SourceControlMissingSelectionToCheckIn, SourceControlResolveConflict, SureWantToDoRevert, SureWantToDoCheckIn,
+        FolderExistsWithName, DownloadedSolutionFromSourceControl, SourceControlFileLockedByAnotherUser, SourceControlUndoLocalChanges,
+        SourceControlUpdateFailed, SourceControlCommitFailed, SourceControlChkInSucss, SourceControlChkInConflictHandledFailed, SourceControlGetLatestConflictHandledFailed, SourceControlCheckInLockedByAnotherUser, SourceControlCheckInLockedByMe, SourceControlCheckInUnsavedFileChecked, FailedToUnlockFileDuringCheckIn, SourceControlChkInConfirmtionForLocalFiles, SourceControlChkInConfirmtionForLocalCommit, SourceControlChkInConfirmtionForLocalCommitAndFiles, SourceControlMissingSelectionToCheckIn, SourceControlMissingSelectionToLocalCommit, SourceControlResolveConflict, SureWantToDoRevert, SureWantToDoCheckIn,
         NoOptionalAgent, MissingActivityAppMapping,
         SettingsChangeRequireRestart, ChangesRequireRestart, UnsupportedFileFormat, WarnRegradingMissingVariablesUse, NotAllMissingVariablesWereAdded, UpdateApplicationNameChangeInSolution,
         ShareEnvAppWithAllEnvs, ShareEnvAppParamWithAllEnvs, CtrlSsaveEnvApp, CtrlSMissingItemToSave, FailedToSendEmail, FailedToExportBF,
         ReportTemplateNotFound, DriverNotSupportingWindowExplorer, AgentNotRunningAfterWaiting,
         FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, StaticQuestionsMessage, ApplicationAgentNotMapped,
-        ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport,
+        ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport, ALMIncorrectExternalID,
         BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, AskIfSureWantToCloseWithoutNote, AskIfSureWantToRestart, AskIfSureWantToRestartWithoutNote , AskIfSureWantToRestartInAdminMode, WindowClosed, TargetWindowNotSelected,
         ChangingEnvironmentParameterValue, IFSaveChangesOfBF, AskIfToLoadExternalFields, WhetherToOpenSolution,
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
@@ -173,15 +173,15 @@ namespace Amdocs.Ginger.Common
         NoPublishRepositoryInfo,
         NotAllowedForMappedRuntimeValue,
         HandleConflictsBeforeMovingForward,
-        HasUnhandledConflicts, 
+        HasUnhandledConflicts,
         HasUnhandledMandatoryIssues,
         UncommitedChangesPreventCheckout,
-        ExportToBPMNSuccessful, 
+        ExportToBPMNSuccessful,
         MultipleExportToBPMNSuccessful,
         GingerEntityToBPMNConversionError,
         IssueWhileAnalyzingConflict,
         ConflictsResolvedCount,
-        AddActivityGroupsToSharedRepositoryForBPMNConversion, 
+        AddActivityGroupsToSharedRepositoryForBPMNConversion,
         AddActivitiesToSharedRepositoryForBPMNConversion,
         AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport,
         FailedToDownloadDriver,
@@ -191,7 +191,9 @@ namespace Amdocs.Ginger.Common
         NoActionAvailable,
         PublishApplicationToOtherEnv,
         NoApplicationPlatformLeft,
-        ShareApplicationToEnvironment
+        ShareApplicationToEnvironment,
+        SaveSolution,
+        LocatorTestInProgress
     }
 
     public static class UserMsgsPool
@@ -233,6 +235,8 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticErrorMessage, new UserMsg(eUserMsgType.ERROR, "Error", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticWarnMessage, new UserMsg(eUserMsgType.WARN, "Warning", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveSolution, new UserMsg(eUserMsgType.INFO, "Saved Solution", "Changes got saved succefully", eUserMsgOption.OK, eUserMsgSelection.None));
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticInfoMessage, new UserMsg(eUserMsgType.INFO, "Info", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticQuestionsMessage, new UserMsg(eUserMsgType.QUESTION, "Question", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + $"Note: Unsaved and {ISolution.CacheDirectoryName} folder file changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -302,7 +306,9 @@ namespace Amdocs.Ginger.Common
             #region SourceControl Messages
             Reporter.UserMsgsPool.Add(eUserMsgKey.NoItemWasSelected, new UserMsg(eUserMsgType.WARN, "No item was selected", "Please select an item to proceed.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToAddCheckInComment, new UserMsg(eUserMsgType.WARN, "Check-In Changes", "Please enter check-in comments.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskToAddLocalCommitComment, new UserMsg(eUserMsgType.WARN, "Local Commit Changes", "Please enter local commit comments.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToGetProjectsListFromSVN, new UserMsg(eUserMsgType.ERROR, "Source Control Error", "Failed to get the solutions list from the source control." + Environment.NewLine + "Error Details: '{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlUndoLocalChanges, new UserMsg(eUserMsgType.WARN, "Check-In Warning", "Undo Changes Will force Ginger to Reload solution." + Environment.NewLine + Environment.NewLine + "Do you want to Undo Local Changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToSelectSolution, new UserMsg(eUserMsgType.WARN, "Select Solution", "Please select solution.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlFileLockedByAnotherUser, new UserMsg(eUserMsgType.WARN, "Source Control File Locked", "The file '{0}' was locked by: {1} " + Environment.NewLine + "Locked comment {2}." + Environment.NewLine + Environment.NewLine + " Are you sure you want to unlock the file?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DownloadedSolutionFromSourceControl, new UserMsg(eUserMsgType.INFO, "Download Solution", "The solution '{0}' was downloaded successfully." + Environment.NewLine + "Do you want to open the downloaded Solution?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -320,16 +326,18 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlConnMissingLocalFolderInput, new UserMsg(eUserMsgType.WARN, "Download Solution", "Missing local folder input, please select local folder to download the solution into.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlUpdateFailed, new UserMsg(eUserMsgType.ERROR, "Update Solution", "Failed to update the solution from source control." + Environment.NewLine + "Error Details: '{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlCommitFailed, new UserMsg(eUserMsgType.ERROR, "Commit Solution", "Failed to commit the solution from source control." + Environment.NewLine + "Error Details: '{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInSucss, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Check-in process ended successfully." + Environment.NewLine + Environment.NewLine + "Do you want to do another check-in?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConflictHandled, new UserMsg(eUserMsgType.QUESTION, "Check-In Results", "The check in process ended, please notice that conflict was identified during the process and may additional check in will be needed for pushing the conflict items." + Environment.NewLine + Environment.NewLine + "Do you want to do another check-in?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInSucss, new UserMsg(eUserMsgType.INFO, "Check-In Solution", "Check-in process ended successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConflictHandledFailed, new UserMsg(eUserMsgType.WARN, "Check-In Results", "Check in process ended with unhandled conflict please notice that you must handled them prior to the next check in of those items", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlGetLatestConflictHandledFailed, new UserMsg(eUserMsgType.WARN, "Get Latest Results", "Get latest process encountered conflicts which must be resolved for successful Solution loading", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, new UserMsg(eUserMsgType.WARN, "Locked Item Check-In", "The item: '{0}'" + Environment.NewLine + "is locked by the user: '{1}'" + Environment.NewLine + "The locking comment is: '{2}' ." + Environment.NewLine + Environment.NewLine + "Do you want to unlock the item and proceed with check in process?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlCheckInLockedByMe, new UserMsg(eUserMsgType.WARN, "Locked Item Check-In", "The item: '{0}'" + Environment.NewLine + "is locked by you please noticed that during check in the lock will need to be removed please confirm to continue", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlCheckInUnsavedFileChecked, new UserMsg(eUserMsgType.QUESTION, "Unsaved Item Checkin", "The item: '{0}' contains unsaved changes which must be saved prior to the check in process." + Environment.NewLine + Environment.NewLine + "Do you want to save the item and proceed with check in process?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToUnlockFileDuringCheckIn, new UserMsg(eUserMsgType.QUESTION, "Locked Item Check-In Failure", "The item: '{0}' unlock operation failed on the URL: '{1}'." + Environment.NewLine + Environment.NewLine + "Do you want to proceed with the check in  process for rest of the items?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConfirmtion, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Checking in changes will effect all project users, are you sure you want to continue and check in those {0} changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConfirmtionForLocalFiles, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Check-in changes will affect all project users. Are you sure you want to continue and check in those {0} modified files ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommit, new UserMsg(eUserMsgType.QUESTION, "Check-In Local Commits", "Check-in changes will affect all project users. Are you sure you want to continue and check in those {0} Local Commit changes ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlChkInConfirmtionForLocalCommitAndFiles, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Check-in changes will affect all project users. Are you sure you want to continue and check in those {0} modified files and {1} Local Commit ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlMissingSelectionToCheckIn, new UserMsg(eUserMsgType.WARN, "Check-In Changes", "Please select items to check-in.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlMissingSelectionToLocalCommit, new UserMsg(eUserMsgType.WARN, "Local Commit Changes", "Please select items to Commit.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlResolveConflict, new UserMsg(eUserMsgType.QUESTION, "Source Control Conflicts", "Source control conflicts has been identified for the path: '{0}'." + Environment.NewLine + "You probably won't be able to use the item which in the path till conflicts will be resolved." + Environment.NewLine + Environment.NewLine + "Do you want to automatically resolve the conflicts and keep your local changes for all conflicts?" + Environment.NewLine + Environment.NewLine + "Select 'No' for accepting server updates for all conflicts or select 'Cancel' for canceling the conflicts handling.", eUserMsgOption.YesNoCancel, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDoRevert, new UserMsg(eUserMsgType.QUESTION, "Undo Changes", "Are you sure you want to revert changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDoCheckIn, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Are you sure you want to check-in changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -357,8 +365,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbTableNameError, new UserMsg(eUserMsgType.ERROR, "Invalid DB Table Name", "Table with the name '{0}' already exist in the Database. Please try another name.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbTableError, new UserMsg(eUserMsgType.ERROR, "DB Table Error", "Error occurred while trying to get the {0}." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbQueryError, new UserMsg(eUserMsgType.ERROR, "DB Query Error", "The DB Query returned error, please double check the table name and field name." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnFailed, new UserMsg(eUserMsgType.ERROR, "DB Connection Status", "Connect to the DB failed.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnSucceed, new UserMsg(eUserMsgType.INFO, "DB Connection Status", "Connect to the DB succeeded.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnFailed, new UserMsg(eUserMsgType.ERROR, "DB Connection Status", "Connect to the DB: '{0}' failed.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnSucceed, new UserMsg(eUserMsgType.INFO, "DB Connection Status", "Connect to the DB: '{0}' succeeded.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbTableNameEmpty, new UserMsg(eUserMsgType.ERROR, "Invalid DB Table Name", "Table name cannot be empty. Please provide valid name", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion DataBase Messages
 
@@ -415,7 +423,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.IFSaveChangesOfBF, new UserMsg(eUserMsgType.WARN, "Save Current" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Before Change?", "Do you want to save the changes made in the '{0}' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RecordingStopped, new UserMsg(eUserMsgType.ERROR, "Recording Stopped", "Recording Stopped for the {0} agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToDownloadDriver, new UserMsg(eUserMsgType.ERROR, "Failed to Download the Driver",
                 "Oh no! The {0} Driver couldn't be downloaded because we're currently offline.Check your internet connection or update the proxy settings in the Agent config for automatic downloads." + Environment.NewLine +
                 $"If that feels like a puzzle, You can also grab the driver yourself and set its location in the DriverFilePath in the Agent Configuration." + Environment.NewLine +"Cheers to problem-solving."
@@ -515,33 +523,34 @@ namespace Amdocs.Ginger.Common
             #endregion CustomeFunctions Messages
 
             #region ALM
-            Reporter.UserMsgsPool.Add(eUserMsgKey.QcConnectSuccess, new UserMsg(eUserMsgType.INFO, "QC/ALM Connection", "QC/ALM connection successful!", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.QcConnectFailure, new UserMsg(eUserMsgType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the credentials you use are correct and that QC/ALM Client is registered on your machine." + System.Environment.NewLine + System.Environment.NewLine + "For registering QC/ALM Client- please follow below steps:" + System.Environment.NewLine + "1. Launch Internet Explorer as Administrator" + System.Environment.NewLine + "2. Go to http://<QCURL>/qcbin" + System.Environment.NewLine + "3. Click on 'Add-Ins Page' link" + System.Environment.NewLine + "4. In next page, click on 'HP ALM Client Registration'" + System.Environment.NewLine + "5. In next page click on 'Register HP ALM Client'" + System.Environment.NewLine + "6. Restart Ginger and try to reconnect", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.QcConnectSuccess, new UserMsg(eUserMsgType.INFO, "ALM Connection", "ALM connection successful!", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.QcConnectFailure, new UserMsg(eUserMsgType.WARN, "ALM Connection Failed", "ALM connection failed." + System.Environment.NewLine + "Please make sure that the credentials you use are correct and that ALM Client is registered on your machine." + System.Environment.NewLine + System.Environment.NewLine + "For registering ALM Client- please follow below steps:" + System.Environment.NewLine + "1. Launch Internet Explorer as Administrator" + System.Environment.NewLine + "2. Go to http://<QCURL>/qcbin" + System.Environment.NewLine + "3. Click on 'Add-Ins Page' link" + System.Environment.NewLine + "4. In next page, click on 'HP ALM Client Registration'" + System.Environment.NewLine + "5. In next page click on 'Register HP ALM Client'" + System.Environment.NewLine + "6. Restart Ginger and try to reconnect", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ALMConnectFailureWithCurrSettings, new UserMsg(eUserMsgType.WARN, "ALM Connection Failed", "ALM Connection Failed, Please make sure credentials are correct.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ALMConnectFailure, new UserMsg(eUserMsgType.WARN, "ALM Connection Failed", "ALM connection failed." + System.Environment.NewLine + "Please make sure that the credentials you use are correct and that ALM Client is registered on your machine.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.QcLoginSuccess, new UserMsg(eUserMsgType.INFO, "Login Success", "QC/ALM Login successful!", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.QcLoginSuccess, new UserMsg(eUserMsgType.INFO, "Login Success", "ALM Login successful!", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ALMLoginFailed, new UserMsg(eUserMsgType.WARN, "Login Failed", "ALM Login Failed - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.QcNeedLogin, new UserMsg(eUserMsgType.WARN, "Not Connected to QC/ALM", "You Must Log Into QC/ALM First.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.QcNeedLogin, new UserMsg(eUserMsgType.WARN, "Not Connected to ALM", "You Must Log Into ALM First.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestCasesUpdatedSuccessfully, new UserMsg(eUserMsgType.INFO, "TestCase Update", "TestCases Updated Successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestCasesUploadedSuccessfully, new UserMsg(eUserMsgType.INFO, "TestCases Uploaded", "TestCases Uploaded Successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestSetsImportedSuccessfully, new UserMsg(eUserMsgType.INFO, "Import ALM Test Set", "ALM Test Set/s import process ended successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestSetsNotExist, new UserMsg(eUserMsgType.INFO, "Business Flow Not Found to Delete", "ALM Test Set/s as Business Flow does not exist to Delete.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.TestSetExists, new UserMsg(eUserMsgType.WARN, "Import Exiting Test Set", "The Test Set '{0}' was imported before and already exists in current Solution." + System.Environment.NewLine + "Do you want to delete the existing mapped " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and import the Test Set again?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.TestSetExists, new UserMsg(eUserMsgType.WARN, "Import Existing Test Set", "The Test Set '{0}' was imported before and already exists in current Solution." + System.Environment.NewLine + "Do you want to delete the existing mapped " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and import the Test Set again?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ErrorInTestsetImport, new UserMsg(eUserMsgType.ERROR, "Import Test Set Error", "Error Occurred while exporting the Test Set '{0}'." + System.Environment.NewLine + "Error Details:{1}", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.ErrorWhileExportingExecDetails, new UserMsg(eUserMsgType.ERROR, "Export Execution Details Error", "Error occurred while exporting the execution details to QC/ALM." + System.Environment.NewLine + "Error Details:{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ErrorWhileExportingExecDetails, new UserMsg(eUserMsgType.ERROR, "Export Execution Details Error", "Error occurred while exporting the execution details to ALM." + System.Environment.NewLine + "Error Details:{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportedExecDetailsToALM, new UserMsg(eUserMsgType.INFO, "Export Execution Details", "Export execution details result: {0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportAllItemsToALMSucceed, new UserMsg(eUserMsgType.INFO, "Export All Items to ALM", "All items has been successfully exported to ALM.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportAllItemsToALMFailed, new UserMsg(eUserMsgType.INFO, "Export All Items to ALM", "While exporting to ALM One or more items failed to export.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportItemToALMSucceed, new UserMsg(eUserMsgType.INFO, "Export ALM Item", "Exporting item to ALM process ended successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ALMOperationFailed, new UserMsg(eUserMsgType.ERROR, "ALM Operation Failed", "Failed to perform the {0} operation." + Environment.NewLine + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, new UserMsg(eUserMsgType.WARN, "Export " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to QC/ALM", "The " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " '{0}' is already mapped to the QC/ALM '{1}' Test Case, do you want to update it?" + Environment.NewLine + Environment.NewLine + "Select 'Yes' to update or 'No' to create new Test Case.", eUserMsgOption.YesNoCancel, eUserMsgSelection.Cancel));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowAlreadyMappedToTC, new UserMsg(eUserMsgType.WARN, "Export " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to QC/ALM", "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '{0}' is already mapped to the QC/ALM '{1}' Test Set, do you want to update it?" + Environment.NewLine + Environment.NewLine + "Select 'Yes' to update or 'No' to create new Test Set.", eUserMsgOption.YesNoCancel, eUserMsgSelection.Cancel));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, new UserMsg(eUserMsgType.WARN, "Export " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to ALM", "The " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " '{0}' is already mapped to the ALM '{1}' Test Case, do you want to update it?" + Environment.NewLine + Environment.NewLine + "Select 'Yes' to update or 'No' to create new Test Case.", eUserMsgOption.YesNoCancel, eUserMsgSelection.Cancel));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowAlreadyMappedToTC, new UserMsg(eUserMsgType.WARN, "Export " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to ALM", "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '{0}' is already mapped to the ALM '{1}' Test Set, do you want to update it?" + Environment.NewLine + Environment.NewLine + "Select 'Yes' to update or 'No' to create new Test Set.", eUserMsgOption.YesNoCancel, eUserMsgSelection.Cancel));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportQCNewTestSetSelectDiffFolder, new UserMsg(eUserMsgType.INFO, "Export QC Item - Creating new Test Set", "Please select QC folder to export to that the Test Set does not exist there.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportItemToALMFailed, new UserMsg(eUserMsgType.ERROR, "Export to ALM Failed", "The {0} ' {1}' failed to be exported to ALM." + Environment.NewLine + Environment.NewLine + "Error Details: {2}", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToSaveBFAfterExport, new UserMsg(eUserMsgType.QUESTION, "Save Links to QC/ALM Items", "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '{0}' must be saved for keeping the links to QC/ALM items." + Environment.NewLine + "To perform the save now?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToSaveBFAfterExport, new UserMsg(eUserMsgType.QUESTION, "Save Links to ALM Items", "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '{0}' must be saved for keeping the links to ALM items." + Environment.NewLine + "To perform the save now?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToLoadExternalFields, new UserMsg(eUserMsgType.QUESTION, "Load/Refresh ALM External Fields", "The activity will run in the background for several hours." + Environment.NewLine + "Please do not close Ginger until operation is complete." + Environment.NewLine + "Would you like to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ALMIncorrectExternalID, new UserMsg(eUserMsgType.INFO, "Export to ALM Failed", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion QC
 
@@ -674,7 +683,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.LoseChangesWarn, new UserMsg(eUserMsgType.WARN, "Save Changes", "The operation may result with lost of un-saved local changes." + Environment.NewLine + "Please make sure all changes were saved before continue." + Environment.NewLine + Environment.NewLine + "To perform the operation?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.CompilationErrorOccured, new UserMsg(eUserMsgType.ERROR, "Compilation Error Occurred", "Compilation error occurred." + Environment.NewLine + "Error Details: " + Environment.NewLine + " '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.CopiedVariableSuccessfully, new UserMsg(eUserMsgType.INFO, "Info Message", "'{0}'" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " Affected." + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RenameItemError, new UserMsg(eUserMsgType.ERROR, "Rename", "Failed to rename the Item. Error: '{0}'?", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfShareVaribalesInRunner, new UserMsg(eUserMsgType.QUESTION, "Share" + GingerDicser.GetTermResValue(eTermResKey.Variables), "Are you sure you want to share selected " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Values to all the similar " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " across all Runners?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -738,7 +747,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlConflictResolveFailed, new UserMsg(eUserMsgType.ERROR, "Resolve Conflict Failed", "Ginger failed to resolve the conflicted file" + Environment.NewLine + "File Path: {0}" + Environment.NewLine + Environment.NewLine + "It seems like the SVN conflict content (e.g. '<<<<<<< .mine') has been updated on the remote repository", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlItemAlreadyLocked, new UserMsg(eUserMsgType.INFO, "Source Control File Locked", "The file is already locked" + Environment.NewLine + "Please do Get info for more details", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SoruceControlItemAlreadyUnlocked, new UserMsg(eUserMsgType.INFO, "Source Control File not Locked", "The file is not locked" + Environment.NewLine + "Please do Get info for more details", eUserMsgOption.OK, eUserMsgSelection.OK));
-
+            Reporter.UserMsgsPool.Add(eUserMsgKey.LocatorTestInProgress, new UserMsg(eUserMsgType.INFO, "Element Locator Test is in Progress", "The Testing of an element locator is already in progress", eUserMsgOption.OK, eUserMsgSelection.OK));
 
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RefreshWholeSolution, new UserMsg(eUserMsgType.QUESTION, "Refresh Solution", "Do you want to Refresh the whole Solution to get the Latest changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -771,12 +780,12 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnEditLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "Any updates to linked shared repository auto update the shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " and all it's usage in other flows." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to proceed with Edit?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnSaveLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "Any updates to linked shared repository auto update the shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " and all it's usage in other flows." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to proceed with Save?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            
+
 
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.EditLinkSharedActivities, new UserMsg(eUserMsgType.INFO, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities), "Linked shared repository " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " are read only by default." + System.Environment.NewLine + System.Environment.NewLine + "If you want to update, open it in edit mode.", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.QcConnectFailureRestAPI, new UserMsg(eUserMsgType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the server url and the credentials you use are correct.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.QcConnectFailureRestAPI, new UserMsg(eUserMsgType.WARN, "ALM Connection Failed", "ALM connection failed." + System.Environment.NewLine + "Please make sure that the server url and the credentials you use are correct.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportedExecDetailsToALMIsInProcess, new UserMsg(eUserMsgType.INFO, "Export Execution Details", "Please Wait, Exporting Execution Details is in process.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskBeforeDefectProfileDeleting, new UserMsg(eUserMsgType.QUESTION, "Profiles Deleting", "After deletion there will be no way to restore deleted profiles.\nAre you sure that you want to delete the selected profiles?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissedMandatotryFields, new UserMsg(eUserMsgType.INFO, "Profiles Saving", "Please, populate value for mandatory field '{0}' of '{1}' Defect Profile", eUserMsgOption.OK, eUserMsgSelection.None));

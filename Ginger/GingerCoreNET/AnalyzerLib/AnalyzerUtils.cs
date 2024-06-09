@@ -19,12 +19,16 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.RunLib;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
+using GingerCore.Drivers;
 using GingerCore.Variables;
+using NPOI.OpenXmlFormats.Dml.Diagram;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,11 +95,19 @@ namespace Ginger.AnalyzerLib
                 {
                     if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
                     {
+
                         checkedGuidList.Add(BF.Guid);
                         BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(BF.Guid);
+                        actualBf.Environment = GR.SpecificEnvironmentName ?? WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
+
                         if (actualBf != null)
                         {
-                            RunBusinessFlowAnalyzer(actualBf, solution, issuesList, AnalyzeBusinessFlow.Check.All.ExcludeFlags(AnalyzeBusinessFlow.Check.MissingMandatoryInputValues));
+                            IEnumerable<IApplicationAgent> applicationAgents = ((GingerExecutionEngine)GR.Executor).GingerRunner.ApplicationAgents;
+                            if (applicationAgents == null)
+                            {
+                                applicationAgents = [];
+                            }
+                            RunBusinessFlowAnalyzer(actualBf, applicationAgents, solution, issuesList, AnalyzeBusinessFlow.Check.All.ExcludeFlags(AnalyzeBusinessFlow.Check.MissingMandatoryInputValues));
                         }
                     }
                 });
@@ -112,9 +124,15 @@ namespace Ginger.AnalyzerLib
             });
         }
 
+
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, Solution solution, ObservableList<AnalyzerItemBase> issuesList)
         {
-            return RunBusinessFlowAnalyzer(businessFlow, solution, issuesList, AnalyzeBusinessFlow.Check.All);
+            return RunBusinessFlowAnalyzer(businessFlow, applicationAgents: Array.Empty<IApplicationAgent>(), solution, issuesList, AnalyzeBusinessFlow.Check.All);
+        }
+
+        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, IEnumerable<IApplicationAgent> applicationAgents, Solution solution, ObservableList<AnalyzerItemBase> issuesList)
+        {
+            return RunBusinessFlowAnalyzer(businessFlow, applicationAgents, solution, issuesList, AnalyzeBusinessFlow.Check.All);
         }
 
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
@@ -124,10 +142,11 @@ namespace Ginger.AnalyzerLib
 
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList, AnalyzeBusinessFlow.Check checks)
         {
-            return RunBusinessFlowAnalyzer(businessFlow, solution: null, issuesList, checks);
+            return RunBusinessFlowAnalyzer(businessFlow, applicationAgents: Array.Empty<IApplicationAgent>(), solution: null, issuesList, checks);
         }
 
-        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, Solution solution, ObservableList<AnalyzerItemBase> issuesList, AnalyzeBusinessFlow.Check checks)
+        private List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, IEnumerable<IApplicationAgent> applicationAgents, 
+            Solution solution, ObservableList<AnalyzerItemBase> issuesList, AnalyzeBusinessFlow.Check checks)
         {
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
@@ -162,10 +181,17 @@ namespace Ginger.AnalyzerLib
                 Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
                 {
 
+                    string actionDescription = iaction.Description;
+                    IApplicationAgent appAgent = applicationAgents.FirstOrDefault(a => string.Equals(activity.TargetApplication, a.AppName));
+                    DriverBase driver = null;
+                    if (appAgent != null)
+                    {
+                        driver = GetDriverForApplicationAgent(appAgent);
+                    }
                     Act action = (Act)iaction;
                     if (action.Active)
                     {
-                        foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
+                        foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList, driver))
                         {
                             AddIssue(issuesList, issue);
                             if (issue.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable)
@@ -175,9 +201,7 @@ namespace Ginger.AnalyzerLib
                                     missingVariableIssueList.Add(issue);
                                 }
                             }
-
                         }
-
                     }
 
                     MergeVariablesList(usedVariablesInActivity, AnalyzeAction.GetUsedVariableFromAction(action));
@@ -221,6 +245,26 @@ namespace Ginger.AnalyzerLib
 
             ReportUnusedVariables(businessFlow, usedVariablesInBF, issuesList);
             return usedVariablesInBF;
+        }
+
+        private DriverBase GetDriverForApplicationAgent(IApplicationAgent appAgent)
+        {
+            if (appAgent == null)
+            {
+                throw new ArgumentNullException(nameof(appAgent));
+            }
+
+            if (appAgent.Agent is not Agent agent)
+            {
+                return null;
+            }
+
+            if (agent.AgentOperations is not AgentOperations agentOperations)
+            {
+                return null;
+            }
+
+            return agentOperations.CreateDriverInstance();
         }
 
         public void ReportUnusedVariables(object obj, List<string> usedVariables, ObservableList<AnalyzerItemBase> issuesList)

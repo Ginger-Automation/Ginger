@@ -38,6 +38,10 @@
     <SolidColorBrush x:Key="$IgnoredStatusColor" Color="#737373"/>
     <SolidColorBrush x:Key="$BlockedStatusColor" Color="DarkRed"/>
 
+    <!--Chat Bot Colors-->
+    <SolidColorBrush x:Key="$LisaUserIconColor" Color="MediumPurple"/>
+    <SolidColorBrush x:Key="$YouUserIconColor" Color="#F05C62"/>
+    
     <LinearGradientBrush x:Key="$amdocsLogoLinarGradientBrush"
 		StartPoint="0,0" EndPoint="0.99,1" 
 		SpreadMethod="Pad" ColorInterpolationMode="SRgbLinearInterpolation" >
@@ -664,6 +668,38 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Button" x:Key="$RoundTextButtonStyle_ChatbotIcon">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="20,3,20,3"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                             BorderBrush="{DynamicResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="7,7,0,0">
+                        <ContentPresenter 
+                             TextElement.Foreground="{TemplateBinding Foreground}" 
+                             Margin="{TemplateBinding Padding}"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="{DynamicResource $BackgroundColor_Black}" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="Cursor" Value="Hand"></Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style TargetType="Button" x:Key="$RoundTextButtonStyle_Generic_Highlight">
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_Black}" />
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}" />
@@ -1686,6 +1722,35 @@
         </Setter>
     </Style>
 
+    <Style TargetType="TabItem" x:Key="$RoundedTabAI">
+        <Setter Property="Height" Value="33"/>
+        <Setter Property="Background" Value="#8a57ea"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <!--The four values of CornerRadius represent the four corners of the TabItem.-->
+                    <Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="{StaticResource $BackgroundColor_DarkGray}" CornerRadius="5,5,0,0" Margin="1,0">
+                        <ContentPresenter x:Name="ContentSite"  
+                                    VerticalAlignment="Center"  
+                                    HorizontalAlignment="Center"  
+                                    ContentSource="Header"  
+                                    Margin="10,2"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#8a57ea" />
+                            <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="Border" Property="Background" Value="#8a57ea" />
+                            <Setter Property="Foreground" Value="{StaticResource $PrimaryColor_Black}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="TabItem" x:Key="$CoolTab">
         <Setter Property="Template">
             <Setter.Value>
@@ -1712,7 +1777,7 @@
                     <ControlTemplate.Resources>
                         <SolidColorBrush x:Key="MouseOverBackground" Color="#DFE9F5" />
                     </ControlTemplate.Resources>
-                    <Border Name="Border" BorderThickness="0 0 1 0"  BorderBrush="{StaticResource $BackgroundColor_Black}">
+                    <Border Name="Border" BorderThickness="0 0 1 0"  BorderBrush="{StaticResource $BackgroundColor_DarkGray}">
                         <ContentPresenter x:Name="ContentSite"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"

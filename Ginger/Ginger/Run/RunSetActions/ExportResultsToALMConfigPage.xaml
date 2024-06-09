@@ -1,5 +1,5 @@
 <!--//# Status=Cleaned; Comment=Cleaned on 05/23/18-->
-    <Page x:Class="Ginger.Run.ExportResultsToALMConfigPage"
+<Page x:Class="Ginger.Run.ExportResultsToALMConfigPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -9,33 +9,33 @@
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"    
       mc:Ignorable="d" 
-      d:DesignHeight="210" d:DesignWidth="600"
+      d:DesignHeight="241.8" d:DesignWidth="570"
 	Title="RunSetActionPublishToQCEditPage">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid>
             <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <Label Style="{StaticResource @LabelStyle}">ALM Type:</Label>
-                <DockPanel>
-                <UserControlsLib:UCComboBox x:Name="xALMTypeCbx" ContextMenu="{x:Null}" Margin="170,0,0,0" Width="300" HorizontalAlignment="Left" ></UserControlsLib:UCComboBox>
-                <usercontrols:ucButton x:Name="xSetFieldsBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Margin="20,0,0,0" ButtonText="Set Fields" ButtonImageType="ALM" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Click="xSetFieldsBtn_Click"/>
-                </DockPanel>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label Style="{StaticResource @LabelStyle}">ALM Test Set Level:</Label>
-                <UserControlsLib:UCComboBox x:Name="xALMTestSetLevelCbx" Margin="120,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" x:Name="xExportTypePanel" Visibility="Collapsed">
-                <Label Style="{StaticResource @LabelStyle}">Export Type:</Label>
-                <UserControlsLib:UCComboBox x:Name="xExportTypeCbx" ContextMenu="{x:Null}" Margin="155,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
-            </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource @LabelStyle}">ALM Type:</Label>
+                    <DockPanel>
+                        <UserControlsLib:UCComboBox x:Name="xALMTypeCbx" ContextMenu="{x:Null}" Margin="170,0,0,0" Width="300" HorizontalAlignment="Left" ></UserControlsLib:UCComboBox>
+                        <usercontrols:ucButton x:Name="xSetFieldsBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Margin="20,0,0,0" ButtonText="Set Fields" ButtonImageType="ALM" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Click="xSetFieldsBtn_Click"/>
+                    </DockPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource @LabelStyle}">ALM Test Set Level:</Label>
+                    <UserControlsLib:UCComboBox x:Name="xALMTestSetLevelCbx" Margin="120,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" x:Name="xExportTypePanel" Visibility="Collapsed">
+                    <Label Style="{StaticResource @LabelStyle}">Export Type:</Label>
+                    <UserControlsLib:UCComboBox x:Name="xExportTypeCbx" ContextMenu="{x:Null}" Margin="155,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
+                </StackPanel>
                 <StackPanel x:Name="SearchALMEntityByNamePnl" Orientation="Horizontal">
-                    <Label Style="{StaticResource @LabelStyle}">Search ALM Entity By Name:</Label>
-                    <CheckBox x:Name="SearchALMEntityByName" Style="{StaticResource @CheckBoxStyle}" Margin="70,5,0,0">
+                    <Label Style="{StaticResource @LabelStyle}">Search By Name:</Label>
+                    <CheckBox x:Name="SearchALMEntityByName" Style="{StaticResource @CheckBoxStyle}" Margin="130,5,0,0">
                     </CheckBox>
-            </StackPanel>
-            
-            <StackPanel x:Name="xExportDestinationFolder" Visibility="Collapsed">
+                </StackPanel>
+
+                <StackPanel x:Name="xExportDestinationFolder" Visibility="Collapsed">
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Test Set Export Folder:</Label>
                         <Actions:UCValueExpression x:Name="xTestSetFolderDestination" Margin="100,10,0,0" Width="300" HorizontalAlignment="Left"/>
@@ -44,12 +44,12 @@
                         <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Test Cases Export Folder:</Label>
                         <Actions:UCValueExpression x:Name="xTestCaseFolderDestination" Margin="85,10,0,0" Width="300" HorizontalAlignment="Left"/>
                     </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Test Cases Results to Export :</Label>
-                <ComboBox x:Name="xFilterByStatusDroplist"  ContextMenu="{x:Null}" Width="300" HorizontalAlignment="Left" Margin="65,0,0,0" Style="{DynamicResource $FlatEditInputComboBoxStyle}"></ComboBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Test Cases Results to Export :</Label>
+                    <ComboBox x:Name="xFilterByStatusDroplist"  ContextMenu="{x:Null}" Width="300" HorizontalAlignment="Left" Margin="65,0,0,0" Style="{DynamicResource $FlatEditInputComboBoxStyle}"></ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
                     <Label Style="{StaticResource @LabelStyle}">
                         <Label.Content>
                             <GingerCore:ucTextDicResource Text="Attach [ActivitiesGroups] Report to TC's:"/>
@@ -58,20 +58,29 @@
                     <CheckBox x:Name="AttachActivitiesGroupReportCbx" Style="{StaticResource @CheckBoxStyle}" Margin="10,6,0,0" Checked="AttachActivitiesGroupReportCbx_Checked" Unchecked="AttachActivitiesGroupReportCbx_Unchecked">
                     </CheckBox>
 
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
                     <Label Style="{StaticResource @LabelStyle}">
                         <Label.Content>
-                             <GingerCore:ucTextDicResource Text="Use User [Variable] TC Run Instance:"/>
+                            <GingerCore:ucTextDicResource Text="Use User [Variable] TC Run Instance:"/>
                         </Label.Content>
                     </Label>
-                    <CheckBox x:Name="UseVariableInTCRunNameCbx" Style="{StaticResource @CheckBoxStyle}" Margin="30,8,0,0" Checked="UseVariableInTCRunNameCbx_Checked" Unchecked="UseVariableInTCRunNameCbx_Unchecked">
+                    <CheckBox x:Name="UseVariableInTCRunNameCbx" Style="{StaticResource @CheckBoxStyle}" Margin="32,8,0,0" Checked="UseVariableInTCRunNameCbx_Checked" Unchecked="UseVariableInTCRunNameCbx_Unchecked">
                     </CheckBox>
-            </StackPanel>
-            <StackPanel Margin="5,0,0,15" x:Name="VariableForTCRunNamePanel" Orientation="Horizontal" IsEnabled="False">
-                    <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">TC Run Instance Name:</Label>
-                <Actions:UCValueExpression x:Name="VariableForTCRunName" Margin="90,0,0,0" Width="300" ToolTip="From"/>
-            </StackPanel>
+                </StackPanel>
+                <StackPanel x:Name="xExportReportStack" Visibility="Visible" Orientation="Horizontal">
+                    <Label Style="{StaticResource @LabelStyle}">
+                        <Label.Content>
+                            <GingerCore:ucTextDicResource Text="Export Execution Report Link :"/>
+                        </Label.Content>
+                    </Label>
+                    <CheckBox x:Name="ExportReportLink"  Style="{StaticResource @CheckBoxStyle}" Margin="60,8,0,0">
+                    </CheckBox>
+                </StackPanel>
+                <StackPanel  x:Name="VariableForTCRunNamePanel" Orientation="Horizontal" IsEnabled="False">
+                    <Label Style="{StaticResource @LabelStyle}" Margin="0,10,8,0">TC Run Instance Name:</Label>
+                    <Actions:UCValueExpression x:Name="VariableForTCRunName" Margin="90,10,10,0" Width="300" ToolTip="From" Height="25"/>
+                </StackPanel>
 
                 <Button x:Name="xExportToALMBtn" Content="Export To ALM" Style="{StaticResource @WindowButtonStyle}" Width="100" Margin="5 0 0 0" HorizontalAlignment="Left" Visibility="Collapsed" Click="xExportToALMBtn_Click"></Button>
             </StackPanel>

@@ -30,7 +30,9 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -38,12 +40,33 @@ using System.Windows.Controls;
 
 namespace GingerWPF.TreeViewItemsLib
 {
-    public class NewTreeViewItemBase : TreeViewItemGenericBase
+    public class NewTreeViewItemBase : TreeViewItemGenericBase, INotifyPropertyChanged
     {
+        private Visibility _visibility;
+        public virtual Visibility Visibility 
+        {
+            get => _visibility; 
+            set
+            {
+                if (_visibility != value)
+                {
+                    _visibility = value;
+                    PropertyChangedEventHandler? handler = PropertyChanged;
+                    if (handler != null)
+                    {
+                        handler.Invoke(sender: this, new PropertyChangedEventArgs(nameof(Visibility)));
+                    }
+                }
+            } 
+        }
+
         public virtual TreeViewItem? TreeViewItem { get; set; }
 
         public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one      
         static bool mBulkOperationIsInProcess = false;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {
             if (item is RepositoryItemBase)
@@ -363,15 +386,21 @@ namespace GingerWPF.TreeViewItemsLib
                 return;
             }
 
+            if (_children == null)
+            {
+                _children = [];
+            }
             // Since refresh of tree items can be triggered from FileWatcher running on separate thread, all TV handling is done on the TV.Dispatcher
             switch (e.Action)
             {
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
                     if (e.NewItems != null && e.NewItems.Count > 0)
                     {
+                        ITreeViewItem treeItem = GetTreeItem(e.NewItems[0]!);
+                        _children.Add(treeItem);
                         mTreeView.Tree.Dispatcher.Invoke(() =>
                         {
-                            mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, GetTreeItem((dynamic)e.NewItems[0]));
+                            mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, treeItem);
                         });
                     }
                     break;
@@ -379,6 +408,11 @@ namespace GingerWPF.TreeViewItemsLib
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
                     if (e.OldItems != null && e.OldItems.Count > 0)
                     {
+                        ITreeViewItem? matchingOldTreeItem = _children.FirstOrDefault(treeItem => treeItem.NodeObject() == e.OldItems[0]);
+                        if (matchingOldTreeItem != null)
+                        {
+                            _children.Remove(matchingOldTreeItem);
+                        }
                         mTreeView.Tree.Dispatcher.Invoke(() =>
                         {
                             mTreeView.Tree.DeleteItemByObjectAndSelectParent(e.OldItems[0], (ITreeViewItem)this);
@@ -389,6 +423,23 @@ namespace GingerWPF.TreeViewItemsLib
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
                     mTreeView.Tree.Dispatcher.Invoke(() =>
                     {
+                        if (sender is System.Collections.IEnumerable senderEnumerable)
+                        {
+                            List<ITreeViewItem> updatedChildren = [];
+                            foreach(object item in senderEnumerable)
+                            {
+                                ITreeViewItem? matchingTreeItem = _children.FirstOrDefault(treeItem => treeItem.NodeObject() == item);
+                                if (matchingTreeItem != null)
+                                {
+                                    updatedChildren.Add(matchingTreeItem);
+                                }
+                                else
+                                {
+                                    updatedChildren.Add(GetTreeItem(item));
+                                }
+                            }
+                            _children = updatedChildren;
+                        }
                         mTreeView.Tree.RefreshTreeNodeChildrens((ITreeViewItem)this);
                     });
                     break;
@@ -512,34 +563,39 @@ namespace GingerWPF.TreeViewItemsLib
             return SourceControlIntegration.GetFileImage(path);
         }
 
+        private List<ITreeViewItem>? _children = null;
+
         protected List<ITreeViewItem> GetChildrentGeneric<T>(RepositoryFolder<T> RF)
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            ObservableList<RepositoryFolder<T>> subFolders = RF.GetSubFolders();
-            foreach (RepositoryFolder<T> subFolder in subFolders)
+            if (_children == null)
             {
-                Childrens.Add(GetTreeItem(subFolder));
-            }
-            CollectionChangedEventManager.RemoveHandler(source: subFolders, handler: TreeFolderItems_CollectionChanged); // track sub folders
-            CollectionChangedEventManager.AddHandler(source: subFolders, handler: TreeFolderItems_CollectionChanged); // track sub folders
+                _children = [];
 
-            //Add direct children's        
-            ObservableList<T> folderItems = RF.GetFolderItems();
-            // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once
-            CollectionChangedEventManager.RemoveHandler(source: folderItems, handler: TreeFolderItems_CollectionChanged);
-            CollectionChangedEventManager.AddHandler(source: folderItems, handler: TreeFolderItems_CollectionChanged);//adding event handler to add/remove tree items automatically based on folder items collection changes
-
-            if (folderItems.Count > 0)
-            {
-                object sampleItem = folderItems[0];
-                foreach (T item in folderItems.OrderBy(((RepositoryItemBase)sampleItem).ItemNameField))
+                ObservableList<RepositoryFolder<T>> subFolders = RF.GetSubFolders();
+                foreach (RepositoryFolder<T> subFolder in subFolders)
                 {
-                    ITreeViewItem tvi = GetTreeItem(item);
-                    Childrens.Add(tvi);
+                    _children.Add(GetTreeItem(subFolder));
+                }
+                CollectionChangedEventManager.RemoveHandler(source: subFolders, handler: TreeFolderItems_CollectionChanged); // track sub folders
+                CollectionChangedEventManager.AddHandler(source: subFolders, handler: TreeFolderItems_CollectionChanged); // track sub folders
+
+                //Add direct children's        
+                ObservableList<T> folderItems = RF.GetFolderItems();
+                // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once
+                CollectionChangedEventManager.RemoveHandler(source: folderItems, handler: TreeFolderItems_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(source: folderItems, handler: TreeFolderItems_CollectionChanged);//adding event handler to add/remove tree items automatically based on folder items collection changes
+
+                if (folderItems.Count > 0)
+                {
+                    object sampleItem = folderItems[0];
+                    foreach (T item in folderItems.OrderBy(((RepositoryItemBase)sampleItem).ItemNameField))
+                    {
+                        ITreeViewItem tvi = GetTreeItem(item);
+                        _children.Add(tvi);
+                    }
                 }
             }
-            return Childrens;
+            return _children;
         }
 
         /// <summary>

@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.BusinessFlowPages.ListHelpers;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
@@ -31,6 +32,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -191,7 +193,14 @@ namespace Ginger.UserControlsLib.UCListView
                         filteredView.Filter = LVItemFilter;
                     }
 
-                    xListView.ItemsSource = mObjList;
+                    if (Dispatcher.CheckAccess())
+                    {
+                        xListView.ItemsSource = mObjList;
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() => xListView.ItemsSource = mObjList);
+                    }
 
                     if(value is ObservableList<VariableBase>)
                     {
@@ -216,8 +225,15 @@ namespace Ginger.UserControlsLib.UCListView
                         }
 
                         //show items as collapsed
-                        mListViewHelper.ExpandItemOnLoad = false;
-                        xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
+                        if(mListViewHelper != null && mListViewHelper is not DatabaseListViewHelper)
+                        {
+                            mListViewHelper.ExpandItemOnLoad = false;
+                            xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
+                        }
+                        else
+                        {
+                            xExpandCollapseBtn.ButtonImageType = eImageType.CollapseAll;
+                        }
                     }));
 
                 }
@@ -579,7 +595,11 @@ namespace Ginger.UserControlsLib.UCListView
         public void SetDefaultListDataTemplate(IListViewHelper listViewHelper)
         {
             mListViewHelper = listViewHelper;
-            mListViewHelper.ListView = this;
+            if (mListViewHelper != null)
+            {
+                mListViewHelper.ListView = this;
+            }
+
             this.Dispatcher.Invoke(() =>
             {
                 DataTemplate dataTemp = new DataTemplate();
@@ -589,8 +609,11 @@ namespace Ginger.UserControlsLib.UCListView
                 dataTemp.VisualTree = listItemFac;
                 xListView.ItemTemplate = dataTemp;
 
-                SetListOperations();
-                SetListExtraOperations();
+                if (mListViewHelper != null)
+                {
+                    SetListOperations();
+                    SetListExtraOperations();
+                }
             });
         }
 

@@ -64,6 +64,12 @@ namespace Ginger.Reports
             No
         }
 
+        public enum eUploadExecutionArtifactsToCentralizedReport
+        {
+            Yes,
+            No
+        }
+
         // Why we serialzie!!?
 
         [IsSerializedForLocalRepository]
@@ -168,6 +174,23 @@ namespace Ginger.Reports
             }
         }
 
+        private eUploadExecutionArtifactsToCentralizedReport mUploadArtifactsToCentralizedReport = eUploadExecutionArtifactsToCentralizedReport.Yes;
+        [IsSerializedForLocalRepository]
+        public eUploadExecutionArtifactsToCentralizedReport UploadArtifactsToCentralizedReport
+        {
+            get
+            {
+                return mUploadArtifactsToCentralizedReport;
+            }
+            set
+            {
+                if (mUploadArtifactsToCentralizedReport != value)
+                {
+                    mUploadArtifactsToCentralizedReport = value;
+                    OnPropertyChanged(nameof(UploadArtifactsToCentralizedReport));
+                }
+            }
+        }
 
         private string mCentralizedHtmlReportServiceURL;
         [IsSerializedForLocalRepository]

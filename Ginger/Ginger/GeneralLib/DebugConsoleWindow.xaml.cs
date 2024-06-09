@@ -93,8 +93,8 @@ namespace GingerWPF
 
         private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
         {
-            // Clipboard.SetText(output.GetText()+"\n"+ errors.GetText());
-            Clipboard.SetText(xConsoleTextBlock.Text);
+            //  GingerCore.General.SetClipboardText(output.GetText()+"\n"+ errors.GetText());
+             GingerCore.General.SetClipboardText(xConsoleTextBlock.Text);
         }
 
         private void CloseWindow(object sender, EventArgs e)

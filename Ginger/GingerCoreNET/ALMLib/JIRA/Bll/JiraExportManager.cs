@@ -26,6 +26,8 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.JIRA.Data_Contracts;
 using GingerCore.Variables;
+using GingerCoreNET.ALMLib;
+using GingerCoreNET.GeneralLib;
 using JiraRepositoryStd;
 using JiraRepositoryStd.BLL;
 using JiraRepositoryStd.Data_Contracts;
@@ -36,6 +38,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 
 namespace GingerCore.ALM.JIRA.Bll
@@ -50,6 +53,7 @@ namespace GingerCore.ALM.JIRA.Bll
             this.jiraRepObj = jiraRep;
             this.jmz = new JiraManagerZephyr();
         }
+
 
         public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
         {
@@ -330,7 +334,7 @@ namespace GingerCore.ALM.JIRA.Bll
                 {
                     var testExecutionData = CreateTestRunData(actGroup);
                     var relevantTcRun = testExecutionData.FirstOrDefault(a => a.TestExecutionId == bizFlow.AlmData);
-                    if (!string.IsNullOrEmpty(relevantTcRun.TestCaseRunId))
+                    if (relevantTcRun !=null && !string.IsNullOrEmpty(relevantTcRun.TestCaseRunId))
                     {
                         List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == actGroup.Name)).Select(a => a).ToList();
                         JiraRunStatus runs = new JiraRunStatus();
@@ -341,7 +345,7 @@ namespace GingerCore.ALM.JIRA.Bll
                         {
                             RunStatus jiraStatus = ConvertGingerStatusToJira(act.Status.HasValue ? act.Status.Value : eRunStatus.NA);
                             string comment = CreateCommentForRun(act.Acts.ToList());
-                            stepColl.Add(new JiraRunStepStautus() { comment = comment, status = jiraStatus });
+                            stepColl.Add(new JiraRunStepStautus() { comment = comment,status = jiraStatus });
                         }
                         resultFlag = jiraRepObj.ExecuteRunStatusBySteps(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, runs, relevantTcRun.TestCaseRunId);
 
@@ -369,6 +373,26 @@ namespace GingerCore.ALM.JIRA.Bll
                                 System.IO.File.Delete(zipFileName);
                             }
                         }
+
+
+                        if (publishToALMConfig.ToExportReportLink)
+                        {
+                            if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
+                            {
+                                string reportLink = General.CreateReportLinkPerFlow(HtmlReportUrl: publishToALMConfig.HtmlReportUrl, ExecutionId: publishToALMConfig.ExecutionId, BusinessFlowInstanceGuid: bizFlow.InstanceGuid.ToString());
+                               reportLink = $"[Ginger Report Link|{reportLink}]";
+
+                                if (this.jiraRepObj.AddComment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, relevantTcRun.TestExecutionId, reportLink) == null)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "failed to add comment");
+                                }
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        resultFlag = false;
                     }
                 }
             }
@@ -378,7 +402,7 @@ namespace GingerCore.ALM.JIRA.Bll
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM);
+                Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM,"Incorrect ExternalID of BF, Please check if BF already exported as Test Set/Plan");
             }
 
             return resultFlag;

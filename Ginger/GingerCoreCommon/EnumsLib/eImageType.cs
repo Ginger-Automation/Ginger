@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -45,6 +45,10 @@ namespace Amdocs.Ginger.Common.Enums
         Sealights,
         NormalUser,
         AdminUser,
+        Chatbot,
+        SendArrow,
+        Medical,
+        Chat,
         #endregion
 
 
@@ -82,6 +86,8 @@ namespace Amdocs.Ginger.Common.Enums
         Timer,
         #endregion
 
+        LisaProcessing,
+
         #region Execution Status Images
         Unknown,
         //############################## Execution Status Images:
@@ -116,6 +122,7 @@ namespace Amdocs.Ginger.Common.Enums
         Stop,
         Close,
         Close2,
+        CloseWhite,
         Run,
         RunSingle,
         Continue,
@@ -239,6 +246,12 @@ namespace Amdocs.Ginger.Common.Enums
         ArrowDown,
         ArrowRight,
         ExcelFile,
+        WordFile,
+        FilePowerpoint,
+        FileXML,
+        FileJSON,
+        FileJavascript,
+        FileArchive,
         User,
         UserProfile,
         Forum,
@@ -367,8 +380,10 @@ namespace Amdocs.Ginger.Common.Enums
         LinkSquare,
         DatePicker,
         TreeView,
-        SelfHealing
+        SelfHealing,
         #endregion
+
+
     }
 }
 
