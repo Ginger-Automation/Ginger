@@ -68,7 +68,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Amdocs.Ginger.CoreNET//check
+namespace Amdocs.Ginger.CoreNET
 {
     public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow, IVisualTestingDriver
     {
