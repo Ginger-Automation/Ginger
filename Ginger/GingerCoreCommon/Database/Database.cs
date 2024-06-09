@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -20,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
 
@@ -28,6 +30,20 @@ namespace GingerCore.Environments
     public class Database : RepositoryItemBase, IDatabase
     {
         public IDatabaseOperations DatabaseOperations;
+
+        public string GetConnectionStringToolTip()
+        {
+            return DBType switch
+            {
+                eDBTypes.DB2 => "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};",
+                eDBTypes.PostgreSQL => "Server={Server URL};User Id={User Name}; Password={User Password};Database={Database Name};",
+                eDBTypes.MySQL => "Server={Server URL};Database={Database Name};UID={User Name};PWD={User Password};",
+                eDBTypes.CosmosDb => "AccountEndpoint={End Point URL};AccountKey={Account Key};",
+                eDBTypes.Hbase => "Server={Server URL};Port={Port No};User Id={User Name}; Password={Password};Database={Database Name};",
+                eDBTypes.MongoDb => "mongodb://database_username:password@server_url/DBName",
+                _ => "Data Source={Data Source};User Id={User Name};Password={User Password};",
+            };
+        }
         public enum eDBTypes
         {
             Oracle,
@@ -41,6 +57,25 @@ namespace GingerCore.Environments
             MongoDb,
             CosmosDb,
             Hbase
+        }
+
+
+        // used only for UI , if the database connection fails the status changes to Fail and
+        // if it passes the status changes accordingly
+
+        private eRunStatus mTestConnectionStatus = eRunStatus.Pending;
+        public eRunStatus TestConnectionStatus {
+
+            get
+            {
+                return mTestConnectionStatus;
+            }
+
+            set
+            {
+                mTestConnectionStatus = value;
+                OnPropertyChanged(nameof(TestConnectionStatus));
+            }
         }
 
         public enum eConfigType
@@ -84,6 +119,13 @@ namespace GingerCore.Environments
             }
         }
 
+        public static eImageType Image
+        {
+            get
+            {
+                return eImageType.Database;
+            }
+        }
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -134,6 +176,9 @@ namespace GingerCore.Environments
         private string mPass;
         [IsSerializedForLocalRepository]
         public string Pass { get { return mPass; } set { if (mPass != value) { mPass = value; OnPropertyChanged(nameof(Pass)); } } }
+
+        // checks if oracle version is lower than 10.2
+        public bool IsOracleVersionLow { get; set; } = false;
 
         public static List<string> DbTypes
         {

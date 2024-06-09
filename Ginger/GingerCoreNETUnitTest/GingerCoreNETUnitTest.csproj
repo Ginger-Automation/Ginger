@@ -86,7 +86,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.6" />
     <PackageReference Include="GingerTestHelper" Version="2.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
@@ -113,6 +112,12 @@
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
     <ProjectReference Include="..\GingerRuntime\GingerRuntime.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Ginger.ExecuterService.Contracts">
+      <HintPath>..\GingerCoreNET\DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

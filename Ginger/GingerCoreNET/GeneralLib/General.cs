@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.ALM;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -122,7 +123,7 @@ namespace GingerCoreNET.GeneralLib
 
         #endregion ENUM
 
-       static Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        static Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         static string GetDatetimeFormat() => DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
         public static T ParseEnum<T>(string value)
         {
@@ -512,7 +513,7 @@ namespace GingerCoreNET.GeneralLib
 
         public static string DownloadImage(string ImageURL, Act act)
         {
-            String currImagePath = string.Empty; 
+            String currImagePath = string.Empty;
             try
             {
                 currImagePath = Act.GetScreenShotRandomFileName();
@@ -526,7 +527,7 @@ namespace GingerCoreNET.GeneralLib
                         fs.Close();
                     });
                     act.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
-                    act.ScreenShots.Add(currImagePath);                   
+                    act.ScreenShots.Add(currImagePath);
                 }
             }
             catch (Exception ex)
@@ -538,7 +539,7 @@ namespace GingerCoreNET.GeneralLib
         }
 
         public static async Task<string> DownloadBaselineImage(string ImageURL, Act act)
-        { 
+        {
             String currImagePath = Act.GetScreenShotRandomFileName();
             try
             {
@@ -554,7 +555,7 @@ namespace GingerCoreNET.GeneralLib
             }
             catch (Exception ex)
             {
-                act.Error += ex.Message; 
+                act.Error += ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, "unable to fetch the baseline image");
             }
             return currImagePath;
@@ -596,10 +597,23 @@ namespace GingerCoreNET.GeneralLib
         public static string GenerateFilePath(string folderPath, string ItemName)
         {
             string path;
-            
+
             string Filename = $"{ItemName}_{GetDatetimeFormat()}.txt";
             path = $"{folderPath}{Path.DirectorySeparatorChar}{Filename}";
             return path;
+        }
+
+        public static string CreateReportLinkPerFlow(string HtmlReportUrl, string ExecutionId, string BusinessFlowInstanceGuid)
+        {
+            if (!string.IsNullOrEmpty(HtmlReportUrl) && !string.IsNullOrEmpty(ExecutionId) && !string.IsNullOrEmpty(BusinessFlowInstanceGuid))
+            {
+                if (HtmlReportUrl.Last() != '/')
+                {
+                    HtmlReportUrl = $"{HtmlReportUrl}/";
+                }
+                return $"{HtmlReportUrl}#/BusinessFlow/{ExecutionId}/{BusinessFlowInstanceGuid}";
+            }
+            return "";
         }
     }
 

@@ -1204,6 +1204,7 @@ namespace Ginger
                 imageMaker.SetAsFontImageWithSize = 16;
                 imageMaker.ImageType = iconType;
                 subMenuItem.Icon = imageMaker;
+                imageMaker.Margin = new Thickness(5,0,-5,0);
             }
             parentMenuItem.Items.Insert(insertIndex, subMenuItem);
         }

@@ -91,7 +91,7 @@
 
                 <Border x:Name="xIdentifierBorder" Grid.RowSpan="1" Grid.Column="2" BorderBrush="Transparent" Margin="0,0,0,10"/>
 
-                <usercontrols:ImageMakerControl x:Name="xItemIcon" Grid.RowSpan="2" Grid.Column="3" ImageToolTip="" ImageType="Null" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" SetAsFontImageWithSize="17" Height="20" Width="20" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                <usercontrols:ImageMakerControl x:Name="xItemIcon" Grid.RowSpan="2" Grid.Column="3" ImageToolTip="" ImageType="Null" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" SetAsFontImageWithSize="17" Height="24" Width="24" HorizontalAlignment="Center" Margin="0,0,0,0"/>
 
                 <Grid x:Name="xDetailsGrid" Grid.Row="0" Grid.Column="4" HorizontalAlignment="Stretch" >
                     <Grid.ColumnDefinitions>
@@ -156,7 +156,7 @@
                         <!--to set width per need like for notifications-->
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock x:Name="xItemDescriptionTxtBlock" Grid.Column="0" Text="Description" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkGray}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" HorizontalAlignment="left" VerticalAlignment="Center" />
+                    <TextBlock x:Name="xItemDescriptionTxtBlock" Grid.Column="0" Text="Description" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkGray}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Width="400" HorizontalAlignment="left" VerticalAlignment="Center" />
 
                     <DockPanel x:Name="xItemOperationsMainPnl" Grid.Column="1" HorizontalAlignment="Right" Visibility="Collapsed">
                         <StackPanel x:Name="xItemExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right"/>
