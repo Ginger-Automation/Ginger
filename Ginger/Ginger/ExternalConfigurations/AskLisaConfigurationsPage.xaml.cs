@@ -58,7 +58,7 @@ namespace Ginger.Configurations
             xHostLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.Host));
             xAuthUrlLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.AuthenticationServiceURL));
             xClientIdLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.ClientId));
-            xClientSecretLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.ClientSecret),);
+            xClientSecretLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.ClientSecret));
 
             xStartNewChatLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.StartNewChat));
             xContinueChatLabelTextBox.Init(mContext, userConfig, nameof(AskLisaConfiguration.ContinueChat));
