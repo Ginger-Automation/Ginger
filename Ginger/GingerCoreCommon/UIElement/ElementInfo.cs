@@ -497,7 +497,7 @@ namespace Amdocs.Ginger.Common.UIElement
             return mData;
         }
 
-        public void SetLocatorsAndPropertiesCategory(string category)
+        public void SetLocatorsAndPropertiesCategory(ePomElementCategory? category)
         {
             foreach(ElementLocator locator in Locators)
             {

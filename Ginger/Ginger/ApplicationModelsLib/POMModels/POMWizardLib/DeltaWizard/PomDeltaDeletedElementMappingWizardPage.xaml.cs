@@ -60,10 +60,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     SetDeletedElementsGridView();
                     DeletedDeltaElementInfos = new ObservableList<DeltaElementInfo>(mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Deleted) && x.IsSelected == true));
                     xDeletedElementsMappingGrid.DataSourceList = DeletedDeltaElementInfos;
-                    foreach (var deletedElement in DeletedDeltaElementInfos)
-                    {
-                        deletedElement.PropertyChanged += DeletedElements_PropertyChanged;
-                    }
                     break;
             }
         }
@@ -79,7 +75,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             //GetNewAddedElementComboBoxItem();
             //view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappedElementInfo), Header = "Mapped New Element", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = NewAddedElementComboList, ComboboxDisplayMemberField = nameof(NewAddedComboboxItem.DisplayValue), ComboboxSelectedValueField = nameof(NewAddedComboboxItem.InternalValue), BindingMode = BindingMode.TwoWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappedElementInfo), Header = "Mapped New Element", WidthWeight = 100, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappedElementInfoName), Header = "Mapped New Element", WidthWeight = 100, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = " ", Header = " ", WidthWeight = 15, MaxWidth=50, BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingElementTemplate"] });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappingElementStatus), WidthWeight = 50, Header = "Operation", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GetElementStatusComoList(), BindingMode = BindingMode.TwoWay });
@@ -174,6 +170,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             var selectedElement = mPomNewAddedElementSelectionPage.ShowAsWindow("Added Elements");
             if (selectedElement != null)
             {
+                currentItem.MappedElementInfoName = selectedElement.ElementInfo.ElementName;
                 currentItem.MappedElementInfo = selectedElement.ElementInfo.Guid.ToString();
                 currentItem.MappingElementStatus = DeltaElementInfo.eMappingStatus.ReplaceExistingElement;
                 //RemoveSelectedElementFromCombobox(selectedElement);
@@ -188,27 +185,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             new PomDeltaMappingElementsComparePage(currentItem, newAddedElement).ShowAsWindow("Elements Details Comparison");
         }
 
-        private void DeletedElements_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(DeltaElementInfo.MappingElementStatus))
-            {
-                if (sender != null)
-                {
-                    DeltaElementInfo deletedElement = (DeltaElementInfo)sender;
-                    if (deletedElement.MappedElementInfo == null &&
-                        (deletedElement.MappingElementStatus == DeltaElementInfo.eMappingStatus.ReplaceExistingElement) ||
-                            deletedElement.MappingElementStatus == DeltaElementInfo.eMappingStatus.MergeExistingElement)
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please first map new element");
-                        deletedElement.MappingElementStatus = DeltaElementInfo.eMappingStatus.DeletedElement;                        
-                    }
-                    else if (deletedElement.MappingElementStatus == DeltaElementInfo.eMappingStatus.DeletedElement)
-                    {
-                        deletedElement.MappedElementInfo = null;
-                    }
-                }
-            }
-        }
     }
 
     //public class NewAddedComboboxItem

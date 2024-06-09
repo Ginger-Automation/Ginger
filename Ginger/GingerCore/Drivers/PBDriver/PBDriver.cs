@@ -88,13 +88,13 @@ namespace GingerCore.Drivers.PBDriver
         [UserConfiguredDescription("Applitool Server Url")]
         public String ApplitoolsServerUrl { get; set; }
 
-        public override string PomCategory
+        public override ePomElementCategory? PomCategory
         {
             get
             {
-                if (string.IsNullOrEmpty(base.PomCategory))
+                if (base.PomCategory == null)
                 {
-                    return "PowerBuilder";
+                    return ePomElementCategory.PowerBuilder;
                 }
                 else
                 {

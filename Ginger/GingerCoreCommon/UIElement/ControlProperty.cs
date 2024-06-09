@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public string Value { get; set; }
 
         [IsSerializedForLocalRepository]
-        public string Category { get; set; }
+        public ePomElementCategory? Category { get; set; }
 
         [IsSerializedForLocalRepository(true)]
         public bool ShowOnUI { get; set; } = true;

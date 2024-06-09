@@ -106,13 +106,13 @@ namespace GingerCore.Drivers.JavaDriverLib
             return true;
         }
 
-        public override string PomCategory
+        public override ePomElementCategory? PomCategory
         {
             get
             {
-                if (string.IsNullOrEmpty(base.PomCategory))
+                if (base.PomCategory == null)
                 {
-                    return "Java";
+                    return ePomElementCategory.Java;
                 }
                 else
                 {

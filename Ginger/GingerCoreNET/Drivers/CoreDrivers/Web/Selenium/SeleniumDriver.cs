@@ -331,13 +331,13 @@ namespace GingerCore.Drivers
 
         private string CurrentFrame;
 
-        public override string PomCategory
+        public override ePomElementCategory? PomCategory
         {
             get
             {
-                if (string.IsNullOrEmpty(base.PomCategory))
+                if (base.PomCategory == null)
                 {
-                    return "Web";
+                    return ePomElementCategory.Web;
                 }
                 else
                 {   

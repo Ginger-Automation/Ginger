@@ -60,9 +60,9 @@ namespace Amdocs.Ginger.Common.UIElement
             set { if (mLocateValue != value) { mLocateValue = value; OnPropertyChanged(nameof(LocateValue)); } }
         }
 
-        private string mCategory { get; set; }
+        private ePomElementCategory? mCategory { get; set; }
         [IsSerializedForLocalRepository]
-        public string Category
+        public ePomElementCategory? Category
         {
             get { return mCategory; }
             set { if (mCategory != value) { mCategory = value; OnPropertyChanged(nameof(Category)); } }

@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         }
 
-        public ElementInfo GetCurrentPOMElementInfo(string category=null)
+        public ElementInfo GetCurrentPOMElementInfo(ePomElementCategory? category =null)
         {
             Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
             ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.FirstOrDefault(z => z.Guid == currentPOMElementInfoGUID);
@@ -81,7 +81,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             }
             else
             {
-                if (!string.IsNullOrEmpty(category))
+                if (category != null)
                 {
                     //copy original element info for not impacting the original element info
                     ElementInfo selectedPOMElementInfoCopy = (ElementInfo)selectedPOMElementInfo.CreateCopy(setNewGUID: false, deepCopy:true);
@@ -93,7 +93,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                     for (int i = selectedPOMElementInfoCopy.Properties.Count - 1; i >= 0; i--)
                     {
                         var prop = selectedPOMElementInfoCopy.Properties[i];
-                        if (string.IsNullOrEmpty(prop.Category) == false && prop.Category.ToLower() != category.ToLower())
+                        if (prop.Category != null && prop.Category != category)
                         {
                             selectedPOMElementInfoCopy.Properties.RemoveAt(i);
                         }
@@ -102,7 +102,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                     for (int i = selectedPOMElementInfoCopy.Locators.Count - 1; i >= 0; i--)
                     {
                         var locator = selectedPOMElementInfoCopy.Locators[i];
-                        if (string.IsNullOrEmpty(locator.Category) == false && locator.Category.ToLower() != category.ToLower())
+                        if (locator.Category != null && locator.Category != category)
                         {
                             selectedPOMElementInfoCopy.Locators.RemoveAt(i);
                         }

@@ -105,13 +105,13 @@ namespace GingerCore.Drivers.WindowsLib
         [UserConfiguredDescription("Applitool Server Url")]
         public String ApplitoolsServerUrl { get; set; }
 
-        public override string PomCategory
+        public override ePomElementCategory? PomCategory
         {
             get
             {
-                if (string.IsNullOrEmpty(base.PomCategory))
+                if (base.PomCategory == null)
                 {
-                    return "Windows";
+                    return ePomElementCategory.Windows;
                 }
                 else
                 {

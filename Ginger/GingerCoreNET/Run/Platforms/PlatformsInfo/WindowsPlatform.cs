@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers.Common;
@@ -62,6 +63,16 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             return browserActElementList;
         }
+
+        /// <summary>
+        /// This method is used to return possible POM elements categories per platform
+        /// </summary>
+        /// <returns></returns>
+        public override List<ePomElementCategory> GetPlatformPOMElementCategories()
+        {
+            return new List<ePomElementCategory> { ePomElementCategory.Windows };
+        }
+
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             List<ActUIElement.eElementAction> windowsPlatformElementActionslist = new List<ActUIElement.eElementAction>();

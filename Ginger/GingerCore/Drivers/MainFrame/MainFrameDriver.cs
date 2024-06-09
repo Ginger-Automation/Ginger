@@ -87,13 +87,13 @@ namespace GingerCore.Drivers.MainFrame
         public int Rows = 24;
         public int Coloumn = 80;
 
-        public override string PomCategory
+        public override ePomElementCategory? PomCategory
         {
             get
             {
-                if (string.IsNullOrEmpty(base.PomCategory))
+                if (base.PomCategory == null)
                 {
-                    return "Mainframe";
+                    return ePomElementCategory.Mainframe;
                 }
                 else
                 {

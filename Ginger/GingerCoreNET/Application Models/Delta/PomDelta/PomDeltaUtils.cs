@@ -756,7 +756,7 @@ namespace GingerCoreNET.Application_Models
             }
         }
        
-        public void MergeElements(ElementInfo originalElement, ElementInfo secondElement)
+        public static void MergeElements(ElementInfo originalElement, ElementInfo secondElement)
         {
             //Merge Properties
             for (int i = secondElement.Properties.Count - 1; i >= 0; i--)

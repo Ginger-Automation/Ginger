@@ -88,6 +88,24 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
+        /// <summary>
+        /// Map Deleted element with new added element
+        /// </summary>
+        /// 
+        private string mMappedElementInfoName;
+        public string MappedElementInfoName
+        {
+            get
+            {
+                return mMappedElementInfoName;
+            }
+            set
+            {
+                mMappedElementInfoName = value;
+                OnPropertyChanged(nameof(MappedElementInfoName));
+            }
+        }
+
 
         private eMappingStatus mMappingElementStatus;
         public eMappingStatus MappingElementStatus
@@ -98,7 +116,22 @@ namespace GingerCoreNET.Application_Models
             }
             set
             {
-                mMappingElementStatus = value;
+                switch(value)
+                {
+                    case eMappingStatus.DeletedElement:
+                        MappedElementInfo = string.Empty;
+                        MappedElementInfoName = string.Empty;
+                        break;
+                    case eMappingStatus.ReplaceExistingElement:
+                    case eMappingStatus.MergeExistingElement:
+                        if (string.IsNullOrEmpty(MappedElementInfo))
+                        {
+                            mMappingElementStatus = eMappingStatus.DeletedElement;
+                            return;//not valid operation
+                        }
+                        break;
+                }
+                mMappingElementStatus = value;               
                 OnPropertyChanged(nameof(MappingElementStatus));
             }
         }

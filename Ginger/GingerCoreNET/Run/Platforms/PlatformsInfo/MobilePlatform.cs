@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -159,6 +160,15 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override bool IsPlatformSupportPOM()
         {
             return true;
+        }
+
+        /// <summary>
+        /// This method is used to return possible POM elements categories per platform
+        /// </summary>
+        /// <returns></returns>
+        public override List<ePomElementCategory> GetPlatformPOMElementCategories()
+        {
+            return new List<ePomElementCategory> { ePomElementCategory.Android, ePomElementCategory.iOS, ePomElementCategory.Web };
         }
 
         public override string GetPageUrlRadioLabelText()

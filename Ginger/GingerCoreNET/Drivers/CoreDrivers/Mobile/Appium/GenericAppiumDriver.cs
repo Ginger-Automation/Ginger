@@ -175,17 +175,24 @@ namespace Amdocs.Ginger.CoreNET//check
             get => LoadDeviceWindow;
         }
 
-        public override string PomCategory 
+        public override ePomElementCategory? PomCategory 
         {
             get
             {
                 if (AppType == eAppType.NativeHybride)
                 {
-                    return DevicePlatformType.ToString();
+                    switch(DevicePlatformType)
+                    {
+                        case eDevicePlatformType.iOS:
+                            return ePomElementCategory.iOS;                            
+                        case eDevicePlatformType.Android:
+                        default:
+                            return ePomElementCategory.Android;                       
+                    }
                 }
                 else
                 {
-                    return eAppType.Web.ToString();
+                    return ePomElementCategory.Web;
                 }
             }
 
