@@ -252,13 +252,30 @@ namespace Ginger.SolutionWindows
                 Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
                 return;
             }
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.TargetApplications.Any(y => y.Name == xTargetApplicationsGrid.grdMain.SelectedItem.ToString())))
+            bool doesAppExistInBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.TargetApplications.Any(y => y.Name == xTargetApplicationsGrid.grdMain.SelectedItem.ToString()));
+            bool doesAppExistInEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().SelectMany((projEnv) => projEnv.Applications).Any((x) => string.Equals(x.Name, xTargetApplicationsGrid.grdMain.SelectedItem.ToString()));
+            if (doesAppExistInBF || doesAppExistInEnv)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can not remove " + xTargetApplicationsGrid.grdMain.SelectedItem.ToString() + ", as it is being used by business flows.");
-            }
-            else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().SelectMany((projEnv) => projEnv.Applications).Any((x) => string.Equals(x.Name, xTargetApplicationsGrid.grdMain.SelectedItem.ToString())))
-            {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"Cannot remove {xTargetApplicationsGrid.grdMain.SelectedItem} as it is being used by Environments.");   
+                string messageToUser = $"Cannot remove {xTargetApplicationsGrid.grdMain.SelectedItem} as it is being used by ";
+
+                if (doesAppExistInBF)
+                {
+                    messageToUser += "Businessflows";
+                }
+                if (doesAppExistInEnv)
+                {
+                    if (messageToUser.EndsWith("Businessflows"))
+                    {
+                        messageToUser += " and Environments";
+                    }
+
+                    else
+                    {
+                        messageToUser += "Environments";
+                    }
+                }
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, messageToUser);
+
             }
             else
             {
@@ -270,15 +287,31 @@ namespace Ginger.SolutionWindows
         {
             foreach (ApplicationPlatform applicationPlatform in WorkSpace.Instance.Solution.ApplicationPlatforms.ToList())
             {
-                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.TargetApplications.Any(y => y.Name == applicationPlatform.AppName)))
+                bool doesAppExistInBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.TargetApplications.Any(y => y.Name == applicationPlatform.AppName));
+                bool doesAppExistInEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().SelectMany((projEnv) => projEnv.Applications).Any((x) => string.Equals(x.Name, applicationPlatform.AppName));
+                if (doesAppExistInBF || doesAppExistInEnv)
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can not remove " + applicationPlatform.AppName + ", as it is being used by business flows.");
-                }
-                else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().SelectMany((projEnv) => projEnv.Applications).Any((x) => string.Equals(x.Name, applicationPlatform.AppName)))
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"Cannot remove {applicationPlatform.AppName} as it is being used by Environments.");
-                }
+                    string messageToUser = $"Cannot remove {applicationPlatform.AppName} as it is being used by ";
 
+                    if (doesAppExistInBF)
+                    {
+                        messageToUser += "Businessflows";
+                    }
+                    if (doesAppExistInEnv)
+                    {
+                        if (messageToUser.EndsWith("Businessflows"))
+                        {
+                            messageToUser += " and Environments";
+                        }
+
+                        else
+                        {
+                            messageToUser += "Environments";
+                        }
+                    }
+
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, messageToUser);
+                }
                 else
                 {
                     WorkSpace.Instance.Solution.ApplicationPlatforms.Remove(applicationPlatform);
