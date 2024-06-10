@@ -129,7 +129,9 @@ namespace Ginger.Variables
 
         private void ChangeDatabasePass(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
-                if (!EncryptionHandler.IsStringEncrypted(database.Pass))
+                if (!string.IsNullOrEmpty(database.Pass) &&
+                    !database.Pass.Contains("{Var Name") && 
+                    !EncryptionHandler.IsStringEncrypted(database.Pass))
                 {
                     database.Pass = EncryptionHandler.EncryptwithKey(database.Pass);
                 }
