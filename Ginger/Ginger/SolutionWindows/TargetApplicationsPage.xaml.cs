@@ -256,6 +256,10 @@ namespace Ginger.SolutionWindows
             {
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can not remove " + xTargetApplicationsGrid.grdMain.SelectedItem.ToString() + ", as it is being used by business flows.");
             }
+            else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().SelectMany((projEnv) => projEnv.Applications).Any((x) => string.Equals(x.Name, xTargetApplicationsGrid.grdMain.SelectedItem.ToString())))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"Cannot remove {xTargetApplicationsGrid.grdMain.SelectedItem} as it is being used by Environments.");   
+            }
             else
             {
                 WorkSpace.Instance.Solution.ApplicationPlatforms.Remove((ApplicationPlatform)xTargetApplicationsGrid.grdMain.SelectedItem);
@@ -270,6 +274,11 @@ namespace Ginger.SolutionWindows
                 {
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can not remove " + applicationPlatform.AppName + ", as it is being used by business flows.");
                 }
+                else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().SelectMany((projEnv) => projEnv.Applications).Any((x) => string.Equals(x.Name, applicationPlatform.AppName)))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"Cannot remove {applicationPlatform.AppName} as it is being used by Environments.");
+                }
+
                 else
                 {
                     WorkSpace.Instance.Solution.ApplicationPlatforms.Remove(applicationPlatform);
