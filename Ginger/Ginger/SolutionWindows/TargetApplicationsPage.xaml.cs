@@ -252,11 +252,22 @@ namespace Ginger.SolutionWindows
                 Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
                 return;
             }
-            bool doesAppExistInBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.TargetApplications.Any(y => y.Name == xTargetApplicationsGrid.grdMain.SelectedItem.ToString()));
-            bool doesAppExistInEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().SelectMany((projEnv) => projEnv.Applications).Any((x) => string.Equals(x.Name, xTargetApplicationsGrid.grdMain.SelectedItem.ToString()));
+
+            DeleteApplication((ApplicationPlatform)xTargetApplicationsGrid.grdMain.SelectedItem);
+        }
+
+        public void DeleteApplication(ApplicationPlatform applicationPlatform)
+        {
+            if(applicationPlatform == null)
+            {
+                return;
+            }
+            
+            bool doesAppExistInBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.TargetApplications.Any(y => y.Name == applicationPlatform.AppName));
+            bool doesAppExistInEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().SelectMany((projEnv) => projEnv.Applications).Any((x) => string.Equals(x.Name, applicationPlatform.AppName));
             if (doesAppExistInBF || doesAppExistInEnv)
             {
-                string messageToUser = $"Cannot remove {xTargetApplicationsGrid.grdMain.SelectedItem} as it is being used by ";
+                string messageToUser = $"Cannot remove {applicationPlatform.AppName} as it is being used by ";
 
                 if (doesAppExistInBF)
                 {
@@ -274,50 +285,21 @@ namespace Ginger.SolutionWindows
                         messageToUser += "Environments";
                     }
                 }
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, messageToUser);
 
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, messageToUser);
             }
             else
             {
-                WorkSpace.Instance.Solution.ApplicationPlatforms.Remove((ApplicationPlatform)xTargetApplicationsGrid.grdMain.SelectedItem);
+                WorkSpace.Instance.Solution.ApplicationPlatforms.Remove(applicationPlatform);
             }
-
         }
+
         private void btnClearAll_Click(object sender, RoutedEventArgs e)
         {
             foreach (ApplicationPlatform applicationPlatform in WorkSpace.Instance.Solution.ApplicationPlatforms.ToList())
             {
-                bool doesAppExistInBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.TargetApplications.Any(y => y.Name == applicationPlatform.AppName));
-                bool doesAppExistInEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().SelectMany((projEnv) => projEnv.Applications).Any((x) => string.Equals(x.Name, applicationPlatform.AppName));
-                if (doesAppExistInBF || doesAppExistInEnv)
-                {
-                    string messageToUser = $"Cannot remove {applicationPlatform.AppName} as it is being used by ";
-
-                    if (doesAppExistInBF)
-                    {
-                        messageToUser += "Businessflows";
-                    }
-                    if (doesAppExistInEnv)
-                    {
-                        if (messageToUser.EndsWith("Businessflows"))
-                        {
-                            messageToUser += " and Environments";
-                        }
-
-                        else
-                        {
-                            messageToUser += "Environments";
-                        }
-                    }
-
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, messageToUser);
-                }
-                else
-                {
-                    WorkSpace.Instance.Solution.ApplicationPlatforms.Remove(applicationPlatform);
-                }
+                DeleteApplication(applicationPlatform);
             }
-
         }
     }
 }
