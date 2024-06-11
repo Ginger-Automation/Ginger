@@ -12,12 +12,6 @@ using System.Threading.Tasks;
 using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
 using GingerCore.Actions.Common;
 using System.Threading;
-using GingerCore.Drivers.Selenium.SeleniumBMP;
-using System.Reflection;
-using System.IO;
-using System.Diagnostics;
-using Applitools;
-using Amdocs.Ginger.Common;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -25,7 +19,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver
     {
         private const string BrowserExecutableNotFoundErrorMessage = "Executable doesn't exist at";
-        private static readonly AutoResetEvent PlaywrightInstallCmdSyncEvent = new(initialState: true);
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -135,7 +128,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         private static void ExecutePlaywrightInstallationCommand(WebBrowserType browserType)
         {
             string browserTypeString;
-            switch(browserType)
+            switch (browserType)
             {
                 case WebBrowserType.Chrome:
                 case WebBrowserType.Edge:
@@ -147,18 +140,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 default:
                     throw new ArgumentException($"Unknown browser type '{browserType}'");
             }
-            PlaywrightInstallCmdSyncEvent.WaitOne();
-            try
+
+            int exitCode = Program.Main(new[] { "install", browserTypeString });
+            if (exitCode != 0)
             {
-                int exitCode = Program.Main(new[] { "install", browserTypeString });
-                if (exitCode != 0)
-                {
-                    throw new Exception($"Error occurred while executing playwright installation command, exited with code {exitCode}");
-                }
-            }
-            finally
-            {
-                PlaywrightInstallCmdSyncEvent.Set();
+                throw new Exception($"Error occurred while executing playwright installation command, exited with code {exitCode}");
             }
         }
 
