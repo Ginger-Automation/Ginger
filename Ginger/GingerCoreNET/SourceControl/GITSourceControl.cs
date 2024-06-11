@@ -1391,7 +1391,7 @@ namespace GingerCore.SourceControl
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "unabled to connect to git repository",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to unpushed local commit",ex);
                 return null;
             }
             
