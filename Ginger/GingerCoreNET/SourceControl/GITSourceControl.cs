@@ -1392,7 +1392,7 @@ namespace GingerCore.SourceControl
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to unpushed local commit",ex);
-                return null;
+                return new ObservableList<SourceControlChangesetDetails>(); ;
             }
             
         }
