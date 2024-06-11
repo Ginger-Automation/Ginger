@@ -89,7 +89,9 @@ jobs:
                     git clone https://github.com/Ginger-Automation/Ginger-Web-Help.git
                     move Ginger-Web-Help\docs .
                     rename docs Library
-                    rmdir /s /q Ginger-Web-Help       
+                    rmdir /s /q Ginger-Web-Help  
+                        
+             
 
           #  -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0.beta1
            #     with: 
@@ -106,7 +108,21 @@ jobs:
              #     filepath: 'D:\a\Installers\Ginger.exe'   
              #     certificate: ${{ secrets.PEM }}
              #     cert-password: ${{ secrets.PEM_PASS }}
-                    
+             - name: Sign inner portable executable files and exe package (Windows 2022)
+                  shell: powershell
+                  run: |
+                    # Install signpath
+                    Install-Module -Name SignPath -Force
+
+                    Submit-SigningRequest `
+                      -InputArtifactPath 'D:\a\Installers\Ginger.exe'  `
+                      -ApiToken "AFQBQFw68WML5gwOciwJ/PlJwo9fa5UiVBJKc4A3VBnR" `
+                      -OrganizationId "5bce7259-d1e7-4ad5-96d5-1ee7c78a40a9" `
+                      -ProjectSlug "Ginger" `
+                      -SigningPolicySlug "GingerSignPolicy" `
+                      -OutputArtifactPath "D:\a\Installers\Ginger.exe" `
+                      -WaitForCompletion
+                      
             -   name: Upload Windows Installer
                 uses: actions/upload-artifact@v3
                 with:
