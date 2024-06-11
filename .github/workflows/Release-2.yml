@@ -108,9 +108,9 @@ jobs:
              #     filepath: 'D:\a\Installers\Ginger.exe'   
              #     certificate: ${{ secrets.PEM }}
              #     cert-password: ${{ secrets.PEM_PASS }}
-             - name: Sign inner portable executable files and exe package (Windows 2022)
-                  shell: powershell
-                  run: |
+            -   name: 'Sign inner portable executable files'
+                shell: powershell
+                run: |
                     # Install signpath
                     Install-Module -Name SignPath -Force
 
