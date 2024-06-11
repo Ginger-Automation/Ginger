@@ -120,7 +120,7 @@ jobs:
                       -OrganizationId "5bce7259-d1e7-4ad5-96d5-1ee7c78a40a9" `
                       -ProjectSlug "Ginger" `
                       -SigningPolicySlug "GingerSignPolicy" `
-                      -OutputArtifactPath "D:\a\Installers\Ginger.exe" -Force`
+                      -OutputArtifactPath "D:\a\Installers\Ginger1.exe" -Force`
                       -WaitForCompletion
                       
             -   name: Upload Windows Installer
