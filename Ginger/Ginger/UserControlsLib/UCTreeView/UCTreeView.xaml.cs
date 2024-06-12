@@ -575,6 +575,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 return;
             }
 
+            if (TVI.Tag is ITreeViewItem tviTreeViewItem)
+            {
+                GetNodeChilds(tviTreeViewItem, childsList, isRecursive);
+                return;
+            }
+
             if (TVI.Items.Count == 0 || (TVI.Items.Count == 1 && ((TreeViewItem)TVI.Items[0]).Tag == null))
             {
                 SetTreeNodeItemChilds(TVI);
@@ -589,6 +595,30 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     {
                         GetNodeChilds(childTVI, childsList, true);
                     }
+                }
+            }
+        }
+
+        private void GetNodeChilds(ITreeViewItem TVI, List<ITreeViewItem> childsList, bool isRecursive)
+        {
+            if (TVI == null)
+            {
+                return;
+            }
+
+            List<ITreeViewItem> children = TVI.Childrens();
+            if (children == null)
+            {
+                return;
+            }
+            children = new(children);
+
+            foreach (ITreeViewItem childTVI in children)
+            {
+                childsList.Add(childTVI);
+                if (isRecursive)
+                {
+                    GetNodeChilds(childTVI, childsList, true);
                 }
             }
         }
