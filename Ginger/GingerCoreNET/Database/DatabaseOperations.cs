@@ -81,6 +81,10 @@ namespace GingerCore.Environments
             }
         }
 
+        public bool IsPassValueExp()
+        {
+            return ValueExpression.IsThisAValueExpression(this.Database.Pass);
+        }
         public string ConnectionStringCalculated
         {
             get

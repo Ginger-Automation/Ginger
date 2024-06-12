@@ -607,6 +607,40 @@ namespace GingerCore
             return false;
         }
 
+        public static bool IsThisAValueExpression(string VE)
+        {
+            if (string.IsNullOrEmpty(VE))
+            {
+                return false;
+            }
+
+            if (IsThisDynamicVE(VE))
+            {
+                return true;
+            }
+
+            if(VE.Contains("{CS Exp="))
+            {
+                return true;
+            }
+
+            MatchCollection functionMatches = rNestedfunc.Matches(VE);
+
+            if(functionMatches.Count > 0)
+            {
+                return true;
+            }
+
+            MatchCollection FDObjectMatches = rxFDPattern.Matches(VE);
+
+            if(FDObjectMatches.Count > 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private void ReplaceDataSources()
         {
             int iCount = 0;// defining no to go in endless loop            
