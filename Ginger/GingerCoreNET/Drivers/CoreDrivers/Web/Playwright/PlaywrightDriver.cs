@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GingerCore.Actions.Common;
+using Amdocs.Ginger.Common.UIElement;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -179,17 +180,162 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public override Act GetCurrentElement()
         {
-            throw new NotImplementedException();
+            ThrowIfClosed();
+
+            async Task<Act?> getCurrentElementAsync()
+            {
+                IBrowserElement? element = await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).GetFocusedElement();
+                if (element == null)
+                {
+                    return null;
+                }
+
+                string tagName = await element.TagNameAsync();
+                Act? act = null;
+                switch (tagName)
+                {
+                    case "text":
+                        act = new ActTextBox()
+                        {
+                            TextBoxAction = ActTextBox.eTextBoxAction.SetValue,
+                        };
+                        await SetElementLocatorToActionAsync(element, act);
+                        act.AddOrUpdateInputParamValue("Value", await element.AttributeValueAsync(name: "value"));
+                        act.AddOrUpdateReturnParamActual("Actual", $"Tag Name = {tagName}");
+                        break;
+                    case "button":
+                        string idAttrValue = await element.AttributeValueAsync(name: "id");
+                        
+                        act = new ActButton()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue
+                        };
+                        break;
+                    case "submit":
+                        idAttrValue = await element.AttributeValueAsync(name: "id");
+
+                        act = new ActButton()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue
+                        };
+                        break;
+                    case "reset":
+                        //TODO: add missing Act get() method
+                        break;
+                    case "file":
+                        //TODO: add missing Act get() method
+                        break;
+                    case "hidden": // does type this apply?
+                                   //TODO: add missing Act get() method
+                        break;
+                    case "password":
+                        act = new ActPassword()
+                        {
+                            PasswordAction = ActPassword.ePasswordAction.SetValue,
+                        };
+                        await SetElementLocatorToActionAsync(element, act);
+                        act.AddOrUpdateInputParamValue("Value", await element.AttributeValueAsync(name: "value"));
+                        act.AddOrUpdateReturnParamActual("Actual", $"Tag Name = {tagName}");
+                        break;
+                    case "checkbox":
+                        idAttrValue = await element.AttributeValueAsync(name: "id");
+                        act = new ActCheckbox()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue,
+                        };
+                        break;
+                    case "radio":
+                        idAttrValue = await element.AttributeValueAsync(name: "id");
+                        act = new ActRadioButton()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue
+                        };
+                        break;
+
+                }
+                return act;
+            }
+
+            return Task.Run(getCurrentElementAsync).Result!;
+            
+        }
+
+        private async Task SetElementLocatorToActionAsync(IBrowserElement element, Act act)
+        {
+            //order by priority
+
+            // By ID
+            string locatorValue = await element.AttributeValueAsync(name: "id");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByID;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            // By name
+            locatorValue = await element.AttributeValueAsync(name: "name");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByName;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            //TODO: CSS....
+
+            //By href
+            locatorValue = await element.AttributeValueAsync(name: "href");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByHref;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            //By Value
+            locatorValue = await element.AttributeValueAsync(name: "value");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByValue;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            // by text
+            locatorValue = await element.TextContentAsync();
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByLinkText;
+                act.LocateValue = locatorValue;
+                return;
+            }
+            //TODO: add XPath
         }
 
         public override string GetURL()
         {
-            throw new NotImplementedException();
+            ThrowIfClosed();
+
+            return Task.Run(() => _browser!.CurrentWindow.CurrentTab.GetURLAsync().Result).Result;
         }
 
         public override void HighlightActElement(Act act)
         {
-            throw new NotImplementedException();
+            ThrowIfClosed();
+            //TODO: implement
+        }
+
+        private void ThrowIfClosed()
+        {
+            if (!IsRunning())
+            {
+                throw new InvalidOperationException($"Cannot perform operation on closed driver.");
+            }
         }
     }
 }

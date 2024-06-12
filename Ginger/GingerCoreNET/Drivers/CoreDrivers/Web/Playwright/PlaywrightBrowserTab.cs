@@ -96,16 +96,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task WaitTillLoadedAsync()
         {
+            ThrowIfClosed();
             return _playwrightPage.WaitForLoadStateAsync(LoadState.Load);
         }
 
         public Task<string> GetConsoleLogsAsync()
         {
+            ThrowIfClosed();
             return Task.FromResult(string.Join('\n', _consoleMessages));
         }
 
         public async Task<string> GetBrowserLogsAsync()
         {
+            ThrowIfClosed();
             string script = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; network;";
 
             JsonElement? logs = await _playwrightPage.EvaluateAsync(script);
@@ -137,6 +140,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public async Task<bool> SwitchFrameAsync(eLocateBy locateBy, string value)
         {
+            ThrowIfClosed();
             IFrameLocator frameLocator;
             switch (locateBy)
             {
@@ -183,12 +187,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task SwitchToMainFrameAsync()
         {
+            ThrowIfClosed();
             _currentFrame = _playwrightPage.MainFrame;
             return Task.CompletedTask;
         }
 
         public Task SwitchToParentFrameAsync()
         {
+            ThrowIfClosed();
             IFrame? parentFrame = _currentFrame.ParentFrame;
             if (parentFrame != null)
             {
@@ -200,6 +206,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public async Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string value)
         {
+            ThrowIfClosed();
             IPlaywrightLocator locator = await LocateElementAsync(locateBy, value);
 
             int matchedElementCount = await locator.CountAsync();
@@ -232,6 +239,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             return Task.FromResult(locator);
+        }
+
+        public async Task<IBrowserElement?> GetFocusedElement()
+        {
+            ThrowIfClosed();
+            IPlaywrightLocator locator = _currentFrame.Locator("css=*:focus");
+            int matchedElementCount = await locator.CountAsync();
+            if (matchedElementCount <= 0)
+            {
+                return null;
+            }
+
+            return new PlaywrightBrowserElement(locator);
         }
 
         private static async Task<bool> DoesLocatorExistsAsync(IPlaywrightLocator locator)
