@@ -2359,7 +2359,7 @@ namespace GingerCore.Drivers
             }
             else
             {
-                return 300;
+                return (int)ImplicitWait;
             }
 
         }
