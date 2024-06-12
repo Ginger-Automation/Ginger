@@ -606,7 +606,11 @@ namespace GingerCore
 
             return false;
         }
-
+        /// <summary>
+        /// This function checks if the string is a value expression of any kind
+        /// </summary>
+        /// <param name="VE">String that is possibly a value expression</param>
+        /// <returns></returns>
         public static bool IsThisAValueExpression(string VE)
         {
             if (string.IsNullOrEmpty(VE))
