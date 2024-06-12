@@ -198,6 +198,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                 throw new InvalidActionConfigurationException("Error: Provided URL is empty. Please provide valid URL.");
             }
 
+            if (!Uri.TryCreate(url, UriKind.Absolute, out _))
+            {
+                string httpsUrlFormat = "https://{0}";
+                if (Uri.TryCreate(string.Format(httpsUrlFormat, url), UriKind.Absolute, out _))
+                {
+                    url = string.Format(httpsUrlFormat, url);
+                }
+                else
+                {
+                    throw new InvalidActionConfigurationException("Error: Invalid URL. Give valid URL(Complete URL)");
+                }
+            }
+
             return url;
         }
 
