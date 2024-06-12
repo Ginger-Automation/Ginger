@@ -165,13 +165,11 @@ namespace Ginger.ALM.Repository
                         {
                             item.ExternalID = null;
                         }
+                        return ExportBFToALMXtended(businessFlow,performSaveAfterExport,almConectStyle);
                     }
                     else
                     {
-                        if (String.IsNullOrEmpty(testPlanUploadPath))
-                        {
-                            testPlanUploadPath = ALMCore.DefaultAlmConfig.ALMProjectName;
-                        }
+                        return ExportBFToALMXtended(businessFlow, performSaveAfterExport, almConectStyle);
                     }
                 }
                 else
@@ -179,7 +177,16 @@ namespace Ginger.ALM.Repository
                     return false;
                 }
             }
+            else
+            {
+                return ExportBFToALMXtended(businessFlow, performSaveAfterExport, almConectStyle);
+            }
+        }
 
+        public bool ExportBFToALMXtended(BusinessFlow businessFlow, bool performSaveAfterExport, eALMConnectType almConectStyle = eALMConnectType.Manual)
+        {
+            bool result = false;
+            string responseStr = string.Empty;
             ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
             var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString()) && (a.ToUpdate || a.Mandatory));
