@@ -9,17 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
 using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
-using Amdocs.Ginger.CoreNET.RunLib;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver
     {
-
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
@@ -36,11 +32,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ValidateBrowserTypeSupport(BrowserType);
 
             IPlaywright playwright = Microsoft.Playwright.Playwright.CreateAsync().Result;
-
-            BrowserTypeLaunchOptions launchOptions = BuildLaunchOptions();
-            IPlaywrightBrowser playwrightBrowser = LaunchBrowserAsync(playwright, BrowserType, launchOptions).Result;
-
-            _browser = new(playwrightBrowser, OnBrowserClose);
+            PlaywrightBrowser.Options browserOptions = BuildPlaywrightBrowserOptions();
+            _browser = new(playwright, BrowserType, browserOptions, OnBrowserClose);
         }
 
         private void ValidateBrowserTypeSupport(WebBrowserType browserType)
@@ -52,9 +45,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
-        private BrowserTypeLaunchOptions BuildLaunchOptions()
+        private PlaywrightBrowser.Options BuildPlaywrightBrowserOptions()
         {
-            BrowserTypeLaunchOptions launchOptions = new()
+            PlaywrightBrowser.Options options = new()
             {
                 Args = new[] { "--start-maximized" },
                 Headless = HeadlessBrowserMode,
@@ -63,42 +56,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             if (!string.IsNullOrEmpty(Proxy))
             {
-                launchOptions.Proxy = new Proxy()
+                options.Proxy = new Proxy()
                 {
                     Server = Proxy
                 };
             }
 
-            if (BrowserType == WebBrowserType.Chrome)
-            {
-                launchOptions.Channel = "chrome";
-            }
-            else if (BrowserType == WebBrowserType.Edge)
-            {
-                launchOptions.Channel = "msedge";
-            }
-
-            return launchOptions;
-        }
-
-        private Task<IPlaywrightBrowser> LaunchBrowserAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
-        {
-            if (browserType == WebBrowserType.Chrome)
-            {
-                return playwright.Chromium.LaunchAsync(launchOptions);
-            }
-            else if (browserType == WebBrowserType.FireFox)
-            {
-                return playwright.Firefox.LaunchAsync(launchOptions);
-            }
-            else if (browserType == WebBrowserType.Edge)
-            {
-                return playwright.Chromium.LaunchAsync(launchOptions);
-            }
-            else
-            {
-                throw new ArgumentException($"Unknown browser type '{BrowserType}'");
-            }
+            return options;
         }
 
         public override bool IsRunning()
@@ -138,21 +102,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.CompletedTask;
         }
 
-        public override Act GetCurrentElement()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string GetURL()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void HighlightActElement(Act act)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void RunAction(Act act)
         {
             if (!IsRunning())
@@ -178,12 +127,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
                     break;
             }
-        }
-
-        public bool CanStartAnotherInstance(out string errorMessage)
-        {
-            errorMessage = string.Empty;
-            return true;
         }
 
         public bool IsActionSupported(Act act, out string message)
@@ -226,6 +169,27 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 message = $"'{act.ActionType}' is not supported by Playwright driver, use Selenium driver instead.";
                 return false;
             }
+        }
+
+        public bool CanStartAnotherInstance(out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            return true;
+        }
+
+        public override Act GetCurrentElement()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetURL()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void HighlightActElement(Act act)
+        {
+            throw new NotImplementedException();
         }
     }
 }

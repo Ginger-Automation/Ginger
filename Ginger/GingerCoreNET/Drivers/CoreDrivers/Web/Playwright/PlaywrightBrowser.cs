@@ -4,21 +4,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
 using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
-using IPlaywrightPage = Microsoft.Playwright.IPage;
-using IPlaywrightDialog = Microsoft.Playwright.IDialog;
-using IPlaywrightLocator = Microsoft.Playwright.ILocator;
+using IPlaywrightBrowserType = Microsoft.Playwright.IBrowserType;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     internal sealed class PlaywrightBrowser : IBrowser
     {
-        private readonly IPlaywrightBrowser _playwrightBrowser;
-        private readonly IBrowser.OnBrowserClose _onBrowserClose;
-        private readonly LinkedList<IBrowserWindow> _windows = [];
+        internal sealed class Options
+        {
+            internal IEnumerable<string>? Args { get; set; }
+
+            internal bool Headless { get; set; }
+
+            internal float? Timeout { get; set; }
+
+            internal Proxy? Proxy { get; set; }
+        }
+
+        private readonly IPlaywright _playwright;
+        private readonly WebBrowserType _browserType;
+        private readonly Options? _options;
+        private readonly LinkedList<IBrowserWindow> _windows;
+        private readonly IBrowser.OnBrowserClose? _onBrowserClose;
         private IBrowserWindow _currentWindow;
         private bool _isClosed = false;
 
@@ -28,55 +39,46 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public bool IsClosed => _isClosed;
 
-        internal PlaywrightBrowser(IPlaywrightBrowser playwrightBrowser, IBrowser.OnBrowserClose onBrowserClose)
+        internal PlaywrightBrowser(IPlaywright playwright, WebBrowserType browserType, Options? options = null, IBrowser.OnBrowserClose? onBrowserClose = null)
         {
-            _playwrightBrowser = playwrightBrowser;
+            _playwright = playwright;
+            _browserType = browserType;
+            _options = options;
             _onBrowserClose = onBrowserClose;
 
-            List<IPlaywrightBrowserContext> contexts = new(_playwrightBrowser.Contexts);
-            foreach (IPlaywrightBrowserContext context in contexts)
-            {
-                PlaywrightBrowserWindow window = new(context, OnWindowClose);
-                _windows.AddLast(window);
-            }
+            _windows = [];
 
-            if (_windows.Count > 0)
+            IBrowserWindow? newWindow = Task.Run(() =>
             {
-                _currentWindow = _windows.Last!.Value;
-            }
-            else
-            {
-                IBrowserWindow? newWindow = Task.Run(() =>
+                try
                 {
-                    try
-                    {
-                        //this code needs to be executed in a separate Task otherwise, it will cause a deadlock and freeze the calling thread
-                        //check this for an example https://stackoverflow.com/a/43912280/12190808
-                        return NewWindowAsync().Result;
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while creating {nameof(IBrowserWindow)}", ex);
-                        return null!;
-                    }
-                }).Result;
-
-                if (newWindow == null)
-                {
-                    throw new Exception($"Error occurred while creating {nameof(IBrowserWindow)}");
+                    //this code needs to be executed in a separate Task otherwise, it will cause a deadlock and freeze the calling thread
+                    //check this for an example https://stackoverflow.com/a/43912280/12190808
+                    return NewWindowAsync().Result;
                 }
-                _currentWindow = newWindow;
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while creating {nameof(IBrowserWindow)}", ex);
+                    return null!;
+                }
+            }).Result;
+
+            if (newWindow == null)
+            {
+                throw new Exception($"Error occurred while creating {nameof(IBrowserWindow)}");
             }
+            _currentWindow = newWindow;
         }
 
         public async Task<IBrowserWindow> NewWindowAsync(bool setAsCurrent = true)
         {
             ThrowIfClosed();
 
-            IPlaywrightBrowserContext context = await _playwrightBrowser.NewContextAsync(new BrowserNewContextOptions()
-            {
-                ViewportSize = ViewportSize.NoViewport,
-            });
+            IPlaywrightBrowserType playwrightBrowserType = GetPlaywrightBrowserType();
+            BrowserTypeLaunchPersistentContextOptions? launchOptions = BuildPlaywrightBrowserContextLaunchOptions();
+
+            IPlaywrightBrowserContext context = await playwrightBrowserType.LaunchPersistentContextAsync(userDataDir: string.Empty, launchOptions);
+
             PlaywrightBrowserWindow window = new(context, OnWindowClose);
             _windows.AddLast(window);
 
@@ -86,6 +88,48 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             return window;
+        }
+
+        private BrowserTypeLaunchPersistentContextOptions? BuildPlaywrightBrowserContextLaunchOptions()
+        {
+            if (_options == null)
+            {
+                return null;
+            }
+
+            BrowserTypeLaunchPersistentContextOptions launchOptions = new()
+            {
+                Args = _options.Args,
+                Headless = _options.Headless,
+                Timeout = _options.Timeout,
+                Proxy = _options.Proxy,
+                ViewportSize = ViewportSize.NoViewport,
+            };
+
+            if (_browserType == WebBrowserType.Chrome)
+            {
+                launchOptions.Channel = "chrome";
+            }
+            else if (_browserType == WebBrowserType.Edge)
+            {
+                launchOptions.Channel = "msedge";
+            }
+
+            return launchOptions;
+        }
+
+        private IPlaywrightBrowserType GetPlaywrightBrowserType()
+        {
+            switch (_browserType)
+            {
+                case WebBrowserType.Chrome:
+                case WebBrowserType.Edge:
+                    return _playwright.Chromium;
+                case WebBrowserType.FireFox:
+                    return _playwright.Firefox;
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public async Task SetWindowAsync(IBrowserWindow window)
@@ -158,9 +202,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             _isClosed = true;
 
-            await _playwrightBrowser.CloseAsync();
-            await _playwrightBrowser.DisposeAsync();
-            await _onBrowserClose.Invoke(closedBrowser: this);
+            _playwright.Dispose();
+            if (_onBrowserClose != null)
+            {
+                await _onBrowserClose.Invoke(closedBrowser: this);
+            }
         }
 
         private void ThrowIfClosed()
