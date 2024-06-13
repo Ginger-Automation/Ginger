@@ -218,6 +218,15 @@ namespace GingerCore.Environments
             return SupportedConfigs;
         }
 
+        // Encrypts if the password is not a value expression or if it is already encrypted
+        public void EncryptDatabasePass()
+        {
+            if (!string.IsNullOrEmpty(Pass) && !this.DatabaseOperations.IsPassValueExp() && !EncryptionHandler.IsStringEncrypted(Pass))
+            {
+                Pass = EncryptionHandler.EncryptwithKey(Pass);
+            }
+        }
+
         public override string ItemName
         {
             get
