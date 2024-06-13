@@ -130,7 +130,7 @@ namespace GingerCore.NoSqlBase
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Unable to connect to Hbase", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to connect to Hbase", ex);
                 return false;
             }         
         }       
