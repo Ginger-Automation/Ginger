@@ -112,10 +112,10 @@ namespace Ginger.Environments
             ShowOrHideEditPage(null);
         }
 
-        private void TestDatabase(object sender, RoutedEventArgs e)
+        private async void TestDatabase(object sender, RoutedEventArgs e)
         {
             Database? database = this.DatabaseListView?.CurrentItem as Database;
-            bool IsConnectionSuccessful = this.dbListViewHelper.TestSingleDatabase(database);
+            bool IsConnectionSuccessful = await this.dbListViewHelper.TestSingleDatabase(database);
 
             if (IsConnectionSuccessful)
             {
