@@ -20,11 +20,13 @@ using ACL_Data_Contract;
 using ACL_Data_Contract.Abstraction;
 using ALM_CommonStd.DataContracts;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using GingerCoreNET.GeneralLib;
 using Newtonsoft.Json;
 using RQMExportStd.ExportBLL;
 using System;
@@ -538,6 +540,10 @@ namespace GingerCore.ALM.RQM
                 {
                     if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
                     {
+                        if (publishToALMConfig.HtmlReportUrl.Last() != '/')
+                        {
+                            publishToALMConfig.HtmlReportUrl = $"{exeResult.HtmlReportUrl}/";
+                        }
                         exeResult.HtmlReportUrl = publishToALMConfig.HtmlReportUrl;
                         exeResult.ExecutionId = publishToALMConfig.ExecutionId;
                         exeResult.ExecutionInstanceId = businessFlow.InstanceGuid.ToString();
