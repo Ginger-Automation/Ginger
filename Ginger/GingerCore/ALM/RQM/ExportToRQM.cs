@@ -542,7 +542,7 @@ namespace GingerCore.ALM.RQM
                     {
                         if (publishToALMConfig.HtmlReportUrl.Last() != '/')
                         {
-                            publishToALMConfig.HtmlReportUrl = $"{exeResult.HtmlReportUrl}/";
+                            publishToALMConfig.HtmlReportUrl = $"{publishToALMConfig.HtmlReportUrl}/";
                         }
                         exeResult.HtmlReportUrl = publishToALMConfig.HtmlReportUrl;
                         exeResult.ExecutionId = publishToALMConfig.ExecutionId;
