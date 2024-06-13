@@ -871,7 +871,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Mobile:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Mobile);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MobileScreenButton);
                     break;
 
                 case eImageType.Codepen:
@@ -883,7 +883,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Runing:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Spinner);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PersonRunning);
                     break;
 
                 case eImageType.Dos:
