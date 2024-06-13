@@ -138,19 +138,19 @@ namespace Ginger.ALM.Repository
 
             if (businessFlow.ActivitiesGroups.Count == 0 && almConectStyle != eALMConnectType.Silence)
             {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"The {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} do not include {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups)} which supposed to be mapped to ALM Test Cases, please add at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} before doing export.");
+                Reporter.ToLog(eLogLevel.ERROR, $"The {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} do not include {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups)} which supposed to be mapped to ALM Test Cases, please add at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} before doing export.");
                 return false;
             }
 
             JiraTestSet matchingTS = null;
 
-            bool result = false;
             string responseStr = string.Empty;
             eUserMsgSelection userSelec;
             if (!String.IsNullOrEmpty(businessFlow.ExternalID))
             {
                 matchingTS = ((JiraCore)ALMIntegration.Instance.AlmCore).GetJiraTestSetData(new JiraTestSet { Key = businessFlow.ExternalID });
-                if (matchingTS != null)
+                if (matchingTS != null && almConectStyle != eALMConnectType.Silence)
                 {
                     //ask user if want to continute
                     userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
@@ -543,21 +543,30 @@ namespace Ginger.ALM.Repository
 
         public override bool LoadALMConfigurations()
         {
-            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
+            try
             {
-                DefaultExt = "*.zip",
-                Filter = "zip Files (*.zip)|*.zip",
-                Title = "Select Jira Configuration Zip File"
-            }, false) is string fileName)
-            {
-                if (!GingerCore.General.LoadALMSettings(fileName, eALMType.Jira))
+                if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
                 {
-                    return false;
-                }
+                    DefaultExt = "*.zip",
+                    Filter = "zip Files (*.zip)|*.zip",
+                    Title = "Select Jira Configuration Zip File"
+                }, false) is string fileName)
+                {
+                    if (!GingerCore.General.LoadALMSettings(fileName, eALMType.Jira))
+                    {
+                        return false;
+                    }
                 ((JiraCore)ALMIntegration.Instance.AlmCore).CreateJiraRepository();
-                ALMIntegration.Instance.SetALMCoreConfigurations(eALMType.Jira);
+                    ALMIntegration.Instance.SetALMCoreConfigurations(eALMType.Jira);
+                }
+                return true; //Browse Dialog Canceled
             }
-            return true; //Browse Dialog Canceled
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Error in loading ALM configurations",ex.InnerException);
+                return false;
+            }
+            
         }
 
         public override string SelectALMTestLabPath()
