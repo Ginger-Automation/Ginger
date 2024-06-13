@@ -104,7 +104,7 @@ namespace Ginger.Run
         {
             if (e.PropertyName == nameof(_executionLogger.PublishLogToCentralDB))
             {
-                if(_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
+                if (_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
                 {
                     ExportReportLinkChkbx.IsEnabled = false;
                     ExportReportLinkChkbx.IsChecked = false;
