@@ -38,6 +38,8 @@ namespace Ginger.Variables
             BindingHandler.ObjFieldBinding(xDatabaseName, TextBox.TextProperty, database, nameof(Database.Name));
             BindingHandler.ObjFieldBinding(xDatabaseDescription, TextBox.TextProperty, database, nameof(Database.Description));
             BindingHandler.ObjFieldBinding(xKeepConnectOpen, CheckBox.IsCheckedProperty, database, nameof(Database.KeepConnectionOpen));
+            BindingHandler.ObjFieldBinding(xOracleVersion, CheckBox.IsCheckedProperty, database, nameof(Database.IsOracleVersionLow));
+
             BindingHandler.ObjFieldBinding(xDatabaseType, TextBox.TextProperty, database, nameof(Database.DBType));
 
             xDatabaseName.AddValidationRule(new DBNameValidationRule());
@@ -53,6 +55,10 @@ namespace Ginger.Variables
                 xDatabaseDetailsPanel.Visibility = System.Windows.Visibility.Visible;
                 ChangeTheTNSName();
                 ShowBrowseBtn();
+                if (database.DBType.Equals(eDBTypes.Oracle))
+                {
+                    xVersionStackPanel.Visibility = System.Windows.Visibility.Visible;
+                }
             }
 
         }
@@ -129,12 +135,8 @@ namespace Ginger.Variables
 
         private void ChangeDatabasePass(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
-                if (!string.IsNullOrEmpty(database.Pass) &&
-                    !database.Pass.Contains("{Var Name") && 
-                    !EncryptionHandler.IsStringEncrypted(database.Pass))
-                {
-                    database.Pass = EncryptionHandler.EncryptwithKey(database.Pass);
-                }
+
+            database.EncryptDatabasePass();
         }
     }
 

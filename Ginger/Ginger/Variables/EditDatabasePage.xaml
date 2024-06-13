@@ -14,33 +14,33 @@
             <StackPanel Background="{StaticResource $BackgroundColor_White}" Margin="10,10,10,10" Orientation="Vertical">
 
                 <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25"  VerticalAlignment="Top" Margin="0,10,0,0" >
-                    <Label Style="{StaticResource $LabelStyle}" Width="150" FontSize="13" Content="Database:"/>
-                    <TextBox x:Name="xDatabaseType" IsReadOnly="True" Width="250" Style="{StaticResource $TextBoxStyle}" Background="#FFEFEFF2" Margin="0,0,50,0" />
+                    <Label Style="{StaticResource $LabelStyle}" Width="180" FontSize="13" Content="Database:"/>
+                    <TextBox x:Name="xDatabaseType" IsReadOnly="True" Width="400" Style="{StaticResource $TextBoxStyle}" Background="#FFEFEFF2" Margin="0,0,50,0" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
-                    <Label Style="{StaticResource $LabelStyle}" Width="150" Content="Database Name:" />
-                    <TextBox Style="{StaticResource $TextBoxStyle}" Height="25" LostKeyboardFocus="XDatabaseName_TextChanged"  x:Name="xDatabaseName" Width="250" Margin="0,0,0,8" ></TextBox>
+                    <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Database Name:" />
+                    <TextBox Style="{StaticResource $TextBoxStyle}" Height="25" LostKeyboardFocus="XDatabaseName_TextChanged"  x:Name="xDatabaseName" Width="400" Margin="0,0,0,8" ></TextBox>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
-                    <Label Style="{StaticResource $LabelStyle}" Width="150" Content="Description:"/>
-                    <TextBox Style="{StaticResource $TextBoxStyle}"  x:Name="xDatabaseDescription" Width="250"></TextBox>
+                    <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Description:"/>
+                    <TextBox Style="{StaticResource $TextBoxStyle}"  x:Name="xDatabaseDescription" Width="400"></TextBox>
                 </StackPanel>
                 <StackPanel x:Name="xDatabaseDetailsPanel">
                     <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
-                        <Label Style="{StaticResource $LabelStyle}" Width="150" Content="Data Source"  Name="xDatabaseTNSName"/>
-                        <businessflowwindows:UCValueExpression x:Name="xDatabaseTNS" Width="280"></businessflowwindows:UCValueExpression>
+                        <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Data Source"  Name="xDatabaseTNSName"/>
+                        <businessflowwindows:UCValueExpression x:Name="xDatabaseTNS" Width="430"></businessflowwindows:UCValueExpression>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" Margin="0,10,0,0">
-                        <Label Style="{StaticResource $LabelStyle}" Width="150" Content="User Name:"/>
-                        <businessflowwindows:UCValueExpression x:Name="xDatabaseUserName" Width="280"></businessflowwindows:UCValueExpression>
+                        <Label Style="{StaticResource $LabelStyle}" Width="180" Content="User Name:"/>
+                        <businessflowwindows:UCValueExpression x:Name="xDatabaseUserName" Width="430"></businessflowwindows:UCValueExpression>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0" >
-                        <Label Style="{StaticResource $LabelStyle}" Width="150"  Content="User Password:"/>
-                        <businessflowwindows:UCValueExpression x:Name="xDatabasePassword" Width="280" LostKeyboardFocus="ChangeDatabasePass"></businessflowwindows:UCValueExpression>
+                        <Label Style="{StaticResource $LabelStyle}" Width="180"  Content="User Password:"/>
+                        <businessflowwindows:UCValueExpression x:Name="xDatabasePassword" Width="430" LostKeyboardFocus="ChangeDatabasePass"></businessflowwindows:UCValueExpression>
                     </StackPanel>
 
                 </StackPanel>
@@ -48,19 +48,19 @@
                 <StackPanel Name="xCosmosDetailsPanel" Visibility="Collapsed">
 
                     <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
-                        <Label Style="{StaticResource $LabelStyle}" Width="150" Content="Account End Point:" />
-                        <businessflowwindows:UCValueExpression  x:Name="xDBAccEndPoint" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                        <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Account End Point:" />
+                        <businessflowwindows:UCValueExpression  x:Name="xDBAccEndPoint" Width="430" Height="25"></businessflowwindows:UCValueExpression>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
-                        <Label Style="{StaticResource $LabelStyle}" Width="150" Content="Account Key:" />
-                        <businessflowwindows:UCValueExpression  x:Name="xDBAccKey" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                        <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Account Key:" />
+                        <businessflowwindows:UCValueExpression  x:Name="xDBAccKey" Width="430" Height="25"></businessflowwindows:UCValueExpression>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <Label Style="{StaticResource $LabelStyle}" Width="150" Content="Connection String:"/>
+                    <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Connection String:"/>
                     <StackPanel Orientation="Horizontal">
-                        <businessflowwindows:UCValueExpression  x:Name="xDatabaseConnectionString" MinHeight="20" MaxHeight="40" Width="280"></businessflowwindows:UCValueExpression>
+                        <businessflowwindows:UCValueExpression  x:Name="xDatabaseConnectionString" MinHeight="20" MaxHeight="40" Width="430"></businessflowwindows:UCValueExpression>
                         <usercontrols:ImageMakerControl 
                     VerticalAlignment="Center" 
                     x:Name="xConnectionStringInfo" SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,0,0,0"/>
@@ -68,8 +68,13 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Name="xKeepConnectOpenPanel" Margin="0,10,0,0" >
-                    <Label Style="{StaticResource $LabelStyle}" Width="150" Content="Keep Connection Open:"/>
+                    <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Keep Connection Open:"/>
                     <CheckBox VerticalAlignment="Center" Name="xKeepConnectOpen" ></CheckBox>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" Name="xVersionStackPanel" Visibility="Collapsed" Margin="0,10,0,0">
+                    <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Is DB Version lower than 10.2:"/>
+                    <CheckBox VerticalAlignment="Center" Name="xOracleVersion"></CheckBox>
                 </StackPanel>
 
             </StackPanel>

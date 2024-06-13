@@ -81,6 +81,10 @@ namespace GingerCore.Environments
             }
         }
 
+        public bool IsPassValueExp()
+        {
+            return ValueExpression.IsThisAValueExpression(this.Database.Pass);
+        }
         public string ConnectionStringCalculated
         {
             get
@@ -255,6 +259,7 @@ namespace GingerCore.Environments
             }
             try
             {
+                Reporter.ToStatus(eStatusMsgKey.TestingDatabase, null,$"Testing Database: {Database.Name}");
 
                 switch (Database.DBType)
                 {
@@ -416,6 +421,11 @@ namespace GingerCore.Environments
                 Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + Database.DBType.ToString() + "; Connection String =" + HidePasswordFromString(connectConnectionString), e);
                 throw (e);
             }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
+
             return false;
         }
         public static string HidePasswordFromString(string dataString)

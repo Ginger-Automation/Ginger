@@ -69,7 +69,7 @@ namespace Ginger.Environments
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, ShowCancelButton, "Cancel");
         }
 
-        private void TestConnection_Click(object? sender, RoutedEventArgs e)
+        private async void TestConnection_Click(object? sender, RoutedEventArgs e)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace Ginger.Environments
 
                 this.testConnectionButton.IsEnabled = false;
 
-                bool IsConnectionSuccessful = this.dbListViewHelper.TestSingleDatabase(database);
+                bool IsConnectionSuccessful = await this.dbListViewHelper.TestSingleDatabase(database);
 
                 if (IsConnectionSuccessful)
                 {
@@ -111,7 +111,7 @@ namespace Ginger.Environments
             return true;
         }
 
-        private void OKButton_Click(object sender, RoutedEventArgs e)
+        private async void OKButton_Click(object sender, RoutedEventArgs e)
         {
             // validation
 
@@ -127,7 +127,7 @@ namespace Ginger.Environments
 
                 okBtn.IsEnabled = false;
 
-                this.dbListViewHelper.TestSingleDatabase(database);
+                await this.dbListViewHelper.TestSingleDatabase(database);
 
                 okBtn.IsEnabled = true;
                 _pageGenericWin?.Close();
@@ -329,12 +329,7 @@ namespace Ginger.Environments
         }
         private void ChangeDatabasePass(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(database.Pass) && 
-                !database.Pass.Contains("{Var Name") && 
-                !EncryptionHandler.IsStringEncrypted(database.Pass))
-            {
-                database.Pass = EncryptionHandler.EncryptwithKey(database.Pass);
-            }
+            database.EncryptDatabasePass();
         }
     }
 }
