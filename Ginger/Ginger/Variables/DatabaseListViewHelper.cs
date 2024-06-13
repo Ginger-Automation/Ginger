@@ -336,7 +336,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 return;
             }
 
-            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteSelectedItems, "Database", (ListView.List.SelectedItems[0] as Database)?.Name ?? string.Empty) == eUserMsgSelection.Yes)
+            if (Reporter.ToUser(eUserMsgKey.DeleteSelectedDB) == eUserMsgSelection.Yes)
             {
                 var dbList = ListView.List.SelectedItems.Cast<Database>().ToList();
                 for(int indx = 0; indx< dbList.Count(); indx++)
