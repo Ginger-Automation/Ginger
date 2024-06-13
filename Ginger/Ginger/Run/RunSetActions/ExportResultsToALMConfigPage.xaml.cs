@@ -34,6 +34,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using YamlDotNet.Core;
 using static Ginger.AnalyzerLib.AnalyzerItemBase;
 using static GingerCore.ALM.PublishToALMConfig;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
@@ -53,6 +54,7 @@ namespace Ginger.Run
         ImageMakerControl loaderElement;
         ValueExpression mVE = null;
         Context mContext = null;
+        ExecutionLoggerConfiguration _executionLogger = new();
         public ExportResultsToALMConfigPage(RunSetActionPublishToQC runSetActionPublishToQC)
         {
             InitializeComponent();
@@ -82,7 +84,49 @@ namespace Ginger.Run
             xALMTypeCbx_SelectionChanged(this, null);
             SetTestLevelComboBoxList(runSetActionPublishToQC.RunAt);
             PropertyChangedEventManager.AddHandler(runSetActionPublishToQC, RunAt_PropertyChanged, string.Empty);
+            _executionLogger = WorkSpace.Instance.Solution.LoggerConfigurations;
+            _executionLogger.PropertyChanged += _executionLogger_PropertyChanged;
 
+            if (_executionLogger.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                AttachActivitiesGroupReportCbx.IsEnabled = false;
+                AttachActivitiesGroupReportCbx.IsChecked = false;
+            }
+
+            if (_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
+            {
+                ExportReportLinkChkbx.IsEnabled = false;
+                ExportReportLinkChkbx.IsChecked = false;
+            }
+        }
+
+        private void _executionLogger_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(_executionLogger.PublishLogToCentralDB))
+            {
+                if(_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
+                {
+                    ExportReportLinkChkbx.IsEnabled = false;
+                    ExportReportLinkChkbx.IsChecked = false;
+                }
+                else if (_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+                {
+                    ExportReportLinkChkbx.IsEnabled = true;
+                }
+            }
+
+            if (e.PropertyName == nameof(_executionLogger.SelectedDataRepositoryMethod))
+            {
+                if (_executionLogger.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    AttachActivitiesGroupReportCbx.IsEnabled = false;
+                    AttachActivitiesGroupReportCbx.IsChecked = false;
+                }
+                else if (_executionLogger.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    AttachActivitiesGroupReportCbx.IsEnabled = true;
+                }
+            }
         }
 
         private ExportResultsToALMConfigPage()
