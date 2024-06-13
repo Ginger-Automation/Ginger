@@ -14,6 +14,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public const string SelectTagName = "select";
         public const string InputTagName = "input";
         public const string ButtonTagName = "button";
+        public const string TextAreaTagName = "textarea";
 
         public Task<string> TagNameAsync();
 

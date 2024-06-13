@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using Applitools.Utils;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using System;
@@ -42,6 +43,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             ActUIElement.eElementAction.SelectByText,
             ActUIElement.eElementAction.SelectByIndex,
             ActUIElement.eElementAction.SetValue,
+        };
+
+        private static readonly IEnumerable<string> SupportedInputTypesForIsValuePopulated = new List<string>()
+        {
+            "date",
+            "datetime-local",
+            "email",
+            "month",
+            "number",
+            "password",
+            "search",
+            "tel",
+            "text",
+            "time",
+            "url",
+            "week"
         };
 
         private readonly ActUIElement _act;
@@ -254,9 +271,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                 string script = "element => element.options[element.selectedIndex].text";
                 value = await element.ExecuteJavascriptAsync(script);
             }
-            else
+            else if (string.Equals(tagName, IBrowserElement.TextAreaTagName, StringComparison.OrdinalIgnoreCase))
             {
                 value = await element.InputValueAsync();
+            }
+            else if (string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase))
+            {
+                string typeAttrValue = await element.AttributeValueAsync(name: "type");
+                if (!SupportedInputTypesForIsValuePopulated.Any(supportedInputType => string.Equals(supportedInputType, typeAttrValue, StringComparison.OrdinalIgnoreCase)))
+                {
+                    throw new InvalidOperationException($"Operation '{nameof(ActUIElement.eElementAction.IsValuePopulated)}' is not supported for 'input' element with type '{typeAttrValue}'.");
+                }
+
+                value = await element.InputValueAsync();
+            }
+            else
+            {
+                throw new InvalidActionConfigurationException($"Operation '{nameof(ActUIElement.eElementAction.IsValuePopulated)}' is not supported for element type '{tagName}'.");
             }
 
             bool containsValue = !string.IsNullOrEmpty(value);
