@@ -329,12 +329,7 @@ namespace Ginger.Environments
         }
         private void ChangeDatabasePass(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(database.Pass) && 
-                !database.Pass.Contains("{Var Name") && 
-                !EncryptionHandler.IsStringEncrypted(database.Pass))
-            {
-                database.Pass = EncryptionHandler.EncryptwithKey(database.Pass);
-            }
+            database.EncryptDatabasePass();
         }
     }
 }
