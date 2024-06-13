@@ -74,7 +74,7 @@
                             <GingerCore:ucTextDicResource Text="Export Execution Report Link :"/>
                         </Label.Content>
                     </Label>
-                    <CheckBox x:Name="ExportReportLinkChkbx" IsEnabled="True"  Style="{StaticResource @CheckBoxStyle}" Margin="60,8,0,0">
+                    <CheckBox x:Name="ExportReportLinkChkbx"  Style="{StaticResource @CheckBoxStyle}" Margin="60,8,0,0">
                     </CheckBox>
                 </StackPanel>
                 <StackPanel  x:Name="VariableForTCRunNamePanel" Orientation="Horizontal" IsEnabled="False">
