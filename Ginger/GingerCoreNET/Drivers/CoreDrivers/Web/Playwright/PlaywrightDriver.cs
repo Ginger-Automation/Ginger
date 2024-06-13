@@ -11,14 +11,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
 using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
-using Amdocs.Ginger.CoreNET.RunLib;
+using System.Threading;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver
     {
+        private const string BrowserExecutableNotFoundErrorMessage = "Executable doesn't exist at";
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             IPlaywright playwright = Microsoft.Playwright.Playwright.CreateAsync().Result;
 
             BrowserTypeLaunchOptions launchOptions = BuildLaunchOptions();
-            IPlaywrightBrowser playwrightBrowser = LaunchBrowserAsync(playwright, BrowserType, launchOptions).Result;
+            IPlaywrightBrowser playwrightBrowser = LaunchBrowserWithInstallationAsync(playwright, BrowserType, launchOptions).Result;
 
             _browser = new(playwrightBrowser, OnBrowserClose);
         }
@@ -81,23 +81,70 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return launchOptions;
         }
 
-        private Task<IPlaywrightBrowser> LaunchBrowserAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
+        private async Task<IPlaywrightBrowser> LaunchBrowserWithInstallationAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
         {
+            IPlaywrightBrowser browser;
+            try
+            {
+                browser = await LaunchBrowserAsync(playwright, browserType, launchOptions);
+            }
+            catch (PlaywrightException ex)
+            {
+                if (ex.Message.Contains(BrowserExecutableNotFoundErrorMessage))
+                {
+                    ExecutePlaywrightInstallationCommand(browserType);
+                    browser = await LaunchBrowserAsync(playwright, browserType, launchOptions);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return browser;
+        }
+
+        private async Task<IPlaywrightBrowser> LaunchBrowserAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
+        {
+            IPlaywrightBrowser browser;
             if (browserType == WebBrowserType.Chrome)
             {
-                return playwright.Chromium.LaunchAsync(launchOptions);
+                browser = await playwright.Chromium.LaunchAsync(launchOptions);
             }
             else if (browserType == WebBrowserType.FireFox)
             {
-                return playwright.Firefox.LaunchAsync(launchOptions);
+                browser = await playwright.Firefox.LaunchAsync(launchOptions);
             }
             else if (browserType == WebBrowserType.Edge)
             {
-                return playwright.Chromium.LaunchAsync(launchOptions);
+                browser = await playwright.Chromium.LaunchAsync(launchOptions);
             }
             else
             {
                 throw new ArgumentException($"Unknown browser type '{BrowserType}'");
+            }
+            return browser;
+        }
+
+        private static void ExecutePlaywrightInstallationCommand(WebBrowserType browserType)
+        {
+            string browserTypeString;
+            switch (browserType)
+            {
+                case WebBrowserType.Chrome:
+                case WebBrowserType.Edge:
+                    browserTypeString = Microsoft.Playwright.BrowserType.Chromium;
+                    break;
+                case WebBrowserType.FireFox:
+                    browserTypeString = Microsoft.Playwright.BrowserType.Firefox;
+                    break;
+                default:
+                    throw new ArgumentException($"Unknown browser type '{browserType}'");
+            }
+
+            int exitCode = Program.Main(new[] { "install", browserTypeString });
+            if (exitCode != 0)
+            {
+                throw new Exception($"Error occurred while executing playwright installation command, exited with code {exitCode}");
             }
         }
 

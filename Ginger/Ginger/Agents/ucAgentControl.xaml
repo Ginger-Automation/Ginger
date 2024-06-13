@@ -10,6 +10,8 @@
 
     <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.Resources>
+            <local:DriverTypeToEnableConverter
+                x:Key="DriverTypeToEnableConverter" />
             <local:AgentStatusColorTypeConverter x:Key="AgentStatusColorTypeConverterKey"></local:AgentStatusColorTypeConverter>
         </Grid.Resources>
         <Grid.RowDefinitions>
@@ -28,6 +30,7 @@
                 <ComboBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ComboBoxItem}">
                         <Setter Property="Foreground" Value="{Binding Path=Status, Converter={StaticResource AgentStatusColorTypeConverterKey}}"/>
+                        <Setter Property="IsEnabled" Value="{Binding Converter={StaticResource DriverTypeToEnableConverter}}"/>
                     </Style>
                 </ComboBox.ItemContainerStyle>
             </ComboBox>
