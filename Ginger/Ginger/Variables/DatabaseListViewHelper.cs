@@ -206,8 +206,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             OnActionListItemEvent(ListItemEventArgs.eEventType.ShowEditPage, database);
         }
-
-        public bool TestSingleDatabase(Database? db)
+        //Edit, Add , Test , Database List, Test All
+        public async Task<bool> TestSingleDatabase(Database? db)
         {
             if (db == null)
             {
@@ -221,9 +221,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = mContext.Environment;
                 db.BusinessFlow = null;
+                db.TestConnectionStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
 
                 db.DatabaseOperations.CloseConnection();
-                if (Task.Run(() => db.DatabaseOperations.Connect(true)).GetAwaiter().GetResult())
+                var connectionTask = await Task.Run(() => db.DatabaseOperations.Connect(true));
+                if (connectionTask)
                 {
                     db.DatabaseOperations.CloseConnection();
                     db.TestConnectionStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
@@ -254,10 +256,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return false;
         }
 
-        private void TestDatabase(object sender, RoutedEventArgs e)
+        private async void TestDatabase(object sender, RoutedEventArgs e)
         {
             Database? db = ((ucButton)sender).Tag as Database;
-            bool IsConnectionSuccessful = TestSingleDatabase(db);
+            bool IsConnectionSuccessful = await TestSingleDatabase(db);
             if (IsConnectionSuccessful)
             {
                 Reporter.ToUser(eUserMsgKey.DbConnSucceed, db?.Name);
@@ -317,12 +319,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return operationsList;
         }
 
-        private void TestAllDatabases(object sender, RoutedEventArgs e)
+        private async void TestAllDatabases(object sender, RoutedEventArgs e)
         {
 
             foreach (var database in Databases)
             {
-                TestSingleDatabase(database as Database);
+                await TestSingleDatabase(database as Database);
             }
         }
 
