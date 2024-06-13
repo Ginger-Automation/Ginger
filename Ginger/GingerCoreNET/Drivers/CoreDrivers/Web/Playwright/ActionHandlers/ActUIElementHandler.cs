@@ -248,17 +248,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             IBrowserElement element = await GetFirstMatchingElementAsync();
 
             string tagName = await element.TagNameAsync();
+            string value;
             if (string.Equals(tagName, IBrowserElement.SelectTagName, StringComparison.OrdinalIgnoreCase))
             {
                 string script = "element => element.options[element.selectedIndex].text";
-                string value = await element.ExecuteJavascriptAsync(script);
-                _act.AddOrUpdateReturnParamActual("Actual", value);
+                value = await element.ExecuteJavascriptAsync(script);
             }
             else
             {
-                string value = await element.InputValueAsync();
-                _act.AddOrUpdateReturnParamActual("Actual", value);
+                value = await element.InputValueAsync();
             }
+
+            bool containsValue = !string.IsNullOrEmpty(value);
+
+            _act.AddOrUpdateReturnParamActual("Actual", containsValue.ToString());
         }
 
         private async Task HandleGetHeightOperationAsync()
