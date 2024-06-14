@@ -234,6 +234,7 @@ namespace Ginger.SolutionWindows
                     {
                         projEnv.StartDirtyTracking();
                         envApplication.Name = app.AppName;
+                        numOfAfectedItems++;
                     }
                 }
             }
