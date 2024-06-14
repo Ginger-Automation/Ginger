@@ -171,7 +171,7 @@ namespace GingerCoreNET.GenAIServices
         }
 
 
-        private string CredentialsCalculation(string value)
+        private static string CredentialsCalculation(string value)
         {
             ValueExpression valueExpression = new();
 
