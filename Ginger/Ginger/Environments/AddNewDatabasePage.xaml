@@ -19,7 +19,7 @@
         <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25"  VerticalAlignment="Top" Margin="0,10,0,0" >
             <Label Style="{StaticResource $LabelStyle}" Width="180" FontSize="13" Content="Database:"/>
             <StackPanel Orientation="Vertical">
-                <ComboBox  Name="xDatabaseComboBox" Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="250" SelectionChanged="xDatabaseComboBox_SelectionChanged" ></ComboBox>
+                <ComboBox  Name="xDatabaseComboBox" Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="350" SelectionChanged="xDatabaseComboBox_SelectionChanged" ></ComboBox>
                 <TextBlock Name="xDatabaseTypeError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
             </StackPanel>
         </StackPanel>
@@ -33,20 +33,20 @@
         <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
             <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Database Name:" />
                 <StackPanel Orientation="Vertical">
-                    <TextBox Style="{StaticResource $TextBoxStyle}"  x:Name="xDatabaseName" Width="250" Height="25"></TextBox>
+                    <TextBox Style="{StaticResource $TextBoxStyle}"  x:Name="xDatabaseName" Width="350" Height="25"></TextBox>
                     <TextBlock  Name="xDatabaseNameError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
             </StackPanel>
         </StackPanel>
     
         <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
             <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Description:"/>
-            <TextBox Style="{StaticResource $TextBoxStyle}"  x:Name="xDatabaseDescription" Width="250"></TextBox>
+            <TextBox Style="{StaticResource $TextBoxStyle}"  x:Name="xDatabaseDescription" Width="350"></TextBox>
         </StackPanel>
         <StackPanel x:Name="xDatabaseDetailsPanel">
             <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
                 <Label Style="{StaticResource $LabelStyle}" Width="180" Content="TNS / File Path:"  Name="xDatabaseTNSName"/>
                 <StackPanel Orientation="Vertical">
-                    <businessflowwindows:UCValueExpression x:Name="xDatabaseTNS" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                    <businessflowwindows:UCValueExpression x:Name="xDatabaseTNS" Width="380" Height="25"></businessflowwindows:UCValueExpression>
                     <TextBlock  Name="xDatabaseTNSError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
                 </StackPanel>
             </StackPanel>
@@ -54,7 +54,7 @@
             <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" Margin="0,10,0,0">
                 <Label Style="{StaticResource $LabelStyle}" Width="180" Content="User Name:"/>
                 <StackPanel Orientation="Vertical">
-                    <businessflowwindows:UCValueExpression x:Name="xDatabaseUserName" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                    <businessflowwindows:UCValueExpression x:Name="xDatabaseUserName" Width="380" Height="25"></businessflowwindows:UCValueExpression>
                     <TextBlock Name="xDatabaseUserNameError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
                 </StackPanel>
             </StackPanel>
@@ -62,8 +62,8 @@
             <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0" >
                 <Label Style="{StaticResource $LabelStyle}" Width="180"  Content="User Password:"/>
                 <StackPanel Orientation="Vertical">
-                    <businessflowwindows:UCValueExpression x:Name="xDatabasePassword" Width="280" Height="25" LostKeyboardFocus="ChangeDatabasePass"></businessflowwindows:UCValueExpression>
-                    <TextBlock Name="xDatabaseUserPassError" Width="250" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
+                    <businessflowwindows:UCValueExpression x:Name="xDatabasePassword" Width="380" Height="25" LostKeyboardFocus="ChangeDatabasePass"></businessflowwindows:UCValueExpression>
+                    <TextBlock Name="xDatabaseUserPassError" Width="380" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
                 </StackPanel>
             </StackPanel>
 
@@ -74,7 +74,7 @@
             <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
                 <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Account End Point:" />
                 <StackPanel Orientation="Vertical">
-                    <businessflowwindows:UCValueExpression  x:Name="xDBAccEndPoint" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                    <businessflowwindows:UCValueExpression  x:Name="xDBAccEndPoint" Width="380" Height="25"></businessflowwindows:UCValueExpression>
                     <TextBlock  Name="xDBAccEndPointError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
                 </StackPanel>
             </StackPanel>
@@ -82,7 +82,7 @@
             <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0">
                 <Label Style="{StaticResource $LabelStyle}" Width="180" Content="Account Key:" />
                 <StackPanel Orientation="Vertical">
-                    <businessflowwindows:UCValueExpression  x:Name="xDBAccKey" Width="280" Height="25"></businessflowwindows:UCValueExpression>
+                    <businessflowwindows:UCValueExpression  x:Name="xDBAccKey" Width="380" Height="25"></businessflowwindows:UCValueExpression>
                     <TextBlock  Name="xDBAccKeyError" VerticalAlignment="Bottom" Margin="0,0,0,0" Visibility="Collapsed" Foreground="Red"/>
                 </StackPanel>
             </StackPanel>
@@ -90,9 +90,9 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Height="auto" MinHeight="25" VerticalAlignment="Top" Margin="0,10,0,0" Name="xDBConnectionStringPanel" Visibility="Collapsed">
-            <Label Style="{StaticResource $LabelStyle}" Width="180" Height="25" Content="Connection String:"/>
+            <Label Style="{StaticResource $LabelStyle}" Width="180" Height="40" Content="Connection String:"/>
             <StackPanel Orientation="Horizontal">
-                <businessflowwindows:UCValueExpression  x:Name="xDatabaseConnectionString" Height="25" Width="280"></businessflowwindows:UCValueExpression>
+                <businessflowwindows:UCValueExpression  x:Name="xDatabaseConnectionString" Height="40" Width="380"></businessflowwindows:UCValueExpression>
                 <usercontrols:ImageMakerControl 
                     VerticalAlignment="Center" 
                     x:Name="xConnectionStringInfo" SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,0,0,0"/>

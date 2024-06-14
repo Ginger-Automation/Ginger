@@ -11,12 +11,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using System.Threading;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver
     {
+        private const string BrowserExecutableNotFoundErrorMessage = "Executable doesn't exist at";
+        
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
@@ -64,6 +67,73 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             return options;
+        }
+
+        private async Task<IPlaywrightBrowser> LaunchBrowserWithInstallationAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
+        {
+            IPlaywrightBrowser browser;
+            try
+            {
+                browser = await LaunchBrowserAsync(playwright, browserType, launchOptions);
+            }
+            catch (PlaywrightException ex)
+            {
+                if (ex.Message.Contains(BrowserExecutableNotFoundErrorMessage))
+                {
+                    ExecutePlaywrightInstallationCommand(browserType);
+                    browser = await LaunchBrowserAsync(playwright, browserType, launchOptions);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return browser;
+        }
+
+        private async Task<IPlaywrightBrowser> LaunchBrowserAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
+        {
+            IPlaywrightBrowser browser;
+            if (browserType == WebBrowserType.Chrome)
+            {
+                browser = await playwright.Chromium.LaunchAsync(launchOptions);
+            }
+            else if (browserType == WebBrowserType.FireFox)
+            {
+                browser = await playwright.Firefox.LaunchAsync(launchOptions);
+            }
+            else if (browserType == WebBrowserType.Edge)
+            {
+                browser = await playwright.Chromium.LaunchAsync(launchOptions);
+            }
+            else
+            {
+                throw new ArgumentException($"Unknown browser type '{BrowserType}'");
+            }
+            return browser;
+        }
+
+        private static void ExecutePlaywrightInstallationCommand(WebBrowserType browserType)
+        {
+            string browserTypeString;
+            switch (browserType)
+            {
+                case WebBrowserType.Chrome:
+                case WebBrowserType.Edge:
+                    browserTypeString = Microsoft.Playwright.BrowserType.Chromium;
+                    break;
+                case WebBrowserType.FireFox:
+                    browserTypeString = Microsoft.Playwright.BrowserType.Firefox;
+                    break;
+                default:
+                    throw new ArgumentException($"Unknown browser type '{browserType}'");
+            }
+
+            int exitCode = Program.Main(new[] { "install", browserTypeString });
+            if (exitCode != 0)
+            {
+                throw new Exception($"Error occurred while executing playwright installation command, exited with code {exitCode}");
+            }
         }
 
         public override bool IsRunning()
@@ -132,38 +202,54 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public bool IsActionSupported(Act act, out string message)
         {
+            message = string.Empty;
+
             if (act is ActWithoutDriver)
             {
-                message = string.Empty;
                 return true;
             }
             if (act is ActUIElement actUIElement)
             {
-                bool isSupported = ActUIElementHandler.IsOperationSupported(actUIElement.ElementAction);
-                if (!isSupported)
+                bool isLocatorSupported = PlaywrightBrowserTab.IsElementLocatorSupported(actUIElement.ElementLocateBy);
+                if (!isLocatorSupported)
+                {
+                    message = $"Element Locator '{actUIElement.ElementLocateBy}' is not supported by Playwright driver, use Selenium driver instead.";
+                }
+
+                bool isOperationSupported = ActUIElementSupportedOperations.Contains(actUIElement.ElementAction);
+                if (!isOperationSupported)
                 {
                     string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), actUIElement.ElementAction);
-                    message = $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        message += '\n';
+                    }
+                    message += $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
                 }
-                else
-                {
-                    message = string.Empty;
-                }
-                return isSupported;
+
+                return isLocatorSupported && isOperationSupported;
             }
             else if (act is ActBrowserElement actBrowserElement)
             {
-                bool isSupported = ActBrowserElementHandler.IsOperationSupported(actBrowserElement.ControlAction);
-                if (!isSupported)
+                bool isLocatorSupported = 
+                    actBrowserElement.ControlAction == ActBrowserElement.eControlAction.SwitchFrame && 
+                    PlaywrightBrowserTab.IsFrameLocatorSupported(act.LocateBy);
+                if (!isLocatorSupported)
+                {
+                    message = $"Frame Locator '{act.LocateBy}' is not supported by Playwright driver, use Selenium driver instead.";
+                }
+
+                bool isOperationSupported = ActBrowserElementSupportedOperations.Contains(actBrowserElement.ControlAction);
+                if (!isOperationSupported)
                 {
                     string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), actBrowserElement.ControlAction);
-                    message = $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        message += '\n';
+                    }
+                    message += $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
                 }
-                else
-                {
-                    message = string.Empty;
-                }
-                return isSupported;
+                return isLocatorSupported && isOperationSupported;
             }
             else
             {
@@ -337,5 +423,61 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new InvalidOperationException($"Cannot perform operation on closed driver.");
             }
         }
+        
+        private static readonly IEnumerable<ActUIElement.eElementAction> ActUIElementSupportedOperations = new List<ActUIElement.eElementAction>()
+        {
+            ActUIElement.eElementAction.Click,
+            ActUIElement.eElementAction.DoubleClick,
+            ActUIElement.eElementAction.Hover,
+            ActUIElement.eElementAction.IsVisible,
+            ActUIElement.eElementAction.IsEnabled,
+            ActUIElement.eElementAction.GetAttrValue,
+            ActUIElement.eElementAction.GetText,
+            ActUIElement.eElementAction.MouseRightClick,
+            ActUIElement.eElementAction.IsValuePopulated,
+            ActUIElement.eElementAction.GetHeight,
+            ActUIElement.eElementAction.GetWidth,
+            ActUIElement.eElementAction.GetSize,
+            ActUIElement.eElementAction.GetStyle,
+            ActUIElement.eElementAction.GetValue,
+            ActUIElement.eElementAction.GetItemCount,
+            ActUIElement.eElementAction.ScrollToElement,
+            ActUIElement.eElementAction.SetFocus,
+            ActUIElement.eElementAction.IsDisabled,
+            ActUIElement.eElementAction.Submit,
+            ActUIElement.eElementAction.MultiClicks,
+            ActUIElement.eElementAction.ClickXY,
+            ActUIElement.eElementAction.DoubleClickXY,
+            ActUIElement.eElementAction.ClearValue,
+            ActUIElement.eElementAction.Select,
+            ActUIElement.eElementAction.SelectByText,
+            ActUIElement.eElementAction.SelectByIndex,
+            ActUIElement.eElementAction.SetValue,
+        };
+
+
+        private static readonly IEnumerable<ActBrowserElement.eControlAction> ActBrowserElementSupportedOperations = new List<ActBrowserElement.eControlAction>()
+        {
+            ActBrowserElement.eControlAction.GotoURL,
+            ActBrowserElement.eControlAction.OpenURLNewTab,
+            ActBrowserElement.eControlAction.GetPageURL,
+            ActBrowserElement.eControlAction.GetWindowTitle,
+            ActBrowserElement.eControlAction.NavigateBack,
+            ActBrowserElement.eControlAction.Refresh,
+            ActBrowserElement.eControlAction.DeleteAllCookies,
+            ActBrowserElement.eControlAction.RunJavaScript,
+            ActBrowserElement.eControlAction.GetPageSource,
+            ActBrowserElement.eControlAction.Close,
+            ActBrowserElement.eControlAction.CloseTabExcept,
+            ActBrowserElement.eControlAction.CloseAll,
+            ActBrowserElement.eControlAction.CheckPageLoaded,
+            ActBrowserElement.eControlAction.GetConsoleLog,
+            ActBrowserElement.eControlAction.GetBrowserLog,
+            ActBrowserElement.eControlAction.SwitchFrame,
+            ActBrowserElement.eControlAction.SwitchToDefaultFrame,
+            ActBrowserElement.eControlAction.SwitchToParentFrame,
+            ActBrowserElement.eControlAction.SwitchWindow,
+            ActBrowserElement.eControlAction.SwitchToDefaultWindow,
+        };
     }
 }

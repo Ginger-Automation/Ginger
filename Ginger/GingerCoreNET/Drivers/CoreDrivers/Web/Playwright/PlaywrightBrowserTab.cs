@@ -12,12 +12,28 @@ using IPlaywrightPage = Microsoft.Playwright.IPage;
 using IPlaywrightDialog = Microsoft.Playwright.IDialog;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     internal sealed class PlaywrightBrowserTab : IBrowserTab
     {
+        private static readonly IEnumerable<eLocateBy> SupportedElementLocators = new List<eLocateBy>()
+        {
+            eLocateBy.ByID,
+            eLocateBy.ByCSS,
+            eLocateBy.ByXPath
+        };
+
+        private static readonly IEnumerable<eLocateBy> SupportedFrameLocators = new List<eLocateBy>()
+        {
+            eLocateBy.ByID,
+            eLocateBy.ByTitle,
+            eLocateBy.ByUrl,
+            eLocateBy.ByXPath
+        };
+
         private readonly IPlaywrightPage _playwrightPage;
         private readonly IBrowserTab.OnTabClose _onTabClose;
         private readonly LinkedList<string> _consoleMessages = [];
@@ -141,6 +157,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public async Task<bool> SwitchFrameAsync(eLocateBy locateBy, string value)
         {
             ThrowIfClosed();
+            if (!IsFrameLocatorSupported(locateBy))
+            {
+                throw new LocatorNotSupportedException($"Frame locator '{locateBy}' is not supported.");
+            }
+            
             IFrameLocator frameLocator;
             switch (locateBy)
             {
@@ -157,7 +178,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     frameLocator = _currentFrame.FrameLocator($"css=iframe[src='{value}']");
                     break;
                 default:
-                    throw new ArgumentException($"Frame locator '{locateBy}' is not supported for frames.");
+                    throw new ArgumentException($"Frame locator '{locateBy}' is not supported.");
             }
 
             bool wasLocated = await frameLocator.Owner.CountAsync() > 0;
@@ -207,7 +228,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public async Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string value)
         {
             ThrowIfClosed();
-            IPlaywrightLocator locator = await LocateElementAsync(locateBy, value);
+            IPlaywrightLocator locator = await GetElementLocator(locateBy, value);
 
             int matchedElementCount = await locator.CountAsync();
             IBrowserElement[] elements = new IBrowserElement[matchedElementCount];
@@ -220,8 +241,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return elements;
         }
 
-        private Task<IPlaywrightLocator> LocateElementAsync(eLocateBy locateBy, string value)
+        /// <summary>
+        /// Get <see cref="IPlaywrightLocator"/> based on the given locate values. The returned locator doesn't guarantee that an element actually exists at that location. <br/>
+        /// Supported locators, <br/>
+        /// <see cref="eLocateBy.ByID"/>, <see cref="eLocateBy.ByCSS"/>, <see cref="eLocateBy.ByXPath"/>.
+        /// </summary>
+        /// <param name="locateBy">Locate element based on which property.</param>
+        /// <param name="value">The value of the locating property.</param>
+        /// <returns><see cref="IPlaywrightLocator"/> pointing to a location in the webpage matching the provided locator values.</returns>
+        /// <exception cref="LocatorNotSupportedException"></exception>
+        private Task<IPlaywrightLocator> GetElementLocator(eLocateBy locateBy, string value)
         {
+            if (!IsElementLocatorSupported(locateBy))
+            {
+                throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
+            }
+
             IPlaywrightLocator locator;
             switch (locateBy)
             {
@@ -235,7 +270,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.Locator($"xpath={value}");
                     break;
                 default:
-                    throw new ArgumentException($"Element locator '{locateBy}' is not supported.");
+                    throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
             }
 
             return Task.FromResult(locator);
@@ -277,6 +312,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 throw new InvalidOperationException("Cannot perform operation, tab is already closed.");
             }
+        }
+
+        public static bool IsElementLocatorSupported(eLocateBy locateBy)
+        {
+            return SupportedElementLocators.Contains(locateBy);
+        }
+
+        public static bool IsFrameLocatorSupported(eLocateBy locateBy)
+        {
+            return SupportedFrameLocators.Contains(locateBy);
         }
     }
 

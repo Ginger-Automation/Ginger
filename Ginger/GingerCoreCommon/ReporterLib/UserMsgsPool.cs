@@ -193,7 +193,8 @@ namespace Amdocs.Ginger.Common
         NoApplicationPlatformLeft,
         ShareApplicationToEnvironment,
         SaveSolution,
-        LocatorTestInProgress
+        LocatorTestInProgress,
+        DeleteSelectedDB
     }
 
     public static class UserMsgsPool
@@ -368,6 +369,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnFailed, new UserMsg(eUserMsgType.ERROR, "DB Connection Status", "Connect to the DB: '{0}' failed.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnSucceed, new UserMsg(eUserMsgType.INFO, "DB Connection Status", "Connect to the DB: '{0}' succeeded.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbTableNameEmpty, new UserMsg(eUserMsgType.ERROR, "Invalid DB Table Name", "Table name cannot be empty. Please provide valid name", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteSelectedDB, new UserMsg(eUserMsgType.QUESTION, "Delete Database", "Are you sure you want to delete the selected Database(s)?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             #endregion DataBase Messages
 
             #region Environment Messages
