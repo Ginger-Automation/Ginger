@@ -264,7 +264,14 @@ namespace Ginger.AnalyzerLib
                 agent.AgentOperations = new AgentOperations(agent);
             }
 
-            return ((AgentOperations)agent.AgentOperations).CreateDriverInstance();
+            try
+            {
+                return ((AgentOperations)agent.AgentOperations).CreateDriverInstance();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public void ReportUnusedVariables(object obj, List<string> usedVariables, ObservableList<AnalyzerItemBase> issuesList)
