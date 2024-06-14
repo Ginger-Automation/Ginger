@@ -124,7 +124,11 @@ jobs:
                     C:\Windows\System32\certutil.exe -csp "DigiCert Signing Manager KSP" -key -user 
                     smksp_cert_sync.exe 
                 shell: cmd 
-
+              
+            -  name: Certificates Sync       
+               run: |
+                   smctl windows certsync
+               shell: cmd
             #-   name: Signing using Signtool 
             #    run: | 
             #        signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 
