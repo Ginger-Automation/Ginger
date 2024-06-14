@@ -124,34 +124,34 @@ namespace Ginger.Actions
                     xOperationDescription.Text = "Waits until an element is both visible and enabled, indicating that it can be clicked. ";
                     break;
                 case ActWebSmartSync.eSyncOperation.TextMatches:
-                    xOperationDescription.Text = "Waits until the text of an element matches a specified pattern. Input Text is case Sensitive.";
+                    xOperationDescription.Text = "Waits until the text of an element matches a specified pattern. Input Text is case-sensitive and does the contains search.";
                     break;
                 case ActWebSmartSync.eSyncOperation.AttributeMatches:
                     xOperationDescription.Text = "Waits until a specific attribute of an element matches a specified pattern. ";
                     break;
                 case ActWebSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
-                    xOperationDescription.Text = "Checks if all the elements found by a given method are enabled and can be interacted. ";
+                    xOperationDescription.Text = "Checks if all the elements found by a given locator are enabled and can be interacted. ";
                     break;
                 case ActWebSmartSync.eSyncOperation.FrameToBeAvailableAndSwitchToIt:
                     xOperationDescription.Text = "Waits until a frame is available to switch to and then switches to it. ";
                     break;
                 case ActWebSmartSync.eSyncOperation.InvisibilityOfAllElementsLocatedBy:
-                    xOperationDescription.Text = "Waits until all the elements found by a given method are invisible or not present. ";
+                    xOperationDescription.Text = "Waits until all the elements found by a given locator are invisible or not present. ";
                     break;
                 case ActWebSmartSync.eSyncOperation.InvisibilityOfElementLocated:
                     xOperationDescription.Text = "Waits until a specific element is no longer visible or not present. ";
                     break;
                 case ActWebSmartSync.eSyncOperation.PresenceOfAllElementsLocatedBy:
-                    xOperationDescription.Text = "Ensures that all the elements found by a given method are present in the webpage's structure (DOM). ";
+                    xOperationDescription.Text = "Ensures that all the elements found by a given locator are present in the webpage's structure (DOM). ";
                     break;
                 case ActWebSmartSync.eSyncOperation.SelectedOfAllElementsLocatedBy:
-                    xOperationDescription.Text = "Ensures that all the elements found by a given method are selected. ";
+                    xOperationDescription.Text = "Ensures that all the elements found by a given locator are selected. ";
                     break;
                 case ActWebSmartSync.eSyncOperation.UrlMatches:
                     xOperationDescription.Text = "Waits until the URL of the current page matches a specified pattern. ";
                     break;
                 case ActWebSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
-                    xOperationDescription.Text = "Ensures that all the elements found by a given method are visible on the webpage. ";
+                    xOperationDescription.Text = "Ensures that all the elements found by a given locator are visible on the webpage. ";
                     break;
                 default:
                     xOperationDescription.Text = "No operation selected.";
