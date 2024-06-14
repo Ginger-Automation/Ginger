@@ -94,8 +94,8 @@ jobs:
             -   name: Set up certificate
                 shell: cmd
                 run: |
-                 echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/Certificate_pkcs12.p12
-                 cat  /d/Certificate_pkcs12.p12
+                 echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > D:\a\Certificate_pkcs12.p12
+                 cat  D:\a\Certificate_pkcs12.p12
                 
             -   name: Set variables 
                 id: variables 
@@ -103,7 +103,7 @@ jobs:
                  echo "::set-output name=version::${GITHUB_REF#refs/tags/v}" 
                  echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV" 
                  echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV" 
-                 echo "SM_CLIENT_CERT_FILE=D:\\Certificate_pkcs12.p12" >> "$GITHUB_ENV" 
+                 echo "SM_CLIENT_CERT_FILE=D:\\a\\Certificate_pkcs12.p12Certificate_pkcs12.p12" >> "$GITHUB_ENV" 
                  echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV" 
                 shell: bash
                 
