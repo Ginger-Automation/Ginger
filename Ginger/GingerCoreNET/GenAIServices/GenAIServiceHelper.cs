@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.IdentityModel.Tokens.Jwt;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore;
+using GingerCore.Environments;
 
 namespace GingerCoreNET.GenAIServices
 {
@@ -12,7 +14,7 @@ namespace GingerCoreNET.GenAIServices
     {
 
         HttpClient _httpClient;
-        private string token = null;
+        private string token = "token";
         public GenAIServiceHelper()
         {
             InitClient();
@@ -23,7 +25,7 @@ namespace GingerCoreNET.GenAIServices
             try
             {
                 _httpClient = new HttpClient();
-                var host = WorkSpace.Instance.UserProfile.AskLisaConfiguration.Host;
+                var host = CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.Host);
                 if (!string.IsNullOrEmpty(host))
                 {
                     host = !host.EndsWith("/") ? $"{host}/" : host;
@@ -49,19 +51,20 @@ namespace GingerCoreNET.GenAIServices
             {
                 ChatBotResponseInfo responseInfo = new();
                 var httpClient = new HttpClient();
-                var host = WorkSpace.Instance.UserProfile.AskLisaConfiguration.AuthenticationServiceURL;
+                var host = CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.AuthenticationServiceURL);
                 if (!string.IsNullOrEmpty(host))
                 {
                     host = !host.EndsWith("/") ? $"{host}/" : host;
                     httpClient.BaseAddress = new Uri(host);
                 }
                 var data = new[]
-                {
-                new KeyValuePair<string, string>("grant_type", WorkSpace.Instance.UserProfile.AskLisaConfiguration.GrantType),
-                new KeyValuePair<string, string>("client_id", WorkSpace.Instance.UserProfile.AskLisaConfiguration.ClientId),
-                new KeyValuePair<string, string>("client_secret",  WorkSpace.Instance.UserProfile.AskLisaConfiguration.ClientSecret),
+               {
+                new KeyValuePair<string, string>("grant_type", CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.GrantType)),
+                new KeyValuePair<string, string>("client_id", CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.ClientId)),
+                new KeyValuePair<string, string>("client_secret", CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.ClientSecret)),
                 };
-                var response = await httpClient.PostAsync(WorkSpace.Instance.UserProfile.AskLisaConfiguration.Token, new FormUrlEncodedContent(data));
+
+                var response = await httpClient.PostAsync(token, new FormUrlEncodedContent(data));
                 var result = await response.Content.ReadAsAsync<dynamic>();
                 responseInfo = result.ToObject<ChatBotResponseInfo>();
                 token = responseInfo.AccessToken;
@@ -105,6 +108,11 @@ namespace GingerCoreNET.GenAIServices
         {
             try
             {
+                if (string.IsNullOrEmpty(token) || token.Split('.').Length != 3)
+                {
+                    return false;
+                }
+
                 DateTime validTo;
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadJwtToken(token);
@@ -133,7 +141,7 @@ namespace GingerCoreNET.GenAIServices
                 MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
                 _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
-                var response = await _httpClient.PostAsync(WorkSpace.Instance.UserProfile.AskLisaConfiguration.ContinueChat, content);
+                var response = await _httpClient.PostAsync(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.ContinueChat), content);
                 return await ParseResponse(response);
             }
             else
@@ -152,7 +160,8 @@ namespace GingerCoreNET.GenAIServices
                 MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
                 _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
-                var response = await _httpClient.PostAsync(WorkSpace.Instance.UserProfile.AskLisaConfiguration.StartNewChat, content);
+                _httpClient.BaseAddress = new Uri(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.Host));
+                var response = await _httpClient.PostAsync(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.StartNewChat), content);
                 return await ParseResponse(response);
             }
             else
@@ -162,7 +171,23 @@ namespace GingerCoreNET.GenAIServices
         }
 
 
+        private string CredentialsCalculation(string value)
+        {
+            ValueExpression valueExpression = new();
 
+            if (ValueExpression.IsThisAValueExpression(value))
+            {
+                value = valueExpression.Calculate(value);
+                return value;
+            }
+            else if (EncryptionHandler.IsStringEncrypted(value))
+            {
+                value = EncryptionHandler.DecryptwithKey(value);
+                return value;
+            }
+
+            return value;
+        }
 
         private static async Task<string> ParseResponse(HttpResponseMessage response)
         {
@@ -180,11 +205,11 @@ namespace GingerCoreNET.GenAIServices
         {
             var content = new MultipartFormDataContent();
             content.Add(new StringContent(Question), "question");
-            content.Add(new StringContent(WorkSpace.Instance.UserProfile.AskLisaConfiguration.Account), "account");
-            content.Add(new StringContent(WorkSpace.Instance.UserProfile.AskLisaConfiguration.DomainType), "domainType");
-            content.Add(new StringContent(WorkSpace.Instance.UserProfile.AskLisaConfiguration.TemperatureLevel), "temperatureVal");
-            content.Add(new StringContent(WorkSpace.Instance.UserProfile.AskLisaConfiguration.MaxTokenValue), "maxTokensVal");
-            content.Add(new StringContent(WorkSpace.Instance.UserProfile.AskLisaConfiguration.DataPath), "dataPath");
+            content.Add(new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.Account)), "account");
+            content.Add(new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.DomainType)), "domainType");
+            content.Add(new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.TemperatureLevel)), "temperatureVal");
+            content.Add(new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.MaxTokenValue)), "maxTokensVal");
+            content.Add(new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.DataPath)), "dataPath");
             return content;
         }
     }

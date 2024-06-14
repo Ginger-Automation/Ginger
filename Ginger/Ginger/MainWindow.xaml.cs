@@ -183,10 +183,8 @@ namespace Ginger
                 }
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
-                WorkSpace.Instance.UserProfile.AskLisaConfiguration.PropertyChanged += AskLisaPropertyChanged;
-                EnableChatBot();
-
                 WorkSpace.Instance.UserProfile.PropertyChanged += AskLisaPropertyChanged;
+                
             }
             catch (Exception ex)
             {
@@ -201,8 +199,9 @@ namespace Ginger
                     AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
                 }
             }
-
+            
         }
+
 
         private void AskLisaPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -211,7 +210,8 @@ namespace Ginger
 
         private void EnableChatBot()
         {
-            if ((WorkSpace.Instance.UserProfile.AskLisaConfiguration.EnableChat == Configurations.AskLisaConfiguration.eEnableChatBot.Yes) && WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures )
+           
+            if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.AskLisaConfiguration.EnableChat == Configurations.AskLisaConfiguration.eEnableChatBot.Yes && WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures )
             {
                 xChatPanel.Visibility = Visibility.Visible;
                 xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
@@ -323,6 +323,8 @@ namespace Ginger
                 {
                     WorkSpace.Instance.SolutionRepository.ModifiedFiles.CollectionChanged += ModifiedFilesChanged;
 
+                    WorkSpace.Instance.Solution.AskLisaConfiguration.PropertyChanged += AskLisaPropertyChanged;
+                    EnableChatBot();
                 }
             }
 
@@ -338,6 +340,7 @@ namespace Ginger
                 }
             }
         }
+
 
         private void SetRecentSolutionsAsMenuItems()
         {
