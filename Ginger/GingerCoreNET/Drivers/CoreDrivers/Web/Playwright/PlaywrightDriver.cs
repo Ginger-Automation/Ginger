@@ -9,17 +9,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
 using GingerCore.Actions.Common;
-using System.Threading;
+using Amdocs.Ginger.Common.UIElement;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver
     {
-        private const string BrowserExecutableNotFoundErrorMessage = "Executable doesn't exist at";
-
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
@@ -36,11 +33,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ValidateBrowserTypeSupport(BrowserType);
 
             IPlaywright playwright = Microsoft.Playwright.Playwright.CreateAsync().Result;
-
-            BrowserTypeLaunchOptions launchOptions = BuildLaunchOptions();
-            IPlaywrightBrowser playwrightBrowser = Task.Run(() => LaunchBrowserWithInstallationAsync(playwright, BrowserType, launchOptions).Result).Result;
-
-            _browser = new(playwrightBrowser, OnBrowserClose);
+            PlaywrightBrowser.Options browserOptions = BuildPlaywrightBrowserOptions();
+            _browser = new(playwright, BrowserType, browserOptions, OnBrowserClose);
         }
 
         private void ValidateBrowserTypeSupport(WebBrowserType browserType)
@@ -52,9 +46,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
-        private BrowserTypeLaunchOptions BuildLaunchOptions()
+        private PlaywrightBrowser.Options BuildPlaywrightBrowserOptions()
         {
-            BrowserTypeLaunchOptions launchOptions = new()
+            PlaywrightBrowser.Options options = new()
             {
                 Args = new[] { "--start-maximized" },
                 Headless = HeadlessBrowserMode,
@@ -63,89 +57,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             if (!string.IsNullOrEmpty(Proxy))
             {
-                launchOptions.Proxy = new Proxy()
+                options.Proxy = new Proxy()
                 {
                     Server = Proxy
                 };
             }
 
-            if (BrowserType == WebBrowserType.Chrome)
-            {
-                launchOptions.Channel = "chrome";
-            }
-            else if (BrowserType == WebBrowserType.Edge)
-            {
-                launchOptions.Channel = "msedge";
-            }
-
-            return launchOptions;
-        }
-
-        private async Task<IPlaywrightBrowser> LaunchBrowserWithInstallationAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
-        {
-            IPlaywrightBrowser browser;
-            try
-            {
-                browser = await LaunchBrowserAsync(playwright, browserType, launchOptions);
-            }
-            catch (PlaywrightException ex)
-            {
-                if (ex.Message.Contains(BrowserExecutableNotFoundErrorMessage))
-                {
-                    ExecutePlaywrightInstallationCommand(browserType);
-                    browser = await LaunchBrowserAsync(playwright, browserType, launchOptions);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return browser;
-        }
-
-        private async Task<IPlaywrightBrowser> LaunchBrowserAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
-        {
-            IPlaywrightBrowser browser;
-            if (browserType == WebBrowserType.Chrome)
-            {
-                browser = await playwright.Chromium.LaunchAsync(launchOptions);
-            }
-            else if (browserType == WebBrowserType.FireFox)
-            {
-                browser = await playwright.Firefox.LaunchAsync(launchOptions);
-            }
-            else if (browserType == WebBrowserType.Edge)
-            {
-                browser = await playwright.Chromium.LaunchAsync(launchOptions);
-            }
-            else
-            {
-                throw new ArgumentException($"Unknown browser type '{BrowserType}'");
-            }
-            return browser;
-        }
-
-        private static void ExecutePlaywrightInstallationCommand(WebBrowserType browserType)
-        {
-            string browserTypeString;
-            switch (browserType)
-            {
-                case WebBrowserType.Chrome:
-                case WebBrowserType.Edge:
-                    browserTypeString = Microsoft.Playwright.BrowserType.Chromium;
-                    break;
-                case WebBrowserType.FireFox:
-                    browserTypeString = Microsoft.Playwright.BrowserType.Firefox;
-                    break;
-                default:
-                    throw new ArgumentException($"Unknown browser type '{browserType}'");
-            }
-
-            int exitCode = Program.Main(new[] { "install", browserTypeString });
-            if (exitCode != 0)
-            {
-                throw new Exception($"Error occurred while executing playwright installation command, exited with code {exitCode}");
-            }
+            return options;
         }
 
         public override bool IsRunning()
@@ -185,21 +103,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.CompletedTask;
         }
 
-        public override Act GetCurrentElement()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string GetURL()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void HighlightActElement(Act act)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void RunAction(Act act)
         {
             if (!IsRunning())
@@ -225,12 +128,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
                     break;
             }
-        }
-
-        public bool CanStartAnotherInstance(out string errorMessage)
-        {
-            errorMessage = string.Empty;
-            return true;
         }
 
         public bool IsActionSupported(Act act, out string message)
@@ -265,7 +162,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             else if (act is ActBrowserElement actBrowserElement)
             {
                 bool isLocatorSupported = 
-                    actBrowserElement.ControlAction == ActBrowserElement.eControlAction.SwitchFrame && 
+                    actBrowserElement.ControlAction != ActBrowserElement.eControlAction.SwitchFrame ||
                     PlaywrightBrowserTab.IsFrameLocatorSupported(act.LocateBy);
                 if (!isLocatorSupported)
                 {
@@ -291,6 +188,172 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
+        public bool CanStartAnotherInstance(out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            return true;
+        }
+
+        public override Act GetCurrentElement()
+        {
+            ThrowIfClosed();
+
+            async Task<Act?> getCurrentElementAsync()
+            {
+                IBrowserElement? element = await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).GetFocusedElement();
+                if (element == null)
+                {
+                    return null;
+                }
+
+                string tagName = await element.TagNameAsync();
+                Act? act = null;
+                switch (tagName)
+                {
+                    case "text":
+                        act = new ActTextBox()
+                        {
+                            TextBoxAction = ActTextBox.eTextBoxAction.SetValue,
+                        };
+                        await SetElementLocatorToActionAsync(element, act);
+                        act.AddOrUpdateInputParamValue("Value", await element.AttributeValueAsync(name: "value"));
+                        act.AddOrUpdateReturnParamActual("Actual", $"Tag Name = {tagName}");
+                        break;
+                    case "button":
+                        string idAttrValue = await element.AttributeValueAsync(name: "id");
+                        
+                        act = new ActButton()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue
+                        };
+                        break;
+                    case "submit":
+                        idAttrValue = await element.AttributeValueAsync(name: "id");
+
+                        act = new ActButton()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue
+                        };
+                        break;
+                    case "reset":
+                        //TODO: add missing Act get() method
+                        break;
+                    case "file":
+                        //TODO: add missing Act get() method
+                        break;
+                    case "hidden": // does type this apply?
+                                   //TODO: add missing Act get() method
+                        break;
+                    case "password":
+                        act = new ActPassword()
+                        {
+                            PasswordAction = ActPassword.ePasswordAction.SetValue,
+                        };
+                        await SetElementLocatorToActionAsync(element, act);
+                        act.AddOrUpdateInputParamValue("Value", await element.AttributeValueAsync(name: "value"));
+                        act.AddOrUpdateReturnParamActual("Actual", $"Tag Name = {tagName}");
+                        break;
+                    case "checkbox":
+                        idAttrValue = await element.AttributeValueAsync(name: "id");
+                        act = new ActCheckbox()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue,
+                        };
+                        break;
+                    case "radio":
+                        idAttrValue = await element.AttributeValueAsync(name: "id");
+                        act = new ActRadioButton()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue
+                        };
+                        break;
+
+                }
+                return act;
+            }
+
+            return Task.Run(getCurrentElementAsync).Result!;
+            
+        }
+
+        private async Task SetElementLocatorToActionAsync(IBrowserElement element, Act act)
+        {
+            //order by priority
+
+            // By ID
+            string locatorValue = await element.AttributeValueAsync(name: "id");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByID;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            // By name
+            locatorValue = await element.AttributeValueAsync(name: "name");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByName;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            //TODO: CSS....
+
+            //By href
+            locatorValue = await element.AttributeValueAsync(name: "href");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByHref;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            //By Value
+            locatorValue = await element.AttributeValueAsync(name: "value");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByValue;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            // by text
+            locatorValue = await element.TextContentAsync();
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByLinkText;
+                act.LocateValue = locatorValue;
+                return;
+            }
+            //TODO: add XPath
+        }
+
+        public override string GetURL()
+        {
+            ThrowIfClosed();
+
+            return Task.Run(() => _browser!.CurrentWindow.CurrentTab.GetURLAsync().Result).Result;
+        }
+
+        public override void HighlightActElement(Act act)
+        {
+            ThrowIfClosed();
+            //TODO: implement
+        }
+
+        private void ThrowIfClosed()
+        {
+            if (!IsRunning())
+            {
+                throw new InvalidOperationException($"Cannot perform operation on closed driver.");
+            }
+        }
+        
         private static readonly IEnumerable<ActUIElement.eElementAction> ActUIElementSupportedOperations = new List<ActUIElement.eElementAction>()
         {
             ActUIElement.eElementAction.Click,
@@ -346,6 +409,5 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActBrowserElement.eControlAction.SwitchWindow,
             ActBrowserElement.eControlAction.SwitchToDefaultWindow,
         };
-
     }
 }
