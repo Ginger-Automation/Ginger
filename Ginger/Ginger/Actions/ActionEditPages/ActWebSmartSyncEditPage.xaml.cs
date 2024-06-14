@@ -30,24 +30,24 @@ using System.Windows.Data;
 using Ginger.UserControls;
 namespace Ginger.Actions
 {
-    public partial class ActNewSmartSyncEditPage : Page, IActEditPage
+    public partial class ActWebSmartSyncEditPage : Page, IActEditPage
     {
-        ActNewSmartSync mAct;
+        ActWebSmartSync mAct;
         public Visibility LocatorVisibility
         {
             get => GetLocatorVisibility();
         }
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ActNewSmartSyncEditPage(GingerCore.Actions.ActNewSmartSync Act)
+        public ActWebSmartSyncEditPage(GingerCore.Actions.ActWebSmartSync Act)
         {
             InitializeComponent();     
             GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.SyncOperations, sortValues: false);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActNewSmartSync.SyncOperations));
-            xTxtMatchVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.TxtMatchInput));
-            xAttributeValueVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.AttributeValue));
-            xAttributeNameVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.AttributeName));
-            xUrlMatchesVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActNewSmartSync.UrlMatches));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActWebSmartSync.SyncOperations));
+            xTxtMatchVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.TxtMatchInput));
+            xAttributeValueVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.AttributeValue));
+            xAttributeNameVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.AttributeName));
+            xUrlMatchesVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.UrlMatches));
 
 
         }
@@ -56,12 +56,12 @@ namespace Ginger.Actions
 
         private Visibility GetLocatorVisibility()
         {
-            if (ActionNameComboBox.SelectedValue is not ActNewSmartSync.eSyncOperation selectedSyncAction)
+            if (ActionNameComboBox.SelectedValue is not ActWebSmartSync.eSyncOperation selectedSyncAction)
             {
                 return Visibility.Visible;
             }
 
-            if (selectedSyncAction == ActNewSmartSync.eSyncOperation.PageHasBeenLoaded || selectedSyncAction == ActNewSmartSync.eSyncOperation.AlertIsPresent || selectedSyncAction == ActNewSmartSync.eSyncOperation.UrlMatches)
+            if (selectedSyncAction == ActWebSmartSync.eSyncOperation.PageHasBeenLoaded || selectedSyncAction == ActWebSmartSync.eSyncOperation.AlertIsPresent || selectedSyncAction == ActWebSmartSync.eSyncOperation.UrlMatches)
             {
                 return Visibility.Collapsed;
             }
@@ -71,9 +71,9 @@ namespace Ginger.Actions
             }
         }
      
-        private void SetPanelVisibility(Panel panel, ActNewSmartSync.eSyncOperation action)
+        private void SetPanelVisibility(Panel panel, ActWebSmartSync.eSyncOperation action)
         {
-            if (ActionNameComboBox.SelectedValue is not ActNewSmartSync.eSyncOperation selectedSyncAction)
+            if (ActionNameComboBox.SelectedValue is not ActWebSmartSync.eSyncOperation selectedSyncAction)
             {
                 panel.Visibility = Visibility.Collapsed;
                 return;
@@ -89,15 +89,15 @@ namespace Ginger.Actions
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ActionNameComboBox.SelectedValue is not ActNewSmartSync.eSyncOperation)
+            if (ActionNameComboBox.SelectedValue is not ActWebSmartSync.eSyncOperation)
             {
                 return;
             }
 
             NotifyLocatorVisibilityChanged();
-            SetPanelVisibility(TxtMatch_Pnl, ActNewSmartSync.eSyncOperation.TextMatches);
-            SetPanelVisibility(UrlMatches_Pnl, ActNewSmartSync.eSyncOperation.UrlMatches);
-            SetPanelVisibility(AttributeMatches_Pnl, ActNewSmartSync.eSyncOperation.AttributeMatches);
+            SetPanelVisibility(TxtMatch_Pnl, ActWebSmartSync.eSyncOperation.TextMatches);
+            SetPanelVisibility(UrlMatches_Pnl, ActWebSmartSync.eSyncOperation.UrlMatches);
+            SetPanelVisibility(AttributeMatches_Pnl, ActWebSmartSync.eSyncOperation.AttributeMatches);
             setOperationDescription();
         }
 
@@ -105,53 +105,53 @@ namespace Ginger.Actions
         {
             switch (ActionNameComboBox.SelectedValue)
             {
-                case ActNewSmartSync.eSyncOperation.ElementIsVisible:
+                case ActWebSmartSync.eSyncOperation.ElementIsVisible:
                     xOperationDescription.Text = "Verifies if an element is present on both the webpage's structure (DOM) and visible to the user.";
                     break;
-                case ActNewSmartSync.eSyncOperation.ElementExists:
+                case ActWebSmartSync.eSyncOperation.ElementExists:
                     xOperationDescription.Text = "Checks if an element exists on the webpage, regardless of whether it is visible.";
                     break;
-                case ActNewSmartSync.eSyncOperation.AlertIsPresent:
+                case ActWebSmartSync.eSyncOperation.AlertIsPresent:
                     xOperationDescription.Text = "Waits until an alert message pops up on the webpage. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.ElementIsSelected:
+                case ActWebSmartSync.eSyncOperation.ElementIsSelected:
                     xOperationDescription.Text = "Confirms if a form element like a checkbox or radio button is currently selected. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.PageHasBeenLoaded:
+                case ActWebSmartSync.eSyncOperation.PageHasBeenLoaded:
                     xOperationDescription.Text = "Ensures that the entire webpage has been loaded and is ready for interaction. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.ElementToBeClickable:
+                case ActWebSmartSync.eSyncOperation.ElementToBeClickable:
                     xOperationDescription.Text = "Waits until an element is both visible and enabled, indicating that it can be clicked. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.TextMatches:
-                    xOperationDescription.Text = "Waits until the text of an element matches a specified pattern. ";
+                case ActWebSmartSync.eSyncOperation.TextMatches:
+                    xOperationDescription.Text = "Waits until the text of an element matches a specified pattern. Input Text is case-sensitive and does the contains search.";
                     break;
-                case ActNewSmartSync.eSyncOperation.AttributeMatches:
+                case ActWebSmartSync.eSyncOperation.AttributeMatches:
                     xOperationDescription.Text = "Waits until a specific attribute of an element matches a specified pattern. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
-                    xOperationDescription.Text = "Checks if all the elements found by a given method are enabled and can be interacted. ";
+                case ActWebSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
+                    xOperationDescription.Text = "Checks if all the elements found by a given locator are enabled and can be interacted. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.FrameToBeAvailableAndSwitchToIt:
+                case ActWebSmartSync.eSyncOperation.FrameToBeAvailableAndSwitchToIt:
                     xOperationDescription.Text = "Waits until a frame is available to switch to and then switches to it. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.InvisibilityOfAllElementsLocatedBy:
-                    xOperationDescription.Text = "Waits until all the elements found by a given method are invisible or not present. ";
+                case ActWebSmartSync.eSyncOperation.InvisibilityOfAllElementsLocatedBy:
+                    xOperationDescription.Text = "Waits until all the elements found by a given locator are invisible or not present. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.InvisibilityOfElementLocated:
+                case ActWebSmartSync.eSyncOperation.InvisibilityOfElementLocated:
                     xOperationDescription.Text = "Waits until a specific element is no longer visible or not present. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.PresenceOfAllElementsLocatedBy:
-                    xOperationDescription.Text = "Ensures that all the elements found by a given method are present in the webpage's structure (DOM). ";
+                case ActWebSmartSync.eSyncOperation.PresenceOfAllElementsLocatedBy:
+                    xOperationDescription.Text = "Ensures that all the elements found by a given locator are present in the webpage's structure (DOM). ";
                     break;
-                case ActNewSmartSync.eSyncOperation.SelectedOfAllElementsLocatedBy:
-                    xOperationDescription.Text = "Ensures that all the elements found by a given method are visible on the webpage. ";
+                case ActWebSmartSync.eSyncOperation.SelectedOfAllElementsLocatedBy:
+                    xOperationDescription.Text = "Ensures that all the elements found by a given locator are selected. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.UrlMatches:
+                case ActWebSmartSync.eSyncOperation.UrlMatches:
                     xOperationDescription.Text = "Waits until the URL of the current page matches a specified pattern. ";
                     break;
-                case ActNewSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
-                    xOperationDescription.Text = "Ensures that all the elements found by a given method are selected. ";
+                case ActWebSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
+                    xOperationDescription.Text = "Ensures that all the elements found by a given locator are visible on the webpage. ";
                     break;
                 default:
                     xOperationDescription.Text = "No operation selected.";
