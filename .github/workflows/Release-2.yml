@@ -94,7 +94,8 @@ jobs:
             -   name: Set up certificate
                 shell: cmd
                 run: |
-                 echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64--decode > /d/Certificate_pkcs12.p12
+                 echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > D:\a\Certificate_pkcs12.p12
+                 cat  D:\a\Certificate_pkcs12.p12
                 
             -   name: Set variables 
                 id: variables 
@@ -102,7 +103,7 @@ jobs:
                  echo "::set-output name=version::${GITHUB_REF#refs/tags/v}" 
                  echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV" 
                  echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV" 
-                 echo "SM_CLIENT_CERT_FILE=D:\\Certificate_pkcs12.p12" >> "$GITHUB_ENV" 
+                 echo "SM_CLIENT_CERT_FILE=D:\\a\\Certificate_pkcs12.p12" >> "$GITHUB_ENV" 
                  echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV" 
                 shell: bash
                 
@@ -110,20 +111,7 @@ jobs:
                 id: variables1
                 run: |
                  echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
-                
-            -   name: Code signing with Software Trust Manager
-                uses: digicert/ssm-code-signing@v0.0.2
             
-           # -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0.beta1
-               # with: 
-               #   Directorypath: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\'   
-                 # certificate: ${{ secrets.PEM }}
-                 # cert-password: ${{ secrets.PEM_PASS }}
-                  
-            -   uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
-                with: 
-                    filepath: './Ginger/GingerInstallerScriptGithub.iss'
-
             -   name: Code signing with Software Trust Manager
                 uses: digicert/ssm-code-signing@v0.0.2
                 
@@ -136,6 +124,23 @@ jobs:
                     C:\Windows\System32\certutil.exe -csp "DigiCert Signing Manager KSP" -key -user 
                     smksp_cert_sync.exe 
                 shell: cmd 
+
+            -   name: Signing using Signtool 
+                run: | 
+                    signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 
+                    "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\" 
+                    signtool.exe verify /v /pa "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\" 
+            
+           # -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0.beta1
+               # with: 
+               #   Directorypath: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\'   
+                 # certificate: ${{ secrets.PEM }}
+                 # cert-password: ${{ secrets.PEM_PASS }}
+                  
+            -   uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
+                with: 
+                    filepath: './Ginger/GingerInstallerScriptGithub.iss'
+
 
             -   name: Signing using Signtool 
                 run: | 
