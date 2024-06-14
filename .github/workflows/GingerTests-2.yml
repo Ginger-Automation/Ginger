@@ -4,6 +4,12 @@ on:
   workflow_call
 
 
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Say Hello
+      run: echo "Hello, world!"
 #jobs:
 #example_job:
 #    runs-on: ubuntu-latest
