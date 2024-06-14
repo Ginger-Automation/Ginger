@@ -43,6 +43,8 @@ namespace Ginger.Environments
             xDBAccKey.Init(context, database, nameof(Database.Pass));
 
             xDatabaseConnectionString.Init(context, database, nameof(Database.ConnectionString));
+            xDatabaseConnectionString.Row.Height = new System.Windows.GridLength(100);
+            xDatabaseConnectionString.ValueTextBox.Height = 40;
             BindingHandler.ObjFieldBinding(xDatabaseName, TextBox.TextProperty, database, nameof(Database.Name));
             BindingHandler.ObjFieldBinding(xDatabaseDescription, TextBox.TextProperty, database, nameof(Database.Description));
             BindingHandler.ObjFieldBinding(xDatabaseComboBox, ComboBox.SelectedValueProperty, database, nameof(Database.DBType));

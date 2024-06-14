@@ -697,7 +697,7 @@ namespace GingerCore.Drivers
                                 ieOptions.EnsureCleanSession = true;
                             }
 
-                            ieOptions.Proxy = mProxy == null ? null : mProxy;
+                            SetProxy(ieOptions);
                             ieOptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
                             if (IgnoreIEProtectedMode == true)
                             {
@@ -747,7 +747,10 @@ namespace GingerCore.Drivers
                             {
                                 EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
                             }
-
+                            else
+                            {
+                                SetProxy(EDOpts);
+                            }
                             SetCurrentPageLoadStrategy(EDOpts);
                             driverService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
                             AddCustomDriverPath(driverService);
