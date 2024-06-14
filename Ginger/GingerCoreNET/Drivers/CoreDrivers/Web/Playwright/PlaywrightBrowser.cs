@@ -14,6 +14,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     internal sealed class PlaywrightBrowser : IBrowser
     {
+        private const string BrowserExecutableNotFoundErrorMessage = "Executable doesn't exist at";
+
         internal sealed class Options
         {
             internal IEnumerable<string>? Args { get; set; }
@@ -48,13 +50,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             _windows = [];
 
+            //Remove synchronous object creation if it is not possible. instead have a async Creator method
             IBrowserWindow? newWindow = Task.Run(() =>
             {
                 try
                 {
                     //this code needs to be executed in a separate Task otherwise, it will cause a deadlock and freeze the calling thread
                     //check this for an example https://stackoverflow.com/a/43912280/12190808
-                    return NewWindowAsync().Result;
+                    return NewWindowAsync();
                 }
                 catch (Exception ex)
                 {
@@ -74,10 +77,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
 
-            IPlaywrightBrowserType playwrightBrowserType = GetPlaywrightBrowserType();
-            BrowserTypeLaunchPersistentContextOptions? launchOptions = BuildPlaywrightBrowserContextLaunchOptions();
-
-            IPlaywrightBrowserContext context = await playwrightBrowserType.LaunchPersistentContextAsync(userDataDir: string.Empty, launchOptions);
+            IPlaywrightBrowserContext context = await LaunchBrowserContextWithInstallationAsync();
 
             PlaywrightBrowserWindow window = new(context, OnWindowClose);
             _windows.AddLast(window);
@@ -90,7 +90,61 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return window;
         }
 
-        private BrowserTypeLaunchPersistentContextOptions? BuildPlaywrightBrowserContextLaunchOptions()
+        private async Task<IPlaywrightBrowserContext> LaunchBrowserContextWithInstallationAsync()
+        {
+            IPlaywrightBrowserContext browserContext;
+            try
+            {
+                browserContext = await LaunchBrowserContextAsync();
+            }
+            catch (PlaywrightException ex)
+            {
+                if (ex.Message.Contains(BrowserExecutableNotFoundErrorMessage))
+                {
+                    ExecutePlaywrightInstallationCommand(_browserType);
+                    browserContext = await LaunchBrowserContextAsync();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return browserContext;
+        }
+
+        private async Task<IPlaywrightBrowserContext> LaunchBrowserContextAsync()
+        {
+            IPlaywrightBrowserType playwrightBrowserType = GetPlaywrightBrowserType();
+            BrowserTypeLaunchPersistentContextOptions? launchOptions = BuildBrowserContextLaunchOptions();
+
+            IPlaywrightBrowserContext context = await playwrightBrowserType.LaunchPersistentContextAsync(userDataDir: string.Empty, launchOptions);
+            return context;
+        }
+
+        private static void ExecutePlaywrightInstallationCommand(WebBrowserType browserType)
+        {
+            string browserTypeString;
+            switch (browserType)
+            {
+                case WebBrowserType.Chrome:
+                case WebBrowserType.Edge:
+                    browserTypeString = Microsoft.Playwright.BrowserType.Chromium;
+                    break;
+                case WebBrowserType.FireFox:
+                    browserTypeString = Microsoft.Playwright.BrowserType.Firefox;
+                    break;
+                default:
+                    throw new ArgumentException($"Unknown browser type '{browserType}'");
+            }
+
+            int exitCode = Program.Main(new[] { "install", browserTypeString });
+            if (exitCode != 0)
+            {
+                throw new Exception($"Error occurred while executing playwright installation command, exited with code {exitCode}");
+            }
+        }
+
+        private BrowserTypeLaunchPersistentContextOptions? BuildBrowserContextLaunchOptions()
         {
             if (_options == null)
             {

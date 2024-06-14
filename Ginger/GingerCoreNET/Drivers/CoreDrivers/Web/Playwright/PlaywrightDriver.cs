@@ -11,15 +11,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
-using System.Threading;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver
     {
-        private const string BrowserExecutableNotFoundErrorMessage = "Executable doesn't exist at";
-        
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
@@ -67,73 +64,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             return options;
-        }
-
-        private async Task<IPlaywrightBrowser> LaunchBrowserWithInstallationAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
-        {
-            IPlaywrightBrowser browser;
-            try
-            {
-                browser = await LaunchBrowserAsync(playwright, browserType, launchOptions);
-            }
-            catch (PlaywrightException ex)
-            {
-                if (ex.Message.Contains(BrowserExecutableNotFoundErrorMessage))
-                {
-                    ExecutePlaywrightInstallationCommand(browserType);
-                    browser = await LaunchBrowserAsync(playwright, browserType, launchOptions);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return browser;
-        }
-
-        private async Task<IPlaywrightBrowser> LaunchBrowserAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
-        {
-            IPlaywrightBrowser browser;
-            if (browserType == WebBrowserType.Chrome)
-            {
-                browser = await playwright.Chromium.LaunchAsync(launchOptions);
-            }
-            else if (browserType == WebBrowserType.FireFox)
-            {
-                browser = await playwright.Firefox.LaunchAsync(launchOptions);
-            }
-            else if (browserType == WebBrowserType.Edge)
-            {
-                browser = await playwright.Chromium.LaunchAsync(launchOptions);
-            }
-            else
-            {
-                throw new ArgumentException($"Unknown browser type '{BrowserType}'");
-            }
-            return browser;
-        }
-
-        private static void ExecutePlaywrightInstallationCommand(WebBrowserType browserType)
-        {
-            string browserTypeString;
-            switch (browserType)
-            {
-                case WebBrowserType.Chrome:
-                case WebBrowserType.Edge:
-                    browserTypeString = Microsoft.Playwright.BrowserType.Chromium;
-                    break;
-                case WebBrowserType.FireFox:
-                    browserTypeString = Microsoft.Playwright.BrowserType.Firefox;
-                    break;
-                default:
-                    throw new ArgumentException($"Unknown browser type '{browserType}'");
-            }
-
-            int exitCode = Program.Main(new[] { "install", browserTypeString });
-            if (exitCode != 0)
-            {
-                throw new Exception($"Error occurred while executing playwright installation command, exited with code {exitCode}");
-            }
         }
 
         public override bool IsRunning()
@@ -232,7 +162,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             else if (act is ActBrowserElement actBrowserElement)
             {
                 bool isLocatorSupported = 
-                    actBrowserElement.ControlAction == ActBrowserElement.eControlAction.SwitchFrame && 
+                    actBrowserElement.ControlAction != ActBrowserElement.eControlAction.SwitchFrame ||
                     PlaywrightBrowserTab.IsFrameLocatorSupported(act.LocateBy);
                 if (!isLocatorSupported)
                 {
