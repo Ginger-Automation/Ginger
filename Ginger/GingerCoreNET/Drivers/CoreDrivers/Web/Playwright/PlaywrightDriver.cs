@@ -19,7 +19,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
     {
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
+        [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
         public bool HeadlessBrowserMode { get; set; }
 
         [UserConfigured]
