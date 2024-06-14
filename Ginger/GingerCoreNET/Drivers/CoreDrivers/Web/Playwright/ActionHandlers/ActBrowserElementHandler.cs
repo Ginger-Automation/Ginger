@@ -8,6 +8,7 @@ using GingerCore.Actions;
 using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -18,30 +19,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
 {
     internal sealed class ActBrowserElementHandler
     {
-        private static readonly IEnumerable<ActBrowserElement.eControlAction> SupportedOperations = new List<ActBrowserElement.eControlAction>()
-        {
-            ActBrowserElement.eControlAction.GotoURL,
-            ActBrowserElement.eControlAction.OpenURLNewTab,
-            ActBrowserElement.eControlAction.GetPageURL,
-            ActBrowserElement.eControlAction.GetWindowTitle,
-            ActBrowserElement.eControlAction.NavigateBack,
-            ActBrowserElement.eControlAction.Refresh,
-            ActBrowserElement.eControlAction.DeleteAllCookies,
-            ActBrowserElement.eControlAction.RunJavaScript,
-            ActBrowserElement.eControlAction.GetPageSource,
-            ActBrowserElement.eControlAction.Close,
-            ActBrowserElement.eControlAction.CloseTabExcept,
-            ActBrowserElement.eControlAction.CloseAll,
-            ActBrowserElement.eControlAction.CheckPageLoaded,
-            ActBrowserElement.eControlAction.GetConsoleLog,
-            ActBrowserElement.eControlAction.GetBrowserLog,
-            ActBrowserElement.eControlAction.SwitchFrame,
-            ActBrowserElement.eControlAction.SwitchToDefaultFrame,
-            ActBrowserElement.eControlAction.SwitchToParentFrame,
-            ActBrowserElement.eControlAction.SwitchWindow,
-            ActBrowserElement.eControlAction.SwitchToDefaultWindow,
-        };
-
         internal readonly struct Context : IEquatable<Context>
         {
             internal required ProjEnvironment Environment { get; init; }
@@ -54,6 +31,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                     Environment == other.Environment &&
                     BusinessFlow == other.BusinessFlow;
             }
+
+            public override bool Equals(object? obj)
+            {
+                if (obj is not Context other)
+                {
+                    return false;
+                }
+
+                return Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                HashCode hashCode = new();
+                hashCode.Add(Environment.GetHashCode());
+                hashCode.Add(BusinessFlow.GetHashCode());
+                return hashCode.ToHashCode();
+            }
         }
 
         private readonly ActBrowserElement _act;
@@ -65,11 +60,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             _act = act;
             _browser = browser;
             _context = context;
-        }
-
-        public static bool IsOperationSupported(ActBrowserElement.eControlAction operation)
-        {
-            return SupportedOperations.Contains(operation);
         }
 
         internal Task HandleAsync()
