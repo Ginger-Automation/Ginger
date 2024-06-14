@@ -332,7 +332,13 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (TVI.Tag is ITreeViewItem ITVI)
             {
-                List<ITreeViewItem> Childs = new(ITVI.Childrens());
+                List<ITreeViewItem>? Childs = null;
+
+                var tviChildren = ITVI.Childrens();
+                if (tviChildren != null)
+                {
+                    Childs = new(tviChildren);
+                }
 
                 TVI.Items.Clear();
                 if (Childs != null)

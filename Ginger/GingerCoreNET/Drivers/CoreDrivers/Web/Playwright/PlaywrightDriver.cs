@@ -22,7 +22,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
+        [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
         public bool HeadlessBrowserMode { get; set; }
 
         [UserConfigured]
@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             IPlaywright playwright = Microsoft.Playwright.Playwright.CreateAsync().Result;
 
             BrowserTypeLaunchOptions launchOptions = BuildLaunchOptions();
-            IPlaywrightBrowser playwrightBrowser = LaunchBrowserWithInstallationAsync(playwright, BrowserType, launchOptions).Result;
+            IPlaywrightBrowser playwrightBrowser = Task.Run(() => LaunchBrowserWithInstallationAsync(playwright, BrowserType, launchOptions).Result).Result;
 
             _browser = new(playwrightBrowser, OnBrowserClose);
         }
