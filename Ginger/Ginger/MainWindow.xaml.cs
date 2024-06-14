@@ -185,6 +185,8 @@ namespace Ginger
 
                 WorkSpace.Instance.UserProfile.AskLisaConfiguration.PropertyChanged += AskLisaPropertyChanged;
                 EnableChatBot();
+
+                WorkSpace.Instance.UserProfile.PropertyChanged += AskLisaPropertyChanged;
             }
             catch (Exception ex)
             {
@@ -209,7 +211,7 @@ namespace Ginger
 
         private void EnableChatBot()
         {
-            if (WorkSpace.Instance.UserProfile.AskLisaConfiguration.EnableChat == Configurations.AskLisaConfiguration.eEnableChatBot.Yes)
+            if ((WorkSpace.Instance.UserProfile.AskLisaConfiguration.EnableChat == Configurations.AskLisaConfiguration.eEnableChatBot.Yes) && WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures )
             {
                 xChatPanel.Visibility = Visibility.Visible;
                 xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;

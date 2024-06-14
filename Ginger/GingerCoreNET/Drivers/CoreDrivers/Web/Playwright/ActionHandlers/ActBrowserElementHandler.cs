@@ -1,5 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -198,6 +199,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                 throw new InvalidActionConfigurationException("Error: Provided URL is empty. Please provide valid URL.");
             }
 
+            if (!Uri.TryCreate(url, UriKind.Absolute, out _))
+            {
+                string httpsUrlFormat = "https://{0}";
+                if (Uri.TryCreate(string.Format(httpsUrlFormat, url), UriKind.Absolute, out _))
+                {
+                    url = string.Format(httpsUrlFormat, url);
+                }
+                else
+                {
+                    throw new InvalidActionConfigurationException("Error: Invalid URL. Give valid URL(Complete URL)");
+                }
+            }
+
             return url;
         }
 
@@ -312,19 +326,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
 
         private async Task HandleCloseTabExceptOperationAsync()
         {
-            if (string.IsNullOrEmpty(_act.ValueForDriver) && string.IsNullOrEmpty(_act.LocateValueCalculated))
+            if (_act.LocateBy != eLocateBy.ByTitle && _act.LocateBy != eLocateBy.ByUrl)
             {
-                throw new InvalidActionConfigurationException("Error: The window title to search for is missing.");
+                throw new InvalidActionConfigurationException($"Error: Locator {_act.LocateBy} is not supported, use {eLocateBy.ByTitle} or {eLocateBy.ByUrl}.");
             }
 
-            string excludedWindowTitle;
+            if (string.IsNullOrEmpty(_act.ValueForDriver) && string.IsNullOrEmpty(_act.LocateValueCalculated))
+            {
+                throw new InvalidActionConfigurationException("Error: The window value to search for is missing.");
+            }
+
+            string excludedValue;
             if (!string.IsNullOrEmpty(_act.LocateValueCalculated))
             {
-                excludedWindowTitle = _act.LocateValueCalculated;
+                excludedValue = _act.LocateValueCalculated;
             }
             else
             {
-                excludedWindowTitle = _act.ValueForDriver;
+                excludedValue = _act.ValueForDriver;
             }
 
             List<IBrowserTab> tabsToClose = [];
@@ -332,8 +351,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             {
                 foreach (IBrowserTab tab in window.Tabs)
                 {
-                    string tabTitle = await tab.GetTitleAsync();
-                    if (!string.IsNullOrEmpty(tabTitle) && tabTitle.Contains(excludedWindowTitle, StringComparison.OrdinalIgnoreCase))
+                    string tabValue = string.Empty;
+                    if (_act.LocateBy == eLocateBy.ByTitle)
+                    {
+                        tabValue = await tab.GetTitleAsync();
+                        
+                    }
+                    else if (_act.LocateBy == eLocateBy.ByUrl)
+                    {
+                        tabValue = await tab.GetURLAsync();
+                    }
+
+                    if (!string.IsNullOrEmpty(tabValue) && tabValue.Contains(excludedValue, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
