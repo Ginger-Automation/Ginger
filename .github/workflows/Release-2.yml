@@ -107,7 +107,7 @@ jobs:
                 shell: bash
                 
             -   name: Get API key from GitHub secrets and save to     environment variables
-                id: variables
+                id: variables1
                 run: |
                  echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
                 
