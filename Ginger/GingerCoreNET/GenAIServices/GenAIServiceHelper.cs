@@ -14,7 +14,7 @@ namespace GingerCoreNET.GenAIServices
     {
         ValueExpression valueExpression;
         HttpClient _httpClient;
-        private string token = "token";
+        private string token = null;
         public GenAIServiceHelper()
         {
             InitClient();
@@ -65,7 +65,7 @@ namespace GingerCoreNET.GenAIServices
                 new KeyValuePair<string, string>("client_secret", CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.ClientSecret)),
                 };
 
-                var response = await httpClient.PostAsync(token, new FormUrlEncodedContent(data));
+                var response = await httpClient.PostAsync(WorkSpace.Instance.Solution.AskLisaConfiguration.Token, new FormUrlEncodedContent(data));
                 var result = await response.Content.ReadAsAsync<dynamic>();
                 responseInfo = result.ToObject<ChatBotResponseInfo>();
                 token = responseInfo.AccessToken;
@@ -168,7 +168,14 @@ namespace GingerCoreNET.GenAIServices
             }
         }
 
-
+        /// <summary>
+        /// Calculates the actual value from the input string based on its type.
+        /// If the input is a value expression, it computes the expression to get the value.
+        /// If the input is an encrypted string, it decrypts the string to retrieve the original value.
+        /// Returns the input as is if it doesn't match the above conditions.
+        /// </summary>
+        /// <param name="value">The input string which might be a value expression or an encrypted string.</param>
+        /// <returns>The calculated or decrypted value, or the input string if no processing is needed.</returns>
         private string CredentialsCalculation(string value)
         {
 

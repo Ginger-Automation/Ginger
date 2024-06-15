@@ -90,6 +90,8 @@ namespace Ginger.Configurations
             }
         }
 
+        // Encrypt the client secret unless it's already encrypted or a value expression.
+        // This ensures that sensitive data is stored securely without altering predefined expressions or duplicating encryption.
         private void xClientIdLabelTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
             if (!EncryptionHandler.IsStringEncrypted(xClientIdLabelTextBox.ValueTextBox.Text))
