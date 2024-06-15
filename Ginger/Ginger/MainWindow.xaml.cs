@@ -184,7 +184,7 @@ namespace Ginger
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
                 WorkSpace.Instance.UserProfile.PropertyChanged += AskLisaPropertyChanged;
-                
+
             }
             catch (Exception ex)
             {
@@ -322,8 +322,6 @@ namespace Ginger
                 if (WorkSpace.Instance.SolutionLoaded)
                 {
                     WorkSpace.Instance.SolutionRepository.ModifiedFiles.CollectionChanged += ModifiedFilesChanged;
-
-                    WorkSpace.Instance.Solution.AskLisaConfiguration.PropertyChanged += AskLisaPropertyChanged;
                     EnableChatBot();
                 }
             }

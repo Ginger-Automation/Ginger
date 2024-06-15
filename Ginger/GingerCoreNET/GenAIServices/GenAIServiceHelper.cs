@@ -12,7 +12,7 @@ namespace GingerCoreNET.GenAIServices
 {
     public class GenAIServiceHelper
     {
-
+        ValueExpression valueExpression;
         HttpClient _httpClient;
         private string token = "token";
         public GenAIServiceHelper()
@@ -25,6 +25,7 @@ namespace GingerCoreNET.GenAIServices
             try
             {
                 _httpClient = new HttpClient();
+                valueExpression = new ValueExpression();
                 var host = CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.Host);
                 if (!string.IsNullOrEmpty(host))
                 {
@@ -139,7 +140,6 @@ namespace GingerCoreNET.GenAIServices
             if (tokenValid)
             {
                 MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
-                _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
                 var response = await _httpClient.PostAsync(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.ContinueChat), content);
                 return await ParseResponse(response);
@@ -158,9 +158,7 @@ namespace GingerCoreNET.GenAIServices
             if (tokenValid)
             {
                 MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
-                _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
-                _httpClient.BaseAddress = new Uri(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.Host));
                 var response = await _httpClient.PostAsync(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.StartNewChat), content);
                 return await ParseResponse(response);
             }
@@ -171,9 +169,8 @@ namespace GingerCoreNET.GenAIServices
         }
 
 
-        private static string CredentialsCalculation(string value)
+        private string CredentialsCalculation(string value)
         {
-            ValueExpression valueExpression = new();
 
             if (ValueExpression.IsThisAValueExpression(value))
             {

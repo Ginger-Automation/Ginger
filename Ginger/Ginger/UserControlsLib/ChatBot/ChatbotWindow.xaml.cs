@@ -24,7 +24,6 @@ namespace Amdocs.Ginger.UserControls
         public ChatbotWindow()
         {
             InitializeComponent();
-            genAIServiceHelper = new GenAIServiceHelper();
             xProfileImageImgBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/Lisa.jpg", UriKind.RelativeOrAbsolute));
             //string introMessage = "Hello I'm Lisa, the Ginger AI Assistent. How can i help you today?";
             // AddMessage("Lisa", introMessage, false);
@@ -70,9 +69,9 @@ namespace Amdocs.Ginger.UserControls
             ShowLoader();
             try
             {
-                //need to handle as we are getting token everytime
 
-                
+                genAIServiceHelper = new GenAIServiceHelper();
+
 
                 if (chatPanel.Children.Count == 1)
                 {
