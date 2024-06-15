@@ -151,7 +151,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             IBrowserElement? firstElement = elements.FirstOrDefault();
             if (firstElement == null)
             {
-                throw new NotFoundException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
+                throw new EntityNotFoundException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
             }
 
             return firstElement;
