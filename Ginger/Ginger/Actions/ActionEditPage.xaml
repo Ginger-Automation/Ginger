@@ -104,7 +104,7 @@
                             <DockPanel x:Name="xOperationSettingsPnl" Margin="5">
                                 <Grid x:Name="xActionLocatorPnl" DockPanel.Dock="Top">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="109" />
                                         <ColumnDefinition Width="330" />
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>

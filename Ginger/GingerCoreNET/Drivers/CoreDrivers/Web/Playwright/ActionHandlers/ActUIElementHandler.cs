@@ -14,37 +14,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
 {
     internal sealed class ActUIElementHandler
     {
-        private static readonly IEnumerable<ActUIElement.eElementAction> SupportedOperations = new List<ActUIElement.eElementAction>()
-        {
-            ActUIElement.eElementAction.Click,
-            ActUIElement.eElementAction.DoubleClick,
-            ActUIElement.eElementAction.Hover,
-            ActUIElement.eElementAction.IsVisible,
-            ActUIElement.eElementAction.IsEnabled,
-            ActUIElement.eElementAction.GetAttrValue,
-            ActUIElement.eElementAction.GetText,
-            ActUIElement.eElementAction.MouseRightClick,
-            ActUIElement.eElementAction.IsValuePopulated,
-            ActUIElement.eElementAction.GetHeight,
-            ActUIElement.eElementAction.GetWidth,
-            ActUIElement.eElementAction.GetSize,
-            ActUIElement.eElementAction.GetStyle,
-            ActUIElement.eElementAction.GetValue,
-            ActUIElement.eElementAction.GetItemCount,
-            ActUIElement.eElementAction.ScrollToElement,
-            ActUIElement.eElementAction.SetFocus,
-            ActUIElement.eElementAction.IsDisabled,
-            ActUIElement.eElementAction.Submit,
-            ActUIElement.eElementAction.MultiClicks,
-            ActUIElement.eElementAction.ClickXY,
-            ActUIElement.eElementAction.DoubleClickXY,
-            ActUIElement.eElementAction.ClearValue,
-            ActUIElement.eElementAction.Select,
-            ActUIElement.eElementAction.SelectByText,
-            ActUIElement.eElementAction.SelectByIndex,
-            ActUIElement.eElementAction.SetValue,
-        };
-
         private static readonly IEnumerable<string> SupportedInputTypesForIsValuePopulated = new List<string>()
         {
             "date",
@@ -68,11 +37,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
         {
             _act = act;
             _browser = browser;
-        }
-
-        public static bool IsOperationSupported(ActUIElement.eElementAction operation)
-        {
-            return SupportedOperations.Contains(operation);
         }
 
         internal Task HandleAsync()
@@ -169,6 +133,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                         break;
                 }
             }
+            catch (LocatorNotSupportedException ex)
+            {
+
+            }
             catch (Exception ex)
             {
                 _act.Error = ex.Message;
@@ -183,7 +151,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             IBrowserElement? firstElement = elements.FirstOrDefault();
             if (firstElement == null)
             {
-                throw new NotFoundException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
+                throw new EntityNotFoundException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
             }
 
             return firstElement;
