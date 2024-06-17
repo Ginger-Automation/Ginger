@@ -43,6 +43,8 @@ namespace Ginger.Environments
             xDBAccKey.Init(context, database, nameof(Database.Pass));
 
             xDatabaseConnectionString.Init(context, database, nameof(Database.ConnectionString));
+            xDatabaseConnectionString.Row.Height = new System.Windows.GridLength(100);
+            xDatabaseConnectionString.ValueTextBox.Height = 40;
             BindingHandler.ObjFieldBinding(xDatabaseName, TextBox.TextProperty, database, nameof(Database.Name));
             BindingHandler.ObjFieldBinding(xDatabaseDescription, TextBox.TextProperty, database, nameof(Database.Description));
             BindingHandler.ObjFieldBinding(xDatabaseComboBox, ComboBox.SelectedValueProperty, database, nameof(Database.DBType));
@@ -69,7 +71,7 @@ namespace Ginger.Environments
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, ShowCancelButton, "Cancel");
         }
 
-        private void TestConnection_Click(object? sender, RoutedEventArgs e)
+        private async void TestConnection_Click(object? sender, RoutedEventArgs e)
         {
             try
             {
@@ -80,7 +82,7 @@ namespace Ginger.Environments
 
                 this.testConnectionButton.IsEnabled = false;
 
-                bool IsConnectionSuccessful = this.dbListViewHelper.TestSingleDatabase(database);
+                bool IsConnectionSuccessful = await this.dbListViewHelper.TestSingleDatabase(database);
 
                 if (IsConnectionSuccessful)
                 {
@@ -111,7 +113,7 @@ namespace Ginger.Environments
             return true;
         }
 
-        private void OKButton_Click(object sender, RoutedEventArgs e)
+        private async void OKButton_Click(object sender, RoutedEventArgs e)
         {
             // validation
 
@@ -127,7 +129,7 @@ namespace Ginger.Environments
 
                 okBtn.IsEnabled = false;
 
-                this.dbListViewHelper.TestSingleDatabase(database);
+                await this.dbListViewHelper.TestSingleDatabase(database);
 
                 okBtn.IsEnabled = true;
                 _pageGenericWin?.Close();
@@ -327,13 +329,9 @@ namespace Ginger.Environments
 
 
         }
-
         private void ChangeDatabasePass(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
-            if (!EncryptionHandler.IsStringEncrypted(database.Pass))
-            {
-                database.Pass = EncryptionHandler.EncryptwithKey(database.Pass);
-            }
+            database.EncryptDatabasePass();
         }
     }
 }

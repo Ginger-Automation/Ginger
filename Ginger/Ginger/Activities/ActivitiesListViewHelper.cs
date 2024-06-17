@@ -362,6 +362,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 sharedRepoInd.AutomationID = "sharedRepoInd";
                 sharedRepoInd.ImageType = mActivity.IsLinkedItem ? Amdocs.Ginger.Common.Enums.eImageType.InstanceLink : Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
                 sharedRepoInd.ToolTip = mActivity.IsLinkedItem ? string.Format("{0} source is linked to {0} from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity)) : string.Format("{0} source is instance from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                sharedRepoInd.ImageSize = 13.5;
                 sharedRepoInd.ImageForeground = Brushes.Orange;
                 sharedRepoInd.BindingObject = mActivity;
                 sharedRepoInd.BindingFieldName = nameof(Activity.IsSharedRepositoryInstance);

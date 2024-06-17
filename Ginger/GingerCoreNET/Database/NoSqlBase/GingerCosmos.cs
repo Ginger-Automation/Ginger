@@ -84,7 +84,7 @@ namespace GingerCore.NoSqlBase
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Unable to connect to cosmos db", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                     return false;
                 }
             }
