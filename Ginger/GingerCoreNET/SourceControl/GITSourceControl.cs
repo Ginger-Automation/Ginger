@@ -1106,7 +1106,7 @@ namespace GingerCore.SourceControl
                 }
                 else
                 {
-                    if (SourceControlUser.Length != 0)
+                    if (SourceControlUser != null && SourceControlUser.Length != 0)
                     {
                         CredentialsHandler credentialsHandler = GetSourceCredentialsHandler();
                         IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, credentialsHandler);
