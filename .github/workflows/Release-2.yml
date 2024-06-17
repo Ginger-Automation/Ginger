@@ -145,10 +145,14 @@ jobs:
                 with: 
                     filepath: './Ginger/GingerInstallerScriptGithub.iss'
 
-
+            -   name: Create Signed Directory       
+                run: |
+                 mkdir D:\a\Installers\Ginger.exe
+                shell: cmd
+                
             -   name: Signing using Signtool 
                 run: | 
-                    signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /fd SHA256 "D:\a\Installers\Ginger.exe" 
+                    signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 "D:\a\Installers\Ginger.exe" 
                     signtool.exe verify /v /pa "D:\a\Installers\Ginger.exe" 
             
            # -   uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
