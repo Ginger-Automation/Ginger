@@ -155,6 +155,7 @@ jobs:
                 run: | 
                     smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
                     smctl sign --keypair-alias ${{ secrets.KEYPAIR_ALIAS }} --input "D:\a\Installers\Ginger.exe"
+                    smctl verify /v /pa "D:\a\Installers\Ginger.exe"
             
            # -   uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
                # with: 
