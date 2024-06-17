@@ -69,7 +69,7 @@
                             Margin="0,0,0,0"
                             VerticalAlignment="Center"
                             Width="{StaticResource HorizontalLabelWidth}" />
-                        <ComboBox x:Name="xDriverTypeComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" FontWeight="Bold"/>
+                        <ComboBox x:Name="xDriverTypeComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" FontWeight="Bold" IsEnabled="false" />
                     </StackPanel>
                     <StackPanel x:Name="BrowserTypePanel" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0" Visibility="Collapsed">
                         <Label
