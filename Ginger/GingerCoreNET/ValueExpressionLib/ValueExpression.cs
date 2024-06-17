@@ -123,8 +123,8 @@ namespace GingerCore
 
         ObservableList<DataSourceBase> DSList;
         Context mContext;
-        public BusinessFlow BF;
-        public ProjEnvironment Env;
+        BusinessFlow BF;
+        ProjEnvironment Env;
         bool bUpdate;
         string updateValue;
         bool bDone;
