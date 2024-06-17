@@ -59,7 +59,28 @@ namespace GingerCore.Environments
         {
             get
             {
-                 return mVE = new ValueExpression(Database.ProjEnvironment ?? new ProjEnvironment(), Database.BusinessFlow ?? new BusinessFlow(), Database.DSList);
+                Database.ProjEnvironment ??= new ProjEnvironment();
+                Database.BusinessFlow ??= new BusinessFlow();
+                if (mVE == null)
+                {
+
+                    mVE = new ValueExpression(Database.ProjEnvironment , Database.BusinessFlow, Database.DSList);
+                }
+                else
+                {
+
+                    if (!mVE.BF.Equals(Database.BusinessFlow))
+                    {
+                        mVE.BF = Database.BusinessFlow;
+                    }
+
+                    if (!mVE.Env.Equals(Database.ProjEnvironment))
+                    {
+                        mVE.Env = Database.ProjEnvironment;
+                    }
+                }
+
+                return mVE;
             }
             set
             {
