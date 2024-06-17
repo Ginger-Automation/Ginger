@@ -86,7 +86,6 @@ namespace Ginger.Configurations
             {
                 xChatBotConfigGrid.Visibility = Visibility.Collapsed;
                 xChabotAdvancedLabelsExpander.Visibility = Visibility.Collapsed;
-
             }
         }
 
