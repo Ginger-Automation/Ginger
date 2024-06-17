@@ -145,10 +145,10 @@ jobs:
                 with: 
                     filepath: './Ginger/GingerInstallerScriptGithub.iss'
 
-            -   name: Create Signed Directory       
-                run: |
-                 mkdir D:\a\Installers\Ginger.exe
-                shell: cmd
+            #-   name: Create Signed Directory       
+               # run: |
+                # mkdir D:\a\Installers\Ginger.exe
+               # shell: cmd
                 
             -   name: Signing using Signtool 
                 run: | 
