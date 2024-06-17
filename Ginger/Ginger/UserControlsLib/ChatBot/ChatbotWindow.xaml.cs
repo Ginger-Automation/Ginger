@@ -14,6 +14,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using NJsonSchema.Infrastructure;
+using Ginger.Configurations;
 
 namespace Amdocs.Ginger.UserControls
 {
@@ -23,11 +25,22 @@ namespace Amdocs.Ginger.UserControls
         static List<(string, string)> messages = [];
         public ChatbotWindow()
         {
+            WorkSpace.Instance.PropertyChanged += Workspace_PropertyChanged;
             InitializeComponent();
-            genAIServiceHelper = new GenAIServiceHelper();
             xProfileImageImgBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/Lisa.jpg", UriKind.RelativeOrAbsolute));
-            //string introMessage = "Hello I'm Lisa, the Ginger AI Assistent. How can i help you today?";
-            // AddMessage("Lisa", introMessage, false);
+            
+
+        }
+        private void Workspace_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(WorkSpace.SolutionLoaded))
+            {
+                if (WorkSpace.Instance.SolutionLoaded)
+                {
+                    genAIServiceHelper = new GenAIServiceHelper();
+
+                }
+            }
         }
 
 
@@ -70,9 +83,6 @@ namespace Amdocs.Ginger.UserControls
             ShowLoader();
             try
             {
-                //need to handle as we are getting token everytime
-
-                
 
                 if (chatPanel.Children.Count == 1)
                 {
