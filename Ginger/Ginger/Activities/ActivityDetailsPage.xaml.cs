@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -170,7 +171,6 @@ namespace Ginger.BusinessFlowPages
 
             
             xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-
             if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.ApplicationPlatforms!=null)
             {
                 WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged -= OnApplicationPlatformChanged;
@@ -182,6 +182,10 @@ namespace Ginger.BusinessFlowPages
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
             mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused;
             BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
+            if(xTargetApplicationComboBox.SelectedValue == null && xTargetApplicationComboBox.ItemsSource.AsQueryable().Count() >= 1)
+            {
+                xTargetApplicationComboBox.SelectedValue = xTargetApplicationComboBox.ItemsSource.AsQueryable().FirstOrDefault();
+            }
             mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Started;
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
