@@ -140,6 +140,7 @@ namespace GingerCoreNET.GenAIServices
             if (tokenValid)
             {
                 MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
+                _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
                 var response = await _httpClient.PostAsync(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.ContinueChat), content);
                 return await ParseResponse(response);
