@@ -74,14 +74,14 @@ namespace GingerCoreNET.GenAIServices
                 responseInfo = result.ToObject<ChatBotResponseInfo>();
                 token = responseInfo.AccessToken;
                 _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
-                if (string.IsNullOrEmpty(token))
+                if (!string.IsNullOrEmpty(token))
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the token for Chat service, Please Check your Credentials");
-                    return false;
+                    _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
+                    return true;
                 }
                 else
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the token for Chat service, Please Check your Credentials");
                     return true;
                 }
             }
@@ -92,7 +92,6 @@ namespace GingerCoreNET.GenAIServices
                 Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{ex.Message}, InnerException:{ex.InnerException},StackTrace:{ex.StackTrace}");
                 return false;
             }
-            // return responseInfo.AccessToken;
         }
 
         private async Task<Boolean> GetOrValidateToken()
