@@ -21,28 +21,34 @@ namespace Amdocs.Ginger.UserControls
 {
     public partial class ChatbotWindow : UserControl
     {
+        bool IsAskLisaConfigChanged = false;
         GenAIServiceHelper genAIServiceHelper;
         static List<(string, string)> messages = [];
         public ChatbotWindow()
         {
-            WorkSpace.Instance.PropertyChanged += Workspace_PropertyChanged;
             InitializeComponent();
             xProfileImageImgBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/Lisa.jpg", UriKind.RelativeOrAbsolute));
-            
 
+
+            WorkSpace.Instance.PropertyChanged += Instance_PropertyChanged;
         }
-        private void Workspace_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+
+        private void Instance_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(WorkSpace.SolutionLoaded))
             {
                 if (WorkSpace.Instance.SolutionLoaded)
                 {
-                    genAIServiceHelper = new GenAIServiceHelper();
+                    WorkSpace.Instance.Solution.AskLisaConfiguration.PropertyChanged += AskLisaConfiguration_PropertyChanged;
 
                 }
             }
         }
 
+        private void AskLisaConfiguration_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            IsAskLisaConfigChanged = true;
+        }
 
         private string GetUserName()
         {
@@ -83,6 +89,12 @@ namespace Amdocs.Ginger.UserControls
             ShowLoader();
             try
             {
+                if (genAIServiceHelper == null || IsAskLisaConfigChanged)
+                {
+                    genAIServiceHelper = new GenAIServiceHelper();
+                    await genAIServiceHelper.InitClient();
+                    IsAskLisaConfigChanged = false;
+                }
 
                 if (chatPanel.Children.Count == 1)
                 {
