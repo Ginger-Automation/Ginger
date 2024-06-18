@@ -19,7 +19,10 @@ namespace GingerCoreNET.GenAIServices
         ValueExpression valueExpression;
         HttpClient _httpClient;
         private string token = null;
-
+        public GenAIServiceHelper()
+        {
+        }
+        
         public async Task<bool> InitClient()
         {
             try
