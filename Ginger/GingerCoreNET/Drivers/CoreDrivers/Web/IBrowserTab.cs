@@ -44,6 +44,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task SwitchToParentFrameAsync();
 
+        public Task<byte[]> ScreenshotAsync();
+
+        public Task<byte[]> ScreenshotFullPageAsync();
+
+        public Task<Size> ViewportSizeAsync();
+
+        public Task SetViewportSizeAsync(Size size);
+
         /// <summary>
         /// Get a collection of <see cref="IBrowserElement"/> matching the provided locators.
         /// </summary>

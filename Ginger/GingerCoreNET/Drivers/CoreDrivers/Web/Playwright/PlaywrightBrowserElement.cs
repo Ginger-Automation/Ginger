@@ -16,6 +16,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     internal sealed class PlaywrightBrowserElement : IBrowserElement
     {
+        //TODO: rename it to _playwrightLocator to maintain the naming format
         private readonly IPlaywrightLocator _locator;
 
         internal PlaywrightBrowserElement(IPlaywrightLocator locator)
@@ -219,6 +220,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 throw new InvalidOperationException($"Expected '{expected}' type but found '{type}'");
             }
+        }
+
+        public Task<byte[]> ScreenshotAsync()
+        {
+            return _locator.ScreenshotAsync();
         }
     }
 }
