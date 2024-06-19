@@ -129,7 +129,7 @@ jobs:
                 shell: cmd 
                 
             -   uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
-            -    name: '@nadeemjazmawe/Sign-action-signtool.exe'
+            -   name: '@nadeemjazmawe/Sign-action-signtool.exe'
             
            # -   name: Find Signtool
             #    run: |
