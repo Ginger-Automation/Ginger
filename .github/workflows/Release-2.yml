@@ -128,8 +128,8 @@ jobs:
                     smksp_cert_sync.exe
                 shell: cmd 
                 
-            -   uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
-            -   name: '@nadeemjazmawe/Sign-action-signtool.exe'
+                uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
+                
             
            # -   name: Find Signtool
             #    run: |
