@@ -117,6 +117,9 @@ jobs:
             
            # -   name: Code signing with Software Trust Manager
             #    uses: digicert/ssm-code-signing@v0.0.2
+            
+            
+            
     
             -   name: Setup SSM KSP on windows latest 
                 run: | 
@@ -129,7 +132,8 @@ jobs:
                 shell: cmd 
                 
              # uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
-           
+            -   name: Windows signtool.exe code sign action
+                uses: skymatic/code-sign-action@v3.0.0
                 
             
            # -   name: Find Signtool
