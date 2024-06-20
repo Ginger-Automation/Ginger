@@ -43,6 +43,8 @@ using GingerCoreNET.Drivers.CommonLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
 using InputSimulatorStandard;
+using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.HBase.Client.Internal;
 using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json;
 using OfficeOpenXml.FormulaParsing.ExpressionGraph.FunctionCompilers;
@@ -2173,28 +2175,76 @@ namespace GingerCore.Drivers
             By elementLocator = null;
             if (act.SyncOperations != ActWebSmartSync.eSyncOperation.AlertIsPresent && act.SyncOperations != ActWebSmartSync.eSyncOperation.PageHasBeenLoaded && act.SyncOperations != ActWebSmartSync.eSyncOperation.UrlMatches)
             {
-                switch (act.LocateBy)
+                eLocateBy locateBy = act.ElementLocateBy;
+                string locateValue = act.ElementLocateValueForDriver;
+                
+                if (act.ElementLocateBy == eLocateBy.POMElement)
+                {
+                    POMExecutionUtils pomExcutionUtil = new(act, act.ElementLocateValue);
+                    if (pomExcutionUtil.GetCurrentPOM() == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Current POM not found from {nameof(POMExecutionUtils)}");
+                        act.Error = "Relevant POM not found";
+                        return;
+                    }
+
+                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                    if (currentPOMElementInfo == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"{nameof(ElementInfo)} not found for the current POM");
+                        act.Error = "Unable to find details about the POM";
+                        return;
+                    }
+
+                    
+                    ElementLocator firstLocator = currentPOMElementInfo.Locators.Where(l => l.Active &&(l.LocateBy == eLocateBy.ByXPath || l.LocateBy == eLocateBy.ByName || l.LocateBy == eLocateBy.ByID || l.LocateBy == eLocateBy.ByClassName || l.LocateBy == eLocateBy.ByCSSSelector || l.LocateBy == eLocateBy.ByLinkText || l.LocateBy == eLocateBy.ByTagName)).FirstOrDefault();
+                    if (firstLocator == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"No active or supported locator found in the current POM");
+                        act.Error = "No active or supported  locators found in the current POM";
+                        return;
+                    }
+
+                    locateBy = firstLocator.LocateBy;
+                    locateValue = firstLocator.LocateValue;
+                }
+                try
+                {
+                    if (String.IsNullOrEmpty(locateValue))
+                    { 
+                        throw new ArgumentNullException();
+                        
+                    }
+                }
+                catch (ArgumentNullException ex)
+                {
+                    act.Error = $"For {act.SyncOperations} operation Locate value is missing or invalid input.";
+                    Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                    return;
+                }
+
+                switch (locateBy)
                 {
                     case eLocateBy.ByXPath:
-                        elementLocator = By.XPath(act.LocateValueCalculated);
+                        elementLocator = By.XPath(locateValue);
                         break;
                     case eLocateBy.ByID:
-                        elementLocator = By.Id(act.LocateValueCalculated);
+                        elementLocator = By.Id(locateValue);
                         break;
                     case eLocateBy.ByName:
-                        elementLocator = By.Name(act.LocateValueCalculated);
+                        elementLocator = By.Name(locateValue);
                         break;
                     case eLocateBy.ByClassName:
-                        elementLocator = By.ClassName(act.LocateValueCalculated);
+                        elementLocator = By.ClassName(locateValue);
                         break;
                     case eLocateBy.ByCSSSelector:
-                        elementLocator = By.CssSelector(act.LocateValueCalculated);
+                        elementLocator = By.CssSelector(locateValue);
                         break;
                     case eLocateBy.ByLinkText:
-                        elementLocator = By.LinkText(act.LocateValueCalculated);
+                        elementLocator = By.LinkText(locateValue);
                         break;
                     case eLocateBy.ByTagName:
-                        elementLocator = By.TagName(act.LocateValueCalculated);
+                        elementLocator = By.TagName(locateValue);
                         break;
                     default:
                         act.Error = "Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, and ByTagName.";
@@ -2238,7 +2288,14 @@ namespace GingerCore.Drivers
                     case ActWebSmartSync.eSyncOperation.TextMatches:                        
                         VE.Value = act.TxtMatchInput;
                         string textToMatch = VE.ValueCalculated;
-                        wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
+                        if (!String.IsNullOrEmpty(textToMatch))
+                        {
+                            wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
+                        }
+                        else
+                        {
+                            throw new ArgumentNullException();
+                        }
                         break;
                     case ActWebSmartSync.eSyncOperation.AttributeMatches:
                         VE.Value = act.AttributeName;
@@ -2246,7 +2303,14 @@ namespace GingerCore.Drivers
                         VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
                         VE.Value = act.AttributeValue;
                         string attributeValue= VE.ValueCalculated;
-                        wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
+                        if (!String.IsNullOrEmpty(attributeValue) || String.IsNullOrEmpty(attributeName))
+                        {
+                            wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
+                        }
+                        else
+                        {
+                            throw new ArgumentNullException();
+                        }
                         break;
                     case ActWebSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.EnabilityOfAllElementsLocatedBy(elementLocator));
@@ -2269,7 +2333,14 @@ namespace GingerCore.Drivers
                     case ActWebSmartSync.eSyncOperation.UrlMatches:
                         VE.Value = act.UrlMatches;
                         string urlMatches = VE.ValueCalculated;
-                        wait.Until(ExpectedConditions.UrlMatches(urlMatches));
+                        if (!String.IsNullOrEmpty(urlMatches))
+                        {
+                            wait.Until(ExpectedConditions.UrlMatches(urlMatches));
+                        }
+                        else
+                        {
+                            throw new ArgumentNullException();
+                        }
                         break;
                     case ActWebSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(elementLocator));

@@ -19,9 +19,11 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using Couchbase.Utils;
+using GingerCore.Actions.Common;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using NJsonSchema.Infrastructure;
@@ -32,19 +34,22 @@ using System.Reflection;
 
 namespace GingerCore.Actions
 {
-    //This class is for UI link element
-    public class ActWebSmartSync : Act, IActPluginExecution
+
+    
+        //This class is for UI link element
+        public class ActWebSmartSync : Act, IActPluginExecution
     {
+    
         public override string ActionDescription { get { return "Web Smart Sync Action"; } }
         public override string ActionUserDescription { get { return "Web Smart Sync"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("The following operations are commonly used in automated web testing, especially with tools like Selenium WebDriver. These operations help ensure that certain conditions are met before moving on to the next step in a test script. Here’s a brief explanation of each one:\r\n1.  ElementIsVisible: Verifies if an element is present on both the webpage’s structure (DOM) and visible to the user.\r\n2.  ElementExists: Checks if an element exists on the webpage, regardless of whether it is visible.\r\n3.  AlertIsPresent: Waits until an alert message pops up on the webpage.\r\n4.  ElementIsSelected: Confirms if a form element like a checkbox or radio button is currently selected.\r\n5.  PageHasBeenLoaded: Ensures that the entire webpage has been loaded and is ready for interaction.\r\n6.  ElementToBeClickable: Waits until an element is both visible and enabled, indicating that it can be clicked.\r\n7.  TextMatches: Waits until the text of an element matches a specified pattern. Input Text is case-sensitive and does the contains search.\r\n8.  AttributeMatches: Waits until a specific attribute of an element matches a specified pattern.\r\n9.  EnabilityOfAllElementsLocatedBy: Checks if all the elements found by a given locator are enabled and can be interacted.\r\n10.  FrameToBeAvailableAndSwitchToIt: Waits until a frame is available to switch to and then switches to it.\r\n11.  InvisibilityOfAllElementsLocatedBy: Waits until all the elements found by a given locator are invisible or not present.\r\n12.  InvisibilityOfElementLocated: Waits until a specific element is no longer visible or not present.\r\n13.  PresenceOfAllElementsLocatedBy: Ensures that all the elements found by a given locator are present in the webpage’s structure (DOM).\r\n14.  SelectedOfAllElementsLocatedBy: Ensures that all the elements found by a given locator are selected.\r\n15.  UrlMatches: Waits until the URL of the current page matches a specified pattern.\r\n16.  VisibilityOfAllElementsLocatedBy: Ensures that all the elements found by a given locator are visible on the webpage.\r\n");
+            TBH.AddText("The following operations are commonly used in automated web testing, especially with tools like Selenium WebDriver. These operations help ensure that certain conditions are met before moving on to the next step in a test script. Here’s a brief explanation of each one:\r\n1.  ElementIsVisible: Verifies if an element is present on both the webpage’s structure (DOM) and visible to the user.\r\n2.  ElementExists: Checks if an element exists on the webpage, regardless of whether it is visible.\r\n3.  AlertIsPresent: Waits until an alert message pops up on the webpage.\r\n4.  ElementIsSelected: Confirms if a form element like a checkbox or radio button is currently selected.\r\n5.  PageHasBeenLoaded: Ensures that the entire webpage has been loaded and is ready for interaction.\r\n6.  ElementToBeClickable: Waits until an element is both visible and enabled, indicating that it can be clicked.\r\n7.  TextMatches: Waits until the text of an element matches a specified pattern. Input Text is case-sensitive and does the contains search.\r\n8.  AttributeMatches: Waits until a specific attribute of an element matches a specified pattern.\r\n9.  EnabilityOfAllElementsLocatedBy: Checks if all the elements found by a given locator are enabled and can be interacted.\r\n10.  FrameToBeAvailableAndSwitchToIt: Waits until a frame is available to switch to and then switches to it.\r\n11.  InvisibilityOfAllElementsLocatedBy: Waits until all the elements found by a given locator are invisible or not present.\r\n12.  InvisibilityOfElementLocated: Waits until a specific element is no longer visible or not present.\r\n13.  PresenceOfAllElementsLocatedBy: Ensures that all the elements found by a given locator are present in the webpage’s structure (DOM).\r\n14.  SelectedOfAllElementsLocatedBy: Ensures that all the elements found by a given locator are selected.\r\n15.  UrlMatches: Waits until the URL of the current page matches a specified pattern.\r\n16.  VisibilityOfAllElementsLocatedBy: Ensures that all the elements found by a given locator are visible on the webpage.\r\n\n \"Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, and ByTagName.\"");
         }
 
         public override string ActionEditPage { get { return "ActWebSmartSyncEditPage"; } }
-        public override bool ObjectLocatorConfigsNeeded { get { return true; } }
+        public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
 
         // return the list of platforms this action is supported on
@@ -61,7 +66,11 @@ namespace GingerCore.Actions
             }
         }
 
- 
+        public new static partial class Fields
+        {
+            public static string ElementLocateValue = "ElementLocateValue";
+            public static string ValueToSelect = "ValueToSelect";
+        }
         public enum eSyncOperation
         {
             [EnumValueDescription("Element is Visible")]
@@ -115,6 +124,37 @@ namespace GingerCore.Actions
             
         }
 
+        public eLocateBy ElementLocateBy
+        {
+            get { return GetOrCreateInputParam(nameof(ElementLocateBy), eLocateBy.ByClassName); }
+            set
+            {
+                GetOrCreateInputParam(nameof(ElementLocateBy)).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ElementLocateBy));
+
+            }
+        }
+
+        public string ElementLocateValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ElementLocateValue)).Value;
+            }
+            set
+            {
+                GetOrCreateInputParam(nameof(ElementLocateValue)).Value = value;
+                OnPropertyChanged(nameof(ElementLocateValue));
+            }
+        }
+        public string ElementLocateValueForDriver
+        {
+            get
+            {
+                return this.GetInputParamCalculatedValue(nameof(ElementLocateValue));
+            }
+        }
         public eSyncOperation SyncOperations
         {
             get { return GetOrCreateInputParam<eSyncOperation>(nameof(SyncOperations), eSyncOperation.ElementIsVisible); }
