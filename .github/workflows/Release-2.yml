@@ -104,7 +104,9 @@ jobs:
                  echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV" 
                  echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV" 
                  echo "SM_CLIENT_CERT_FILE=D:\\a\\Certificate_pkcs12.p12" >> "$GITHUB_ENV" 
-                 echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV" 
+                 echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
+                 echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
+                 echo "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools" >> $GITHUB_PATH
                 shell: bash
                 
             -   name: Get API key from GitHub secrets and save to     environment variables
@@ -112,9 +114,12 @@ jobs:
                 run: |
                  echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
             
-            -   name: Code signing with Software Trust Manager
-                uses: digicert/ssm-code-signing@v0.0.2
-                
+           # -   name: Code signing with Software Trust Manager
+            #    uses: digicert/ssm-code-signing@v0.0.2
+            
+            
+            
+    
             -   name: Setup SSM KSP on windows latest 
                 run: | 
                  curl -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:%SM_API_KEY%" -o smtools-windows-x64.msi 
@@ -124,6 +129,17 @@ jobs:
                     C:\Windows\System32\certutil.exe -csp "DigiCert Signing Manager KSP" -key -user 
                     smksp_cert_sync.exe
                 shell: cmd 
+                
+             # uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
+            -   name: Windows signtool.exe code sign action
+                uses: skymatic/code-sign-action@v3.0.0
+            
+                
+            
+           # -   name: Find Signtool
+            #    run: |
+             #       nadeemjazmawe/Sign-action-signtool.exe@v0.1
+            #    shell: cmd
               
             -  name: Certificates Sync       
                run: |
@@ -132,7 +148,7 @@ jobs:
                shell: cmd
             #-   name: Signing using Signtool 
             #    run: | 
-            #        signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 
+            #        signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 
              #       "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\" 
               #      signtool.exe verify /v /pa "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\" 
             
@@ -153,9 +169,21 @@ jobs:
                 
             -   name: Signing using Signtool 
                 run: | 
-                    smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
-                    smctl sign --keypair-alias ${{ secrets.KEYPAIR_ALIAS }} --input "D:\a\Installers\Ginger.exe"
+                  # smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
+                    signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v "D:\a\Installers\Ginger.exe" 
+             #smctl sign --keypair-alias ${{ secrets.KEYPAIR_ALIAS }} --input "D:\a\Installers\Ginger.exe" -v
+             # smctl sign --input "D:\a\Installers\Ginger.exe"
             
+            -   name: Signtool verify
+                run: |
+                    signtool verify /v /pa "D:\a\Installers\Ginger.exe"
+                shell: cmd
+                
+               # shell: cmd- name: Signtool verify
+                #run: |
+                #    signtool verify /v /pa <path to the signed .exe or .dll>
+              #  shell: cmd
+
            # -   uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
                # with: 
                 # filepath: 'D:\a\Installers\Ginger.exe'   

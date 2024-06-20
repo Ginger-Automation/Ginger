@@ -183,11 +183,9 @@ namespace Ginger
                 }
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
-                WorkSpace.Instance.UserProfile.AskLisaConfiguration.PropertyChanged += AskLisaPropertyChanged;
-                EnableChatBot();
-
                 WorkSpace.Instance.UserProfile.PropertyChanged += AskLisaPropertyChanged;
-            }
+
+                }
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.ApplicationInitError, ex.Message);
@@ -201,17 +199,29 @@ namespace Ginger
                     AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
                 }
             }
-
+            
         }
+
 
         private void AskLisaPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            EnableChatBot();
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
+                EnableChatBot();
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    EnableChatBot();
+                });
+            }
+
         }
 
         private void EnableChatBot()
         {
-            if ((WorkSpace.Instance.UserProfile.AskLisaConfiguration.EnableChat == Configurations.AskLisaConfiguration.eEnableChatBot.Yes) && WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures )
+            if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.AskLisaConfiguration.EnableChat == Configurations.AskLisaConfiguration.eEnableChatBot.Yes && WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
             {
                 xChatPanel.Visibility = Visibility.Visible;
                 xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
@@ -322,7 +332,9 @@ namespace Ginger
                 if (WorkSpace.Instance.SolutionLoaded)
                 {
                     WorkSpace.Instance.SolutionRepository.ModifiedFiles.CollectionChanged += ModifiedFilesChanged;
-
+                    EnableChatBot();
+                    WorkSpace.Instance.Solution.AskLisaConfiguration.PropertyChanged += AskLisaPropertyChanged;
+                    
                 }
             }
 
@@ -338,6 +350,7 @@ namespace Ginger
                 }
             }
         }
+
 
         private void SetRecentSolutionsAsMenuItems()
         {

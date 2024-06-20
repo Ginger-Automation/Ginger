@@ -51,10 +51,10 @@
                         <Activities:UCValueExpression x:Name="xAuthUrlLabelTextBox" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
 
                         <Label Content="Client Id:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
-                        <Activities:UCValueExpression x:Name="xClientIdLabelTextBox" Grid.Row="2"  Grid.Column="1" VerticalAlignment="Center"/>
+                        <Activities:UCValueExpression x:Name="xClientIdLabelTextBox" Grid.Row="2"  Grid.Column="1" VerticalAlignment="Center" LostKeyboardFocus="xClientIdLabelTextBox_LostKeyboardFocus"/>
 
                         <Label Content="Client Secret:" Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
-                        <Activities:UCValueExpression x:Name="xClientSecretLabelTextBox" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"/>
+                        <Activities:UCValueExpression x:Name="xClientSecretLabelTextBox" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" LostKeyboardFocus="xClientSecretLabelTextBox_LostKeyboardFocus"/>
                     </Grid>
 
                     <Expander Visibility="Visible" x:Name="xChabotAdvancedLabelsExpander" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,20,0,0">

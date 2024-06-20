@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Microsoft.CodeAnalysis;
+using GingerCore.Activities;
 
 namespace Ginger.Configurations
 {
@@ -27,7 +28,7 @@ namespace Ginger.Configurations
     public class AskLisaConfiguration : RepositoryItemBase
     {
         public delegate void AskLisaConfigurationChangedEvent();
-
+       
         public enum eEnableChatBot
         {
             Yes,
@@ -67,8 +68,6 @@ namespace Ginger.Configurations
                 {
                     mHost = value;
                     OnPropertyChanged(nameof(Host));
-                    GingerCoreCommonWorkSpace.Instance.UserProfile.OnPropertyChanged(nameof(AskLisaConfiguration));
-                    GingerCoreCommonWorkSpace.Instance.UserProfile.StartDirtyTracking();
                 }
             }
         }
@@ -246,7 +245,7 @@ namespace Ginger.Configurations
             set
             {
                 if (mMaxTokenValue != value)
-                {
+                {   
                     mMaxTokenValue = value;
                     OnPropertyChanged(nameof(MaxTokenValue));
                 }
@@ -288,8 +287,11 @@ namespace Ginger.Configurations
                 }
             }
         }
-        public string Token { get; set; }
+
+        public string Token = "token";
+      
 
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
     }
 }

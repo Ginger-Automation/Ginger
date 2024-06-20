@@ -31,6 +31,7 @@ namespace Ginger.Environments
 
             // Initializes the Database Combobox
             this.database = new();
+            this.database.ProjEnvironment = context.Environment;
 
             SQL_Selected(null, null);
 

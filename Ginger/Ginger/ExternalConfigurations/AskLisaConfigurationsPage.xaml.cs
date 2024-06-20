@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.UserControlsLib;
 using Ginger.ValidationRules;
+using GingerCore;
 using GingerCoreNET;
 using System;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace Ginger.Configurations
 
         private void Init()
         {
-            userConfig = WorkSpace.Instance.UserProfile.AskLisaConfiguration;
+            userConfig = WorkSpace.Instance.Solution.AskLisaConfiguration;
 
             userConfig.StartDirtyTracking();
             SetControls();
@@ -85,6 +86,25 @@ namespace Ginger.Configurations
             {
                 xChatBotConfigGrid.Visibility = Visibility.Collapsed;
                 xChabotAdvancedLabelsExpander.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        // Encrypt the client secret unless it's already encrypted or a value expression.
+        // This ensures that sensitive data is stored securely without altering predefined expressions or duplicating encryption.
+        private void xClientIdLabelTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            if (!EncryptionHandler.IsStringEncrypted(xClientIdLabelTextBox.ValueTextBox.Text))
+            {
+                xClientIdLabelTextBox.ValueTextBox.Text = ValueExpression.IsThisAValueExpression(xClientIdLabelTextBox.ValueTextBox.Text) ? xClientIdLabelTextBox.ValueTextBox.Text : EncryptionHandler.EncryptwithKey(xClientIdLabelTextBox.ValueTextBox.Text);
+
+            }
+        }
+
+        private void xClientSecretLabelTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            if (!EncryptionHandler.IsStringEncrypted(xClientSecretLabelTextBox.ValueTextBox.Text))
+            {
+                xClientSecretLabelTextBox.ValueTextBox.Text = ValueExpression.IsThisAValueExpression(xClientSecretLabelTextBox.ValueTextBox.Text) ? xClientSecretLabelTextBox.ValueTextBox.Text : EncryptionHandler.EncryptwithKey(xClientSecretLabelTextBox.ValueTextBox.Text);
 
             }
         }
