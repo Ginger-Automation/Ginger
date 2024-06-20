@@ -7,6 +7,10 @@ using System.IdentityModel.Tokens.Jwt;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore;
 using GingerCore.Environments;
+using Cassandra;
+using Microsoft.TeamFoundation.Build.WebApi;
+using Ginger.Configurations;
+using Amazon.Runtime;
 
 namespace GingerCoreNET.GenAIServices
 {
@@ -17,10 +21,9 @@ namespace GingerCoreNET.GenAIServices
         private string token = null;
         public GenAIServiceHelper()
         {
-            InitClient();
         }
-
-        private void InitClient()
+        
+        public async Task<bool> InitClient()
         {
             try
             {
@@ -29,8 +32,11 @@ namespace GingerCoreNET.GenAIServices
                 var host = CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.Host);
                 if (!string.IsNullOrEmpty(host))
                 {
-                    host = !host.EndsWith("/") ? $"{host}/" : host;
+                    host = !host.EndsWith('/') ? $"{host}/" : host;
                     _httpClient.BaseAddress = new Uri(host);
+
+                    await GetOrValidateToken();
+                    return true;
                 }
                 else
                 {
@@ -40,8 +46,9 @@ namespace GingerCoreNET.GenAIServices
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Chat bot service initialization failed", ex);
-            }
 
+            }
+            return false;
         }
 
 
@@ -55,7 +62,7 @@ namespace GingerCoreNET.GenAIServices
                 var host = CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.AuthenticationServiceURL);
                 if (!string.IsNullOrEmpty(host))
                 {
-                    host = !host.EndsWith("/") ? $"{host}/" : host;
+                    host = !host.EndsWith('/') ? $"{host}/" : host;
                     httpClient.BaseAddress = new Uri(host);
                 }
                 var data = new[]
@@ -69,13 +76,15 @@ namespace GingerCoreNET.GenAIServices
                 var result = await response.Content.ReadAsAsync<dynamic>();
                 responseInfo = result.ToObject<ChatBotResponseInfo>();
                 token = responseInfo.AccessToken;
-                if (string.IsNullOrEmpty(token))
+                _httpClient.DefaultRequestHeaders.Clear();
+                if (!string.IsNullOrEmpty(token))
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the token for Chat service");
-                    return false;
+                    _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
+                    return true;
                 }
                 else
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the token for Chat service, Please Check your Credentials");
                     return true;
                 }
             }
@@ -86,16 +95,11 @@ namespace GingerCoreNET.GenAIServices
                 Reporter.ToLog(eLogLevel.ERROR, $"{error}, Error :{ex.Message}, InnerException:{ex.InnerException},StackTrace:{ex.StackTrace}");
                 return false;
             }
-            // return responseInfo.AccessToken;
         }
 
         private async Task<Boolean> GetOrValidateToken()
         {
-            if (string.IsNullOrEmpty(token))
-            {
-                return await GetToken();
-            }
-            else if (IsTokenValid())
+           if (IsTokenValid())
             {
                 return true;
             }
@@ -140,8 +144,8 @@ namespace GingerCoreNET.GenAIServices
             if (tokenValid)
             {
                 MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
+
+
                 var response = await _httpClient.PostAsync(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.ContinueChat), content);
                 return await ParseResponse(response);
             }
@@ -159,7 +163,6 @@ namespace GingerCoreNET.GenAIServices
             if (tokenValid)
             {
                 MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
-                _httpClient.DefaultRequestHeaders.Add("Authorization", string.Format($"Bearer {token}"));
                 var response = await _httpClient.PostAsync(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.StartNewChat), content);
                 return await ParseResponse(response);
             }
@@ -182,7 +185,9 @@ namespace GingerCoreNET.GenAIServices
 
             if (ValueExpression.IsThisAValueExpression(value))
             {
+                valueExpression.DecryptFlag = true;
                 value = valueExpression.Calculate(value);
+                valueExpression.DecryptFlag = false;
                 return value;
             }
             else if (EncryptionHandler.IsStringEncrypted(value))
