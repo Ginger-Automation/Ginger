@@ -697,7 +697,7 @@ namespace GingerCore.Drivers
                                 ieOptions.EnsureCleanSession = true;
                             }
 
-                            ieOptions.Proxy = mProxy == null ? null : mProxy;
+                            SetProxy(ieOptions);
                             ieOptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
                             if (IgnoreIEProtectedMode == true)
                             {
@@ -747,7 +747,10 @@ namespace GingerCore.Drivers
                             {
                                 EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
                             }
-
+                            else
+                            {
+                                SetProxy(EDOpts);
+                            }
                             SetCurrentPageLoadStrategy(EDOpts);
                             driverService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
                             AddCustomDriverPath(driverService);
@@ -1556,7 +1559,7 @@ namespace GingerCore.Drivers
                 try
                 {
                     //it's wait until all page gets load 
-                    if (act is not ActNewSmartSync { SyncOperations : ActNewSmartSync.eSyncOperation.PageHasBeenLoaded })
+                    if (act is not ActWebSmartSync { SyncOperations : ActWebSmartSync.eSyncOperation.PageHasBeenLoaded })
                     {
                         _ = Driver.Title;//just to make sure window attributes do not throw exception
                     }
@@ -1630,9 +1633,9 @@ namespace GingerCore.Drivers
                 SmartSyncHandler((ActSmartSync)act);
                 return;
             }
-            if (ActType == typeof(ActNewSmartSync))
+            if (ActType == typeof(ActWebSmartSync))
             {
-                NewSmartSyncHandler((ActNewSmartSync)act);
+                WebSmartSyncHandler((ActWebSmartSync)act);
                 return;
             }
             if (ActType == typeof(ActTextBox))
@@ -2165,10 +2168,10 @@ namespace GingerCore.Drivers
             }
         }
 
-        public void NewSmartSyncHandler(ActNewSmartSync act)
+        public void WebSmartSyncHandler(ActWebSmartSync act)
         {
             By elementLocator = null;
-            if (act.SyncOperations != ActNewSmartSync.eSyncOperation.AlertIsPresent && act.SyncOperations != ActNewSmartSync.eSyncOperation.PageHasBeenLoaded && act.SyncOperations != ActNewSmartSync.eSyncOperation.UrlMatches)
+            if (act.SyncOperations != ActWebSmartSync.eSyncOperation.AlertIsPresent && act.SyncOperations != ActWebSmartSync.eSyncOperation.PageHasBeenLoaded && act.SyncOperations != ActWebSmartSync.eSyncOperation.UrlMatches)
             {
                 switch (act.LocateBy)
                 {
@@ -2207,67 +2210,68 @@ namespace GingerCore.Drivers
             Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
 
             wait.PollingInterval = TimeSpan.FromMilliseconds(500);
-            ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), null);
+            ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
             try
             {
-                
+
                 switch (act.SyncOperations)
                 {
-                    case ActNewSmartSync.eSyncOperation.ElementIsVisible:
+                    case ActWebSmartSync.eSyncOperation.ElementIsVisible:
                         wait.Until(ExpectedConditions.ElementIsVisible(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.ElementExists:
+                    case ActWebSmartSync.eSyncOperation.ElementExists:
                         wait.Until(ExpectedConditions.ElementExists(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.AlertIsPresent:
+                    case ActWebSmartSync.eSyncOperation.AlertIsPresent:
                         //no need for locators
                         wait.Until(ExpectedConditions.AlertIsPresent());
                         break;
-                    case ActNewSmartSync.eSyncOperation.ElementIsSelected:
+                    case ActWebSmartSync.eSyncOperation.ElementIsSelected:
                         wait.Until(ExpectedConditions.ElementIsSelected(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.PageHasBeenLoaded:
+                    case ActWebSmartSync.eSyncOperation.PageHasBeenLoaded:
                         wait.Until(ExpectedConditions.PageHasBeenLoaded());
                         break;
-                    case ActNewSmartSync.eSyncOperation.ElementToBeClickable:
+                    case ActWebSmartSync.eSyncOperation.ElementToBeClickable:
                         wait.Until(ExpectedConditions.ElementToBeClickable(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.TextMatches:
+                    case ActWebSmartSync.eSyncOperation.TextMatches:                        
                         VE.Value = act.TxtMatchInput;
                         string textToMatch = VE.ValueCalculated;
                         wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
                         break;
-                    case ActNewSmartSync.eSyncOperation.AttributeMatches:
+                    case ActWebSmartSync.eSyncOperation.AttributeMatches:
                         VE.Value = act.AttributeName;
                         string attributeName = VE.ValueCalculated;
+                        VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
                         VE.Value = act.AttributeValue;
                         string attributeValue= VE.ValueCalculated;
                         wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
                         break;
-                    case ActNewSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
+                    case ActWebSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.EnabilityOfAllElementsLocatedBy(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.FrameToBeAvailableAndSwitchToIt:
+                    case ActWebSmartSync.eSyncOperation.FrameToBeAvailableAndSwitchToIt:
                         wait.Until(ExpectedConditions.FrameToBeAvailableAndSwitchToIt(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.InvisibilityOfAllElementsLocatedBy:
+                    case ActWebSmartSync.eSyncOperation.InvisibilityOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.InvisibilityOfAllElementsLocatedBy(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.InvisibilityOfElementLocated:
+                    case ActWebSmartSync.eSyncOperation.InvisibilityOfElementLocated:
                         wait.Until(ExpectedConditions.InvisibilityOfElementLocated(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.PresenceOfAllElementsLocatedBy:
+                    case ActWebSmartSync.eSyncOperation.PresenceOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.SelectedOfAllElementsLocatedBy:
+                    case ActWebSmartSync.eSyncOperation.SelectedOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.SelectedOfAllElementsLocatedBy(elementLocator));
                         break;
-                    case ActNewSmartSync.eSyncOperation.UrlMatches:
+                    case ActWebSmartSync.eSyncOperation.UrlMatches:
                         VE.Value = act.UrlMatches;
                         string urlMatches = VE.ValueCalculated;
                         wait.Until(ExpectedConditions.UrlMatches(urlMatches));
                         break;
-                    case ActNewSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
+                    case ActWebSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(elementLocator));
                         break;
                     default:
@@ -2351,7 +2355,7 @@ namespace GingerCore.Drivers
 
         //}
 
-        private int NewSmartSyncGetMaxTimeout(ActNewSmartSync act)
+        private int NewSmartSyncGetMaxTimeout(ActWebSmartSync act)
         {
             if (act.Timeout > 0)
             {
@@ -2359,7 +2363,7 @@ namespace GingerCore.Drivers
             }
             else
             {
-                return 300;
+                return (int)ImplicitWait;
             }
 
         }

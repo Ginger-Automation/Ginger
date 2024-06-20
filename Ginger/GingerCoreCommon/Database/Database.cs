@@ -178,7 +178,17 @@ namespace GingerCore.Environments
         public string Pass { get { return mPass; } set { if (mPass != value) { mPass = value; OnPropertyChanged(nameof(Pass)); } } }
 
         // checks if oracle version is lower than 10.2
-        public bool IsOracleVersionLow { get; set; } = false;
+        private bool mIsOracleVersionLow;
+        [IsSerializedForLocalRepository]
+        public bool IsOracleVersionLow 
+        { 
+            get { return mIsOracleVersionLow; } 
+            set 
+            { 
+                mIsOracleVersionLow = value; 
+                OnPropertyChanged(nameof(IsOracleVersionLow)); 
+            } 
+        }
 
         public static List<string> DbTypes
         {
@@ -206,6 +216,15 @@ namespace GingerCore.Environments
             }
 
             return SupportedConfigs;
+        }
+
+        // Encrypts if the password is not a value expression or if it is already encrypted
+        public void EncryptDatabasePass()
+        {
+            if (!string.IsNullOrEmpty(Pass) && !this.DatabaseOperations.IsPassValueExp() && !EncryptionHandler.IsStringEncrypted(Pass))
+            {
+                Pass = EncryptionHandler.EncryptwithKey(Pass);
+            }
         }
 
         public override string ItemName

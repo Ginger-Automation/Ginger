@@ -367,8 +367,7 @@ namespace GingerCore.ALM.JIRA.Bll
                                 //Creating the Zip file - finish                                
                                 if (this.jiraRepObj.AddAttachment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, relevantTcRun.TestExecutionId, zipFileName) == null)
                                 {
-                                    result = "Failed to create attachment";
-                                    return false;
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to create attachment");
                                 }
                                 System.IO.File.Delete(zipFileName);
                             }

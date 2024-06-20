@@ -9,20 +9,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
 using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
-using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.Common.UIElement;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver
     {
-
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
+        [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
         public bool HeadlessBrowserMode { get; set; }
 
         [UserConfigured]
@@ -36,11 +33,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ValidateBrowserTypeSupport(BrowserType);
 
             IPlaywright playwright = Microsoft.Playwright.Playwright.CreateAsync().Result;
-
-            BrowserTypeLaunchOptions launchOptions = BuildLaunchOptions();
-            IPlaywrightBrowser playwrightBrowser = LaunchBrowserAsync(playwright, BrowserType, launchOptions).Result;
-
-            _browser = new(playwrightBrowser, OnBrowserClose);
+            PlaywrightBrowser.Options browserOptions = BuildPlaywrightBrowserOptions();
+            _browser = new(playwright, BrowserType, browserOptions, OnBrowserClose);
         }
 
         private void ValidateBrowserTypeSupport(WebBrowserType browserType)
@@ -52,9 +46,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
-        private BrowserTypeLaunchOptions BuildLaunchOptions()
+        private PlaywrightBrowser.Options BuildPlaywrightBrowserOptions()
         {
-            BrowserTypeLaunchOptions launchOptions = new()
+            PlaywrightBrowser.Options options = new()
             {
                 Args = new[] { "--start-maximized" },
                 Headless = HeadlessBrowserMode,
@@ -63,42 +57,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             if (!string.IsNullOrEmpty(Proxy))
             {
-                launchOptions.Proxy = new Proxy()
+                options.Proxy = new Proxy()
                 {
                     Server = Proxy
                 };
             }
 
-            if (BrowserType == WebBrowserType.Chrome)
-            {
-                launchOptions.Channel = "chrome";
-            }
-            else if (BrowserType == WebBrowserType.Edge)
-            {
-                launchOptions.Channel = "msedge";
-            }
-
-            return launchOptions;
-        }
-
-        private Task<IPlaywrightBrowser> LaunchBrowserAsync(IPlaywright playwright, WebBrowserType browserType, BrowserTypeLaunchOptions? launchOptions = null)
-        {
-            if (browserType == WebBrowserType.Chrome)
-            {
-                return playwright.Chromium.LaunchAsync(launchOptions);
-            }
-            else if (browserType == WebBrowserType.FireFox)
-            {
-                return playwright.Firefox.LaunchAsync(launchOptions);
-            }
-            else if (browserType == WebBrowserType.Edge)
-            {
-                return playwright.Chromium.LaunchAsync(launchOptions);
-            }
-            else
-            {
-                throw new ArgumentException($"Unknown browser type '{BrowserType}'");
-            }
+            return options;
         }
 
         public override bool IsRunning()
@@ -138,21 +103,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.CompletedTask;
         }
 
-        public override Act GetCurrentElement()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string GetURL()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void HighlightActElement(Act act)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void RunAction(Act act)
         {
             if (!IsRunning())
@@ -180,46 +130,56 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
-        public bool CanStartAnotherInstance(out string errorMessage)
-        {
-            errorMessage = string.Empty;
-            return true;
-        }
-
         public bool IsActionSupported(Act act, out string message)
         {
+            message = string.Empty;
+
             if (act is ActWithoutDriver)
             {
-                message = string.Empty;
                 return true;
             }
             if (act is ActUIElement actUIElement)
             {
-                bool isSupported = ActUIElementHandler.IsOperationSupported(actUIElement.ElementAction);
-                if (!isSupported)
+                bool isLocatorSupported = PlaywrightBrowserTab.IsElementLocatorSupported(actUIElement.ElementLocateBy);
+                if (!isLocatorSupported)
+                {
+                    message = $"Element Locator '{actUIElement.ElementLocateBy}' is not supported by Playwright driver, use Selenium driver instead.";
+                }
+
+                bool isOperationSupported = ActUIElementSupportedOperations.Contains(actUIElement.ElementAction);
+                if (!isOperationSupported)
                 {
                     string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), actUIElement.ElementAction);
-                    message = $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        message += '\n';
+                    }
+                    message += $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
                 }
-                else
-                {
-                    message = string.Empty;
-                }
-                return isSupported;
+
+                return isLocatorSupported && isOperationSupported;
             }
             else if (act is ActBrowserElement actBrowserElement)
             {
-                bool isSupported = ActBrowserElementHandler.IsOperationSupported(actBrowserElement.ControlAction);
-                if (!isSupported)
+                bool isLocatorSupported = 
+                    actBrowserElement.ControlAction != ActBrowserElement.eControlAction.SwitchFrame ||
+                    PlaywrightBrowserTab.IsFrameLocatorSupported(act.LocateBy);
+                if (!isLocatorSupported)
+                {
+                    message = $"Frame Locator '{act.LocateBy}' is not supported by Playwright driver, use Selenium driver instead.";
+                }
+
+                bool isOperationSupported = ActBrowserElementSupportedOperations.Contains(actBrowserElement.ControlAction);
+                if (!isOperationSupported)
                 {
                     string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), actBrowserElement.ControlAction);
-                    message = $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        message += '\n';
+                    }
+                    message += $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
                 }
-                else
-                {
-                    message = string.Empty;
-                }
-                return isSupported;
+                return isLocatorSupported && isOperationSupported;
             }
             else
             {
@@ -227,5 +187,227 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return false;
             }
         }
+
+        public bool CanStartAnotherInstance(out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            return true;
+        }
+
+        public override Act GetCurrentElement()
+        {
+            ThrowIfClosed();
+
+            async Task<Act?> getCurrentElementAsync()
+            {
+                IBrowserElement? element = await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).GetFocusedElement();
+                if (element == null)
+                {
+                    return null;
+                }
+
+                string tagName = await element.TagNameAsync();
+                Act? act = null;
+                switch (tagName)
+                {
+                    case "text":
+                        act = new ActTextBox()
+                        {
+                            TextBoxAction = ActTextBox.eTextBoxAction.SetValue,
+                        };
+                        await SetElementLocatorToActionAsync(element, act);
+                        act.AddOrUpdateInputParamValue("Value", await element.AttributeValueAsync(name: "value"));
+                        act.AddOrUpdateReturnParamActual("Actual", $"Tag Name = {tagName}");
+                        break;
+                    case "button":
+                        string idAttrValue = await element.AttributeValueAsync(name: "id");
+                        
+                        act = new ActButton()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue
+                        };
+                        break;
+                    case "submit":
+                        idAttrValue = await element.AttributeValueAsync(name: "id");
+
+                        act = new ActButton()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue
+                        };
+                        break;
+                    case "reset":
+                        //TODO: add missing Act get() method
+                        break;
+                    case "file":
+                        //TODO: add missing Act get() method
+                        break;
+                    case "hidden": // does type this apply?
+                                   //TODO: add missing Act get() method
+                        break;
+                    case "password":
+                        act = new ActPassword()
+                        {
+                            PasswordAction = ActPassword.ePasswordAction.SetValue,
+                        };
+                        await SetElementLocatorToActionAsync(element, act);
+                        act.AddOrUpdateInputParamValue("Value", await element.AttributeValueAsync(name: "value"));
+                        act.AddOrUpdateReturnParamActual("Actual", $"Tag Name = {tagName}");
+                        break;
+                    case "checkbox":
+                        idAttrValue = await element.AttributeValueAsync(name: "id");
+                        act = new ActCheckbox()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue,
+                        };
+                        break;
+                    case "radio":
+                        idAttrValue = await element.AttributeValueAsync(name: "id");
+                        act = new ActRadioButton()
+                        {
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = idAttrValue
+                        };
+                        break;
+
+                }
+                return act;
+            }
+
+            return Task.Run(getCurrentElementAsync).Result!;
+            
+        }
+
+        private async Task SetElementLocatorToActionAsync(IBrowserElement element, Act act)
+        {
+            //order by priority
+
+            // By ID
+            string locatorValue = await element.AttributeValueAsync(name: "id");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByID;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            // By name
+            locatorValue = await element.AttributeValueAsync(name: "name");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByName;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            //TODO: CSS....
+
+            //By href
+            locatorValue = await element.AttributeValueAsync(name: "href");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByHref;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            //By Value
+            locatorValue = await element.AttributeValueAsync(name: "value");
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByValue;
+                act.LocateValue = locatorValue;
+                return;
+            }
+
+            // by text
+            locatorValue = await element.TextContentAsync();
+            if (locatorValue != "")
+            {
+                act.LocateBy = eLocateBy.ByLinkText;
+                act.LocateValue = locatorValue;
+                return;
+            }
+            //TODO: add XPath
+        }
+
+        public override string GetURL()
+        {
+            ThrowIfClosed();
+
+            return Task.Run(() => _browser!.CurrentWindow.CurrentTab.GetURLAsync().Result).Result;
+        }
+
+        public override void HighlightActElement(Act act)
+        {
+            ThrowIfClosed();
+            //TODO: implement
+        }
+
+        private void ThrowIfClosed()
+        {
+            if (!IsRunning())
+            {
+                throw new InvalidOperationException($"Cannot perform operation on closed driver.");
+            }
+        }
+        
+        private static readonly IEnumerable<ActUIElement.eElementAction> ActUIElementSupportedOperations = new List<ActUIElement.eElementAction>()
+        {
+            ActUIElement.eElementAction.Click,
+            ActUIElement.eElementAction.DoubleClick,
+            ActUIElement.eElementAction.Hover,
+            ActUIElement.eElementAction.IsVisible,
+            ActUIElement.eElementAction.IsEnabled,
+            ActUIElement.eElementAction.GetAttrValue,
+            ActUIElement.eElementAction.GetText,
+            ActUIElement.eElementAction.MouseRightClick,
+            ActUIElement.eElementAction.IsValuePopulated,
+            ActUIElement.eElementAction.GetHeight,
+            ActUIElement.eElementAction.GetWidth,
+            ActUIElement.eElementAction.GetSize,
+            ActUIElement.eElementAction.GetStyle,
+            ActUIElement.eElementAction.GetValue,
+            ActUIElement.eElementAction.GetItemCount,
+            ActUIElement.eElementAction.ScrollToElement,
+            ActUIElement.eElementAction.SetFocus,
+            ActUIElement.eElementAction.IsDisabled,
+            ActUIElement.eElementAction.Submit,
+            ActUIElement.eElementAction.MultiClicks,
+            ActUIElement.eElementAction.ClickXY,
+            ActUIElement.eElementAction.DoubleClickXY,
+            ActUIElement.eElementAction.ClearValue,
+            ActUIElement.eElementAction.Select,
+            ActUIElement.eElementAction.SelectByText,
+            ActUIElement.eElementAction.SelectByIndex,
+            ActUIElement.eElementAction.SetValue,
+        };
+
+
+        private static readonly IEnumerable<ActBrowserElement.eControlAction> ActBrowserElementSupportedOperations = new List<ActBrowserElement.eControlAction>()
+        {
+            ActBrowserElement.eControlAction.GotoURL,
+            ActBrowserElement.eControlAction.OpenURLNewTab,
+            ActBrowserElement.eControlAction.GetPageURL,
+            ActBrowserElement.eControlAction.GetWindowTitle,
+            ActBrowserElement.eControlAction.NavigateBack,
+            ActBrowserElement.eControlAction.Refresh,
+            ActBrowserElement.eControlAction.DeleteAllCookies,
+            ActBrowserElement.eControlAction.RunJavaScript,
+            ActBrowserElement.eControlAction.GetPageSource,
+            ActBrowserElement.eControlAction.Close,
+            ActBrowserElement.eControlAction.CloseTabExcept,
+            ActBrowserElement.eControlAction.CloseAll,
+            ActBrowserElement.eControlAction.CheckPageLoaded,
+            ActBrowserElement.eControlAction.GetConsoleLog,
+            ActBrowserElement.eControlAction.GetBrowserLog,
+            ActBrowserElement.eControlAction.SwitchFrame,
+            ActBrowserElement.eControlAction.SwitchToDefaultFrame,
+            ActBrowserElement.eControlAction.SwitchToParentFrame,
+            ActBrowserElement.eControlAction.SwitchWindow,
+            ActBrowserElement.eControlAction.SwitchToDefaultWindow,
+        };
     }
 }
