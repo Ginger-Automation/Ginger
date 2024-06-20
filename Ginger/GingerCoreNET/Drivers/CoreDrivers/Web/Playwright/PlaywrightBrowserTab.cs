@@ -68,19 +68,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return _playwrightPage.EvaluateAsync<string>(script);
         }
 
-        public Task<string> GetPageSourceAsync()
+        public Task<string> PageSourceAsync()
         {
             ThrowIfClosed();
             return _playwrightPage.ContentAsync();
         }
 
-        public Task<string> GetTitleAsync()
+        public Task<string> TitleAsync()
         {
             ThrowIfClosed();
             return _playwrightPage.TitleAsync();
         }
 
-        public Task<string> GetURLAsync()
+        public Task<string> URLAsync()
         {
             ThrowIfClosed();
             return Task.FromResult(_playwrightPage.Url);
@@ -117,13 +117,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return _playwrightPage.WaitForLoadStateAsync(LoadState.Load);
         }
 
-        public Task<string> GetConsoleLogsAsync()
+        public Task<string> ConsoleLogsAsync()
         {
             ThrowIfClosed();
             return Task.FromResult(string.Join('\n', _consoleMessages));
         }
 
-        public async Task<string> GetBrowserLogsAsync()
+        public async Task<string> BrowserLogsAsync()
         {
             ThrowIfClosed();
             string script = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; network;";

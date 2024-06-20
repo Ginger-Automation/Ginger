@@ -16,11 +16,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public bool IsClosed { get; }
 
-        public Task<string> GetURLAsync();
+        public Task<string> URLAsync();
 
         public Task GoToURLAsync(string url);
 
-        public Task<string> GetTitleAsync();
+        public Task<string> TitleAsync();
 
         public Task NavigateBackAsync();
 
@@ -28,15 +28,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task RefreshAsync();
 
-        public Task<string> GetPageSourceAsync();
+        public Task<string> PageSourceAsync();
 
         public Task<string> ExecuteJavascriptAsync(string script);
 
         public Task WaitTillLoadedAsync();
 
-        public Task<string> GetConsoleLogsAsync();
+        public Task<string> ConsoleLogsAsync();
 
-        public Task<string> GetBrowserLogsAsync();
+        public Task<string> BrowserLogsAsync();
 
         public Task<bool> SwitchFrameAsync(eLocateBy locatyBy, string locateValue);
 

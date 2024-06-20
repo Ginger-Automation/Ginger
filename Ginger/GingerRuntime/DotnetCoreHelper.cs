@@ -316,5 +316,55 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             return false;
         }
+
+        public byte[] Capture(Point position, Size size, ImageFormat format)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ScreenCount()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int PrimaryScreenIndex()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ScreenName(int screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Size ScreenSize(int screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Point ScreenPosition(int screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Point TaskbarPosition(int screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Size TaskbarSize(int screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] MergeVertically(IEnumerable<byte[]> images, ImageFormat format)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Save(string filepath, byte[] image, ImageFormat format)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

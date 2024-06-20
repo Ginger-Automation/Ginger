@@ -1,5 +1,4 @@
 ﻿using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandlers;
 using Amdocs.Ginger.CoreNET.RunLib;
 using GingerCore;
 using GingerCore.Actions;
@@ -16,6 +15,7 @@ using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Runtime.Versioning;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -108,7 +108,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.CompletedTask;
         }
 
-        [SupportedOSPlatform("windows")]
         public override void RunAction(Act act)
         {
             if (!IsRunning())
@@ -351,7 +350,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
 
-            return Task.Run(() => _browser!.CurrentWindow.CurrentTab.GetURLAsync().Result).Result;
+            return Task.Run(() => _browser!.CurrentWindow.CurrentTab.URLAsync().Result).Result;
         }
 
         public override void HighlightActElement(Act act)
@@ -369,16 +368,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         [SupportedOSPlatform("windows")]
-        public Bitmap? GetScreenShot(Tuple<int, int>? screenSize = null, bool fullPage = false)
+        public Bitmap? GetScreenShot(Tuple<int, int>? size = null, bool fullPage = false)
         {
             ThrowIfClosed();
             return Task.Run(async () =>
             {
                 IBrowserTab tab = _browser!.CurrentWindow.CurrentTab;
 
-                if (screenSize != null)
+                if (size != null)
                 {
-                    await tab.SetViewportSizeAsync(new Size(width: screenSize.Item1, height: screenSize.Item2));
+                    await tab.SetViewportSizeAsync(new Size(width: size.Item1, height: size.Item2));
                 }
 
                 byte[] screenshot;

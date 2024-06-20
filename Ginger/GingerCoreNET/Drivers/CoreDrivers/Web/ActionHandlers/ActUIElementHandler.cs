@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
-namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandlers
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 {
     internal sealed class ActUIElementHandler
     {
@@ -277,7 +277,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             _act.AddOrUpdateReturnParamActual("Actual", size.Width.ToString());
         }
 
-        private  async Task HandleGetSizeOperationAsync()
+        private async Task HandleGetSizeOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             Size size = await element.SizeAsync();
@@ -343,7 +343,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             bool isInputElement = string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase);
             bool isButtonElement = string.Equals(tagName, IBrowserElement.ButtonTagName, StringComparison.OrdinalIgnoreCase);
             bool isTypeSubmit = string.Equals(await element.AttributeValueAsync(name: "type"), "submit", StringComparison.OrdinalIgnoreCase);
-            
+
             if ((isInputElement || isButtonElement) && isTypeSubmit)
             {
                 await element.ClickAsync();
