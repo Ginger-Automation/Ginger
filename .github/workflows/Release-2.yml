@@ -106,7 +106,6 @@ jobs:
                  echo "SM_CLIENT_CERT_FILE=D:\\a\\Certificate_pkcs12.p12" >> "$GITHUB_ENV" 
                  echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
                  echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
-                 echo "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools" >> $GITHUB_PATH
                  echo "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools" >> $GITHUB_PATH
                 shell: bash
                 
@@ -133,7 +132,7 @@ jobs:
                 
              # uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
             -   name: Windows signtool.exe code sign action
-                uses: skymatic/code-sign-action@v3.0.0
+                uses: Rushikph/Ginger_signtool_2@v1.0.0
                 
             
            # -   name: Find Signtool
