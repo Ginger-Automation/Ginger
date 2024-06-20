@@ -132,7 +132,8 @@ jobs:
                 
              # uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
             -   name: Windows signtool.exe code sign action
-                uses: Rushikph/Ginger_signtool_2@v1.0.0
+                uses: skymatic/code-sign-action@v3.0.0
+            
                 
             
            # -   name: Find Signtool
