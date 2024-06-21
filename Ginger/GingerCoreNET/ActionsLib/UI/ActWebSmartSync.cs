@@ -35,7 +35,7 @@ using System.Reflection;
 namespace GingerCore.Actions
 {
 
-    
+
 
     public class ActWebSmartSync : Act, IActPluginExecution
     {
@@ -87,6 +87,21 @@ namespace GingerCore.Actions
                 return mPlatforms;
             }
         }
+
+        public readonly static List<eLocateBy> SupportedLocatorsTypeList =
+            [
+                eLocateBy.POMElement,
+            eLocateBy.ByID,
+            eLocateBy.ByName,
+            eLocateBy.ByXPath,
+            eLocateBy.ByClassName,
+            eLocateBy.ByCSSSelector,
+            eLocateBy.ByLinkText,
+            eLocateBy.ByTagName,
+            eLocateBy.ByRelXPath
+            ];
+
+
 
         /// <summary>
         /// Represents the fields of the class.
@@ -319,6 +334,27 @@ namespace GingerCore.Actions
             }
 
             return platformAction;
+        }
+    }
+
+    public class LocatorTypeManager
+    {
+        public List<eLocateBy> LocatorsTypeList { get; private set; }
+
+        public LocatorTypeManager()
+        {
+            LocatorsTypeList = new List<eLocateBy>
+        {
+            eLocateBy.POMElement,
+            eLocateBy.ByID,
+            eLocateBy.ByName,
+            eLocateBy.ByXPath,
+            eLocateBy.ByClassName,
+            eLocateBy.ByCSSSelector,
+            eLocateBy.ByLinkText,
+            eLocateBy.ByTagName,
+            eLocateBy.ByRelXPath
+        };
         }
     }
 }

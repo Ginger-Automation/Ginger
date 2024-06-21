@@ -41,11 +41,7 @@ namespace Ginger.Actions
     {
         ActWebSmartSync mAction;
         string mExistingPOMAndElementGuidString = null;
-        //Act mAction;
-        /*public Visibility LocatorVisibility
-        {
-            get => GetLocatorVisibility();
-        }*/
+        
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
@@ -124,19 +120,8 @@ namespace Ginger.Actions
         /// </summary>
         private void setLocateBycombo()
         {
-            List<eLocateBy> locatorsTypeList = new List<eLocateBy>
-            {
-                eLocateBy.POMElement,
-                eLocateBy.ByID,
-                eLocateBy.ByName,
-                eLocateBy.ByXPath,
-                eLocateBy.ByClassName,
-                eLocateBy.ByCSSSelector,
-                eLocateBy.ByLinkText,
-                eLocateBy.ByTagName,
-                eLocateBy.ByRelXPath
-            };
-            xLocateByComboBox.BindControl(mAction, nameof(ActWebSmartSync.ElementLocateBy), locatorsTypeList, isSorted: false);
+           
+            xLocateByComboBox.BindControl(mAction, nameof(ActWebSmartSync.ElementLocateBy), ActWebSmartSync.SupportedLocatorsTypeList, isSorted: false);
         }
      
 

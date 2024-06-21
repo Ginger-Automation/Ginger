@@ -122,7 +122,7 @@ namespace GingerCore.Drivers
             }
 
             DriverConfigParam browserTypeParam = driverConfigParams.FirstOrDefault(param => string.Equals(param.Parameter, nameof(BrowserType)));
-            
+
             if (browserTypeParam == null || !Enum.TryParse(browserTypeParam.Value, out WebBrowserType browserType))
             {
                 return null;
@@ -458,7 +458,7 @@ namespace GingerCore.Drivers
                 RemoteBrowserName = agent.GetParamValue(SeleniumDriver.RemoteBrowserNameParam);
                 RemotePlatform = agent.GetParamValue(SeleniumDriver.RemotePlatformParam);
                 RemoteVersion = agent.GetParamValue(SeleniumDriver.RemoteVersionParam);
-                if(WorkSpace.Instance.BetaFeatures.ShowHealenium)
+                if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
                 {
                     IsHealenium = agent.Healenium;
                     HealeniumUrl = agent.HealeniumURL;
@@ -499,7 +499,7 @@ namespace GingerCore.Drivers
             //Add localhost to no proxy so that driver service can be started with proxy
             //System.Environment.SetEnvironmentVariable("NO_PROXY", @"http://localhost");
 
-           
+
 
             if (StartBMP)
             {
@@ -550,7 +550,7 @@ namespace GingerCore.Drivers
                 ImplicitWait = 30;
             }
 
-            
+
             if (!string.IsNullOrEmpty(SeleniumUserArguments))
             {
                 SeleniumUserArgs = SeleniumUserArguments.Split(';');
@@ -610,7 +610,7 @@ namespace GingerCore.Drivers
                         Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
                     #endregion
-                   
+
                     #region Mozilla Firefox
                     case eBrowserType.FireFox:
 
@@ -662,23 +662,27 @@ namespace GingerCore.Drivers
                     #endregion
 
                     #region Brave
-                        //checking the windows 32 and 64 bit version exists or not. if not then user can provide the path mannually.
+                    //checking the windows 32 and 64 bit version exists or not. if not then user can provide the path mannually.
                     case eBrowserType.Brave:
                         ChromeOptions brave_options = new ChromeOptions();
-                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath)) { 
+                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath))
+                        {
 
-                             brave_options.BinaryLocation = BrowserExecutablePath;
-                         }
-                         else if (File.Exists(BRAVE_64BIT_BINARY_PATH)) {
-                             brave_options.BinaryLocation = BRAVE_64BIT_BINARY_PATH;
-                         }
-                         else if (File.Exists(BRAVE_32BIT_BINARY_PATH)) {
-                             brave_options.BinaryLocation = BRAVE_32BIT_BINARY_PATH;
-                         }
-                         else { 
-                         throw new Exception("Brave browser valid executable path required!");
+                            brave_options.BinaryLocation = BrowserExecutablePath;
+                        }
+                        else if (File.Exists(BRAVE_64BIT_BINARY_PATH))
+                        {
+                            brave_options.BinaryLocation = BRAVE_64BIT_BINARY_PATH;
+                        }
+                        else if (File.Exists(BRAVE_32BIT_BINARY_PATH))
+                        {
+                            brave_options.BinaryLocation = BRAVE_32BIT_BINARY_PATH;
+                        }
+                        else
+                        {
+                            throw new Exception("Brave browser valid executable path required!");
 
-                         }
+                        }
                         configChromeDriverAndStart(brave_options);
 
                         break;
@@ -783,7 +787,7 @@ namespace GingerCore.Drivers
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), ieoptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             }
-                            else if(WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
                             {
                                 Driver = new RemoteWebDriver(new Uri(HealeniumUrl), ieoptions.ToCapabilities());
                             }
@@ -941,7 +945,7 @@ namespace GingerCore.Drivers
         //created common method for Chrome and Brave browser because both support ChromeDriver
         private void configChromeDriverAndStart(ChromeOptions options)
         {
-           
+
             options.AddArgument("--start-maximized");
             SetCurrentPageLoadStrategy(options);
             SetBrowserLogLevel(options);
@@ -1026,7 +1030,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                
+
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && ex.Message.ToLower().Contains("no such file or directory"))
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Chrome binary isn't found at default location, checking for Chromium...");
@@ -1228,7 +1232,7 @@ namespace GingerCore.Drivers
             }
 
             var proxy = new Proxy();
-            
+
 
             options.Proxy = proxy;
 
@@ -1243,7 +1247,7 @@ namespace GingerCore.Drivers
                     {
                         options.Proxy.AddBypassAddresses(AddByPassAddress());
                     }
-                    
+
                     //TODO: GETTING ERROR LAUNCHING BROWSER 
                     // options.Proxy.SocksProxy = mProxy.SocksProxy;
                     break;
@@ -1561,7 +1565,7 @@ namespace GingerCore.Drivers
                 try
                 {
                     //it's wait until all page gets load 
-                    if (act is not ActWebSmartSync { SyncOperations : ActWebSmartSync.eSyncOperation.PageHasBeenLoaded })
+                    if (act is not ActWebSmartSync { SyncOperations: ActWebSmartSync.eSyncOperation.PageHasBeenLoaded })
                     {
                         _ = Driver.Title;//just to make sure window attributes do not throw exception
                     }
@@ -2200,20 +2204,7 @@ namespace GingerCore.Drivers
                         return;
                     }
 
-
-                     var validLocateByValues = new HashSet<eLocateBy>
-                        {
-                            eLocateBy.ByXPath,
-                            eLocateBy.ByName,
-                            eLocateBy.ByID,
-                            eLocateBy.ByClassName,
-                            eLocateBy.ByCSSSelector,
-                            eLocateBy.ByLinkText,
-                            eLocateBy.ByTagName,
-                            eLocateBy.ByRelXPath
-                        };
-
-                    ElementLocator firstLocator = currentPOMElementInfo.Locators.Where(l => l.Active && validLocateByValues.Contains(l.LocateBy)).FirstOrDefault();
+                    ElementLocator firstLocator = currentPOMElementInfo.Locators.FirstOrDefault(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy));
 
                     if (firstLocator == null)
                     {
@@ -2225,14 +2216,15 @@ namespace GingerCore.Drivers
                     locateBy = firstLocator.LocateBy;
                     locateValue = firstLocator.LocateValue;
                 }
-                  if (String.IsNullOrEmpty(locateValue))
-                    {
+
+                if (String.IsNullOrEmpty(locateValue))
+                {
                     act.Error = $"For {act.SyncOperations} operation Locate value is missing or invalid input.";
                     Reporter.ToLog(eLogLevel.ERROR, act.Error);
                     return;
 
-                    }
-             
+                }
+
                 switch (locateBy)
                 {
                     case eLocateBy.ByXPath:
@@ -2264,9 +2256,11 @@ namespace GingerCore.Drivers
             }
             //get time configured in flow-control, if nothing provided then use 30 seconds
             int MaxTimeout = NewSmartSyncGetMaxTimeout(act);
-            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(MaxTimeout));
+            WebDriverWait wait = new(Driver, TimeSpan.FromSeconds(MaxTimeout));
+
             //store agent's implicit wait in a variable
             int implicitWait = (int)Driver.Manage().Timeouts().ImplicitWait.TotalSeconds;
+
             //set agent's implicit wait to 1 second
             Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
 
@@ -2305,7 +2299,7 @@ namespace GingerCore.Drivers
                             Reporter.ToLog(eLogLevel.ERROR, act.Error);
                             return;
                         }
-                        wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));                        
+                        wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
                         break;
                     case ActWebSmartSync.eSyncOperation.AttributeMatches:
                         VE.Value = act.AttributeName;
@@ -2313,7 +2307,7 @@ namespace GingerCore.Drivers
                         VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
                         VE.Value = act.AttributeValue;
                         string attributeValue = VE.ValueCalculated;
-                        if (String.IsNullOrEmpty(attributeValue) || String.IsNullOrEmpty(attributeName))
+                        if (string.IsNullOrEmpty(attributeValue) || string.IsNullOrEmpty(attributeName))
                         {
                             act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
                             Reporter.ToLog(eLogLevel.ERROR, act.Error);
@@ -2376,64 +2370,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        //private void Until(Func<IWebDriver, IWebDriver> condition, int timeout)
-        //{
-        //    long startTime = DateTime.Now.Ticks;
-        //    while (TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds < timeout)
-        //    {
-        //        if (condition(Driver) != null)
-        //        {
-        //            return;
-        //        }
-        //    }
-        //    throw new Exception("until timed-out");
-        //}
-
-        //public static Func<IWebDriver, IWebDriver> PageHasBeenLoaded()
-        //{
-        //    string script = @"
-        //     function getReadyState(timeout) {
-        //        return new Promise((resolve, reject) => {
-        //            const timer = setTimeout(() => {
-        //                reject('');
-        //            }, timeout);
-        
-        //            const state = document.readyState;
-        //            resolve(state);
-        //        });
-        //    }
-
-        //    try {
-        //        const state = await getReadyState(3000);
-        //        return state;
-        //    } catch (error) {
-        //        return error;
-        //    }";
-        //    return delegate (IWebDriver driver)
-        //    {
-        //        if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            return driver;
-        //        }
-
-        //        string text = ((IJavaScriptExecutor)driver).ExecuteScript(script) as string;
-        //        return text.Equals("complete", StringComparison.OrdinalIgnoreCase) ? driver : null;
-        //    };
-        //}
-
-        //public static Func<IWebDriver, IWebDriver> PageHasBeenLoaded()
-        //{
-
-        //        if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            return driver;
-        //        }
-
-        //        string text = ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState") as string;
-        //        return text.Equals("complete", StringComparison.OrdinalIgnoreCase) ? driver : null;
-
-        //}
-
+       
         private int NewSmartSyncGetMaxTimeout(ActWebSmartSync act)
         {
             if (act.Timeout > 0)
@@ -2447,7 +2384,7 @@ namespace GingerCore.Drivers
 
         }
 
-             public void SmartSyncHandler(ActSmartSync act)
+        public void SmartSyncHandler(ActSmartSync act)
         {
             int MaxTimeout = GetMaxTimeout(act);
 
