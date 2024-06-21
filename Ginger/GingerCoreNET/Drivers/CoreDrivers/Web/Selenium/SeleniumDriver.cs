@@ -2170,6 +2170,10 @@ namespace GingerCore.Drivers
             }
         }
 
+        /// <summary>
+        /// Handles the synchronization of web elements using various synchronization operations.
+        /// </summary>
+        /// <param name="act">The ActWebSmartSync object containing the synchronization details.</param>
         public void WebSmartSyncHandler(ActWebSmartSync act)
         {
             By elementLocator = null;
@@ -2177,7 +2181,7 @@ namespace GingerCore.Drivers
             {
                 eLocateBy locateBy = act.ElementLocateBy;
                 string locateValue = act.ElementLocateValueForDriver;
-                
+
                 if (act.ElementLocateBy == eLocateBy.POMElement)
                 {
                     POMExecutionUtils pomExcutionUtil = new(act, act.ElementLocateValue);
@@ -2196,8 +2200,21 @@ namespace GingerCore.Drivers
                         return;
                     }
 
-                    
-                    ElementLocator firstLocator = currentPOMElementInfo.Locators.Where(l => l.Active &&(l.LocateBy == eLocateBy.ByXPath || l.LocateBy == eLocateBy.ByName || l.LocateBy == eLocateBy.ByID || l.LocateBy == eLocateBy.ByClassName || l.LocateBy == eLocateBy.ByCSSSelector || l.LocateBy == eLocateBy.ByLinkText || l.LocateBy == eLocateBy.ByTagName || l.LocateBy == eLocateBy.ByRelXPath)).FirstOrDefault();
+
+                     var validLocateByValues = new HashSet<eLocateBy>
+                        {
+                            eLocateBy.ByXPath,
+                            eLocateBy.ByName,
+                            eLocateBy.ByID,
+                            eLocateBy.ByClassName,
+                            eLocateBy.ByCSSSelector,
+                            eLocateBy.ByLinkText,
+                            eLocateBy.ByTagName,
+                            eLocateBy.ByRelXPath
+                        };
+
+                    ElementLocator firstLocator = currentPOMElementInfo.Locators.Where(l => l.Active && validLocateByValues.Contains(l.LocateBy)).FirstOrDefault();
+
                     if (firstLocator == null)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"No active or supported locator found in the current POM");
@@ -2208,24 +2225,18 @@ namespace GingerCore.Drivers
                     locateBy = firstLocator.LocateBy;
                     locateValue = firstLocator.LocateValue;
                 }
-                try
-                {
-                    if (String.IsNullOrEmpty(locateValue))
-                    { 
-                        throw new ArgumentNullException();
-                        
-                    }
-                }
-                catch (ArgumentNullException ex)
-                {
+                  if (String.IsNullOrEmpty(locateValue))
+                    {
                     act.Error = $"For {act.SyncOperations} operation Locate value is missing or invalid input.";
-                    Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, act.Error);
                     return;
-                }
 
+                    }
+             
                 switch (locateBy)
                 {
                     case eLocateBy.ByXPath:
+                    case eLocateBy.ByRelXPath:
                         elementLocator = By.XPath(locateValue);
                         break;
                     case eLocateBy.ByID:
@@ -2245,9 +2256,6 @@ namespace GingerCore.Drivers
                         break;
                     case eLocateBy.ByTagName:
                         elementLocator = By.TagName(locateValue);
-                        break;
-                    case eLocateBy.ByRelXPath:
-                        elementLocator = By.XPath(locateValue);
                         break;
                     default:
                         act.Error = "Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath and ByTagName.";
@@ -2288,32 +2296,30 @@ namespace GingerCore.Drivers
                     case ActWebSmartSync.eSyncOperation.ElementToBeClickable:
                         wait.Until(ExpectedConditions.ElementToBeClickable(elementLocator));
                         break;
-                    case ActWebSmartSync.eSyncOperation.TextMatches:                        
+                    case ActWebSmartSync.eSyncOperation.TextMatches:
                         VE.Value = act.TxtMatchInput;
                         string textToMatch = VE.ValueCalculated;
-                        if (!String.IsNullOrEmpty(textToMatch))
+                        if (String.IsNullOrEmpty(textToMatch))
                         {
-                            wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
+                            act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                            Reporter.ToLog(eLogLevel.ERROR, act.Error);
+                            return;
                         }
-                        else
-                        {
-                            throw new ArgumentNullException();
-                        }
+                        wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));                        
                         break;
                     case ActWebSmartSync.eSyncOperation.AttributeMatches:
                         VE.Value = act.AttributeName;
                         string attributeName = VE.ValueCalculated;
                         VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
                         VE.Value = act.AttributeValue;
-                        string attributeValue= VE.ValueCalculated;
-                        if (!String.IsNullOrEmpty(attributeValue) || String.IsNullOrEmpty(attributeName))
+                        string attributeValue = VE.ValueCalculated;
+                        if (String.IsNullOrEmpty(attributeValue) || String.IsNullOrEmpty(attributeName))
                         {
-                            wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
+                            act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                            Reporter.ToLog(eLogLevel.ERROR, act.Error);
+                            return;
                         }
-                        else
-                        {
-                            throw new ArgumentNullException();
-                        }
+                        wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
                         break;
                     case ActWebSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.EnabilityOfAllElementsLocatedBy(elementLocator));
@@ -2336,20 +2342,19 @@ namespace GingerCore.Drivers
                     case ActWebSmartSync.eSyncOperation.UrlMatches:
                         VE.Value = act.UrlMatches;
                         string urlMatches = VE.ValueCalculated;
-                        if (!String.IsNullOrEmpty(urlMatches))
+                        if (String.IsNullOrEmpty(urlMatches))
                         {
-                            wait.Until(ExpectedConditions.UrlMatches(urlMatches));
+                            act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                            Reporter.ToLog(eLogLevel.ERROR, act.Error);
+                            return;
                         }
-                        else
-                        {
-                            throw new ArgumentNullException();
-                        }
+                        wait.Until(ExpectedConditions.UrlMatches(urlMatches));
                         break;
                     case ActWebSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(elementLocator));
                         break;
                     default:
-                        act.Error = "Unable to complete this operation.";
+                        act.Error = "Unsupported operation.";
                         break;
                 }
                 return;
