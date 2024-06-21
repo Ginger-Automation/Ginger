@@ -24,7 +24,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             eLocateBy.ByID,
             eLocateBy.ByCSS,
-            eLocateBy.ByXPath
+            eLocateBy.ByXPath,
+            eLocateBy.POMElement,
         };
 
         private static readonly IEnumerable<eLocateBy> SupportedFrameLocators = new List<eLocateBy>()
@@ -32,7 +33,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             eLocateBy.ByID,
             eLocateBy.ByTitle,
             eLocateBy.ByUrl,
-            eLocateBy.ByXPath
+            eLocateBy.ByXPath,
+            eLocateBy.ByRelXPath,
         };
 
         private readonly IPlaywrightPage _playwrightPage;
@@ -173,6 +175,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     frameLocator = _currentFrame.FrameLocator($"css=iframe[title='{value}']");
                     break;
                 case eLocateBy.ByXPath:
+                    frameLocator = _currentFrame.FrameLocator($"xpath={value}");
+                    break;
+                case eLocateBy.ByRelXPath:
                     frameLocator = _currentFrame.FrameLocator($"xpath={value}");
                     break;
                 case eLocateBy.ByUrl:
