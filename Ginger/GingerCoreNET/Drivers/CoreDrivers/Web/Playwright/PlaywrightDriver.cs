@@ -20,7 +20,7 @@ using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers;
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
-    public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IVisualTestingDriver, IIncompleteDriver
+    public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver
     {
         [UserConfigured]
         [UserConfiguredDefault("false")]
