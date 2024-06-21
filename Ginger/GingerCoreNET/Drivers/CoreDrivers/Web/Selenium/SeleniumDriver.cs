@@ -2197,7 +2197,7 @@ namespace GingerCore.Drivers
                     }
 
                     
-                    ElementLocator firstLocator = currentPOMElementInfo.Locators.Where(l => l.Active &&(l.LocateBy == eLocateBy.ByXPath || l.LocateBy == eLocateBy.ByName || l.LocateBy == eLocateBy.ByID || l.LocateBy == eLocateBy.ByClassName || l.LocateBy == eLocateBy.ByCSSSelector || l.LocateBy == eLocateBy.ByLinkText || l.LocateBy == eLocateBy.ByTagName)).FirstOrDefault();
+                    ElementLocator firstLocator = currentPOMElementInfo.Locators.Where(l => l.Active &&(l.LocateBy == eLocateBy.ByXPath || l.LocateBy == eLocateBy.ByName || l.LocateBy == eLocateBy.ByID || l.LocateBy == eLocateBy.ByClassName || l.LocateBy == eLocateBy.ByCSSSelector || l.LocateBy == eLocateBy.ByLinkText || l.LocateBy == eLocateBy.ByTagName || l.LocateBy == eLocateBy.ByRelXPath)).FirstOrDefault();
                     if (firstLocator == null)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"No active or supported locator found in the current POM");
@@ -2246,8 +2246,11 @@ namespace GingerCore.Drivers
                     case eLocateBy.ByTagName:
                         elementLocator = By.TagName(locateValue);
                         break;
+                    case eLocateBy.ByRelXPath:
+                        elementLocator = By.XPath(locateValue);
+                        break;
                     default:
-                        act.Error = "Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, and ByTagName.";
+                        act.Error = "Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath and ByTagName.";
                         return;
                 }
             }

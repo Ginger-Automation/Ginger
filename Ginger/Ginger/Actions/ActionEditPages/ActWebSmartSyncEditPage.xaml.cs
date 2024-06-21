@@ -128,16 +128,17 @@ namespace Ginger.Actions
         {
             List<eLocateBy> locatorsTypeList = new List<eLocateBy>
           {
-        eLocateBy.ByXPath,
+        eLocateBy.POMElement,
         eLocateBy.ByID,
         eLocateBy.ByName,
+        eLocateBy.ByXPath,
         eLocateBy.ByClassName,
         eLocateBy.ByCSSSelector,
         eLocateBy.ByLinkText,
         eLocateBy.ByTagName,
-        eLocateBy.POMElement
+        eLocateBy.ByRelXPath
           };
-            xLocateByComboBox.BindControl(mAction, nameof(ActWebSmartSync.ElementLocateBy), locatorsTypeList);
+            xLocateByComboBox.BindControl(mAction, nameof(ActWebSmartSync.ElementLocateBy), locatorsTypeList,isSorted:false);
         }
      
 
