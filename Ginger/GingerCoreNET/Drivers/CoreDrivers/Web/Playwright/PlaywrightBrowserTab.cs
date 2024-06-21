@@ -13,6 +13,7 @@ using IPlaywrightDialog = Microsoft.Playwright.IDialog;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using System.Drawing;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -67,19 +68,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return _playwrightPage.EvaluateAsync<string>(script);
         }
 
-        public Task<string> GetPageSourceAsync()
+        public Task<string> PageSourceAsync()
         {
             ThrowIfClosed();
             return _playwrightPage.ContentAsync();
         }
 
-        public Task<string> GetTitleAsync()
+        public Task<string> TitleAsync()
         {
             ThrowIfClosed();
             return _playwrightPage.TitleAsync();
         }
 
-        public Task<string> GetURLAsync()
+        public Task<string> URLAsync()
         {
             ThrowIfClosed();
             return Task.FromResult(_playwrightPage.Url);
@@ -116,13 +117,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return _playwrightPage.WaitForLoadStateAsync(LoadState.Load);
         }
 
-        public Task<string> GetConsoleLogsAsync()
+        public Task<string> ConsoleLogsAsync()
         {
             ThrowIfClosed();
             return Task.FromResult(string.Join('\n', _consoleMessages));
         }
 
-        public async Task<string> GetBrowserLogsAsync()
+        public async Task<string> BrowserLogsAsync()
         {
             ThrowIfClosed();
             string script = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; network;";
@@ -239,6 +240,50 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             return elements;
+        }
+
+        public Task<byte[]> ScreenshotAsync()
+        {
+            return ScreenshotInternalAsync(fullPage: false);
+        }
+
+        public Task<byte[]> ScreenshotFullPageAsync()
+        {
+            return ScreenshotInternalAsync(fullPage: true);
+        }
+
+        private Task<byte[]> ScreenshotInternalAsync(bool fullPage)
+        {
+            ThrowIfClosed();
+            return _playwrightPage.ScreenshotAsync(new PageScreenshotOptions()
+            {
+                FullPage = fullPage,
+            });
+        }
+
+        public async Task<Size> ViewportSizeAsync()
+        {
+            PageViewportSizeResult? sizeResult = _playwrightPage.ViewportSize;
+            if (sizeResult != null)
+            {
+                return new Size(sizeResult.Width, sizeResult.Height);
+            }
+
+            try
+            {
+                int width = int.Parse(await ExecuteJavascriptAsync("window.innerWidth"));
+                int height = int.Parse(await ExecuteJavascriptAsync("window.innerHeight"));
+                return new Size(width, height);
+            }
+            catch (Exception)
+            {
+                throw new PlaywrightException($"Unable to get viewport size");
+            }
+        }
+
+        public Task SetViewportSizeAsync(Size size)
+        {
+            return _playwrightPage.SetViewportSizeAsync(size.Width, size.Height);
         }
 
         /// <summary>
