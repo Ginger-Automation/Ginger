@@ -18,9 +18,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         private readonly IScreenCapture _screenCapture;
         private readonly IBitmapOperations _bitmapOperations;
 
+        // For production
         internal ActScreenShotHandler(ActScreenShot act, IBrowser browser) :
             this(act, browser, screenInfo: TargetFrameworkHelper.Helper, screenCapture: TargetFrameworkHelper.Helper, bitmapOperations: TargetFrameworkHelper.Helper) { }
 
+        // All dependencies are injected, used for unit testing
         internal ActScreenShotHandler(ActScreenShot act, IBrowser browser, IScreenInfo screenInfo, IScreenCapture screenCapture, IBitmapOperations bitmapOperations)
         {
             _act = act;
