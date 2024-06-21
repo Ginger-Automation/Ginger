@@ -32,6 +32,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _playwrightBrowserContext = playwrightBrowserContext;
             _onWindowClose = onWindowClose;
 
+            _playwrightBrowserContext.Page += OnNewPlaywrightPage;
+
             List<IPlaywrightPage> pages = new(_playwrightBrowserContext.Pages);
             foreach (IPlaywrightPage page in pages)
             {
@@ -66,20 +68,46 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
+        private void OnNewPlaywrightPage(object? sender, IPlaywrightPage newPlaywrightPage)
+        {
+            List<PlaywrightBrowserTab> tabs = new(_tabs.Cast<PlaywrightBrowserTab>());
+            foreach (PlaywrightBrowserTab tab in tabs)
+            {
+                if (tab.PlaywrightPageEquals(newPlaywrightPage))
+                {
+                    return;
+                }
+            }
+            PlaywrightBrowserTab newTab = new(newPlaywrightPage, OnTabClosed);
+            _tabs.AddLast(newTab);
+
+            _currentTab = newTab;
+        }
+
         public async Task<IBrowserTab> NewTabAsync(bool setAsCurrent = true)
         {
             ThrowIfClosed();
 
-            IPlaywrightPage page = await _playwrightBrowserContext.NewPageAsync();
-            PlaywrightBrowserTab tab = new(page, OnTabClosed);
-            _tabs.AddLast(tab);
+            IPlaywrightPage newPlaywrightPage = await _playwrightBrowserContext.NewPageAsync();
+
+            List<PlaywrightBrowserTab> tabs = new(_tabs.Cast<PlaywrightBrowserTab>());
+            foreach (PlaywrightBrowserTab tab in tabs)
+            {
+                if (tab.PlaywrightPageEquals(newPlaywrightPage))
+                {
+                    return tab;
+                }
+            }
+
+            PlaywrightBrowserTab newTab = new(newPlaywrightPage, OnTabClosed);
+            _tabs.AddLast(newTab);
 
             if (setAsCurrent)
             {
-                _currentTab = tab;
+                _currentTab = newTab;
             }
 
-            return tab;
+            return newTab;
         }
 
         public Task SetTabAsync(IBrowserTab tab)
@@ -164,6 +192,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             _isClosed = true;
 
+            _playwrightBrowserContext.Page -= OnNewPlaywrightPage;
             await _playwrightBrowserContext.CloseAsync();
             await _onWindowClose.Invoke(closedWindow: this);
         }

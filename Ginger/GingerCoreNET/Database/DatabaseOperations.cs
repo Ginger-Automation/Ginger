@@ -73,6 +73,7 @@ namespace GingerCore.Environments
 
                     mVE = new ValueExpression(Database.ProjEnvironment, Database.BusinessFlow, Database.DSList);
                 }
+
                 return mVE;
             }
             set

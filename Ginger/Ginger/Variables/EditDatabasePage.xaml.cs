@@ -21,6 +21,7 @@ namespace Ginger.Variables
         public EditDatabasePage(Database database, Context context)
         {
             this.database = database;
+            this.database.ProjEnvironment = context.Environment;
             InitializeComponent();
 
             xConnectionStringInfo.ToolTip = database.GetConnectionStringToolTip();

@@ -314,6 +314,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
+        internal bool PlaywrightPageEquals(IPlaywrightPage playwrightPage)
+        {
+            return _playwrightPage == playwrightPage;
+        }
+
         public static bool IsElementLocatorSupported(eLocateBy locateBy)
         {
             return SupportedElementLocators.Contains(locateBy);
