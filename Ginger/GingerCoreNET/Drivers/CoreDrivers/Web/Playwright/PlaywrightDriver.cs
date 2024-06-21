@@ -1,5 +1,4 @@
 ﻿using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandlers;
 using Amdocs.Ginger.CoreNET.RunLib;
 using GingerCore;
 using GingerCore.Actions;
@@ -11,6 +10,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using System.Drawing;
+using GingerCore.Actions.VisualTesting;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.ComponentModel;
+using System.Runtime.Versioning;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -124,6 +129,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     ActUIElementHandler actUIElementHandler = new(actUIElement, _browser!);
                     actUIElementHandler.HandleAsync().Wait();
                     break;
+                case ActScreenShot actScreenShot:
+                    ActScreenShotHandler actScreenShotHandler = new(actScreenShot, _browser!);
+                    actScreenShotHandler.HandleAsync().Wait();
+                    break;
                 default:
                     act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
                     break;
@@ -161,7 +170,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
             else if (act is ActBrowserElement actBrowserElement)
             {
-                bool isLocatorSupported = 
+                bool isLocatorSupported =
                     actBrowserElement.ControlAction != ActBrowserElement.eControlAction.SwitchFrame ||
                     PlaywrightBrowserTab.IsFrameLocatorSupported(act.LocateBy);
                 if (!isLocatorSupported)
@@ -180,6 +189,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     message += $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
                 }
                 return isLocatorSupported && isOperationSupported;
+            }
+            else if (act is ActScreenShot)
+            {
+                return true;
             }
             else
             {
@@ -221,7 +234,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         break;
                     case "button":
                         string idAttrValue = await element.AttributeValueAsync(name: "id");
-                        
+
                         act = new ActButton()
                         {
                             LocateBy = eLocateBy.ByID,
@@ -277,7 +290,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             return Task.Run(getCurrentElementAsync).Result!;
-            
+
         }
 
         private async Task SetElementLocatorToActionAsync(IBrowserElement element, Act act)
@@ -337,7 +350,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
 
-            return Task.Run(() => _browser!.CurrentWindow.CurrentTab.GetURLAsync().Result).Result;
+            return Task.Run(() => _browser!.CurrentWindow.CurrentTab.URLAsync().Result).Result;
         }
 
         public override void HighlightActElement(Act act)
@@ -353,7 +366,126 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new InvalidOperationException($"Cannot perform operation on closed driver.");
             }
         }
-        
+
+        [SupportedOSPlatform("windows")]
+        public Bitmap? GetScreenShot(Tuple<int, int>? size = null, bool fullPage = false)
+        {
+            ThrowIfClosed();
+            return Task.Run(async () =>
+            {
+                IBrowserTab tab = _browser!.CurrentWindow.CurrentTab;
+
+                if (size != null)
+                {
+                    await tab.SetViewportSizeAsync(new Size(width: size.Item1, height: size.Item2));
+                }
+
+                byte[] screenshot;
+                if (fullPage)
+                {
+                    screenshot = await tab.ScreenshotAsync();
+                }
+                else
+                {
+                    screenshot = await tab.ScreenshotFullPageAsync();
+                }
+
+                return BitmapFromBytes(screenshot);
+            }).Result;
+        }
+
+        [SupportedOSPlatform("windows")]
+        public Bitmap? GetElementScreenshot(Act act)
+        {
+            ThrowIfClosed();
+            return Task.Run(async () =>
+            {
+                eLocateBy locateBy;
+                string locateValue;
+                if (act is ActUIElement actUIElement)
+                {
+                    locateBy = actUIElement.ElementLocateBy;
+                    locateValue = actUIElement.ElementLocateValueForDriver;
+                }
+                else
+                {
+                    locateBy = act.LocateBy;
+                    locateValue = act.LocateValueCalculated;
+                }
+
+                IBrowserElement? element = 
+                    (await _browser!
+                    .CurrentWindow
+                    .CurrentTab
+                    .GetElementsAsync(locateBy, locateValue))
+                    .FirstOrDefault();
+
+                if (element == null)
+                {
+                    return null;
+                }
+
+                byte[] screenshot = await element.ScreenshotAsync();
+                return BitmapFromBytes(screenshot);
+            }).Result;
+        }
+
+        private static Bitmap? BitmapFromBytes(byte[] bytes)
+        {
+            TypeConverter typeConverter = TypeDescriptor.GetConverter(typeof(Bitmap));
+            return (Bitmap?)typeConverter.ConvertFrom(bytes);
+        }
+
+        public VisualElementsInfo GetVisualElementsInfo()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ChangeAppWindowSize(int Width, int Height)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetApplitoolServerURL()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetApplitoolKey()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ePlatformType GetPlatform()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetEnvironment()
+        {
+            throw new NotImplementedException();
+        }
+
+        public OpenQA.Selenium.IWebDriver GetWebDriver()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetAgentAppName()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetViewport()
+        {
+            throw new NotImplementedException();
+        }
+
         private static readonly IEnumerable<ActUIElement.eElementAction> ActUIElementSupportedOperations = new List<ActUIElement.eElementAction>()
         {
             ActUIElement.eElementAction.Click,
