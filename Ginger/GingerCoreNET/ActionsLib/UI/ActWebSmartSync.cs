@@ -336,26 +336,5 @@ namespace GingerCore.Actions
             return platformAction;
         }
     }
-
-    public class LocatorTypeManager
-    {
-        public List<eLocateBy> LocatorsTypeList { get; private set; }
-
-        public LocatorTypeManager()
-        {
-            LocatorsTypeList = new List<eLocateBy>
-        {
-            eLocateBy.POMElement,
-            eLocateBy.ByID,
-            eLocateBy.ByName,
-            eLocateBy.ByXPath,
-            eLocateBy.ByClassName,
-            eLocateBy.ByCSSSelector,
-            eLocateBy.ByLinkText,
-            eLocateBy.ByTagName,
-            eLocateBy.ByRelXPath
-        };
-        }
-    }
 }
 
