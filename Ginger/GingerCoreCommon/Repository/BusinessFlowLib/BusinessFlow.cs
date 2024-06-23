@@ -29,6 +29,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Variables;
+using Amdocs.Ginger.CoreNET.DevelopmentTime;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.FlowControlLib;
@@ -37,14 +38,17 @@ using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.CodeAnalysis;
+using System.Diagnostics;
+using Ginger.Run;
 namespace GingerCore
 {
-    public class BusinessFlow : RepositoryItemBase
+    public class BusinessFlow : RepositoryItemBase,IDevelopmentTimeTracker
     {
-
+        private readonly Stopwatch _stopwatch = new();
         public BusinessFlow()
         {
             AllowAutoSave = true;
+            this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
 
         public BusinessFlow(string sName)
@@ -61,6 +65,15 @@ namespace GingerCore
             Activities.CurrentItem = a;
             CurrentActivity = a;
             AllowAutoSave = true;
+            this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
+        }
+
+        private void BusinessFlow_OnDirtyStatusChanged(object sender, EventArgs e)
+        {
+            if(DirtyStatus == eDirtyStatus.Modified)
+            {
+                StartTimer();
+            }
         }
 
         public override string ToString()
@@ -104,6 +117,40 @@ namespace GingerCore
 
         public List<string> VariablesBeforeExec { get; set; }
 
+        private TimeSpan mDevelopmentTime;
+        [IsSerializedForLocalRepository]
+        public TimeSpan DevelopmentTime
+        {
+            get
+            {
+                StopTimer();
+                return mDevelopmentTime;
+            }
+        }
+
+        public void StartTimer()
+        {
+            if (!_stopwatch.IsRunning)
+            {
+                _stopwatch.Start();
+            }
+            else
+            {
+                _stopwatch.Restart();
+            }
+        }
+
+        public void StopTimer()
+        {
+            if (_stopwatch.IsRunning)
+            {
+                _stopwatch.Stop();
+                TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
+                mDevelopmentTime = mDevelopmentTime.Add(elapsedTime);
+                elapsedTime = TimeSpan.Zero;
+                _stopwatch.Reset();
+            }
+        }
 
         // Why here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public List<string> SolutionVariablesBeforeExec { get; set; }

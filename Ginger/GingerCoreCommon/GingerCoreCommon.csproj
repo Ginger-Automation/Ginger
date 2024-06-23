@@ -53,6 +53,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="GingerCoreNET">
+      <HintPath>..\GingerCoreNET\bin\Debug\net8.0\GingerCoreNET.dll</HintPath>
+    </Reference>
     <Reference Include="LiteDB">
       <HintPath>..\..\..\..\..\.nuget\packages\litedb\4.1.4\lib\net40\LiteDB.dll</HintPath>
     </Reference>
