@@ -44,10 +44,11 @@ namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase,IDevelopmentTimeTracker
     {
-        private readonly Stopwatch _stopwatch = new();
+        private readonly Stopwatch _stopwatch;
         public BusinessFlow()
         {
             AllowAutoSave = true;
+            _stopwatch = new Stopwatch();
             this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
 
@@ -65,6 +66,8 @@ namespace GingerCore
             Activities.CurrentItem = a;
             CurrentActivity = a;
             AllowAutoSave = true;
+            _stopwatch = new Stopwatch();
+
             this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
 
@@ -127,7 +130,7 @@ namespace GingerCore
                 return mDevelopmentTime;
             }
         }
-
+      
         public void StartTimer()
         {
             if (!_stopwatch.IsRunning)
@@ -147,7 +150,6 @@ namespace GingerCore
                 _stopwatch.Stop();
                 TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
                 mDevelopmentTime = mDevelopmentTime.Add(elapsedTime);
-                elapsedTime = TimeSpan.Zero;
                 _stopwatch.Reset();
             }
         }
