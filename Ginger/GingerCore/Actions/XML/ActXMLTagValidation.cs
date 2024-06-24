@@ -303,7 +303,8 @@ namespace GingerCore.Actions.XML
 
             try
             {
-                return xmlReqDoc.SelectSingleNode(valueCalculated, nameSpaceManager);
+                return xmlReqDoc.SelectSingleNode(valueCalculated, nameSpaceManager)
+                    ?? xmlReqDoc.SelectSingleNode(valueCalculatedBackup, nameSpaceManager);
             }
             catch (Exception)
             {
