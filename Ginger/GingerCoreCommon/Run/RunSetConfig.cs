@@ -52,10 +52,6 @@ namespace Ginger.Run
                 }
             }
         }
-        /// <summary>
-        /// List of all the agents and the Virtual ones mapped during run 
-        /// </summary>
-        public List<IAgent> ActiveAgentList = new List<IAgent>();
 
         /// <summary>
         /// List of all the agents and the Virtual ones mapped during run with runner guid
