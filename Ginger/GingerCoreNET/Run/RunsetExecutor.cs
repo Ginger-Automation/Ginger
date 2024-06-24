@@ -923,7 +923,7 @@ namespace Ginger.Run
                         {
                             var virtualAgent = (Agent)appAgents[i].Agent;
 
-                            var realAgent = runset.ActiveAgentListWithRunner.Select(y => y.Value).FirstOrDefault(x => ((Agent)x).Guid.Equals(virtualAgent.ParentGuid));
+                            var realAgent = runset.ActiveAgentListWithRunner.TryGetValue(virtualAgent.ParentGuid, out IAgent foundAgent) ? foundAgent : null;
 
                             if (realAgent != null)
                             {
@@ -932,12 +932,11 @@ namespace Ginger.Run
 
                                 if (runsetVirtualAgent != null)
                                 {
-                                    foreach (KeyValuePair<Guid, IAgent> kvp in runset.ActiveAgentListWithRunner)
-                                    {
-                                        if (((Agent)runsetVirtualAgent).Guid.Equals( ((Agent)kvp.Value).Guid))
-                                            runset.ActiveAgentListWithRunner.Remove(kvp.Key);
-                                    }
+                                    runset.ActiveAgentListWithRunner = runset.ActiveAgentListWithRunner
+                                             .Where(kvp => !((Agent)runsetVirtualAgent).Guid.Equals(((Agent)kvp.Value).Guid))
+                                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                                 }
+
                             }
                         }
                     }
