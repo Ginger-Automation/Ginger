@@ -33,17 +33,17 @@ using System.Reflection;
 namespace GingerCore.Actions
 {
     //This class is for UI link element
-    public class ActNewSmartSync : Act, IActPluginExecution
+    public class ActWebSmartSync : Act, IActPluginExecution
     {
-        public override string ActionDescription { get { return "New Smart Sync Action"; } }
-        public override string ActionUserDescription { get { return "New Smart Sync"; } }
+        public override string ActionDescription { get { return "Web Smart Sync Action"; } }
+        public override string ActionUserDescription { get { return "Web Smart Sync"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action in case you need to automate smart sync.");
+            TBH.AddText("The following operations are commonly used in automated web testing, especially with tools like Selenium WebDriver. These operations help ensure that certain conditions are met before moving on to the next step in a test script. Here’s a brief explanation of each one:\r\n1.  ElementIsVisible: Verifies if an element is present on both the webpage’s structure (DOM) and visible to the user.\r\n2.  ElementExists: Checks if an element exists on the webpage, regardless of whether it is visible.\r\n3.  AlertIsPresent: Waits until an alert message pops up on the webpage.\r\n4.  ElementIsSelected: Confirms if a form element like a checkbox or radio button is currently selected.\r\n5.  PageHasBeenLoaded: Ensures that the entire webpage has been loaded and is ready for interaction.\r\n6.  ElementToBeClickable: Waits until an element is both visible and enabled, indicating that it can be clicked.\r\n7.  TextMatches: Waits until the text of an element matches a specified pattern. Input Text is case-sensitive and does the contains search.\r\n8.  AttributeMatches: Waits until a specific attribute of an element matches a specified pattern.\r\n9.  EnabilityOfAllElementsLocatedBy: Checks if all the elements found by a given locator are enabled and can be interacted.\r\n10.  FrameToBeAvailableAndSwitchToIt: Waits until a frame is available to switch to and then switches to it.\r\n11.  InvisibilityOfAllElementsLocatedBy: Waits until all the elements found by a given locator are invisible or not present.\r\n12.  InvisibilityOfElementLocated: Waits until a specific element is no longer visible or not present.\r\n13.  PresenceOfAllElementsLocatedBy: Ensures that all the elements found by a given locator are present in the webpage’s structure (DOM).\r\n14.  SelectedOfAllElementsLocatedBy: Ensures that all the elements found by a given locator are selected.\r\n15.  UrlMatches: Waits until the URL of the current page matches a specified pattern.\r\n16.  VisibilityOfAllElementsLocatedBy: Ensures that all the elements found by a given locator are visible on the webpage.\r\n");
         }
 
-        public override string ActionEditPage { get { return "ActNewSmartSyncEditPage"; } }
+        public override string ActionEditPage { get { return "ActWebSmartSyncEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return false; } }
 
@@ -125,23 +125,6 @@ namespace GingerCore.Actions
         }
 
 
-
-        public int? WaitTime
-        {
-            get
-            {
-
-
-                int i;
-                return int.TryParse(GetOrCreateInputParam(nameof(WaitTime)).Value, out i) ? i : (int?)null;
-
-            }
-            set
-            {
-                GetOrCreateInputParam(nameof(WaitTime)).Value = value.ToString();
-            }
-        }
-
         public string AttributeValue
         {
             get
@@ -195,20 +178,20 @@ namespace GingerCore.Actions
      
         public override String ToString()
         {
-            return "NewSmartSync: " + GetInputParamValue("Value");
+            return "WebSmartSync: " + GetInputParamValue("Value");
         }
 
 
         public string GetName()
         {
-            return "NewSmartSyncAction";
+            return "WebSmartSyncAction";
         }
 
         public override String ActionType
         {
             get
             {
-                return "NewSmartSync: " + SyncOperations.ToString();
+                return "WebSmartSync: " + SyncOperations.ToString();
             }
         }
         public override eImageType Image { get { return eImageType.Refresh; } }

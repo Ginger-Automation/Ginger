@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions
 {
-    public sealed class NotFoundException : Exception
+    public sealed class EntityNotFoundException : Exception
     {
-        public NotFoundException(string message) : base(message) { }
+        public EntityNotFoundException(string message) : base(message) { }
     }
 }

@@ -19,6 +19,7 @@ limitations under the License.
 using AlmDataContractsStd.Enums;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM.JIRA;
 using Ginger.ALM.JIRA.TreeViewItems;
@@ -130,76 +131,120 @@ namespace Ginger.ALM.Repository
 
         public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
-            bool result = false;
-            string responseStr = string.Empty;
-
-            if (businessFlow != null)
+            if (businessFlow == null)
             {
-                if (businessFlow.ActivitiesGroups.Count == 0)
+                return false;
+            }
+
+            if (businessFlow.ActivitiesGroups.Count == 0 && almConectStyle != eALMConnectType.Silence)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"The {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} do not include {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups)} which supposed to be mapped to ALM Test Cases, please add at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} before doing export.");
+                Reporter.ToLog(eLogLevel.ERROR, $"The {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} do not include {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups)} which supposed to be mapped to ALM Test Cases, please add at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} before doing export.");
+                return false;
+            }
+
+            JiraTestSet matchingTS = null;
+
+            string responseStr = string.Empty;
+            eUserMsgSelection userSelec;
+            if (!String.IsNullOrEmpty(businessFlow.ExternalID))
+            {
+                matchingTS = ((JiraCore)ALMIntegration.Instance.AlmCore).GetJiraTestSetData(new JiraTestSet { Key = businessFlow.ExternalID });
+                if (matchingTS != null && almConectStyle != eALMConnectType.Silence)
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
-                    return false;
+                    //ask user if want to continute
+                    userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
+                    if (userSelec == eUserMsgSelection.Cancel)
+                    {
+                        return false;
+                    }
+                    else if (userSelec == eUserMsgSelection.No)
+                    {
+                        businessFlow.ExternalID = null;
+                        foreach (var item in businessFlow.ActivitiesGroups)
+                        {
+                            item.ExternalID = null;
+                        }
+                        return ExportBFToALMXtended(businessFlow,performSaveAfterExport,almConectStyle);
+                    }
+                    else
+                    {
+                        return ExportBFToALMXtended(businessFlow, performSaveAfterExport, almConectStyle);
+                    }
                 }
                 else
                 {
-                    ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
-                    ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
-                    var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString()) && (a.ToUpdate || a.Mandatory));
-                    var testSetFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_SET.ToString()) && (a.ToUpdate || a.Mandatory));
-                    var testExecutionFields = allFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory));
-                    Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
-                    bool exportRes = false;
-                    switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
-                    {
-                        case eTestingALMType.Xray:
-                            exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
-                            break;
-                        case eTestingALMType.Zephyr:
-                            JiraZephyrTreeItem zephyrExportPath = SelectZephyrExportPath();
-                            if (zephyrExportPath == null)
-                            {
-                                return true;
-                            }
-                            if (zephyrExportPath is JiraZephyrVersionTreeItem)
-                            {
-                                exportRes = ((JiraCore)this.AlmCore).ExportBfToZephyr(businessFlow, testCaseFields, testSetFields,
-                                                                                        testExecutionFields, ref responseStr,
-                                                                                        ((JiraZephyrVersionTreeItem)zephyrExportPath).VersionId.ToString(), string.Empty);
-                            }
-                            else if (zephyrExportPath is JiraZephyrCycleTreeItem)
-                            {
-                                exportRes = ((JiraCore)this.AlmCore).ExportBfToZephyr(businessFlow, testCaseFields, testSetFields,
-                                                                                        testExecutionFields, ref responseStr,
-                                                                                        ((JiraZephyrCycleTreeItem)zephyrExportPath).VersionId.ToString(),
-                                                                                        ((JiraZephyrCycleTreeItem)zephyrExportPath).Id.ToString());
-                            }
-                            break;
-                        default:
-                            exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
-                            break;
-                    }
+                    return false;
+                }
+            }
+            else
+            {
+                return ExportBFToALMXtended(businessFlow, performSaveAfterExport, almConectStyle);
+            }
+        }
 
-                    if (exportRes)
+        public bool ExportBFToALMXtended(BusinessFlow businessFlow, bool performSaveAfterExport, eALMConnectType almConectStyle = eALMConnectType.Manual)
+        {
+            bool result = false;
+            string responseStr = string.Empty;
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+            ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
+            var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString()) && (a.ToUpdate || a.Mandatory));
+            var testSetFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_SET.ToString()) && (a.ToUpdate || a.Mandatory));
+            var testExecutionFields = allFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory));
+            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
+            bool exportRes = false;
+            switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
+            {
+                case eTestingALMType.Xray:
+                    exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
+                    break;
+                case eTestingALMType.Zephyr:
+                    JiraZephyrTreeItem zephyrExportPath = SelectZephyrExportPath();
+                    if (zephyrExportPath == null)
                     {
-                        if (performSaveAfterExport)
-                        {
-                            Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
-                            Reporter.HideStatusMessage();
-                        }
-                        if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
-                        {
-                            Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
-                        }
                         return true;
                     }
-                    else if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+                    if (zephyrExportPath is JiraZephyrVersionTreeItem)
                     {
-                        Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, responseStr);
+                        exportRes = ((JiraCore)this.AlmCore).ExportBfToZephyr(businessFlow, testCaseFields, testSetFields,
+                                                                                testExecutionFields, ref responseStr,
+                                                                                ((JiraZephyrVersionTreeItem)zephyrExportPath).VersionId.ToString(), string.Empty);
                     }
-                }
-                Reporter.HideStatusMessage();
+                    else if (zephyrExportPath is JiraZephyrCycleTreeItem)
+                    {
+                        exportRes = ((JiraCore)this.AlmCore).ExportBfToZephyr(businessFlow, testCaseFields, testSetFields,
+                                                                                testExecutionFields, ref responseStr,
+                                                                                ((JiraZephyrCycleTreeItem)zephyrExportPath).VersionId.ToString(),
+                                                                                ((JiraZephyrCycleTreeItem)zephyrExportPath).Id.ToString());
+                    }
+                    break;
+                default:
+                    exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
+                    break;
             }
+
+            if (exportRes)
+            {
+                if (performSaveAfterExport)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
+                    Reporter.HideStatusMessage();
+                }
+                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+                {
+                    Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
+                }
+                return true;
+            }
+            else if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+            {
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, responseStr);
+            }
+
+            Reporter.HideStatusMessage();
+
             return result;
         }
 
@@ -498,21 +543,30 @@ namespace Ginger.ALM.Repository
 
         public override bool LoadALMConfigurations()
         {
-            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
+            try
             {
-                DefaultExt = "*.zip",
-                Filter = "zip Files (*.zip)|*.zip",
-                Title = "Select Jira Configuration Zip File"
-            }, false) is string fileName)
-            {
-                if (!GingerCore.General.LoadALMSettings(fileName, eALMType.Jira))
+                if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
                 {
-                    return false;
-                }
+                    DefaultExt = "*.zip",
+                    Filter = "zip Files (*.zip)|*.zip",
+                    Title = "Select Jira Configuration Zip File"
+                }, false) is string fileName)
+                {
+                    if (!GingerCore.General.LoadALMSettings(fileName, eALMType.Jira))
+                    {
+                        return false;
+                    }
                 ((JiraCore)ALMIntegration.Instance.AlmCore).CreateJiraRepository();
-                ALMIntegration.Instance.SetALMCoreConfigurations(eALMType.Jira);
+                    ALMIntegration.Instance.SetALMCoreConfigurations(eALMType.Jira);
+                }
+                return true; //Browse Dialog Canceled
             }
-            return true; //Browse Dialog Canceled
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Error in loading ALM configurations",ex.InnerException);
+                return false;
+            }
+            
         }
 
         public override string SelectALMTestLabPath()

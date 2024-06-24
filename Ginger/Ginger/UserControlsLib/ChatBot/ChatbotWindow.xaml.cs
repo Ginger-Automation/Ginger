@@ -14,22 +14,41 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using NJsonSchema.Infrastructure;
+using Ginger.Configurations;
 
 namespace Amdocs.Ginger.UserControls
 {
     public partial class ChatbotWindow : UserControl
     {
+        bool IsAskLisaConfigChanged = false;
         GenAIServiceHelper genAIServiceHelper;
         static List<(string, string)> messages = [];
         public ChatbotWindow()
         {
             InitializeComponent();
-            genAIServiceHelper = new GenAIServiceHelper();
             xProfileImageImgBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/Lisa.jpg", UriKind.RelativeOrAbsolute));
-            //string introMessage = "Hello I'm Lisa, the Ginger AI Assistent. How can i help you today?";
-            // AddMessage("Lisa", introMessage, false);
+
+
+            WorkSpace.Instance.PropertyChanged += Instance_PropertyChanged;
         }
 
+        private void Instance_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(WorkSpace.SolutionLoaded))
+            {
+                if (WorkSpace.Instance.SolutionLoaded)
+                {
+                    WorkSpace.Instance.Solution.AskLisaConfiguration.PropertyChanged += AskLisaConfiguration_PropertyChanged;
+
+                }
+            }
+        }
+
+        private void AskLisaConfiguration_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            IsAskLisaConfigChanged = true;
+        }
 
         private string GetUserName()
         {
@@ -70,9 +89,12 @@ namespace Amdocs.Ginger.UserControls
             ShowLoader();
             try
             {
-                //need to handle as we are getting token everytime
-
-                
+                if (genAIServiceHelper == null || IsAskLisaConfigChanged)
+                {
+                    genAIServiceHelper = new GenAIServiceHelper();
+                    await genAIServiceHelper.InitClient();
+                    IsAskLisaConfigChanged = false;
+                }
 
                 if (chatPanel.Children.Count == 1)
                 {
