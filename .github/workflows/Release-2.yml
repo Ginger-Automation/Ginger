@@ -91,28 +91,28 @@ jobs:
                     rename docs Library
                     rmdir /s /q Ginger-Web-Help
                     
-            -   name: Set up certificate
-                shell: cmd
-                run: |
-                 echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > D:\a\Certificate_pkcs12.p12
-                 cat  D:\a\Certificate_pkcs12.p12
+            #-   name: Set up certificate
+               # shell: cmd
+               # run: |
+                # echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > D:\a\Certificate_pkcs12.p12
+                # cat  D:\a\Certificate_pkcs12.p12
                 
-            -   name: Set variables 
-                id: variables 
-                run: | 
-                 echo "::set-output name=version::${GITHUB_REF#refs/tags/v}" 
-                 echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV" 
-                 echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV" 
-                 echo "SM_CLIENT_CERT_FILE=D:\\a\\Certificate_pkcs12.p12" >> "$GITHUB_ENV" 
-                 echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
-                 echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
-                 echo "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools" >> $GITHUB_PATH
-                shell: bash
+            #-   name: Set variables 
+               # id: variables 
+                 #run: | 
+                 #echo "::set-output name=version::${GITHUB_REF#refs/tags/v}" 
+                 #echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV" 
+                 #echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV" 
+                 #echo "SM_CLIENT_CERT_FILE=D:\\a\\Certificate_pkcs12.p12" >> "$GITHUB_ENV" 
+                 #echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
+                 #echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
+                 #echo "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools" >> $GITHUB_PATH
+                #shell: bash
                 
-            -   name: Get API key from GitHub secrets and save to     environment variables
-                id: variables1
-                run: |
-                 echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
+            #-   name: Get API key from GitHub secrets and save to     environment variables
+               # id: variables1
+                #run: |
+                 #echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
             
            # -   name: Code signing with Software Trust Manager
             #    uses: digicert/ssm-code-signing@v0.0.2
@@ -120,19 +120,19 @@ jobs:
             
             
     
-            -   name: Setup SSM KSP on windows latest 
-                run: | 
-                 curl -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:%SM_API_KEY%" -o smtools-windows-x64.msi 
-                    msiexec /i smtools-windows-x64.msi /quiet /qn 
-                    smksp_registrar.exe list 
-                    smctl.exe keypair ls 
-                    C:\Windows\System32\certutil.exe -csp "DigiCert Signing Manager KSP" -key -user 
-                    smksp_cert_sync.exe
-                shell: cmd 
+            #-   name: Setup SSM KSP on windows latest 
+             #   run: | 
+                 #curl -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:%SM_API_KEY%" -o smtools-windows-x64.msi 
+                   # msiexec /i smtools-windows-x64.msi /quiet /qn 
+                    #smksp_registrar.exe list 
+                   # smctl.exe keypair ls 
+                    #C:\Windows\System32\certutil.exe -csp "DigiCert Signing Manager KSP" -key -user 
+                    #smksp_cert_sync.exe
+                #shell: cmd 
                 
              # uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
-            -   name: Windows signtool.exe code sign action
-                uses: skymatic/code-sign-action@v3.0.0
+            #-   name: Windows signtool.exe code sign action
+              #  uses: skymatic/code-sign-action@v3.0.0
             
                 
             
@@ -141,11 +141,11 @@ jobs:
              #       nadeemjazmawe/Sign-action-signtool.exe@v0.1
             #    shell: cmd
               
-            -  name: Certificates Sync       
-               run: |
-                   smctl windows certsync
-                   smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
-               shell: cmd
+            #-  name: Certificates Sync       
+              # run: |
+                #   smctl windows certsync
+                #   smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
+               # shell: cmd
             #-   name: Signing using Signtool 
             #    run: | 
             #        signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 
@@ -167,17 +167,17 @@ jobs:
                 # mkdir D:\a\Installers\Ginger.exe
                # shell: cmd
                 
-            -   name: Signing using Signtool 
-                run: | 
+            #-   name: Signing using Signtool 
+                #run: | 
                   # smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
-                    signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v "D:\a\Installers\Ginger.exe" 
+                   # signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v "D:\a\Installers\Ginger.exe" 
              #smctl sign --keypair-alias ${{ secrets.KEYPAIR_ALIAS }} --input "D:\a\Installers\Ginger.exe" -v
              # smctl sign --input "D:\a\Installers\Ginger.exe"
             
-            -   name: Signtool verify
-                run: |
-                    signtool verify /v /pa "D:\a\Installers\Ginger.exe"
-                shell: cmd
+           # -   name: Signtool verify
+            #    run: |
+              #      signtool verify /v /pa "D:\a\Installers\Ginger.exe"
+                # shell: cmd
                 
                # shell: cmd- name: Signtool verify
                 #run: |
