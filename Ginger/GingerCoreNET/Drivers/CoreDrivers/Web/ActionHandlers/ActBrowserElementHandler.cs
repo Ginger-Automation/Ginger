@@ -62,72 +62,71 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _context = context;
         }
 
-        internal Task HandleAsync()
+        internal async Task HandleAsync()
         {
-            Task operationTask = Task.CompletedTask;
             try
             {
                 switch (_act.ControlAction)
                 {
                     case ActBrowserElement.eControlAction.GotoURL:
-                        operationTask = HandleGotoUrlOperationAsync();
+                        await HandleGotoUrlOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.OpenURLNewTab:
-                        operationTask = HandleOpenUrlInNewTabOperationAsync();
+                        await HandleOpenUrlInNewTabOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.GetPageURL:
-                        operationTask = HandleGetPageUrlOperationAsync();
+                        await HandleGetPageUrlOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.GetWindowTitle:
-                        operationTask = HandleGetWindowTitleOperationAsync();
+                        await HandleGetWindowTitleOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.NavigateBack:
-                        operationTask = HandleNavigateBackOperationAsync();
+                        await HandleNavigateBackOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.Refresh:
-                        operationTask = HandleRefreshOperationAsync();
+                        await HandleRefreshOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.DeleteAllCookies:
-                        operationTask = HandleDeleteAllCookiesOperationAsync();
+                        await HandleDeleteAllCookiesOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.RunJavaScript:
-                        operationTask = HandleRunJavascriptionOperationAsync();
+                        await HandleRunJavascriptionOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.GetPageSource:
-                        operationTask = HandleGetPageSourceOperationAsync();
+                        await HandleGetPageSourceOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.Close:
-                        operationTask = HandleCloseOperationAsync();
+                        await HandleCloseOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.CloseTabExcept:
-                        operationTask = HandleCloseTabExceptOperationAsync();
+                        await HandleCloseTabExceptOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.CloseAll:
-                        operationTask = HandleCloseAllOperationAsync();
+                        await HandleCloseAllOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.CheckPageLoaded:
-                        operationTask = HandleCheckPageLoadedOperationAsync();
+                        await HandleCheckPageLoadedOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.GetConsoleLog:
-                        operationTask = HandleGetConsoleLogOperationAsync();
+                        await HandleGetConsoleLogOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.GetBrowserLog:
-                        operationTask = HandleGetBrowserLogOperationAsync();
+                        await HandleGetBrowserLogOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.SwitchFrame:
-                        operationTask = HandleSwitchFrameOperationAsync();
+                        await HandleSwitchFrameOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.SwitchToDefaultFrame:
-                        operationTask = HandleSwitchToDefaultFrameOperationAsync();
+                        await HandleSwitchToDefaultFrameOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.SwitchToParentFrame:
-                        operationTask = HandleSwitchToParentFrameOperationAsync();
+                        await HandleSwitchToParentFrameOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.SwitchWindow:
-                        operationTask = HandleSwitchWindowOperationAsync();
+                        await HandleSwitchWindowOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.SwitchToDefaultWindow:
-                        operationTask = HandleSwitchToDefaultWindowOperationAsync();
+                        await HandleSwitchToDefaultWindowOperationAsync();
                         break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), _act.ControlAction);
@@ -139,8 +138,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             {
                 _act.Error = ex.Message;
             }
-
-            return operationTask;
         }
 
         private async Task HandleGotoUrlOperationAsync()

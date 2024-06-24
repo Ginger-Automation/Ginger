@@ -126,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     actBrowserElementHandler.HandleAsync().Wait();
                     break;
                 case ActUIElement actUIElement:
-                    ActUIElementHandler actUIElementHandler = new(actUIElement, _browser!);
+                    ActUIElementHandler actUIElementHandler = new(actUIElement, _browser!, BusinessFlow, Environment);
                     actUIElementHandler.HandleAsync().Wait();
                     break;
                 case ActScreenShot actScreenShot:
