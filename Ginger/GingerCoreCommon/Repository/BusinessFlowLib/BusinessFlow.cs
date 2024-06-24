@@ -29,7 +29,6 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Variables;
-using Amdocs.Ginger.CoreNET.DevelopmentTime;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.FlowControlLib;
@@ -42,7 +41,7 @@ using System.Diagnostics;
 using Ginger.Run;
 namespace GingerCore
 {
-    public class BusinessFlow : RepositoryItemBase,IDevelopmentTimeTracker
+    public class BusinessFlow : RepositoryItemBase
     {
         private readonly Stopwatch _stopwatch;
         public BusinessFlow()
