@@ -43,6 +43,8 @@ using GingerCoreNET.Drivers.CommonLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
 using InputSimulatorStandard;
+using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.HBase.Client.Internal;
 using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json;
 using OfficeOpenXml.FormulaParsing.ExpressionGraph.FunctionCompilers;
@@ -120,7 +122,7 @@ namespace GingerCore.Drivers
             }
 
             DriverConfigParam browserTypeParam = driverConfigParams.FirstOrDefault(param => string.Equals(param.Parameter, nameof(BrowserType)));
-            
+
             if (browserTypeParam == null || !Enum.TryParse(browserTypeParam.Value, out WebBrowserType browserType))
             {
                 return null;
@@ -456,7 +458,7 @@ namespace GingerCore.Drivers
                 RemoteBrowserName = agent.GetParamValue(SeleniumDriver.RemoteBrowserNameParam);
                 RemotePlatform = agent.GetParamValue(SeleniumDriver.RemotePlatformParam);
                 RemoteVersion = agent.GetParamValue(SeleniumDriver.RemoteVersionParam);
-                if(WorkSpace.Instance.BetaFeatures.ShowHealenium)
+                if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
                 {
                     IsHealenium = agent.Healenium;
                     HealeniumUrl = agent.HealeniumURL;
@@ -497,7 +499,7 @@ namespace GingerCore.Drivers
             //Add localhost to no proxy so that driver service can be started with proxy
             //System.Environment.SetEnvironmentVariable("NO_PROXY", @"http://localhost");
 
-           
+
 
             if (StartBMP)
             {
@@ -548,7 +550,7 @@ namespace GingerCore.Drivers
                 ImplicitWait = 30;
             }
 
-            
+
             if (!string.IsNullOrEmpty(SeleniumUserArguments))
             {
                 SeleniumUserArgs = SeleniumUserArguments.Split(';');
@@ -608,7 +610,7 @@ namespace GingerCore.Drivers
                         Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
                     #endregion
-                   
+
                     #region Mozilla Firefox
                     case eBrowserType.FireFox:
 
@@ -660,23 +662,27 @@ namespace GingerCore.Drivers
                     #endregion
 
                     #region Brave
-                        //checking the windows 32 and 64 bit version exists or not. if not then user can provide the path mannually.
+                    //checking the windows 32 and 64 bit version exists or not. if not then user can provide the path mannually.
                     case eBrowserType.Brave:
                         ChromeOptions brave_options = new ChromeOptions();
-                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath)) { 
+                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath))
+                        {
 
-                             brave_options.BinaryLocation = BrowserExecutablePath;
-                         }
-                         else if (File.Exists(BRAVE_64BIT_BINARY_PATH)) {
-                             brave_options.BinaryLocation = BRAVE_64BIT_BINARY_PATH;
-                         }
-                         else if (File.Exists(BRAVE_32BIT_BINARY_PATH)) {
-                             brave_options.BinaryLocation = BRAVE_32BIT_BINARY_PATH;
-                         }
-                         else { 
-                         throw new Exception("Brave browser valid executable path required!");
+                            brave_options.BinaryLocation = BrowserExecutablePath;
+                        }
+                        else if (File.Exists(BRAVE_64BIT_BINARY_PATH))
+                        {
+                            brave_options.BinaryLocation = BRAVE_64BIT_BINARY_PATH;
+                        }
+                        else if (File.Exists(BRAVE_32BIT_BINARY_PATH))
+                        {
+                            brave_options.BinaryLocation = BRAVE_32BIT_BINARY_PATH;
+                        }
+                        else
+                        {
+                            throw new Exception("Brave browser valid executable path required!");
 
-                         }
+                        }
                         configChromeDriverAndStart(brave_options);
 
                         break;
@@ -781,7 +787,7 @@ namespace GingerCore.Drivers
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), ieoptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             }
-                            else if(WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
+                            else if (WorkSpace.Instance.BetaFeatures.ShowHealenium && IsHealenium)
                             {
                                 Driver = new RemoteWebDriver(new Uri(HealeniumUrl), ieoptions.ToCapabilities());
                             }
@@ -939,7 +945,7 @@ namespace GingerCore.Drivers
         //created common method for Chrome and Brave browser because both support ChromeDriver
         private void configChromeDriverAndStart(ChromeOptions options)
         {
-           
+
             options.AddArgument("--start-maximized");
             SetCurrentPageLoadStrategy(options);
             SetBrowserLogLevel(options);
@@ -1024,7 +1030,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                
+
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && ex.Message.ToLower().Contains("no such file or directory"))
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Chrome binary isn't found at default location, checking for Chromium...");
@@ -1226,7 +1232,7 @@ namespace GingerCore.Drivers
             }
 
             var proxy = new Proxy();
-            
+
 
             options.Proxy = proxy;
 
@@ -1241,7 +1247,7 @@ namespace GingerCore.Drivers
                     {
                         options.Proxy.AddBypassAddresses(AddByPassAddress());
                     }
-                    
+
                     //TODO: GETTING ERROR LAUNCHING BROWSER 
                     // options.Proxy.SocksProxy = mProxy.SocksProxy;
                     break;
@@ -1559,7 +1565,7 @@ namespace GingerCore.Drivers
                 try
                 {
                     //it's wait until all page gets load 
-                    if (act is not ActWebSmartSync { SyncOperations : ActWebSmartSync.eSyncOperation.PageHasBeenLoaded })
+                    if (act is not ActWebSmartSync { SyncOperations: ActWebSmartSync.eSyncOperation.PageHasBeenLoaded })
                     {
                         _ = Driver.Title;//just to make sure window attributes do not throw exception
                     }
@@ -2168,44 +2174,93 @@ namespace GingerCore.Drivers
             }
         }
 
+        /// <summary>
+        /// Handles the synchronization of web elements using various synchronization operations.
+        /// </summary>
+        /// <param name="act">The ActWebSmartSync object containing the synchronization details.</param>
         public void WebSmartSyncHandler(ActWebSmartSync act)
         {
             By elementLocator = null;
             if (act.SyncOperations != ActWebSmartSync.eSyncOperation.AlertIsPresent && act.SyncOperations != ActWebSmartSync.eSyncOperation.PageHasBeenLoaded && act.SyncOperations != ActWebSmartSync.eSyncOperation.UrlMatches)
             {
-                switch (act.LocateBy)
+                eLocateBy locateBy = act.ElementLocateBy;
+                string locateValue = act.ElementLocateValueForDriver;
+
+                if (act.ElementLocateBy == eLocateBy.POMElement)
+                {
+                    POMExecutionUtils pomExcutionUtil = new(act, act.ElementLocateValue);
+                    if (pomExcutionUtil.GetCurrentPOM() == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Current POM not found from {nameof(POMExecutionUtils)}");
+                        act.Error = "Relevant POM not found";
+                        return;
+                    }
+
+                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                    if (currentPOMElementInfo == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"{nameof(ElementInfo)} not found for the current POM");
+                        act.Error = "Unable to find details about the POM";
+                        return;
+                    }
+
+                    ElementLocator firstLocator = currentPOMElementInfo.Locators.FirstOrDefault(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy));
+
+                    if (firstLocator == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"No active or supported locator found in the current POM");
+                        act.Error = "No active or supported  locators found in the current POM";
+                        return;
+                    }
+
+                    locateBy = firstLocator.LocateBy;
+                    locateValue = firstLocator.LocateValue;
+                }
+
+                if (String.IsNullOrEmpty(locateValue))
+                {
+                    act.Error = $"For {act.SyncOperations} operation Locate value is missing or invalid input.";
+                    Reporter.ToLog(eLogLevel.ERROR, act.Error);
+                    return;
+
+                }
+
+                switch (locateBy)
                 {
                     case eLocateBy.ByXPath:
-                        elementLocator = By.XPath(act.LocateValueCalculated);
+                    case eLocateBy.ByRelXPath:
+                        elementLocator = By.XPath(locateValue);
                         break;
                     case eLocateBy.ByID:
-                        elementLocator = By.Id(act.LocateValueCalculated);
+                        elementLocator = By.Id(locateValue);
                         break;
                     case eLocateBy.ByName:
-                        elementLocator = By.Name(act.LocateValueCalculated);
+                        elementLocator = By.Name(locateValue);
                         break;
                     case eLocateBy.ByClassName:
-                        elementLocator = By.ClassName(act.LocateValueCalculated);
+                        elementLocator = By.ClassName(locateValue);
                         break;
                     case eLocateBy.ByCSSSelector:
-                        elementLocator = By.CssSelector(act.LocateValueCalculated);
+                        elementLocator = By.CssSelector(locateValue);
                         break;
                     case eLocateBy.ByLinkText:
-                        elementLocator = By.LinkText(act.LocateValueCalculated);
+                        elementLocator = By.LinkText(locateValue);
                         break;
                     case eLocateBy.ByTagName:
-                        elementLocator = By.TagName(act.LocateValueCalculated);
+                        elementLocator = By.TagName(locateValue);
                         break;
                     default:
-                        act.Error = "Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, and ByTagName.";
+                        act.Error = "Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath and ByTagName.";
                         return;
                 }
             }
             //get time configured in flow-control, if nothing provided then use 30 seconds
             int MaxTimeout = NewSmartSyncGetMaxTimeout(act);
-            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(MaxTimeout));
+            WebDriverWait wait = new(Driver, TimeSpan.FromSeconds(MaxTimeout));
+
             //store agent's implicit wait in a variable
             int implicitWait = (int)Driver.Manage().Timeouts().ImplicitWait.TotalSeconds;
+
             //set agent's implicit wait to 1 second
             Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
 
@@ -2235,9 +2290,15 @@ namespace GingerCore.Drivers
                     case ActWebSmartSync.eSyncOperation.ElementToBeClickable:
                         wait.Until(ExpectedConditions.ElementToBeClickable(elementLocator));
                         break;
-                    case ActWebSmartSync.eSyncOperation.TextMatches:                        
+                    case ActWebSmartSync.eSyncOperation.TextMatches:
                         VE.Value = act.TxtMatchInput;
                         string textToMatch = VE.ValueCalculated;
+                        if (String.IsNullOrEmpty(textToMatch))
+                        {
+                            act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                            Reporter.ToLog(eLogLevel.ERROR, act.Error);
+                            return;
+                        }
                         wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
                         break;
                     case ActWebSmartSync.eSyncOperation.AttributeMatches:
@@ -2245,7 +2306,13 @@ namespace GingerCore.Drivers
                         string attributeName = VE.ValueCalculated;
                         VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
                         VE.Value = act.AttributeValue;
-                        string attributeValue= VE.ValueCalculated;
+                        string attributeValue = VE.ValueCalculated;
+                        if (string.IsNullOrEmpty(attributeValue) || string.IsNullOrEmpty(attributeName))
+                        {
+                            act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                            Reporter.ToLog(eLogLevel.ERROR, act.Error);
+                            return;
+                        }
                         wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
                         break;
                     case ActWebSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
@@ -2269,13 +2336,19 @@ namespace GingerCore.Drivers
                     case ActWebSmartSync.eSyncOperation.UrlMatches:
                         VE.Value = act.UrlMatches;
                         string urlMatches = VE.ValueCalculated;
+                        if (String.IsNullOrEmpty(urlMatches))
+                        {
+                            act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                            Reporter.ToLog(eLogLevel.ERROR, act.Error);
+                            return;
+                        }
                         wait.Until(ExpectedConditions.UrlMatches(urlMatches));
                         break;
                     case ActWebSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
                         wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(elementLocator));
                         break;
                     default:
-                        act.Error = "Unable to complete this operation.";
+                        act.Error = "Unsupported operation.";
                         break;
                 }
                 return;
@@ -2297,64 +2370,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        //private void Until(Func<IWebDriver, IWebDriver> condition, int timeout)
-        //{
-        //    long startTime = DateTime.Now.Ticks;
-        //    while (TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds < timeout)
-        //    {
-        //        if (condition(Driver) != null)
-        //        {
-        //            return;
-        //        }
-        //    }
-        //    throw new Exception("until timed-out");
-        //}
-
-        //public static Func<IWebDriver, IWebDriver> PageHasBeenLoaded()
-        //{
-        //    string script = @"
-        //     function getReadyState(timeout) {
-        //        return new Promise((resolve, reject) => {
-        //            const timer = setTimeout(() => {
-        //                reject('');
-        //            }, timeout);
-        
-        //            const state = document.readyState;
-        //            resolve(state);
-        //        });
-        //    }
-
-        //    try {
-        //        const state = await getReadyState(3000);
-        //        return state;
-        //    } catch (error) {
-        //        return error;
-        //    }";
-        //    return delegate (IWebDriver driver)
-        //    {
-        //        if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            return driver;
-        //        }
-
-        //        string text = ((IJavaScriptExecutor)driver).ExecuteScript(script) as string;
-        //        return text.Equals("complete", StringComparison.OrdinalIgnoreCase) ? driver : null;
-        //    };
-        //}
-
-        //public static Func<IWebDriver, IWebDriver> PageHasBeenLoaded()
-        //{
-
-        //        if (driver.GetType().Name.Contains("APPIUM", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            return driver;
-        //        }
-
-        //        string text = ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState") as string;
-        //        return text.Equals("complete", StringComparison.OrdinalIgnoreCase) ? driver : null;
-
-        //}
-
+       
         private int NewSmartSyncGetMaxTimeout(ActWebSmartSync act)
         {
             if (act.Timeout > 0)
@@ -2368,7 +2384,7 @@ namespace GingerCore.Drivers
 
         }
 
-             public void SmartSyncHandler(ActSmartSync act)
+        public void SmartSyncHandler(ActSmartSync act)
         {
             int MaxTimeout = GetMaxTimeout(act);
 
