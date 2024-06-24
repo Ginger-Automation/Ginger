@@ -50,7 +50,7 @@ namespace GingerCoreCommonTest.DevelopmentTimeTest
             Assert.AreEqual(timeNoted, businessFlow.DevelopmentTime);
         }
 
-
+        [TestMethod]
         public void CheckStopWatchTimerStartActivity()
         {
             GingerCore.Activity act = new GingerCore.Activity();
