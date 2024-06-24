@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -97,6 +98,15 @@ namespace GingerCore.Platforms.PlatformsInfo
         public virtual bool IsPlatformSupportPOM()
         {
             return false;
+        }
+
+        /// <summary>
+        /// This method is used to return possible POM elements categories per platform
+        /// </summary>
+        /// <returns></returns>
+        public virtual List<ePomElementCategory> GetPlatformPOMElementCategories()
+        {
+            return null;
         }
 
         /// <summary>

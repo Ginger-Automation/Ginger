@@ -1273,6 +1273,8 @@ namespace Ginger.WindowExplorer
                 ElementInfo inspectElementInfo = await ((IVisualTestingDriver)((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver).GetElementAtPoint(pointOnAppScreen.X, pointOnAppScreen.Y);
                 if (inspectElementInfo != null && inspectElementInfo != currentHighlightedElement)
                 {
+                    inspectElementInfo.SetLocatorsAndPropertiesCategory(((DriverBase)mWindowExplorerDriver).PomCategory);
+
                     //mark the element bounds on image
                     DrawElementRectangleAsync(inspectElementInfo);
 
