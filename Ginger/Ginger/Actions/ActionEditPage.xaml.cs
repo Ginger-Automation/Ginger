@@ -1651,7 +1651,7 @@ namespace Ginger.Actions
         {
             if (xTimeoutTextBox.Text == String.Empty || xTimeoutTextBox.Text == null)
             {
-                xTimeoutTextBox.Text = "0";
+                xTimeoutTextBox.Text = null;
                 xTimeoutTextBox.CaretIndex = 1;
             }
         }
@@ -2242,5 +2242,34 @@ namespace Ginger.Actions
                 base.IsVisibleChangedHandler(sender, e);
             }
         }
+
+        private void xTimeoutTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+
+            bool isEmptyString = string.IsNullOrEmpty(e.Text);
+            if (isEmptyString)
+            {
+                //allow
+                e.Handled = false;
+                return;
+            }
+
+            string currentText = xTimeoutTextBox.Text != null ? xTimeoutTextBox.Text : string.Empty;
+            bool isValidInteger = int.TryParse(currentText + e.Text, out _);
+            if (isValidInteger)
+            {
+                //allow
+                e.Handled = false;
+                return;
+            }
+            else
+            {
+                //don't allow
+                e.Handled = true;
+            }
+
+        }
+
+    
     }
 }
