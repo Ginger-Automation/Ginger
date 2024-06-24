@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -237,6 +238,7 @@ namespace GingerCore.Drivers
             BusinessFlow = context.BusinessFlow;
         }
 
+        public virtual ePomElementCategory? PomCategory { get; set; }
 
         #region VirtualDrivers
 

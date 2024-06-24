@@ -105,6 +105,24 @@ namespace GingerCore.Drivers.WindowsLib
         [UserConfiguredDescription("Applitool Server Url")]
         public String ApplitoolsServerUrl { get; set; }
 
+        public override ePomElementCategory? PomCategory
+        {
+            get
+            {
+                if (base.PomCategory == null)
+                {
+                    return ePomElementCategory.Windows;
+                }
+                else
+                {
+                    return base.PomCategory;
+                }
+            }
+
+            set => base.PomCategory = value;
+        }
+
+
         protected IWebDriver Driver;
 
 
@@ -1159,6 +1177,10 @@ namespace GingerCore.Drivers.WindowsLib
                         if (learnElement)
                         {
                             foundElemntInfo.IsAutoLearned = true;
+
+                            //set the POM category
+                            foundElemntInfo.SetLocatorsAndPropertiesCategory(this.PomCategory);
+
                             foundElementsList.Add(foundElemntInfo);
                         }
                     }
