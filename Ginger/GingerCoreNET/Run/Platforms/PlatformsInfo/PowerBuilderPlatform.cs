@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -93,6 +94,15 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override string GetPlatformGenericElementEditControls()
         {
             return null;
+        }
+
+        /// <summary>
+        /// This method is used to return possible POM elements categories per platform
+        /// </summary>
+        /// <returns></returns>
+        public override List<ePomElementCategory> GetPlatformPOMElementCategories()
+        {
+            return new List<ePomElementCategory> { ePomElementCategory.PowerBuilder };
         }
 
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
