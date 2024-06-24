@@ -55,7 +55,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private const string BPMNExportPath = @"~\\Documents\BPMN";
-
+        
         private BusinessFlowViewPage mBusinessFlowViewPage;
 
         private BusinessFlow mBusinessFlow { get; set; }
@@ -102,8 +102,17 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (mBusinessFlowViewPage == null)
             {
                 mBusinessFlowViewPage = new BusinessFlowViewPage(mBusinessFlow, null, General.eRIPageViewMode.Standalone);
+
+                TreeViewItem.Unselected += TreeViewItem_Unselected;
             }
             return mBusinessFlowViewPage;
+        }
+
+        private void TreeViewItem_Unselected(object sender, RoutedEventArgs e)
+        {
+            
+            mBusinessFlow.StopTimer();
+           
         }
 
         ContextMenu ITreeViewItem.Menu()
@@ -121,6 +130,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     TreeViewUtils.AddMenuItem(mContextMenu, "Automate", Automate, null, eImageType.Automate);
                 }
+
+                TreeViewItem.Unselected -= TreeViewItem_Unselected;
+                TreeViewItem.Unselected += TreeViewItem_Unselected;
+
+
 
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
                 MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion", eImageType.Convert);

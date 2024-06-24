@@ -545,6 +545,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (mActivity != null)
             {
                 PropertyChangedEventManager.RemoveHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
+                mActivity.StopTimer();
             }
             mActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
 
