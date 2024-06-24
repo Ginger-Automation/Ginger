@@ -78,6 +78,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             gridViewDef.GridColsView = new ObservableList<GridColView>();
             gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, ReadOnly = true });
             gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65, ReadOnly = true });
+            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.Category), WidthWeight = 25, ReadOnly = true });
             gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 20, ReadOnly = true });
 
             if (isDeletedElement)

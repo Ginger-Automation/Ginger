@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCoreNET.Application_Models
 {
@@ -34,6 +35,8 @@ namespace GingerCoreNET.Application_Models
 
         public string Name { get { return ElementProperty.Name; } }
         public string Value { get { return ElementProperty.Value; } }
+
+        public ePomElementCategory? Category { get { return ElementProperty.Category; } }
 
         //public string UpdatedValue { get; set; }        
 

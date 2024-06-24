@@ -63,5 +63,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task SetCheckboxAsync(bool check);
 
         public Task SetTextAsync(string text);
+
+        public Task<byte[]> ScreenshotAsync();
     }
 }

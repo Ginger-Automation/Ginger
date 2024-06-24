@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -79,6 +80,8 @@ namespace GingerCore
     // The activities can come from external like: QC TC Step, vStorm    
     public class Activity : RepositoryItemBase
     {
+        private Stopwatch _stopwatch;
+
         bool mSelectedForConversion;
         public bool SelectedForConversion
         {
@@ -127,11 +130,60 @@ namespace GingerCore
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
             Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
+            this.OnDirtyStatusChanged += Activity_OnDirtyStatusChanged;
         }
 
+        private void Activity_OnDirtyStatusChanged(object sender, EventArgs e)
+        {
+            if (DirtyStatus == eDirtyStatus.Modified)
+            {
+                StartTimer();
+            }
+        }
+
+        
         public override string ToString()
         {
             return ActivityName;
+        }
+
+        private TimeSpan mDevelopmentTime;
+        [IsSerializedForLocalRepository]
+        public TimeSpan DevelopmentTime
+        {
+            get
+            {
+                StopTimer();
+                return mDevelopmentTime;
+            }
+        }
+
+        public void StartTimer()
+        {
+            if (_stopwatch == null)
+            {
+                _stopwatch = new Stopwatch();
+            }
+
+            if (!_stopwatch.IsRunning)
+            {
+                _stopwatch.Start();
+            }
+            else
+            {
+                _stopwatch.Restart();
+            }
+        }
+
+        public void StopTimer()
+        {
+            if (_stopwatch != null && _stopwatch.IsRunning)
+            {
+                _stopwatch.Stop();
+                TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
+                mDevelopmentTime = mDevelopmentTime.Add(elapsedTime);
+                _stopwatch.Reset();
+            }
         }
 
         private bool mLinkedActive = true;

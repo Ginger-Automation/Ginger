@@ -12,12 +12,12 @@ on:
                 description: Release
                 type: number 
                 required: true
-                default: '2'
+                default: '3'
             build:
                 description: Beta
                 type: number 
                 required: true
-                default: '0'
+                default: '1'
             revision:
                 description: Alpha
                 type: number 
