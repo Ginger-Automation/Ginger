@@ -1,0 +1,55 @@
+﻿<Page x:Class="Ginger.Actions.ActWebSmartSyncEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Actions="clr-namespace:Ginger.BusinessFlowWindows"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="500"
+      Title="ActWebSmartSyncEditPage">
+
+    <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
+        <StackPanel.Resources>
+            <Thickness x:Key="ChildGap">0 9 0 9</Thickness>
+            <sys:Double x:Key="LabelWidth">150</sys:Double>
+            <sys:Double x:Key="ControlWidth">270</sys:Double>
+            <sys:Double x:Key="VEControlWidth">300</sys:Double>
+        </StackPanel.Resources>
+        <StackPanel x:Name="xLocaterPnl">
+        <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+            <Label x:Name="xLocateByLbl" Content="Locate By:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+            <ComboBox x:Name="xLocateByComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" ToolTip="How to Locate the Element on the screen" Width="{StaticResource ControlWidth}"/>
+        </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+            <Label x:Name="LocateValueLable" Content="Locate Value:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                <Frame x:Name="LocateValueEditFrame" NavigationUIVisibility="Hidden" BorderBrush="Transparent" Width="900"/>
+        </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+            <Label Content="Operation Type:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+            <ComboBox x:Name="ActionNameComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"  ToolTip="Select the action type to perform" SelectionChanged="ActionNameComboBox_SelectionChanged" Width="{StaticResource ControlWidth}"/>
+        </StackPanel>
+        <StackPanel x:Name="TxtMatch_Pnl" Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+            <Label Content="Text to Match:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+            <Actions:UCValueExpression x:Name="xTxtMatchVE"  ToolTip="Please provide the input to match the text for the specified element."  Width="{StaticResource VEControlWidth}"/>
+        </StackPanel>
+        <StackPanel  x:Name="AttributeMatches_Pnl">
+        <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+            <Label Content="Attribute Name:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+            <Actions:UCValueExpression x:Name="xAttributeNameVE"  ToolTip="Please provide the Attribute Name for the specified element." Width="{StaticResource VEControlWidth}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+            <Label Content="Attribute Value:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+            <Actions:UCValueExpression x:Name="xAttributeValueVE"   ToolTip="Please provide the Attribute Value for the specified Attribute Name." Width="{StaticResource VEControlWidth}"/>
+        </StackPanel>
+        </StackPanel>
+        <StackPanel x:Name="UrlMatches_Pnl" Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+            <Label Content="URL to Match:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+            <Actions:UCValueExpression x:Name="xUrlMatchesVE"  ToolTip="Please provide the input value based on the operation." Width="{StaticResource VEControlWidth}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+            <Label Content="Operation Description:" FontWeight="Bold" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"></Label>
+            <TextBlock x:Name="xOperationDescription" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" TextAlignment="Left"  FontSize="12" Width="{StaticResource VEControlWidth}"></TextBlock>
+        </StackPanel>
+    </StackPanel>
+</Page>

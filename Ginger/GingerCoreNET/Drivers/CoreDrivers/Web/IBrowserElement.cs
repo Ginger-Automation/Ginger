@@ -14,6 +14,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public const string SelectTagName = "select";
         public const string InputTagName = "input";
         public const string ButtonTagName = "button";
+        public const string TextAreaTagName = "textarea";
 
         public Task<string> TagNameAsync();
 
@@ -62,5 +63,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task SetCheckboxAsync(bool check);
 
         public Task SetTextAsync(string text);
+
+        public Task<byte[]> ScreenshotAsync();
     }
 }

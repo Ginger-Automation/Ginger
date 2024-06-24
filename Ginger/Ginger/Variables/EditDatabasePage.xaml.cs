@@ -21,6 +21,7 @@ namespace Ginger.Variables
         public EditDatabasePage(Database database, Context context)
         {
             this.database = database;
+            this.database.ProjEnvironment = context.Environment;
             InitializeComponent();
 
             xConnectionStringInfo.ToolTip = database.GetConnectionStringToolTip();
@@ -32,12 +33,15 @@ namespace Ginger.Variables
             xDBAccEndPoint.Init(context, database, nameof(Database.User));
             xDBAccKey.Init(context, database, nameof(Database.Pass));
             xDatabaseConnectionString.Init(context, database, nameof(Database.ConnectionString));
-
+            xDatabaseConnectionString.Row.Height = new System.Windows.GridLength(100); 
+            xDatabaseConnectionString.ValueTextBox.Height = 40;
             ((DatabaseOperations)this.database.DatabaseOperations).NameBeforeEdit = this.database.Name;
 
             BindingHandler.ObjFieldBinding(xDatabaseName, TextBox.TextProperty, database, nameof(Database.Name));
             BindingHandler.ObjFieldBinding(xDatabaseDescription, TextBox.TextProperty, database, nameof(Database.Description));
             BindingHandler.ObjFieldBinding(xKeepConnectOpen, CheckBox.IsCheckedProperty, database, nameof(Database.KeepConnectionOpen));
+            BindingHandler.ObjFieldBinding(xOracleVersion, CheckBox.IsCheckedProperty, database, nameof(Database.IsOracleVersionLow));
+
             BindingHandler.ObjFieldBinding(xDatabaseType, TextBox.TextProperty, database, nameof(Database.DBType));
 
             xDatabaseName.AddValidationRule(new DBNameValidationRule());
@@ -53,6 +57,10 @@ namespace Ginger.Variables
                 xDatabaseDetailsPanel.Visibility = System.Windows.Visibility.Visible;
                 ChangeTheTNSName();
                 ShowBrowseBtn();
+                if (database.DBType.Equals(eDBTypes.Oracle))
+                {
+                    xVersionStackPanel.Visibility = System.Windows.Visibility.Visible;
+                }
             }
 
         }
@@ -129,10 +137,8 @@ namespace Ginger.Variables
 
         private void ChangeDatabasePass(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
-                if (!EncryptionHandler.IsStringEncrypted(database.Pass))
-                {
-                    database.Pass = EncryptionHandler.EncryptwithKey(database.Pass);
-                }
+
+            database.EncryptDatabasePass();
         }
     }
 

@@ -87,6 +87,23 @@ namespace GingerCore.Drivers.MainFrame
         public int Rows = 24;
         public int Coloumn = 80;
 
+        public override ePomElementCategory? PomCategory
+        {
+            get
+            {
+                if (base.PomCategory == null)
+                {
+                    return ePomElementCategory.Mainframe;
+                }
+                else
+                {
+                    return base.PomCategory;
+                }
+            }
+
+            set => base.PomCategory = value;
+        }
+
         #endregion GingerConfigs
 
         #region GingerFunctions
@@ -734,6 +751,10 @@ namespace GingerCore.Drivers.MainFrame
                                 EI.ElementType = "High";
                             }
                         }
+
+                        //set the POM category
+                        EI.SetLocatorsAndPropertiesCategory(this.PomCategory);
+
                         Eil.Add(EI);
                     }
                 }

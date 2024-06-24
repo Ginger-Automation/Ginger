@@ -694,8 +694,5 @@ namespace Ginger
             return false;
         }
 
-        [IsSerializedForLocalRepository]
-        public AskLisaConfiguration AskLisaConfiguration { get; set; } = new();
-        
     }
 }

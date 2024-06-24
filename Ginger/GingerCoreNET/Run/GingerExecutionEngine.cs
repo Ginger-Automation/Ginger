@@ -513,10 +513,10 @@ namespace Ginger.Run
                 //Init 
                 mGingerRunner.Status = eRunStatus.Started;
                 IsRunning = true;
-                mStopRun = false;
-                SetupVirtualAgents();
+                mStopRun = false;                
                 if (doContinueRun == false)
                 {
+                    SetupVirtualAgents();
                     RunnerExecutionWatch.StartRunWatch();
                 }
                 else
@@ -830,7 +830,7 @@ namespace Ginger.Run
                                         agent.AgentOperations = agentOperations;
                                     }
                                     //logic for if need to assign virtual agent
-                                    if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Any(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)))
+                                    if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentListWithRunner.Where(entry => entry.Key != mGingerRunner.Guid).Select(y => y.Value).ToList().Where(y => y != null).Any(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)))
                                     {
                                         var virtualagent = agent.CreateCopy(true) as Agent;
                                         virtualagent.AgentOperations = new AgentOperations(virtualagent);
@@ -847,7 +847,7 @@ namespace Ginger.Run
 
                                 if (applicationAgent.Agent != null)
                                 {
-                                    runSetConfig.ActiveAgentList.Add(applicationAgent.Agent);
+                                    runSetConfig.ActiveAgentListWithRunner.Add(mGingerRunner.Guid, applicationAgent.Agent);
                                 }
 
                             }

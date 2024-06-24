@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using Applitools.Utils;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using System;
@@ -9,39 +10,24 @@ using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
-namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandlers
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 {
     internal sealed class ActUIElementHandler
     {
-        private static readonly IEnumerable<ActUIElement.eElementAction> SupportedOperations = new List<ActUIElement.eElementAction>()
+        private static readonly IEnumerable<string> SupportedInputTypesForIsValuePopulated = new List<string>()
         {
-            ActUIElement.eElementAction.Click,
-            ActUIElement.eElementAction.DoubleClick,
-            ActUIElement.eElementAction.Hover,
-            ActUIElement.eElementAction.IsVisible,
-            ActUIElement.eElementAction.IsEnabled,
-            ActUIElement.eElementAction.GetAttrValue,
-            ActUIElement.eElementAction.GetText,
-            ActUIElement.eElementAction.MouseRightClick,
-            ActUIElement.eElementAction.IsValuePopulated,
-            ActUIElement.eElementAction.GetHeight,
-            ActUIElement.eElementAction.GetWidth,
-            ActUIElement.eElementAction.GetSize,
-            ActUIElement.eElementAction.GetStyle,
-            ActUIElement.eElementAction.GetValue,
-            ActUIElement.eElementAction.GetItemCount,
-            ActUIElement.eElementAction.ScrollToElement,
-            ActUIElement.eElementAction.SetFocus,
-            ActUIElement.eElementAction.IsDisabled,
-            ActUIElement.eElementAction.Submit,
-            ActUIElement.eElementAction.MultiClicks,
-            ActUIElement.eElementAction.ClickXY,
-            ActUIElement.eElementAction.DoubleClickXY,
-            ActUIElement.eElementAction.ClearValue,
-            ActUIElement.eElementAction.Select,
-            ActUIElement.eElementAction.SelectByText,
-            ActUIElement.eElementAction.SelectByIndex,
-            ActUIElement.eElementAction.SetValue,
+            "date",
+            "datetime-local",
+            "email",
+            "month",
+            "number",
+            "password",
+            "search",
+            "tel",
+            "text",
+            "time",
+            "url",
+            "week"
         };
 
         private readonly ActUIElement _act;
@@ -51,11 +37,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
         {
             _act = act;
             _browser = browser;
-        }
-
-        public static bool IsOperationSupported(ActUIElement.eElementAction operation)
-        {
-            return SupportedOperations.Contains(operation);
         }
 
         internal Task HandleAsync()
@@ -152,6 +133,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                         break;
                 }
             }
+            catch (LocatorNotSupportedException ex)
+            {
+
+            }
             catch (Exception ex)
             {
                 _act.Error = ex.Message;
@@ -166,7 +151,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             IBrowserElement? firstElement = elements.FirstOrDefault();
             if (firstElement == null)
             {
-                throw new NotFoundException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
+                throw new EntityNotFoundException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
             }
 
             return firstElement;
@@ -248,17 +233,34 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             IBrowserElement element = await GetFirstMatchingElementAsync();
 
             string tagName = await element.TagNameAsync();
+            string value;
             if (string.Equals(tagName, IBrowserElement.SelectTagName, StringComparison.OrdinalIgnoreCase))
             {
                 string script = "element => element.options[element.selectedIndex].text";
-                string value = await element.ExecuteJavascriptAsync(script);
-                _act.AddOrUpdateReturnParamActual("Actual", value);
+                value = await element.ExecuteJavascriptAsync(script);
+            }
+            else if (string.Equals(tagName, IBrowserElement.TextAreaTagName, StringComparison.OrdinalIgnoreCase))
+            {
+                value = await element.InputValueAsync();
+            }
+            else if (string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase))
+            {
+                string typeAttrValue = await element.AttributeValueAsync(name: "type");
+                if (!SupportedInputTypesForIsValuePopulated.Any(supportedInputType => string.Equals(supportedInputType, typeAttrValue, StringComparison.OrdinalIgnoreCase)))
+                {
+                    throw new InvalidOperationException($"Operation '{nameof(ActUIElement.eElementAction.IsValuePopulated)}' is not supported for 'input' element with type '{typeAttrValue}'.");
+                }
+
+                value = await element.InputValueAsync();
             }
             else
             {
-                string value = await element.InputValueAsync();
-                _act.AddOrUpdateReturnParamActual("Actual", value);
+                throw new InvalidActionConfigurationException($"Operation '{nameof(ActUIElement.eElementAction.IsValuePopulated)}' is not supported for element type '{tagName}'.");
             }
+
+            bool containsValue = !string.IsNullOrEmpty(value);
+
+            _act.AddOrUpdateReturnParamActual("Actual", containsValue.ToString());
         }
 
         private async Task HandleGetHeightOperationAsync()
@@ -275,7 +277,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             _act.AddOrUpdateReturnParamActual("Actual", size.Width.ToString());
         }
 
-        private  async Task HandleGetSizeOperationAsync()
+        private async Task HandleGetSizeOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             Size size = await element.SizeAsync();
@@ -341,7 +343,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             bool isInputElement = string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase);
             bool isButtonElement = string.Equals(tagName, IBrowserElement.ButtonTagName, StringComparison.OrdinalIgnoreCase);
             bool isTypeSubmit = string.Equals(await element.AttributeValueAsync(name: "type"), "submit", StringComparison.OrdinalIgnoreCase);
-            
+
             if ((isInputElement || isButtonElement) && isTypeSubmit)
             {
                 await element.ClickAsync();

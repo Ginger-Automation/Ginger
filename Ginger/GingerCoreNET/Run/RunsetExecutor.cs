@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
@@ -922,16 +923,20 @@ namespace Ginger.Run
                         {
                             var virtualAgent = (Agent)appAgents[i].Agent;
 
-                            var realAgent = runset.ActiveAgentList.FirstOrDefault(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString());
+                            var realAgent = runset.ActiveAgentListWithRunner.Select(y => y.Value).FirstOrDefault(x => ((Agent)x).Guid.Equals(virtualAgent.ParentGuid));
 
                             if (realAgent != null)
                             {
-                                var runsetVirtualAgent = runset.ActiveAgentList.FirstOrDefault(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid);
+                                var runsetVirtualAgent = runset.ActiveAgentListWithRunner.Where(entry => entry.Key == runner.GingerRunner.Guid).Select(y => y.Value).ToList().FirstOrDefault(x => ((Agent)x).Guid.Equals(((Agent)virtualAgent).Guid));
                                 appAgents[i].Agent = realAgent;
 
                                 if (runsetVirtualAgent != null)
                                 {
-                                    runset.ActiveAgentList.Remove(runsetVirtualAgent);
+                                    foreach (KeyValuePair<Guid, IAgent> kvp in runset.ActiveAgentListWithRunner)
+                                    {
+                                        if (((Agent)runsetVirtualAgent).Guid.Equals( ((Agent)kvp.Value).Guid))
+                                            runset.ActiveAgentListWithRunner.Remove(kvp.Key);
+                                    }
                                 }
                             }
                         }
