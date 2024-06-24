@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.Common
     }
 
 
-    public interface ITargetFrameworkHelper
+    public interface ITargetFrameworkHelper : IScreenCapture, IScreenInfo, IBitmapOperations
     {
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList);

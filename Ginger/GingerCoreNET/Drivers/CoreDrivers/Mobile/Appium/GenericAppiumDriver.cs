@@ -175,6 +175,30 @@ namespace Amdocs.Ginger.CoreNET
             get => LoadDeviceWindow;
         }
 
+        public override ePomElementCategory? PomCategory 
+        {
+            get
+            {
+                if (AppType == eAppType.NativeHybride)
+                {
+                    switch(DevicePlatformType)
+                    {
+                        case eDevicePlatformType.iOS:
+                            return ePomElementCategory.iOS;                            
+                        case eDevicePlatformType.Android:
+                        default:
+                            return ePomElementCategory.Android;                       
+                    }
+                }
+                else
+                {
+                    return ePomElementCategory.Web;
+                }
+            }
+
+            set => base.PomCategory = value;
+        }
+
         private AppiumDriver Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
         public override bool StopProcess
@@ -276,8 +300,10 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                mSeleniumDriver.isAppiumSession = true;
                 mSeleniumDriver.StopProcess = this.StopProcess;
                 mSeleniumDriver.BusinessFlow = this.BusinessFlow;
+                mSeleniumDriver.PomCategory = this.PomCategory;
 
                 if (AppType == eAppType.Web && mDefaultURL != null)
                 {
@@ -1621,7 +1647,15 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    var detail= ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier");
+                    if (detail != null)
+                    {
+                        return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    }
+                    else
+                    {
+                        return "Package | Activity";
+                    }
                 }
                 else
                 {
@@ -1839,7 +1873,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
 
                     ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
-                    EI.IsAutoLearned = true;
+                    EI.IsAutoLearned = true;                    
 
                     if (pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
                     {
@@ -1862,12 +1896,15 @@ namespace Amdocs.Ginger.CoreNET
                         }
                     }
 
+                    //set the POM category
+                    EI.SetLocatorsAndPropertiesCategory(this.PomCategory);
+
                     if (pomSetting.filteredElementType == null ||
                         (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
-                    {
+                    {                        
                         foundElementsList.Add(EI);
                     }
-                }
+                }            
 
                 return foundElementsList.ToList();
             }
@@ -2518,7 +2555,24 @@ namespace Amdocs.Ginger.CoreNET
                 originalList.Select(e => { e.ElementStatus = ElementInfo.eElementStatus.Pending; return e; }).ToList();
                 foreach (ElementInfo EI in originalList)
                 {
-                    EI.ElementStatus = ElementInfo.eElementStatus.Pending;
+                    try
+                    {
+                        object e = LocateElementByLocators(EI.Locators);
+                        if (e != null)
+                        {
+                            EI.ElementObject = e;
+                            EI.ElementStatus = ElementInfo.eElementStatus.Passed;
+                        }
+                        else
+                        {
+                            EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                        Console.WriteLine("CollectOriginalElementsDataForDeltaCheck error: " + ex.Message);
+                    }
                 }
             }
             finally

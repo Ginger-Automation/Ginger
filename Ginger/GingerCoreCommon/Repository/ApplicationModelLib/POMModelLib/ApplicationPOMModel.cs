@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -28,8 +28,13 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Amdocs.Ginger.Repository
 {
-    public class ApplicationPOMModel : ApplicationModelBase
+    public enum ePomElementCategory
     {
+        Web, Java, Android, iOS, Windows, PowerBuilder, Mainframe
+    }
+
+    public class ApplicationPOMModel : ApplicationModelBase
+    {       
         public ApplicationPOMModel()
         {
         }

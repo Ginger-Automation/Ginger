@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions.UserControls;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -248,7 +249,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xStatusTextBlock.Foreground = (Brush)FindResource("$RunningStatusColor");
                     GingerCore.General.DoEvents();
                     mSpyElement = mWindowExplorerDriver.GetControlFromMousePosition();
-
+                                        
                     if (mSpyElement != null)
                     {
                         mWindowExplorerDriver.UnHighLightElements();
@@ -260,6 +261,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
                         mWindowExplorerDriver.HighLightElement(mSpyElement);
                         xUCElementDetails.SelectedElement = mSpyElement;
+                        mSpyElement.SetLocatorsAndPropertiesCategory(((DriverBase)mWindowExplorerDriver).PomCategory);
                         //update screenshot
                         BitmapSource source = null;
                         if (mSpyElement.ScreenShotImage != null)
