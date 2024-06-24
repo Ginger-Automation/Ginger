@@ -1116,14 +1116,7 @@ namespace Ginger.Actions
             if (a.ActionEditPage != null)
             {
                 Page actEditPage = ActionsFactory.GetActionEditPage(a, mContext);
-                if (actEditPage is IActEditPage)
-                {
-                    xActionLocatorPnl.Visibility = ((IActEditPage)actEditPage).LocatorVisibility;
-
-                    string allProperties = string.Empty;
-                    PropertyChangedEventManager.RemoveHandler(source: (IActEditPage)actEditPage, ActionEditPage_PropertyChanged, propertyName: allProperties);
-                    PropertyChangedEventManager.AddHandler(source: (IActEditPage)actEditPage, ActionEditPage_PropertyChanged, propertyName: allProperties);
-                }
+             
                 if (actEditPage != null)
                 {
                     // Load the page
@@ -1137,17 +1130,7 @@ namespace Ginger.Actions
             }
         }
 
-        private void ActionEditPage_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (string.Equals(e.PropertyName, nameof(IActEditPage.LocatorVisibility)) && sender != null)
-            {
-                Visibility locatorVisibility = ((IActEditPage)sender).LocatorVisibility;
-                if (xActionLocatorPnl.Visibility != locatorVisibility)
-                {
-                    xActionLocatorPnl.Visibility = locatorVisibility;
-                }
-            }
-        }
+    
 
         //private void NextActionButton_Click(object sender, RoutedEventArgs e)
         //{
