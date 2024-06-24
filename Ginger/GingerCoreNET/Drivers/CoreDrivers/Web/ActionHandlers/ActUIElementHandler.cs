@@ -1,19 +1,27 @@
-﻿using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+﻿using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Applitools.Utils;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 #nullable enable
-namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandlers
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 {
     internal sealed class ActUIElementHandler
     {
+        //split by comma outside brackets
+        private static readonly Regex FramesFromElementPathSplitter = new(@",(?![^\[]*[\]])");
+
         private static readonly IEnumerable<string> SupportedInputTypesForIsValuePopulated = new List<string>()
         {
             "date",
@@ -32,100 +40,103 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
 
         private readonly ActUIElement _act;
         private readonly IBrowser _browser;
+        private readonly BusinessFlow _businessFlow;
+        private readonly ProjEnvironment _environment;
 
-        internal ActUIElementHandler(ActUIElement act, IBrowser browser)
+        internal ActUIElementHandler(ActUIElement act, IBrowser browser, BusinessFlow businessFlow, ProjEnvironment environment)
         {
             _act = act;
             _browser = browser;
+            _businessFlow = businessFlow;
+            _environment = environment;
         }
 
-        internal Task HandleAsync()
+        internal async Task HandleAsync()
         {
-            Task operationTask = Task.CompletedTask;
             try
             {
                 switch (_act.ElementAction)
                 {
                     case ActUIElement.eElementAction.Click:
-                        operationTask = HandleClickOperationAsync();
+                        await HandleClickOperationAsync();
                         break;
                     case ActUIElement.eElementAction.DoubleClick:
-                        operationTask = HandleDoubleClickOperationAsync();
+                        await HandleDoubleClickOperationAsync();
                         break;
                     case ActUIElement.eElementAction.Hover:
-                        operationTask = HandleHoverOperationAsync();
+                        await HandleHoverOperationAsync();
                         break;
                     case ActUIElement.eElementAction.IsVisible:
-                        operationTask = HandleIsVisibleOperationAsync();
+                        await HandleIsVisibleOperationAsync();
                         break;
                     case ActUIElement.eElementAction.IsEnabled:
-                        operationTask = HandleIsEnabledOperationAsync();
+                        await HandleIsEnabledOperationAsync();
                         break;
                     case ActUIElement.eElementAction.GetAttrValue:
-                        operationTask = HandleGetAttributeOperationAsync();
+                        await HandleGetAttributeOperationAsync();
                         break;
                     case ActUIElement.eElementAction.GetText:
-                        operationTask = HandleGetTextOperationAsync();
+                        await HandleGetTextOperationAsync();
                         break;
                     case ActUIElement.eElementAction.MouseRightClick:
-                        operationTask = HandleRightClickOperationAsync();
+                        await HandleRightClickOperationAsync();
                         break;
                     case ActUIElement.eElementAction.IsValuePopulated:
-                        operationTask = HandleIsValuePopulatedOperationAsync();
+                        await HandleIsValuePopulatedOperationAsync();
                         break;
                     case ActUIElement.eElementAction.GetHeight:
-                        operationTask = HandleGetHeightOperationAsync();
+                        await HandleGetHeightOperationAsync();
                         break;
                     case ActUIElement.eElementAction.GetWidth:
-                        operationTask = HandleGetWidthOperationAsync();
+                        await HandleGetWidthOperationAsync();
                         break;
                     case ActUIElement.eElementAction.GetSize:
-                        operationTask = HandleGetSizeOperationAsync();
+                        await HandleGetSizeOperationAsync();
                         break;
                     case ActUIElement.eElementAction.GetStyle:
-                        operationTask = HandleGetStyleOperationAsync();
+                        await HandleGetStyleOperationAsync();
                         break;
                     case ActUIElement.eElementAction.GetValue:
-                        operationTask = HandleGetValueOperationAsync();
+                        await HandleGetValueOperationAsync();
                         break;
                     case ActUIElement.eElementAction.GetItemCount:
-                        operationTask = HandleGetItemCountOperationAsync();
+                        await HandleGetItemCountOperationAsync();
                         break;
                     case ActUIElement.eElementAction.ScrollToElement:
-                        operationTask = HandleScrollToElementOperationAsync();
+                        await HandleScrollToElementOperationAsync();
                         break;
                     case ActUIElement.eElementAction.SetFocus:
-                        operationTask = HandleSetFocusOperationAsync();
+                        await HandleSetFocusOperationAsync();
                         break;
                     case ActUIElement.eElementAction.IsDisabled:
-                        operationTask = HandleIsDisabledOperationAsync();
+                        await HandleIsDisabledOperationAsync();
                         break;
                     case ActUIElement.eElementAction.Submit:
-                        operationTask = HandleSubmitOperationAsync();
+                        await HandleSubmitOperationAsync();
                         break;
                     case ActUIElement.eElementAction.MultiClicks:
-                        operationTask = HandleMultiClicksOperationAsync();
+                        await HandleMultiClicksOperationAsync();
                         break;
                     case ActUIElement.eElementAction.ClickXY:
-                        operationTask = HandleClickXYOperationAsync();
+                        await HandleClickXYOperationAsync();
                         break;
                     case ActUIElement.eElementAction.DoubleClickXY:
-                        operationTask = HandleDoubleClickXYOperationAsync();
+                        await HandleDoubleClickXYOperationAsync();
                         break;
                     case ActUIElement.eElementAction.ClearValue:
-                        operationTask = HandleClearValueOperationAsync();
+                        await HandleClearValueOperationAsync();
                         break;
                     case ActUIElement.eElementAction.Select:
-                        operationTask = HandleSelectOperationAsync();
+                        await HandleSelectOperationAsync();
                         break;
                     case ActUIElement.eElementAction.SelectByText:
-                        operationTask = HandleSelectByTextOperationAsync();
+                        await HandleSelectByTextOperationAsync();
                         break;
                     case ActUIElement.eElementAction.SelectByIndex:
-                        operationTask = HandleSelectByIndexOperationAsync();
+                        await HandleSelectByIndexOperationAsync();
                         break;
                     case ActUIElement.eElementAction.SetValue:
-                        operationTask = HandleSetValueOperationAsync();
+                        await HandleSetValueOperationAsync();
                         break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActUIElement.eElementAction), _act.ElementAction);
@@ -133,15 +144,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
                         break;
                 }
             }
-            catch (LocatorNotSupportedException ex)
-            {
-
-            }
             catch (Exception ex)
             {
                 _act.Error = ex.Message;
             }
-            return operationTask;
         }
 
         private async Task<IBrowserElement> GetFirstMatchingElementAsync()
@@ -158,10 +164,75 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
         }
         private Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsAsync()
         {
-            return _browser
+            if (_act.ElementLocateBy == eLocateBy.POMElement)
+            {
+                return GetAllMatchingElementsFromPOMAsync();
+            }
+            else
+            {
+                eLocateBy locateBy = _act.ElementLocateBy;
+                string locateValue = _act.ElementLocateValueForDriver;
+
+                return _browser
                 .CurrentWindow
                 .CurrentTab
-                .GetElementsAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+                .GetElementsAsync(locateBy, locateValue);
+            }
+        }
+
+        private async Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsFromPOMAsync()
+        {
+            string locateValue = _act.ElementLocateValueForDriver;
+
+            POMLocatorParser pomLocatorParser = POMLocatorParser.Create(locateValue);
+            if (pomLocatorParser.ElementInfo == null)
+            {
+                return [];
+            }
+
+            await SwitchToFrameOfElementAsync(pomLocatorParser.ElementInfo);
+
+            POMElementLocator<IBrowserElement>.ElementsProvider elementsProvider =
+                _browser
+                .CurrentWindow
+                .CurrentTab
+                .GetElementsAsync;
+
+            POMElementLocator<IBrowserElement> pomElementLocator = new(new POMElementLocator<IBrowserElement>.Args
+            {
+                AutoUpdatePOM = false,
+                BusinessFlow = _businessFlow,
+                Environment = _environment,
+                ElementInfo = pomLocatorParser.ElementInfo,
+                ElementsProvider = elementsProvider,
+            });
+            POMElementLocator<IBrowserElement>.LocateResult result = await pomElementLocator.LocateAsync();
+
+            return result.Elements;
+        }
+
+        private async Task SwitchToFrameOfElementAsync(ElementInfo elementInfo)
+        {
+            string pathToElement = elementInfo.Path;
+            if (!elementInfo.IsAutoLearned)
+            {
+                GingerCore.ValueExpression valueExpression = new(_environment, _businessFlow);
+                pathToElement = valueExpression.Calculate(pathToElement);
+            }
+
+            if (string.IsNullOrEmpty(pathToElement))
+            {
+                return;
+            }
+
+            await _browser.CurrentWindow.CurrentTab.SwitchToMainFrameAsync();
+
+            string[] iframesPaths = FramesFromElementPathSplitter.Split(pathToElement);
+
+            foreach (string iframePath in iframesPaths)
+            {
+                await _browser.CurrentWindow.CurrentTab.SwitchFrameAsync(eLocateBy.ByRelXPath, iframePath);                
+            }
         }
 
         private async Task HandleClickOperationAsync()
@@ -277,7 +348,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             _act.AddOrUpdateReturnParamActual("Actual", size.Width.ToString());
         }
 
-        private  async Task HandleGetSizeOperationAsync()
+        private async Task HandleGetSizeOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             Size size = await element.SizeAsync();
@@ -343,7 +414,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright.ActionHandler
             bool isInputElement = string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase);
             bool isButtonElement = string.Equals(tagName, IBrowserElement.ButtonTagName, StringComparison.OrdinalIgnoreCase);
             bool isTypeSubmit = string.Equals(await element.AttributeValueAsync(name: "type"), "submit", StringComparison.OrdinalIgnoreCase);
-            
+
             if ((isInputElement || isButtonElement) && isTypeSubmit)
             {
                 await element.ClickAsync();

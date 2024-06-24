@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using System.ComponentModel;
 
 namespace GingerCoreNET.Application_Models
@@ -40,6 +41,8 @@ namespace GingerCoreNET.Application_Models
         public bool Active { get { return ElementLocator.Active; } }
         public eLocateBy LocateBy { get { return ElementLocator.LocateBy; } }
         public string LocateValue { get { return ElementLocator.LocateValue; } }
+
+        public ePomElementCategory? Category { get { return ElementLocator.Category; } }
 
         public string ReferanceElement { get { return ElementLocator.ReferanceElement; } }
         public bool IsAutoLearned { get { return ElementLocator.IsAutoLearned; } }
