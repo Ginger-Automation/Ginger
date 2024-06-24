@@ -80,7 +80,7 @@ namespace GingerCore
     // The activities can come from external like: QC TC Step, vStorm    
     public class Activity : RepositoryItemBase
     {
-        private readonly Stopwatch _stopwatch;
+        private Stopwatch _stopwatch;
 
         bool mSelectedForConversion;
         public bool SelectedForConversion
@@ -130,7 +130,6 @@ namespace GingerCore
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
             Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
-            _stopwatch = new Stopwatch();
             this.OnDirtyStatusChanged += Activity_OnDirtyStatusChanged;
         }
 
@@ -149,19 +148,23 @@ namespace GingerCore
         }
 
         private TimeSpan mDevelopmentTime;
-
         [IsSerializedForLocalRepository]
         public TimeSpan DevelopmentTime
         {
             get
             {
-                StopTimer();
                 return mDevelopmentTime;
+            }
+            set
+            {
+                mDevelopmentTime = value;
             }
         }
 
         public void StartTimer()
         {
+            _stopwatch = new Stopwatch();
+
             if (!_stopwatch.IsRunning)
             {
                 _stopwatch.Start();
@@ -178,7 +181,7 @@ namespace GingerCore
             {
                 _stopwatch.Stop();
                 TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
-                mDevelopmentTime = mDevelopmentTime.Add(elapsedTime);
+                DevelopmentTime = DevelopmentTime.Add(elapsedTime);
                 _stopwatch.Reset();
             }
         }

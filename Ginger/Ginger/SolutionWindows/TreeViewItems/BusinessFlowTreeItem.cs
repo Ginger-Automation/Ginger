@@ -120,8 +120,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return mContextMenu;
         }
 
-        bool isUnselectedSubscribed = false;
-
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             mTreeView = TV;
@@ -133,11 +131,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     TreeViewUtils.AddMenuItem(mContextMenu, "Automate", Automate, null, eImageType.Automate);
                 }
 
-                if (!isUnselectedSubscribed)
-                {
-                    TreeViewItem.Unselected += TreeViewItem_Unselected;
-                    isUnselectedSubscribed = true;
-                }
+                TreeViewItem.Unselected -= TreeViewItem_Unselected;
+                TreeViewItem.Unselected += TreeViewItem_Unselected;
+
 
 
                 AddItemNodeBasicManipulationsOptions(mContextMenu);

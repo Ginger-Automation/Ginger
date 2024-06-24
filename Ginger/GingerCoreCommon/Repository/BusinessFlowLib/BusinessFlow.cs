@@ -43,7 +43,7 @@ namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
     {
-        private readonly Stopwatch _stopwatch;
+        private Stopwatch _stopwatch;
         public BusinessFlow()
         {
             AllowAutoSave = true;
@@ -65,14 +65,13 @@ namespace GingerCore
             Activities.CurrentItem = a;
             CurrentActivity = a;
             AllowAutoSave = true;
-            _stopwatch = new Stopwatch();
 
             this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
 
         private void BusinessFlow_OnDirtyStatusChanged(object sender, EventArgs e)
         {
-            if(DirtyStatus == eDirtyStatus.Modified)
+            if (DirtyStatus == eDirtyStatus.Modified)
             {
                 StartTimer();
             }
@@ -125,13 +124,17 @@ namespace GingerCore
         {
             get
             {
-                StopTimer();
                 return mDevelopmentTime;
+            }
+            set
+            {
+                mDevelopmentTime = value;
             }
         }
       
         public void StartTimer()
         {
+            _stopwatch = new Stopwatch();
             if (!_stopwatch.IsRunning)
             {
                 _stopwatch.Start();
@@ -148,7 +151,7 @@ namespace GingerCore
             {
                 _stopwatch.Stop();
                 TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
-                mDevelopmentTime = mDevelopmentTime.Add(elapsedTime);
+                DevelopmentTime = DevelopmentTime.Add(elapsedTime);
                 _stopwatch.Reset();
             }
         }
