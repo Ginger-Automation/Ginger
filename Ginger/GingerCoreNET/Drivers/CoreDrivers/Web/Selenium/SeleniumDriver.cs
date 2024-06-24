@@ -26,6 +26,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
@@ -422,6 +423,24 @@ namespace GingerCore.Drivers
         private List<ElementInfo> allReadElem = new List<ElementInfo>();
 
         private string CurrentFrame;
+
+        public override ePomElementCategory? PomCategory
+        {
+            get
+            {
+                if (base.PomCategory == null)
+                {
+                    return ePomElementCategory.Web;
+                }
+                else
+                {   
+                    return base.PomCategory;
+                }
+            }
+
+            set => base.PomCategory = value;
+        }
+        public bool isAppiumSession { get; set; }
 
         public SeleniumDriver()
         {
@@ -4054,7 +4073,16 @@ namespace GingerCore.Drivers
 
                 if (currentPOM != null)
                 {
-                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                    ElementInfo currentPOMElementInfo = null;
+                    if (isAppiumSession)
+                    {
+                        currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo(this.PomCategory);//consider the Category only in case of Mobile flow for now
+                    }
+                    else
+                    {
+                        currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                    }
+
                     if (currentPOMElementInfo != null)
                     {
                         if (HandelIFramShiftAutomaticallyForPomElement)
@@ -5113,6 +5141,9 @@ namespace GingerCore.Drivers
                         }
 
                         HTMLElementInfo foundElementInfo = CreateHTMLElementInfo(webElement, path, htmlElemNode, elementTypeEnum.Item1, elementTypeEnum.Item2, ParentGUID, pomSetting, foundElementsList.Count.ToString());
+
+                        //set the POM category
+                        foundElementInfo.SetLocatorsAndPropertiesCategory(this.PomCategory);
 
                         // Add element to found elements list
                         foundElementsList.Add(foundElementInfo);
