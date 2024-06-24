@@ -28,32 +28,107 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using Ginger.UserControls;
+using System.Collections.Generic;
+using Amdocs.Ginger.Common.UIElement;
+using System.Linq;
+using OpenQA.Selenium.Appium;
+using Ginger.Actions._Common.ActUIElementLib;
+using GingerCore.Actions.Common;
+using GingerCore.Helpers;
 namespace Ginger.Actions
 {
-    public partial class ActWebSmartSyncEditPage : Page, IActEditPage
+    public partial class ActWebSmartSyncEditPage : Page
     {
-        ActWebSmartSync mAct;
-        public Visibility LocatorVisibility
-        {
-            get => GetLocatorVisibility();
-        }
+        ActWebSmartSync mAction;
+        string mExistingPOMAndElementGuidString = null;
+        
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        /// <summary>
+        /// Initializes a new instance of the ActWebSmartSyncEditPage class.
+        /// </summary>
+        /// <param name="Act">The ActWebSmartSync object.</param>
         public ActWebSmartSyncEditPage(GingerCore.Actions.ActWebSmartSync Act)
         {
-            InitializeComponent();     
+            mAction = Act;
+            InitializeComponent();
+            setLocateBycombo();
             GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.SyncOperations, sortValues: false);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActWebSmartSync.SyncOperations));
             xTxtMatchVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.TxtMatchInput));
             xAttributeValueVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.AttributeValue));
             xAttributeNameVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.AttributeName));
             xUrlMatchesVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.UrlMatches));
-
-
+            xLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
+            SetLocateValueFrame();
+        }
+        private void ElementLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            mAction.LocateValue = string.Empty;
+            mAction.LocateValueCalculated = string.Empty;
+            mAction.ElementLocateValue = string.Empty;
+            SetLocateValueFrame();
+        }
+        /// <summary>
+        /// Sets the content of the LocateValueEditFrame based on the selected LocateBy type.
+        /// </summary>
+        private void SetLocateValueFrame()
+        {
+            LocateValueEditFrame.ClearAndSetContent(null);
+            if (xLocateByComboBox.SelectedItem == null)
+            {
+                return;
+            }
+            eLocateBy SelectedLocType = (eLocateBy)((ComboEnumItem)xLocateByComboBox.SelectedItem).Value;
+            Page p = GetLocateValueEditPage(SelectedLocType);
+            LocateValueEditFrame.ClearAndSetContent(p);
         }
 
+        /// <summary>
+        /// Gets the appropriate LocateValueEditPage based on the selected LocateBy type.
+        /// </summary>
+        /// <param name="SelectedLocType">The selected LocateBy type.</param>
+        /// <returns>The LocateValueEditPage.</returns>
+        private Page GetLocateValueEditPage(eLocateBy SelectedLocType)
+        {
+            switch (SelectedLocType)
+            {
+                case eLocateBy.POMElement:
+                    LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(Context.GetAsContext(mAction.Context), objectElementType: null, elementTypeFieldName: "", mAction, nameof(ActWebSmartSync.ElementLocateValue));
+                    locateByPOMElementPage.ElementChangedPageEvent -= POMElementChanged;
+                    locateByPOMElementPage.ElementChangedPageEvent += POMElementChanged;
+                    return locateByPOMElementPage;
+                default:
+                    return new LocateValueEditPage(Context.GetAsContext(mAction.Context), mAction, ActWebSmartSync.Fields.ElementLocateValue);
+            }
+        }
+
+        /// <summary>
+        /// Event handler for the POMElementChanged event.
+        /// </summary>
+        private void POMElementChanged()
+        {
+            if (mExistingPOMAndElementGuidString != mAction.LocateValue)
+            {
+                mAction.AddOrUpdateInputParamValue(ActWebSmartSync.Fields.ValueToSelect, string.Empty);
+            }
+        }
+    
+
+        /// <summary>
+        /// Sets the items for the LocateByComboBox.
+        /// </summary>
+        private void setLocateBycombo()
+        {
+           
+            xLocateByComboBox.BindControl(mAction, nameof(ActWebSmartSync.ElementLocateBy), ActWebSmartSync.SupportedLocatorsTypeList, isSorted: false);
+        }
      
 
+        /// <summary>
+        /// Gets the visibility of the locator based on the selected sync action.
+        /// </summary>
+        /// <returns>The visibility of the locator.</returns>
         private Visibility GetLocatorVisibility()
         {
             if (ActionNameComboBox.SelectedValue is not ActWebSmartSync.eSyncOperation selectedSyncAction)
@@ -70,7 +145,19 @@ namespace Ginger.Actions
                 return Visibility.Visible;
             }
         }
+        /// <summary>
+        /// Sets the visibility of the locator based on the selected sync action.
+        /// </summary>
+        private void locatorVisibility()
+        {
+            xLocaterPnl.Visibility = GetLocatorVisibility();
+        }
      
+        /// <summary>
+        /// Sets the visibility of the panel based on the selected sync action.
+        /// </summary>
+        /// <param name="panel">The panel to set the visibility for.</param>
+        /// <param name="action">The sync action to compare against.</param>
         private void SetPanelVisibility(Panel panel, ActWebSmartSync.eSyncOperation action)
         {
             if (ActionNameComboBox.SelectedValue is not ActWebSmartSync.eSyncOperation selectedSyncAction)
@@ -82,11 +169,11 @@ namespace Ginger.Actions
             panel.Visibility = selectedSyncAction == action ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void NotifyLocatorVisibilityChanged()
-        {
-            PropertyChanged?.Invoke(sender: this, new PropertyChangedEventArgs(propertyName: nameof(LocatorVisibility)));
-        }
+     
 
+        /// <summary>
+        /// Event handler for the ActionNameComboBox selection changed event.
+        /// </summary>
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ActionNameComboBox.SelectedValue is not ActWebSmartSync.eSyncOperation)
@@ -94,14 +181,17 @@ namespace Ginger.Actions
                 return;
             }
 
-            NotifyLocatorVisibilityChanged();
+            locatorVisibility();
             SetPanelVisibility(TxtMatch_Pnl, ActWebSmartSync.eSyncOperation.TextMatches);
             SetPanelVisibility(UrlMatches_Pnl, ActWebSmartSync.eSyncOperation.UrlMatches);
             SetPanelVisibility(AttributeMatches_Pnl, ActWebSmartSync.eSyncOperation.AttributeMatches);
             setOperationDescription();
         }
 
-        void setOperationDescription()
+        /// <summary>
+        /// Sets the operation description based on the selected sync action.
+        /// </summary>
+        private void setOperationDescription()
         {
             switch (ActionNameComboBox.SelectedValue)
             {
@@ -156,16 +246,10 @@ namespace Ginger.Actions
                 default:
                     xOperationDescription.Text = "No operation selected.";
                     break;
-
-
             }
-
         }
         
     }
 
-    public interface IActEditPage : INotifyPropertyChanged
-    {
-        public Visibility LocatorVisibility { get; }
-    }
+ 
 }
