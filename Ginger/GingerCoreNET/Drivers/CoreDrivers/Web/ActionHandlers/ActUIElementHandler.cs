@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Applitools.Utils;
 using GingerCore;
 using GingerCore.Actions;
@@ -18,6 +19,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 {
     internal sealed class ActUIElementHandler
     {
+        //split by comma outside brackets
+        private static readonly Regex FramesFromElementPathSplitter = new(@",(?![^\[]*[\]])");
+
         private static readonly IEnumerable<string> SupportedInputTypesForIsValuePopulated = new List<string>()
         {
             "date",
@@ -146,26 +150,29 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
         }
 
-        private async Task<IBrowserElement> GetFirstMatchingElementAsync(eLocateBy locateBy, string locateValue)
+        private async Task<IBrowserElement> GetFirstMatchingElementAsync()
         {
-            IEnumerable<IBrowserElement> elements = await GetAllMatchingElementsAsync(locateBy, locateValue);
+            IEnumerable<IBrowserElement> elements = await GetAllMatchingElementsAsync();
 
             IBrowserElement? firstElement = elements.FirstOrDefault();
             if (firstElement == null)
             {
-                throw new EntityNotFoundException($"No element found by locator '{locateBy}' and value '{locateValue}'");
+                throw new EntityNotFoundException($"No element found by locator '{_act.ElementLocateBy}' and value '{_act.ElementLocateValueForDriver}'");
             }
 
             return firstElement;
         }
-        private Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsAsync(eLocateBy locateBy, string locateValue)
+        private Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsAsync()
         {
-            if (locateBy == eLocateBy.POMElement)
+            if (_act.ElementLocateBy == eLocateBy.POMElement)
             {
-                return GetAllMatchingElementsFromPOMAsync(locateValue);
+                return GetAllMatchingElementsFromPOMAsync();
             }
             else
             {
+                eLocateBy locateBy = _act.ElementLocateBy;
+                string locateValue = _act.ElementLocateValueForDriver;
+
                 return _browser
                 .CurrentWindow
                 .CurrentTab
@@ -173,8 +180,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
         }
 
-        private async Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsFromPOMAsync(string locateValue)
+        private async Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsFromPOMAsync()
         {
+            string locateValue = _act.ElementLocateValueForDriver;
+
             POMLocatorParser pomLocatorParser = POMLocatorParser.Create(locateValue);
             if (pomLocatorParser.ElementInfo == null)
             {
@@ -211,16 +220,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                 pathToElement = valueExpression.Calculate(pathToElement);
             }
 
-            await _browser.CurrentWindow.CurrentTab.SwitchToMainFrameAsync();
-            
             if (string.IsNullOrEmpty(pathToElement))
             {
                 return;
             }
 
-            //split Path by commo outside of brackets 
-            Regex splitByCommaOutsideBrackets = new(@",(?![^\[]*[\]])");
-            string[] iframesPaths = splitByCommaOutsideBrackets.Split(pathToElement);
+            await _browser.CurrentWindow.CurrentTab.SwitchToMainFrameAsync();
+
+            string[] iframesPaths = FramesFromElementPathSplitter.Split(pathToElement);
 
             foreach (string iframePath in iframesPaths)
             {
@@ -230,46 +237,46 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task HandleClickOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ClickAsync();
         }
 
         private async Task HandleDoubleClickOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.DoubleClickAsync();
         }
 
         private async Task HandleHoverOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.HoverAsync();
         }
 
         private async Task HandleIsVisibleOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             bool isVisible = await element.IsVisibleAsync();
             _act.AddOrUpdateReturnParamActual("Actual", isVisible.ToString());
         }
 
         private async Task HandleIsEnabledOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             bool isEnabled = await element.IsEnabledAsync();
             _act.AddOrUpdateReturnParamActual("Actual", isEnabled.ToString());
         }
 
         private async Task HandleGetAttributeOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             string attributeValue = await element.AttributeValueAsync(_act.ValueForDriver);
             _act.AddOrUpdateReturnParamActual("Actual", attributeValue);
         }
 
         private async Task HandleGetTextOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             string text = await element.TextContentAsync();
             if (string.IsNullOrEmpty(text))
             {
@@ -288,13 +295,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task HandleRightClickOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.RightClickAsync();
         }
 
         private async Task HandleIsValuePopulatedOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
 
             string tagName = await element.TagNameAsync();
             string value;
@@ -329,28 +336,28 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task HandleGetHeightOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             Size size = await element.SizeAsync();
             _act.AddOrUpdateReturnParamActual("Actual", size.Height.ToString());
         }
 
         private async Task HandleGetWidthOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             Size size = await element.SizeAsync();
             _act.AddOrUpdateReturnParamActual("Actual", size.Width.ToString());
         }
 
         private async Task HandleGetSizeOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             Size size = await element.SizeAsync();
             _act.AddOrUpdateReturnParamActual("Actual", $"{size.Width}x{size.Height}");
         }
 
         private async Task HandleGetValueOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             string tagName = await element.TagNameAsync();
             if (string.Equals(tagName, IBrowserElement.AnchorTagName))
             {
@@ -370,39 +377,39 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task HandleGetStyleOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             string style = await element.AttributeValueAsync(name: "style");
             _act.AddOrUpdateReturnParamActual("Actual", style);
         }
 
         private async Task HandleGetItemCountOperationAsync()
         {
-            IEnumerable<IBrowserElement> elements = await GetAllMatchingElementsAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IEnumerable<IBrowserElement> elements = await GetAllMatchingElementsAsync();
             _act.AddOrUpdateReturnParamActual("Elements Count", elements.Count().ToString());
         }
 
         private async Task HandleScrollToElementOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ScrollToViewAsync();
         }
 
         private async Task HandleSetFocusOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.FocusAsync();
         }
 
         private async Task HandleIsDisabledOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             bool isEnabled = await element.IsEnabledAsync();
             _act.AddOrUpdateReturnParamActual("Actual", (!isEnabled).ToString());
         }
 
         private async Task HandleSubmitOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             string tagName = await element.TagNameAsync();
             bool isInputElement = string.Equals(tagName, IBrowserElement.InputTagName, StringComparison.OrdinalIgnoreCase);
             bool isButtonElement = string.Equals(tagName, IBrowserElement.ButtonTagName, StringComparison.OrdinalIgnoreCase);
@@ -420,7 +427,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task HandleMultiClicksOperationAsync()
         {
-            IEnumerable<IBrowserElement> elements = new List<IBrowserElement>(await GetAllMatchingElementsAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver));
+            IEnumerable<IBrowserElement> elements = new List<IBrowserElement>(await GetAllMatchingElementsAsync());
 
             foreach (IBrowserElement element in elements)
             {
@@ -444,7 +451,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                 throw new InvalidActionConfigurationException($"Y-Coordinate must be a valid integer");
             }
 
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ClickAsync(x, y);
         }
 
@@ -461,19 +468,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                 throw new InvalidActionConfigurationException($"X-Coordinate must be a integer");
             }
 
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.DoubleClickAsync(x, y);
         }
 
         private async Task HandleClearValueOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ClearAsync();
         }
 
         private async Task HandleSelectOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             string value = _act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect);
             await element.SelectByValueAsync(value);
         }
@@ -481,14 +488,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         private async Task HandleSelectByTextOperationAsync()
         {
 
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             string text = _act.GetInputParamCalculatedValue(ActUIElement.Fields.Value);
             await element.SelectByTextAsync(text);
         }
 
         private async Task HandleSelectByIndexOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             if (!int.TryParse(_act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect), out int index))
             {
                 throw new InvalidActionConfigurationException($"Index to select must be a integer");
@@ -498,7 +505,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task HandleSetValueOperationAsync()
         {
-            IBrowserElement element = await GetFirstMatchingElementAsync(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
+            IBrowserElement element = await GetFirstMatchingElementAsync();
             string tagName = await element.TagNameAsync();
             string type = await element.AttributeValueAsync(name: "type");
 

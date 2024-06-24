@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
-namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 {
     internal sealed class POMLocatorParser
     {
@@ -27,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         {
             Func<Guid, ApplicationPOMModel> pomProvider = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>;
 
-            return Create(locatorValue,pomProvider);
+            return Create(locatorValue, pomProvider);
         }
 
         internal static POMLocatorParser Create(string locatorValue, Func<Guid, ApplicationPOMModel> pomProvider)

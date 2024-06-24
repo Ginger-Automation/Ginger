@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
-namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 {
     internal sealed class POMElementLocator<TElement>
     {
