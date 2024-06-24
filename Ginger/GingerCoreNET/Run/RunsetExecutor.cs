@@ -922,11 +922,11 @@ namespace Ginger.Run
                         {
                             var virtualAgent = (Agent)appAgents[i].Agent;
 
-                            var realAgent = runset.ActiveAgentList.FirstOrDefault(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString());
+                            var realAgent = runset.ActiveAgentListWithRunner.Select(y => y.Value).Where(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
 
                             if (realAgent != null)
                             {
-                                var runsetVirtualAgent = runset.ActiveAgentList.FirstOrDefault(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid);
+                                var runsetVirtualAgent = runset.ActiveAgentListWithRunner.Where(entry => entry.Key == runner.GingerRunner.Guid).Select(y => y.Value).ToList().FirstOrDefault(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid);
                                 appAgents[i].Agent = realAgent;
 
                                 if (runsetVirtualAgent != null)
