@@ -209,4 +209,3 @@ jobs:
                 with:
                   name: WindowsInstaller
                   path: D:/a/Installers/ginger
-                  
