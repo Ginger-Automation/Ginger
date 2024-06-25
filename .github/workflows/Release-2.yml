@@ -148,22 +148,22 @@ jobs:
              #       nadeemjazmawe/Sign-action-signtool.exe@v0.1
             #    shell: cmd
               
-            -   name: Certificates Sync       
-                run: |
+            -  name: Certificates Sync       
+               run: |
                   smctl windows certsync
-                shell: cmd
+               shell: cmd
                
-            -   name: Create Signed Directory for dll 
-                run: |
-                 mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger
-                shell: cmd
+            #- name: Create Signed Directory for dll      
+            #  run: |
+             #    mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger
+              #shell: cmd
     
                
-            -   name: Signing using Signtool dll
-                run: | 
-                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger\Ginger.dll
-                 signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger\Ginger.dll"    
-                    signtool.exe verify /v /pa "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.dll" 
+           # -   name: Signing using Signtool dll
+               # run: | 
+                 #copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger
+                 #signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger" --verbsose     
+              #      signtool.exe verify /v /pa "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\" 
             
            # -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0.beta1
                # with: 
@@ -209,3 +209,4 @@ jobs:
                 with:
                   name: WindowsInstaller
                   path: D:/a/Installers/ginger
+                  
