@@ -148,15 +148,15 @@ jobs:
              #       nadeemjazmawe/Sign-action-signtool.exe@v0.1
             #    shell: cmd
               
-            -  name: Certificates Sync       
-               run: |
+            -   name: Certificates Sync       
+                run: |
                   smctl windows certsync
-               shell: cmd
+                shell: cmd
                
-            -  name: Create Signed Directory for dll 
-               run: |
-                mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger
-               shell: cmd
+            -   name: Create Signed Directory for dll 
+                run: |
+                 mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger
+                shell: cmd
     
                
             -   name: Signing using Signtool dll
@@ -209,4 +209,3 @@ jobs:
                 with:
                   name: WindowsInstaller
                   path: D:/a/Installers/ginger
-                  
