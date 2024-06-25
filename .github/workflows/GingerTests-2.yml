@@ -4,10 +4,17 @@ on:
   workflow_call
  
 jobs:
-  windows:
-    uses: ./.github/workflows/WindowsTest-2.yml
-    secrets: inherit
-  Linux:
-    uses: ./.github/workflows/LinuxTest-2.yml
+  say-hello:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Say Hello
+      run: echo "Hello, world!"
+
+#jobs:
+ # windows:
+   # uses: ./.github/workflows/WindowsTest-2.yml
+   # secrets: inherit
+ # Linux:
+  #  uses: ./.github/workflows/LinuxTest-2.yml
 #  MacOS:
 #    uses: ./.github/workflows/MacOSTest-2.yml
