@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -1252,6 +1252,22 @@ namespace Amdocs.Ginger.Repository
                             RepositoryItemKey repositoryItemKey = new RepositoryItemKey();
                             repositoryItemKey.Key = sValue;
                             propertyInfo.SetValue(obj, repositoryItemKey);
+
+                        }
+                        else if (propertyInfo.PropertyType == typeof(System.TimeSpan))
+                        {
+                            if (sValue != "00:00:00")
+                            {
+                                TimeSpan timeSpan;
+                                if(TimeSpan.TryParse(sValue, out timeSpan))
+                                {
+                                    propertyInfo.SetValue(obj, timeSpan);
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR,"Failed to set the DevelopmentTime");
+                                }
+                            }
 
                         }
                         else
