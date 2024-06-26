@@ -147,7 +147,7 @@ namespace Amdocs.Ginger.Repository
             {
                 repositoryItem.RepositoryItemHeader.LastUpdateBy = Environment.UserName;
             }
-            xml.WriteAttributeString("LastUpdateBy", repositoryItem.RepositoryItemHeader.LastUpdateBy.ToString());
+            xml.WriteAttributeString("LastUpdateBy", repositoryItem.RepositoryItemHeader.LastUpdateBy);
 
             xml.WriteAttributeString(nameof(RepositoryItemHeader.LastUpdate), repositoryItem.RepositoryItemHeader.LastUpdate.ToString(cDateTimeXMLFormat));
 
@@ -167,7 +167,7 @@ namespace Amdocs.Ginger.Repository
         class RIAttr
         {
             public string Name;
-            public Type ttt;
+            public Type Type;
             public object value;
             public IsSerializedForLocalRepositoryAttribute attrIS;
         }
@@ -194,20 +194,20 @@ namespace Amdocs.Ginger.Repository
                     {
                         continue;
                     }
-                    Type tt;
+                    Type type;
                     object value;
                     if (mi.MemberType == MemberTypes.Property)
                     {
-                        tt = ((PropertyInfo)mi).PropertyType;
+                        type = ((PropertyInfo)mi).PropertyType;
                         value = ri.GetType().GetProperty(mi.Name).GetValue(ri);
                     }
                     else
                     {
-                        tt = ((FieldInfo)mi).FieldType;
+                        type = ((FieldInfo)mi).FieldType;
                         value = ri.GetType().GetField(mi.Name).GetValue(ri);
                     }
 
-                    RIAttr rIAttr = new RIAttr() { Name = mi.Name, ttt = tt, value = value, attrIS = isSerialziedAttr };
+                    RIAttr rIAttr = new RIAttr() { Name = mi.Name, Type = type, value = value, attrIS = isSerialziedAttr };
                     if (value is IObservableList or List<string> or RepositoryItemBase)
                     {
                         ListAttrs.Add(rIAttr);
