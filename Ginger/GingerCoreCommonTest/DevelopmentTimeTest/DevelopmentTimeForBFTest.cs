@@ -22,7 +22,7 @@ namespace GingerCoreCommonTest.DevelopmentTimeTest
             
             Thread.Sleep(1000);
             //Checking that Time has not started until any change
-            Assert.AreEqual(stopwatch, businessFlow.DevelopmentTime);
+            Assert.AreEqual(stopwatch, businessFlow.DevelopmentTimeCalc);
 
 
             businessFlow.StartDirtyTracking();
@@ -30,7 +30,7 @@ namespace GingerCoreCommonTest.DevelopmentTimeTest
 
             Thread.Sleep(1000);
             //Checking if after dirty status changed to modified, tracking of time started
-            Assert.AreNotEqual(stopwatch, businessFlow.DevelopmentTime);
+            Assert.AreNotEqual(stopwatch, businessFlow.DevelopmentTimeCalc);
 
 
         }
@@ -43,11 +43,11 @@ namespace GingerCoreCommonTest.DevelopmentTimeTest
             businessFlow.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified;
 
             Thread.Sleep(1000);
-            TimeSpan timeNoted = businessFlow.DevelopmentTime;
+            TimeSpan timeNoted = businessFlow.DevelopmentTimeCalc;
             businessFlow.StopTimer();
 
             Thread.Sleep(2300);
-            Assert.AreEqual(timeNoted, businessFlow.DevelopmentTime);
+            Assert.AreEqual(timeNoted, businessFlow.DevelopmentTimeCalc);
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ namespace GingerCoreCommonTest.DevelopmentTimeTest
 
             TimeSpan stopwatch = TimeSpan.Zero;
 
-            Assert.AreEqual(stopwatch, act.DevelopmentTime);
+            Assert.AreEqual(stopwatch, act.DevelopmentTimeCalc);
 
 
 
@@ -66,7 +66,7 @@ namespace GingerCoreCommonTest.DevelopmentTimeTest
 
             Thread.Sleep(1000);
 
-            Assert.AreNotEqual(stopwatch, act.DevelopmentTime);
+            Assert.AreNotEqual(stopwatch, act.DevelopmentTimeCalc);
         }
 
         [TestMethod]
@@ -77,11 +77,11 @@ namespace GingerCoreCommonTest.DevelopmentTimeTest
             act.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified;
 
             Thread.Sleep(1000);
-            TimeSpan timeNoted = act.DevelopmentTime;
+            TimeSpan timeNoted = act.DevelopmentTimeCalc;
             act.StopTimer();
 
             Thread.Sleep(2300);
-            Assert.AreEqual(timeNoted, act.DevelopmentTime);
+            Assert.AreEqual(timeNoted, act.DevelopmentTimeCalc);
         }
     }
 }

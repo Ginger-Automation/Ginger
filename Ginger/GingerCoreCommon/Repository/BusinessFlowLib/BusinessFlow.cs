@@ -117,24 +117,36 @@ namespace GingerCore
 
         public List<string> VariablesBeforeExec { get; set; }
 
-        private TimeSpan mDevelopmentTime;
-        [IsSerializedForLocalRepository]
-        public TimeSpan DevelopmentTime
+        [IsSerializedForLocalRepository("00:00:00")]
+        public string DevelopmentTime
+        {
+            get
+            {
+                return DevelopmentTimeCalc.ToString();
+            }
+            set
+            {
+                DevelopmentTimeCalc = TimeSpan.Parse(value);
+            }
+        }
+
+        private TimeSpan mDevelopmentTimeCalc;
+        public TimeSpan DevelopmentTimeCalc
         {
             get
             {
                 StopTimer();
-                return mDevelopmentTime;
+                return mDevelopmentTimeCalc;
             }
             set
             {
-                if (mDevelopmentTime != value)
+                if (mDevelopmentTimeCalc != value)
                 {
-                    mDevelopmentTime = value;
+                    mDevelopmentTimeCalc = value;
                 }
             }
         }
-      
+
         public void StartTimer()
         {
             if (_stopwatch == null)
@@ -158,7 +170,7 @@ namespace GingerCore
             {
                 _stopwatch.Stop();
                 TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
-                DevelopmentTime = DevelopmentTime.Add(elapsedTime);
+                DevelopmentTimeCalc = DevelopmentTimeCalc.Add(elapsedTime);
                 _stopwatch.Reset();
             }
         }
