@@ -152,7 +152,7 @@ jobs:
                run: |
                   smctl windows certsync
                shell: cmd
-               
+                    
             - name: Create Signed Directory for dll      
               run: |
                  mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger
@@ -161,7 +161,7 @@ jobs:
                
             -   name: Signing using Signtool dll
                 run: | 
-                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger\GingerCore.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.exe D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger\Ginger.exe
                  signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger" --verbsose     
               #      signtool.exe verify /v /pa "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\" 
             
@@ -173,7 +173,7 @@ jobs:
                   
             -   uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
                 with: 
-                    filepath: './Ginger/GingerInstallerScriptGithub.iss'
+                    filepath: './Ginger/GingerInstallerScriptGithub.iss' 
 
             -   name: Create Signed Directory       
                 run: |
