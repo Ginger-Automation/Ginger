@@ -699,7 +699,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            throw new Exception("The Brave browser is not in the default path. Please install it or provide the executable path in the BrowserExecutablePath parameter in the agent configuration");
+                            throw new Exception("The Brave browser is not available in default path. Please install it or provide the valid executable path in BrowserExecutablePath parameter in agent configuration.");
 
                         }
                         configChromeDriverAndStart(brave_options);
