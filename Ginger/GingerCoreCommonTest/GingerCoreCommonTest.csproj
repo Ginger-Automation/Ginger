@@ -31,4 +31,8 @@
     <Folder Include="TestResources\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\GingerCoreCommon\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
 </Project>
