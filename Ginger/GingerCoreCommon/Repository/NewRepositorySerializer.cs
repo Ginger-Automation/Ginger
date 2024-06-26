@@ -1228,6 +1228,22 @@ namespace Amdocs.Ginger.Repository
                             propertyInfo.SetValue(obj, repositoryItemKey);
 
                         }
+                        else if (propertyInfo.PropertyType == typeof(System.TimeSpan))
+                        {
+                            if (sValue != "00:00:00")
+                            {
+                                TimeSpan timeSpan;
+                                if(TimeSpan.TryParse(sValue, out timeSpan))
+                                {
+                                    propertyInfo.SetValue(obj, timeSpan);
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR,"Failed to set the DevelopmentTime");
+                                }
+                            }
+
+                        }
                         else
                         {
                             //check if this is nullable enum  like: Activity Status? 
