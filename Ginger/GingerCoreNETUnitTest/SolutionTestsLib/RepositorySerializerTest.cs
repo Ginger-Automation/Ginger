@@ -32,6 +32,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
 {
@@ -111,7 +112,9 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             // Verify Object class written in short name again, and since we changed only the name no other attrs should be added
             // We do not write all attribute only the one which changed from default value            
             Assert.IsTrue(xml.Contains(" Name=\"BF1"));
-            Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
+            //Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
+            Regex regex = new(@"<BusinessFlow.*\sGuid=");
+            Assert.IsTrue(regex.Matches(xml).Count>0);
             Assert.IsTrue(xml.Contains("<Activities>"));
             // We need to have only one activity - make sure it is written squeezed to min
             Assert.IsTrue(xml.Contains("ActivityName=\"Activity 1\""));
