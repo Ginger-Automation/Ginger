@@ -2199,6 +2199,12 @@ namespace GingerCore.Drivers
             }
         }
 
+        /// <summary>
+        /// Retrieves the appropriate locators for the ActWebSmartSync action based on the provided parameters.
+        /// </summary>
+        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
+        /// <param name="pomExecutionUtil">The POMExecutionUtils object used to retrieve information about the current POM.</param>
+        /// <returns>A tuple containing the locateBy and locateValue for the ActWebSmartSync action.</returns>
         internal (eLocateBy locateBy, string locateValue) GetLocatorsForWebSmartSync(ActWebSmartSync act, POMExecutionUtils pomExecutionUtil)
         {
             eLocateBy locateBy = act.ElementLocateBy;
@@ -2227,10 +2233,16 @@ namespace GingerCore.Drivers
                 locateBy = firstLocator.LocateBy;
                 locateValue = firstLocator.LocateValue;
             }
-            
+
             return (locateBy, locateValue);
         }
 
+        /// <summary>
+        /// Retrieves the appropriate Selenium By object based on the provided locateBy and locateValue.
+        /// </summary>
+        /// <param name="locateBy">The eLocateBy value representing the type of locator.</param>
+        /// <param name="locateValue">The value of the locator.</param>
+        /// <returns>The Selenium By object representing the locator.</returns>
         internal static By GetElementLocatorForWebSmartSync(eLocateBy locateBy, string locateValue)
         {
             By elementLocator = locateBy switch
@@ -2247,6 +2259,13 @@ namespace GingerCore.Drivers
             return elementLocator;
         }
 
+        /// <summary>
+        /// Waits for the specified synchronization operation to complete using the provided elementLocator.
+        /// </summary>
+        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
+        /// <param name="elementLocator">The Selenium By object representing the locator.</param>
+        /// <param name="VE">The ValueExpression object used to evaluate dynamic values.</param>
+        /// <param name="wait">The WebDriverWait object used for waiting.</param>
         internal void WebSmartSyncWaitForLocator(ActWebSmartSync act, By elementLocator, ValueExpression VE, WebDriverWait wait)
         {
             switch (act.SyncOperations)
@@ -2336,7 +2355,7 @@ namespace GingerCore.Drivers
         /// <summary>
         /// Handles the synchronization of web elements using various synchronization operations.
         /// </summary>
-        /// <param name="act">The ActWebSmartSync object containing the synchronization details.</param>
+        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
         public void WebSmartSyncHandler(ActWebSmartSync act)
         {
             By elementLocator = null;
@@ -2360,11 +2379,16 @@ namespace GingerCore.Drivers
                 return;
 
             }
-            WebOperations(act,elementLocator);
-            
+            WebOperations(act, elementLocator);
+
         }
 
-       void WebOperations(ActWebSmartSync act,By elementLocator)
+        /// <summary>
+        /// Performs the specified synchronization operation on the web element using the provided elementLocator.
+        /// </summary>
+        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
+        /// <param name="elementLocator">The Selenium By object representing the locator.</param>
+        private void WebOperations(ActWebSmartSync act, By elementLocator)
         {
             //get time configured in flow-control, if nothing provided then use 30 seconds
             int MaxTimeout = WebSmartSyncGetMaxTimeout(act);
@@ -2383,7 +2407,7 @@ namespace GingerCore.Drivers
 
                 WebSmartSyncWaitForLocator(act, elementLocator, VE, wait);
             }
-            catch(InvalidSelectorException ex)
+            catch (InvalidSelectorException ex)
             {
                 act.Error = $"Invalid input provided for {act.SyncOperations} operation.";
                 Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
@@ -2398,8 +2422,13 @@ namespace GingerCore.Drivers
                 //set agent's implicit wait to the original value from the variable above
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)implicitWait));
             }
-        
+
         }
+        /// <summary>
+        /// Retrieves the maximum timeout value for the ActWebSmartSync action.
+        /// </summary>
+        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
+        /// <returns>The maximum timeout value in seconds.</returns>
         internal int WebSmartSyncGetMaxTimeout(ActWebSmartSync act)
         {
             if (act.Timeout > 0)
