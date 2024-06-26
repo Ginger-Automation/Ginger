@@ -157,7 +157,10 @@ jobs:
               run: |
                  mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\ginger
               shell: cmd
-    
+              
+            -   uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
+                with: 
+                    filepath: './Ginger/GingerInstallerScriptGithub.iss' 
                
             -   name: Signing using Signtool dll
                 run: | 
@@ -171,9 +174,6 @@ jobs:
                  # certificate: ${{ secrets.PEM }}
                  # cert-password: ${{ secrets.PEM_PASS }}
                   
-            -   uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
-                with: 
-                    filepath: './Ginger/GingerInstallerScriptGithub.iss' 
 
             -   name: Create Signed Directory       
                 run: |
