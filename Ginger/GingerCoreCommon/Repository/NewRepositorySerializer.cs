@@ -120,10 +120,6 @@ namespace Amdocs.Ginger.Repository
                 return string.Empty;
         }
 
-
-
-
-
         private void xmlwriteHeader(XmlTextWriter xml, RepositoryItemBase repositoryItem)
         {
             // Since Header is simple object and unique, we write the attrs in the order we want            
@@ -157,10 +153,6 @@ namespace Amdocs.Ginger.Repository
 
             xml.WriteEndElement();
         }
-
-
-
-
 
         //TODO: later on get back this function it is more organize, but causing saving problems  -to be fixed later
         private void xmlwriteObject(XmlTextWriter xml, RepositoryItemBase ri)
@@ -215,17 +207,14 @@ namespace Amdocs.Ginger.Repository
                         value = ri.GetType().GetField(mi.Name).GetValue(ri);
                     }
 
-
                     RIAttr rIAttr = new RIAttr() { Name = mi.Name, ttt = tt, value = value, attrIS = isSerialziedAttr };
                     if (value is IObservableList or List<string> or RepositoryItemBase)
                     {
-
                         ListAttrs.Add(rIAttr);
                     }
                     else
                     {
                         SimpleAttrs.Add(rIAttr);
-
                     }
                 }
             }
@@ -294,8 +283,6 @@ namespace Amdocs.Ginger.Repository
                     break;
             }
         }
-
-
 
         private bool IsValueDefault(object attrValue, IsSerializedForLocalRepositoryAttribute IsSerializedForLocalRepository)
         {
@@ -380,7 +367,6 @@ namespace Amdocs.Ginger.Repository
 
             }
 
-
             xml.WriteWhitespace("\n");
             xml.WriteEndElement();
             xml.WriteWhitespace("\n");
@@ -411,7 +397,6 @@ namespace Amdocs.Ginger.Repository
             string xml = File.ReadAllText(fileName);
 
             return DeserializeFromText(xml, filePath: fileName);
-
         }
 
 
@@ -449,7 +434,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-
         public RepositoryItemBase DeserializeFromFile(string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName) || !File.Exists(fileName))
@@ -461,9 +445,6 @@ namespace Amdocs.Ginger.Repository
 
             return DeserializeFromText(xml, filePath: fileName);
         }
-
-
-
 
         public static RepositoryItemBase DeserializeFromText(string xml, RepositoryItemBase targetObj = null, string filePath = "")
         {
@@ -633,9 +614,9 @@ namespace Amdocs.Ginger.Repository
                 switch (observableList.LazyLoadDetails.Config.LazyLoadType)
                 {
                     case LazyLoadListConfig.eLazyLoadType.NodePath:
-                        if (string.IsNullOrEmpty(repoItemBaseItem.FilePath) == false
-                                && File.Exists(repoItemBaseItem.FilePath)
-                                    && repoItemBaseItem.DirtyStatus != Common.Enums.eDirtyStatus.Modified)
+                        if (!string.IsNullOrEmpty(repoItemBaseItem.FilePath)
+                            && File.Exists(repoItemBaseItem.FilePath)
+                            && repoItemBaseItem.DirtyStatus != Common.Enums.eDirtyStatus.Modified)
                         {
                             observableList.LazyLoadDetails.XmlFilePath = repoItemBaseItem.FilePath;
                             xdr.ReadOuterXml();//so xdr will progress
@@ -1233,13 +1214,13 @@ namespace Amdocs.Ginger.Repository
                             if (sValue != "00:00:00")
                             {
                                 TimeSpan timeSpan;
-                                if(TimeSpan.TryParse(sValue, out timeSpan))
+                                if (TimeSpan.TryParse(sValue, out timeSpan))
                                 {
                                     propertyInfo.SetValue(obj, timeSpan);
                                 }
                                 else
                                 {
-                                    Reporter.ToLog(eLogLevel.ERROR,"Failed to set the DevelopmentTime");
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set the DevelopmentTime");
                                 }
                             }
 
@@ -1259,9 +1240,7 @@ namespace Amdocs.Ginger.Repository
                                     throw new Exception("Cannot convert Enum - " + sValue);
                                 }
                             }
-                            else
-                                // handle long?   = int64 nullable  - used in elapsed 
-                                if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int64)
+                            else if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int64) // handle long?   = int64 nullable  - used in elapsed 
                             {
                                 if (sValue != null)
                                 {
@@ -1272,8 +1251,7 @@ namespace Amdocs.Ginger.Repository
                                     throw new Exception("Cannot convert Nullable Int64 - " + sValue);
                                 }
                             }
-                            else
-                                    if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int32)
+                            else if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int32)
                             {
                                 if (sValue != null)
                                 {
@@ -1284,8 +1262,7 @@ namespace Amdocs.Ginger.Repository
                                     throw new Exception("Cannot convert Nullable Int32 - " + sValue);
                                 }
                             }
-                            else
-                                        if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Double)
+                            else if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Double)
                             {
                                 if (sValue != null)
                                 {
@@ -1314,20 +1291,20 @@ namespace Amdocs.Ginger.Repository
             catch
             {
                 if (obj is RepositoryItemBase repoItemBaseItem
-                     && repoItemBaseItem.SerializationError(SerializationErrorType.SetValueException, propertyInfo.Name, sValue.ToString()))
+                     && repoItemBaseItem.SerializationError(SerializationErrorType.SetValueException, propertyInfo.Name, sValue))
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Property value converted successfully: object='{0}', property='{1}', value='{2}'", obj.GetType().Name, propertyInfo.Name, sValue.ToString()));
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Property value converted successfully: object='{0}', property='{1}', value='{2}'", obj.GetType().Name, propertyInfo.Name, sValue));
                 }
                 else
                 {
                     string err;
                     if (propertyInfo != null)
                     {
-                        err = "Obj=" + obj + ", Property=" + propertyInfo.Name + ", Value=" + sValue.ToString();
+                        err = $"Obj={obj}, Property={propertyInfo.Name}, Value={sValue}";
                     }
                     else
                     {
-                        err = "Property Not found: Obj=" + obj + " Value=" + sValue.ToString();
+                        err = $"Property Not found: Obj={obj} Value={sValue}";
                     }
                     throw new Exception(err);
                 }
