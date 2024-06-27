@@ -11,6 +11,7 @@ using Cassandra;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Ginger.Configurations;
 using Amazon.Runtime;
+using Grpc.Core;
 
 namespace GingerCoreNET.GenAIServices
 {
@@ -147,7 +148,15 @@ namespace GingerCoreNET.GenAIServices
 
 
                 var response = await _httpClient.PostAsync(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.ContinueChat), content);
-                return await ParseResponse(response);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await ParseResponse(response);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR,"Response is not successfull");
+                    throw new HttpRequestException($"{response.StatusCode}");
+                }
             }
             else
             {
@@ -164,7 +173,15 @@ namespace GingerCoreNET.GenAIServices
             {
                 MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
                 var response = await _httpClient.PostAsync(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.StartNewChat), content);
-                return await ParseResponse(response);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await ParseResponse(response);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Response is not successfull");
+                    throw new HttpRequestException($"{response.StatusCode}");
+                }
             }
             else
             {
