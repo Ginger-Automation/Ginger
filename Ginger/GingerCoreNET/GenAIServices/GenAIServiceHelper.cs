@@ -154,7 +154,8 @@ namespace GingerCoreNET.GenAIServices
                 }
                 else
                 {
-                    return null;
+                    Reporter.ToLog(eLogLevel.ERROR,"Response is not successfull");
+                    throw new HttpRequestException($"{response.StatusCode}");
                 }
             }
             else
@@ -178,7 +179,8 @@ namespace GingerCoreNET.GenAIServices
                 }
                 else
                 {
-                    return null;
+                    Reporter.ToLog(eLogLevel.ERROR, "Response is not successfull");
+                    throw new HttpRequestException($"{response.StatusCode}");
                 }
             }
             else
