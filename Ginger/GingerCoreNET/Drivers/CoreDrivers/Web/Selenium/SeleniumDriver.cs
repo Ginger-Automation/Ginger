@@ -2222,9 +2222,23 @@ namespace GingerCore.Drivers
                 {
                     throw new Exception("Unable to find details about the POM");
                 }
-
-                ElementLocator firstLocator = currentPOMElementInfo.Locators.FirstOrDefault(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy));
-
+                ElementLocator firstLocator=null;
+                if (act.UseAllLocators == true)
+                {
+                    foreach (var l in currentPOMElementInfo.Locators)
+                    {
+                        if (l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy))
+                        {
+                            locateBy = l.LocateBy;
+                            locateValue = l.LocateValue;
+                            return (locateBy, locateValue);
+                        }
+                    }
+                }
+                else
+                {
+                    firstLocator = currentPOMElementInfo.Locators.FirstOrDefault(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy));
+                }
                 if (firstLocator == null)
                 {
                     throw new Exception("No active or supported  locators found in the current POM");
