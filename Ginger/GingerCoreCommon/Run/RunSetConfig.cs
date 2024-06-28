@@ -56,7 +56,7 @@ namespace Ginger.Run
         /// <summary>
         /// List of all the agents and the Virtual ones mapped during run with runner guid
         /// </summary>
-        public Dictionary<Guid, IAgent> ActiveAgentListWithRunner = new Dictionary<Guid, IAgent>();
+        public Dictionary<Guid, List<IAgent>> ActiveAgentListWithRunner = new Dictionary<Guid, List<IAgent>>();
 
 
         private bool mIsRunning;
