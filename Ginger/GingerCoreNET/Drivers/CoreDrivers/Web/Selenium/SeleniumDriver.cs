@@ -6450,21 +6450,29 @@ namespace GingerCore.Drivers
             {
                 foreach (HtmlNode childNode in htmlElementObject.ChildNodes)
                 {
-                    if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
+                    if (!childNode.Name.StartsWith('#') && !string.IsNullOrEmpty(childNode.InnerText))
                     {
-                        string[] tempOpVals = childNode.InnerText.Split('\n');
+                        var tempOpVals = childNode.InnerText
+                            .Split('\n')
+                            .Where(f => !string.IsNullOrEmpty(f.Trim()) && !f.Trim().Equals('\r'))
+                            .Select(g => g.Trim().Replace("\r", ""));
+
                         foreach (string cuVal in tempOpVals)
                         {
                             ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
                         }
                     }
                 }
+
                 if (ElementInfo.OptionalValuesObjectsList.Count > 0)
                 {
                     ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
-                    list.Add(new ControlProperty() { Name = ElementProperty.OptionalValues, Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+                    list.Add(new ControlProperty()
+                    {
+                        Name = ElementProperty.OptionalValues,
+                        Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "")
+                    });
                 }
-
             }
 
             HtmlAttributeCollection htmlAttributes = htmlElementObject.Attributes;
@@ -6578,7 +6586,7 @@ namespace GingerCore.Drivers
 
         private object GetComboValues(ElementInfo ElementInfo)
         {
-            List<ComboBoxElementItem> ComboValues = new List<ComboBoxElementItem>();
+            List<ComboBoxElementItem> ComboValues = [];
             IWebElement e = Driver.FindElement(By.XPath(ElementInfo.XPath));
             SelectElement se = new SelectElement(e);
             IList<IWebElement> options = se.Options;
@@ -6591,7 +6599,7 @@ namespace GingerCore.Drivers
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
-            ObservableList<ElementLocator> locatorsList = new Platforms.PlatformsInfo.WebPlatform().GetLearningLocators();
+            ObservableList<ElementLocator> locatorsList = [];
             IWebElement e = null;
 
             if (ElementInfo.ElementObject != null)
@@ -6704,7 +6712,7 @@ namespace GingerCore.Drivers
         ObservableList<ElementLocator> IWindowExplorer.GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
 
-            ObservableList<ElementLocator> locatorsList = new ObservableList<ElementLocator>();
+            ObservableList<ElementLocator> locatorsList = [];
             try
             {
                 if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
@@ -6811,12 +6819,17 @@ namespace GingerCore.Drivers
                     learnElement = false;
                 }
             }
-            ElementLocator elemLocator = new ElementLocator();
-            elemLocator.Active = true;
-            elemLocator.Position = position;
-            elemLocator.LocateBy = eLocateBy.POMElement;
-            elemLocator.LocateValue = learnElement ? currentHtmlNode.XPath : String.Empty;
-            elemLocator.IsAutoLearned = true;
+
+            ElementLocator elementLocator = new()
+            {
+                Active = true,
+                Position = position,
+                LocateBy = eLocateBy.POMElement,
+                LocateValue = learnElement ? currentHtmlNode.XPath : String.Empty,
+                IsAutoLearned = true
+            };
+            ElementLocator elemLocator = elementLocator;
+
             if (!string.IsNullOrEmpty(elemLocator.LocateValue))
             {
                 locatorsList.Add(elemLocator);
@@ -7025,7 +7038,7 @@ namespace GingerCore.Drivers
             ISearchContext parentElement = null;
             ReadOnlyCollection<IWebElement> childrenElements = null;
             bool isShadowRootDetected = false;
-            XPaths ??= new List<string>();
+            XPaths ??= [];
 
             while (stack.Count > 0)
             {

@@ -45,10 +45,11 @@ namespace Ginger.DataSource
             InitializeComponent();
 
             mTargetFolder = folder;
-            mDSDetails = new AccessDataSource();
-
-            mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
-            mDSDetails.Name = "GingerDataSource";
+            mDSDetails = new AccessDataSource
+            {
+                FilePath = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb",
+                Name = "GingerDataSource"
+            };
 
             FilePathTextBox.IsEnabled = false;
             FileBrowseButton.IsEnabled = false;
@@ -68,7 +69,7 @@ namespace Ginger.DataSource
 
         void SetAccessDataSource()
         {
-            if (!(mDSDetails is AccessDataSource))
+            if (mDSDetails is not AccessDataSource)
             {
                 mDSDetails = new AccessDataSource();
             }
@@ -83,7 +84,7 @@ namespace Ginger.DataSource
 
         void SetLiteDBDataSource()
         {
-            if (!(mDSDetails is GingerLiteDB))
+            if (mDSDetails is not GingerLiteDB)
             {
                 mDSDetails = new GingerLiteDB();
             }
@@ -110,14 +111,25 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (FilePathTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "File Path"); return; }
-            else if (DSTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "DB type"); return; }
+            if (FilePathTextBox.Text.Trim() == string.Empty)
+            {
+                Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "File Path"); 
+                return;
+            }
+            else if (DSTypeComboBox.SelectedItem == null)
+            {
+                Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "DB type");
+                return;
+            }
 
             mDSDetails.FilePath = FilePathTextBox.Text;
             mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~", WorkSpace.Instance.Solution.Folder);
             mDSDetails.Name = DSName.Text;
             if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
-            { Reporter.ToUser(eUserMsgKey.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
+            {
+                Reporter.ToUser(eUserMsgKey.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); 
+                return;
+            }
 
             mDSDetails.FilePath = mDSDetails.FilePath.Replace(WorkSpace.Instance.Solution.Folder, "~");//Pending                       
 
@@ -142,16 +154,16 @@ namespace Ginger.DataSource
                 if (mDSDetails.DSType == DataSourceBase.eDSType.MSAccess)
                 {
                     byte[] obj = Properties.Resources.GingerDataSource;
-                    System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath.Replace("~", WorkSpace.Instance.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                    fs.Write(obj, 0, obj.Count());
+                    System.IO.FileStream fs = new(mDSDetails.FileFullPath.Replace("~", WorkSpace.Instance.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                    fs.Write(obj, 0, obj.Length);
                     fs.Close();
                     fs.Dispose();
                 }
                 else if (mDSDetails.DSType == DataSourceBase.eDSType.LiteDataBase)
                 {
                     byte[] obj = Properties.Resources.LiteDB;
-                    System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath.Replace("~", WorkSpace.Instance.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                    fs.Write(obj, 0, obj.Count());
+                    System.IO.FileStream fs = new(mDSDetails.FileFullPath.Replace("~", WorkSpace.Instance.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                    fs.Write(obj, 0, obj.Length);
                     fs.Close();
                     fs.Dispose();
                 }
@@ -165,10 +177,12 @@ namespace Ginger.DataSource
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button okBtn = new Button();
-            okBtn.Content = "OK";
+            Button okBtn = new()
+            {
+                Content = "OK"
+            };
             okBtn.Click += new RoutedEventHandler(OKButton_Click);
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
             winButtons.Add(okBtn);
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, true, "Cancel");
