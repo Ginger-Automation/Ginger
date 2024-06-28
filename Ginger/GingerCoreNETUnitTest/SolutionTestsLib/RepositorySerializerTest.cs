@@ -113,8 +113,6 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             // We do not write all attribute only the one which changed from default value            
             Assert.IsTrue(xml.Contains(" Name=\"BF1"));
             Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
-            //Regex regex = new(@"<BusinessFlow.*\sGuid="); // added for handling the development time tag in between of guid
-            //Assert.IsTrue(regex.Matches(xml).Count>0);
             Assert.IsTrue(xml.Contains("<Activities>"));
             // We need to have only one activity - make sure it is written squeezed to min
             Assert.IsTrue(xml.Contains("ActivityName=\"Activity 1\""));
