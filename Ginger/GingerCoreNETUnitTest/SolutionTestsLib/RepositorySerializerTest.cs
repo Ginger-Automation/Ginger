@@ -98,7 +98,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
             int lt = xml.Count(f => f == '<');
             int gt = xml.Count(f => f == '>');
-            Assert.IsTrue(xml.Length < 914, "Verify minimal xml is less than 900 bytes"); //development time tag in BF, increased the xml size
+            Assert.IsTrue(xml.Length < 900, "Verify minimal xml is less than 900 bytes");
             Assert.AreEqual(9, lt, "XML Elements count <");
             Assert.AreEqual(9, gt, "XML Elements count >");
 
@@ -112,9 +112,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             // Verify Object class written in short name again, and since we changed only the name no other attrs should be added
             // We do not write all attribute only the one which changed from default value            
             Assert.IsTrue(xml.Contains(" Name=\"BF1"));
-            //Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
-            Regex regex = new(@"<BusinessFlow.*\sGuid="); // added for handling the development time tag in between of guid
-            Assert.IsTrue(regex.Matches(xml).Count>0);
+            Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
             Assert.IsTrue(xml.Contains("<Activities>"));
             // We need to have only one activity - make sure it is written squeezed to min
             Assert.IsTrue(xml.Contains("ActivityName=\"Activity 1\""));
