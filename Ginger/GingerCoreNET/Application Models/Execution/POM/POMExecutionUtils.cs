@@ -82,37 +82,42 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             else
             {
                 if (category != null)
-                {
-                    //copy original element info for not impacting the original element info
-                    ElementInfo selectedPOMElementInfoCopy = (ElementInfo)selectedPOMElementInfo.CreateCopy(setNewGUID: false, deepCopy:true);
-                    selectedPOMElementInfoCopy.Properties = new ObservableList<ControlProperty>(selectedPOMElementInfo.Properties);
-                    selectedPOMElementInfoCopy.Locators = new ObservableList<ElementLocator>(selectedPOMElementInfo.Locators);
-
-                    //pull only Properties and Locators which match to the Driver Category
-                    //foreach (var prop in selectedPOMElementInfo.Properties)
-                    for (int i = selectedPOMElementInfoCopy.Properties.Count - 1; i >= 0; i--)
-                    {
-                        var prop = selectedPOMElementInfoCopy.Properties[i];
-                        if (prop.Category != null && prop.Category != category)
-                        {
-                            selectedPOMElementInfoCopy.Properties.RemoveAt(i);
-                        }
-                    }
-
-                    for (int i = selectedPOMElementInfoCopy.Locators.Count - 1; i >= 0; i--)
-                    {
-                        var locator = selectedPOMElementInfoCopy.Locators[i];
-                        if (locator.Category != null && locator.Category != category)
-                        {
-                            selectedPOMElementInfoCopy.Locators.RemoveAt(i);
-                        }
-                    }
-
-                    return selectedPOMElementInfoCopy;
+                {                    
+                    return FilterElementDetailsByCategory(selectedPOMElementInfo, category);
                 }
             }
 
             return selectedPOMElementInfo;
+        }
+
+        public static ElementInfo FilterElementDetailsByCategory(ElementInfo originalElementInfo, ePomElementCategory? category)
+        {
+            //copy original element info for not impacting the original element info
+            ElementInfo ElementInfoCopy = (ElementInfo)originalElementInfo.CreateCopy(setNewGUID: false, deepCopy: true);
+            ElementInfoCopy.Properties = new ObservableList<ControlProperty>(originalElementInfo.Properties);
+            ElementInfoCopy.Locators = new ObservableList<ElementLocator>(originalElementInfo.Locators);
+
+            //pull only Properties and Locators which match to the Driver Category
+            //foreach (var prop in selectedPOMElementInfo.Properties)
+            for (int i = ElementInfoCopy.Properties.Count - 1; i >= 0; i--)
+            {
+                var prop = ElementInfoCopy.Properties[i];
+                if (prop.Category != null && prop.Category != category)
+                {
+                    ElementInfoCopy.Properties.RemoveAt(i);
+                }
+            }
+
+            for (int i = ElementInfoCopy.Locators.Count - 1; i >= 0; i--)
+            {
+                var locator = ElementInfoCopy.Locators[i];
+                if (locator.Category != null && locator.Category != category)
+                {
+                    ElementInfoCopy.Locators.RemoveAt(i);
+                }
+            }
+
+            return ElementInfoCopy;
         }
 
         public ElementInfo GetFriendlyElementInfo(Guid elementGuid)

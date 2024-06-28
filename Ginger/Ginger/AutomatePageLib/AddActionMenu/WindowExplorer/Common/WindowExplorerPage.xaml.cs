@@ -207,6 +207,8 @@ namespace Ginger.WindowExplorer
 
                 if (elemInfo != null)
                 {
+                    elemInfo.SetLocatorsAndPropertiesCategory(((DriverBase)mWindowExplorerDriver).PomCategory);
+
                     mCurrentControlTreeViewItem = GetTreeViewItemForElementInfo(elemInfo);
                     ShowCurrentControlInfo();
                 }
@@ -228,6 +230,8 @@ namespace Ginger.WindowExplorer
 
                 if (elemInfo != null)
                 {
+                    elemInfo.SetLocatorsAndPropertiesCategory(((DriverBase)mWindowExplorerDriver).PomCategory);
+
                     mCurrentControlTreeViewItem = GetTreeViewItemForElementInfo(elemInfo);
                     ShowCurrentControlInfo();
                 }
