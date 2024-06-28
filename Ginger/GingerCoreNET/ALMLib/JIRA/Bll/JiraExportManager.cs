@@ -306,8 +306,36 @@ namespace GingerCore.ALM.JIRA.Bll
 
         public bool ExecuteDataToJira(BusinessFlow bizFlow, PublishToALMConfig publishToALMConfig, ref string result)
         {
-            bool resultFlag = false;          
-            if (bizFlow.ExternalID != "0" && (!String.IsNullOrEmpty(bizFlow.ExternalID)))
+            bool resultFlag = false;
+            if (string.IsNullOrEmpty(bizFlow.ExternalID) || bizFlow.ExternalID.Equals("0"))
+            {
+                if (bizFlow.ALMTestSetLevel == "RunSet")
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {bizFlow.Name} is missing ExternalID, cannot export JIRA TestPlan execution results without External ID";
+                    Reporter.ToLog(eLogLevel.ERROR, result);
+                }
+                else
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {bizFlow.Name} is missing ExternalID, cannot export JIRA TestPlan execution results without External ID";
+                    Reporter.ToLog(eLogLevel.ERROR, result);
+                }
+
+                return resultFlag;
+            }
+            else if (bizFlow.ActivitiesGroups.Count == 0)
+            {
+                if (bizFlow.ALMTestSetLevel == "RunSet")
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {bizFlow.Name} Must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
+                }
+                else
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {bizFlow.Name} Must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
+                }
+
+                return resultFlag;
+            }
+            else
             {
                 if (string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunName))
                 {
@@ -401,7 +429,7 @@ namespace GingerCore.ALM.JIRA.Bll
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM,"Incorrect ExternalID of BF, Please check if BF already exported as Test Set/Plan");
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Export to ALM, Error in Executing JIRA Run Status by Steps ");
             }
 
             return resultFlag;
