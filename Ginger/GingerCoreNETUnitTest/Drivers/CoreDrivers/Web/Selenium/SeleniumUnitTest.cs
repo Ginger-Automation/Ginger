@@ -44,8 +44,8 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             var result = selenium.GetLocatorsForWebSmartSync(act, pomExecutionUtil);
 
             // Assert
-            Assert.AreEqual(eLocateBy.ByID, result.locateBy);
-            Assert.AreEqual("expectedId", result.locateValue);
+            Assert.AreEqual(eLocateBy.ByID, result[0].LocateBy);
+            Assert.AreEqual("expectedId", result[0].LocateValue);
         }
         /// <summary>
         /// This unit test method verifies that the GetLocatorsForWebSmartSync method uses the first active locator when the ElementLocateBy is set to eLocateBy.POMElement.
@@ -80,8 +80,8 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             var result = yourClass.GetLocatorsForWebSmartSync(act, mockPOMExecutionUtil.Object);
 
             // Assert
-            Assert.AreEqual(locators[1].LocateBy, result.locateBy);
-            Assert.AreEqual(locators[1].LocateValue, result.locateValue);
+            Assert.AreEqual(locators[1].LocateBy, result[0].LocateBy);
+            Assert.AreEqual(locators[1].LocateValue, result[0].LocateValue);
         }
         /// <summary>
         /// This unit test method verifies that the GetLocatorsForWebSmartSync method uses the first supported locator when the ElementLocateBy is set to eLocateBy.POMElement.
@@ -113,11 +113,11 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             var yourClass = new SeleniumDriver();
 
             // Act
-            var result = yourClass.GetLocatorsForWebSmartSync(act, mockPOMExecutionUtil.Object);
+            List<ElementLocator> result = yourClass.GetLocatorsForWebSmartSync(act, mockPOMExecutionUtil.Object);
 
             // Assert
-            Assert.AreEqual(locators[2].LocateBy, result.locateBy);
-            Assert.AreEqual(locators[2].LocateValue, result.locateValue);
+            Assert.AreEqual(locators[2].LocateValue, result[0].LocateValue);
+          Assert.AreEqual(locators[2].LocateBy, result[0].LocateBy);
         }
         /// <summary>
         /// This unit test method verifies that the GetLocatorsForWebSmartSync method throws an exception when there is no active locator for the POM element.
@@ -251,6 +251,46 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             Assert.AreEqual("Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath and ByTagName.", ex.Message);
 
         }
+        /// <summary>
+        /// This unit test method verifies that the GetLocatorsForWebSmartSync method uses the active and supported locators when the ElementLocateBy is set to eLocateBy.POMElement and UseAllLocators is true.
+        /// </summary>
+        [TestMethod]
+        public void GetLocatorsForWebSmartSync_POMElement_UseAllActiveandSupportedLocator()
+        {
+            // Arrange
+            var mockPOMExecutionUtil = new Mock<POMExecutionUtils>();
+            var act = new ActWebSmartSync
+            {
+                ElementLocateBy = eLocateBy.POMElement,
+                ElementLocateValue = "expectedId",
+                UseAllLocators = true,
 
+            };
+            act.InputValues.First(iv => string.Equals(iv.Param, nameof(ActWebSmartSync.ElementLocateValue))).ValueForDriver = act.ElementLocateValue;
+
+            var locators = new ObservableList<ElementLocator>
+            {
+                new ElementLocator { LocateBy = eLocateBy.ByID, LocateValue = "testId", Active = true },
+                new ElementLocator { LocateBy = eLocateBy.ByXPath, LocateValue = "//div[@id='test']", Active = true },
+                new ElementLocator { LocateBy = eLocateBy.ByName, LocateValue = "testName", Active = true }
+            };
+
+            var currentPOMElementInfo = new ElementInfo { Locators = locators };
+            mockPOMExecutionUtil.Setup(p => p.GetCurrentPOM()).Returns(new ApplicationPOMModel());
+            mockPOMExecutionUtil.Setup(p => p.GetCurrentPOMElementInfo(null)).Returns(currentPOMElementInfo);
+
+            var yourClass = new SeleniumDriver();
+
+            // Act
+            List<ElementLocator> result = yourClass.GetLocatorsForWebSmartSync(act, mockPOMExecutionUtil.Object);
+
+            // Assert
+            Assert.AreEqual(locators[0].LocateValue, result[0].LocateValue);
+            Assert.AreEqual(locators[0].LocateBy, result[0].LocateBy);
+            Assert.AreEqual(locators[1].LocateValue, result[1].LocateValue);
+            Assert.AreEqual(locators[1].LocateBy, result[1].LocateBy);
+            Assert.AreEqual(locators[2].LocateValue, result[2].LocateValue);
+            Assert.AreEqual(locators[2].LocateBy, result[2].LocateBy);
+        }
     }
 }
