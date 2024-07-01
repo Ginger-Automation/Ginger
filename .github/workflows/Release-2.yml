@@ -161,7 +161,8 @@ jobs:
             -   name: Signing using Signtool dll
                 run: | 
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll
-                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll    
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll 
               #      signtool.exe verify /v /pa "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\" 
             
            # -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0.beta1
