@@ -2381,17 +2381,13 @@ namespace GingerCore.Drivers
                     {
                         throw new Exception($"For {act.SyncOperations} operation Locate value is missing or invalid input.");
                     }
-
-                
-                }
-                
+                }                
             }
             catch (Exception ex)
             {
                 act.Error = ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
                 return;
-
             }
             int MaxTimeout = WebSmartSyncGetMaxTimeout(act);
             //store agent's implicit wait in a variable
@@ -2400,10 +2396,6 @@ namespace GingerCore.Drivers
             Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
             WebDriverWait wait;
             ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
-
-
-
-
             if (act.UseAllLocators && act.ElementLocateBy == eLocateBy.POMElement)
             {
                 for (int i = 0; i < locatorList.Count; i++)
@@ -2483,6 +2475,8 @@ namespace GingerCore.Drivers
             }
 
         }
+
+
 
         /// <summary>
         /// Retrieves the maximum timeout value for the ActWebSmartSync action.
