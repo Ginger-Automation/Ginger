@@ -242,6 +242,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                     mSpyElement.WindowExplorer = mWinExplorer;
                     mSpyElement.IsAutoLearned = true;
+                    mSpyElement.SetLocatorsAndPropertiesCategory(((DriverBase)mWinExplorer).PomCategory);
                     xStatusLable.Content = "Element found";
                     FocusSpyItemOnElementsGrid();
                     mWinExplorer.HighLightElement(mSpyElement);

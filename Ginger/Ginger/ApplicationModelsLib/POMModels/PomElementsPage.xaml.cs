@@ -423,7 +423,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 if (xMainElementsGrid.Grid.SelectedItems.Count == 2)
                 {
-                    if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, "Are you sure you eant to perform merge of selected elements?" + Environment.NewLine + Environment.NewLine + "Note: one of the selected elements will be deleted post merge.") == eUserMsgSelection.Yes)
+                    if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, string.Format("Are you sure you want to perform merge of selected elements?" + Environment.NewLine + Environment.NewLine + "Note: '{0}' element will be deleted post merge.", ((ElementInfo)xMainElementsGrid.Grid.SelectedItems[1]).ItemName)) == eUserMsgSelection.Yes)
                     {
                         xMainElementsGrid.Grid.CommitEdit();
 

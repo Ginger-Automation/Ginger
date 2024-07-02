@@ -16,23 +16,62 @@ using System.Threading.Tasks;
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 {
+    /// <summary>
+    /// Locate <see cref="ApplicationPOMModel"/> elements.
+    /// </summary>
+    /// <typeparam name="TElement">The type of elements to locate.</typeparam>
     internal sealed class POMElementLocator<TElement>
     {
+        /// <summary>
+        /// Delegate for locating elements based on primitive locators.
+        /// <br/><br/>
+        /// <b>NOTE</b><br/>
+        /// Only primitive locators like <see cref="eLocateBy.ByID"/>, <see cref="eLocateBy.ByXPath"/> etc. will be passed to this delegate. <br/>
+        /// Complex locators like <see cref="eLocateBy.POMElement"/> will not be passed.
+        /// </summary>
+        /// <param name="locateBy">The primitive locator type. </param>
+        /// <param name="locateValue">The value to locate the element.</param>
+        /// <returns>The located elements.</returns>
         internal delegate Task<IEnumerable<TElement>> ElementsProvider(eLocateBy locateBy, string locateValue);
 
         internal sealed class LocateResult
         {
+            /// <summary>
+            /// Get or initialize the located elements.
+            /// </summary>
             internal required IEnumerable<TElement> Elements { get; init; }
 
+            /// <summary>
+            /// Get or initialize a value indicating whether the POM was auto-updated during the locate operation.
+            /// </summary>
             internal required bool WasAutoUpdated { get; init; }
         }
 
         internal sealed class Args
         {
+            /// <summary>
+            /// Get or initialize the information about the element to locate.
+            /// </summary>
             internal required ElementInfo ElementInfo { get; init; }
+
+            /// <summary>
+            /// Get or initialize the provider for locating elements.
+            /// </summary>
             internal required ElementsProvider ElementsProvider { get; init; }
+
+            /// <summary>
+            /// Get or initialize the current business flow.
+            /// </summary>
             internal required BusinessFlow BusinessFlow { get; init; }
+
+            /// <summary>
+            /// Get or initialize the current project environment.
+            /// </summary>
             internal required ProjEnvironment Environment { get; init; }
+
+            /// <summary>
+            /// Get or initialize a value indicating whether the POM should be auto-updated during the locate operation.
+            /// </summary>
             internal required bool AutoUpdatePOM { get; init; }
         }
 
@@ -44,6 +83,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
         private readonly BusinessFlow _businessFlow;
         private readonly ProjEnvironment _environment;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="POMElementLocator{TElement}"/>.
+        /// </summary>
+        /// <param name="args">The arguments for initializing <see cref="POMElementLocator{TElement}"/>.</param>
         internal POMElementLocator(Args args)
         {
             _autoUpdatePOM = args.AutoUpdatePOM;
@@ -53,12 +96,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             _environment = args.Environment;
         }
 
+        /// <summary>
+        /// Locate POM elements. This method also tries to modify the POM if no elements are found initially and appropriate configurations are set via <see cref="Args"/>.
+        /// </summary>
+        /// <returns><see cref="LocateResult"/> containing the result of the locate operation.</returns>
         internal async Task<LocateResult> LocateAsync()
         {
             IEnumerable<TElement>? elements = null;
             bool wasAutoUpdated = false;
 
-            elements = await LocateAsync(_elementInfo.Locators);
+            elements = await GetElementsByLocators(_elementInfo.Locators);
 
             bool noElementFound = elements == null || !elements.Any();
 
@@ -66,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             {
                 UpdatePOM();
                 wasAutoUpdated = true;
-                elements = await LocateAsync(_elementInfo.Locators);
+                elements = await GetElementsByLocators(_elementInfo.Locators);
             }
 
             if (elements == null)
@@ -81,7 +128,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             };
         }
 
-        private async Task<IEnumerable<TElement>> LocateAsync(IEnumerable<ElementLocator> locators)
+        /// <summary>
+        /// Get collection of <typeparamref name="TElement"/> matching any of the provided locators.
+        /// </summary>
+        /// <param name="locators">Collection of <see cref="ElementLocator"/> to search for.</param>
+        /// <returns>Collection of <typeparamref name="TElement"/> matching any of the provided locators</returns>
+        private async Task<IEnumerable<TElement>> GetElementsByLocators(IEnumerable<ElementLocator> locators)
         {
             IEnumerable<TElement>? elements = null;
 

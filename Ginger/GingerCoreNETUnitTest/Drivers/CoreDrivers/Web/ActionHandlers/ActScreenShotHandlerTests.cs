@@ -15,7 +15,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.ActionHandlers
 {
     [TestClass]
     [TestCategory(TestCategory.UnitTest)]
-    public class ActScreenShotHandlerUnitTests
+    public class ActScreenShotHandlerTests
     {
         [TestMethod]
         public async Task HandleAsync_OnlyActiveWindow_OneScreenShotAddedToAction()

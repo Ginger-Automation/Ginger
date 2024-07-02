@@ -32,6 +32,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
 {
@@ -97,7 +98,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
             int lt = xml.Count(f => f == '<');
             int gt = xml.Count(f => f == '>');
-            Assert.IsTrue(xml.Length < 914, "Verify minimal xml is less than 900 bytes"); //development time tag in BF, increased the xml size
+            Assert.IsTrue(xml.Length < 900, "Verify minimal xml is less than 900 bytes");
             Assert.AreEqual(9, lt, "XML Elements count <");
             Assert.AreEqual(9, gt, "XML Elements count >");
 

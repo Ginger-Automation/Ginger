@@ -51,6 +51,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _onTabClose = onTabClose;
             _currentFrame = _playwrightPage.MainFrame;
             _playwrightPage.Console += OnConsoleMessage;
+            _playwrightPage.Close += OnPlaywrightPageClose;
+        }
+
+        private void RemoveEventHandlers()
+        {
+            _playwrightPage.Console -= OnConsoleMessage;
+            _playwrightPage.Close -= OnPlaywrightPageClose;
+        }
+
+        private void OnPlaywrightPageClose(object? sender, IPlaywrightPage e)
+        {
+            _ = CloseAsync();
         }
 
         private void OnConsoleMessage(object? sender, IConsoleMessage e)
@@ -353,7 +365,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _isClosed = true;
             //_playwrightPage.Dialog -= OnDialog;
             await _playwrightPage.CloseAsync();
-            await _onTabClose.Invoke(closedTab: this);
+            RemoveEventHandlers();
+            await _onTabClose(closedTab: this);
         }
 
         private void ThrowIfClosed()

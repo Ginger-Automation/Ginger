@@ -810,10 +810,9 @@ namespace Ginger.Run
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
                 {
                     RunSetConfig runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+                    List<IAgent> RunnerAgentList = new();
                     foreach (ApplicationAgent applicationAgent in mGingerRunner.ApplicationAgents)
                     {
-
-
                         if (applicationAgent.AgentName != null)
                         {
                             ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
@@ -829,8 +828,12 @@ namespace Ginger.Run
                                         AgentOperations agentOperations = new AgentOperations(agent);
                                         agent.AgentOperations = agentOperations;
                                     }
-                                    //logic for if need to assign virtual agent
-                                    if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentListWithRunner.Where(entry => entry.Key != mGingerRunner.Guid).Select(y => y.Value).ToList().Where(y => y != null).Any(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)))
+                                    /// <summary>
+                                    /// logic for if need to assign virtual agent
+                                    /// Second condition for  If any runner have same agent multiple times then for that runner it will not launch multiple agent within same runner
+                                    /// third condition if any agent is used in different agent then only it will create virtual agent for that specific agent 
+                                    /// </summary>
+                                    if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentListWithRunner.Where(entry => entry.Key == mGingerRunner.Guid).Select(y => y.Value).Where(y => y != null).Any(x => (x.Any(k => ((Agent)k).Guid != agent.Guid))) && runSetConfig.ActiveAgentListWithRunner.Where(entry => entry.Key != mGingerRunner.Guid).Select(y => y.Value).Where(y => y != null).Any(x => (x.Any(k => ((Agent)k).Guid == agent.Guid || (((Agent)k).ParentGuid != null && ((Agent)k).ParentGuid == agent.Guid))))) 
                                     {
                                         var virtualagent = agent.CreateCopy(true) as Agent;
                                         virtualagent.AgentOperations = new AgentOperations(virtualagent);
@@ -847,7 +850,16 @@ namespace Ginger.Run
 
                                 if (applicationAgent.Agent != null)
                                 {
-                                    runSetConfig.ActiveAgentListWithRunner.Add(mGingerRunner.Guid, applicationAgent.Agent);
+                                    RunnerAgentList.Add(applicationAgent.Agent);
+
+                                    if (runSetConfig.ActiveAgentListWithRunner.Any(kvp => kvp.Key.Equals(mGingerRunner.Guid)))
+                                    {
+                                        runSetConfig.ActiveAgentListWithRunner[mGingerRunner.Guid] = RunnerAgentList;
+                                    }
+                                    else
+                                    {
+                                        runSetConfig.ActiveAgentListWithRunner.Add(mGingerRunner.Guid, RunnerAgentList);
+                                    }
                                 }
 
                             }
@@ -4936,7 +4948,7 @@ namespace Ginger.Run
             }
             else
             {
-                foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents)
+                foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents.DistinctBy(x=>x.AgentID))
                 {
                     if (p.Agent != null)
                     {
@@ -5144,7 +5156,7 @@ namespace Ginger.Run
             if (appPlatform != null)
             {
                 List<Agent> platformAgents = SolutionAgents
-                    .Where(solutionAgent => solutionAgent.Platform == appPlatform.Platform && !solutionAgent.UsedForAutoMapping)
+                    .Where(solutionAgent => solutionAgent.Platform == appPlatform.Platform && (solutionAgent.SupportVirtualAgent() ? true : !solutionAgent.UsedForAutoMapping))
                     .ToList();
 
                 //Get the last used agent to this Target App if exist

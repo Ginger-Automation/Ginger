@@ -156,6 +156,13 @@ namespace GingerCore
                 StopTimer();
                 return mDevelopmentTime;
             }
+            set
+            {
+                if (mDevelopmentTime != value)
+                {
+                    mDevelopmentTime = value;
+                }
+            }
         }
 
         public void StartTimer()
@@ -181,7 +188,7 @@ namespace GingerCore
             {
                 _stopwatch.Stop();
                 TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
-                mDevelopmentTime = mDevelopmentTime.Add(elapsedTime);
+                DevelopmentTime = DevelopmentTime.Add(elapsedTime);
                 _stopwatch.Reset();
             }
         }

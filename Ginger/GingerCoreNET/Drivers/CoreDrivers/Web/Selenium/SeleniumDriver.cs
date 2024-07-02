@@ -2205,36 +2205,55 @@ namespace GingerCore.Drivers
         /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
         /// <param name="pomExecutionUtil">The POMExecutionUtils object used to retrieve information about the current POM.</param>
         /// <returns>A tuple containing the locateBy and locateValue for the ActWebSmartSync action.</returns>
-        internal (eLocateBy locateBy, string locateValue) GetLocatorsForWebSmartSync(ActWebSmartSync act, POMExecutionUtils pomExecutionUtil)
+        internal List<ElementLocator> GetLocatorsForWebSmartSync(ActWebSmartSync act, POMExecutionUtils pomExecutionUtil)
         {
-            eLocateBy locateBy = act.ElementLocateBy;
-            string locateValue = act.ElementLocateValueForDriver;
-
+            List<ElementLocator> activeSupportedLocators = new List<ElementLocator>();
             if (act.ElementLocateBy == eLocateBy.POMElement)
             {
                 if (pomExecutionUtil.GetCurrentPOM() == null)
                 {
-                    throw new Exception("Relevant POM not found");
+                    throw new Exception("Relevant POM not found. Ensure that the POM context is correctly initialized before invoking this operation.");
+                    
                 }
 
                 ElementInfo currentPOMElementInfo = pomExecutionUtil.GetCurrentPOMElementInfo();
                 if (currentPOMElementInfo == null)
                 {
-                    throw new Exception("Unable to find details about the POM");
+                    throw new Exception("Unable to find details about the POM. Check if the POM element information is correctly set.");
                 }
 
-                ElementLocator firstLocator = currentPOMElementInfo.Locators.FirstOrDefault(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy));
 
-                if (firstLocator == null)
+                if (act.UseAllLocators)
                 {
-                    throw new Exception("No active or supported  locators found in the current POM");
+                    activeSupportedLocators = currentPOMElementInfo.Locators
+                        .Where(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy))
+                        .ToList();
+                }
+                else
+                {
+                    var singleLocator = currentPOMElementInfo.Locators
+                        .FirstOrDefault(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy));
+
+                    if (singleLocator != null)
+                    {
+                        activeSupportedLocators.Add(singleLocator);
+                    }
+                }
+                if (activeSupportedLocators.Count==0)
+                {
+                    throw new Exception("No active or supported locators found in the current POM. Verify the POM configuration.");
                 }
 
-                locateBy = firstLocator.LocateBy;
-                locateValue = firstLocator.LocateValue;
+            }
+            else
+            {
+                ElementLocator elementLocator = new ElementLocator();
+                elementLocator.LocateBy = act.ElementLocateBy;
+                elementLocator.LocateValue = act.ElementLocateValueForDriver;
+                activeSupportedLocators.Add(elementLocator);
             }
 
-            return (locateBy, locateValue);
+            return activeSupportedLocators;
         }
 
         /// <summary>
@@ -2254,7 +2273,7 @@ namespace GingerCore.Drivers
                 eLocateBy.ByCSSSelector => By.CssSelector(locateValue),
                 eLocateBy.ByLinkText => By.LinkText(locateValue),
                 eLocateBy.ByTagName => By.TagName(locateValue),
-                _ => throw new Exception("Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath and ByTagName."),
+                _ => throw new Exception("Unsupported locator type. Supported locator types include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath, and ByTagName."),
             };
             return elementLocator;
         }
@@ -2294,9 +2313,7 @@ namespace GingerCore.Drivers
                     string textToMatch = VE.ValueCalculated;
                     if (String.IsNullOrEmpty(textToMatch))
                     {
-                        act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
-                        Reporter.ToLog(eLogLevel.ERROR, act.Error);
-                        return;
+                        throw new InvalidDataException("For TextMatches operation,The input value is missing or invalid input.");
                     }
                     wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
                     break;
@@ -2308,9 +2325,7 @@ namespace GingerCore.Drivers
                     string attributeValue = VE.ValueCalculated;
                     if (string.IsNullOrEmpty(attributeValue) || string.IsNullOrEmpty(attributeName))
                     {
-                        act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
-                        Reporter.ToLog(eLogLevel.ERROR, act.Error);
-                        return;
+                        throw new InvalidDataException("For AttributeMatches operation,The input value is missing or invalid input.");
                     }
                     wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
                     break;
@@ -2337,9 +2352,7 @@ namespace GingerCore.Drivers
                     string urlMatches = VE.ValueCalculated;
                     if (String.IsNullOrEmpty(urlMatches))
                     {
-                        act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
-                        Reporter.ToLog(eLogLevel.ERROR, act.Error);
-                        return;
+                        throw new InvalidDataException("For UrlMatches operation,The input value is missing or invalid input.");
                     }
                     wait.Until(ExpectedConditions.UrlMatches(urlMatches));
                     break;
@@ -2357,73 +2370,115 @@ namespace GingerCore.Drivers
         /// </summary>
         /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
         public void WebSmartSyncHandler(ActWebSmartSync act)
-        {
+        {   List<ElementLocator> locatorList = new List<ElementLocator>();
             By elementLocator = null;
             try
             {
                 if (!operationsWithoutLocator.Contains(act.SyncOperations))
                 {
-                    (eLocateBy locateBy, string locateValue) = GetLocatorsForWebSmartSync(act, new POMExecutionUtils(act, act.ElementLocateValue));
+                    locatorList = GetLocatorsForWebSmartSync(act, new POMExecutionUtils(act, act.ElementLocateValue));
 
-                    if (string.IsNullOrEmpty(locateValue))
+                    if (act.ElementLocateBy != eLocateBy.POMElement && string.IsNullOrEmpty(locatorList[0].LocateValue))
                     {
                         throw new Exception($"For {act.SyncOperations} operation Locate value is missing or invalid input.");
                     }
-
-                    elementLocator = GetElementLocatorForWebSmartSync(locateBy, locateValue);
-                }
+                }                
             }
             catch (Exception ex)
             {
                 act.Error = ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
                 return;
-
             }
-            WebOperations(act, elementLocator);
-
-        }
-
-        /// <summary>
-        /// Performs the specified synchronization operation on the web element using the provided elementLocator.
-        /// </summary>
-        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
-        /// <param name="elementLocator">The Selenium By object representing the locator.</param>
-        private void WebOperations(ActWebSmartSync act, By elementLocator)
-        {
-            //get time configured in flow-control, if nothing provided then use 30 seconds
             int MaxTimeout = WebSmartSyncGetMaxTimeout(act);
             //store agent's implicit wait in a variable
             int implicitWait = (int)Driver.Manage().Timeouts().ImplicitWait.TotalSeconds;
-
-            try
+            //set agent's implicit wait to 1 second
+            Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
+            WebDriverWait wait;
+            ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
+            if (act.UseAllLocators && act.ElementLocateBy == eLocateBy.POMElement)
             {
-                WebDriverWait wait = new(Driver, TimeSpan.FromSeconds(MaxTimeout));
-
-                //set agent's implicit wait to 1 second
-                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
-
-                wait.PollingInterval = TimeSpan.FromMilliseconds(500);
-                ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
-
-                WebSmartSyncWaitForLocator(act, elementLocator, VE, wait);
+                for (int i = 0; i < locatorList.Count; i++)
+                {
+                    try
+                    {
+                        wait = new(Driver, TimeSpan.FromSeconds(MaxTimeout));
+                        wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+                        elementLocator = GetElementLocatorForWebSmartSync(locatorList[i].LocateBy, locatorList[i].LocateValue);
+                        WebSmartSyncWaitForLocator(act, elementLocator, VE, wait);
+                        break;
+                    }
+                   catch( WebDriverTimeoutException ex)
+                    {
+                        if(i == locatorList.Count - 1)
+                        {
+                            act.Error = $"{act.SyncOperations} was not completed within the allotted time or Unable to locate element.";
+                            Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                            break;
+                        }
+                        continue;
+                    }
+                    catch (InvalidSelectorException ex)
+                    {
+                        act.Error = $"Invalid input provided for {act.SyncOperations} operation.";
+                        Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                        break;
+                    }
+                    catch(InvalidDataException ex)
+                    {
+                        act.Error = $"Invalid input provided for {act.SyncOperations} operation.";
+                        Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        act.Error = $"unexpected error occured!";
+                        Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                    }
+                    finally
+                    {
+                        //set agent's implicit wait to the original value from the variable above
+                        Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)implicitWait));
+                    }
+                }
             }
-            catch (InvalidSelectorException ex)
+            else
             {
-                act.Error = $"Invalid input provided for {act.SyncOperations} operation.";
-                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
-            }
-            catch (Exception ex)
-            {
-                act.Error = $"{act.SyncOperations} was not completed within the allotted {MaxTimeout} seconds.";
-                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
-            }
-            finally
-            {
-                //set agent's implicit wait to the original value from the variable above
-                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)implicitWait));
+                try
+                {
+                   wait = new(Driver, TimeSpan.FromSeconds(MaxTimeout));
+                   wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+                   if (!operationsWithoutLocator.Contains(act.SyncOperations))
+                       elementLocator = GetElementLocatorForWebSmartSync(locatorList[0].LocateBy, locatorList[0].LocateValue);
+                    WebSmartSyncWaitForLocator(act, elementLocator, VE, wait);
+                }
+                catch (InvalidSelectorException ex)
+                {
+                    act.Error = $"Invalid input provided for {act.SyncOperations} operation.";
+                    Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                }
+                catch (WebDriverTimeoutException ex)
+                {
+                    act.Error = $"{act.SyncOperations} was not completed within the allotted {MaxTimeout} seconds.";
+                    Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                }
+                catch (Exception ex)
+                {
+                    act.Error = $"unexpected error occured!";
+                    Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                }
+                finally
+                {
+                    //set agent's implicit wait to the original value from the variable above
+                    Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)implicitWait));
+                }
             }
 
         }
+
+
+
         /// <summary>
         /// Retrieves the maximum timeout value for the ActWebSmartSync action.
         /// </summary>
@@ -6489,21 +6544,29 @@ namespace GingerCore.Drivers
             {
                 foreach (HtmlNode childNode in htmlElementObject.ChildNodes)
                 {
-                    if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
+                    if (!childNode.Name.StartsWith('#') && !string.IsNullOrEmpty(childNode.InnerText))
                     {
-                        string[] tempOpVals = childNode.InnerText.Split('\n');
+                        var tempOpVals = childNode.InnerText
+                            .Split('\n')
+                            .Where(f => !string.IsNullOrEmpty(f.Trim()) && !f.Trim().Equals('\r'))
+                            .Select(g => g.Trim().Replace("\r", ""));
+
                         foreach (string cuVal in tempOpVals)
                         {
                             ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
                         }
                     }
                 }
+
                 if (ElementInfo.OptionalValuesObjectsList.Count > 0)
                 {
                     ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
-                    list.Add(new ControlProperty() { Name = ElementProperty.OptionalValues, Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+                    list.Add(new ControlProperty()
+                    {
+                        Name = ElementProperty.OptionalValues,
+                        Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "")
+                    });
                 }
-
             }
 
             HtmlAttributeCollection htmlAttributes = htmlElementObject.Attributes;
@@ -6617,7 +6680,7 @@ namespace GingerCore.Drivers
 
         private object GetComboValues(ElementInfo ElementInfo)
         {
-            List<ComboBoxElementItem> ComboValues = new List<ComboBoxElementItem>();
+            List<ComboBoxElementItem> ComboValues = [];
             IWebElement e = Driver.FindElement(By.XPath(ElementInfo.XPath));
             SelectElement se = new SelectElement(e);
             IList<IWebElement> options = se.Options;
@@ -6630,7 +6693,7 @@ namespace GingerCore.Drivers
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
-            ObservableList<ElementLocator> locatorsList = new Platforms.PlatformsInfo.WebPlatform().GetLearningLocators();
+            ObservableList<ElementLocator> locatorsList = [];
             IWebElement e = null;
 
             if (ElementInfo.ElementObject != null)
@@ -6743,7 +6806,7 @@ namespace GingerCore.Drivers
         ObservableList<ElementLocator> IWindowExplorer.GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
 
-            ObservableList<ElementLocator> locatorsList = new ObservableList<ElementLocator>();
+            ObservableList<ElementLocator> locatorsList = [];
             try
             {
                 if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
@@ -6850,12 +6913,17 @@ namespace GingerCore.Drivers
                     learnElement = false;
                 }
             }
-            ElementLocator elemLocator = new ElementLocator();
-            elemLocator.Active = true;
-            elemLocator.Position = position;
-            elemLocator.LocateBy = eLocateBy.POMElement;
-            elemLocator.LocateValue = learnElement ? currentHtmlNode.XPath : String.Empty;
-            elemLocator.IsAutoLearned = true;
+
+            ElementLocator elementLocator = new()
+            {
+                Active = true,
+                Position = position,
+                LocateBy = eLocateBy.POMElement,
+                LocateValue = learnElement ? currentHtmlNode.XPath : String.Empty,
+                IsAutoLearned = true
+            };
+            ElementLocator elemLocator = elementLocator;
+
             if (!string.IsNullOrEmpty(elemLocator.LocateValue))
             {
                 locatorsList.Add(elemLocator);
@@ -7064,7 +7132,7 @@ namespace GingerCore.Drivers
             ISearchContext parentElement = null;
             ReadOnlyCollection<IWebElement> childrenElements = null;
             bool isShadowRootDetected = false;
-            XPaths ??= new List<string>();
+            XPaths ??= [];
 
             while (stack.Count > 0)
             {

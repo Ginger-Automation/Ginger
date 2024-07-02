@@ -1,6 +1,8 @@
-﻿using Amdocs.Ginger.Common.UIElement;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
+using Amdocs.Ginger.Repository;
 using Applitools.Utils;
 using GingerCore;
 using GingerCore.Actions;
@@ -183,8 +185,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         private async Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsFromPOMAsync()
         {
             string locateValue = _act.ElementLocateValueForDriver;
-
-            POMLocatorParser pomLocatorParser = POMLocatorParser.Create(locateValue);
+            Func<Guid, ApplicationPOMModel> pomByIdProvider = WorkSpace
+                .Instance
+                .SolutionRepository
+                .GetRepositoryItemByGuid<ApplicationPOMModel>;
+            
+            POMLocatorParser pomLocatorParser = POMLocatorParser.Create(locateValue, pomByIdProvider);
             if (pomLocatorParser.ElementInfo == null)
             {
                 return [];

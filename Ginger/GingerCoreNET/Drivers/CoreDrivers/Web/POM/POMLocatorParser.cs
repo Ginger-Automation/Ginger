@@ -1,36 +1,45 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.SelfHealingLib;
-using Amdocs.Ginger.Common.UIElement;
+﻿using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using GingerCore.Drivers.Common;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 {
+    /// <summary>
+    /// Parses the POM locator value and provides access to the POM and element information.
+    /// </summary>
     internal sealed class POMLocatorParser
     {
+        /// <summary>
+        /// Id of the POM.
+        /// </summary>
         internal Guid POMId { get; }
 
+        /// <summary>
+        /// POM model.
+        /// </summary>
         internal ApplicationPOMModel? POM { get; }
 
+        /// <summary>
+        /// Id of the element.
+        /// </summary>
         internal Guid ElementId { get; }
 
+        /// <summary>
+        /// Information about the identified element.
+        /// </summary>
         internal ElementInfo? ElementInfo { get; }
 
-        internal static POMLocatorParser Create(string locatorValue)
-        {
-            Func<Guid, ApplicationPOMModel> pomProvider = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>;
-
-            return Create(locatorValue, pomProvider);
-        }
-
-        internal static POMLocatorParser Create(string locatorValue, Func<Guid, ApplicationPOMModel> pomProvider)
+        /// <summary>
+        /// Creates a new instance of <see cref="POMLocatorParser"/>.
+        /// </summary>
+        /// <param name="locatorValue">The POM element locator value.</param>
+        /// <param name="pomByIdProvider">The function to provide the <see cref="ApplicationPOMModel"/> based on the given id.</param>
+        /// <returns>A new instance of <see cref="POMLocatorParser"/>.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="locatorValue"/> is null or empty.</exception>
+        /// <exception cref="FormatException">Thrown when <paramref name="locatorValue"/> is an invalid POM locator or the POM id or element id is not valid.</exception>
+        internal static POMLocatorParser Create(string locatorValue, Func<Guid, ApplicationPOMModel?> pomByIdProvider)
         {
             if (string.IsNullOrEmpty(locatorValue))
             {
@@ -48,7 +57,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 throw new FormatException($"'{ids[0]}' is not a valid POM id");
             }
 
-            ApplicationPOMModel? pom = pomProvider(pomId);
+            ApplicationPOMModel? pom = pomByIdProvider(pomId);
 
             if (!Guid.TryParse(ids[1], out Guid elementId))
             {
@@ -61,7 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 element = pom.MappedUIElements.FirstOrDefault(e => e != null && e.Guid == elementId);
             }
 
-            return new(pomId, pom, elementId, element);
+            return new POMLocatorParser(pomId, pom, elementId, element);
         }
 
         private POMLocatorParser(Guid pomId, ApplicationPOMModel? pom, Guid elementId, ElementInfo? element)

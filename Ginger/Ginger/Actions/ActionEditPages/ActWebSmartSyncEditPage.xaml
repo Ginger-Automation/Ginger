@@ -22,8 +22,11 @@
         </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
             <Label x:Name="LocateValueLable" Content="Locate Value:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
-                <Frame x:Name="LocateValueEditFrame" NavigationUIVisibility="Hidden" BorderBrush="Transparent" Width="900"/>
-        </StackPanel>
+             <StackPanel x:Name="xPomPanel" Orientation="Vertical">
+                    <Frame x:Name="LocateValueEditFrame" NavigationUIVisibility="Hidden" BorderBrush="Transparent" Width="900"/>
+                    <CheckBox x:Name="xAlllocatorCheckbox" Visibility="Collapsed" Content="Try all supported locators" Margin="0,0,0,0" ToolTip="Try with POM supported locators" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+                </StackPanel>
+            </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
             <Label Content="Operation Type:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>

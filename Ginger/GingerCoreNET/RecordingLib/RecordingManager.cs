@@ -23,6 +23,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Drivers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -315,6 +316,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (args.LearnedElementInfo != null)
                 {
                     einfo = (ElementInfo)args.LearnedElementInfo;
+                    einfo.SetLocatorsAndPropertiesCategory(((DriverBase)PlatformDriver).PomCategory);
                     args.AddPOMToAction = CreatePOM;
                     args.POMGuid = CurrentPOM != null ? CurrentPOM.Guid.ToString() : string.Empty;
                     args.ElementGuid = einfo.Guid.ToString();

@@ -118,7 +118,7 @@
                         <Label x:Name="FreeSQLLabel"  Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Free SQL:</Label>
                         <usercontrols:ImageMakerControl x:Name="imgHelpSql" ToolTip="SELECT COUNT(1) FROM {Table} - Enter only Table name below (+optional WHERE clause)" Visibility="Collapsed" SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="SemiBold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5,0,0,0">
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,0">
                         <Actions:UCValueExpression x:Name="SQLUCValueExpression" Width="550"/>
                     </StackPanel>
                 </Grid>
@@ -185,7 +185,7 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" x:Name="lblWhere" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Where:</Label>
 
-                        <TextBox Grid.Column="1" x:Name="txtWhere" Width="550" HorizontalAlignment="Left"></TextBox>
+                        <TextBox Grid.Column="1" x:Name="txtWhere" Style="{StaticResource @TextBoxStyle}"  Width="550" HorizontalAlignment="Left"></TextBox>
                     </Grid>
                 </StackPanel>
             </StackPanel>

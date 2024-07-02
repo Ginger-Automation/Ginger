@@ -35,6 +35,7 @@ using OpenQA.Selenium.Appium;
 using Ginger.Actions._Common.ActUIElementLib;
 using GingerCore.Actions.Common;
 using GingerCore.Helpers;
+using Amdocs.Ginger.Common.Actions;
 namespace Ginger.Actions
 {
     public partial class ActWebSmartSyncEditPage : Page
@@ -59,6 +60,7 @@ namespace Ginger.Actions
             xAttributeValueVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.AttributeValue));
             xAttributeNameVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.AttributeName));
             xUrlMatchesVE.Init(Context.GetAsContext(Act.Context), Act, nameof(ActWebSmartSync.UrlMatches));
+            xAlllocatorCheckbox.BindControl(Act, nameof(ActWebSmartSync.UseAllLocators));
             xLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
             SetLocateValueFrame();
         }
@@ -68,6 +70,7 @@ namespace Ginger.Actions
             mAction.LocateValueCalculated = string.Empty;
             mAction.ElementLocateValue = string.Empty;
             SetLocateValueFrame();
+            setAlllocatorCheckboxVisbility();
         }
         /// <summary>
         /// Sets the content of the LocateValueEditFrame based on the selected LocateBy type.
@@ -169,6 +172,17 @@ namespace Ginger.Actions
             panel.Visibility = selectedSyncAction == action ? Visibility.Visible : Visibility.Collapsed;
         }
 
+       private void setAlllocatorCheckboxVisbility()
+        {
+            if (xLocateByComboBox.SelectedValue is eLocateBy.POMElement)
+            {
+                xAlllocatorCheckbox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xAlllocatorCheckbox.Visibility = Visibility.Collapsed;
+            }
+        }
      
 
         /// <summary>
@@ -186,6 +200,7 @@ namespace Ginger.Actions
             SetPanelVisibility(UrlMatches_Pnl, ActWebSmartSync.eSyncOperation.UrlMatches);
             SetPanelVisibility(AttributeMatches_Pnl, ActWebSmartSync.eSyncOperation.AttributeMatches);
             setOperationDescription();
+            setAlllocatorCheckboxVisbility();
         }
 
         /// <summary>
