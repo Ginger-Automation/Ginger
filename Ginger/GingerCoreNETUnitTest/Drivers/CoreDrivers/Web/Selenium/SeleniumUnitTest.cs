@@ -149,7 +149,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             var yourClass = new SeleniumDriver();
             //Act/Assert
             var ex = Assert.ThrowsException<Exception>(() => yourClass.GetLocatorsForWebSmartSync(act, mockPOMExecutionUtil.Object));
-            Assert.AreEqual("No active or supported  locators found in the current POM", ex.Message);
+            Assert.AreEqual("No active or supported locators found in the current POM. Verify the POM configuration.", ex.Message);
 
         }
         /// <summary>
@@ -182,7 +182,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             var yourClass = new SeleniumDriver();
             //Act/Assert
             var ex = Assert.ThrowsException<Exception>(() => yourClass.GetLocatorsForWebSmartSync(act, mockPOMExecutionUtil.Object));
-            Assert.AreEqual("No active or supported  locators found in the current POM", ex.Message);
+            Assert.AreEqual("No active or supported locators found in the current POM. Verify the POM configuration.", ex.Message);
 
         }
         /// <summary>
@@ -206,7 +206,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             var yourClass = new SeleniumDriver();
             //Act/Assert
             var ex = Assert.ThrowsException<Exception>(() => yourClass.GetLocatorsForWebSmartSync(act, mockPOMExecutionUtil.Object));
-            Assert.AreEqual("Relevant POM not found", ex.Message);
+            Assert.AreEqual("Relevant POM not found. Ensure that the POM context is correctly initialized before invoking this operation.", ex.Message);
 
         }
 
@@ -232,7 +232,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             var yourClass = new SeleniumDriver();
             //Act/Assert
             var ex = Assert.ThrowsException<Exception>(() => yourClass.GetLocatorsForWebSmartSync(act, mockPOMExecutionUtil.Object));
-            Assert.AreEqual("Unable to find details about the POM", ex.Message);
+            Assert.AreEqual("Unable to find details about the POM. Check if the POM element information is correctly set.", ex.Message);
 
         }
 
@@ -248,7 +248,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
             var ElementLocateValue = "expectedId";
             //Act/Assert
             var ex = Assert.ThrowsException<Exception>(() => SeleniumDriver.GetElementLocatorForWebSmartSync(ElementLocateBy, ElementLocateValue));
-            Assert.AreEqual("Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath and ByTagName.", ex.Message);
+            Assert.AreEqual("Unsupported locator type. Supported locator types include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath, and ByTagName.", ex.Message);
 
         }
         /// <summary>
