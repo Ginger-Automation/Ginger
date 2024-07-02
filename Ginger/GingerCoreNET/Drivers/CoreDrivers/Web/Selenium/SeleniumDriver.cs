@@ -2212,13 +2212,14 @@ namespace GingerCore.Drivers
             {
                 if (pomExecutionUtil.GetCurrentPOM() == null)
                 {
-                    throw new Exception("Relevant POM not found");
+                    throw new Exception("Relevant POM not found. Ensure that the POM context is correctly initialized before invoking this operation.");
+                    
                 }
 
                 ElementInfo currentPOMElementInfo = pomExecutionUtil.GetCurrentPOMElementInfo();
                 if (currentPOMElementInfo == null)
                 {
-                    throw new Exception("Unable to find details about the POM");
+                    throw new Exception("Unable to find details about the POM. Check if the POM element information is correctly set.");
                 }
 
 
@@ -2240,7 +2241,7 @@ namespace GingerCore.Drivers
                 }
                 if (activeSupportedLocators.Count==0)
                 {
-                    throw new Exception("No active or supported  locators found in the current POM");
+                    throw new Exception("No active or supported locators found in the current POM. Verify the POM configuration.");
                 }
 
             }
@@ -2272,7 +2273,7 @@ namespace GingerCore.Drivers
                 eLocateBy.ByCSSSelector => By.CssSelector(locateValue),
                 eLocateBy.ByLinkText => By.LinkText(locateValue),
                 eLocateBy.ByTagName => By.TagName(locateValue),
-                _ => throw new Exception("Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath and ByTagName."),
+                _ => throw new Exception("Unsupported locator type. Supported locator types include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath, and ByTagName."),
             };
             return elementLocator;
         }
@@ -2312,7 +2313,7 @@ namespace GingerCore.Drivers
                     string textToMatch = VE.ValueCalculated;
                     if (String.IsNullOrEmpty(textToMatch))
                     {
-                        throw new InvalidDataException("For TextMatches operation input value is missing or invalid input.");
+                        throw new InvalidDataException("For TextMatches operation,The input value is missing or invalid input.");
                     }
                     wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
                     break;
@@ -2324,7 +2325,7 @@ namespace GingerCore.Drivers
                     string attributeValue = VE.ValueCalculated;
                     if (string.IsNullOrEmpty(attributeValue) || string.IsNullOrEmpty(attributeName))
                     {
-                        throw new InvalidDataException("For AttributeMatches operation input value is missing or invalid input.");
+                        throw new InvalidDataException("For AttributeMatches operation,The input value is missing or invalid input.");
                     }
                     wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
                     break;
@@ -2351,7 +2352,7 @@ namespace GingerCore.Drivers
                     string urlMatches = VE.ValueCalculated;
                     if (String.IsNullOrEmpty(urlMatches))
                     {
-                        throw new InvalidDataException("For UrlMatches operation input value is missing or invalid input.");
+                        throw new InvalidDataException("For UrlMatches operation,The input value is missing or invalid input.");
                     }
                     wait.Until(ExpectedConditions.UrlMatches(urlMatches));
                     break;
