@@ -762,12 +762,8 @@ namespace GingerCoreNET.Application_Models
             for (int i = secondElement.Properties.Count - 1; i >= 0; i--)
             {
                 ControlProperty originalProp = originalElement.Properties.FirstOrDefault(x => x.Name == secondElement.Properties[i].Name && x.Category == secondElement.Properties[i].Category);
-                if (originalProp != null)
-                {
-                    originalProp.Value = secondElement.Properties[i].Value;
-                }
-                else
-                {
+                if (originalProp == null)
+                { 
                     originalElement.Properties.Add(secondElement.Properties[i]);
                 }
             }
@@ -775,12 +771,8 @@ namespace GingerCoreNET.Application_Models
             //Merge Locators
             for (int i = secondElement.Locators.Count - 1; i >= 0; i--)
             {
-                ElementLocator originalLocator = originalElement.Locators.FirstOrDefault(x => x.LocateBy == secondElement.Locators[i].LocateBy && x.Category == secondElement.Locators[i].Category && x.IsAutoLearned==true);
-                if (originalLocator != null)
-                {
-                    originalLocator.LocateValue = secondElement.Locators[i].LocateValue;
-                }
-                else
+                ElementLocator originalLocator = originalElement.Locators.FirstOrDefault(x => x.LocateBy == secondElement.Locators[i].LocateBy && x.LocateValue == secondElement.Locators[i].LocateValue && x.Category == secondElement.Locators[i].Category && x.IsAutoLearned == true);
+                if (originalLocator == null)
                 {
                     originalElement.Locators.Add(secondElement.Locators[i]);
                 }
