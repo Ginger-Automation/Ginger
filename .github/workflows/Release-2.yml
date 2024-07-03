@@ -170,7 +170,7 @@ jobs:
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.External.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.External.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerAutoPilot.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerAutoPilot.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerControls.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerControls.dll
-                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreNET.dll
+                 #copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreNET.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCoreNET.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCoreCommon.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreCommon.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerExternal.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerExternal.dll
@@ -188,7 +188,7 @@ jobs:
                  signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerAutoPilot.dll
                  signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerControls.dll
                  signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll
-                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreNET.dll
+                 #signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreNET.dll
                  signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreCommon.dll
                  signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerExternal.dll
                  signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerHelper.dll
@@ -208,7 +208,7 @@ jobs:
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerAutoPilot.dll  D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerAutoPilot.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerControls.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerControls.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreNET.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll 
-                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCoreNET.dll
+                 #copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCoreNET.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreCommon.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCoreCommon.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerExternal.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerExternal.dll 
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerHelper.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerHelper.dll 
