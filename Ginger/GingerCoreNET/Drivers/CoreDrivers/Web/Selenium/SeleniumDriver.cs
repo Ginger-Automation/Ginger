@@ -5008,7 +5008,7 @@ namespace GingerCore.Drivers
                         }
                         AppWindow AW = new AppWindow();
                         AW.Title = Driver.Title;
-                        AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
+                        AW.WindowType = AppWindow.eWindowType.WebPage;
                         list.Add(AW);
                     }
                     catch (Exception ex)

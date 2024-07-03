@@ -259,6 +259,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return elements;
         }
 
+        public Task<IEnumerable<IBrowserElement>> GetElementsAsync(string javascript)
+        {
+            ThrowIfClosed();
+            _currentFrame.EvaluateAsync()
+            //return Task.FromResult((IEnumerable<IBrowserElement>)null);
+        }
+
         public Task<byte[]> ScreenshotAsync()
         {
             return ScreenshotInternalAsync(fullPage: false);

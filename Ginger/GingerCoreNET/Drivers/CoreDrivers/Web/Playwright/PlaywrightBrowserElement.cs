@@ -10,6 +10,8 @@ using IPlaywrightPage = Microsoft.Playwright.IPage;
 using IPlaywrightDialog = Microsoft.Playwright.IDialog;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using System.Drawing;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -17,16 +19,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
     internal sealed class PlaywrightBrowserElement : IBrowserElement
     {
         //TODO: rename it to _playwrightLocator to maintain the naming format
-        private readonly IPlaywrightLocator _locator;
+        private readonly IPlaywrightLocator _playwrightLocator;
 
         internal PlaywrightBrowserElement(IPlaywrightLocator locator)
         {
-            _locator = locator;
+            _playwrightLocator = locator;
         }
 
         public Task ClickAsync()
         {
-            return _locator.ClickAsync(new LocatorClickOptions
+            return _playwrightLocator.ClickAsync(new LocatorClickOptions
             {
                 Button = MouseButton.Left
             });
@@ -34,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task ClickAsync(int x, int y)
         {
-            return _locator.ClickAsync(new LocatorClickOptions
+            return _playwrightLocator.ClickAsync(new LocatorClickOptions
             {
                 Button = MouseButton.Left,
                 Position = new()
@@ -43,12 +45,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     Y = y
                 }
             });
-
         }
 
         public Task DoubleClickAsync()
         {
-            return _locator.DblClickAsync(new LocatorDblClickOptions()
+            return _playwrightLocator.DblClickAsync(new LocatorDblClickOptions()
             {
                 Button = MouseButton.Left
             });
@@ -56,7 +57,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task DoubleClickAsync(int x, int y)
         {
-            return _locator.DblClickAsync(new LocatorDblClickOptions
+            return _playwrightLocator.DblClickAsync(new LocatorDblClickOptions
             {
                 Button = MouseButton.Left,
                 Position = new()
@@ -65,27 +66,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     Y = y
                 }
             });
-
         }
 
         public Task HoverAsync()
         {
-            return _locator.HoverAsync();
+            return _playwrightLocator.HoverAsync();
         }
 
         public Task<bool> IsVisibleAsync()
         {
-            return _locator.IsVisibleAsync();
+            return _playwrightLocator.IsVisibleAsync();
         }
 
         public Task<bool> IsEnabledAsync()
         {
-            return _locator.IsEnabledAsync();
+            return _playwrightLocator.IsEnabledAsync();
         }
 
         public async Task<string> AttributeValueAsync(string name)
         {
-            string? attributeValue = await _locator.GetAttributeAsync(name);
+            string? attributeValue = await _playwrightLocator.GetAttributeAsync(name);
             if (attributeValue == null)
             {
                 return string.Empty;
@@ -96,12 +96,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task SetAttributeValueAsync(string name, string value)
         {
-            return _locator.EvaluateAsync<string>($"element => element.setAttribute('{name}', '{value}')");
+            return _playwrightLocator.EvaluateAsync<string>($"element => element.setAttribute('{name}', '{value}')");
         }
 
         public async Task<Size> SizeAsync()
         {
-            LocatorBoundingBoxResult? boundingBox = await _locator.BoundingBoxAsync();
+            LocatorBoundingBoxResult? boundingBox = await _playwrightLocator.BoundingBoxAsync();
             if (boundingBox == null)
             {
                 return new Size(width: 0, height: 0);
@@ -110,9 +110,35 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return new Size((int)boundingBox.Width, (int)boundingBox.Height);
         }
 
+        public async Task<Point> PositionAsync()
+        {
+            string rect = await _playwrightLocator.EvaluateAsync<string>("element => element.getBoundingClientRect().x + 'x' + element.getBoundingClientRect().y");
+            if (string.IsNullOrEmpty(rect))
+            {
+                throw new Exception("Unable to get element position");
+            }
+            
+            string[] coordinates = rect.Split('x');
+            if (coordinates.Length != 2)
+            {
+                throw new Exception("Unable to get element position");
+            }
+
+            if (!double.TryParse(coordinates[0], out double x))
+            {
+                throw new Exception($"Unable to get element position, invalid x coordinate ");
+            }
+            if (!double.TryParse(coordinates[1], out double y))
+            {
+                throw new Exception($"Unable to get element position, invalid y coordinate {coordinates[1]}");
+            }
+
+            return new Point((int)x, (int)y);
+        }
+
         public async Task<string> TextContentAsync()
         {
-            string? content = await _locator.TextContentAsync();
+            string? content = await _playwrightLocator.TextContentAsync();
             if (content == null)
             {
                 return string.Empty;
@@ -123,22 +149,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task<string> ExecuteJavascriptAsync(string script)
         {
-            return _locator.EvaluateAsync<string>(script);
+            return _playwrightLocator.EvaluateAsync<string>(script);
         }
 
         public Task<string> InnerTextAsync()
         {
-            return _locator.InnerTextAsync();
+            return _playwrightLocator.InnerTextAsync();
         }
 
         public Task<string> InputValueAsync()
         {
-            return _locator.InputValueAsync();
+            return _playwrightLocator.InputValueAsync();
         }
 
         public Task RightClickAsync()
         {
-            return _locator.ClickAsync(new LocatorClickOptions()
+            return _playwrightLocator.ClickAsync(new LocatorClickOptions()
             {
                 Button = MouseButton.Right
             });
@@ -146,28 +172,28 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task<string> TagNameAsync()
         {
-            return _locator.EvaluateAsync<string>("elem => elem.tagName");
+            return _playwrightLocator.EvaluateAsync<string>("elem => elem.tagName");
         }
 
         public Task ScrollToViewAsync()
         {
-            return _locator.ScrollIntoViewIfNeededAsync();
+            return _playwrightLocator.ScrollIntoViewIfNeededAsync();
         }
 
         public Task FocusAsync()
         {
-            return _locator.FocusAsync();
+            return _playwrightLocator.FocusAsync();
         }
 
         public Task ClearAsync()
         {
-            return _locator.ClearAsync();
+            return _playwrightLocator.ClearAsync();
         }
 
         public async Task SelectByValueAsync(string value)
         {
             await AssertTagNameAsync(IBrowserElement.SelectTagName);
-            await _locator.SelectOptionAsync(new SelectOptionValue()
+            await _playwrightLocator.SelectOptionAsync(new SelectOptionValue()
             {
                 Value = value
             });
@@ -176,7 +202,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public async Task SelectByTextAsync(string text)
         {
             await AssertTagNameAsync(IBrowserElement.SelectTagName);
-            await _locator.SelectOptionAsync(new SelectOptionValue()
+            await _playwrightLocator.SelectOptionAsync(new SelectOptionValue()
             {
                 Label = text
             });
@@ -185,7 +211,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public async Task SelectByIndexAsync(int index)
         {
             await AssertTagNameAsync(IBrowserElement.SelectTagName);
-            await _locator.SelectOptionAsync(new SelectOptionValue()
+            await _playwrightLocator.SelectOptionAsync(new SelectOptionValue()
             {
                 Index = index
             });
@@ -201,7 +227,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task SetTextAsync(string text)
         {
-            return _locator.FillAsync(text);
+            return _playwrightLocator.FillAsync(text);
         }
 
         private async Task AssertTagNameAsync(string expected)
@@ -224,7 +250,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task<byte[]> ScreenshotAsync()
         {
-            return _locator.ScreenshotAsync();
+            return _playwrightLocator.ScreenshotAsync();
+        }
+
+        public async Task<IBrowserShadowRoot?> ShadowRootAsync()
+        {
+            if (!await ShadowRootExists())
+            {
+                return null;
+            }
+
+            return new PlaywrightBrowserShadowRoot(_playwrightLocator);
+        }
+
+        private Task<bool> ShadowRootExists()
+        {
+            return _playwrightLocator.EvaluateAsync<bool>("element => element.shadowRoot != null");
         }
     }
 }

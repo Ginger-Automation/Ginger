@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 {
     internal interface IBrowserElement
@@ -19,6 +20,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<string> TagNameAsync();
 
         public Task<Size> SizeAsync();
+
+        public Task<Point> PositionAsync();
 
         public Task ClickAsync();
 
@@ -65,5 +68,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task SetTextAsync(string text);
 
         public Task<byte[]> ScreenshotAsync();
+
+        public Task<IBrowserShadowRoot?> ShadowRootAsync();
     }
 }

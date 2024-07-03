@@ -16,11 +16,24 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Runtime.Versioning;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.VisualStudio.Services.WebApi;
+using System.Text.RegularExpressions;
+using GingerCore.Drivers.Common;
+using System.IO;
+using HtmlAgilityPack;
+using Protractor;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
+using Amdocs.Ginger.IO;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
-    public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver
+    public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver, IWindowExplorer, IXPath
     {
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -32,6 +45,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public string? Proxy { get; set; }
 
         private PlaywrightBrowser? _browser;
+        private IBrowserElement? _lastHighlightedElement;
 
         public override void StartDriver()
         {
@@ -359,6 +373,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             //TODO: implement
         }
 
+        [MemberNotNull(nameof(_browser))]
         private void ThrowIfClosed()
         {
             if (!IsRunning())
@@ -390,7 +405,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     screenshot = await tab.ScreenshotFullPageAsync();
                 }
 
-                return BitmapFromBytes(screenshot);
+                return BytesToBitmap(screenshot);
             }).Result;
         }
 
@@ -426,64 +441,523 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
 
                 byte[] screenshot = await element.ScreenshotAsync();
-                return BitmapFromBytes(screenshot);
+                return BytesToBitmap(screenshot);
             }).Result;
         }
 
-        private static Bitmap? BitmapFromBytes(byte[] bytes)
+        [SupportedOSPlatform("windows")]
+        private static Bitmap BytesToBitmap(byte[] bytes)
         {
-            TypeConverter typeConverter = TypeDescriptor.GetConverter(typeof(Bitmap));
-            return (Bitmap?)typeConverter.ConvertFrom(bytes);
+            using MemoryStream memoryStream = new(bytes);
+            return new Bitmap(memoryStream);
         }
 
-        public VisualElementsInfo GetVisualElementsInfo()
+        private protected override IBrowser GetBrowser()
+        {
+            ThrowIfClosed();
+            return _browser;
+        }
+
+        public List<AppWindow> GetAppWindows()
+        {
+            //TODO: unhighlight last highlighted element
+            IEnumerable<AppWindow> appWindows = Task.Run(() => GetAppWindowsAsync().Result).Result;
+            return new List<AppWindow>(appWindows);
+        }
+
+        public void SwitchWindow(string tabTitle)
+        {
+            Task.Run(async () =>
+            {
+                await SwitchTabAsync(filter: async (_, tab) =>
+                {
+                    string title = await tab.TitleAsync();
+                    return string.Equals(title, tabTitle);
+                });
+            }).Wait();
+        }
+
+        public void HighLightElement(ElementInfo element, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
+        {
+            Task.Run(async () =>
+            {
+                if (_lastHighlightedElement != null)
+                {
+                    await UnhighlightElementAsync(_lastHighlightedElement);
+                }
+                await SwitchToFrameOfElementAsync(element);
+                IBrowserElement? browserElement = await FindBrowserElementAsync(element);
+                if (browserElement == null)
+                {
+                    return;
+                }
+                _lastHighlightedElement = browserElement;
+                await HighlightElementAsync(browserElement);
+            }).Wait();
+        }
+
+        private protected override async Task<IBrowserElement?> FindBrowserElementAsync(eLocateBy locateBy, string locateValue)
+        {
+            ThrowIfClosed();
+            return (await _browser.CurrentWindow.CurrentTab.GetElementsAsync(locateBy, locateValue)).FirstOrDefault();
+        }
+
+        public void UnHighLightElements()
+        {
+            Task.Run(async () =>
+            {
+                if (_lastHighlightedElement != null)
+                {
+                    await UnhighlightElementAsync(_lastHighlightedElement);
+                }
+            }).Wait();
+        }
+
+        public string GetFocusedControl()
+        {
+            //same implementation in SeleniumDriver so just copying, don't know why?
+            return null!;
+        }
+
+        public ElementInfo GetControlFromMousePosition()
+        {
+            ThrowIfClosed();
+
+            return Task.Run(async () =>
+            {
+                IBrowserTab currentTab = _browser.CurrentWindow.CurrentTab;
+
+                if (_lastHighlightedElement != null)
+                {
+                    await UnhighlightElementAsync(_lastHighlightedElement);
+                }
+
+                await InjectLiveSpyScriptAsync(currentTab);
+
+                IBrowserElement? browserElement = (await currentTab.GetElementsAsync("GingerLibLiveSpy.ElementFromPoint()")).FirstOrDefault();
+                if (browserElement == null)
+                {
+                    return null!;
+                }
+
+                string screenshot = Convert.ToBase64String(await browserElement.ScreenshotAsync());
+                string tag = await browserElement.TagNameAsync();
+                string xPath = string.Empty;
+                if (string.Equals(tag, "iframe", StringComparison.OrdinalIgnoreCase) && string.Equals(tag, "frame", StringComparison.OrdinalIgnoreCase))
+                {
+                    xPath = await GenerateXPathFromBrowserElementAsync(browserElement);
+                    //TODO: create HTMLElementInfo specific for IFrame
+                }
+
+                return new HTMLElementInfo()
+                {
+                    ElementObject = browserElement,
+                    ScreenShotImage = screenshot,
+                    XPath = xPath,
+                };
+            }).Result;
+        }
+
+        public AppWindow GetActiveWindow()
+        {
+            ThrowIfClosed();
+            return Task.Run(async () =>
+            {
+                string title = await _browser.CurrentWindow.CurrentTab.TitleAsync();
+                return new AppWindow()
+                {
+                    Title = title,
+                };
+            }).Result;
+        }
+
+        public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
+        {
+            ThrowIfClosed();
+            
+            if (_lastHighlightedElement != null)
+            {
+                await UnhighlightElementAsync(_lastHighlightedElement);
+            }
+
+            IBrowserTab currentTab = _browser.CurrentWindow.CurrentTab;
+
+            await currentTab.SwitchToMainFrameAsync();
+            string pageSource = await _browser.CurrentWindow.CurrentTab.PageSourceAsync();
+
+
+            POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
+            IEnumerable<HTMLElementInfo> htmlElements = await pomLearner.LearnElementsAsync();
+
+            if (foundElementsList != null)
+            {
+                foundElementsList.AddRange(htmlElements.Cast<ElementInfo>());
+            }
+
+            return new(htmlElements);
+        }
+
+        private sealed class PlaywrightBrowserElementProvider : POMLearner.IBrowserElementProvider
+        {
+            private readonly IBrowserTab _browserTab;
+
+            internal PlaywrightBrowserElementProvider(IBrowserTab browserTab)
+            {
+                _browserTab = browserTab;
+            }
+
+            public async Task<IBrowserElement?> GetElementAsync(eLocateBy locateBy, string locateValue)
+            {
+                return (await _browserTab.GetElementsAsync(locateBy, locateValue)).FirstOrDefault();
+            }
+
+            public async Task OnFrameEnterAsync(HTMLElementInfo frameElement)
+            {
+                if (!string.IsNullOrEmpty(frameElement.XPath))
+                {
+                    bool wasSwitched = await _browserTab.SwitchFrameAsync(eLocateBy.ByXPath, frameElement.XPath);
+
+                    if (!wasSwitched)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"unable to switch to frame with xpath {frameElement.XPath}");
+                    }
+                }
+            }
+
+            public Task OnFrameExitAsync(HTMLElementInfo frameElement)
+            {
+                return _browserTab.SwitchToParentFrameAsync();
+            }
+
+            public Task OnShadowDOMEnterAsync(HTMLElementInfo shadowHostElement)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task OnShadowDOMExitAsync(HTMLElementInfo shadowHostElement)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public List<ElementInfo> GetElementChildren(ElementInfo elementInfo)
+        {
+            ThrowIfClosed();
+            if (elementInfo == null || elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return [];
+            }
+
+            return Task.Run(async () =>
+            {
+                await SwitchToFrameOfElementAsync(elementInfo);
+                string xpath = GenerateXPathFromHTMLElementInfo(htmlElementInfo);
+                IEnumerable<IBrowserElement> browserElements = await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByXPath, xpath);
+                List<HTMLElementInfo> htmlElements = [];
+                foreach (IBrowserElement browserElement in browserElements)
+                {
+                    string tag = await browserElement.TagNameAsync();
+                    string nameAttributeValue = await browserElement.AttributeValueAsync("name");
+                    string idAttributeValue = await browserElement.AttributeValueAsync("id");
+                    string valueAttributeValue = await browserElement.AttributeValueAsync("value");
+                    string typeAttributeValue = await browserElement.AttributeValueAsync("type");
+
+                    string elementTitle = tag;
+                    if (string.Equals(tag, "table", StringComparison.OrdinalIgnoreCase))
+                    {
+                        elementTitle = "Table";
+                    }
+                    else if (!string.IsNullOrEmpty(nameAttributeValue))
+                    {
+                        elementTitle = $"{nameAttributeValue} {tag}";
+                    }
+                    else if (!string.IsNullOrEmpty(idAttributeValue))
+                    {
+                        elementTitle = $"{idAttributeValue} {tag}";
+                    }
+                    else if (!string.IsNullOrEmpty(valueAttributeValue))
+                    {
+                        elementTitle = $"{(valueAttributeValue.Length > 50 ? valueAttributeValue.Substring(0, 50) + "..." : valueAttributeValue)} {tag}";
+                    }
+
+                    string elementName = tag;
+                    if (string.IsNullOrEmpty(elementName))
+                    {
+                        elementName = nameAttributeValue;
+                    }
+
+                    string elementId = idAttributeValue;
+                    if (string.IsNullOrEmpty(elementId))
+                    {
+                        elementId = htmlElementInfo.HTMLElementObject.Id;
+                    }
+
+                    string elementValue = string.Empty;
+                    if (string.Equals(tag, "select", StringComparison.OrdinalIgnoreCase))
+                    {
+                        elementValue = $"set to {await browserElement.ExecuteJavascriptAsync("element => element.options[element.selectedIndex].text")}";
+                    }
+                    else if (string.Equals(tag, "span", StringComparison.OrdinalIgnoreCase))
+                    {
+                        elementValue = $"set to {await browserElement.TextContentAsync()}";
+                    }
+                    else if (string.Equals(tag, "input", StringComparison.OrdinalIgnoreCase) && string.Equals(typeAttributeValue, "checkbox", StringComparison.OrdinalIgnoreCase)) 
+                    {
+                        elementValue = $"set to {await browserElement.ExecuteJavascriptAsync("element => element.checked.toString()")}";
+                    }
+                    else
+                    {
+                        elementValue = valueAttributeValue;
+                    }
+
+                    string elementType = string.Empty;
+                    if (string.Equals(tag, "input", StringComparison.OrdinalIgnoreCase))
+                    {
+                        elementType = $"{tag}.{typeAttributeValue}";
+                    }
+                    else if (string.Equals(tag, "a", StringComparison.OrdinalIgnoreCase) || string.Equals(tag, "li", StringComparison.OrdinalIgnoreCase))
+                    {
+                        elementType = "link";
+                    }
+                    else
+                    {
+                        elementType = tag;
+                    }
+
+                    string elementPath = htmlElementInfo.Path;
+                    if (string.IsNullOrEmpty(htmlElementInfo.XPath))
+                    {
+                        string[] xpathSegments = htmlElementInfo.XPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                        if (xpathSegments.Length > 0)
+                        {
+                            string lastXPathSegment = xpathSegments[^1].TrimStart('[').TrimEnd(']');
+                            if (string.Equals(lastXPathSegment, "frame", StringComparison.OrdinalIgnoreCase) || 
+                                string.Equals(lastXPathSegment, "iframe", StringComparison.OrdinalIgnoreCase))
+                            {
+                                elementPath = $"{htmlElementInfo.Path},{htmlElementInfo.XPath}";
+                            }
+                            elementPath = elementPath.TrimStart(',');
+                        }
+                    }
+
+                    HTMLElementInfo newHtmlElement = new()
+                    {
+                        ElementObject = browserElement,
+                        ElementTitle = elementTitle ?? string.Empty,
+                        WindowExplorer = this,
+                        Name = elementName ?? string.Empty,
+                        ID = elementId ?? string.Empty,
+                        Value = elementValue ?? string.Empty,
+                        Path = elementPath,
+                        XPath = await GenerateXPathFromBrowserElementAsync(browserElement),
+                        ElementType = elementType ?? string.Empty,
+                        ElementTypeEnum = POMLearner.GetElementType(tag, typeAttributeValue),
+                    };
+                    newHtmlElement.RelXpath = POMLearner.GenerateRelativeXPathFromHTMLElementInfo(newHtmlElement, xpathImpl: this, pomSetting: null);
+                    htmlElements.Add(newHtmlElement);
+                }
+                return htmlElements.Cast<ElementInfo>().ToList();
+            }).Result;
+        }
+
+        public ObservableList<ControlProperty> GetElementProperties(ElementInfo elementInfo)
+        {
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return [];
+            }
+
+            if (htmlElementInfo.ElementObject == null)
+            {
+                htmlElementInfo.ElementObject = Task.Run(async () => await FindBrowserElementAsync(htmlElementInfo)).Result;
+            }
+
+            if (htmlElementInfo.OptionalValuesObjectsList == null)
+            {
+                htmlElementInfo.OptionalValuesObjectsList = [];
+            }
+            htmlElementInfo.OptionalValuesObjectsList.AddRange(POMLearner.GetOptionValues(htmlElementInfo));
+
+            return new(POMLearner.GetProperties(htmlElementInfo));
+        }
+
+        public ObservableList<ElementLocator> GetElementLocators(ElementInfo elementInfo, PomSetting pomSetting = null)
+        {
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return [];
+            }
+
+            return new(POMLearner.GenerateLocators(htmlElementInfo, pomSetting));
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
+        {
+            return [];
+        }
+
+        public ObservableList<OptionalValue> GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            //copying existing implementation from SeleniumDriver
+            throw new NotImplementedException();
+        }
+
+        public object GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
             throw new NotImplementedException();
         }
 
-        public void ChangeAppWindowSize(int Width, int Height)
+        public bool IsRecordingSupported()
+        {
+            return false;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return true;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return true;
+        }
+
+        public bool IsWinowSelectionRequired()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.TreeView;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Page:";
+        }
+
+        public ObservableList<ElementInfo> GetElements(ElementLocator EL)
+        {
+            //copying existing implementation from SeleniumDriver
+            throw new Exception("Not implemented yet for this driver");
+        }
+
+        public void UpdateElementInfoFields(ElementInfo elementInfo)
+        {
+            ThrowIfClosed();
+
+            Task.Run(async () =>
+            {
+                if (elementInfo == null)
+                {
+                    return;
+                }
+
+                if (elementInfo is not HTMLElementInfo htmlElementInfo)
+                {
+                    return;
+                }
+
+                IBrowserElement? browserElement = (IBrowserElement)elementInfo.ElementObject;
+                if (browserElement == null)
+                {
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(elementInfo.XPath))
+                {
+                    elementInfo.XPath = GenerateXPathFromHTMLElementInfo(htmlElementInfo);
+                }
+
+                Point position = await browserElement.PositionAsync();
+                Size size = await browserElement.SizeAsync();
+
+                elementInfo.X = position.X;
+                elementInfo.Y = position.Y;
+                elementInfo.Width = size.Width;
+                elementInfo.Height = size.Height;
+
+            }).Wait();
+        }
+
+        public bool IsElementObjectValid(object obj)
+        {
+            //copying from SeleniumDriver, don't know why we return true
+            return true;
+        }
+
+        public bool TestElementLocators(ElementInfo Element, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
+        public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
         {
             throw new NotImplementedException();
         }
 
-        public string GetApplitoolServerURL()
+        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
             throw new NotImplementedException();
         }
 
-        public string GetApplitoolKey()
+        public void StartSpying()
+        {
+            ThrowIfClosed();
+            Task.Run(async () =>
+            {
+                await InjectLiveSpyScriptAsync(_browser.CurrentWindow.CurrentTab);
+            }).Wait();
+        }
+
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting? pomSetting = null)
         {
             throw new NotImplementedException();
         }
 
-        public ePlatformType GetPlatform()
+        public List<AppWindow> GetWindowAllFrames()
         {
+            //copying from SeleniumDriver
             throw new NotImplementedException();
         }
 
-        public string GetEnvironment()
+        public string GetCurrentPageSourceString()
         {
-            throw new NotImplementedException();
+            ThrowIfClosed();
+            return Task.Run(async () =>
+            {
+                return await _browser.CurrentWindow.CurrentTab.PageSourceAsync();
+            }).Result;
         }
 
-        public OpenQA.Selenium.IWebDriver GetWebDriver()
-        {
-            throw new NotImplementedException();
-        }
 
-        public string GetAgentAppName()
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// This field is only used as a cache for <see cref="GetPageSourceDocument(bool)"/> method. Don't rely on this to get the current tab content.
+        /// </summary>
+        private HtmlDocument? _currentPageDocument;
 
-        public string GetViewport()
+        public async Task<object> GetPageSourceDocument(bool reload)
         {
-            throw new NotImplementedException();
+            ThrowIfClosed();
+
+            if (reload)
+            {
+                _currentPageDocument = null;
+            }
+
+            if (_currentPageDocument == null)
+            {
+                _currentPageDocument = new HtmlDocument();
+                _currentPageDocument.LoadHtml(await _browser.CurrentWindow.CurrentTab.PageSourceAsync());
+            }
+
+            return _currentPageDocument;
         }
 
         private static readonly IEnumerable<ActUIElement.eElementAction> ActUIElementSupportedOperations = new List<ActUIElement.eElementAction>()
