@@ -200,7 +200,7 @@ jobs:
                  signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.exe
                  
                  
-                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll  D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll 
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.ExecuterService.Contracts.dll  D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.ExecuterService.Contracts.dll 
@@ -240,7 +240,8 @@ jobs:
                 run: | 
                   # smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
                    copy D:\a\Installers\Ginger.exe D:\a\Installers\ginger\Ginger.exe
-                   signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v "D:\a\Installers\ginger\Ginger.exe" 
+                   signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v "D:\a\Installers\ginger\Ginger.exe"
+                   copy D:\a\Installers\ginger\Ginger.exe D:\a\Installers\Ginger.exe
              #smctl sign --keypair-alias ${{ secrets.KEYPAIR_ALIAS }} --input "D:\a\Installers\Ginger.exe" -v
              # smctl sign --input "D:\a\Installers\Ginger.exe"
             
@@ -264,4 +265,4 @@ jobs:
                 uses: actions/upload-artifact@v3
                 with:
                   name: WindowsInstaller
-                  path: D:/a/Installers/ginger
+                  path: D:/a/Installers
