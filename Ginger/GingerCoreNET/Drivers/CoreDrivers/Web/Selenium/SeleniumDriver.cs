@@ -6599,7 +6599,7 @@ namespace GingerCore.Drivers
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
-            ObservableList<ElementLocator> locatorsList = [];
+            ObservableList<ElementLocator> locatorsList = new Platforms.PlatformsInfo.WebPlatform().GetLearningLocators();
             IWebElement e = null;
 
             if (ElementInfo.ElementObject != null)
@@ -6828,11 +6828,10 @@ namespace GingerCore.Drivers
                 LocateValue = learnElement ? currentHtmlNode.XPath : String.Empty,
                 IsAutoLearned = true
             };
-            ElementLocator elemLocator = elementLocator;
 
-            if (!string.IsNullOrEmpty(elemLocator.LocateValue))
+            if (!string.IsNullOrEmpty(elementLocator.LocateValue))
             {
-                locatorsList.Add(elemLocator);
+                locatorsList.Add(elementLocator);
             }
         }
 
