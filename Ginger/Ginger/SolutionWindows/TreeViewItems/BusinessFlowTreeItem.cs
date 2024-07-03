@@ -110,7 +110,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void TreeViewItem_Unselected(object sender, RoutedEventArgs e)
         {
-            
+            if (mBusinessFlow.CurrentActivity != null)
+            {
+                mBusinessFlow.CurrentActivity.StopTimer();
+            }
+
             mBusinessFlow.StopTimer();
            
         }
