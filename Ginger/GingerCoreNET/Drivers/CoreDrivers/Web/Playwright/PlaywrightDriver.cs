@@ -11,29 +11,24 @@ using System.Threading.Tasks;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using System.Drawing;
-using GingerCore.Actions.VisualTesting;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.ComponentModel;
 using System.Runtime.Versioning;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.VisualStudio.Services.WebApi;
-using System.Text.RegularExpressions;
 using GingerCore.Drivers.Common;
 using System.IO;
 using HtmlAgilityPack;
-using Protractor;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
-using Amdocs.Ginger.IO;
-using DocumentFormat.OpenXml.Wordprocessing;
+using GingerCore.Actions.VisualTesting;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using amdocs.ginger.GingerCoreNET;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
-    public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver, IWindowExplorer, IXPath
+    public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver, IWindowExplorer, IXPath, IVisualTestingDriver
     {
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -656,72 +651,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 List<HTMLElementInfo> htmlElements = [];
                 foreach (IBrowserElement browserElement in browserElements)
                 {
-                    string tag = await browserElement.TagNameAsync();
-                    string nameAttributeValue = await browserElement.AttributeValueAsync("name");
-                    string idAttributeValue = await browserElement.AttributeValueAsync("id");
-                    string valueAttributeValue = await browserElement.AttributeValueAsync("value");
-                    string typeAttributeValue = await browserElement.AttributeValueAsync("type");
+                    HTMLElementInfo newHtmlElement = await CreateHtmlElementAsync(browserElement);
 
-                    string elementTitle = tag;
-                    if (string.Equals(tag, "table", StringComparison.OrdinalIgnoreCase))
+                    if (string.IsNullOrEmpty(newHtmlElement.ID))
                     {
-                        elementTitle = "Table";
-                    }
-                    else if (!string.IsNullOrEmpty(nameAttributeValue))
-                    {
-                        elementTitle = $"{nameAttributeValue} {tag}";
-                    }
-                    else if (!string.IsNullOrEmpty(idAttributeValue))
-                    {
-                        elementTitle = $"{idAttributeValue} {tag}";
-                    }
-                    else if (!string.IsNullOrEmpty(valueAttributeValue))
-                    {
-                        elementTitle = $"{(valueAttributeValue.Length > 50 ? valueAttributeValue.Substring(0, 50) + "..." : valueAttributeValue)} {tag}";
-                    }
-
-                    string elementName = tag;
-                    if (string.IsNullOrEmpty(elementName))
-                    {
-                        elementName = nameAttributeValue;
-                    }
-
-                    string elementId = idAttributeValue;
-                    if (string.IsNullOrEmpty(elementId))
-                    {
-                        elementId = htmlElementInfo.HTMLElementObject.Id;
-                    }
-
-                    string elementValue = string.Empty;
-                    if (string.Equals(tag, "select", StringComparison.OrdinalIgnoreCase))
-                    {
-                        elementValue = $"set to {await browserElement.ExecuteJavascriptAsync("element => element.options[element.selectedIndex].text")}";
-                    }
-                    else if (string.Equals(tag, "span", StringComparison.OrdinalIgnoreCase))
-                    {
-                        elementValue = $"set to {await browserElement.TextContentAsync()}";
-                    }
-                    else if (string.Equals(tag, "input", StringComparison.OrdinalIgnoreCase) && string.Equals(typeAttributeValue, "checkbox", StringComparison.OrdinalIgnoreCase)) 
-                    {
-                        elementValue = $"set to {await browserElement.ExecuteJavascriptAsync("element => element.checked.toString()")}";
-                    }
-                    else
-                    {
-                        elementValue = valueAttributeValue;
-                    }
-
-                    string elementType = string.Empty;
-                    if (string.Equals(tag, "input", StringComparison.OrdinalIgnoreCase))
-                    {
-                        elementType = $"{tag}.{typeAttributeValue}";
-                    }
-                    else if (string.Equals(tag, "a", StringComparison.OrdinalIgnoreCase) || string.Equals(tag, "li", StringComparison.OrdinalIgnoreCase))
-                    {
-                        elementType = "link";
-                    }
-                    else
-                    {
-                        elementType = tag;
+                        newHtmlElement.ID = htmlElementInfo.HTMLElementObject.Id;
                     }
 
                     string elementPath = htmlElementInfo.Path;
@@ -731,7 +665,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         if (xpathSegments.Length > 0)
                         {
                             string lastXPathSegment = xpathSegments[^1].TrimStart('[').TrimEnd(']');
-                            if (string.Equals(lastXPathSegment, "frame", StringComparison.OrdinalIgnoreCase) || 
+                            if (string.Equals(lastXPathSegment, "frame", StringComparison.OrdinalIgnoreCase) ||
                                 string.Equals(lastXPathSegment, "iframe", StringComparison.OrdinalIgnoreCase))
                             {
                                 elementPath = $"{htmlElementInfo.Path},{htmlElementInfo.XPath}";
@@ -739,21 +673,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                             elementPath = elementPath.TrimStart(',');
                         }
                     }
-
-                    HTMLElementInfo newHtmlElement = new()
-                    {
-                        ElementObject = browserElement,
-                        ElementTitle = elementTitle ?? string.Empty,
-                        WindowExplorer = this,
-                        Name = elementName ?? string.Empty,
-                        ID = elementId ?? string.Empty,
-                        Value = elementValue ?? string.Empty,
-                        Path = elementPath,
-                        XPath = await GenerateXPathFromBrowserElementAsync(browserElement),
-                        ElementType = elementType ?? string.Empty,
-                        ElementTypeEnum = POMLearner.GetElementType(tag, typeAttributeValue),
-                    };
+                    newHtmlElement.Path = elementPath;
+                    newHtmlElement.WindowExplorer = this;
                     newHtmlElement.RelXpath = POMLearner.GenerateRelativeXPathFromHTMLElementInfo(newHtmlElement, xpathImpl: this, pomSetting: null);
+
                     htmlElements.Add(newHtmlElement);
                 }
                 return htmlElements.Cast<ElementInfo>().ToList();
@@ -958,6 +881,549 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             return _currentPageDocument;
+        }
+
+        public XPathHelper GetXPathHelper(ElementInfo? elementInfo = null)
+        {
+            return new XPathHelper(Driver: this, ["PlaywrightDriver", "Web"]);
+        }
+
+        public ElementInfo GetRootElement()
+        {
+            ElementInfo rootElement = new()
+            {
+                ElementTitle = "html/body",
+                ElementType = "root",
+                Value = string.Empty,
+                Path = string.Empty,
+                XPath = "html/body"
+            };
+            return rootElement;
+        }
+
+        public ElementInfo UseRootElement()
+        {
+            ThrowIfClosed();
+            Task.Run(() => _browser.CurrentWindow.CurrentTab.SwitchToMainFrameAsync().Wait()).Wait();
+            return GetRootElement();
+        }
+
+        public ElementInfo? GetElementParent(ElementInfo elementInfo, PomSetting? pomSetting = null)
+        {
+            if (elementInfo is not HTMLElementInfo htmlElementInfo) 
+            {
+                return null;
+            }
+
+            return htmlElementInfo.ParentElement;
+        }
+
+        public string? GetElementProperty(ElementInfo elementInfo, string propertyName)
+        {
+            ThrowIfClosed();
+            if (elementInfo.ElementObject == null)
+            {
+                elementInfo.ElementObject = Task.Run(() => _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByXPath, elementInfo.XPath).Result).Result;
+            }
+            if (elementInfo.ElementObject is not IBrowserElement browserElement)
+            {
+                return null;
+            }
+            return Task.Run(() => browserElement.AttributeValueAsync(propertyName).Result).Result;
+        }
+
+        public ElementInfo? FindFirst(ElementInfo elementInfo, List<XpathPropertyCondition> conditions)
+        {
+            ThrowIfClosed();
+            return Task.Run(async () =>
+            {
+                IEnumerable<IBrowserElement> browserElements = await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByCSS, "*");
+                foreach (IBrowserElement browserElement in browserElements)
+                {
+                    string tag = await browserElement.TagNameAsync();
+                    if (!string.Equals(tag, elementInfo.ElementType))
+                    {
+                        continue;
+                    }
+
+                    bool allConditionsPassed = true;
+                    foreach (XpathPropertyCondition condition in conditions)
+                    {
+                        string attributeValue = await browserElement.AttributeValueAsync(condition.PropertyName);
+                        switch (condition.Op)
+                        {
+                            case XpathPropertyCondition.XpathConditionOperator.Equel:
+                                allConditionsPassed = string.Equals(elementInfo.Value, attributeValue) && allConditionsPassed;
+                                break;
+                            case XpathPropertyCondition.XpathConditionOperator.Less:
+                                int elementValueAsInt = Convert.ToInt32(elementInfo.Value);
+                                int attributeValueAsInt = Convert.ToInt32(attributeValue);
+                                allConditionsPassed = elementValueAsInt < attributeValueAsInt && allConditionsPassed;
+                                break;
+                            case XpathPropertyCondition.XpathConditionOperator.More:
+                                elementValueAsInt = Convert.ToInt32(elementInfo.Value);
+                                attributeValueAsInt = Convert.ToInt32(attributeValue);
+                                allConditionsPassed = elementValueAsInt > attributeValueAsInt && allConditionsPassed;
+                                break;
+                        }
+                    }
+                    if (allConditionsPassed)
+                    {
+                        HTMLElementInfo newHtmlElement = await CreateHtmlElementAsync(browserElement);
+                        newHtmlElement.WindowExplorer = this;
+                        newHtmlElement.RelXpath = POMLearner.GenerateRelativeXPathFromHTMLElementInfo(newHtmlElement, xpathImpl: this, pomSetting: null);
+                        return newHtmlElement;
+                    }
+                }
+                return null;
+            }).Result;
+        }
+
+        public List<ElementInfo> FindAll(ElementInfo elementInfo, List<XpathPropertyCondition> conditions)
+        {
+            ThrowIfClosed();
+            return Task.Run(async () =>
+            {
+                List<HTMLElementInfo> foundElements = []; 
+                IEnumerable<IBrowserElement> browserElements = await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByCSS, "*");
+                foreach (IBrowserElement browserElement in browserElements)
+                {
+                    string tag = await browserElement.TagNameAsync();
+                    if (!string.Equals(tag, elementInfo.ElementType))
+                    {
+                        continue;
+                    }
+
+                    bool allConditionsPassed = true;
+                    foreach (XpathPropertyCondition condition in conditions)
+                    {
+                        string attributeValue = await browserElement.AttributeValueAsync(condition.PropertyName);
+                        switch (condition.Op)
+                        {
+                            case XpathPropertyCondition.XpathConditionOperator.Equel:
+                                allConditionsPassed = string.Equals(elementInfo.Value, attributeValue) && allConditionsPassed;
+                                break;
+                            case XpathPropertyCondition.XpathConditionOperator.Less:
+                                int elementValueAsInt = Convert.ToInt32(elementInfo.Value);
+                                int attributeValueAsInt = Convert.ToInt32(attributeValue);
+                                allConditionsPassed = elementValueAsInt < attributeValueAsInt && allConditionsPassed;
+                                break;
+                            case XpathPropertyCondition.XpathConditionOperator.More:
+                                elementValueAsInt = Convert.ToInt32(elementInfo.Value);
+                                attributeValueAsInt = Convert.ToInt32(attributeValue);
+                                allConditionsPassed = elementValueAsInt > attributeValueAsInt && allConditionsPassed;
+                                break;
+                        }
+                    }
+                    if (allConditionsPassed)
+                    {
+                        HTMLElementInfo newHtmlElement = await CreateHtmlElementAsync(browserElement);
+                        newHtmlElement.WindowExplorer = this;
+                        newHtmlElement.RelXpath = POMLearner.GenerateRelativeXPathFromHTMLElementInfo(newHtmlElement, xpathImpl: this, pomSetting: null);
+                        foundElements.Add(newHtmlElement);
+                    }
+                }
+                return foundElements.Cast<ElementInfo>().ToList();
+            }).Result;
+        }
+
+        public ElementInfo? GetPreviousSibling(ElementInfo elementInfo)
+        {
+            if (elementInfo == null)
+            {
+                return null;
+            }
+
+            if (elementInfo.ParentElement == null || elementInfo.ParentElement.ChildElements.Count <= 0)
+            {
+                return null;
+            }
+
+            IList<ElementInfo> childElements = elementInfo.ParentElement.ChildElements;
+
+            for (int i = 0; i < childElements.Count; i++)
+            {
+                ElementInfo siblingElement = childElements[i];
+                if (siblingElement != elementInfo)
+                {
+                    continue;
+                }
+
+                if (i > 0)
+                {
+                    return childElements[i - 1];
+                }
+            }
+
+            return null;
+        }
+
+        public ElementInfo? GetNextSibling(ElementInfo elementInfo)
+        {
+            if (elementInfo == null)
+            {
+                return null;
+            }
+
+            if (elementInfo.ParentElement == null || elementInfo.ParentElement.ChildElements.Count <= 0)
+            {
+                return null;
+            }
+
+            IList<ElementInfo> childElements = elementInfo.ParentElement.ChildElements;
+
+            for (int i = 0; i < childElements.Count; i++)
+            {
+                ElementInfo siblingElement = childElements[i];
+                if (siblingElement != elementInfo)
+                {
+                    continue;
+                }
+
+                if (i < childElements.Count - 1)
+                {
+                    return childElements[i + 1];
+                }
+            }
+
+            return null;
+        }
+
+        public string? GetElementID(ElementInfo elementInfo)
+        {
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return null;
+            }
+
+            if (htmlElementInfo.HTMLElementObject != null)
+            {
+                return htmlElementInfo.HTMLElementObject.Id;
+            }
+            return Task.Run(() => ((IBrowserElement)htmlElementInfo).AttributeValueAsync("id").Result).Result;
+        }
+
+        public string? GetElementTagName(ElementInfo elementInfo)
+        {
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return null;
+            }
+
+            if (htmlElementInfo.HTMLElementObject != null)
+            {
+                return htmlElementInfo.HTMLElementObject.Name;
+            }
+            return Task.Run(() => ((IBrowserElement)htmlElementInfo).TagNameAsync().Result).Result;
+        }
+
+        public List<object> GetAllElementsByLocator(eLocateBy locateBy, string locateValue)
+        {
+            ThrowIfClosed();
+            return new(Task.Run(() => _browser.CurrentWindow.CurrentTab.GetElementsAsync(locateBy, locateValue).Result).Result);
+        }
+
+        public string? GetElementXpath(ElementInfo elementInfo)
+        {
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return null;
+            }
+
+            return POMLearner.GenerateXPathFromHtmlElementInfo(htmlElementInfo);
+        }
+
+        public string? GetInnerHtml(ElementInfo elementInfo)
+        {
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return null;
+            }
+
+            if (htmlElementInfo.HTMLElementObject == null)
+            {
+                return null;
+            }
+
+            return htmlElementInfo.HTMLElementObject.InnerHtml;
+        }
+
+        public object? GetElementParentNode(ElementInfo elementInfo)
+        {
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return null;
+            }
+
+            if (htmlElementInfo.HTMLElementObject == null)
+            {
+                return null;
+            }
+
+            return htmlElementInfo.HTMLElementObject.ParentNode;
+        }
+
+        public string? GetInnerText(ElementInfo elementInfo)
+        {
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return null;
+            }
+
+            if (htmlElementInfo.HTMLElementObject == null)
+            {
+                return null;
+            }
+
+            return htmlElementInfo.HTMLElementObject.InnerText;
+        }
+
+        public string? GetPreviousSiblingInnerText(ElementInfo elementInfo)
+        {
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return null;
+            }
+
+            if (htmlElementInfo.HTMLElementObject == null)
+            {
+                return null;
+            }
+
+            HtmlNode prevSibling = htmlElementInfo.HTMLElementObject.PreviousSibling;
+
+            var innerText = string.Empty;
+
+            //looking for text till two level up
+            if (string.Equals(htmlElementInfo.HTMLElementObject.Name, "input", StringComparison.OrdinalIgnoreCase) && prevSibling == null)
+            {
+                prevSibling = htmlElementInfo.HTMLElementObject.ParentNode;
+
+                if (string.IsNullOrEmpty(prevSibling.InnerText))
+                {
+                    prevSibling = prevSibling.PreviousSibling;
+                }
+            }
+
+            if (prevSibling != null && !string.IsNullOrEmpty(prevSibling.InnerText) && prevSibling.ChildNodes.Count == 1)
+            {
+                innerText = prevSibling.InnerText;
+            }
+
+            return innerText;
+        }
+
+        [SupportedOSPlatform("windows")]
+        public VisualElementsInfo GetVisualElementsInfo()
+        {
+            ThrowIfClosed();
+
+            VisualElementsInfo visualElementsInfo = new();
+
+            visualElementsInfo.Bitmap = GetScreenShot();
+
+            Task.Run(async () =>
+            {
+                //TODO: add function to get all tags available - below is missing some...
+                List<IBrowserElement> visualBrowserElements = [];
+                visualBrowserElements.AddRange(await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByTagName, "a"));
+                visualBrowserElements.AddRange(await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByTagName, "input"));
+                visualBrowserElements.AddRange(await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByTagName, "select"));
+                visualBrowserElements.AddRange(await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByTagName, "label"));
+                visualBrowserElements.AddRange(await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByTagName, "H1"));
+                visualBrowserElements.AddRange(await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByTagName, "H2"));
+                visualBrowserElements.AddRange(await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByTagName, "H3"));
+                visualBrowserElements.AddRange(await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByTagName, "H4"));
+                visualBrowserElements.AddRange(await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByTagName, "H5"));
+                visualBrowserElements.AddRange(await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByTagName, "H6"));
+                List<IBrowserElement> visibleVisualBrowserElements = [];
+                foreach (IBrowserElement visualBrowserElement in visualBrowserElements)
+                {
+                    bool isVisible = await visualBrowserElement.IsVisibleAsync();
+                    Size size = await visualBrowserElement.SizeAsync();
+                    if (isVisible && size.Width > 0 && size.Height > 0)
+                    {
+                        visibleVisualBrowserElements.Add(visualBrowserElement);
+                    }
+                }
+
+                List<VisualElement> visualElements = [];
+                foreach (IBrowserElement visibleVisualBrowserElement in visibleVisualBrowserElements)
+                {
+                    string tag = await visibleVisualBrowserElement.TagNameAsync();
+                    string text = await visibleVisualBrowserElement.TextContentAsync();
+                    if (string.IsNullOrEmpty(text) && string.Equals(tag, "input", StringComparison.OrdinalIgnoreCase))
+                    {
+                        text = await visibleVisualBrowserElement.AttributeValueAsync("value");
+                        if (string.IsNullOrEmpty(text))
+                        {
+                            text = await visibleVisualBrowserElement.AttributeValueAsync("outerHTML");
+                        }
+                    }
+                    Size size = await visibleVisualBrowserElement.SizeAsync();
+                    Point position = await visibleVisualBrowserElement.PositionAsync();
+                    VisualElement VE = new()
+                    {
+                        ElementType = tag,
+                        Text = text,
+                        X = position.X,
+                        Y = position.Y,
+                        Width = size.Width,
+                        Height = size.Height
+                    };
+                    visualElements.Add(VE);
+                }
+
+                visualElementsInfo.Elements = visualElements;;
+            }).Wait();
+
+            return visualElementsInfo;
+        }
+
+        public void ChangeAppWindowSize(int width, int height)
+        {
+            ThrowIfClosed();
+            Size size = new(width, height);
+            Task.Run(() => _browser.CurrentWindow.CurrentTab.SetViewportSizeAsync(size).Wait()).Wait();
+        }
+
+        public async Task<ElementInfo?> GetElementAtPoint(long ptX, long ptY)
+        {
+            ThrowIfClosed();
+            try
+            {
+                HTMLElementInfo? elemInfo = null;
+
+                string iframeXPath = string.Empty;
+                Point parentElementLocation = new Point(0, 0);
+
+                while (true)
+                {
+                    string s_Script = $"return document.elementFromPoint({ptX}, {ptY});";
+
+                    IBrowserElement? ele = (await _browser.CurrentWindow.CurrentTab.GetElementsAsync(s_Script)).FirstOrDefault();
+
+                    if (ele == null)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        HtmlNode? elemNode = null;
+                        string elemId;
+                        try
+                        {
+                            elemId = await ele.AttributeValueAsync("id");
+                            if (_currentPageDocument == null)
+                            {
+                                _currentPageDocument = new HtmlDocument();
+                                _currentPageDocument.LoadHtml(GetCurrentPageSourceString());
+                            }
+                            elemNode = _currentPageDocument.DocumentNode.Descendants().FirstOrDefault(x => x.Id.Equals(elemId));
+                        }
+                        catch (Exception)
+                        {
+                            elemId = "";
+                        }
+
+                        elemInfo = await CreateHtmlElementAsync(ele);
+                        elemInfo.Path = iframeXPath;
+                    }
+
+                    if (elemInfo.ElementTypeEnum != eElementType.Iframe)    // ele.TagName != "frame" && ele.TagName != "iframe")
+                    {
+                        await _browser.CurrentWindow.CurrentTab.SwitchToMainFrameAsync();
+
+                        break;
+                    }
+
+                    if (string.IsNullOrEmpty(iframeXPath))
+                    {
+                        iframeXPath = elemInfo.XPath;
+                    }
+                    else
+                    {
+                        iframeXPath += "," + elemInfo.XPath;
+                    }
+
+                    parentElementLocation.X += elemInfo.X;
+                    parentElementLocation.Y += elemInfo.Y;
+
+                    String s_Script2 = "var X, Y; "
+                            + "if (window.pageYOffset) " // supported by most browsers 
+                            + "{ "
+                            + "  X = window.pageXOffset; "
+                            + "  Y = window.pageYOffset; "
+                            + "} "
+                            + "else " // Internet Explorer 6, 7, 8
+                            + "{ "
+                            + "  var  Elem = document.documentElement; "         // <html> node (IE with DOCTYPE)
+                            + "  if (!Elem.clientHeight) Elem = document.body; " // <body> node (IE in quirks mode)
+                            + "  X = Elem.scrollLeft; "
+                            + "  Y = Elem.scrollTop; "
+                            + "} "
+                            + "return new Array(X, Y);";
+
+                    IList<Object> i_Coord = (IList<Object>)_browser.CurrentWindow.CurrentTab.ExecuteJavascriptAsync(s_Script2);
+
+                    int s32_ScrollX = Convert.ToInt32(i_Coord[0]);
+                    int s32_ScrollY = Convert.ToInt32(i_Coord[1]);
+
+                    Point elePosition = await ele.PositionAsync();
+                    Point p_Pos = new Point(elePosition.X - s32_ScrollX,
+                                     elePosition.Y - s32_ScrollY);
+                    ptX -= p_Pos.X;
+                    ptY -= p_Pos.Y;
+
+                    //Driver.SwitchTo().Frame(ele);
+                }
+
+                elemInfo.X += parentElementLocation.X;
+                elemInfo.Y += parentElementLocation.Y;
+
+                return elemInfo;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Element At Point", ex);
+                return null;
+            }
+        }
+
+        public string GetApplitoolServerURL()
+        {
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
+        }
+
+        public string GetApplitoolKey()
+        {
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
+        }
+
+        public ePlatformType GetPlatform()
+        {
+            return this.Platform;
+        }
+
+        public string GetEnvironment()
+        {
+            return this.BusinessFlow.Environment;
+        }
+
+        public OpenQA.Selenium.IWebDriver GetWebDriver()
+        {
+            return null;
+        }
+
+        public string GetAgentAppName()
+        {
+            return BrowserType.ToString();
+        }
+
+        public string GetViewport()
+        {
+            ThrowIfClosed();
+            return Task.Run(() => _browser.CurrentWindow.CurrentTab.ViewportSizeAsync().Result).Result.ToString();
         }
 
         private static readonly IEnumerable<ActUIElement.eElementAction> ActUIElementSupportedOperations = new List<ActUIElement.eElementAction>()

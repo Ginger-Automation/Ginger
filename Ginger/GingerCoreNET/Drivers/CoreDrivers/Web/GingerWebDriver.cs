@@ -367,5 +367,86 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             }";
             return element.ExecuteJavascriptAsync(script);
         }
+
+        private protected async Task<HTMLElementInfo> CreateHtmlElementAsync(IBrowserElement browserElement)
+        {
+            string tag = await browserElement.TagNameAsync();
+            string nameAttributeValue = await browserElement.AttributeValueAsync("name");
+            string idAttributeValue = await browserElement.AttributeValueAsync("id");
+            string valueAttributeValue = await browserElement.AttributeValueAsync("value");
+            string typeAttributeValue = await browserElement.AttributeValueAsync("type");
+
+            string elementTitle = tag;
+            if (string.Equals(tag, "table", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTitle = "Table";
+            }
+            else if (!string.IsNullOrEmpty(nameAttributeValue))
+            {
+                elementTitle = $"{nameAttributeValue} {tag}";
+            }
+            else if (!string.IsNullOrEmpty(idAttributeValue))
+            {
+                elementTitle = $"{idAttributeValue} {tag}";
+            }
+            else if (!string.IsNullOrEmpty(valueAttributeValue))
+            {
+                elementTitle = $"{(valueAttributeValue.Length > 50 ? valueAttributeValue.Substring(0, 50) + "..." : valueAttributeValue)} {tag}";
+            }
+
+            string elementName = tag;
+            if (string.IsNullOrEmpty(elementName))
+            {
+                elementName = nameAttributeValue;
+            }
+
+            string elementId = idAttributeValue;
+
+            string elementValue = string.Empty;
+            if (string.Equals(tag, "select", StringComparison.OrdinalIgnoreCase))
+            {
+                elementValue = $"set to {await browserElement.ExecuteJavascriptAsync("element => element.options[element.selectedIndex].text")}";
+            }
+            else if (string.Equals(tag, "span", StringComparison.OrdinalIgnoreCase))
+            {
+                elementValue = $"set to {await browserElement.TextContentAsync()}";
+            }
+            else if (string.Equals(tag, "input", StringComparison.OrdinalIgnoreCase) && string.Equals(typeAttributeValue, "checkbox", StringComparison.OrdinalIgnoreCase))
+            {
+                elementValue = $"set to {await browserElement.ExecuteJavascriptAsync("element => element.checked.toString()")}";
+            }
+            else
+            {
+                elementValue = valueAttributeValue;
+            }
+
+            string elementType = string.Empty;
+            if (string.Equals(tag, "input", StringComparison.OrdinalIgnoreCase))
+            {
+                elementType = $"{tag}.{typeAttributeValue}";
+            }
+            else if (string.Equals(tag, "a", StringComparison.OrdinalIgnoreCase) || string.Equals(tag, "li", StringComparison.OrdinalIgnoreCase))
+            {
+                elementType = "link";
+            }
+            else
+            {
+                elementType = tag;
+            }
+
+            HTMLElementInfo newHtmlElement = new()
+            {
+                ElementObject = browserElement,
+                ElementTitle = elementTitle ?? string.Empty,
+                Name = elementName ?? string.Empty,
+                ID = elementId ?? string.Empty,
+                Value = elementValue ?? string.Empty,
+                XPath = await GenerateXPathFromBrowserElementAsync(browserElement),
+                ElementType = elementType ?? string.Empty,
+                ElementTypeEnum = POMLearner.GetElementType(tag, typeAttributeValue),
+            };
+            
+            return newHtmlElement;
+        }
     }
 }

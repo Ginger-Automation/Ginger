@@ -66,18 +66,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return LearnDocumentElementsAsync(_htmlDocument);
         }
 
-        private async Task<IEnumerable<HTMLElementInfo>> LearnDocumentElementsAsync(HtmlDocument htmlDocument)
+        private Task<IEnumerable<HTMLElementInfo>> LearnDocumentElementsAsync(HtmlDocument htmlDocument)
+        {
+            return LearnHtmlNodeChildElements(htmlDocument.DocumentNode);
+        }
+
+        private async Task<IEnumerable<HTMLElementInfo>> LearnHtmlNodeChildElements(HtmlNode htmlNode)
         {
             List<HTMLElementInfo> htmlElements = [];
 
-            foreach (HtmlNode htmlNode in htmlDocument.DocumentNode.Descendants())
+            foreach (HtmlNode childNode in htmlNode.ChildNodes)
             {
-                if (!ShouldIncludeHtmlNode(htmlNode))
+                if (!ShouldIncludeHtmlNode(childNode))
                 {
                     continue;
                 }
 
-                IBrowserElement? browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, htmlNode.XPath);
+                IBrowserElement? browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
                 if (browserElement == null)
                 {
                     continue;
@@ -88,13 +93,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     continue;
                 }
 
-                HTMLElementInfo htmlElementInfo = await CreateHTMLElementInfoAsync(htmlNode, browserElement);
+                HTMLElementInfo childElement = await CreateHTMLElementInfoAsync(childNode, browserElement);
 
-                htmlElements.Add(htmlElementInfo);
+                htmlElements.Add(childElement);
 
-                htmlElements.AddRange(await LearnShadowDOMElementsAsync(htmlElementInfo));
-                htmlElements.AddRange(await LearnFrameElementsAsync(htmlElementInfo));
+                htmlElements.AddRange(await LearnShadowDOMElementsAsync(childElement));
+                htmlElements.AddRange(await LearnFrameElementsAsync(childElement));
                 //TODO: create suggested activities
+
+                IEnumerable<HTMLElementInfo> grandChildElements = await LearnHtmlNodeChildElements(childNode);
+                foreach (HTMLElementInfo grandChildElement in grandChildElements)
+                {
+                    grandChildElement.ParentElement = childElement;
+                }
+                childElement.ChildElements.Clear();
+                childElement.ChildElements.AddRange(grandChildElements.Cast<ElementInfo>());
+
+                htmlElements.AddRange(grandChildElements);
             }
 
             return htmlElements;
@@ -397,8 +412,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }
 
             List<ElementLocator> locators = [];
+            XPathHelper xpathHelper = NewXPathHelper(_xpathImpl);
 
-            string relXPathWithMultipleAtrrs = _xpathHelper.CreateRelativeXpathWithTagNameAndAttributes(htmlElementInfo);
+            string relXPathWithMultipleAtrrs = xpathHelper.CreateRelativeXpathWithTagNameAndAttributes(htmlElementInfo);
             if (!string.IsNullOrEmpty(relXPathWithMultipleAtrrs) &&
                 _browserElementProvider.GetElementAsync(eLocateBy.ByRelXPath, relXPathWithMultipleAtrrs) != null)
             {
@@ -413,7 +429,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             string innerText = htmlElementInfo.HTMLElementObject.InnerText;
             if (!string.IsNullOrEmpty(innerText))
             {
-                var relXPathWithExactTextMatch = _xpathHelper.CreateRelativeXpathWithTextMatch(htmlElementInfo, isExactMatch: true);
+                var relXPathWithExactTextMatch = xpathHelper.CreateRelativeXpathWithTextMatch(htmlElementInfo, isExactMatch: true);
                 if (!string.IsNullOrEmpty(relXPathWithExactTextMatch) &&
                     _browserElementProvider.GetElementAsync(eLocateBy.ByRelXPath, relXPathWithExactTextMatch) != null)
                 {
@@ -424,7 +440,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                         IsAutoLearned = true 
                     });
                     
-                    var relXPathWithContainsText = _xpathHelper.CreateRelativeXpathWithTextMatch(htmlElementInfo, isExactMatch: false);
+                    var relXPathWithContainsText = xpathHelper.CreateRelativeXpathWithTextMatch(htmlElementInfo, isExactMatch: false);
                     if (!string.IsNullOrEmpty(relXPathWithContainsText))
                     {
                         locators.Add(new() 
@@ -438,7 +454,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 }
             }
 
-            var relXPathWithSiblingText = _xpathHelper.CreateRelativeXpathWithSibling(htmlElementInfo);
+            var relXPathWithSiblingText = xpathHelper.CreateRelativeXpathWithSibling(htmlElementInfo);
             if (!string.IsNullOrEmpty(relXPathWithSiblingText) && 
                 _browserElementProvider.GetElementAsync(eLocateBy.ByRelXPath, relXPathWithSiblingText) != null)
             {
@@ -501,7 +517,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return locators;
         }
 
-        private string GenerateXPathFromHtmlElementInfo(HTMLElementInfo htmlElementInfo)
+        internal static string GenerateXPathFromHtmlElementInfo(HTMLElementInfo htmlElementInfo)
         {
             if (!string.IsNullOrEmpty(htmlElementInfo.XPath) && !string.Equals(htmlElementInfo.XPath, "/"))
             {

@@ -10947,5 +10947,17 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Error in OnNetworkResponseReceived ", ex);
             }
         }
+
+        private protected override IBrowser GetBrowser()
+        {
+            //overridden method from GingerWebDriver, need to implement this when we refactor SeleniumDriver to be in the similar structure as PlaywrightDriver
+            throw new NotImplementedException();
+        }
+
+        private protected override Task<IBrowserElement> FindBrowserElementAsync(eLocateBy locateBy, string locateValue)
+        {
+            //overridden method from GingerWebDriver, need to implement this when we refactor SeleniumDriver to be in the similar structure as PlaywrightDriver
+            throw new NotImplementedException();
+        }
     }
 }

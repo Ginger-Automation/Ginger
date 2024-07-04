@@ -6,14 +6,14 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.Json;
 using System.Threading.Tasks;
-using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
-using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
-using IPlaywrightDialog = Microsoft.Playwright.IDialog;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
+using IPlaywrightJSHandle = Microsoft.Playwright.IJSHandle;
+using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using System.Drawing;
+using NPOI.OpenXmlFormats.Dml;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -259,11 +259,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return elements;
         }
 
-        public Task<IEnumerable<IBrowserElement>> GetElementsAsync(string javascript)
+        public async Task<IEnumerable<IBrowserElement>> GetElementsAsync(string javascript)
         {
             ThrowIfClosed();
-            _currentFrame.EvaluateAsync()
-            //return Task.FromResult((IEnumerable<IBrowserElement>)null);
+            IPlaywrightJSHandle jsHandle = await _currentFrame.EvaluateHandleAsync(javascript);
+            IPlaywrightElementHandle? elementHandle = jsHandle.AsElement();
+            if (elementHandle == null)
+            {
+                return [];
+            }
+            return [new PlaywrightBrowserElement(elementHandle)];
         }
 
         public Task<byte[]> ScreenshotAsync()
