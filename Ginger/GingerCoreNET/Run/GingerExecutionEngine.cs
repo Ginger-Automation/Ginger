@@ -694,7 +694,6 @@ namespace Ginger.Run
                     mErrorPostExecutionActionFlowBreaker = false;
                 }
 
-
             }
         }
 
@@ -830,20 +829,19 @@ namespace Ginger.Run
                                     }
                                     /// <summary>
                                     /// logic for if need to assign virtual agent
-                                    /// Second condition for  If any runner have same agent multiple times then for that runner it will not launch multiple agent within same runner
-                                    /// third condition if any agent is used in different agent then only it will create virtual agent for that specific agent 
+                                    /// Second condition if any agent is used in different agent then only it will create virtual agent for that specific agent 
                                     /// </summary>
-                                    if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentListWithRunner.Where(entry => entry.Key == mGingerRunner.Guid).Select(y => y.Value).Where(y => y != null).Any(x => (x.Any(k => ((Agent)k).Guid != agent.Guid))) && runSetConfig.ActiveAgentListWithRunner.Where(entry => entry.Key != mGingerRunner.Guid).Select(y => y.Value).Where(y => y != null).Any(x => (x.Any(k => ((Agent)k).Guid == agent.Guid || (((Agent)k).ParentGuid != null && ((Agent)k).ParentGuid == agent.Guid))))) 
+                                    if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentListWithRunner.Where(entry => entry.Key != mGingerRunner.Guid).Select(y => y.Value).Where(y => y != null).Any(x => (x.Any(k => ((Agent)k).Guid == agent.Guid || (((Agent)k).ParentGuid != null && ((Agent)k).ParentGuid == agent.Guid)))))
                                     {
-                                        var virtualagent = agent.CreateCopy(true) as Agent;
-                                        virtualagent.AgentOperations = new AgentOperations(virtualagent);
-                                        virtualagent.ParentGuid = agent.Guid;
-                                        virtualagent.Name = agent.Name + " Virtual";
-                                        virtualagent.IsVirtual = true;
-                                        virtualagent.DriverClass = agent.DriverClass;
-                                        virtualagent.DriverType = agent.DriverType;
-                                        applicationAgent.Agent = virtualagent;
-                                        virtualagent.DriverConfiguration = agent.DriverConfiguration;
+                                            var virtualagent = agent.CreateCopy(true) as Agent;
+                                            virtualagent.AgentOperations = new AgentOperations(virtualagent);
+                                            virtualagent.ParentGuid = agent.Guid;
+                                            virtualagent.Name = agent.Name + " Virtual";
+                                            virtualagent.IsVirtual = true;
+                                            virtualagent.DriverClass = agent.DriverClass;
+                                            virtualagent.DriverType = agent.DriverType;
+                                            applicationAgent.Agent = virtualagent;
+                                            virtualagent.DriverConfiguration = agent.DriverConfiguration;
                                     }
                                 }
 

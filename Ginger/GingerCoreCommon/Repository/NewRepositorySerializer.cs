@@ -190,7 +190,7 @@ namespace Amdocs.Ginger.Repository
                 if (isSerialziedAttr != null)
                 {
                     // Skip specific properties if the item is linked
-                    if (ri.IsLinkedItem && IsLinkedItemExclusion(mi.Name))
+                    if (ri.IsLinkedItem && !IsLinkedItemExclusion(mi.Name))
                     {
                         continue;
                     }

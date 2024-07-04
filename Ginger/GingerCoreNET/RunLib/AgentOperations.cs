@@ -863,7 +863,7 @@ namespace GingerCore
                 Counter++;
 
                 int waitingTime = 30;// 30 seconds
-                if (Driver.DriverLoadWaitingTime > 0)
+                if (Driver != null && Driver.DriverLoadWaitingTime > 0)
                 {
                     waitingTime = Driver.DriverLoadWaitingTime;
                 }

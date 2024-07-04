@@ -17,7 +17,7 @@ on:
                 description: Beta
                 type: number 
                 required: true
-                default: '1'
+                default: '2'
             revision:
                 description: Alpha
                 type: number 
