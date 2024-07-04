@@ -91,44 +91,51 @@ jobs:
                     rename docs Library
                     rmdir /s /q Ginger-Web-Help
                     
-            #-   name: Set up certificate
-               # shell: cmd
-               # run: |
-                # echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > D:\a\Certificate_pkcs12.p12
-                # cat  D:\a\Certificate_pkcs12.p12
+            -   name: Set up certificate
+                #shell: cmd
+                #run: |
+                  #echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/Certificate_pkcs12.p12
+                  #cat  /d/Certificate_pkcs12.p12
+                #  - name: Setup Certificate
+                run: |
+                   echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/Certificate_pkcs12.p12
+                   cat  /d/Certificate_pkcs12.p12
+                shell: bash  
                 
-            #-   name: Set variables 
-               # id: variables 
-                 #run: | 
-                 #echo "::set-output name=version::${GITHUB_REF#refs/tags/v}" 
-                 #echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV" 
-                 #echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV" 
-                 #echo "SM_CLIENT_CERT_FILE=D:\\a\\Certificate_pkcs12.p12" >> "$GITHUB_ENV" 
-                 #echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
-                 #echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
-                 #echo "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools" >> $GITHUB_PATH
-                #shell: bash
+            -   name: Set variables 
+                id: variables 
+                run: | 
+                 echo "::set-output name=version::${GITHUB_REF#refs/tags/v}" 
+                 echo "::set-output name=KEYPAIR_NAME::gt-standard-keypair"
+                 echo "::set-output name=CERTIFICATE_NAME::gt-certificate"
+                 echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV"                  
+                 echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV" 
+                 echo "SM_CLIENT_CERT_FILE=D:\\Certificate_pkcs12.p12" >> "$GITHUB_ENV" 
+                 echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
+                 echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
+                 echo "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools" >> $GITHUB_PATH
+                 echo "C:\Program Files\DigiCert\DigiCert Keylocker Tools" >> $GITHUB_PATH
+                shell: bash
                 
             #-   name: Get API key from GitHub secrets and save to     environment variables
                # id: variables1
                 #run: |
                  #echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
             
-           # -   name: Code signing with Software Trust Manager
-            #    uses: digicert/ssm-code-signing@v0.0.2
+            -   name: Code signing with Software Trust Manager
+                uses: digicert/ssm-code-signing@v0.0.2
             
             
             
     
-            #-   name: Setup SSM KSP on windows latest 
-             #   run: | 
-                 #curl -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:%SM_API_KEY%" -o smtools-windows-x64.msi 
-                   # msiexec /i smtools-windows-x64.msi /quiet /qn 
-                    #smksp_registrar.exe list 
-                   # smctl.exe keypair ls 
-                    #C:\Windows\System32\certutil.exe -csp "DigiCert Signing Manager KSP" -key -user 
-                    #smksp_cert_sync.exe
-                #shell: cmd 
+            -   name: Setup SSM KSP on windows latest 
+                run: | 
+                 curl -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/keylockertools-windows-x64.msi/download -H "x-api-key:%SM_API_KEY%" -o keylockertools-windows-x64.msi 
+                    msiexec /i keylockertools-windows-x64.msi /quiet /qn 
+                    smksp_registrar.exe list 
+                    smctl.exe keypair ls 
+                    C:\Windows\System32\certutil.exe -csp "DigiCert Signing Manager KSP" -key -user 
+                shell: cmd 
                 
              # uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
             #-   name: Windows signtool.exe code sign action
@@ -141,15 +148,74 @@ jobs:
              #       nadeemjazmawe/Sign-action-signtool.exe@v0.1
             #    shell: cmd
               
-            #-  name: Certificates Sync       
-              # run: |
-                #   smctl windows certsync
-                #   smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
-               # shell: cmd
-            #-   name: Signing using Signtool 
-            #    run: | 
-            #        signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 
-             #       "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\" 
+            -  name: Certificates Sync       
+               run: |
+                  smctl windows certsync
+               shell: cmd
+                    
+            - name: Create Signed Directory for dll      
+              run: |
+                 mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist
+              shell: cmd
+              
+            -   name: Signing using Signtool dll
+                #runs-on: windows-latest
+                #folder: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\'
+                #recursive: true
+                 #if {% ${{ folder }}='Ginger'%}
+                run: | 
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.ExecuterService.Contracts.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.ExecuterService.Contracts.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.External.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.External.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerAutoPilot.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerAutoPilot.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerControls.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerControls.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCoreNET.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreNET.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCoreCommon.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreCommon.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerExternal.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerExternal.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerHelper.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerHelper.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerHbaseFilter.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerHbaseFilter.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerPluginCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerPluginCore.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerPlugIns.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerPlugIns.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerUtils.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerUtils.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.exe D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.exe
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerWin64OsSupport.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerWin64OsSupport.dll
+                 
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.ExecuterService.Contracts.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.External.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerAutoPilot.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerControls.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreNET.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreCommon.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerExternal.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerHelper.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerHbaseFilter.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerPluginCore.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerPlugIns.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerUtils.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerWin64OsSupport.dll
+                 signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.exe
+                 
+                 
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll  D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.ExecuterService.Contracts.dll  D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.ExecuterService.Contracts.dll 
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.External.dll  D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.External.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerAutoPilot.dll  D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerAutoPilot.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerControls.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerControls.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreNET.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCoreNET.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCoreCommon.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCoreCommon.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerExternal.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerExternal.dll 
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerHelper.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerHelper.dll 
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerHbaseFilter.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerHbaseFilter.dll 
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerPluginCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerPluginCore.dll 
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerPlugIns.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerPlugIns.dll 
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerUtils.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerUtils.dll 
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerWin64OsSupport.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerWin64OsSupport.dll
+                 copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.exe D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.exe 
+             
               #      signtool.exe verify /v /pa "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\" 
             
            # -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0.beta1
@@ -157,27 +223,29 @@ jobs:
                #   Directorypath: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\'   
                  # certificate: ${{ secrets.PEM }}
                  # cert-password: ${{ secrets.PEM_PASS }}
-                  
+            
             -   uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
                 with: 
-                    filepath: './Ginger/GingerInstallerScriptGithub.iss'
+                    filepath: './Ginger/GingerInstallerScriptGithub.iss'       
 
-            #-   name: Create Signed Directory       
-               # run: |
-                # mkdir D:\a\Installers\Ginger.exe
-               # shell: cmd
+            -   name: Create Signed Directory       
+                run: |
+                 mkdir D:\a\Installers\ginger
+                shell: cmd
                 
-            #-   name: Signing using Signtool 
-                #run: | 
+            -   name: Signing using Signtool 
+                run: | 
                   # smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
-                   # signtool.exe sign /sha1 b04acd961a24c99503145b62ed77ebe7e5b0da66 /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v "D:\a\Installers\Ginger.exe" 
+                   copy D:\a\Installers\Ginger.exe D:\a\Installers\ginger\Ginger.exe
+                   signtool.exe sign /sha1 ${{ secrets.SM_CODE_SIGNING_CERT_SHA1_HASH }} /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /v "D:\a\Installers\ginger\Ginger.exe"
+                   copy D:\a\Installers\ginger\Ginger.exe D:\a\Installers\Ginger.exe
              #smctl sign --keypair-alias ${{ secrets.KEYPAIR_ALIAS }} --input "D:\a\Installers\Ginger.exe" -v
              # smctl sign --input "D:\a\Installers\Ginger.exe"
             
-           # -   name: Signtool verify
-            #    run: |
-              #      signtool verify /v /pa "D:\a\Installers\Ginger.exe"
-                # shell: cmd
+            -   name: Signtool verify
+                run: |
+                   signtool verify /v /pa "D:\a\Installers\ginger\Ginger.exe"
+                shell: cmd
                 
                # shell: cmd- name: Signtool verify
                 #run: |
@@ -195,4 +263,3 @@ jobs:
                 with:
                   name: WindowsInstaller
                   path: D:/a/Installers
-                  
