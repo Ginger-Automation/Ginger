@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -59,6 +59,8 @@ namespace Amdocs.Ginger.Repository
         // We keep year/month/day hour/minutes - removed seconds and millis
         private const string cDateTimeXMLFormat = "yyyyMMddHHmm";
 
+        const string UTF8_ENCODING = "utf-8";
+
         public delegate object NewRepositorySerializerEventHandler(NewRepositorySerializerEventArgs EventArgs);
         public static event NewRepositorySerializerEventHandler NewRepositorySerializerEvent;
         public static object OnNewRepositorySerializerEvent(NewRepositorySerializerEventArgs.eEventType EvType, string FilePath, string XML, RepositoryItemBase TargetObj)
@@ -118,10 +120,6 @@ namespace Amdocs.Ginger.Repository
                 return string.Empty;
         }
 
-
-
-
-
         private void xmlwriteHeader(XmlTextWriter xml, RepositoryItemBase repositoryItem)
         {
             // Since Header is simple object and unique, we write the attrs in the order we want            
@@ -149,16 +147,12 @@ namespace Amdocs.Ginger.Repository
             {
                 repositoryItem.RepositoryItemHeader.LastUpdateBy = Environment.UserName;
             }
-            xml.WriteAttributeString("LastUpdateBy", repositoryItem.RepositoryItemHeader.LastUpdateBy.ToString());
+            xml.WriteAttributeString("LastUpdateBy", repositoryItem.RepositoryItemHeader.LastUpdateBy);
 
             xml.WriteAttributeString(nameof(RepositoryItemHeader.LastUpdate), repositoryItem.RepositoryItemHeader.LastUpdate.ToString(cDateTimeXMLFormat));
 
             xml.WriteEndElement();
         }
-
-
-
-
 
         //TODO: later on get back this function it is more organize, but causing saving problems  -to be fixed later
         private void xmlwriteObject(XmlTextWriter xml, RepositoryItemBase ri)
@@ -173,7 +167,7 @@ namespace Amdocs.Ginger.Repository
         class RIAttr
         {
             public string Name;
-            public Type ttt;
+            public Type Type;
             public object value;
             public IsSerializedForLocalRepositoryAttribute attrIS;
         }
@@ -185,8 +179,8 @@ namespace Amdocs.Ginger.Repository
             // Get all serialized attrs (properties and fields)            
             var attrs = ri.GetType().GetMembers().OrderBy(x => x.Name);         // Order by name so XML compare will be easier              
 
-            List<RIAttr> SimpleAttrs = new List<RIAttr>();
-            List<RIAttr> ListAttrs = new List<RIAttr>();
+            List<RIAttr> SimpleAttrs = [];
+            List<RIAttr> ListAttrs = [];
             // order by attrs with simple prop first then lists latest 
 
             foreach (MemberInfo mi in attrs)
@@ -195,35 +189,32 @@ namespace Amdocs.Ginger.Repository
 
                 if (isSerialziedAttr != null)
                 {
-                    //Add only specific properties of linked activity
-                    if (ri.IsLinkedItem && (mi.Name != nameof(ri.Guid) && mi.Name != nameof(ri.ParentGuid) && mi.Name != "Type" && mi.Name != "ActivitiesGroupID" && mi.Name != "ActivityName" && mi.Name != "Active" && mi.Name != "LinkedActive"))
+                    // Skip specific properties if the item is linked
+                    if (ri.IsLinkedItem && !IsLinkedItemExclusion(mi.Name))
                     {
                         continue;
                     }
-                    Type tt;
+                    Type type;
                     object value;
                     if (mi.MemberType == MemberTypes.Property)
                     {
-                        tt = ((PropertyInfo)mi).PropertyType;
+                        type = ((PropertyInfo)mi).PropertyType;
                         value = ri.GetType().GetProperty(mi.Name).GetValue(ri);
                     }
                     else
                     {
-                        tt = ((FieldInfo)mi).FieldType;
+                        type = ((FieldInfo)mi).FieldType;
                         value = ri.GetType().GetField(mi.Name).GetValue(ri);
                     }
 
-
-                    RIAttr rIAttr = new RIAttr() { Name = mi.Name, ttt = tt, value = value, attrIS = isSerialziedAttr };
-                    if (value is IObservableList || value is List<string> || value is RepositoryItemBase)
+                    RIAttr rIAttr = new RIAttr() { Name = mi.Name, Type = type, value = value, attrIS = isSerialziedAttr };
+                    if (value is IObservableList or List<string> or RepositoryItemBase)
                     {
-
                         ListAttrs.Add(rIAttr);
                     }
                     else
                     {
                         SimpleAttrs.Add(rIAttr);
-
                     }
                 }
             }
@@ -241,111 +232,82 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        private void WriteRepoItemAttr(XmlTextWriter xml, RIAttr rIAttr)
+        // Helper method to determine if a member name should be excluded for linked items
+        private bool IsLinkedItemExclusion(string memberName)
         {
-
-            //if (LazyLoadAttr.Contains(rIAttr.Name))
-            //{
-            //    bool b;
-            //    if (mi.MemberType == MemberTypes.Field)
-            //    {
-            //        b = ((IObservableList)(ri.GetType().GetField(mi.Name).GetValue(ri))).LazyLoad;
-            //    }
-            //    else
-            //    {
-            //        b = ((IObservableList)(ri.GetType().GetProperty(mi.Name).GetValue(ri))).LazyLoad;
-            //    }
-
-            //    if (b)
-            //    {
-            //        // Hurray! we use the cache ready made string
-            //        string s = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).StringData;
-            //        xml.WriteStartElement(mi.Name);
-            //        xml.WriteString(s);
-            //        xml.WriteEndElement();
-            //}
-            //}
-
-            // We write the property value only if it is not null and different than default when serialized
-            if (rIAttr.value == null)
+            return memberName switch
             {
-                return;
-            }
-            if (IsValueDefault(rIAttr.value, rIAttr.attrIS))
-            {
-                return;
-            }
-
-
-            if (rIAttr.value is IObservableList)
-            {
-                IObservableList vv = (IObservableList)rIAttr.value;
-                if (vv.Count != 0)  // Write only if we have items - save xml space
-                {
-                    xmlwriteObservableList(xml, rIAttr.Name, (IObservableList)rIAttr.value);
-                }
-            }
-            else if (rIAttr.value is List<string>)
-            {
-                xmlwriteStringList(xml, rIAttr.Name, (List<string>)rIAttr.value);
-            }
-            else if (rIAttr.value is RepositoryItemBase)
-            {
-                xmlwriteSingleObjectField(xml, rIAttr.Name, rIAttr.value);
-            }
-            else
-            {
-                if (rIAttr.value != null)
-                {
-                    xmlwriteatrr(xml, rIAttr.Name, rIAttr.value.ToString());
-                }
-            }
-
+                nameof(RepositoryItemBase.Guid) or
+                nameof(RepositoryItemBase.ParentGuid) or
+                "Type" or
+                "ActivitiesGroupID" or
+                "ActivityName" or
+                "Active" or
+                "LinkedActive" => true,
+                _ => false
+            };
         }
 
+        private void WriteRepoItemAttr(XmlTextWriter xml, RIAttr rIAttr)
+        {
+            // Early exit if the attribute value is null or default
+            if (rIAttr.value == null || IsValueDefault(rIAttr.value, rIAttr.attrIS))
+            {
+                return;
+            }
+
+            // Handle different types of attribute values
+            switch (rIAttr.value)
+            {
+                case IObservableList observableList:
+                    if (observableList.Count > 0)  // Write only if we have items - save xml space
+                    {
+                        // Write only if we have items - save XML space
+                        xmlwriteObservableList(xml, rIAttr.Name, observableList);
+                    }
+                    break;
+
+                case List<string> stringList:
+                    xmlwriteStringList(xml, rIAttr.Name, stringList);
+                    break;
+
+                case RepositoryItemBase repositoryItem:
+                    xmlwriteSingleObjectField(xml, rIAttr.Name, repositoryItem);
+                    break;
+
+                default:
+                    if (rIAttr.value != null)
+                    {
+                        xmlwriteatrr(xml, rIAttr.Name, rIAttr.value.ToString());
+                    }
+                    break;
+            }
+        }
 
         private bool IsValueDefault(object attrValue, IsSerializedForLocalRepositoryAttribute IsSerializedForLocalRepository)
         {
+            // Retrieve the default value from the attribute
             object attrDefaultValue = IsSerializedForLocalRepository.GetDefualtValue();
+
+            // If there's no default value defined
             if (attrDefaultValue == null)
             {
-                // DefaultValue annotation not exist on attr
-                if (attrValue is bool)   // in case of bool do not write False as it is the default
+                // Use pattern matching to check for default values of specific types
+                return attrValue switch
                 {
-                    if ((bool)attrValue == false)
-                    {
-                        return true;
-                    }
-                }
-
-                if (attrValue is string)
-                {
-                    if ((string)attrValue == string.Empty)
-                    {
-                        return true;
-                    }
-                }
-
-                if (attrValue is int)
-                {
-                    if ((int)attrValue == 0)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                    bool boolValue => boolValue == false,
+                    string strValue => strValue == string.Empty,
+                    int intValue => intValue == 0,
+                    Guid guidValue => guidValue == Guid.Empty,
+                    TimeSpan timeSpanValue => timeSpanValue == TimeSpan.Zero,
+                    _ => false
+                };
             }
 
-            if (attrValue.Equals(attrDefaultValue))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            // Compare the attribute value to the default value
+            return attrValue.Equals(attrDefaultValue);
         }
+
 
         private void xmlwriteSingleObjectField(XmlTextWriter xml, string Name, Object obj)
         {
@@ -382,12 +344,12 @@ namespace Amdocs.Ginger.Repository
             xml.WriteStartElement(Name);
             foreach (var v in list)
             {
-                if (v is RepositoryItemBase)
+                if (v is RepositoryItemBase repoItemBaseItem)
                 {
-                    if (!((RepositoryItemBase)v).IsTempItem) // Ignore temp items like dynamic activities or some output values if marked as temp
+                    if (!repoItemBaseItem.IsTempItem) // Ignore temp items like dynamic activities or some output values if marked as temp
                     {
                         xml.WriteWhitespace("\n");
-                        xmlwriteObject(xml, (RepositoryItemBase)v);
+                        xmlwriteObject(xml, repoItemBaseItem);
                     }
 
                 }
@@ -404,7 +366,6 @@ namespace Amdocs.Ginger.Repository
                 }
 
             }
-
 
             xml.WriteWhitespace("\n");
             xml.WriteEndElement();
@@ -426,51 +387,31 @@ namespace Amdocs.Ginger.Repository
 
 
         //TODO: Not using t why is it needed?
-        public RepositoryItemBase DeserializeFromFile(Type t, string FileName)
+        public RepositoryItemBase DeserializeFromFile(Type t, string fileName)
         {
-            //Reporter.ToLog(eLogLevel.DEBUG, "DeserializeFromFile the file: " + FileName);
-
-            if (FileName.Length > 0 && File.Exists(FileName))
+            if (string.IsNullOrWhiteSpace(fileName) || !File.Exists(fileName))
             {
-                string xml = File.ReadAllText(FileName);
-
-                // first check if we need to auto upgrade the xml to latest ginger version
-                //long XMLVersion = RepositorySerializer.GetXMLVersionAsLong(xml);
-                //long GingerVersion = GetCurrentVersionAsLong();
-                //GingerCore.XMLConverters.XMLConverterBase.eGingerFileType FileType =  XMLConverterBase.GetGingerFileTypeFromFilename(FileName);
-                //if (GingerVersion > XMLVersion)
-                //{
-                //    xml = XMLUpgrade.Convert(FileType, xml, XMLVersion);
-                //    File.WriteAllText(FileName, xml);
-                //}    
-
-                // CP ERROR Commented
-                // XMLUpgrade.UpgradeXMLIfNeeded(xml, FileName);
-
-                return DeserializeFromText(xml, filePath: FileName);
+                throw new FileNotFoundException("File not found", fileName);
             }
-            else
-            {
-                throw new Exception("File Not Found - " + FileName);
-            }
+
+            string xml = File.ReadAllText(fileName);
+
+            return DeserializeFromText(xml, filePath: fileName);
         }
 
 
         public static void DeserializeObservableListFromText<T>(ObservableList<T> lst, string xml)
         {
-            string encoding = "utf-8";
-
-            using (var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml)))
+            var xmlReaderSettings = new XmlReaderSettings()
             {
-                var xdrs = new XmlReaderSettings()
-                {
-                    IgnoreComments = true,
-                    IgnoreWhitespace = true,
-                    CloseInput = true
-                };
+                IgnoreComments = true,
+                IgnoreWhitespace = true,
+                CloseInput = true
+            };
 
-
-                using (XmlReader xdr = XmlReader.Create(ms, xdrs))
+            using (var ms = new MemoryStream(Encoding.GetEncoding(UTF8_ENCODING).GetBytes(xml)))
+            {
+                using (XmlReader xdr = XmlReader.Create(ms, xmlReaderSettings))
                 {
                     xdr.Read();
                     xdr.Read();
@@ -478,9 +419,9 @@ namespace Amdocs.Ginger.Repository
                     while (xdr.NodeType != XmlNodeType.EndElement)
                     {
                         object item = xmlReadObject(null, xdr);
-                        if (item != null)
+                        if (item is T typedItem)
                         {
-                            lst.Add((T)item);
+                            lst.Add(typedItem);
                         }
                         else
                         {
@@ -493,42 +434,22 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-
-        public RepositoryItemBase DeserializeFromFile(string FileName)
+        public RepositoryItemBase DeserializeFromFile(string fileName)
         {
-            if (FileName.Length > 0 && File.Exists(FileName))
+            if (string.IsNullOrWhiteSpace(fileName) || !File.Exists(fileName))
             {
-                string xml = File.ReadAllText(FileName);
-
-                // first check if we need to auto upgrade the xml to latest ginger version
-                //long XMLVersion = RepositorySerializer.GetXMLVersionAsLong(xml);
-                //long GingerVersion = GetCurrentVersionAsLong();
-                //GingerCore.XMLConverters.XMLConverterBase.eGingerFileType FileType = XMLConverterBase.GetGingerFileTypeFromFilename(FileName);
-                //if (GingerVersion > XMLVersion)
-                //{  
-                //    xml = XMLUpgrade.Convert(FileType, xml, XMLVersion);
-                //    File.WriteAllText(FileName, xml);
-                //}
-
-
-                // CP ERROR Commented
-                // XMLUpgrade.UpgradeXMLIfNeeded(xml, FileName);
-
-                return DeserializeFromText(xml, filePath: FileName);
+                throw new FileNotFoundException("File not found", fileName);
             }
-            else
-            {
-                throw new Exception("File Not Found - " + FileName);
-            }
+
+            string xml = File.ReadAllText(fileName);
+
+            return DeserializeFromText(xml, filePath: fileName);
         }
-
-
 
         public static RepositoryItemBase DeserializeFromText(string xml, RepositoryItemBase targetObj = null, string filePath = "")
         {
-            string encoding = "utf-8"; // make it static or remove string creation
             //check if we need ms or maybe text reader + do using to release mem
-            using (var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml)))
+            using (var ms = new MemoryStream(Encoding.GetEncoding(UTF8_ENCODING).GetBytes(xml)))
             {
                 var xdrs = new XmlReaderSettings()
                 {
@@ -536,7 +457,7 @@ namespace Amdocs.Ginger.Repository
                     IgnoreWhitespace = true,
                     CloseInput = true
                 };
-                using (XmlReader xdr = XmlReader.Create(ms, xdrs)) 
+                using (XmlReader xdr = XmlReader.Create(ms, xdrs))
                 {
                     xdr.Read();
                     xdr.Read();
@@ -568,25 +489,53 @@ namespace Amdocs.Ginger.Repository
                     }
                     return (RepositoryItemBase)RootObj;
                 }
-                
+
             }
-                
+
         }
 
 
 
         private static void SetRepositoryItemHeaderAttr(RepositoryItemHeader RIH, string name, string value)
         {
-            if (name == nameof(RepositoryItemHeader.ItemType)) { RIH.ItemType = value; return; }
-            if (name == nameof(RepositoryItemHeader.GingerVersion)) { RIH.GingerVersion = value; return; }
-            if (name == nameof(RepositoryItemHeader.CreatedBy)) { RIH.CreatedBy = value; return; }
-            if (name == nameof(RepositoryItemHeader.Created)) { RIH.Created = DateTime.ParseExact(value, cDateTimeXMLFormat, CultureInfo.InvariantCulture); return; }
-            if (name == nameof(RepositoryItemHeader.Version)) { RIH.Version = int.Parse(value); return; }
-            if (name == nameof(RepositoryItemHeader.LastUpdateBy)) { RIH.LastUpdateBy = value; return; }
-            if (name == nameof(RepositoryItemHeader.LastUpdate)) { RIH.LastUpdate = DateTime.ParseExact(value, cDateTimeXMLFormat, CultureInfo.InvariantCulture); return; }
-            if (name == nameof(RepositoryItemHeader.ItemGuid)) { RIH.ItemGuid = Guid.Parse(value); return; }
+            switch (name)
+            {
+                case nameof(RepositoryItemHeader.ItemType):
+                    RIH.ItemType = value;
+                    break;
 
-            throw new Exception("Unknown attribute in repository header: " + name);
+                case nameof(RepositoryItemHeader.GingerVersion):
+                    RIH.GingerVersion = value;
+                    break;
+
+                case nameof(RepositoryItemHeader.CreatedBy):
+                    RIH.CreatedBy = value;
+                    break;
+
+                case nameof(RepositoryItemHeader.Created):
+                    RIH.Created = DateTime.ParseExact(value, cDateTimeXMLFormat, CultureInfo.InvariantCulture);
+                    break;
+
+                case nameof(RepositoryItemHeader.Version):
+                    RIH.Version = int.Parse(value);
+                    break;
+
+                case nameof(RepositoryItemHeader.LastUpdateBy):
+                    RIH.LastUpdateBy = value;
+                    break;
+
+                case nameof(RepositoryItemHeader.LastUpdate):
+                    RIH.LastUpdate = DateTime.ParseExact(value, cDateTimeXMLFormat, CultureInfo.InvariantCulture);
+                    break;
+
+                case nameof(RepositoryItemHeader.ItemGuid):
+                    RIH.ItemGuid = Guid.Parse(value);
+                    break;
+
+                default:
+                    throw new Exception("Unknown attribute in repository header: " + name);
+            }
+
         }
 
         private static void xmlReadListOfObjects(object ParentObj, XmlReader xdr, IObservableList observableList)
@@ -601,8 +550,10 @@ namespace Amdocs.Ginger.Repository
 
                     if (RIKey != null)
                     {
-                        RepositoryItemKey repositoryItemKey = new RepositoryItemKey();
-                        repositoryItemKey.Key = RIKey;
+                        RepositoryItemKey repositoryItemKey = new()
+                        {
+                            Key = RIKey
+                        };
                         observableList.Add(repositoryItemKey);
                     }
                     else
@@ -633,9 +584,11 @@ namespace Amdocs.Ginger.Repository
 
         private static void xmlReadListOfObjects_LazyLoad(MemberInfo mi, object parentObj, XmlReader xdr, IObservableList observableList)
         {
-            LazyLoadListConfig lazyLoadConfig = new LazyLoadListConfig();
-            lazyLoadConfig.ListName = mi.Name;
-            IsLazyLoadAttribute[] lazyAttr = null;
+            LazyLoadListConfig lazyLoadConfig = new LazyLoadListConfig
+            {
+                ListName = mi.Name
+            };
+            IsLazyLoadAttribute[] lazyAttr;
             if (mi.MemberType == MemberTypes.Property)
             {
                 lazyAttr = (IsLazyLoadAttribute[])((PropertyInfo)mi).GetCustomAttributes(typeof(IsLazyLoadAttribute), false);
@@ -652,18 +605,20 @@ namespace Amdocs.Ginger.Repository
             {
                 lazyLoadConfig.LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData;//default
             }
-            if (parentObj is RepositoryItemBase && lazyLoadConfig != null && observableList.AvoidLazyLoad == false)
+            if (parentObj is RepositoryItemBase repoItemBaseItem && lazyLoadConfig != null && observableList.AvoidLazyLoad == false)
             {
-                observableList.LazyLoadDetails = new LazyLoadListDetails();
-                observableList.LazyLoadDetails.Config = lazyLoadConfig;
+                observableList.LazyLoadDetails = new LazyLoadListDetails
+                {
+                    Config = lazyLoadConfig
+                };
                 switch (observableList.LazyLoadDetails.Config.LazyLoadType)
                 {
                     case LazyLoadListConfig.eLazyLoadType.NodePath:
-                        if (string.IsNullOrEmpty(((RepositoryItemBase)parentObj).FilePath) == false
-                                && File.Exists(((RepositoryItemBase)parentObj).FilePath)
-                                    && ((RepositoryItemBase)parentObj).DirtyStatus != Common.Enums.eDirtyStatus.Modified)
+                        if (!string.IsNullOrEmpty(repoItemBaseItem.FilePath)
+                            && File.Exists(repoItemBaseItem.FilePath)
+                            && repoItemBaseItem.DirtyStatus != Common.Enums.eDirtyStatus.Modified)
                         {
-                            observableList.LazyLoadDetails.XmlFilePath = ((RepositoryItemBase)parentObj).FilePath;
+                            observableList.LazyLoadDetails.XmlFilePath = repoItemBaseItem.FilePath;
                             xdr.ReadOuterXml();//so xdr will progress
                         }
                         else //can't go with NodePath approch because no file to refernce or file do not have latest data
@@ -778,9 +733,9 @@ namespace Amdocs.Ginger.Repository
 
                 }
 
-                if (obj is RepositoryItemBase)
+                if (obj is RepositoryItemBase repoItemBaseItem)
                 {
-                    ((RepositoryItemBase)obj).PostDeserialization();
+                    (repoItemBaseItem).PostDeserialization();
                 }
 
                 return obj;
@@ -806,9 +761,9 @@ namespace Amdocs.Ginger.Repository
             {
                 obj = t.Assembly.CreateInstance(t.FullName);
 
-                if (obj is RepositoryItemBase)
+                if (obj is RepositoryItemBase repoItemBaseItem)
                 {
-                    ((RepositoryItemBase)obj).PreDeserialization();
+                    (repoItemBaseItem).PreDeserialization();
                 }
 
                 return obj;
@@ -821,13 +776,12 @@ namespace Amdocs.Ginger.Repository
 
         // We keep a cache of type and members default value since reflection is costly/perf 
         // so we don't need to read all attrs every time when deserializing
-        private static Dictionary<Type, List<MemberInfoDefault>> mMemberDefaultDictionary = new Dictionary<Type, List<MemberInfoDefault>>();
+        private static Dictionary<Type, List<MemberInfoDefault>> mMemberDefaultDictionary = [];
 
         private static void SetObjectSerializedAttrDefaultValue(object obj)
         {
             try
             {
-                List<MemberInfoDefault> members;
                 Type type = obj.GetType();
 
                 if (!mMemberDefaultDictionary.ContainsKey(type))
@@ -835,7 +789,7 @@ namespace Amdocs.Ginger.Repository
                     AddClassTypeInfo(type);
                 }
 
-                mMemberDefaultDictionary.TryGetValue(type, out members);
+                mMemberDefaultDictionary.TryGetValue(type, out var members);
 
                 foreach (MemberInfoDefault memberInfo in members)
                 {
@@ -866,7 +820,7 @@ namespace Amdocs.Ginger.Repository
                 return;
             }
 
-            List<MemberInfoDefault> list = new List<MemberInfoDefault>();
+            List<MemberInfoDefault> list = [];
 
             var members = type.GetMembers();
             foreach (MemberInfo memberInfo in members)
@@ -885,13 +839,13 @@ namespace Amdocs.Ginger.Repository
             mMemberDefaultDictionary.Add(type, list);
         }
 
-        static Dictionary<string, Type> mClassDictionary = new Dictionary<string, Type>();
+        static Dictionary<string, Type> mClassDictionary = [];
 
-        static List<Assembly> mAssemblies = new List<Assembly>();
+        static List<Assembly> mAssemblies = [];
         public enum eAssemblyType { Ginger, GingerCore, GingerCoreCommon, GingerCoreCommonTest, GingerCoreNET }
         public static void AddClassesFromAssembly(eAssemblyType assemblyType)
         {
-            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName.Contains(assemblyType.ToString() + ",")).FirstOrDefault();
+            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => x.FullName.Contains(assemblyType.ToString() + ","));
             if (assembly == null)
             {
                 string err = string.Format("Failed to load the assembly '{0}' into NewRepositorySerializer", assemblyType.ToString());
@@ -964,14 +918,13 @@ namespace Amdocs.Ginger.Repository
         private static string GetFullClassName(string className)
         {
             // TODO: use dictionary or something smarter - check perf 
-            int i = className.LastIndexOf(".");
+            int i = className.LastIndexOf('.');
             if (i > 0)
             {
                 className = className.Substring(i + 1);
             }
 
-            Type t;
-            bool b = mClassDictionary.TryGetValue(className, out t);
+            bool b = mClassDictionary.TryGetValue(className, out Type t);
             if (b)
             {
                 return t.FullName;
@@ -1061,7 +1014,7 @@ namespace Amdocs.Ginger.Repository
                             }
 
                             // Read the list from the xml
-                            if (obj is RepositoryItemBase && ((RepositoryItemBase)obj).ItemBeenReloaded)
+                            if (obj is RepositoryItemBase repoItemBaseItem && repoItemBaseItem.ItemBeenReloaded)
                             {
                                 if (lst.Count > 0)
                                 {
@@ -1090,7 +1043,7 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
-                string s2 = xdr.Value;
+                _ = xdr.Value;
             }
         }
 
@@ -1129,11 +1082,11 @@ namespace Amdocs.Ginger.Repository
                         PropertyInfo propertyInfo = obj.GetType().GetProperty(xdr.Name);
                         if (propertyInfo == null)
                         {
-                            if (xdr.Name != "Created" && xdr.Name != "CreatedBy" && xdr.Name != "LastUpdate" && xdr.Name != "LastUpdateBy" && xdr.Name != "Version" && xdr.Name != "ExternalID")
+                            if (xdr.Name is not "Created" and not "CreatedBy" and not "LastUpdate" and not "LastUpdateBy" and not "Version" and not "ExternalID")
                             {
-                                if (obj is RepositoryItemBase)
+                                if (obj is RepositoryItemBase repoItemBaseItem)
                                 {
-                                    bool handled = ((RepositoryItemBase)obj).SerializationError(SerializationErrorType.PropertyNotFound, xdr.Name, xdr.Value);
+                                    bool handled = repoItemBaseItem.SerializationError(SerializationErrorType.PropertyNotFound, xdr.Name, xdr.Value);
                                     if (handled)
                                     {
                                         Reporter.ToLog(eLogLevel.DEBUG, "Property converted successfully :" + obj.GetType().Name + "." + xdr.Name);
@@ -1173,7 +1126,7 @@ namespace Amdocs.Ginger.Repository
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "NewRepositorySerilizer- Error when setting Property: " + xdr.Name, ex);
-                throw ex;
+                throw;
             }
         }
 
@@ -1183,9 +1136,9 @@ namespace Amdocs.Ginger.Repository
             try
             {
                 System.TypeCode typeCode = Type.GetTypeCode(propertyInfo.PropertyType);
+
                 switch (typeCode)
                 {
-
                     case TypeCode.String:
                         propertyInfo.SetValue(obj, sValue);
                         break;
@@ -1226,12 +1179,12 @@ namespace Amdocs.Ginger.Repository
                         break;
 
                     case TypeCode.Boolean:
-                        if (sValue.ToUpper() == "FALSE")
+                        if (sValue.Equals("FALSE", StringComparison.CurrentCultureIgnoreCase))
                         {
                             propertyInfo.SetValue(obj, false);
                             return;
                         }
-                        if (sValue.ToUpper() == "TRUE")
+                        if (sValue.Equals("TRUE", StringComparison.CurrentCultureIgnoreCase))
                         {
                             propertyInfo.SetValue(obj, true);
                             return;
@@ -1249,9 +1202,27 @@ namespace Amdocs.Ginger.Repository
                         }
                         else if (propertyInfo.PropertyType == typeof(RepositoryItemKey))
                         {
-                            RepositoryItemKey repositoryItemKey = new RepositoryItemKey();
-                            repositoryItemKey.Key = sValue;
+                            RepositoryItemKey repositoryItemKey = new RepositoryItemKey
+                            {
+                                Key = sValue
+                            };
                             propertyInfo.SetValue(obj, repositoryItemKey);
+
+                        }
+                        else if (propertyInfo.PropertyType == typeof(System.TimeSpan))
+                        {
+                            if (sValue != "00:00:00")
+                            {
+                                TimeSpan timeSpan;
+                                if (TimeSpan.TryParse(sValue, out timeSpan))
+                                {
+                                    propertyInfo.SetValue(obj, timeSpan);
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set the DevelopmentTime");
+                                }
+                            }
 
                         }
                         else
@@ -1269,9 +1240,7 @@ namespace Amdocs.Ginger.Repository
                                     throw new Exception("Cannot convert Enum - " + sValue);
                                 }
                             }
-                            else
-                                // handle long?   = int64 nullable  - used in elapsed 
-                                if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int64)
+                            else if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int64) // handle long?   = int64 nullable  - used in elapsed 
                             {
                                 if (sValue != null)
                                 {
@@ -1282,8 +1251,7 @@ namespace Amdocs.Ginger.Repository
                                     throw new Exception("Cannot convert Nullable Int64 - " + sValue);
                                 }
                             }
-                            else
-                                    if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int32)
+                            else if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Int32)
                             {
                                 if (sValue != null)
                                 {
@@ -1294,8 +1262,7 @@ namespace Amdocs.Ginger.Repository
                                     throw new Exception("Cannot convert Nullable Int32 - " + sValue);
                                 }
                             }
-                            else
-                                        if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Double)
+                            else if (Type.GetTypeCode(Nullable.GetUnderlyingType(propertyInfo.PropertyType)) == TypeCode.Double)
                             {
                                 if (sValue != null)
                                 {
@@ -1323,21 +1290,21 @@ namespace Amdocs.Ginger.Repository
             }
             catch
             {
-                if (obj is RepositoryItemBase
-                     && ((RepositoryItemBase)obj).SerializationError(SerializationErrorType.SetValueException, propertyInfo.Name, sValue.ToString()))
+                if (obj is RepositoryItemBase repoItemBaseItem
+                     && repoItemBaseItem.SerializationError(SerializationErrorType.SetValueException, propertyInfo.Name, sValue))
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Property value converted successfully: object='{0}', property='{1}', value='{2}'", obj.GetType().Name, propertyInfo.Name, sValue.ToString()));
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Property value converted successfully: object='{0}', property='{1}', value='{2}'", obj.GetType().Name, propertyInfo.Name, sValue));
                 }
                 else
                 {
                     string err;
                     if (propertyInfo != null)
                     {
-                        err = "Obj=" + obj + ", Property=" + propertyInfo.Name + ", Value=" + sValue.ToString();
+                        err = $"Obj={obj}, Property={propertyInfo.Name}, Value={sValue}";
                     }
                     else
                     {
-                        err = "Property Not found: Obj=" + obj + " Value=" + sValue.ToString();
+                        err = $"Property Not found: Obj={obj} Value={sValue}";
                     }
                     throw new Exception(err);
                 }
@@ -1364,7 +1331,7 @@ namespace Amdocs.Ginger.Repository
                     version.Append(xml[indx]);
                     indx++;
                 }
-                
+
                 Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
                 Match match = regex.Match(version.ToString());
                 if (match.Success)
@@ -1375,14 +1342,14 @@ namespace Amdocs.Ginger.Repository
                 {
                     //failed to get the XML version   
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the XML version of the file:'{0}'", xmlFilePath));
-                    return null;                 
+                    return null;
                 }
             }
             catch (Exception ex)
             {
                 //failed to get te XML version 
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the XML version of the file:'{0}'", xmlFilePath), ex);
-                return null;               
+                return null;
             }
         }
 
@@ -1501,8 +1468,7 @@ namespace Amdocs.Ginger.Repository
 
         public object DeserializeFromTextWithTargetObj(Type t, string xml, RepositoryItemBase targetObj = null)
         {
-            string encoding = "utf-8";
-            using (var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml)))
+            using (var ms = new MemoryStream(Encoding.GetEncoding(UTF8_ENCODING).GetBytes(xml)))
             {
                 var xdrs = new XmlReaderSettings()
                 {
