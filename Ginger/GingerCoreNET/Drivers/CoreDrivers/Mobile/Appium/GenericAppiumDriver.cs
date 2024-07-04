@@ -2756,7 +2756,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             checkSessionCounter++;
             //check session is still valid
-            if (checkSessionCounter % 5 == 0)
+            if (AppType == eAppType.NativeHybride && checkSessionCounter % 30 == 0)
             {
                 if (Driver.SessionDetails != null)
                 {
