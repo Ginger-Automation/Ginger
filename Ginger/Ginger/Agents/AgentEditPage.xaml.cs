@@ -34,6 +34,7 @@ using System.Windows.Controls;
 using System.ComponentModel;
 using static GingerCore.Agent;
 using System.Linq;
+using Ginger.Drivers.DriversConfigsEditPages;
 
 namespace Ginger.Agents
 {
@@ -109,7 +110,16 @@ namespace Ginger.Agents
                 }
                 if (mAgent.AgentType == eAgentType.Driver)
                 {
-                    xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent, _viewMode));
+                    if (mAgent.DriverType == eDriverType.Selenium || mAgent.DriverType == eDriverType.Playwright)
+                    {
+                        xAgentConfigFrame.SetContent(new WebAgentConfigEditPage(mAgent,mAgent.DriverType, new Context() { }, mAgent.DriverConfiguration));
+                    }
+                    else
+                    {
+                        xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent, _viewMode));
+                    }
+                   
+                   
                 }
                 else
                 {
