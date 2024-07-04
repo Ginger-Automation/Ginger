@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
 
 
-        public ApplicationPOMModel GetCurrentPOM()
+        public virtual ApplicationPOMModel GetCurrentPOM()
         {
             Guid selectedPOMGUID = new Guid(PomElementGUID[0]);
             ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         }
 
-        public ElementInfo GetCurrentPOMElementInfo(ePomElementCategory? category =null)
+        public virtual ElementInfo GetCurrentPOMElementInfo(ePomElementCategory? category =null)
         {
             Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
             ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.FirstOrDefault(z => z.Guid == currentPOMElementInfoGUID);
