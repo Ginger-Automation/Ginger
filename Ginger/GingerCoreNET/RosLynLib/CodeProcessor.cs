@@ -19,9 +19,13 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.Repository;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using Microsoft.TeamFoundation.Build.WebApi;
+using SikuliStandard.sikuli_REST;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -246,5 +250,81 @@ namespace GingerCoreNET.RosLynLib
             return null;
         }
 
+        public static string GetBogusDataGenerateresult(string Expression)
+        {
+            if (!Expression.Contains(@"{MockDataExp"))
+            {
+                return Expression;
+            }
+            string pattern = "{MockDataExp({.*}|[^{}]*)*}";
+            Pattern = new Regex(pattern);
+            Regex Clean = new Regex("{MockDataExp(\\s)*Fun(\\s)*=");
+
+            foreach (Match M in Pattern.Matches(Expression))
+            {
+                string Error = "";
+                string match = M.Value;
+                string exp = match;
+                exp = exp.Replace(Clean.Match(exp).Value, "");
+                exp = exp.Remove(exp.Length - 1);
+                string evalresult = GetBogusExpressionEvaluteResult(exp, out Error);
+                Expression = Expression.Replace(match, evalresult);
+            }
+            return Expression;
+        }
+        public static string GetBogusExpressionEvaluteResult(string expression, out string error)
+        {
+            error = "";
+            try
+            {
+                Assembly BogusAssembly = Assembly.Load("Bogus");
+
+                if (!expression.Contains("new Bogus.DataSets."))
+                {
+                    if (expression.Contains("Randomizer"))
+                    {
+                        expression = $"var Result = new Bogus.{expression} return Result;";
+                    }
+                    else
+                    {
+                        if (expression.Contains('@'))
+                        {
+                            string[] expressionlist = expression.Split('.');
+                            if (expressionlist[1].Contains("Between"))
+                            {
+                                string expressionsubstring = expressionlist[1].Substring(expressionlist[1].IndexOf('(') + 1,expressionlist[1].IndexOf("))") - expressionlist[1].IndexOf("(") + 1);
+                                string[] Parameter = expressionsubstring.Split(',');
+                                if (expressionlist[1].Contains("Past") && expressionlist[1].Contains("Future"))
+                                {
+                                    expressionlist[1] = expressionlist[1].Replace(Parameter[0], $"Result.{Parameter[0]}").Replace(Parameter[1], $"Result.{Parameter[1]}");
+                                }
+                                expression = $"var Result = new Bogus.DataSets.{expressionlist[0]}; return Result.{expressionlist[1]}";
+                            }
+                            else 
+                            {
+                                expression = $"var Result = new Bogus.DataSets.{expressionlist[0]}; return Result.{expressionlist[1]}";
+                            }
+                            
+                        }
+                        else
+                        {
+                            expression = $"var Result = new Bogus.DataSets.{expression} return Result;";
+                        }
+                    }
+                }
+                else
+                {
+                    expression = $"var Result = {expression} return Result;";
+                }
+
+                object result = CSharpScript.EvaluateAsync(expression, ScriptOptions.Default.WithReferences(new Assembly[] { BogusAssembly })).Result;
+                return result.ToString();
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, expression + System.Environment.NewLine + " not a valid Bogus data generate expression to evaluate", e);
+            }
+            return error;
+        }
     }
 }

@@ -488,6 +488,18 @@
       "ExpressionResult": "6",
       "IconImageName": "@Clock_16x16.png"
     },
+
+    {
+      "Category": "Data Operations",
+      "SubCategory": "String",
+      "Name": "Split String By Delimeter & Get 0th Index",
+      "Expression": "{CS Exp=@\"Hello,World\".Split(@\",\")[0]}",
+      "UseCase": "Provides Index(base 0) of Provided keyword in string",
+      "Samples": [ "{CS Exp=@\"Hello,World\".Split(@\",\")[index of array element]} will return Oth index of splited array" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
     {
       "Category": "Data Operations",
       "SubCategory": "Math",
@@ -852,6 +864,338 @@
       "ExpressionResult": null,
       "IconImageName": "Action",
       "RequiresSpecificFlowDetails": true
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Address",
+      "Name": "Get Country",
+      "Expression": "{MockDataExp Fun=Address(@\"en\").Country();}",
+      "UseCase": "Get Country",
+      "Samples": [ "{MockDataExp Fun=Address(@\"en\").Country();} will give you Country Name" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "Action"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Address",
+      "Name": "Get Full Address",
+      "Expression": "{MockDataExp Fun=Address(@\"en\").FullAddress();}",
+      "UseCase": "Get Country",
+      "Samples": [ "{MockDataExp Fun=Address(@\"en\").FullAddress();} will give you full address" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "Action"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Date",
+      "Name": "Get Past Date",
+      "Expression": "{MockDataExp Fun=Date(@\"en\").PastDateOnly(1);}",
+      "UseCase": "GetPastDate",
+      "Samples": [ "{MockDataExp Fun=Date(@\"en\").PastDateOnly(int yearsToGoBack);} will give you Past Date" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Date",
+      "Name": "Get Future Date",
+      "Expression": "{MockDataExp Fun=Date(@\"en\").FutureDateOnly(1);}",
+      "UseCase": "GetFutureDate",
+      "Samples": [ "{MockDataExp Fun=Date(@\"en\").FutureDateOnly(int yearsToGoForword);} will give you future Date" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Date",
+      "Name": "Get Between Date",
+      "Expression": "{MockDataExp Fun=Date(@\"en\").BetweenDateOnly(PastDateOnly(1),FutureDateOnly(1));}",
+      "UseCase": "GetBetweenDate",
+      "Samples": [ "{MockDataExp Fun=Date(@\"en\").GetBetweenDate(Date StartDate,Date EndDate);} will give you Between Date" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Date",
+      "Name": "Get Past DateTime",
+      "Expression": "{MockDataExp Fun=Date(@\"en\").Past(1);}",
+      "UseCase": "GetPastDate",
+      "Samples": [ "{MockDataExp Fun=Date(@\"en\").Past(int yearsToGoBack);} will give you Past Date" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Date",
+      "Name": "Get Future DateTime",
+      "Expression": "{MockDataExp Fun=Date(@\"en\").Future(1);}",
+      "UseCase": "GetFutureDate",
+      "Samples": [ "{MockDataExp Fun=Date(@\"en\").Future(int yearsToGoForword);} will give you future Date" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Date",
+      "Name": "Get Between DateTime",
+      "Expression": "{MockDataExp Fun=Date(@\"en\").BetweenDateOnly(PastDateOnly(1),FutureDateOnly(1));}",
+      "UseCase": "GetBetweenDate",
+      "Samples": [ "{MockDataExp Fun=Date(@\"en\").BetweenDateOnly(DateTime StartDate,DateTime EndDate);} will give you Between Date" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Date",
+      "Name": "Get Random Month",
+      "Expression": "{MockDataExp Fun=Date(@\"en\").Month();}",
+      "UseCase": "GetRandomMonth",
+      "Samples": [ "{MockDataExp Fun=Date(@\"en\").Month();} will give you Random Month" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Date",
+      "Name": "Get Random Weekday",
+      "Expression": "{MockDataExp Fun=Date(@\"en\").Weekday();}",
+      "UseCase": "GetRandomWeekday",
+      "Samples": [ "{MockDataExp Fun=Date(@\"en\").Weekday();} will give you Random Weekday" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Finance",
+      "Name": "Get Account Number",
+      "Expression": "{MockDataExp Fun=Finance().Account();}",
+      "UseCase": "GetAccountNumber",
+      "Samples": [ "{MockDataExp Fun=Finance().Account();} will give you Account Number" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Finance",
+      "Name": "Get Transaction Type",
+      "Expression": "{MockDataExp Fun=Finance().TransactionType();}",
+      "UseCase": "GetTransactionType",
+      "Samples": [ "{MockDataExp Fun=Finance().TransactionType();} will give you Transaction Type" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Finance",
+      "Name": "Get CreditCard Number",
+      "Expression": "{MockDataExp Fun=Finance().CreditCardNumber();}",
+      "UseCase": "CreditCardNumber",
+      "Samples": [ "{MockDataExp Fun=Finance().CreditCardNumber();} will give you CreditCard Number" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Finance",
+      "Name": "Get CreditCardCvv",
+      "Expression": "{MockDataExp Fun=Finance().CreditCardCvv();}",
+      "UseCase": "CreditCardCvv",
+      "Samples": [ "{MockDataExp Fun=Finance().CreditCardCvv();} will give you CreditCardCvv" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Finance",
+      "Name": "Get BIC",
+      "Expression": "{MockDataExp Fun=Finance().Bic();}",
+      "UseCase": "Get BIC",
+      "Samples": [ "{MockDataExp Fun=Finance().Bic();} will give you BIC" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Finance",
+      "Name": "Get IBAN",
+      "Expression": "{MockDataExp Fun=Finance().Iban();}",
+      "UseCase": "Get IBAN",
+      "Samples": [ "{MockDataExp Fun=Finance().Iban();} will give you IBAN" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Finance",
+      "Name": "Get Currency code",
+      "Expression": "{MockDataExp Fun=Finance().Currency().Code;}",
+      "UseCase": "Get Currency",
+      "Samples": [ "{MockDataExp Fun=Finance().Currency().Code;} will give you Currency code" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Finance",
+      "Name": "Get Currency Symobol",
+      "Expression": "{MockDataExp Fun=Finance().Currency().Symbol;}",
+      "UseCase": "Get Currency",
+      "Samples": [ "{MockDataExp Fun=Finance().Currency().Symbol;} will give you Currency Symbol" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Internet",
+      "Name": "Get Email",
+      "Expression": "{MockDataExp Fun=Internet(@\"en\").Email();}",
+      "UseCase": "Get Email",
+      "Samples": [ "{MockDataExp Fun=Internet(@\"en\").Email();} will give you Email" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Internet",
+      "Name": "Get UserName",
+      "Expression": "{MockDataExp Fun=Internet(@\"en\").UserName();}",
+      "UseCase": "Get UserName",
+      "Samples": [ "{MockDataExp Fun=Internet(@\"en\").UserName();} will give you UserName" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Internet",
+      "Name": "Get Password",
+      "Expression": "{MockDataExp Fun=Internet(@\"en\").Password();}",
+      "UseCase": "Get Password",
+      "Samples": [ "{MockDataExp Fun=Internet(@\"en\").Password();} will give you Password" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Name",
+      "Name": "Get FirstName",
+      "Expression": "{MockDataExp Fun=Name(@\"en\").FirstName();}",
+      "UseCase": "Get FirstName",
+      "Samples": [ "{MockDataExp Fun=Name(@\"en\").FirstName();} will give you FirstName" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Name",
+      "Name": "Get LastName",
+      "Expression": "{MockDataExp Fun=Name(@\"en\").LastName();}",
+      "UseCase": "Get LastName",
+      "Samples": [ "{MockDataExp Fun=Name(@\"en\").LastName();} will give you LastName" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Name",
+      "Name": "Get FullName",
+      "Expression": "{MockDataExp Fun=Name(@\"en\").FullName();}",
+      "UseCase": "Get FullName",
+      "Samples": [ "{MockDataExp Fun=Name(@\"en\").FullName();} will give you FullName" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Phone",
+      "Name": "Get PhoneNumber",
+      "Expression": "{MockDataExp Fun=PhoneNumbers(@\"en\").PhoneNumber();}",
+      "UseCase": "Get PhoneNumber",
+      "Samples": [ "{MockDataExp Fun=PhoneNumbers(@\"en\").PhoneNumber();} will give you PhoneNumber" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Random",
+      "Name": "Get Random Number",
+      "Expression": "{MockDataExp Fun=Randomizer().Number(1,10);}",
+      "UseCase": "Get RandomNumber",
+      "Samples": [ "{MockDataExp Fun=Randomizer().Number(int min, int max);} will give you Number in between min and max" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Random",
+      "Name": "Get Random Digit",
+      "Expression": "{MockDataExp Fun=Randomizer().Digits(3,0,9);}",
+      "UseCase": "Get RandomDigit",
+      "Samples": [ "{MockDataExp Fun=Randomizer().Digits(int Count,int minDigit,int maxDigit);} will give you Digit with provided number count digit should in between minDigit and MaxDigit" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Random",
+      "Name": "Get Random Decimal",
+      "Expression": "{MockDataExp Fun=Randomizer().Decimal();}",
+      "UseCase": "Get RandomDecimal",
+      "Samples": [ "{MockDataExp Fun=Randomizer().Decimal();} will give you Decimal" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Random",
+      "Name": "Get Random String",
+      "Expression": "{MockDataExp Fun=Randomizer().String();}",
+      "UseCase": "Get RandomString",
+      "Samples": [ "{MockDataExp Fun=Randomizer().String();} will give you String" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
+    },
+    {
+      "Category": "Mock Data",
+      "SubCategory": "Random",
+      "Name": "Get Random AplhaNumericString",
+      "Expression": "{MockDataExp Fun=Randomizer().AlphaNumeric(3);}",
+      "UseCase": "Get RandomAplhaNumericString",
+      "Samples": [ "{MockDataExp Fun=Randomizer().AlphaNumeric(int LengthOfstring);} will give you AplhaNumericString of length provided" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "@Clock_16x16.png"
     }
+
   ]
 }

@@ -996,6 +996,21 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Asterisk:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Asterisk);
                     break;
+                case eImageType.MoneyCheckDollar:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MoneyCheckDollar);
+                    break;
+                case eImageType.AddressCard:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_AddressCard);
+                    break;
+                case eImageType.IdCard:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_IdCard);
+                    break;
+                case eImageType.IdBadge:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_IdBadge);
+                    break;
+                case eImageType.Phone:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Phone);
+                    break;
                 #endregion
 
                 #region ElementType Images
