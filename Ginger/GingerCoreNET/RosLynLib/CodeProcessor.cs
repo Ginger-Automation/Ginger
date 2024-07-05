@@ -19,13 +19,9 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.Repository;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
-using Microsoft.TeamFoundation.Build.WebApi;
-using SikuliStandard.sikuli_REST;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -257,8 +253,8 @@ namespace GingerCoreNET.RosLynLib
                 return Expression;
             }
             string pattern = "{MockDataExp({.*}|[^{}]*)*}";
-            Pattern = new Regex(pattern);
-            Regex Clean = new Regex("{MockDataExp(\\s)*Fun(\\s)*=");
+            Pattern = new Regex(pattern, RegexOptions.Compiled);
+            Regex Clean = new Regex("{MockDataExp(\\s)*Fun(\\s)*=", RegexOptions.Compiled);
 
             foreach (Match M in Pattern.Matches(Expression))
             {
@@ -274,7 +270,7 @@ namespace GingerCoreNET.RosLynLib
         }
         public static string GetBogusExpressionEvaluteResult(string expression, out string error)
         {
-            error = "";
+            error = string.Empty;
             try
             {
                 Assembly BogusAssembly = Assembly.Load("Bogus");
