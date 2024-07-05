@@ -1,5 +1,7 @@
 ﻿
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
@@ -7,6 +9,7 @@ using GingerCore.Drivers;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.GeneralLib;
 using Microsoft.VisualStudio.Services.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -31,12 +34,64 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             this.mAgent = mAgent;
             InitializeComponent();
           
-
+          
             bindElement();
+            chromePnlvisibilitly();
+            chromeFirefoxPnlVisibility();
+            edgeIEPnlVisibility();
 
 
         }
-       void bindElement()
+
+        void edgeIEPnlVisibility()
+        {
+            DriverConfigParam? browserTypeParam = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, nameof(GingerWebDriver.BrowserType)));
+            if (browserTypeParam != null && Enum.TryParse(browserTypeParam.Value, out Amdocs.Ginger.Common.Drivers.CoreDrivers.Web.WebBrowserType result))
+            {
+                if (result == WebBrowserType.Edge || result == WebBrowserType.InternetExplorer)
+                {
+                    xEdgeIE.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xEdgeIE.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+        void chromePnlvisibilitly()
+        {
+            DriverConfigParam? browserTypeParam = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, nameof(GingerWebDriver.BrowserType)));
+            if (browserTypeParam != null && Enum.TryParse(browserTypeParam.Value, out WebBrowserType result))
+            {
+                if (result == WebBrowserType.Chrome)
+                {
+                    xChromePnl.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xChromePnl.Visibility = Visibility.Collapsed;
+                }
+            }
+
+        }
+        void chromeFirefoxPnlVisibility()
+        {
+            DriverConfigParam? browserTypeParam = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, nameof(GingerWebDriver.BrowserType)));
+            if (browserTypeParam != null && Enum.TryParse(browserTypeParam.Value, out WebBrowserType result))
+            {
+                if (result == WebBrowserType.Chrome || result == WebBrowserType.FireFox)
+                {
+                    xChromeFirefoxPnl.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xChromeFirefoxPnl.Visibility = Visibility.Collapsed;
+                }
+            }
+
+        }
+
+        void bindElement()
         {
             
             #region ProxyConfigration
@@ -97,6 +152,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             xBrowserVersionVE.Init(null, browserVersion, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xBrowserVersionVE, TextBox.ToolTipProperty, browserVersion, nameof(DriverConfigParam.Description));
 
+
             //Emulation Device Name
             DriverConfigParam emulationDeviceName = mAgent.GetOrCreateParam(nameof(SeleniumDriver.EmulationDeviceName));
             xEmulationDeviceNameVE.Init(null, emulationDeviceName, nameof(DriverConfigParam.Value));
@@ -138,22 +194,19 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xDriverFilePathVE, TextBox.ToolTipProperty, driverFilePath, nameof(DriverConfigParam.Description));
 
             //Browser Private Mode
-            GingerCore.General.FillComboFromList(xBrowserPrivateModeComboBox, new List<string> { "true", "false" });
             DriverConfigParam browserPrivateMode = mAgent.GetOrCreateParam(nameof(SeleniumDriver.BrowserPrivateMode));
-            BindingHandler.ObjFieldBinding(xBrowserPrivateModeComboBox, ComboBox.TextProperty, browserPrivateMode, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xBrowserPrivateModeComboBox, ComboBox.ToolTipProperty, browserPrivateMode, nameof(DriverConfigParam.Description));
+            BindingHandler.ObjFieldBinding(xBrowserPrivateModeCB, CheckBox.IsCheckedProperty, browserPrivateMode, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xBrowserPrivateModeCB, CheckBox.ToolTipProperty, browserPrivateMode, nameof(DriverConfigParam.Description));
 
             //Headless Browser Mode
-            GingerCore.General.FillComboFromList(xHeadlessBrowserModeComboBox, new List<string> { "true", "false" });
             DriverConfigParam headlessBrowserMode = mAgent.GetOrCreateParam(nameof(SeleniumDriver.HeadlessBrowserMode));
-            BindingHandler.ObjFieldBinding(xHeadlessBrowserModeComboBox, ComboBox.TextProperty, headlessBrowserMode, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xHeadlessBrowserModeComboBox, ComboBox.ToolTipProperty, headlessBrowserMode, nameof(DriverConfigParam.Description));
+            BindingHandler.ObjFieldBinding(xHeadlessBrowserModeCB, CheckBox.IsCheckedProperty, headlessBrowserMode, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xHeadlessBrowserModeCB, CheckBox.ToolTipProperty, headlessBrowserMode, nameof(DriverConfigParam.Description));
 
             //Browser Minimized
-            GingerCore.General.FillComboFromList(xBrowserMinimizedComboBox, new List<string> { "true", "false" });
-            DriverConfigParam browserMinimized = mAgent.GetOrCreateParam(nameof(SeleniumDriver.BrowserMinimized));
-            BindingHandler.ObjFieldBinding(xBrowserMinimizedComboBox, ComboBox.TextProperty, browserMinimized, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xBrowserMinimizedComboBox, ComboBox.ToolTipProperty, browserMinimized, nameof(DriverConfigParam.Description));
+            DriverConfigParam browserMinimize = mAgent.GetOrCreateParam(nameof(SeleniumDriver.BrowserMinimized));
+            BindingHandler.ObjFieldBinding(xBrowserMinimizedCB, CheckBox.IsCheckedProperty, browserMinimize, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xBrowserMinimizedCB, CheckBox.ToolTipProperty, browserMinimize, nameof(DriverConfigParam.Description));
 
             #endregion
 
@@ -164,10 +217,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xUse64BitbrowserCB, CheckBox.ToolTipProperty, use64Bitbrowser, nameof(DriverConfigParam.Description));
 
             //Ensure Clean Session
-            GingerCore.General.FillComboFromList(xEnsureCleanSessionComboBox, new List<string> { "true", "false" });
             DriverConfigParam ensureCleanSession = mAgent.GetOrCreateParam(nameof(SeleniumDriver.EnsureCleanSession));
-            BindingHandler.ObjFieldBinding(xEnsureCleanSessionComboBox, ComboBox.TextProperty, ensureCleanSession, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xEnsureCleanSessionComboBox, ComboBox.ToolTipProperty, ensureCleanSession, nameof(DriverConfigParam.Description));
+            BindingHandler.ObjFieldBinding(xEnsureCleanSessionCB, CheckBox.IsCheckedProperty, ensureCleanSession, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xEnsureCleanSessionCB, CheckBox.ToolTipProperty, ensureCleanSession, nameof(DriverConfigParam.Description));            
 
             //ignore IE Protected Mode
             DriverConfigParam ignoreIEProtectedMode = mAgent.GetOrCreateParam(nameof(SeleniumDriver.IgnoreIEProtectedMode));
@@ -175,15 +227,15 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xIgnoreIEProtectedModeCB, CheckBox.ToolTipProperty, ignoreIEProtectedMode, nameof(DriverConfigParam.Description));
 
             //Open IEMode In Edge
-            GingerCore.General.FillComboFromList(xOpenIEModeInEdgeComboBox, new List<string> { "true", "false" });
             DriverConfigParam openIEModeInEdge = mAgent.GetOrCreateParam(nameof(SeleniumDriver.OpenIEModeInEdge));
-            BindingHandler.ObjFieldBinding(xOpenIEModeInEdgeComboBox, ComboBox.TextProperty, openIEModeInEdge, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xOpenIEModeInEdgeComboBox, ComboBox.ToolTipProperty, openIEModeInEdge, nameof(DriverConfigParam.Description));
+            BindingHandler.ObjFieldBinding(xOpenIEModeInEdgeCB, CheckBox.IsCheckedProperty, openIEModeInEdge, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xOpenIEModeInEdgeCB, CheckBox.ToolTipProperty, openIEModeInEdge, nameof(DriverConfigParam.Description));
 
             //Edge Executable Path
             DriverConfigParam edgeExcutablePath = mAgent.GetOrCreateParam(nameof(SeleniumDriver.EdgeExcutablePath));
             xEdgeExcutablePathVE.Init(null, edgeExcutablePath, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xEdgeExcutablePathVE, TextBox.ToolTipProperty, edgeExcutablePath, nameof(DriverConfigParam.Description));
+
 
             #endregion
 
@@ -209,41 +261,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             xExtensionPathVE.Init(null, extentionPath, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xExtensionPathVE, TextBox.ToolTipProperty, extentionPath, nameof(DriverConfigParam.Description));
 
-            //TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure
-            GingerCore.General.FillComboFromList(xFrameWindowScreenShotComboBox, new List<string> { "true", "false" });
-            DriverConfigParam frameWindowScreenShot = mAgent.GetOrCreateParam(nameof(SeleniumDriver.TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure));
-            BindingHandler.ObjFieldBinding(xFrameWindowScreenShotComboBox, ComboBox.TextProperty, frameWindowScreenShot, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xFrameWindowScreenShotComboBox, ComboBox.ToolTipProperty, frameWindowScreenShot, nameof(DriverConfigParam.Description));
-
-            //HandelIFramShiftAutomaticallyForPomElement
-            GingerCore.General.FillComboFromList(xAutoFrameShiftForPOMComboBox, new List<string> { "true", "false" });
-            DriverConfigParam autoFrameShiftForPOM = mAgent.GetOrCreateParam(nameof(SeleniumDriver.HandelIFramShiftAutomaticallyForPomElement));
-            BindingHandler.ObjFieldBinding(xAutoFrameShiftForPOMComboBox, ComboBox.TextProperty, autoFrameShiftForPOM, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xAutoFrameShiftForPOMComboBox, ComboBox.ToolTipProperty, autoFrameShiftForPOM, nameof(DriverConfigParam.Description));
-
-            //Disable Extention
-            GingerCore.General.FillComboFromList(xDisableExtensionComboBox, new List<string> { "true", "false" });
-            DriverConfigParam disableExtention = mAgent.GetOrCreateParam(nameof(SeleniumDriver.DisableExtension));
-            BindingHandler.ObjFieldBinding(xDisableExtensionComboBox, ComboBox.TextProperty, disableExtention, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xDisableExtensionComboBox, ComboBox.ToolTipProperty, disableExtention, nameof(DriverConfigParam.Description));
-
-            //Enable Native Events
-            GingerCore.General.FillComboFromList(xEnableNativeEventsComboBox, new List<string> { "true", "false" });
-            DriverConfigParam enableNativeEvents = mAgent.GetOrCreateParam(nameof(SeleniumDriver.EnableNativeEvents));
-            BindingHandler.ObjFieldBinding(xEnableNativeEventsComboBox, ComboBox.TextProperty, enableNativeEvents, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xEnableNativeEventsComboBox, ComboBox.ToolTipProperty, enableNativeEvents, nameof(DriverConfigParam.Description));
-
-            //Start BMP
-            GingerCore.General.FillComboFromList(xStartBMPComboBox, new List<string> { "true", "false" });
-            DriverConfigParam startBMP = mAgent.GetOrCreateParam(nameof(SeleniumDriver.StartBMP));
-            BindingHandler.ObjFieldBinding(xStartBMPComboBox, ComboBox.TextProperty, startBMP, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xStartBMPComboBox, ComboBox.ToolTipProperty, startBMP, nameof(DriverConfigParam.Description));
-
-            //Hide Console Window
-            GingerCore.General.FillComboFromList(xHideConsoleWindowComboBox, new List<string> { "true", "false" });
-            DriverConfigParam hideConsoleWindow = mAgent.GetOrCreateParam(nameof(SeleniumDriver.HideConsoleWindow));
-            BindingHandler.ObjFieldBinding(xHideConsoleWindowComboBox, ComboBox.TextProperty, hideConsoleWindow, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xHideConsoleWindowComboBox, ComboBox.ToolTipProperty, hideConsoleWindow, nameof(DriverConfigParam.Description));
+            //xStart BMP PortVE
+            DriverConfigParam startBMPPort = mAgent.GetOrCreateParam(nameof(SeleniumDriver.StartBMPPort));
+            xStartBMPPortVE.Init(null, startBMPPort, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xStartBMPPortVE, TextBox.ToolTipProperty, startBMPPort, nameof(DriverConfigParam.Description));
 
             //Unhandled promt Behavior
             GingerCore.General.FillComboFromEnumType(xUnhandledPromptBehaviorComboBox, typeof(SeleniumDriver.eUnhandledPromptBehavior));
@@ -252,10 +273,46 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xUnhandledPromptBehaviorComboBox, ComboBox.ToolTipProperty, UnhandledPromptBehavior, nameof(DriverConfigParam.Description));
 
             //browser Log Level
-            GingerCore.General.FillComboFromEnumType(xBrowserLogLevelComboBox, typeof(SeleniumDriver.eBrowserLogLevel));
+            // GingerCore.General.FillComboFromEnumType(xBrowserLogLevelComboBox, typeof(SeleniumDriver.eBrowserLogLevel));
+            // GingerCore.General.FillComboFromList(xBrowserLogLevelComboBox, new List<string> { "0"+ " All", "1"+ " Debug", "2" + " info", "3", "4" });
+            //GingerCore.General.FillComboFromList(xBrowserLogLevelComboBox, new Map<string, string>{ "0" : "All", "1" : "Debug", "2" : "info, "3" : "Warning", "4" : "Severe" });
+            GingerCore.General.FillComboFromList(xBrowserLogLevelComboBox, new List<string> { "0", "1", "2", "3", "4" });
             DriverConfigParam browserLogLevel = mAgent.GetOrCreateParam(nameof(SeleniumDriver.BrowserLogLevel));
             BindingHandler.ObjFieldBinding(xBrowserLogLevelComboBox, ComboBox.TextProperty, browserLogLevel, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xBrowserLogLevelComboBox, ComboBox.ToolTipProperty, browserLogLevel, nameof(DriverConfigParam.Description));
+
+            //Disable Extension
+            DriverConfigParam disableExtension = mAgent.GetOrCreateParam(nameof(SeleniumDriver.DisableExtension));
+            BindingHandler.ObjFieldBinding(xDisableExtensionCB, CheckBox.IsCheckedProperty, disableExtension, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xDisableExtensionCB, CheckBox.ToolTipProperty, disableExtension, nameof(DriverConfigParam.Description));
+
+            //Enable Native Events
+            DriverConfigParam enableNativeEvents = mAgent.GetOrCreateParam(nameof(SeleniumDriver.EnableNativeEvents));
+            BindingHandler.ObjFieldBinding(xEnableNativeEventsCB, CheckBox.IsCheckedProperty, enableNativeEvents, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xEnableNativeEventsCB, CheckBox.ToolTipProperty, enableNativeEvents, nameof(DriverConfigParam.Description));
+
+            //Start BMP
+            DriverConfigParam startBMP = mAgent.GetOrCreateParam(nameof(SeleniumDriver.StartBMP));
+            BindingHandler.ObjFieldBinding(xStartBMPCB, CheckBox.IsCheckedProperty, startBMP, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xStartBMPCB, CheckBox.ToolTipProperty, startBMP, nameof(DriverConfigParam.Description));
+
+            //Hide Console Window
+            DriverConfigParam hideConsoleWindow = mAgent.GetOrCreateParam(nameof(SeleniumDriver.HideConsoleWindow));
+            BindingHandler.ObjFieldBinding(xHideConsoleWindowCB, CheckBox.IsCheckedProperty, hideConsoleWindow, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xHideConsoleWindowCB, CheckBox.ToolTipProperty, hideConsoleWindow, nameof(DriverConfigParam.Description));
+
+            //Take only Active Screenshot
+            DriverConfigParam takeOnlyActiveScreenshot = mAgent.GetOrCreateParam(nameof(SeleniumDriver.TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure));
+            BindingHandler.ObjFieldBinding(xFrameWindowScreenShotCB, CheckBox.IsCheckedProperty, takeOnlyActiveScreenshot, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xFrameWindowScreenShotCB, CheckBox.ToolTipProperty, takeOnlyActiveScreenshot, nameof(DriverConfigParam.Description));
+
+            //Handle IFrame Shift auto
+            DriverConfigParam handleIFrameShiftAuto = mAgent.GetOrCreateParam(nameof(SeleniumDriver.HandelIFramShiftAutomaticallyForPomElement));
+            BindingHandler.ObjFieldBinding(xAutoFrameShiftForPOMCB, CheckBox.IsCheckedProperty, handleIFrameShiftAuto, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xAutoFrameShiftForPOMCB, CheckBox.ToolTipProperty, handleIFrameShiftAuto, nameof(DriverConfigParam.Description));
+
+
+
             #endregion
         }
 
@@ -271,6 +328,30 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
             xProxyPnl.IsEnabled = true;
         }
-       
+        private void Expender_Expanded(object sender, RoutedEventArgs e)
+        {
+            CollapseAllExpanderExceptCurrent((Expander)sender);
+        }
+        private void CollapseAllExpanderExceptCurrent(Expander currentExpander)
+        {
+            if (currentExpander != xProxyExpander && xProxyExpander != null)
+            {
+                xProxyExpander.IsExpanded = false;
+            }
+            if (currentExpander != xSessionManagement && xSessionManagement != null)
+            {
+                xSessionManagement.IsExpanded = false;
+            }
+            if (currentExpander != xBrowserConfigration && xBrowserConfigration != null)
+            {
+                xBrowserConfigration.IsExpanded = false;
+            }
+            if (currentExpander != xAdvanceSetting && xAdvanceSetting != null)
+            {
+                xAdvanceSetting.IsExpanded = false;
+            }
+            
+           
+        }
     }
 }

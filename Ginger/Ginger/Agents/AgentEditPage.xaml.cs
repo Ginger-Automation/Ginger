@@ -180,7 +180,7 @@ namespace Ginger.Agents
                 if (browserTypeParam != null && Enum.TryParse(browserTypeParam.Value, out WebBrowserType result))
                 {
                     browserType = result;
-                }
+                }                
             }
             bool isRemoteBrowser = browserType.HasValue && browserType.Value == WebBrowserType.RemoteWebDriver;
 
@@ -299,7 +299,7 @@ namespace Ginger.Agents
             browserTypeParam.Value = ((WebBrowserType)BrowserTypeComboBox.SelectedValue).ToString();
             if (xAgentConfigFrame.Content is AgentDriverConfigPage driverConfigPage)
             {
-                driverConfigPage.SetDriverConfigsPageContent();
+                      driverConfigPage.SetDriverConfigsPageContent();              
             }
 
             if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
