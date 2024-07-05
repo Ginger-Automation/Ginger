@@ -37,6 +37,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.Plugin.Core;
@@ -1735,27 +1736,30 @@ namespace Amdocs.Ginger.CoreNET
 
         async void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
+
+            ElementInfo filteredElementInfo = POMExecutionUtils.FilterElementDetailsByCategory(ElementInfo, PomCategory);
+
             if (AppType == eAppType.Web)
             {
-                ((IWindowExplorer)mSeleniumDriver).HighLightElement(ElementInfo, locateElementByItLocators);
+                ((IWindowExplorer)mSeleniumDriver).HighLightElement(filteredElementInfo, locateElementByItLocators);
                 return;
             }
 
-            if (ElementInfo.X == 0 && ElementInfo.Properties.FirstOrDefault(p => p.Name == "x") != null)
+            if (filteredElementInfo.X == 0 && filteredElementInfo.Properties.FirstOrDefault(p => p.Name == "x") != null)
             {
-                ElementInfo.X = Convert.ToInt32(ElementInfo.Properties.FirstOrDefault(p => p.Name == "x").Value);
+                filteredElementInfo.X = Convert.ToInt32(filteredElementInfo.Properties.FirstOrDefault(p => p.Name == "x").Value);
             }
-            if (ElementInfo.Y == 0 && ElementInfo.Properties.FirstOrDefault(p => p.Name == "y") != null)
+            if (filteredElementInfo.Y == 0 && filteredElementInfo.Properties.FirstOrDefault(p => p.Name == "y") != null)
             {
-                ElementInfo.Y = Convert.ToInt32(ElementInfo.Properties.FirstOrDefault(p => p.Name == "y").Value);
-            }
-
-            if (ElementInfo.ElementObject == null)
-            {
-                ElementInfo.ElementObject = await FindElementXmlNodeByXY(ElementInfo.X, ElementInfo.Y);
+                filteredElementInfo.Y = Convert.ToInt32(filteredElementInfo.Properties.FirstOrDefault(p => p.Name == "y").Value);
             }
 
-            OnDriverMessage(eDriverMessageType.HighlightElement, ElementInfo);
+            if (filteredElementInfo.ElementObject == null)
+            {
+                filteredElementInfo.ElementObject = await FindElementXmlNodeByXY(filteredElementInfo.X, filteredElementInfo.Y);
+            }
+
+            OnDriverMessage(eDriverMessageType.HighlightElement, filteredElementInfo);
         }
 
         private void RemoveElemntRectangle()
@@ -2189,7 +2193,7 @@ namespace Amdocs.Ginger.CoreNET
 
         static string GetAttrValue(XmlNode xmlNode, string attr)
         {
-            if (xmlNode.Attributes == null)
+            if (xmlNode == null || xmlNode.Attributes == null)
             {
                 return null;
             }
@@ -2747,9 +2751,24 @@ namespace Amdocs.Ginger.CoreNET
             return AppType;
         }
 
-        public Byte[] GetScreenshotImage()
+        int checkSessionCounter = 0;
+        public Byte[] GetScreenshotImage()        
         {
-            return Driver.GetScreenshot().AsByteArray;
+            checkSessionCounter++;
+            //check session is still valid
+            if (AppType == eAppType.NativeHybride && checkSessionCounter % 30 == 0)
+            {
+                if (Driver.SessionDetails != null)
+                {
+                    return Driver.GetScreenshot().AsByteArray;
+                }
+            }            
+            else
+            {
+                return Driver.GetScreenshot().AsByteArray;
+            }
+
+            return null;
         }
 
         public void PerformTap(long x, long y)
