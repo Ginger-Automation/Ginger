@@ -176,7 +176,7 @@ namespace Ginger.Actions
         {
             if (xLocateByComboBox.SelectedValue is eLocateBy.POMElement)
             {
-                xAlllocatorCheckbox.Visibility = Visibility.Visible;
+                //xAlllocatorCheckbox.Visibility = Visibility.Visible;
             }
             else
             {
