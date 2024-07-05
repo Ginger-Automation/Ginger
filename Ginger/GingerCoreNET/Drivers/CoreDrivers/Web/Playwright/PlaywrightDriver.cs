@@ -119,33 +119,37 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public override void RunAction(Act act)
         {
-            if (!IsRunning())
-            {
-                throw new InvalidOperationException("cannot run action when driver is not started");
-            }
+            ThrowIfClosed();
 
-            switch (act)
+            Task.Run(() =>
             {
-                case ActBrowserElement actBrowserElement:
-                    ActBrowserElementHandler actBrowserElementHandler = new(actBrowserElement, _browser!, new ActBrowserElementHandler.Context
-                    {
-                        BusinessFlow = BusinessFlow,
-                        Environment = Environment,
-                    });
-                    actBrowserElementHandler.HandleAsync().Wait();
-                    break;
-                case ActUIElement actUIElement:
-                    ActUIElementHandler actUIElementHandler = new(actUIElement, _browser!, BusinessFlow, Environment);
-                    actUIElementHandler.HandleAsync().Wait();
-                    break;
-                case ActScreenShot actScreenShot:
-                    ActScreenShotHandler actScreenShotHandler = new(actScreenShot, _browser!);
-                    actScreenShotHandler.HandleAsync().Wait();
-                    break;
-                default:
-                    act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
-                    break;
-            }
+                switch (act)
+                {
+                    case ActBrowserElement actBrowserElement:
+                        ActBrowserElementHandler actBrowserElementHandler = new(actBrowserElement, _browser, new ActBrowserElementHandler.Context
+                        {
+                            BusinessFlow = BusinessFlow,
+                            Environment = Environment,
+                        });
+                        actBrowserElementHandler.HandleAsync().Wait();
+                        break;
+                    case ActUIElement actUIElement:
+                        ActUIElementHandler actUIElementHandler = new(actUIElement, _browser, BusinessFlow, Environment);
+                        actUIElementHandler.HandleAsync().Wait();
+                        break;
+                    case ActScreenShot actScreenShot:
+                        ActScreenShotHandler actScreenShotHandler = new(actScreenShot, _browser);
+                        actScreenShotHandler.HandleAsync().Wait();
+                        break;
+                    case ActGotoURL actGotoURL:
+                        ActGotoURLHandler actGotoURLHandler = new(actGotoURL, _browser);
+                        actGotoURLHandler.HandleAsync().Wait();
+                        break;
+                    default:
+                        act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
+                        break;
+                }
+            }).Wait();
         }
 
         public bool IsActionSupported(Act act, out string message)
@@ -815,9 +819,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return true;
         }
 
-        public bool TestElementLocators(ElementInfo Element, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
+        public bool TestElementLocators(ElementInfo elementInfo, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
-            throw new NotImplementedException();
+            return Task.Run(() => TestElementLocatorsAsync(elementInfo, tillFirstPassed: GetOutAfterFoundElement).Result).Result;
         }
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)

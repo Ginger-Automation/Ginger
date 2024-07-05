@@ -24,7 +24,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             eLocateBy.ByID,
             eLocateBy.ByCSS,
+            eLocateBy.ByName,
             eLocateBy.ByXPath,
+            eLocateBy.ByTagName,
+            eLocateBy.ByRelXPath,
             eLocateBy.POMElement,
         };
 
@@ -80,6 +83,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
             return _playwrightPage.EvaluateAsync<string>(script);
+        }
+
+        public Task InjectJavascriptAsync(string script)
+        {
+            ThrowIfClosed();
+            return _playwrightPage.AddInitScriptAsync(script);
         }
 
         public Task<string> PageSourceAsync()
@@ -341,7 +350,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.Locator($"css={value}");
                     break;
                 case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
                     locator = _currentFrame.Locator($"xpath={value}");
+                    break;
+                case eLocateBy.ByName:
+                    locator = _currentFrame.Locator($"css=[name='{value}']");
+                    break;
+                case eLocateBy.ByTagName:
+                    locator = _currentFrame.Locator($"css={value}");
                     break;
                 default:
                     throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");

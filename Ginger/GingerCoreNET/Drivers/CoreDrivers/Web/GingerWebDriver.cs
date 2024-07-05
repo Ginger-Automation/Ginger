@@ -199,7 +199,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
             IBrowserElement? browserElement = null;
 
-            foreach (ElementLocator locator in element.Locators)
+            foreach (ElementLocator locator in element.Locators.Where(l => l.Active))
             {
                 eLocateBy locateBy = locator.LocateBy;
                 string locateValue = locator.LocateValue;
@@ -222,6 +222,45 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             }
 
             return browserElement;
+        }
+
+        private protected async Task<bool> TestElementLocatorsAsync(ElementInfo element, bool tillFirstPassed = false)
+        {
+            //TODO: handle shadow root
+            foreach (ElementLocator locator in element.Locators)
+            {
+                locator.StatusError = string.Empty;
+                locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
+            }
+
+            IBrowserElement? browserElement = null;
+
+            foreach (ElementLocator locator in element.Locators.Where(l => l.Active))
+            {
+                eLocateBy locateBy = locator.LocateBy;
+                string locateValue = locator.LocateValue;
+                if (!element.IsAutoLearned)
+                {
+                    locateValue = EvaluateValueExpression(locateValue);
+                }
+
+                browserElement = await FindBrowserElementAsync(locateBy, locateValue);
+
+                if (browserElement != null)
+                {
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                    if (tillFirstPassed)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                }
+            }
+
+            return element.Locators.Where(l => l.Active).All(l => l.LocateStatus == ElementLocator.eLocateStatus.Passed);
         }
 
         private string EvaluateValueExpression(string value)
@@ -265,7 +304,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         private protected Task InjectScriptAsync(IBrowserTab tab, string script)
         {
             string injectionableScript = PrepareScriptForInjection(script);
-            return tab.ExecuteJavascriptAsync(injectionableScript);
+            //return tab.ExecuteJavascriptAsync(injectionableScript);
+            return tab.InjectJavascriptAsync(injectionableScript);
         }
 
         private string PrepareScriptForInjection(string script)

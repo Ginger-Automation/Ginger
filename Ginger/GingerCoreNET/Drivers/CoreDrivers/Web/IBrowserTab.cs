@@ -32,6 +32,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<string> ExecuteJavascriptAsync(string script);
 
+        public Task InjectJavascriptAsync(string script);
+
         public Task WaitTillLoadedAsync();
 
         public Task<string> ConsoleLogsAsync();

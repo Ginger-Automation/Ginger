@@ -9,6 +9,7 @@ using GingerCore.Platforms.PlatformsInfo;
 using HtmlAgilityPack;
 using Microsoft.Graph;
 using Microsoft.VisualStudio.Services.Common;
+using NPOI.OpenXmlFormats;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -77,8 +78,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
             foreach (HtmlNode childNode in htmlNode.ChildNodes)
             {
+                IEnumerable<HTMLElementInfo> grandChildElements;
+                HTMLElementInfo? childElement = null;
                 if (!ShouldIncludeHtmlNode(childNode))
                 {
+                    grandChildElements = await LearnHtmlNodeChildElements(childNode);
+                    htmlElements.AddRange(grandChildElements);
+
                     continue;
                 }
 
@@ -93,7 +99,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     continue;
                 }
 
-                HTMLElementInfo childElement = await CreateHTMLElementInfoAsync(childNode, browserElement);
+                childElement = await CreateHTMLElementInfoAsync(childNode, browserElement);
 
                 htmlElements.Add(childElement);
 
@@ -101,7 +107,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 htmlElements.AddRange(await LearnFrameElementsAsync(childElement));
                 //TODO: create suggested activities
 
-                IEnumerable<HTMLElementInfo> grandChildElements = await LearnHtmlNodeChildElements(childNode);
+                grandChildElements = await LearnHtmlNodeChildElements(childNode);
                 foreach (HTMLElementInfo grandChildElement in grandChildElements)
                 {
                     grandChildElement.ParentElement = childElement;
@@ -117,6 +123,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         private bool ShouldIncludeHtmlNode(HtmlNode htmlNode)
         {
+            if (htmlNode.Name.StartsWith("#"))
+            {
+                return false;
+            }
+
+            if (htmlNode.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            IEnumerable<string> staticExcludedItems = ["noscript", "script", "style", "meta", "head", "link", "html", "body"];
+
+            if (staticExcludedItems.Any(x => string.Equals(x, htmlNode.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                return false;
+            }
+
             if (_pomSetting == null || _pomSetting.filteredElementType == null)
             {
                 return false;
@@ -132,6 +155,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             Point position = await browserElement.PositionAsync();
             HTMLElementInfo htmlElementInfo = new()
             {
+                ElementName = GenerateElementName(htmlNode),
                 ElementType = htmlNode.Name,
                 ElementTypeEnum = GetElementType(htmlNode),
                 ElementObject = browserElement,
@@ -170,6 +194,49 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             htmlElementInfo.SetLocatorsAndPropertiesCategory(ePomElementCategory.Web);
 
             return htmlElementInfo;
+        }
+
+        private string GenerateElementName(HtmlNode htmlNode)
+        {
+            string elementName = string.Empty;
+
+            string tag = htmlNode.Name;
+            if (!string.IsNullOrEmpty(tag) && !elementName.Contains(tag))
+            {
+                elementName += $" {tag}";
+            }
+
+            string type = htmlNode.GetAttributeValue("type", def: string.Empty);
+            if (!string.IsNullOrEmpty(type) && !elementName.Contains(type))
+            {
+                elementName += $" {type}";
+            }
+
+            string name = htmlNode.GetAttributeValue("name", def: string.Empty);
+            if (!string.IsNullOrEmpty(name) && !elementName.Contains(name))
+            {
+                elementName += $" {name}";
+            }
+
+            string title = htmlNode.GetAttributeValue("title", def: string.Empty);
+            if (!string.IsNullOrEmpty(title) && !elementName.Contains(title))
+            {
+                elementName += $" {title}";
+            }
+
+            string id = htmlNode.GetAttributeValue("id", def: string.Empty);
+            if (!string.IsNullOrEmpty(id) && !elementName.Contains(id))
+            {
+                elementName += $" {id}";
+            }
+
+            string value = htmlNode.GetAttributeValue("value", def: string.Empty);
+            if (!string.IsNullOrEmpty(value) && !elementName.Contains(value))
+            {
+                elementName += $" {value}";
+            }
+
+            return elementName;
         }
 
         private eElementType GetElementType(HtmlNode htmlNode)
@@ -254,8 +321,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                         locator.IsAutoLearned = true;
                         locator.EnableFriendlyLocator = getPOMSettingElementLocator(eLocateBy.ByName)?.EnableFriendlyLocator ?? false;
                         break;
+                    case eLocateBy.ByXPath:
+                        string xpath = htmlElementInfo.XPath;
+                        if (string.IsNullOrEmpty(xpath))
+                        {
+                            continue;
+                        }
+                        locator.LocateValue = xpath;
+                        locator.IsAutoLearned = true;
+                        locator.EnableFriendlyLocator = getPOMSettingElementLocator(eLocateBy.ByID)?.EnableFriendlyLocator ?? false;
+                        break;
                     case eLocateBy.ByRelXPath:
-                        string relXPath = htmlElementInfo.XPath;
+                        string relXPath = htmlElementInfo.RelXpath;
                         if (string.IsNullOrEmpty(relXPath))
                         {
                             continue;
