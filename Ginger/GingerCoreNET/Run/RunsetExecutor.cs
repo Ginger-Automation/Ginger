@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
@@ -922,17 +923,24 @@ namespace Ginger.Run
                         {
                             var virtualAgent = (Agent)appAgents[i].Agent;
 
-                            var realAgent = runset.ActiveAgentList.FirstOrDefault(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString());
+                            List<IAgent> agentslist = runset.ActiveAgentListWithRunner.Values.SelectMany(l => l).ToList();
+
+                            var realAgent = agentslist != null ? agentslist.FirstOrDefault(x => ((Agent)x).Guid.Equals(virtualAgent.ParentGuid)) : null;
 
                             if (realAgent != null)
                             {
-                                var runsetVirtualAgent = runset.ActiveAgentList.FirstOrDefault(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid);
+                                var VirtualAgentList = runset.ActiveAgentListWithRunner.Where(entry => entry.Key == runner.GingerRunner.Guid).Select(y => y.Value).ToList().Select(x => x.FirstOrDefault(k => ((Agent)k).Guid.Equals(virtualAgent.Guid)));
+
+                                var runsetVirtualAgent = VirtualAgentList != null ? VirtualAgentList.FirstOrDefault(x => ((Agent)x).Guid.Equals(virtualAgent.Guid)) : null;
                                 appAgents[i].Agent = realAgent;
 
                                 if (runsetVirtualAgent != null)
                                 {
-                                    runset.ActiveAgentList.Remove(runsetVirtualAgent);
+                                    runset.ActiveAgentListWithRunner = runset.ActiveAgentListWithRunner
+                                             .Where(kvp => kvp.Value.Any(x => !((Agent)x).Guid.Equals(((Agent)runsetVirtualAgent).Guid)))
+                                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                                 }
+
                             }
                         }
                     }

@@ -73,6 +73,7 @@ namespace GingerCore.Environments
 
                     mVE = new ValueExpression(Database.ProjEnvironment, Database.BusinessFlow, Database.DSList);
                 }
+
                 return mVE;
             }
             set
@@ -81,6 +82,10 @@ namespace GingerCore.Environments
             }
         }
 
+        public bool IsPassValueExp()
+        {
+            return ValueExpression.IsThisAValueExpression(this.Database.Pass);
+        }
         public string ConnectionStringCalculated
         {
             get
@@ -255,6 +260,7 @@ namespace GingerCore.Environments
             }
             try
             {
+                Reporter.ToStatus(eStatusMsgKey.TestingDatabase, null,$"Testing Database: {Database.Name}");
 
                 switch (Database.DBType)
                 {
@@ -265,32 +271,20 @@ namespace GingerCore.Environments
                         break;
                     case eDBTypes.Oracle:
                         //TODO: Oracle connection is deprecated use another method - Switched to ODP.NET
-                        //Try Catch for Connecting DB Which having Oracle Version Less then 10.2                         
-                        try
+                        if (!Database.IsOracleVersionLow)
                         {
 
                             oConn = WorkSpace.Instance.TargetFrameworkHelper.GetOracleConnection(connectConnectionString);
                             oConn.Open();
-                            break;
                         }
-                        catch (Exception e)
+                        else
                         {
-                            String Temp = e.Message;
-                            //if (Temp.Contains ("ORA-03111"))
-                            if (Temp.Contains("ORA-03111"))
-                            {
-
-
-                                oConn = SqlClientFactory.Instance.CreateConnection();
-                                oConn.ConnectionString = "Provider=msdaora;" + connectConnectionString;
-                                oConn.Open();
-                                break;
-                            }
-                            else
-                            {
-                                throw e;
-                            }
+                            oConn = SqlClientFactory.Instance.CreateConnection();
+                            oConn.ConnectionString = "Provider=msdaora;" + connectConnectionString;
+                            oConn.Open();
                         }
+
+                        break;
 
                     case eDBTypes.MSAccess:
 
@@ -428,6 +422,11 @@ namespace GingerCore.Environments
                 Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + Database.DBType.ToString() + "; Connection String =" + HidePasswordFromString(connectConnectionString), e);
                 throw (e);
             }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
+
             return false;
         }
         public static string HidePasswordFromString(string dataString)

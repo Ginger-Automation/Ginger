@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -237,6 +238,7 @@ namespace GingerCore.Drivers
             BusinessFlow = context.BusinessFlow;
         }
 
+        public virtual ePomElementCategory? PomCategory { get; set; }
 
         #region VirtualDrivers
 
@@ -269,7 +271,7 @@ namespace GingerCore.Drivers
         /// <summary>
         /// Name of customized edit page for the driver to load on Agent edit page
         /// </summary>
-        public virtual string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        public virtual string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
             return null;
         }
@@ -399,6 +401,7 @@ namespace GingerCore.Drivers
                 return 5;
             }
         }
+        
     }
 }
 

@@ -26,6 +26,8 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.JIRA.Data_Contracts;
 using GingerCore.Variables;
+using GingerCoreNET.ALMLib;
+using GingerCoreNET.GeneralLib;
 using JiraRepositoryStd;
 using JiraRepositoryStd.BLL;
 using JiraRepositoryStd.Data_Contracts;
@@ -36,6 +38,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 
 namespace GingerCore.ALM.JIRA.Bll
@@ -50,6 +53,7 @@ namespace GingerCore.ALM.JIRA.Bll
             this.jiraRepObj = jiraRep;
             this.jmz = new JiraManagerZephyr();
         }
+
 
         public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
         {
@@ -302,8 +306,36 @@ namespace GingerCore.ALM.JIRA.Bll
 
         public bool ExecuteDataToJira(BusinessFlow bizFlow, PublishToALMConfig publishToALMConfig, ref string result)
         {
-            bool resultFlag = false;          
-            if (bizFlow.ExternalID != "0" && (!String.IsNullOrEmpty(bizFlow.ExternalID)))
+            bool resultFlag = false;
+            if (string.IsNullOrEmpty(bizFlow.ExternalID) || bizFlow.ExternalID.Equals("0"))
+            {
+                if (bizFlow.ALMTestSetLevel == "RunSet")
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {bizFlow.Name} is missing ExternalID, cannot export JIRA TestPlan execution results without External ID";
+                    Reporter.ToLog(eLogLevel.ERROR, result);
+                }
+                else
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {bizFlow.Name} is missing ExternalID, cannot export JIRA TestPlan execution results without External ID";
+                    Reporter.ToLog(eLogLevel.ERROR, result);
+                }
+
+                return resultFlag;
+            }
+            else if (bizFlow.ActivitiesGroups.Count == 0)
+            {
+                if (bizFlow.ALMTestSetLevel == "RunSet")
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.RunSet)}: {bizFlow.Name} Must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
+                }
+                else
+                {
+                    result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {bizFlow.Name} Must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
+                }
+
+                return resultFlag;
+            }
+            else
             {
                 if (string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunName))
                 {
@@ -341,7 +373,7 @@ namespace GingerCore.ALM.JIRA.Bll
                         {
                             RunStatus jiraStatus = ConvertGingerStatusToJira(act.Status.HasValue ? act.Status.Value : eRunStatus.NA);
                             string comment = CreateCommentForRun(act.Acts.ToList());
-                            stepColl.Add(new JiraRunStepStautus() { comment = comment, status = jiraStatus });
+                            stepColl.Add(new JiraRunStepStautus() { comment = comment,status = jiraStatus });
                         }
                         resultFlag = jiraRepObj.ExecuteRunStatusBySteps(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, runs, relevantTcRun.TestCaseRunId);
 
@@ -363,10 +395,25 @@ namespace GingerCore.ALM.JIRA.Bll
                                 //Creating the Zip file - finish                                
                                 if (this.jiraRepObj.AddAttachment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, relevantTcRun.TestExecutionId, zipFileName) == null)
                                 {
-                                    result = "Failed to create attachment";
-                                    return false;
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to create attachment");
                                 }
                                 System.IO.File.Delete(zipFileName);
+                            }
+                        }
+
+
+                        if (publishToALMConfig.ToExportReportLink)
+                        {
+                            if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
+                            {
+                                string reportLink = General.CreateReportLinkPerFlow(HtmlReportUrl: publishToALMConfig.HtmlReportUrl, ExecutionId: publishToALMConfig.ExecutionId, BusinessFlowInstanceGuid: bizFlow.InstanceGuid.ToString());
+                               reportLink = $"[Ginger Report Link|{reportLink}]";
+
+                                if (this.jiraRepObj.AddComment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, relevantTcRun.TestExecutionId, reportLink) == null)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "failed to add comment");
+                                }
+
                             }
                         }
                     }
@@ -382,7 +429,7 @@ namespace GingerCore.ALM.JIRA.Bll
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM,"Incorrect ExternalID of BF, Please check if BF already exported as Test Set/Plan");
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Export to ALM, Error in Executing JIRA Run Status by Steps ");
             }
 
             return resultFlag;

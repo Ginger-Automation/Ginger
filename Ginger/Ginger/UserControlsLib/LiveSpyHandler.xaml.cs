@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
+using GingerCore.Drivers;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -129,6 +130,7 @@ namespace Ginger.UserControlsLib
 
                     SpySelectedElement.WindowExplorer = mWinExplorer;
                     SpySelectedElement.IsAutoLearned = true;
+                    SpySelectedElement.SetLocatorsAndPropertiesCategory(((DriverBase)mWinExplorer).PomCategory);
                     mWinExplorer.HighLightElement(SpySelectedElement);
                 }
                 else

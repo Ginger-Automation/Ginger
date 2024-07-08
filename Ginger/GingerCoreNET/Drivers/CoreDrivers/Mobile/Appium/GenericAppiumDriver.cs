@@ -37,6 +37,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.Plugin.Core;
@@ -74,7 +75,7 @@ namespace Amdocs.Ginger.CoreNET
     {
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
 
-        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
             return "AppiumDriverEditPage";
         }
@@ -175,6 +176,30 @@ namespace Amdocs.Ginger.CoreNET
             get => LoadDeviceWindow;
         }
 
+        public override ePomElementCategory? PomCategory 
+        {
+            get
+            {
+                if (AppType == eAppType.NativeHybride)
+                {
+                    switch(DevicePlatformType)
+                    {
+                        case eDevicePlatformType.iOS:
+                            return ePomElementCategory.iOS;                            
+                        case eDevicePlatformType.Android:
+                        default:
+                            return ePomElementCategory.Android;                       
+                    }
+                }
+                else
+                {
+                    return ePomElementCategory.Web;
+                }
+            }
+
+            set => base.PomCategory = value;
+        }
+
         private AppiumDriver Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
         public override bool StopProcess
@@ -259,35 +284,41 @@ namespace Amdocs.Ginger.CoreNET
                         break;
                 }
 
-                //If Driver.SessionId is null, it means that the Mobile Agent already in use.
-                
-                if (!(Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device"))
+                if (String.IsNullOrEmpty(Driver.SessionId.ToString()))
                 {
-                    mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                    mSeleniumDriver.StopProcess = this.StopProcess;
-                    mSeleniumDriver.BusinessFlow = this.BusinessFlow;
-
-                    if (AppType == eAppType.Web && mDefaultURL != null)
-                    {
-                        try
-                        {
-                            Driver.Navigate().GoToUrl(mDefaultURL);
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
-                        }
-                    }
-
-                    return true;
+                    string error = "Failed to start Appium session, created Driver not seems to be valid (it SessionId is null), please validate the Appium server URL and capabilities";
+                    Reporter.ToLog(eLogLevel.ERROR, error);
+                    ErrorMessageFromDriver = error;
+                    return false;
                 }
-                else
+                           
+                if (Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device")
                 {
                     string error = string.Format("Failed to start Appium session.{0}Error: Mobile device is already in use. Please close all other sessions and try again.", System.Environment.NewLine);
                     Reporter.ToLog(eLogLevel.ERROR, error);
                     ErrorMessageFromDriver = error;
                     return false;
                 }
+
+                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                mSeleniumDriver.isAppiumSession = true;
+                mSeleniumDriver.StopProcess = this.StopProcess;
+                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
+                mSeleniumDriver.PomCategory = this.PomCategory;
+
+                if (AppType == eAppType.Web && mDefaultURL != null)
+                {
+                    try
+                    {
+                        Driver.Navigate().GoToUrl(mDefaultURL);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
+                    }
+                }
+
+                return true;
 
             }
             catch (Exception ex)
@@ -332,63 +363,82 @@ namespace Amdocs.Ginger.CoreNET
             //User customized capabilities
             foreach (DriverConfigParam UserCapability in AppiumCapabilities)
             {
-                if (String.IsNullOrWhiteSpace(UserCapability.Parameter) || String.IsNullOrWhiteSpace(UserCapability.Value))
+                try
                 {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("The Appium Capability '{0}'='{1}' is not valid, avoiding it.", UserCapability.Parameter, UserCapability.Value));
-                    continue;
-                }
+                    if (String.IsNullOrWhiteSpace(UserCapability.Parameter) || String.IsNullOrWhiteSpace(UserCapability.Value))
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("The Appium Capability '{0}'='{1}' is not valid, avoiding it.", UserCapability.Parameter, UserCapability.Value));
+                        continue;
+                    }
 
-                if (UserCapability.Parameter.ToLower().Trim() == "defaulturl" || UserCapability.Parameter.ToLower().Trim() == "ginger:defaulturl")
-                {
-                    mDefaultURL = UserCapability.Value;
+                    if (UserCapability.Parameter.ToLower().Trim() == "defaulturl" || UserCapability.Parameter.ToLower().Trim() == "ginger:defaulturl")
+                    {
+                        mDefaultURL = UserCapability.Value;
 
-                    continue;
-                }
+                        continue;
+                    }
 
-                bool boolValue;
-                int intValue = 0;
-                if (bool.TryParse(UserCapability.Value, out boolValue))
-                {
-                    driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, boolValue);
-                }
-                else if (!isContainQuotationMarks(UserCapability) && int.TryParse(UserCapability.Value, out intValue))
-                {
-                    driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, intValue);
-                }
-                else if (UserCapability.Value.Contains("{"))
-                {
-                    try
+                    bool boolValue;
+                    int intValue = 0;
+                    if (bool.TryParse(UserCapability.Value, out boolValue))
                     {
-                        JObject json = JObject.Parse(UserCapability.Value);
-                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, json);//for Json value to work properly, need to convert it into specific object type like: json.ToObject<selector>());
+                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, boolValue);
                     }
-                    catch (Exception)
+                    else if (!isContainQuotationMarks(UserCapability) && int.TryParse(UserCapability.Value, out intValue))
                     {
-                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, UserCapability.Value);
+                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, intValue);
                     }
-                }
-                else
-                {
-                    if (UserCapability.Parameter == "platformName" || UserCapability.Parameter == "appium:platformName")
+                    else if (UserCapability.Value.Contains("{"))
                     {
-                        driverOptions.PlatformName = UserCapability.Value;
-                    }
-                    else if (UserCapability.Parameter == "automationName" || UserCapability.Parameter == "appium:automationName")
-                    {
-                        driverOptions.AutomationName = UserCapability.Value;
-                    }
-                    else if (UserCapability.Parameter == "deviceName" || UserCapability.Parameter == "appium:deviceName")
-                    {
-                        driverOptions.DeviceName = UserCapability.Value;
-                    }
-                    else if (UserCapability.Parameter == "browserName" || UserCapability.Parameter == "appium:browserName")
-                    {
-                        driverOptions.BrowserName = UserCapability.Value;
+                        try
+                        {
+                            JObject json = JObject.Parse(UserCapability.Value);
+                            driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, json);//for Json value to work properly, need to convert it into specific object type like: json.ToObject<selector>());
+                        }
+                        catch (Exception)
+                        {
+                            driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, UserCapability.Value);
+                        }
                     }
                     else
                     {
-                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, UserCapability.Value);
+                        if (UserCapability.Parameter.Trim().ToLower() == "automationName".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:automationName".ToLower())
+                        {
+                            driverOptions.AutomationName = UserCapability.Value;
+                        }
+                        else if (UserCapability.Parameter.Trim().ToLower() == "platformName".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:platformName".ToLower())
+                        {
+                            driverOptions.PlatformName = UserCapability.Value;
+                        }
+                        else if (UserCapability.Parameter.Trim().ToLower() == "platformVersion".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:platformVersion".ToLower())
+                        {
+                            driverOptions.PlatformVersion = UserCapability.Value;
+                        }                        
+                        else if (UserCapability.Parameter.Trim().ToLower() == "deviceName".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:deviceName".ToLower())
+                        {
+                            driverOptions.DeviceName = UserCapability.Value;
+                        }
+                        else if (UserCapability.Parameter.Trim().ToLower() == "app".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:app".ToLower())
+                        {
+                            driverOptions.App = UserCapability.Value;
+                        }
+                        else if (UserCapability.Parameter.Trim().ToLower() == "browserName".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:browserName".ToLower())
+                        {
+                            driverOptions.BrowserName = UserCapability.Value;
+                        }
+                        else if (UserCapability.Parameter.Trim().ToLower() == "browserVersion".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:browserVersion".ToLower())
+                        {
+                            driverOptions.BrowserVersion = UserCapability.Value;
+                        }
+                        else
+                        {
+                            driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, UserCapability.Value);
+                        }
                     }
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to set Appium capability '{0}'='{1}'", UserCapability.Parameter, UserCapability.Value), ex);
                 }
             }
 
@@ -1598,7 +1648,15 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    var detail= ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier");
+                    if (detail != null)
+                    {
+                        return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    }
+                    else
+                    {
+                        return "Package | Activity";
+                    }
                 }
                 else
                 {
@@ -1678,27 +1736,30 @@ namespace Amdocs.Ginger.CoreNET
 
         async void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
+
+            ElementInfo filteredElementInfo = POMExecutionUtils.FilterElementDetailsByCategory(ElementInfo, PomCategory);
+
             if (AppType == eAppType.Web)
             {
-                ((IWindowExplorer)mSeleniumDriver).HighLightElement(ElementInfo, locateElementByItLocators);
+                ((IWindowExplorer)mSeleniumDriver).HighLightElement(filteredElementInfo, locateElementByItLocators);
                 return;
             }
 
-            if (ElementInfo.X == 0 && ElementInfo.Properties.FirstOrDefault(p => p.Name == "x") != null)
+            if (filteredElementInfo.X == 0 && filteredElementInfo.Properties.FirstOrDefault(p => p.Name == "x") != null)
             {
-                ElementInfo.X = Convert.ToInt32(ElementInfo.Properties.FirstOrDefault(p => p.Name == "x").Value);
+                filteredElementInfo.X = Convert.ToInt32(filteredElementInfo.Properties.FirstOrDefault(p => p.Name == "x").Value);
             }
-            if (ElementInfo.Y == 0 && ElementInfo.Properties.FirstOrDefault(p => p.Name == "y") != null)
+            if (filteredElementInfo.Y == 0 && filteredElementInfo.Properties.FirstOrDefault(p => p.Name == "y") != null)
             {
-                ElementInfo.Y = Convert.ToInt32(ElementInfo.Properties.FirstOrDefault(p => p.Name == "y").Value);
-            }
-
-            if (ElementInfo.ElementObject == null)
-            {
-                ElementInfo.ElementObject = await FindElementXmlNodeByXY(ElementInfo.X, ElementInfo.Y);
+                filteredElementInfo.Y = Convert.ToInt32(filteredElementInfo.Properties.FirstOrDefault(p => p.Name == "y").Value);
             }
 
-            OnDriverMessage(eDriverMessageType.HighlightElement, ElementInfo);
+            if (filteredElementInfo.ElementObject == null)
+            {
+                filteredElementInfo.ElementObject = await FindElementXmlNodeByXY(filteredElementInfo.X, filteredElementInfo.Y);
+            }
+
+            OnDriverMessage(eDriverMessageType.HighlightElement, filteredElementInfo);
         }
 
         private void RemoveElemntRectangle()
@@ -1816,7 +1877,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
 
                     ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
-                    EI.IsAutoLearned = true;
+                    EI.IsAutoLearned = true;                    
 
                     if (pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
                     {
@@ -1839,12 +1900,15 @@ namespace Amdocs.Ginger.CoreNET
                         }
                     }
 
+                    //set the POM category
+                    EI.SetLocatorsAndPropertiesCategory(this.PomCategory);
+
                     if (pomSetting.filteredElementType == null ||
                         (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
-                    {
+                    {                        
                         foundElementsList.Add(EI);
                     }
-                }
+                }            
 
                 return foundElementsList.ToList();
             }
@@ -2129,7 +2193,7 @@ namespace Amdocs.Ginger.CoreNET
 
         static string GetAttrValue(XmlNode xmlNode, string attr)
         {
-            if (xmlNode.Attributes == null)
+            if (xmlNode == null || xmlNode.Attributes == null)
             {
                 return null;
             }
@@ -2495,7 +2559,24 @@ namespace Amdocs.Ginger.CoreNET
                 originalList.Select(e => { e.ElementStatus = ElementInfo.eElementStatus.Pending; return e; }).ToList();
                 foreach (ElementInfo EI in originalList)
                 {
-                    EI.ElementStatus = ElementInfo.eElementStatus.Pending;
+                    try
+                    {
+                        object e = LocateElementByLocators(EI.Locators);
+                        if (e != null)
+                        {
+                            EI.ElementObject = e;
+                            EI.ElementStatus = ElementInfo.eElementStatus.Passed;
+                        }
+                        else
+                        {
+                            EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                        Console.WriteLine("CollectOriginalElementsDataForDeltaCheck error: " + ex.Message);
+                    }
                 }
             }
             finally
@@ -2670,9 +2751,24 @@ namespace Amdocs.Ginger.CoreNET
             return AppType;
         }
 
-        public Byte[] GetScreenshotImage()
+        int checkSessionCounter = 0;
+        public Byte[] GetScreenshotImage()        
         {
-            return Driver.GetScreenshot().AsByteArray;
+            checkSessionCounter++;
+            //check session is still valid
+            if (AppType == eAppType.NativeHybride && checkSessionCounter % 30 == 0)
+            {
+                if (Driver.SessionDetails != null)
+                {
+                    return Driver.GetScreenshot().AsByteArray;
+                }
+            }            
+            else
+            {
+                return Driver.GetScreenshot().AsByteArray;
+            }
+
+            return null;
         }
 
         public void PerformTap(long x, long y)

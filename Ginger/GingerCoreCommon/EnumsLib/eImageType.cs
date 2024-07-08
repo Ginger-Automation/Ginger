@@ -45,6 +45,10 @@ namespace Amdocs.Ginger.Common.Enums
         Sealights,
         NormalUser,
         AdminUser,
+        Chatbot,
+        SendArrow,
+        Medical,
+        Chat,
         #endregion
 
 
@@ -82,6 +86,8 @@ namespace Amdocs.Ginger.Common.Enums
         Timer,
         #endregion
 
+        LisaProcessing,
+
         #region Execution Status Images
         Unknown,
         //############################## Execution Status Images:
@@ -116,6 +122,7 @@ namespace Amdocs.Ginger.Common.Enums
         Stop,
         Close,
         Close2,
+        CloseWhite,
         Run,
         RunSingle,
         Continue,
@@ -318,6 +325,11 @@ namespace Amdocs.Ginger.Common.Enums
         Support,
         Asterisk,
         Smile,
+        AddressCard,
+        IdCard,
+        IdBadge,
+        Phone,
+        MoneyCheckDollar,
         #endregion
 
         #region Source control Images     
@@ -373,8 +385,10 @@ namespace Amdocs.Ginger.Common.Enums
         LinkSquare,
         DatePicker,
         TreeView,
-        SelfHealing
+        SelfHealing,
         #endregion
+
+
     }
 }
 

@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.Repository;
@@ -41,6 +42,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Drawing;
 using System.Linq;
+using static GingerCore.Agent;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
@@ -149,12 +151,10 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
             switch (zAgent.DriverType)
             {
-                case Agent.eDriverType.SeleniumFireFox:
-                case Agent.eDriverType.SeleniumChrome:
-                case Agent.eDriverType.SeleniumIE:
-                case Agent.eDriverType.SeleniumRemoteWebDriver:
-                case Agent.eDriverType.SeleniumEdge:
+                case Agent.eDriverType.Selenium:
                     return (typeof(SeleniumDriver));
+                case eDriverType.Playwright:
+                    return typeof(PlaywrightDriver);
 
                 case Agent.eDriverType.Appium:
                     return (typeof(GenericAppiumDriver));
@@ -173,16 +173,11 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
             switch (zAgent.DriverType)
             {
-                case Agent.eDriverType.SeleniumFireFox:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.FireFox);
-                case Agent.eDriverType.SeleniumChrome:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Chrome);
-                case Agent.eDriverType.SeleniumIE:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.IE);
-                case Agent.eDriverType.SeleniumRemoteWebDriver:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
-                case Agent.eDriverType.SeleniumEdge:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
+                case Agent.eDriverType.Selenium:
+                    return new SeleniumDriver();
+
+                case Agent.eDriverType.Playwright:
+                    return new PlaywrightDriver();
 
                 case Agent.eDriverType.Appium:
                     return new GenericAppiumDriver(zAgent.BusinessFlow);
@@ -320,6 +315,56 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, PublishToALMConfig publishToALMConfig, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             return false;
+        }
+
+        public byte[] Capture(Point position, Size size, ImageFormat format)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ScreenCount()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int PrimaryScreenIndex()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ScreenName(int screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Size ScreenSize(int screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Point ScreenPosition(int screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Point TaskbarPosition(int screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Size TaskbarSize(int screenIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] MergeVertically(IEnumerable<byte[]> images, ImageFormat format)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Save(string filepath, byte[] image, ImageFormat format)
+        {
+            throw new NotImplementedException();
         }
     }
 }

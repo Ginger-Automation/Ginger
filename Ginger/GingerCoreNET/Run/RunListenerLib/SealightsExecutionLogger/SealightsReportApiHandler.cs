@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             
             return 
                 !mVE.ValueCalculated.Equals(EndPointUrl) || 
-                !Token.Equals(WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken);
+                !(Token !=null && Token.Equals(WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken));
         }
 
         public void SendCreationTestSessionToSealightsAsync()

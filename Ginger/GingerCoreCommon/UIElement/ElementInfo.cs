@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -360,6 +360,9 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
+        public ElementInfo ParentElement { get; set; }
+        public IList<ElementInfo> ChildElements { get; } = [];
+
         ObservableList<OptionalValue> IParentOptionalValuesObject.OptionalValuesList { get { return OptionalValuesObjectsList; } set { OptionalValuesObjectsList = value; } }
 
         void IParentOptionalValuesObject.PropertyChangedEventHandler()
@@ -495,6 +498,18 @@ namespace Amdocs.Ginger.Common.UIElement
                 mData = this.WindowExplorer.GetElementData(this, elementLocateBy, elementLocateValue);
             }
             return mData;
+        }
+
+        public void SetLocatorsAndPropertiesCategory(ePomElementCategory? category)
+        {
+            foreach(ElementLocator locator in Locators)
+            {
+                locator.Category = category;
+            }
+            foreach (ControlProperty property in Properties)
+            {
+                property.Category = category;
+            }
         }
 
         public static eImageType GetElementTypeImage(eElementType elementType = eElementType.Unknown)

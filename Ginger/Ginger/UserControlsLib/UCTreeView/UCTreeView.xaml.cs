@@ -332,7 +332,13 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (TVI.Tag is ITreeViewItem ITVI)
             {
-                List<ITreeViewItem> Childs = ITVI.Childrens();
+                List<ITreeViewItem>? Childs = null;
+
+                var tviChildren = ITVI.Childrens();
+                if (tviChildren != null)
+                {
+                    Childs = new(tviChildren);
+                }
 
                 TVI.Items.Clear();
                 if (Childs != null)
@@ -575,6 +581,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 return;
             }
 
+            if (TVI.Tag is ITreeViewItem tviTreeViewItem)
+            {
+                GetNodeChilds(tviTreeViewItem, childsList, isRecursive);
+                return;
+            }
+
             if (TVI.Items.Count == 0 || (TVI.Items.Count == 1 && ((TreeViewItem)TVI.Items[0]).Tag == null))
             {
                 SetTreeNodeItemChilds(TVI);
@@ -589,6 +601,30 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     {
                         GetNodeChilds(childTVI, childsList, true);
                     }
+                }
+            }
+        }
+
+        private void GetNodeChilds(ITreeViewItem TVI, List<ITreeViewItem> childsList, bool isRecursive)
+        {
+            if (TVI == null)
+            {
+                return;
+            }
+
+            List<ITreeViewItem> children = TVI.Childrens();
+            if (children == null)
+            {
+                return;
+            }
+            children = new(children);
+
+            foreach (ITreeViewItem childTVI in children)
+            {
+                childsList.Add(childTVI);
+                if (isRecursive)
+                {
+                    GetNodeChilds(childTVI, childsList, true);
                 }
             }
         }
@@ -683,12 +719,31 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             foreach (TreeViewItem tvi in ((TreeViewItem)Tree.Items[0]).Items)
             {
-                if (tvi.Tag is ITreeViewItem)
+                if (tvi.Tag == null || tvi.Tag is not ITreeViewItem)
                 {
-                    return true;
+                    return false;
+                }
+
+                ITreeViewItem itvi = (ITreeViewItem)tvi.Tag;
+                List<ITreeViewItem>? oldChildren = itvi.Childrens();
+                List<ITreeViewItem>? newChildren = itvi.Childrens();
+                if (oldChildren == null || newChildren == null)
+                {
+                    continue;
+                }
+
+                if (oldChildren.Count <= 0 || newChildren.Count <= 0)
+                {
+                    continue;
+                }
+
+                if (oldChildren[0] != newChildren[0])
+                {
+                    return false;
                 }
             }
-            return false;
+
+            return true;
         }
 
         public void FilterItemsByTextNew(string text)

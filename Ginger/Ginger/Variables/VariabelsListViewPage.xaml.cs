@@ -248,6 +248,7 @@ namespace Ginger.BusinessFlowPages
                 {
                     mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
                     mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
+                    mVariabelsListView.xListTitleImage.Width = 24;
                 }
                 mVariabelListHelper = new VariablesListViewHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
                 mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
@@ -290,11 +291,11 @@ namespace Ginger.BusinessFlowPages
                 mVariabelsListView.DataSourceList = null;
             }
         }
-        private void MVariabelListItemInfo_VariabelListItemEvent(VariabelListItemEventArgs EventArgs)
+        private void MVariabelListItemInfo_VariabelListItemEvent(ListItemEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
             {
-                case VariabelListItemEventArgs.eEventType.ShowVariabelEditPage:
+                case ListItemEventArgs.eEventType.ShowEditPage:
                     ShowHideEditPage((VariableBase)EventArgs.EventObject);
                     break;
             }

@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.SourceControlLib;
+using GingerCoreNET.GenAIServices;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
@@ -182,7 +183,9 @@ namespace Ginger
                 }
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
-            }
+                WorkSpace.Instance.UserProfile.PropertyChanged += AskLisaPropertyChanged;
+
+                }
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.ApplicationInitError, ex.Message);
@@ -195,6 +198,46 @@ namespace Ginger
                 {
                     AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
                 }
+            }
+            
+        }
+
+
+        private void AskLisaPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
+                EnableChatBot();
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    EnableChatBot();
+                });
+            }
+
+        }
+
+        private void EnableChatBot()
+        {
+            if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.AskLisaConfiguration.EnableChat == Configurations.AskLisaConfiguration.eEnableChatBot.Yes && WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+            {
+                xChatPanel.Visibility = Visibility.Visible;
+                xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
+            }
+            else
+            {
+                xChatPanel.Visibility = Visibility.Collapsed;
+                xChatbotWindow.IsVisibleChanged -= XChatbotWindow_IsVisibleChanged;
+            }
+        }
+
+        private void XChatbotWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if(xChatbotWindow.Visibility == Visibility.Collapsed && xChatbotIcon.Visibility == Visibility.Collapsed)
+            {
+                xChatbotIcon.Visibility = Visibility.Visible;
             }
         }
 
@@ -289,6 +332,9 @@ namespace Ginger
                 if (WorkSpace.Instance.SolutionLoaded)
                 {
                     WorkSpace.Instance.SolutionRepository.ModifiedFiles.CollectionChanged += ModifiedFilesChanged;
+                    EnableChatBot();
+                    WorkSpace.Instance.Solution.AskLisaConfiguration.PropertyChanged += AskLisaPropertyChanged;
+                    
                 }
             }
 
@@ -304,6 +350,7 @@ namespace Ginger
                 }
             }
         }
+
 
         private void SetRecentSolutionsAsMenuItems()
         {
@@ -627,6 +674,16 @@ namespace Ginger
                     xSolutionSourceControlInitMenuItem.Visibility = Visibility.Visible;
                     xSolutionSourceControlSetMenuItem.Visibility = Visibility.Collapsed;
                 }
+
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    xChatbotIcon.Visibility = Visibility.Visible;
+                }
+                else 
+                {
+                    xChatbotIcon.Visibility = Visibility.Collapsed;
+                }
+                xChatbotWindow.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -1162,6 +1219,7 @@ namespace Ginger
                 imageMaker.SetAsFontImageWithSize = 16;
                 imageMaker.ImageType = iconType;
                 subMenuItem.Icon = imageMaker;
+                imageMaker.Margin = new Thickness(5,0,-5,0);
             }
             parentMenuItem.Items.Insert(insertIndex, subMenuItem);
         }
@@ -1645,6 +1703,43 @@ namespace Ginger
                 mLaunchInAdminMode = true;
                 mRestartApplication = true;
                 App.MainWindow.Close();
+            }
+        }
+
+        private void ChatbotIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if(xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
+            }
+            
+        }
+
+        private void xChatbotIcon_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void xChatbotIcon_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void xChatbotIcon_Click(object sender, RoutedEventArgs e)
+        {
+            if (xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
             }
         }
     }

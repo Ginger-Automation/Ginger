@@ -129,7 +129,10 @@ namespace GingerCore
         public CancellationTokenSource CTS = null;
         BackgroundWorker CancelTask;
 
-
+        public DriverBase CreateDriverInstance()
+        {
+            return (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(Agent);
+        }
 
         public async void StartDriver()
         {
@@ -155,7 +158,7 @@ namespace GingerCore
                         }
                         else
                         {
-                            Driver = (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(Agent);
+                            Driver = CreateDriverInstance();
                         }
                     }
                     catch (Exception e)
@@ -196,7 +199,14 @@ namespace GingerCore
                             CTS = new CancellationTokenSource();
                             MSTATask = new Task(() =>
                             {
-                                Driver.StartDriver();
+                                try
+                                {
+                                    Driver.StartDriver();
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred! While Trying to Communicate with the {Agent.AgentType} Agent {Agent.Name}. Please try checking your Agent Configurations!", ex);
+                                }
                             }
                             , CTS.Token, TaskCreationOptions.LongRunning);
                             MSTATask.Start();
@@ -853,7 +863,7 @@ namespace GingerCore
                 Counter++;
 
                 int waitingTime = 30;// 30 seconds
-                if (Driver.DriverLoadWaitingTime > 0)
+                if (Driver != null && Driver.DriverLoadWaitingTime > 0)
                 {
                     waitingTime = Driver.DriverLoadWaitingTime;
                 }

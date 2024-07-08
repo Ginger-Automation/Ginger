@@ -207,6 +207,8 @@ namespace Ginger.WindowExplorer
 
                 if (elemInfo != null)
                 {
+                    elemInfo.SetLocatorsAndPropertiesCategory(((DriverBase)mWindowExplorerDriver).PomCategory);
+
                     mCurrentControlTreeViewItem = GetTreeViewItemForElementInfo(elemInfo);
                     ShowCurrentControlInfo();
                 }
@@ -228,6 +230,8 @@ namespace Ginger.WindowExplorer
 
                 if (elemInfo != null)
                 {
+                    elemInfo.SetLocatorsAndPropertiesCategory(((DriverBase)mWindowExplorerDriver).PomCategory);
+
                     mCurrentControlTreeViewItem = GetTreeViewItemForElementInfo(elemInfo);
                     ShowCurrentControlInfo();
                 }
@@ -550,7 +554,7 @@ namespace Ginger.WindowExplorer
                     AFTI.Path = AW.Path;
                     InitTree(AFTI);
                     break;
-                case AppWindow.eWindowType.SeleniumWebPage:
+                case AppWindow.eWindowType.WebPage:
                     HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
                     HTMLElementInfo EI = new HTMLElementInfo();
                     EI.ElementTitle = AW.Title;
@@ -1273,6 +1277,8 @@ namespace Ginger.WindowExplorer
                 ElementInfo inspectElementInfo = await ((IVisualTestingDriver)((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver).GetElementAtPoint(pointOnAppScreen.X, pointOnAppScreen.Y);
                 if (inspectElementInfo != null && inspectElementInfo != currentHighlightedElement)
                 {
+                    inspectElementInfo.SetLocatorsAndPropertiesCategory(((DriverBase)mWindowExplorerDriver).PomCategory);
+
                     //mark the element bounds on image
                     DrawElementRectangleAsync(inspectElementInfo);
 

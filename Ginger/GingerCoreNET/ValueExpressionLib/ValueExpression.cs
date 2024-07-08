@@ -237,6 +237,8 @@ namespace GingerCore
                 ProcessGeneralFuncations();
                 EvaluateFlowDetails();
                 EvaluateCSharpFunctions();
+                EvaluateBogusDataGenrateFunctions();
+
             }
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
@@ -543,6 +545,11 @@ namespace GingerCore
             mValueCalculated = CodeProcessor.GetResult(mValueCalculated);
         }
 
+        private void EvaluateBogusDataGenrateFunctions()
+        {
+            mValueCalculated = CodeProcessor.GetBogusDataGenerateresult(mValueCalculated);
+        }
+
         private void ReplaceGlobalParameters()
         {
             MatchCollection matches = rxGlobalParamPattern.Matches(mValueCalculated);
@@ -603,6 +610,44 @@ namespace GingerCore
             if (matchesRegEx.Count > 0) { return true; }
             MatchCollection matcheVBS = VBSRegex.Matches(VE);
             if (matcheVBS.Count > 0) { return true; }
+
+            return false;
+        }
+        /// <summary>
+        /// This function checks if the string is a value expression of any kind
+        /// </summary>
+        /// <param name="VE">String that is possibly a value expression</param>
+        /// <returns></returns>
+        public static bool IsThisAValueExpression(string VE)
+        {
+            if (string.IsNullOrEmpty(VE))
+            {
+                return false;
+            }
+
+            if (IsThisDynamicVE(VE))
+            {
+                return true;
+            }
+
+            if(VE.Contains("{CS Exp="))
+            {
+                return true;
+            }
+
+            MatchCollection functionMatches = rNestedfunc.Matches(VE);
+
+            if(functionMatches.Count > 0)
+            {
+                return true;
+            }
+
+            MatchCollection FDObjectMatches = rxFDPattern.Matches(VE);
+
+            if(FDObjectMatches.Count > 0)
+            {
+                return true;
+            }
 
             return false;
         }
@@ -1722,6 +1767,10 @@ namespace GingerCore
             else if (mValueCalculated.Contains(@"{CS"))
             {
                 return true;
+            }
+            else if(mValueCalculated.Contains(@"{MockDataExp")) 
+            { 
+                return true; 
             }
             return false;
         }

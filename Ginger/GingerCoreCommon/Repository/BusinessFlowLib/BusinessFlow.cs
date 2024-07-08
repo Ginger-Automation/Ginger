@@ -37,14 +37,17 @@ using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.CodeAnalysis;
+using System.Diagnostics;
+using Ginger.Run;
 namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
     {
-
+        private Stopwatch _stopwatch;
         public BusinessFlow()
         {
             AllowAutoSave = true;
+            this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
         }
 
         public BusinessFlow(string sName)
@@ -61,6 +64,16 @@ namespace GingerCore
             Activities.CurrentItem = a;
             CurrentActivity = a;
             AllowAutoSave = true;
+
+            this.OnDirtyStatusChanged += BusinessFlow_OnDirtyStatusChanged;
+        }
+
+        private void BusinessFlow_OnDirtyStatusChanged(object sender, EventArgs e)
+        {
+            if (DirtyStatus == eDirtyStatus.Modified)
+            {
+                StartTimer();
+            }
         }
 
         public override string ToString()
@@ -104,6 +117,51 @@ namespace GingerCore
 
         public List<string> VariablesBeforeExec { get; set; }
 
+        private TimeSpan mDevelopmentTime;
+        [IsSerializedForLocalRepository]
+        public TimeSpan DevelopmentTime
+        {
+            get
+            {
+                StopTimer();
+                return mDevelopmentTime;
+            }
+            set
+            {
+                if (mDevelopmentTime != value)
+                {
+                    mDevelopmentTime = value;
+                }
+            }
+        }
+      
+        public void StartTimer()
+        {
+            if (_stopwatch == null)
+            {
+                _stopwatch = new Stopwatch();
+            }
+
+            if (!_stopwatch.IsRunning)
+            {
+                _stopwatch.Start();
+            }
+            else
+            {
+                _stopwatch.Restart();
+            }
+        }
+
+        public void StopTimer()
+        {
+            if (_stopwatch != null && _stopwatch.IsRunning)
+            {
+                _stopwatch.Stop();
+                TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
+                DevelopmentTime = DevelopmentTime.Add(elapsedTime);
+                _stopwatch.Reset();
+            }
+        }
 
         // Why here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public List<string> SolutionVariablesBeforeExec { get; set; }
@@ -344,6 +402,20 @@ namespace GingerCore
                 if (this.DirtyStatus != eDirtyStatus.NoTracked)
                 {
                     this.TrackObservableList(mActivities);
+                }
+
+                IEnumerable<string> distinctTargetApp =  mActivities.Select((activity) => activity.TargetApplication).Distinct();
+
+                for(int indx=0; indx < TargetApplications.Count;)
+                {
+                    if (!distinctTargetApp.Contains(TargetApplications[indx].Name))
+                    {
+                        TargetApplications.RemoveAt(indx);
+                    }
+                    else
+                    {
+                        indx++;
+                    }
                 }
             }
         }
@@ -1118,6 +1190,7 @@ namespace GingerCore
                         copyItem.ActivitiesGroupID = this.Activities[i].ActivitiesGroupID;
                         copyItem.Type = this.Activities[i].Type;
                         copyItem.Active = this.Activities[i].Active;
+                        copyItem.DevelopmentTime = this.Activities[i].DevelopmentTime;
                         this.Activities[i] = copyItem;
                     }
                     else
@@ -1363,12 +1436,6 @@ namespace GingerCore
                         messageToUser = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to selected {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}. Ginger will map the {GingerDicser.GetTermResValue(eTermResKey.Activity)}'s {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}.{System.Environment.NewLine} ";
                     }
 
-                    if (consumerApplicationsGUIDs.Count > 0 &&
-                         consumerApplicationsGUIDs.Any(ca => !TargetApplications.Any(ta => ta.ParentGuid.Equals(ca))))
-                    {
-                        messageToUser += $"Selected Consumers in activity is not present in the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}, Ginger will add. ";
-
-                    }
                     if (silently)
                     {
                         userSelection = eUserMsgSelection.OK;
@@ -1387,40 +1454,10 @@ namespace GingerCore
                     {
                         this.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName, TargetGuid = appAgent.Guid });
                     }
-
-                    if (consumerApplicationsGUIDs.Count > 0 &&
-                                             consumerApplicationsGUIDs.Any(ca => !TargetApplications.Any(ta => ta.ParentGuid.Equals(ca))))
-                    {
-                        MapCAToBF(activityIns, ApplicationPlatforms);
-                    }
                 }
             }
 
             return userSelection;
-        }
-
-        /// <summary>
-        /// Adds the consumer application related TA in the business flow for shared repository
-        /// </summary>
-        /// <param name="activityIns"></param>
-        /// <param name="ApplicationPlatforms"></param>
-        public void MapCAToBF(Activity activityIns, ObservableList<ApplicationPlatform> ApplicationPlatforms)
-        {
-            foreach (var consumerPlat in activityIns.ConsumerApplications)
-            {
-                // Get the corresponding TargetApplication for the consumerGuid
-                TargetBase targetApp = GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications()
-                    .FirstOrDefault(app => Guid.Equals(app.Guid, consumerPlat.ConsumerGuid));
-
-                if (targetApp != null && !TargetApplications.Any(app => app.ParentGuid == targetApp.Guid))
-                {
-                    this.TargetApplications.Add(new TargetApplication() { AppName = targetApp.Name, TargetGuid = targetApp.Guid });
-                }
-                else
-                {
-                    continue;
-                }
-            }
         }
 
         public object GetValidationsStat(ref bool isValidaionsExist)

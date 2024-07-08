@@ -416,6 +416,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
+                
                 CurrentItemToSave = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
@@ -544,6 +545,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (mActivity != null)
             {
                 PropertyChangedEventManager.RemoveHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
+                mActivity.StopTimer();
             }
             mActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
 
@@ -560,7 +562,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             UpdateContextWithActivityDependencies();
-
+            OnTargetApplicationChanged(null, null);
             SetActivityEditPage();
         }
 
@@ -646,24 +648,24 @@ namespace GingerWPF.BusinessFlowsLib
 
 
             // Create a list to store the items to be removed
-            List<TargetBase> agentsToRemove = [];
+            List<TargetBase> TargetApplicationsToRemove = [];
             var userTA = mBusinessFlow.Activities.Select(f => f.TargetApplication);
 
-            // Iterate through the ApplicationAgents
+            // Iterate through the Business Flow Target Application
             foreach (var existingTargetApp in mBusinessFlow.TargetApplications.OfType<TargetApplication>())
             {
-                // Check if the existing agent is not present in mBusinessFlow.TargetApplications
+                // Check if the existing target application is not present in mBusinessFlow.TargetApplications
                 if (!userTA.Contains((existingTargetApp as TargetApplication).AppName))
                 {
                     // If not present, add to the removal list
-                    agentsToRemove.Add(existingTargetApp);
+                    TargetApplicationsToRemove.Add(existingTargetApp);
                 }
             }
 
-            // Remove the agents from mExecutionEngine.GingerRunner.ApplicationAgents
-            foreach (var agentToRemove in agentsToRemove)
+            // Remove the target applications from mBusinessFlow.TargetApplications
+            foreach (var TargetAppToRemove in TargetApplicationsToRemove)
             {
-                mBusinessFlow.TargetApplications.Remove(agentToRemove);
+                mBusinessFlow.TargetApplications.Remove(TargetAppToRemove);
             }
 
         }
@@ -980,7 +982,7 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         AnalyzerPage analyzerPage = new AnalyzerPage();
 
-                        analyzerPage.Init(mBusinessFlow, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
+                        analyzerPage.Init(mBusinessFlow, solution: null, mExecutionEngine.GingerRunner.ApplicationAgents, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
                         await analyzerPage.AnalyzeWithoutUI();
                         Reporter.HideStatusMessage();
                         if (analyzerPage.TotalHighAndCriticalIssues > 0)
@@ -1588,7 +1590,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             AnalyzerPage AP = new AnalyzerPage();
-            AP.Init(mBusinessFlow);
+            AP.Init(mBusinessFlow, solution: null, mExecutionEngine.GingerRunner.ApplicationAgents);
             AP.ShowAsWindow();
         }
 

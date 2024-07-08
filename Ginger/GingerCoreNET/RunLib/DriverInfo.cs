@@ -117,11 +117,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             if (platformType == ePlatformType.Web)
             {
-                DI.services.Add(Agent.eDriverType.SeleniumChrome);
-                DI.services.Add(Agent.eDriverType.SeleniumFireFox);
-                DI.services.Add(Agent.eDriverType.SeleniumEdge);
-                DI.services.Add(Agent.eDriverType.SeleniumIE);
-                DI.services.Add(Agent.eDriverType.SeleniumRemoteWebDriver);
+                DI.services.Add(Agent.eDriverType.Selenium);
+                DI.services.Add(Agent.eDriverType.Playwright);
                 DI.services.Add(Agent.eDriverType.InternalBrowser);
             }
             else if (platformType == ePlatformType.Java)

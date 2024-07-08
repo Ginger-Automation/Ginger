@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -42,5 +42,6 @@ namespace GingerCore.Environments
         string GetRecordCount(string SQL);
         bool MakeSureConnectionIsOpen();
         void SplitUserIdPassFromTNS();
+        bool IsPassValueExp();
     }
 }

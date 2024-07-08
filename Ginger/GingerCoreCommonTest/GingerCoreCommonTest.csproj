@@ -24,10 +24,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
+    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="TestResources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\GingerCoreCommon\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
 </Project>

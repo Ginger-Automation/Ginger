@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.GeneralLib;
@@ -52,9 +53,9 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -99,16 +100,10 @@ namespace Ginger
 
             switch (zAgent.DriverType)
             {
-                case eDriverType.SeleniumFireFox:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.FireFox);
-                case eDriverType.SeleniumChrome:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Chrome);
-                case eDriverType.SeleniumIE:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.IE);
-                case eDriverType.SeleniumRemoteWebDriver:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
-                case eDriverType.SeleniumEdge:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
+                case eDriverType.Selenium:
+                    return new SeleniumDriver();
+                case eDriverType.Playwright:
+                    return new PlaywrightDriver();
 
                 case eDriverType.Appium:
                     return new GenericAppiumDriver(zAgent.BusinessFlow);
@@ -147,12 +142,10 @@ namespace Ginger
             {
                 case eDriverType.InternalBrowser:
                     return (typeof(InternalBrowser));
-                case eDriverType.SeleniumFireFox:
-                case eDriverType.SeleniumChrome:
-                case eDriverType.SeleniumIE:
-                case eDriverType.SeleniumRemoteWebDriver:
-                case eDriverType.SeleniumEdge:
+                case eDriverType.Selenium:
                     return (typeof(SeleniumDriver));
+                case eDriverType.Playwright:
+                    return typeof(PlaywrightDriver);
                 case eDriverType.ASCF:
                     return (typeof(ASCFDriver));
                 case eDriverType.DOSConsole:
@@ -413,7 +406,7 @@ namespace Ginger
                         xAxis = 140;
                     }
                     graphicImage.DrawString(yList.Sum().ToString(), new Font("sans-serif", 9, FontStyle.Bold), myBrush1, new System.Drawing.Point(xAxis, 91));
-                    bitMapImage.Save(Path.Combine(tempFolder, chartName), ImageFormat.Jpeg);
+                    bitMapImage.Save(Path.Combine(tempFolder, chartName), System.Drawing.Imaging.ImageFormat.Jpeg);
                 }
             }
         }
@@ -426,7 +419,7 @@ namespace Ginger
             {
                 Directory.CreateDirectory(tempFolder);
             }
-            CustomerLogo.Save(Path.Combine(tempFolder,"CustomerLogo.png"));
+            CustomerLogo.Save(Path.Combine(tempFolder, "CustomerLogo.png"));
             HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
         }
 
@@ -452,7 +445,7 @@ namespace Ginger
 
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
-           return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, eALMConnectType.Silence);
+            return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, eALMConnectType.Silence);
         }
 
         public ITextBoxFormatter CreateTextBoxFormatter(object Textblock)
@@ -595,6 +588,66 @@ namespace Ginger
         public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, PublishToALMConfig publishToALMConfig, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             return ALMIntegration.Instance.ExportVirtualBusinessFlowToALM(businessFlow, publishToALMConfig, performSaveAfterExport, almConnectStyle, testPlanUploadPath, testLabUploadPath);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public string ScreenName(int screenIndex)
+        {
+            return GingerCore.General.ScreenName(screenIndex);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public int ScreenCount()
+        {
+            return GingerCore.General.ScreenCount();
+        }
+
+        [SupportedOSPlatform("windows")]
+        public int PrimaryScreenIndex()
+        {
+            return GingerCore.General.PrimaryScreenIndex();
+        }
+
+        [SupportedOSPlatform("windows")]
+        public void Save(string filepath, byte[] image, ImageFormat format)
+        {
+            GingerCore.General.Save(filepath, image, format);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public Size ScreenSize(int screenIndex)
+        {
+            return GingerCore.General.ScreenSize(screenIndex);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public Point ScreenPosition(int screenIndex)
+        {
+            return GingerCore.General.ScreenPosition(screenIndex);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public Point TaskbarPosition(int screenIndex)
+        {
+            return GingerCore.General.TaskbarPosition(screenIndex);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public Size TaskbarSize(int screenIndex)
+        {
+            return GingerCore.General.TaskbarSize(screenIndex);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public byte[] Capture(Point position, Size size, ImageFormat format)
+        {
+            return GingerCore.General.Capture(position, size, format);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public byte[] MergeVertically(IEnumerable<byte[]> images, ImageFormat format)
+        {
+            return GingerCore.General.MergeVertically(images, format);
         }
     }
 }

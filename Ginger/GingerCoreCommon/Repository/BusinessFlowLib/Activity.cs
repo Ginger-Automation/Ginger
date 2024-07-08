@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -79,6 +80,8 @@ namespace GingerCore
     // The activities can come from external like: QC TC Step, vStorm    
     public class Activity : RepositoryItemBase
     {
+        private Stopwatch _stopwatch;
+
         bool mSelectedForConversion;
         public bool SelectedForConversion
         {
@@ -127,11 +130,73 @@ namespace GingerCore
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
             Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
+            this.OnDirtyStatusChanged += Activity_OnDirtyStatusChanged;
         }
+
+        private void Activity_OnDirtyStatusChanged(object sender, EventArgs e)
+        {
+            if (DirtyStatus == eDirtyStatus.Modified)
+            {
+                StartTimer();
+            }
+        }
+
 
         public override string ToString()
         {
             return ActivityName;
+        }
+
+        private TimeSpan mDevelopmentTime;
+        [IsSerializedForLocalRepository]
+        public TimeSpan DevelopmentTime
+        {
+            get
+            {
+                StopTimer();
+                return mDevelopmentTime;
+            }
+            set
+            {
+                if (mDevelopmentTime != value)
+                {
+                    mDevelopmentTime = value;
+                }
+            }
+        }
+
+        public void StartTimer()
+        {
+            if (_stopwatch == null)
+            {
+                _stopwatch = new Stopwatch();
+            }
+
+            if (!_stopwatch.IsRunning)
+            {
+                _stopwatch.Start();
+            }
+            else
+            {
+                _stopwatch.Restart();
+            }
+        }
+
+        public void StopTimer()
+        {
+            if (_stopwatch != null && _stopwatch.IsRunning)
+            {
+                _stopwatch.Stop();
+                TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
+                DevelopmentTime = DevelopmentTime.Add(elapsedTime);
+                _stopwatch.Reset();
+            }
+        }
+
+        public static void StopAndResetTimer(Activity act)
+        {
+            act.DevelopmentTime = TimeSpan.Zero;
+            act.StopTimer();
         }
 
         private bool mLinkedActive = true;
@@ -171,7 +236,7 @@ namespace GingerCore
                 }
                 if (mActive != value)
                 {
-                    mActive = value; 
+                    mActive = value;
                     OnPropertyChanged(nameof(Active));
                 }
             }
@@ -520,8 +585,8 @@ namespace GingerCore
                 {
                     mConsumerApplications = value;
                     OnPropertyChanged(nameof(ConsumerApplications));
-                }       
-             }
+                }
+            }
         }
 
         [IsSerializedForLocalRepository]
@@ -854,6 +919,7 @@ namespace GingerCore
         {
             Activity copy = (Activity)srActivity.CreateInstance(originFromSharedRepository, setNewGUID: false);
             copy.Guid = Guid.NewGuid();
+            StopAndResetTimer(copy);
             List<KeyValuePair<Guid, Guid>> oldNewActionGuidList = [];
             foreach (Act action in copy.Acts.Cast<Act>())
             {
@@ -866,7 +932,7 @@ namespace GingerCore
                 variable.ParentGuid = variable.Guid;
                 variable.Guid = Guid.NewGuid();
             }
-            foreach(FlowControl fc in copy.Acts.SelectMany(a => a.FlowControls))
+            foreach (FlowControl fc in copy.Acts.SelectMany(a => a.FlowControls))
             {
                 Guid targetGuid = fc.GetGuidFromValue();
                 if (oldNewActionGuidList.Any(oldNew => oldNew.Key == targetGuid))
@@ -878,25 +944,36 @@ namespace GingerCore
             return copy;
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extradetails=null)
         {
+            
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
             Activity newInstance = null;
 
             if (activityInstance.Type == eSharedItemType.Link)
             {
+
                 newInstance = CopySharedRepositoryActivity(this, originFromSharedRepository: true);
                 newInstance.Guid = activityInstance.Guid;
                 newInstance.ActivitiesGroupID = activityInstance.ActivitiesGroupID;
                 newInstance.Type = activityInstance.Type;
                 newInstance.Active = activityInstance.Active;
+
+                if(newInstance.Guid == this.Guid)
+                {
+                    newInstance.DevelopmentTime = newInstance.DevelopmentTime.Add(this.DevelopmentTime);
+                }
+                else
+                {
+                    newInstance.DevelopmentTime = activityInstance.DevelopmentTime;
+                }
+
                 if (hostItem != null)
                 {
                     //replace old instance object with new
                     int originalIndex = ((BusinessFlow)hostItem).Activities.IndexOf(activityInstance);
-                    ((BusinessFlow)hostItem).Activities.Remove(activityInstance);
-                    ((BusinessFlow)hostItem).Activities.Insert(originalIndex, newInstance);
+                    ((BusinessFlow)hostItem).Activities.ReplaceItem(originalIndex, newInstance);
                 }
                 return;
             }

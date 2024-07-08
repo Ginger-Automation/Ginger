@@ -30,10 +30,10 @@ using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.DataSource;
-using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -41,14 +41,12 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static GingerCore.General;
@@ -367,6 +365,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xMainElementsGrid.ShowDelete = Visibility.Collapsed;
 
                 xMainElementsGrid.AddToolbarTool(eImageType.DataSource, "Export Possible Values to DataSource", new RoutedEventHandler(ExportPossibleValuesToDataSource));
+                xMainElementsGrid.AddToolbarTool(eImageType.Merge, "Merge Selected Elements", new RoutedEventHandler(MergeSelectedElements));
             }
             else
             {
@@ -410,6 +409,43 @@ namespace Ginger.ApplicationModelsLib.POMModels
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while exporting POM optional Values to Data Source", ex);
+            }
+        }
+
+        /// <summary>
+        /// Merge 2 selected elements
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MergeSelectedElements(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (xMainElementsGrid.Grid.SelectedItems.Count == 2)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, string.Format("Are you sure you want to perform merge of selected elements?" + Environment.NewLine + Environment.NewLine + "Note: '{0}' element will be deleted post merge.", ((ElementInfo)xMainElementsGrid.Grid.SelectedItems[1]).ItemName)) == eUserMsgSelection.Yes)
+                    {
+                        xMainElementsGrid.Grid.CommitEdit();
+
+                        ElementInfo firstElement = (ElementInfo)xMainElementsGrid.Grid.SelectedItems[0];
+                        ElementInfo secondElement = (ElementInfo)xMainElementsGrid.Grid.SelectedItems[1];
+
+                        PomDeltaUtils.MergeElements(firstElement, secondElement);
+
+                        mPOM.MappedUIElements.Remove(secondElement);
+
+                        xMainElementsGrid.Grid.SelectedItem = firstElement;
+                        xMainElementsGrid.ScrollToViewCurrentItem();
+                    }
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select 2 elements to merge");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while merging POM elements", ex);
             }
         }
 
@@ -565,7 +601,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
             defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xLocateValueVETemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xCopyLocatorButtonTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Visible = isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Visible = isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });            
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Category), Header = nameof(ElementLocator.Category), WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GetPossibleCategories(), BindingMode = BindingMode.TwoWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
@@ -580,6 +617,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
             
             
             xElementDetails.xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
+        }
+
+        private List<ComboEnumItem> GetPossibleCategories()
+        {
+            ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+            List<ePomElementCategory> categoriesList= PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
+
+            List<ComboEnumItem> elementStatus = new List<ComboEnumItem>();
+            foreach (ePomElementCategory category in categoriesList)
+            {
+                elementStatus.Add(new ComboEnumItem() { text = category.ToString(), Value = category });
+            }        
+            return elementStatus;
         }
 
         private List<ComboEnumItem> GetPositionList()

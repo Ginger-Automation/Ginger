@@ -580,5 +580,9 @@ namespace Ginger.SolutionGeneral
                 this.SealightsConfiguration.SealightsTestStage = this.LoggerConfigurations.SealightsTestStage;
             }
         }
+
+
+        [IsSerializedForLocalRepository]
+        public AskLisaConfiguration AskLisaConfiguration { get; set; } = new AskLisaConfiguration();
     }
 }

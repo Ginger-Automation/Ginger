@@ -1106,7 +1106,7 @@ namespace GingerCore.SourceControl
                 }
                 else
                 {
-                    if (SourceControlUser.Length != 0)
+                    if (SourceControlUser != null && SourceControlUser.Length != 0)
                     {
                         CredentialsHandler credentialsHandler = GetSourceCredentialsHandler();
                         IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, credentialsHandler);
@@ -1366,25 +1366,72 @@ namespace GingerCore.SourceControl
 
         public override ObservableList<SourceControlChangesetDetails> GetUnpushedLocalCommits()
         {
-            using (var repo = new Repository(RepositoryRootFolder))
+            try
             {
-                var localBranch = repo.Branches[SourceControlBranch];
-                var trackingBranch = localBranch.TrackedBranch;
-
-                var filter = new CommitFilter
+                using (var repo = new Repository(RepositoryRootFolder))
                 {
-                    IncludeReachableFrom = localBranch.Tip,
-                    ExcludeReachableFrom = trackingBranch.Tip
-                };
+                    var localBranch = repo.Branches[SourceControlBranch];
+                    var trackingBranch = localBranch.TrackedBranch;
 
-                var unpushedCommits = repo.Commits.QueryBy(filter).ToList();
-                ObservableList<SourceControlChangesetDetails> commits = new ObservableList<SourceControlChangesetDetails>();
-                foreach (var commit in unpushedCommits)
-                {
-                    commits.Add(new SourceControlChangesetDetails() { Author = commit.Committer.Name, Date = commit.Committer.When, ID = commit.Id.Sha, Message = commit.MessageShort });
+                    var filter = new CommitFilter
+                    {
+                        IncludeReachableFrom = localBranch.Tip,
+                        ExcludeReachableFrom = trackingBranch.Tip
+                    };
+
+                    var unpushedCommits = repo.Commits.QueryBy(filter).ToList();
+                    ObservableList<SourceControlChangesetDetails> commits = new ObservableList<SourceControlChangesetDetails>();
+                    foreach (var commit in unpushedCommits)
+                    {
+                        commits.Add(new SourceControlChangesetDetails() { Author = commit.Committer.Name, Date = commit.Committer.When, ID = commit.Id.Sha, Message = commit.MessageShort });
+                    }
+
+                    return commits;
                 }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to unpushed local commit",ex);
+                return new ObservableList<SourceControlChangesetDetails>(); ;
+            }
+            
+        }
+        
 
-                return commits;
+        public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
+        {
+            try
+            {
+                using (var repo = new Repository(RepositoryRootFolder))
+                {
+                    List<string> filesPathsToUndo = [];
+                    foreach (var file in selectedFiles)
+                    {
+                        if (file.Status == SourceControlFileInfo.eRepositoryItemStatus.New)
+                        {
+                            if (File.Exists(file.Path))
+                            {
+                                File.Delete(file.Path);
+                            }
+                        }
+                        else if (file.Status == SourceControlFileInfo.eRepositoryItemStatus.Modified ||
+                                 file.Status == SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved ||
+                                 file.Status == SourceControlFileInfo.eRepositoryItemStatus.Deleted)
+                        {
+                            filesPathsToUndo.Add(file.Path);
+                        }
+                    }
+                    if (filesPathsToUndo.Count > 0)
+                    {
+                        CheckoutOptions options = new CheckoutOptions() { CheckoutModifiers = CheckoutModifiers.Force };
+                        repo.Checkout(repo.Head.Tip.Tree, filesPathsToUndo, options);
+                    }
+                    return true;
+                }
+            } catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Undo Changes", ex);
+                return false;
             }
         }
 

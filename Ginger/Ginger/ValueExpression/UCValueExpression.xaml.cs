@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Applitools;
 using GingerCore;
 using System;
 using System.Windows;
@@ -61,7 +62,21 @@ namespace Ginger.BusinessFlowWindows
             mContext = context;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
         }
+        public void SetBrowserBtn(eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
+        {
+            mBrowserType = browserType;
+            LastCol.Width = new GridLength(55);
+            BrowseButton.Visibility = Visibility.Visible;
+            this.fileType = fileType;
 
+            BrowseButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(BrowseButton_Click));
+
+            if (extraBrowserSelectionHandler != null)
+            {
+                BrowseButton.Click += extraBrowserSelectionHandler;
+            }
+
+        }
         public void Init(Context context, object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
         {
             this.obj = obj;
@@ -71,17 +86,7 @@ namespace Ginger.BusinessFlowWindows
 
             if (isBrowseNeeded)
             {
-                mBrowserType = browserType;
-                LastCol.Width = new GridLength(55);
-                BrowseButton.Visibility = Visibility.Visible;
-                this.fileType = fileType;
-
-                BrowseButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(BrowseButton_Click));
-
-                if (extraBrowserSelectionHandler != null)
-                {
-                    BrowseButton.Click += extraBrowserSelectionHandler;
-                }
+                SetBrowserBtn(browserType, fileType, extraBrowserSelectionHandler);
             }
 
             if (!isVENeeded)
@@ -129,6 +134,11 @@ namespace Ginger.BusinessFlowWindows
         public void AdjustHight(int hight)
         {
             Row.Height = new GridLength(hight);
+        }
+
+        public void HideBrowserBTN()
+        {
+            BrowseButton.Visibility = Visibility.Collapsed;
         }
 
         public bool IsReadOnly

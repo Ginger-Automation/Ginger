@@ -20,11 +20,13 @@ using ACL_Data_Contract;
 using ACL_Data_Contract.Abstraction;
 using ALM_CommonStd.DataContracts;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using GingerCoreNET.GeneralLib;
 using Newtonsoft.Json;
 using RQMExportStd.ExportBLL;
 using System;
@@ -534,12 +536,20 @@ namespace GingerCore.ALM.RQM
                 exeResult.ExecutionRecordExportID = exeRecordId;
                 exeResult.StartDate = businessFlow.StartTimeStamp.ToString("o");
                 exeResult.EndDate = businessFlow.EndTimeStamp.ToString("o");
-                if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
+                if (publishToALMConfig.ToExportReportLink)
                 {
-                    exeResult.HtmlReportUrl = publishToALMConfig.HtmlReportUrl;
-                    exeResult.ExecutionId = publishToALMConfig.ExecutionId;
-                    exeResult.ExecutionInstanceId = businessFlow.InstanceGuid.ToString();
+                    if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
+                    {
+                        if (publishToALMConfig.HtmlReportUrl.Last() != '/')
+                        {
+                            publishToALMConfig.HtmlReportUrl = $"{publishToALMConfig.HtmlReportUrl}/";
+                        }
+                        exeResult.HtmlReportUrl = publishToALMConfig.HtmlReportUrl;
+                        exeResult.ExecutionId = publishToALMConfig.ExecutionId;
+                        exeResult.ExecutionInstanceId = businessFlow.InstanceGuid.ToString();
+                    }
                 }
+              
                 int i = 1;
                 StringBuilder errors;
                 var relevantActivities = businessFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.FileName);

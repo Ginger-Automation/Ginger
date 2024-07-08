@@ -904,10 +904,13 @@ namespace Amdocs.Ginger.Repository
             string containingFolder = string.Empty;
             try
             {
-                int startIndx = this.FileName.ToUpper().IndexOf(this.ObjFolderName.ToUpper());
-                int endIndx = this.FileName.LastIndexOf('\\');
-                if (endIndx > startIndx)
-                    containingFolder = this.FileName.Substring(startIndx, endIndx - startIndx) + "\\";
+                if (!string.IsNullOrWhiteSpace(this.FileName))
+                {
+                    int startIndx = this.FileName.ToUpper().IndexOf(this.ObjFolderName.ToUpper());
+                    int endIndx = this.FileName.LastIndexOf('\\');
+                    if (endIndx > startIndx)
+                        containingFolder = this.FileName.Substring(startIndx, endIndx - startIndx) + "\\";
+                }
                 return containingFolder;
             }
             catch (Exception ex)
@@ -1041,7 +1044,7 @@ namespace Amdocs.Ginger.Repository
                         // check that path is really valid path to a file contaning both drive at the start & a target with extension, also in order to keep the list unique, check if the value has already been added to the list.
                         if (!String.IsNullOrEmpty(FilePath) && Path.IsPathFullyQualified(FilePath) && !GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Contains(this))
                         {
-                            GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Add(this);
+                            GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Add(this); 
                         }
                     }
                     OnPropertyChanged(nameof(DirtyStatus));

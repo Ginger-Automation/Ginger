@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Reports;
@@ -1374,6 +1375,168 @@ namespace GingerCore
             }
             return false;
 
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static int ScreenCount()
+        {
+            return System.Windows.Forms.Screen.AllScreens.Length;
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static int PrimaryScreenIndex()
+        {
+            for (int index = 0; index < ScreenCount(); index++)
+            {
+                if (System.Windows.Forms.Screen.AllScreens[index].Primary)
+                {
+                    return index;
+                }
+            }
+            return -1;
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static string ScreenName(int screenIndex)
+        {
+            if (screenIndex < 0 || screenIndex >= ScreenCount())
+            {
+                throw new ArgumentOutOfRangeException(nameof(screenIndex));
+            }
+            return System.Windows.Forms.Screen.AllScreens[screenIndex].DeviceName;
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static System.Drawing.Size ScreenSize(int screenIndex)
+        {
+            if (screenIndex < 0 || screenIndex >= ScreenCount())
+            {
+                throw new ArgumentOutOfRangeException(nameof(screenIndex));
+            }
+            return System.Windows.Forms.Screen.AllScreens[screenIndex].Bounds.Size;
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static System.Drawing.Point ScreenPosition(int screenIndex)
+        {
+            if (screenIndex < 0 || screenIndex >= ScreenCount())
+            {
+                throw new ArgumentOutOfRangeException(nameof(screenIndex));
+            }
+            return System.Windows.Forms.Screen.AllScreens[screenIndex].Bounds.Location;
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static System.Drawing.Point TaskbarPosition(int screenIndex)
+        {
+            if (screenIndex < 0 || screenIndex >= ScreenCount())
+            {
+                throw new ArgumentOutOfRangeException(nameof(screenIndex));
+            }
+            System.Windows.Forms.Screen screen = System.Windows.Forms.Screen.AllScreens[screenIndex];
+            return new System.Drawing.Point(x: 0, y: screen.WorkingArea.Height);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static System.Drawing.Size TaskbarSize(int screenIndex)
+        {
+            if (screenIndex < 0 || screenIndex >= ScreenCount())
+            {
+                throw new ArgumentOutOfRangeException(nameof(screenIndex));
+            }
+            System.Windows.Forms.Screen screen = System.Windows.Forms.Screen.AllScreens[screenIndex];
+            return new System.Drawing.Size(width: screen.Bounds.Width, height: screen.Bounds.Height - screen.WorkingArea.Height);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static byte[] Capture(System.Drawing.Point position, System.Drawing.Size size, ImageFormat format)
+        {
+            Bitmap image = new(size.Width, size.Height);
+            
+            using Graphics graphics = Graphics.FromImage(image);
+            System.Drawing.Point upperLeftSource = new(position.X, position.Y);
+            System.Drawing.Point uppderLeftDestination = new(x: 0, y: 0);
+            graphics.CopyFromScreen(upperLeftSource, uppderLeftDestination, image.Size);
+
+            return BitmapToBytes(image, format);
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static byte[] MergeVertically(IEnumerable<byte[]> images, ImageFormat format)
+        {
+            IEnumerable<SKBitmap> bitmaps = images
+                .Select(BytesToBitmap)
+                .Select(bitmap => bitmap.ToSKBitmap());
+
+            int maxWidth = bitmaps.Max(bitmap => bitmap.Width);
+            int mergedHeight = bitmaps.Aggregate(0, (totalHeight, bitmap) => totalHeight + bitmap.Height);
+
+            using SKBitmap mergedBitmap = new(maxWidth, mergedHeight);
+
+            using SKCanvas canvas = new(mergedBitmap);
+            
+            int currentDrawnHeight = 0;
+            foreach (SKBitmap bitmap in bitmaps)
+            {
+                //if the images have a different widths then we want them centered
+                float drawingXCoordinate = (float)(maxWidth - bitmap.Width) / 2;
+
+                float drawingYCoordinate = currentDrawnHeight;
+
+                canvas.DrawBitmap(bitmap, drawingXCoordinate, drawingYCoordinate);
+
+                currentDrawnHeight += bitmap.Height;
+            }
+
+            byte[] mergedImage = BitmapToBytes(mergedBitmap.ToBitmap(), format);
+
+            foreach (SKBitmap bitmap in bitmaps)
+            {
+                bitmap.Dispose();
+            }
+
+            return mergedImage;
+        }
+
+        [SupportedOSPlatform("windows")]
+        private static Bitmap BytesToBitmap(byte[] bytes)
+        {
+            using MemoryStream memoryStream = new(bytes);
+            return new Bitmap(memoryStream);
+        }
+
+        [SupportedOSPlatform("windows")]
+        private static byte[] BitmapToBytes(Bitmap bitmap, ImageFormat format)
+        {
+            using MemoryStream memoryStream = new();
+            bitmap.Save(memoryStream, GenericToGDIImageFormat(format));
+
+            return memoryStream.ToArray();
+        }
+
+        [SupportedOSPlatform("windows")]
+        public static void Save(string filepath, byte[] image, ImageFormat format)
+        {
+            Bitmap bitmap = BytesToBitmap(image);
+            if (!Directory.Exists(Path.GetDirectoryName(filepath)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(filepath));
+            }
+            bitmap.Save(filepath, GenericToGDIImageFormat(format));
+        }
+
+        [SupportedOSPlatform("windows")]
+        private static System.Drawing.Imaging.ImageFormat GenericToGDIImageFormat(ImageFormat imageFormat)
+        {
+            switch(imageFormat)
+            {
+                case ImageFormat.Png:
+                    return System.Drawing.Imaging.ImageFormat.Png;
+                case ImageFormat.Jpeg:
+                    return System.Drawing.Imaging.ImageFormat.Jpeg;
+                default:
+                    throw new Exception($"Unknown ImageFormat '{imageFormat}'");
+            }
         }
     }
 }

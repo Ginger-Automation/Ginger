@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
+using Ginger.Reports;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.ALM;
@@ -33,6 +34,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using YamlDotNet.Core;
 using static Ginger.AnalyzerLib.AnalyzerItemBase;
 using static GingerCore.ALM.PublishToALMConfig;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
@@ -47,10 +49,12 @@ namespace Ginger.Run
         GenericWindow genWin = null;
         ObservableList<BusinessFlow> mBfs = new ObservableList<BusinessFlow>();
         PublishToALMConfig mPublishToALMConfig = new PublishToALMConfig();
+        ExecutionLoggerConfiguration mExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
         public bool IsProcessing = false;
         ImageMakerControl loaderElement;
         ValueExpression mVE = null;
         Context mContext = null;
+        ExecutionLoggerConfiguration _executionLogger = new();
         public ExportResultsToALMConfigPage(RunSetActionPublishToQC runSetActionPublishToQC)
         {
             InitializeComponent();
@@ -64,6 +68,7 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.VariableForTCRunName));
             BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.isVariableInTCRunUsed));
             BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toAttachActivitiesGroupReport));
+            BindingHandler.ObjFieldBinding(ExportReportLinkChkbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ToExportReportLink));
             BindingHandler.ObjFieldBinding(SearchALMEntityByName, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.SearchALMEntityByName));
             xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
             xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType),
@@ -79,6 +84,49 @@ namespace Ginger.Run
             xALMTypeCbx_SelectionChanged(this, null);
             SetTestLevelComboBoxList(runSetActionPublishToQC.RunAt);
             PropertyChangedEventManager.AddHandler(runSetActionPublishToQC, RunAt_PropertyChanged, string.Empty);
+            _executionLogger = WorkSpace.Instance.Solution.LoggerConfigurations;
+            _executionLogger.PropertyChanged += _executionLogger_PropertyChanged;
+
+            if (_executionLogger.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                AttachActivitiesGroupReportCbx.IsEnabled = false;
+                AttachActivitiesGroupReportCbx.IsChecked = false;
+            }
+
+            if (_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
+            {
+                ExportReportLinkChkbx.IsEnabled = false;
+                ExportReportLinkChkbx.IsChecked = false;
+            }
+        }
+
+        private void _executionLogger_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(_executionLogger.PublishLogToCentralDB))
+            {
+                if (_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
+                {
+                    ExportReportLinkChkbx.IsEnabled = false;
+                    ExportReportLinkChkbx.IsChecked = false;
+                }
+                else if (_executionLogger.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+                {
+                    ExportReportLinkChkbx.IsEnabled = true;
+                }
+            }
+
+            if (e.PropertyName == nameof(_executionLogger.SelectedDataRepositoryMethod))
+            {
+                if (_executionLogger.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    AttachActivitiesGroupReportCbx.IsEnabled = false;
+                    AttachActivitiesGroupReportCbx.IsChecked = false;
+                }
+                else if (_executionLogger.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    AttachActivitiesGroupReportCbx.IsEnabled = true;
+                }
+            }
         }
 
         private ExportResultsToALMConfigPage()
@@ -93,6 +141,7 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, mPublishToALMConfig, nameof(PublishToALMConfig.VariableForTCRunName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.IsVariableInTCRunUsed));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.ToAttachActivitiesGroupReport));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExportReportLinkChkbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.ToExportReportLink));
             xFilterByStatusDroplist.BindControl(mPublishToALMConfig, nameof(PublishToALMConfig.FilterStatus));
         }
 
@@ -122,9 +171,10 @@ namespace Ginger.Run
                 SearchALMEntityByNamePnl.Visibility = Visibility.Collapsed;
                 xALMTestSetLevelCbx.IsEnabled = false;
                 xALMTypeCbx.IsEnabled = false;
+                ExportReportLinkChkbx.IsEnabled = false;
                 mBfs = bfs;
                 mVE = VE;
-                mContext = Context;
+                mContext = Context;  
                 return true;
             }
             else

@@ -31,6 +31,7 @@ using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -63,7 +64,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
         Object ITreeViewItem.NodeObject()
         {
-            return null;
+            return Path;
         }
         override public string NodePath()
         {
@@ -79,8 +80,45 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return TreeViewUtils.NewRepositoryItemTreeHeader(null, Folder, eImageType.Folder, GetSourceControlImageByPath(Path), false);
         }
 
+        private List<ITreeViewItem>? _children = null;
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
+        {
+            if (_children == null)
+            {
+                _children = GetChildrenList();
+            }
+            else
+            {
+                List<ITreeViewItem> updatedChildren = [];
+                List<ITreeViewItem> newChildren = GetChildrenList();
+                foreach (ITreeViewItem child in newChildren)
+                {
+                    ITreeViewItem? oldChild = _children.FirstOrDefault(o =>
+                    {
+                        object oldNodeObj = o.NodeObject();
+                        object newNodeObj = child.NodeObject();
+                        if (oldNodeObj is not string oldNodeObjStr || newNodeObj is not string newNodeObjStr)
+                        {
+                            return false;
+                        }
+                        return string.Equals(oldNodeObjStr, newNodeObjStr);
+                    });
+                    if (oldChild != null)
+                    {
+                        updatedChildren.Add(oldChild);
+                    }
+                    else
+                    {
+                        updatedChildren.Add(child);
+                    }
+                }
+                _children = updatedChildren;
+            }
+            return _children;
+        }
+
+        private List<ITreeViewItem> GetChildrenList()
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 

@@ -84,14 +84,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 return (VariablesParent!=null && VariablesParent is EnvApplication) ? GingerDicser.GetTermResValue(eTermResKey.Parameter) : GingerDicser.GetTermResValue(eTermResKey.Variables);
             }
         }
-        public delegate void VariabelListItemEventHandler(VariabelListItemEventArgs EventArgs);
+        public delegate void VariabelListItemEventHandler(ListItemEventArgs EventArgs);
         public event VariabelListItemEventHandler VariabelListItemEvent;
-        private void OnActionListItemEvent(VariabelListItemEventArgs.eEventType eventType, Object eventObject = null)
+        private void OnActionListItemEvent(ListItemEventArgs.eEventType eventType, Object eventObject = null)
         {
             VariabelListItemEventHandler handler = VariabelListItemEvent;
             if (handler != null)
             {
-                handler(new VariabelListItemEventArgs(eventType, eventObject));
+                handler(new ListItemEventArgs(eventType, eventObject));
             }
         }
 
@@ -340,7 +340,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     .ForEach((filteredApp) =>
                     {
 
-                        filteredApp.Variables.Add(varToAdd);
+                        filteredApp.Variables.Add((VariableBase)varToAdd.CreateCopy());
                     });
                 });
             }
@@ -660,7 +660,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void EditHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            OnActionListItemEvent(VariabelListItemEventArgs.eEventType.ShowVariabelEditPage, mVariable);
+            OnActionListItemEvent(ListItemEventArgs.eEventType.ShowEditPage, mVariable);
         }
 
         private void DeleteHandler(object sender, RoutedEventArgs e)
@@ -863,17 +863,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         }
     }
 
-    public class VariabelListItemEventArgs
+    public class ListItemEventArgs
     {
         public enum eEventType
         {
-            ShowVariabelEditPage,
+            ShowEditPage,
         }
 
         public eEventType EventType;
         public Object EventObject;
 
-        public VariabelListItemEventArgs(eEventType eventType, object eventObject = null)
+        public ListItemEventArgs(eEventType eventType, object eventObject = null)
         {
             this.EventType = eventType;
             this.EventObject = eventObject;

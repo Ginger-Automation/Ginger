@@ -18,12 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
@@ -47,11 +49,9 @@ using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -513,10 +513,10 @@ namespace Ginger.Run
                 //Init 
                 mGingerRunner.Status = eRunStatus.Started;
                 IsRunning = true;
-                mStopRun = false;
-                SetupVirtualAgents();
+                mStopRun = false;                
                 if (doContinueRun == false)
                 {
+                    SetupVirtualAgents();
                     RunnerExecutionWatch.StartRunWatch();
                 }
                 else
@@ -694,7 +694,6 @@ namespace Ginger.Run
                     mErrorPostExecutionActionFlowBreaker = false;
                 }
 
-
             }
         }
 
@@ -810,10 +809,9 @@ namespace Ginger.Run
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
                 {
                     RunSetConfig runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+                    List<IAgent> RunnerAgentList = new();
                     foreach (ApplicationAgent applicationAgent in mGingerRunner.ApplicationAgents)
                     {
-
-
                         if (applicationAgent.AgentName != null)
                         {
                             ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
@@ -829,25 +827,37 @@ namespace Ginger.Run
                                         AgentOperations agentOperations = new AgentOperations(agent);
                                         agent.AgentOperations = agentOperations;
                                     }
-                                    //logic for if need to assign virtual agent
-                                    if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Any(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)))
+                                    /// <summary>
+                                    /// logic for if need to assign virtual agent
+                                    /// Second condition if any agent is used in different agent then only it will create virtual agent for that specific agent 
+                                    /// </summary>
+                                    if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentListWithRunner.Where(entry => entry.Key != mGingerRunner.Guid).Select(y => y.Value).Where(y => y != null).Any(x => (x.Any(k => ((Agent)k).Guid == agent.Guid || (((Agent)k).ParentGuid != null && ((Agent)k).ParentGuid == agent.Guid)))))
                                     {
-                                        var virtualagent = agent.CreateCopy(true) as Agent;
-                                        virtualagent.AgentOperations = new AgentOperations(virtualagent);
-                                        virtualagent.ParentGuid = agent.Guid;
-                                        virtualagent.Name = agent.Name + " Virtual";
-                                        virtualagent.IsVirtual = true;
-                                        virtualagent.DriverClass = agent.DriverClass;
-                                        virtualagent.DriverType = agent.DriverType;
-                                        applicationAgent.Agent = virtualagent;
-                                        virtualagent.DriverConfiguration = agent.DriverConfiguration;
+                                            var virtualagent = agent.CreateCopy(true) as Agent;
+                                            virtualagent.AgentOperations = new AgentOperations(virtualagent);
+                                            virtualagent.ParentGuid = agent.Guid;
+                                            virtualagent.Name = agent.Name + " Virtual";
+                                            virtualagent.IsVirtual = true;
+                                            virtualagent.DriverClass = agent.DriverClass;
+                                            virtualagent.DriverType = agent.DriverType;
+                                            applicationAgent.Agent = virtualagent;
+                                            virtualagent.DriverConfiguration = agent.DriverConfiguration;
                                     }
                                 }
 
 
                                 if (applicationAgent.Agent != null)
                                 {
-                                    runSetConfig.ActiveAgentList.Add(applicationAgent.Agent);
+                                    RunnerAgentList.Add(applicationAgent.Agent);
+
+                                    if (runSetConfig.ActiveAgentListWithRunner.Any(kvp => kvp.Key.Equals(mGingerRunner.Guid)))
+                                    {
+                                        runSetConfig.ActiveAgentListWithRunner[mGingerRunner.Guid] = RunnerAgentList;
+                                    }
+                                    else
+                                    {
+                                        runSetConfig.ActiveAgentListWithRunner.Add(mGingerRunner.Guid, RunnerAgentList);
+                                    }
                                 }
 
                             }
@@ -4936,7 +4946,7 @@ namespace Ginger.Run
             }
             else
             {
-                foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents)
+                foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents.DistinctBy(x=>x.AgentID))
                 {
                     if (p.Agent != null)
                     {
@@ -5144,7 +5154,7 @@ namespace Ginger.Run
             if (appPlatform != null)
             {
                 List<Agent> platformAgents = SolutionAgents
-                    .Where(solutionAgent => solutionAgent.Platform == appPlatform.Platform && !solutionAgent.UsedForAutoMapping)
+                    .Where(solutionAgent => solutionAgent.Platform == appPlatform.Platform && (solutionAgent.SupportVirtualAgent() ? true : !solutionAgent.UsedForAutoMapping))
                     .ToList();
 
                 //Get the last used agent to this Target App if exist
@@ -5166,7 +5176,18 @@ namespace Ginger.Run
                     {
                         if (appPlatform.Platform == ePlatformType.Web)
                         {
-                            agent = platformAgents.Find(x => x.DriverType == Agent.eDriverType.SeleniumIE);
+                            agent = platformAgents.Find(x =>
+                            {
+                                string browserTypeString = x.GetParamValue(nameof(GingerWebDriver.BrowserType));
+                                if (Enum.TryParse(browserTypeString, out WebBrowserType browserType))
+                                {
+                                    return browserType == WebBrowserType.InternetExplorer;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            });
                         }
 
                         if (agent == null)

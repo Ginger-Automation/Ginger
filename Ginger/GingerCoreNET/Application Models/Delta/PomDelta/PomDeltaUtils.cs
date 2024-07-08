@@ -728,19 +728,53 @@ namespace GingerCoreNET.Application_Models
         {
             foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
             {
-                if (elementToUpdate.MappedElementInfo != null && elementToUpdate.DeltaStatus.Equals(eDeltaStatus.Deleted))
+                if (elementToUpdate.MappedElementInfo != null && (elementToUpdate.DeltaStatus.Equals(eDeltaStatus.Deleted) || elementToUpdate.DeltaStatus.Equals(eDeltaStatus.Unknown)))
                 {
                     var deltaElementToUpdateProp = DeltaViewElements.FirstOrDefault(x => x.IsSelected == true && x.DeltaStatus.Equals(eDeltaStatus.Added) && x.ElementInfo.Guid.ToString().Equals(elementToUpdate.MappedElementInfo));
                     if (deltaElementToUpdateProp != null)
                     {
-                        elementToUpdate.ElementInfo.Properties = deltaElementToUpdateProp.ElementInfo.Properties;
-                        elementToUpdate.ElementInfo.Locators = deltaElementToUpdateProp.ElementInfo.Locators;
-                        elementToUpdate.ElementInfo.ElementType = deltaElementToUpdateProp.ElementInfo.ElementType;
-                        elementToUpdate.DeltaStatus = eDeltaStatus.Changed;
+                        if (elementToUpdate.MappingElementStatus == DeltaElementInfo.eMappingStatus.ReplaceExistingElement)
+                        {
+                            elementToUpdate.ElementInfo.Properties = deltaElementToUpdateProp.ElementInfo.Properties;
+                            elementToUpdate.ElementInfo.Locators = deltaElementToUpdateProp.ElementInfo.Locators;
+                            elementToUpdate.ElementInfo.ElementType = deltaElementToUpdateProp.ElementInfo.ElementType;
+                            elementToUpdate.DeltaStatus = eDeltaStatus.Changed;
+                        }
+                        else if (elementToUpdate.MappingElementStatus == DeltaElementInfo.eMappingStatus.MergeExistingElement)
+                        {
+                            MergeElements(elementToUpdate.ElementInfo, deltaElementToUpdateProp.ElementInfo);
+                            elementToUpdate.DeltaStatus = eDeltaStatus.Changed;
+                        }
 
-                        var index = DeltaViewElements.IndexOf(deltaElementToUpdateProp);
-                        DeltaViewElements.RemoveAt(index);
+                        if (elementToUpdate.DeltaStatus == eDeltaStatus.Changed)
+                        {
+                            var index = DeltaViewElements.IndexOf(deltaElementToUpdateProp);
+                            DeltaViewElements.RemoveAt(index);
+                        }
                     }
+                }
+            }
+        }
+       
+        public static void MergeElements(ElementInfo originalElement, ElementInfo secondElement)
+        {
+            //Merge Properties
+            for (int i = secondElement.Properties.Count - 1; i >= 0; i--)
+            {
+                ControlProperty originalProp = originalElement.Properties.FirstOrDefault(x => x.Name == secondElement.Properties[i].Name && x.Category == secondElement.Properties[i].Category);
+                if (originalProp == null)
+                { 
+                    originalElement.Properties.Add(secondElement.Properties[i]);
+                }
+            }
+
+            //Merge Locators
+            for (int i = secondElement.Locators.Count - 1; i >= 0; i--)
+            {
+                ElementLocator originalLocator = originalElement.Locators.FirstOrDefault(x => x.LocateBy == secondElement.Locators[i].LocateBy && x.LocateValue == secondElement.Locators[i].LocateValue && x.Category == secondElement.Locators[i].Category && x.IsAutoLearned == true);
+                if (originalLocator == null)
+                {
+                    originalElement.Locators.Add(secondElement.Locators[i]);
                 }
             }
         }

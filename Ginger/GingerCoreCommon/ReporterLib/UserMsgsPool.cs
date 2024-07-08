@@ -96,7 +96,7 @@ namespace Amdocs.Ginger.Common
         ConnectionCloseWarning,
         InvalidCharactersWarning,
         InvalidValueExpression,
-        FolderExistsWithName, DownloadedSolutionFromSourceControl, SourceControlFileLockedByAnotherUser,
+        FolderExistsWithName, DownloadedSolutionFromSourceControl, SourceControlFileLockedByAnotherUser, SourceControlUndoLocalChanges,
         SourceControlUpdateFailed, SourceControlCommitFailed, SourceControlChkInSucss, SourceControlChkInConflictHandledFailed, SourceControlGetLatestConflictHandledFailed, SourceControlCheckInLockedByAnotherUser, SourceControlCheckInLockedByMe, SourceControlCheckInUnsavedFileChecked, FailedToUnlockFileDuringCheckIn, SourceControlChkInConfirmtionForLocalFiles, SourceControlChkInConfirmtionForLocalCommit, SourceControlChkInConfirmtionForLocalCommitAndFiles, SourceControlMissingSelectionToCheckIn, SourceControlMissingSelectionToLocalCommit, SourceControlResolveConflict, SureWantToDoRevert, SureWantToDoCheckIn,
         NoOptionalAgent, MissingActivityAppMapping,
         SettingsChangeRequireRestart, ChangesRequireRestart, UnsupportedFileFormat, WarnRegradingMissingVariablesUse, NotAllMissingVariablesWereAdded, UpdateApplicationNameChangeInSolution,
@@ -193,7 +193,8 @@ namespace Amdocs.Ginger.Common
         NoApplicationPlatformLeft,
         ShareApplicationToEnvironment,
         SaveSolution,
-        LocatorTestInProgress
+        LocatorTestInProgress,
+        DeleteSelectedDB
     }
 
     public static class UserMsgsPool
@@ -308,6 +309,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToAddCheckInComment, new UserMsg(eUserMsgType.WARN, "Check-In Changes", "Please enter check-in comments.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToAddLocalCommitComment, new UserMsg(eUserMsgType.WARN, "Local Commit Changes", "Please enter local commit comments.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToGetProjectsListFromSVN, new UserMsg(eUserMsgType.ERROR, "Source Control Error", "Failed to get the solutions list from the source control." + Environment.NewLine + "Error Details: '{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlUndoLocalChanges, new UserMsg(eUserMsgType.WARN, "Check-In Warning", "Undo Changes Will force Ginger to Reload solution." + Environment.NewLine + Environment.NewLine + "Do you want to Undo Local Changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToSelectSolution, new UserMsg(eUserMsgType.WARN, "Select Solution", "Please select solution.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlFileLockedByAnotherUser, new UserMsg(eUserMsgType.WARN, "Source Control File Locked", "The file '{0}' was locked by: {1} " + Environment.NewLine + "Locked comment {2}." + Environment.NewLine + Environment.NewLine + " Are you sure you want to unlock the file?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DownloadedSolutionFromSourceControl, new UserMsg(eUserMsgType.INFO, "Download Solution", "The solution '{0}' was downloaded successfully." + Environment.NewLine + "Do you want to open the downloaded Solution?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -364,9 +366,10 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbTableNameError, new UserMsg(eUserMsgType.ERROR, "Invalid DB Table Name", "Table with the name '{0}' already exist in the Database. Please try another name.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbTableError, new UserMsg(eUserMsgType.ERROR, "DB Table Error", "Error occurred while trying to get the {0}." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbQueryError, new UserMsg(eUserMsgType.ERROR, "DB Query Error", "The DB Query returned error, please double check the table name and field name." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnFailed, new UserMsg(eUserMsgType.ERROR, "DB Connection Status", "Connect to the DB failed.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnSucceed, new UserMsg(eUserMsgType.INFO, "DB Connection Status", "Connect to the DB succeeded.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnFailed, new UserMsg(eUserMsgType.ERROR, "DB Connection Status", "Connect to the DB: '{0}' failed.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnSucceed, new UserMsg(eUserMsgType.INFO, "DB Connection Status", "Connect to the DB: '{0}' succeeded.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbTableNameEmpty, new UserMsg(eUserMsgType.ERROR, "Invalid DB Table Name", "Table name cannot be empty. Please provide valid name", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteSelectedDB, new UserMsg(eUserMsgType.QUESTION, "Delete Database", "Are you sure you want to delete the selected Database(s)?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             #endregion DataBase Messages
 
             #region Environment Messages

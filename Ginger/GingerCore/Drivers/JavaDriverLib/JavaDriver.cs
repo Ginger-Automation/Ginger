@@ -106,6 +106,23 @@ namespace GingerCore.Drivers.JavaDriverLib
             return true;
         }
 
+        public override ePomElementCategory? PomCategory
+        {
+            get
+            {
+                if (base.PomCategory == null)
+                {
+                    return ePomElementCategory.Java;
+                }
+                else
+                {
+                    return base.PomCategory;
+                }
+            }
+
+            set => base.PomCategory = value;
+        }
+
         public JavaDriver(BusinessFlow BF)
         {
             BusinessFlow = BF;
@@ -2141,6 +2158,9 @@ namespace GingerCore.Drivers.JavaDriverLib
                                 break;
                             }
                             JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
+
+                            //set the POM category
+                            ci.SetLocatorsAndPropertiesCategory(this.PomCategory);
 
                             if (pomSetting.isPOMLearn)
                             {

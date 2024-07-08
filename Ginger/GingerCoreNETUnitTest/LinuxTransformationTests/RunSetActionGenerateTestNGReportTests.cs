@@ -18,6 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.Repository;
@@ -82,7 +84,9 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             mGR.GingerRunner.ProjEnvironment = environment;
 
             Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            a.DriverType = Agent.eDriverType.Selenium;
+            DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
+            browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
@@ -117,7 +121,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             GingerExecutionEngine mGRForRunset = new GingerExecutionEngine(new GingerRunner());
             mGRForRunset.GingerRunner.Name = "Test Runner";
             Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            a.DriverType = Agent.eDriverType.Selenium;
             mGRForRunset.SolutionAgents = new ObservableList<Agent>();
             mGRForRunset.SolutionAgents.Add(a);
             mGRForRunset.GingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
@@ -157,7 +161,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             GingerExecutionEngine mGRForRunset = new GingerExecutionEngine(new GingerRunner());
             mGRForRunset.GingerRunner.Name = "Test Runner";
             Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            a.DriverType = Agent.eDriverType.Selenium;
             mGRForRunset.SolutionAgents = new ObservableList<Agent>();
             mGRForRunset.SolutionAgents.Add(a);
             mGRForRunset.GingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });

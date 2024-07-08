@@ -46,7 +46,6 @@ namespace GingerCore.NoSqlBase
         {
             get
             {
-                int lastIndexOf = Db.ConnectionString.LastIndexOf(';');
                 string[] strArray = Db.ConnectionString.Split(';');
                 string connectionString = strArray[0] + ";" + strArray[1];
                 return connectionString;
@@ -57,7 +56,6 @@ namespace GingerCore.NoSqlBase
         {
             get
             {
-                int lastIndexOf = Db.ConnectionString.LastIndexOf(';');
                 string[] strArray = Db.ConnectionString.Split(';');
                 string dbString = strArray[2];
                 return dbString.Split('=')[1];
@@ -86,7 +84,7 @@ namespace GingerCore.NoSqlBase
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Unable to connect to cosmos db", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                     return false;
                 }
             }

@@ -18,6 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib;
 using GingerCore;
@@ -25,10 +27,14 @@ using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.ComponentModel;
 using static GingerCore.Agent;
+using System.Linq;
+using Ginger.Drivers.DriversConfigsEditPages;
 
 namespace Ginger.Agents
 {
@@ -37,7 +43,7 @@ namespace Ginger.Agents
     /// </summary>
     public partial class AgentEditPage : GingerUIPage
     {
-        Agent mAgent;
+        private Agent mAgent;
         ePlatformType mOriginalPlatformType;
         string mOriginalDriverType;
         bool IsReadOnly, IsEnabledCheckBox;
@@ -57,6 +63,7 @@ namespace Ginger.Agents
             if (agent != null)
             {
                 mAgent = agent;
+                PropertyChangedEventManager.AddHandler(mAgent, Agent_PropertyChanged, propertyName: string.Empty);
                 CurrentItemToSave = mAgent;
                 xShowIDUC.Init(mAgent);
                 BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
@@ -67,6 +74,18 @@ namespace Ginger.Agents
                 BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
                 BindingHandler.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
                 BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mAgent, nameof(RepositoryItemBase.Publish));
+                
+                if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
+                {
+                    UpdateHealeniumUI();
+                }
+                else
+                {
+                    xHealeniumURLPnl.Visibility = Visibility.Collapsed;
+                    xHealeniumcheckbox.Visibility = Visibility.Collapsed;
+                }
+                string allProperties = string.Empty;
+                PropertyChangedEventManager.AddHandler(source: WorkSpace.Instance.BetaFeatures, handler: BetaFeatures_PropertyChanged, propertyName: allProperties);
                 TagsViewer.Init(mAgent.Tags);
 
                 if (mAgent.AgentType == eAgentType.Driver)
@@ -91,7 +110,16 @@ namespace Ginger.Agents
                 }
                 if (mAgent.AgentType == eAgentType.Driver)
                 {
-                    xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent, _viewMode));
+                    if (mAgent.DriverType == eDriverType.Selenium)
+                    {
+                        xAgentConfigFrame.SetContent(new WebAgentConfigEditPage(mAgent));
+                    }
+                    else
+                    {
+                        xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent, _viewMode));
+                    }
+                   
+                   
                 }
                 else
                 {
@@ -100,13 +128,90 @@ namespace Ginger.Agents
                 }
             }
         }
+        
+        private void Agent_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (string.Equals(e.PropertyName, nameof(Agent.DriverType)))
+            {
+                mAgent.AgentOperations.InitDriverConfigs();
+                if (mAgent.Platform == ePlatformType.Web && DriverSupportMultipleBrowsers(mAgent.DriverType))
+                {
+                    PopulateBrowserTypeComboBox();
+                    BrowserTypePanel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    BrowserTypeComboBox.Items.Clear();
+                    BrowserTypePanel.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private bool DriverSupportMultipleBrowsers(eDriverType driverType)
+        {
+            return driverType == eDriverType.Selenium || driverType == eDriverType.Playwright;
+        }
+        
+        private void BetaFeatures_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(BetaFeatures.ShowHealenium))
+            {
+                if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
+                {
+                    UpdateHealeniumUI();
+                }
+                else
+                {
+                    xHealeniumURLPnl.Visibility = Visibility.Collapsed;
+                    xHealeniumcheckbox.Visibility = Visibility.Collapsed;
+                }
+
+            }
+            
+        }
+
+        private void UpdateHealeniumUI()
+        {
+            bool isSeleniumDriver = mAgent.DriverType == eDriverType.Selenium;
+            WebBrowserType? browserType = null; 
+            if (mAgent.DriverConfiguration != null)
+            {
+                DriverConfigParam? browserTypeParam = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, nameof(GingerWebDriver.BrowserType)));
+                if (browserTypeParam != null && Enum.TryParse(browserTypeParam.Value, out WebBrowserType result))
+                {
+                    browserType = result;
+                }                
+            }
+            bool isRemoteBrowser = browserType.HasValue && browserType.Value == WebBrowserType.RemoteWebDriver;
+
+            if (isSeleniumDriver && isRemoteBrowser)
+            {
+                xHealeniumcheckbox.IsEnabled = true;
+                BindingHandler.ObjFieldBinding(xHealeniumcheckbox, CheckBox.IsCheckedProperty, mAgent, nameof(Agent.Healenium));
+                xHealeniumcheckbox.Visibility = Visibility.Visible;
+                if (mAgent.Healenium)
+                {
+                    xHealeniumURLPnl.Visibility = Visibility.Visible;
+                    BindingHandler.ObjFieldBinding(xHealeniumURLTextBox, TextBox.TextProperty, mAgent, nameof(Agent.HealeniumURL));
+                }
+                else
+                {
+                    xHealeniumURLPnl.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                xHealeniumcheckbox.IsEnabled = false;
+                xHealeniumcheckbox.Visibility = Visibility.Collapsed;
+                xHealeniumURLPnl.Visibility = Visibility.Collapsed;
+            }
+        }
 
         private void ChangeContorlsReadOnly(bool isReadOnly)
         {
             xAgentNameTextBox.IsReadOnly = isReadOnly;
             xDescriptionTextBox.IsReadOnly = isReadOnly;
             xDriverTypeComboBox.IsReadOnly = isReadOnly;
-            xDriverTypeComboBox.IsEnabled = !isReadOnly;
             xPublishcheckbox.IsEnabled = !isReadOnly;
             xTestBtn.IsEnabled = !IsReadOnly;
         }
@@ -133,6 +238,16 @@ namespace Ginger.Agents
 
         private void SetDriverInformation()
         {
+            if (mAgent.Platform == ePlatformType.Web && DriverSupportMultipleBrowsers(mAgent.DriverType))
+            {
+                BrowserTypePanel.Visibility = Visibility.Visible;
+                PopulateBrowserTypeComboBox();
+            }
+            else
+            {
+                BrowserTypeComboBox.Items.Clear();
+                BrowserTypePanel.Visibility = Visibility.Collapsed;
+            }
             List<object> lst = new List<object>();
             foreach (eDriverType item in Enum.GetValues(typeof(eDriverType)))
             {
@@ -154,6 +269,42 @@ namespace Ginger.Agents
             else
             {
                 xAgentVirtualSupported.Content = "No";
+            }
+        }
+
+        private void PopulateBrowserTypeComboBox()
+        {
+            BrowserTypeComboBox.Items.Clear();
+            
+            foreach (WebBrowserType browser in GingerWebDriver.GetSupportedBrowserTypes(mAgent.DriverType))
+            {
+                BrowserTypeComboBox.Items.Add(new ComboEnumItem()
+                {
+                    text = browser.ToString(),
+                    Value = browser
+                });
+            }
+            BrowserTypeComboBox.SelectedValuePath = nameof(ComboEnumItem.Value);
+            BrowserTypeComboBox.SelectedValue = Enum.Parse<WebBrowserType>(mAgent.GetParamValue(nameof(GingerWebDriver.BrowserType)));
+        }
+
+        private void BrowserTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 0)
+            {
+                return;
+            }
+
+            DriverConfigParam browserTypeParam = mAgent.GetParam(nameof(GingerWebDriver.BrowserType));
+            browserTypeParam.Value = ((WebBrowserType)BrowserTypeComboBox.SelectedValue).ToString();
+            if (xAgentConfigFrame.Content is AgentDriverConfigPage driverConfigPage)
+            {
+                driverConfigPage.SetDriverConfigsPageContent();              
+            }
+
+            if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
+            {
+                UpdateHealeniumUI();
             }
         }
 
@@ -187,8 +338,16 @@ namespace Ginger.Agents
                 else
                 {
                     mOriginalDriverType = xDriverTypeComboBox.SelectedItem.ToString();
-                    mAgent.AgentOperations.InitDriverConfigs();
                 }
+            }
+            if (WorkSpace.Instance.BetaFeatures.ShowHealenium)
+            {
+                UpdateHealeniumUI();
+            }
+            else
+            {
+                xHealeniumURLPnl.Visibility = Visibility.Collapsed;
+                xHealeniumcheckbox.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -221,5 +380,19 @@ namespace Ginger.Agents
         //{
         //    VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
         //}
+
+        private void Healeniumcheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            mAgent.Healenium = true;
+            xHealeniumURLPnl.Visibility = Visibility.Visible;
+
+        }
+
+        private void Healeniumcheckbox_UnChecked(object sender, RoutedEventArgs e)
+        {
+            mAgent.Healenium = false;
+            xHealeniumURLPnl.Visibility = Visibility.Collapsed;
+
+        }
     }
 }
