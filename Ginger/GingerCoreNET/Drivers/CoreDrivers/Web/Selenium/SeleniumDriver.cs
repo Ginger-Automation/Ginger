@@ -124,8 +124,10 @@ namespace GingerCore.Drivers
         public enum eUnhandledPromptBehavior
         {
             dismissAndNotify,
-            dismess,
+            dismiss,
             accept,
+            acceptAndNotify,
+            ignore,
         }
        
 
