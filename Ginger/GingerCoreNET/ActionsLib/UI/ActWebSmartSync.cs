@@ -283,6 +283,23 @@ namespace GingerCore.Actions
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether to use all locators.
+        /// </summary>
+        public bool UseAllLocators
+        {
+            get
+            {
+                return bool.Parse(GetInputParamValue(nameof(UseAllLocators)) ?? "false");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(UseAllLocators), value.ToString());
+                OnPropertyChanged(nameof(UseAllLocators));
+            }
+        }
+    
+
+        /// <summary>
         /// Overrides the ToString() method to provide a string representation of the action.
         /// </summary>
         /// <returns>The string representation of the action.</returns>
