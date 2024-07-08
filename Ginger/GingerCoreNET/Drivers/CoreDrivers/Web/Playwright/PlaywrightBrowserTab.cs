@@ -6,14 +6,14 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.Json;
 using System.Threading.Tasks;
-using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
-using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
-using IPlaywrightDialog = Microsoft.Playwright.IDialog;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
+using IPlaywrightJSHandle = Microsoft.Playwright.IJSHandle;
+using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using System.Drawing;
+using NPOI.OpenXmlFormats.Dml;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -24,7 +24,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             eLocateBy.ByID,
             eLocateBy.ByCSS,
+            eLocateBy.ByName,
             eLocateBy.ByXPath,
+            eLocateBy.ByTagName,
+            eLocateBy.ByRelXPath,
             eLocateBy.POMElement,
         };
 
@@ -80,6 +83,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
             return _playwrightPage.EvaluateAsync<string>(script);
+        }
+
+        public Task<string> ExecuteJavascriptAsync(string script, object arg)
+        {
+            ThrowIfClosed();
+            return _playwrightPage.EvaluateAsync<string>(script, arg);
+        }
+
+        public Task InjectJavascriptAsync(string script)
+        {
+            ThrowIfClosed();
+            return _playwrightPage.AddScriptTagAsync(new PageAddScriptTagOptions()
+            {
+                Content = script,
+            });
         }
 
         public Task<string> PageSourceAsync()
@@ -259,6 +277,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return elements;
         }
 
+        public async Task<IBrowserElement?> GetElementAsync(string javascript)
+        {
+            ThrowIfClosed();
+            IPlaywrightJSHandle jsHandle = await _currentFrame.EvaluateHandleAsync(javascript);
+            IPlaywrightElementHandle? elementHandle = jsHandle.AsElement();
+            if (elementHandle == null)
+            {
+                return null;
+            }
+            return new PlaywrightBrowserElement(elementHandle);
+        }
+
         public Task<byte[]> ScreenshotAsync()
         {
             return ScreenshotInternalAsync(fullPage: false);
@@ -329,7 +359,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.Locator($"css={value}");
                     break;
                 case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
                     locator = _currentFrame.Locator($"xpath={value}");
+                    break;
+                case eLocateBy.ByName:
+                    locator = _currentFrame.Locator($"css=[name='{value}']");
+                    break;
+                case eLocateBy.ByTagName:
+                    locator = _currentFrame.Locator($"css={value}");
                     break;
                 default:
                     throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");

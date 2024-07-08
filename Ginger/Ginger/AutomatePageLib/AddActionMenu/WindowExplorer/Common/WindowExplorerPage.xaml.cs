@@ -554,7 +554,7 @@ namespace Ginger.WindowExplorer
                     AFTI.Path = AW.Path;
                     InitTree(AFTI);
                     break;
-                case AppWindow.eWindowType.SeleniumWebPage:
+                case AppWindow.eWindowType.WebPage:
                     HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
                     HTMLElementInfo EI = new HTMLElementInfo();
                     EI.ElementTitle = AW.Title;
