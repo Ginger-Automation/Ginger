@@ -1190,6 +1190,7 @@ namespace GingerCore
                         copyItem.ActivitiesGroupID = this.Activities[i].ActivitiesGroupID;
                         copyItem.Type = this.Activities[i].Type;
                         copyItem.Active = this.Activities[i].Active;
+                        copyItem.DevelopmentTime = this.Activities[i].DevelopmentTime;
                         this.Activities[i] = copyItem;
                     }
                     else
