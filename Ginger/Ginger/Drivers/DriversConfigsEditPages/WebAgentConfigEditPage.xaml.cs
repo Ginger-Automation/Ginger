@@ -236,9 +236,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xUnhandledPromptBehaviorComboBox, ComboBox.ToolTipProperty, UnhandledPromptBehavior, nameof(DriverConfigParam.Description));
 
             //browser Log Level
-            // GingerCore.General.FillComboFromEnumType(xBrowserLogLevelComboBox, typeof(SeleniumDriver.eBrowserLogLevel));
-            // GingerCore.General.FillComboFromList(xBrowserLogLevelComboBox, new List<string> { "0"+ " All", "1"+ " Debug", "2" + " info", "3", "4" });
-            //GingerCore.General.FillComboFromList(xBrowserLogLevelComboBox, new Map<string, string>{ "0" : "All", "1" : "Debug", "2" : "info, "3" : "Warning", "4" : "Severe" });
             GingerCore.General.FillComboFromList(xBrowserLogLevelComboBox, new List<string> { "0", "1", "2", "3", "4" });
             DriverConfigParam browserLogLevel = mAgent.GetOrCreateParam(nameof(SeleniumDriver.BrowserLogLevel));
             BindingHandler.ObjFieldBinding(xBrowserLogLevelComboBox, ComboBox.TextProperty, browserLogLevel, nameof(DriverConfigParam.Value));

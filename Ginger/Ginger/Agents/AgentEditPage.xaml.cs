@@ -297,10 +297,9 @@ namespace Ginger.Agents
 
             DriverConfigParam browserTypeParam = mAgent.GetParam(nameof(GingerWebDriver.BrowserType));
             browserTypeParam.Value = ((WebBrowserType)BrowserTypeComboBox.SelectedValue).ToString();
-            //xAgentConfigFrame.SetContent(new WebAgentConfigEditPage(mAgent));
             if (xAgentConfigFrame.Content is AgentDriverConfigPage driverConfigPage)
             {
-                      driverConfigPage.SetDriverConfigsPageContent();              
+                driverConfigPage.SetDriverConfigsPageContent();              
             }
 
             if (WorkSpace.Instance.BetaFeatures.ShowHealenium)

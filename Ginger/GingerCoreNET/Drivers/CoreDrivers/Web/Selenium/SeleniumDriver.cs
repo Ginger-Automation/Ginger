@@ -129,11 +129,6 @@ namespace GingerCore.Drivers
         }
        
 
-        public enum eBrowserLogLevel
-        {
-            All,
-            Debug,
-        }
 
         public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
@@ -314,7 +309,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Start BMP - Browser Mob Proxy (true/false)")]
         public bool StartBMP { get; set; }
-
         [UserConfigured]
         [UserConfiguredDefault(@"C:\...\browsermob\bin\browsermob-proxy.bat")]
         [UserConfiguredDescription("Start BMP .BAT File - full path to BMP BAT file")]
