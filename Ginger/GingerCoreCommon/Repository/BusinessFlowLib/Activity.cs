@@ -193,6 +193,12 @@ namespace GingerCore
             }
         }
 
+        public static void StopAndResetTimer(Activity act)
+        {
+            act.DevelopmentTime = TimeSpan.Zero;
+            act.StopTimer();
+        }
+
         private bool mLinkedActive = true;
         [IsSerializedForLocalRepository(true)]
         public Boolean LinkedActive
@@ -913,6 +919,7 @@ namespace GingerCore
         {
             Activity copy = (Activity)srActivity.CreateInstance(originFromSharedRepository, setNewGUID: false);
             copy.Guid = Guid.NewGuid();
+            StopAndResetTimer(copy);
             List<KeyValuePair<Guid, Guid>> oldNewActionGuidList = [];
             foreach (Act action in copy.Acts.Cast<Act>())
             {
@@ -934,8 +941,6 @@ namespace GingerCore
                     fc.Value = fc.Value.Replace(targetGuid.ToString(), newTargetGuid.ToString());
                 }
             }
-            copy.DevelopmentTime = TimeSpan.Zero;
-            copy.StopTimer();
             return copy;
         }
 
