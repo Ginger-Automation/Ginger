@@ -544,7 +544,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 IBrowserElement? browserElement = null;
                 try
                 {    
-                    browserElement = (await currentTab.GetElementsAsync("GingerLibLiveSpy.ElementFromPoint();")).FirstOrDefault();
+                    browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
                 }
                 catch (Exception) 
                 {
@@ -576,14 +576,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public AppWindow GetActiveWindow()
         {
             ThrowIfClosed();
-            return Task.Run(async () =>
-            {
-                string title = await _browser.CurrentWindow.CurrentTab.TitleAsync();
-                return new AppWindow()
-                {
-                    Title = title,
-                };
-            }).Result;
+            return Task.Run(() => GetActiveWindowAsync().Result).Result;
         }
 
         public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
@@ -646,12 +639,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             public Task OnShadowDOMEnterAsync(HTMLElementInfo shadowHostElement)
             {
-                throw new NotImplementedException();
+                return Task.CompletedTask;
             }
 
             public Task OnShadowDOMExitAsync(HTMLElementInfo shadowHostElement)
             {
-                throw new NotImplementedException();
+                return Task.CompletedTask;
             }
         }
 
@@ -743,7 +736,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public ObservableList<OptionalValue> GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
             //copying existing implementation from SeleniumDriver
-            throw new NotImplementedException();
+            return [];
         }
 
         public object? GetElementData(ElementInfo elementInfo, eLocateBy elementLocateBy, string elementLocateValue)
@@ -852,12 +845,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
         {
-            throw new NotImplementedException();
+
         }
 
-        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
+        public ElementInfo? GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public void StartSpying()
@@ -900,7 +893,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public List<AppWindow> GetWindowAllFrames()
         {
             //copying from SeleniumDriver
-            throw new NotImplementedException();
+            return [];
         }
 
         public string GetCurrentPageSourceString()
@@ -1362,7 +1355,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 {
                     string s_Script = $"return document.elementFromPoint({ptX}, {ptY});";
 
-                    IBrowserElement? ele = (await _browser.CurrentWindow.CurrentTab.GetElementsAsync(s_Script)).FirstOrDefault();
+                    IBrowserElement? ele = await _browser.CurrentWindow.CurrentTab.GetElementAsync(s_Script);
 
                     if (ele == null)
                     {

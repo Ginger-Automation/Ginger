@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         /// <exception cref="LocatorNotSupportedException">If the provided <see cref="eLocateBy"/> is not supported.</exception>
         public Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string locateValue);
 
-        public Task<IEnumerable<IBrowserElement>> GetElementsAsync(string javascript);
+        public Task<IBrowserElement?> GetElementAsync(string javascript);
 
         public Task CloseAsync();
     }

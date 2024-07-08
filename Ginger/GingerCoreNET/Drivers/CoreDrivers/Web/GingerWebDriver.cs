@@ -110,6 +110,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             return appWindows;
         }
 
+        private protected async Task<AppWindow> GetActiveWindowAsync()
+        {
+            IBrowser browser = GetBrowser();
+            string title = await browser.CurrentWindow.CurrentTab.TitleAsync();
+            return new AppWindow()
+            {
+                Title = title,
+            };
+        }
+
         private protected async Task SwitchTabAsync(Func<IBrowserWindow, IBrowserTab, Task<bool>> filter)
         {
             IBrowser browser = GetBrowser();

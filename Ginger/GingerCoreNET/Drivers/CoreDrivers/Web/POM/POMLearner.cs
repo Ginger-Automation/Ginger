@@ -116,8 +116,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return htmlElements;
         }
 
+        private static readonly IEnumerable<string> LearningExcludedItems = ["noscript", "script", "style", "meta", "head", "link", "html", "body"];
+
         private bool ShouldIncludeHtmlNode(HtmlNode htmlNode)
         {
+            if (_pomSetting == null || _pomSetting.filteredElementType == null)
+            {
+                return false;
+            }
+
             if (htmlNode.Name.StartsWith("#"))
             {
                 return false;
@@ -128,14 +135,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 return false;
             }
 
-            IEnumerable<string> staticExcludedItems = ["noscript", "script", "style", "meta", "head", "link", "html", "body"];
+            ;
 
-            if (staticExcludedItems.Any(x => string.Equals(x, htmlNode.Name, StringComparison.OrdinalIgnoreCase)))
-            {
-                return false;
-            }
-
-            if (_pomSetting == null || _pomSetting.filteredElementType == null)
+            if (LearningExcludedItems.Any(x => string.Equals(x, htmlNode.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 return false;
             }

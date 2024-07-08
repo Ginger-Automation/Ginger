@@ -277,16 +277,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return elements;
         }
 
-        public async Task<IEnumerable<IBrowserElement>> GetElementsAsync(string javascript)
+        public async Task<IBrowserElement?> GetElementAsync(string javascript)
         {
             ThrowIfClosed();
             IPlaywrightJSHandle jsHandle = await _currentFrame.EvaluateHandleAsync(javascript);
             IPlaywrightElementHandle? elementHandle = jsHandle.AsElement();
             if (elementHandle == null)
             {
-                return [];
+                return null;
             }
-            return [new PlaywrightBrowserElement(elementHandle)];
+            return new PlaywrightBrowserElement(elementHandle);
         }
 
         public Task<byte[]> ScreenshotAsync()
