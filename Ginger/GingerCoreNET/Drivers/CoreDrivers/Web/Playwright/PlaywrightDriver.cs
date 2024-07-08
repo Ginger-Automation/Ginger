@@ -485,7 +485,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     await UnhighlightElementAsync(_lastHighlightedElement);
                 }
                 await SwitchToFrameOfElementAsync(element);
-                IBrowserElement? browserElement = await FindBrowserElementAsync(element);
+                IBrowserElement? browserElement = null;
+                if (element.ElementObject is IBrowserElement)
+                {
+                    browserElement = (IBrowserElement)element.ElementObject;
+                }
+                if (browserElement == null)
+                {
+                    browserElement = await FindBrowserElementAsync(element);
+                }
                 if (browserElement == null)
                 {
                     return;
@@ -533,7 +541,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 await InjectLiveSpyScriptAsync(currentTab);
 
-                IBrowserElement? browserElement = (await currentTab.GetElementsAsync("GingerLibLiveSpy.ElementFromPoint()")).FirstOrDefault();
+                IBrowserElement? browserElement = null;
+                try
+                {
+                    //when we spy the element for the first time, it throws exception because X,Y point of mouse position is undefined for some reason
+                    browserElement = (await currentTab.GetElementsAsync("GingerLibLiveSpy.ElementFromPoint();")).FirstOrDefault();
+                }
+                catch (Exception) { }
                 if (browserElement == null)
                 {
                     return null!;
@@ -703,9 +717,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 htmlElementInfo.OptionalValuesObjectsList = [];
             }
-            htmlElementInfo.OptionalValuesObjectsList.AddRange(POMLearner.GetOptionValues(htmlElementInfo));
+            htmlElementInfo.OptionalValuesObjectsList.AddRange(Task.Run(() => POMLearner.GetOptionalValuesAsync(htmlElementInfo).Result).Result);
 
-            return new(POMLearner.GetProperties(htmlElementInfo));
+            return new(Task.Run(() => POMLearner.GetPropertiesAsync(htmlElementInfo).Result).Result);
         }
 
         public ObservableList<ElementLocator> GetElementLocators(ElementInfo elementInfo, PomSetting pomSetting = null)
@@ -715,7 +729,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return [];
             }
 
-            return new(POMLearner.GenerateLocators(htmlElementInfo, pomSetting));
+            IEnumerable<ElementLocator> locators = Task.Run(() => POMLearner.GenerateLocatorsAsync(htmlElementInfo, pomSetting).Result).Result;
+            return new(locators);
         }
 
         public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
@@ -729,9 +744,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             throw new NotImplementedException();
         }
 
-        public object GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        public object? GetElementData(ElementInfo elementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
-            throw new NotImplementedException();
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
+            {
+                return null;
+            }
+            if (htmlElementInfo.ElementObject is not IBrowserElement browserElement)
+            {
+                return null;
+            }
+
+            return null;
         }
 
         public bool IsRecordingSupported()
@@ -843,9 +867,32 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }).Wait();
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting? pomSetting = null)
+        public ElementInfo LearnElementInfoDetails(ElementInfo elementInfo, PomSetting? pomSetting = null)
         {
-            throw new NotImplementedException();
+            if (elementInfo is not HTMLElementInfo htmlElementInfo || htmlElementInfo.ElementObject is not IBrowserElement browserElement)
+            {
+                return elementInfo;
+            }
+
+            Task.Run(async () =>
+            {
+                HTMLElementInfo newHtmlElementInfo = await CreateHtmlElementAsync(browserElement);
+                htmlElementInfo.ElementTitle = newHtmlElementInfo.ElementTitle ?? string.Empty;
+                htmlElementInfo.Name = newHtmlElementInfo.Name ?? string.Empty;
+                htmlElementInfo.ID = newHtmlElementInfo.ID ?? string.Empty;
+                htmlElementInfo.Value = newHtmlElementInfo.Value ?? string.Empty;
+                htmlElementInfo.ElementType = newHtmlElementInfo.ElementType ?? string.Empty;
+                htmlElementInfo.XPath = newHtmlElementInfo.XPath ?? string.Empty;
+                htmlElementInfo.RelXpath = GetXPathHelper().GetElementRelXPath(htmlElementInfo, pomSetting);
+
+                string tag = await browserElement.TagNameAsync();
+                string typeAttributeValue = await browserElement.AttributeValueAsync("type");
+
+                htmlElementInfo.ElementTypeEnum = POMLearner.GetElementType(tag, typeAttributeValue);
+                htmlElementInfo.Properties.AddRange(await POMLearner.GetPropertiesAsync(htmlElementInfo));
+            }).Wait();
+
+            return htmlElementInfo;
         }
 
         public List<AppWindow> GetWindowAllFrames()
@@ -1104,7 +1151,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 return htmlElementInfo.HTMLElementObject.Id;
             }
-            return Task.Run(() => ((IBrowserElement)htmlElementInfo).AttributeValueAsync("id").Result).Result;
+            else if (htmlElementInfo.ElementObject is IBrowserElement browserElement)
+            {
+                return Task.Run(() => browserElement.AttributeValueAsync("id").Result).Result;
+            }
+            return null;
         }
 
         public string? GetElementTagName(ElementInfo elementInfo)
@@ -1118,7 +1169,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 return htmlElementInfo.HTMLElementObject.Name;
             }
-            return Task.Run(() => ((IBrowserElement)htmlElementInfo).TagNameAsync().Result).Result;
+            else if (htmlElementInfo.ElementObject is IBrowserElement browserElement)
+            {
+                return Task.Run(() => browserElement.TagNameAsync().Result).Result;
+            }
+            return null;
         }
 
         public List<object> GetAllElementsByLocator(eLocateBy locateBy, string locateValue)

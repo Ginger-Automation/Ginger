@@ -85,10 +85,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return _playwrightPage.EvaluateAsync<string>(script);
         }
 
+        public Task<string> ExecuteJavascriptAsync(string script, object arg)
+        {
+            ThrowIfClosed();
+            return _playwrightPage.EvaluateAsync<string>(script, arg);
+        }
+
         public Task InjectJavascriptAsync(string script)
         {
             ThrowIfClosed();
-            return _playwrightPage.AddInitScriptAsync(script);
+            return _playwrightPage.AddScriptTagAsync(new PageAddScriptTagOptions()
+            {
+                Content = script,
+            });
         }
 
         public Task<string> PageSourceAsync()

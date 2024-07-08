@@ -39,6 +39,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<string> AttributeValueAsync(string name);
 
+        public Task<IEnumerable<KeyValuePair<string, string>>> AttributesAsync();
+
         public Task SetAttributeValueAsync(string name, string value);
 
         public Task<string> TextContentAsync();

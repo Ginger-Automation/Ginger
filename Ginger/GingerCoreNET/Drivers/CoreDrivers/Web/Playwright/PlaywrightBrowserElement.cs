@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
 using System.Drawing;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -278,6 +276,39 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             return attributeValue;
+        }
+
+        public async Task<IEnumerable<KeyValuePair<string, string>>> AttributesAsync()
+        {
+            string script =
+                @"element => {
+                    let attributes = [];
+                    for(let i = 0; i < element.attributes.length; i++) {
+                        let attribute = element.attributes[i];
+                        attributes.push([
+                            attribute.nodeName,
+                            attribute.nodeValue,
+                        ]);
+                    }
+                    return attributes;
+                }";
+            if (_playwrightLocator != null)
+            {
+                string[][] nameValuePairs = await _playwrightLocator.EvaluateAsync<string[][]>(script);
+                if (nameValuePairs != null)
+                {
+                    return nameValuePairs.Select(pair => new KeyValuePair<string, string>(pair[0], pair[1]));
+                }
+            }
+            else
+            {
+                string[][] nameValuePairs = await _playwrightElementHandle!.EvaluateAsync<string[][]>(script);
+                if (nameValuePairs != null)
+                {
+                    return nameValuePairs.Select(pair => new KeyValuePair<string, string>(pair[0], pair[1]));
+                }
+            }
+            return [];
         }
 
         public Task SetAttributeValueAsync(string name, string value)

@@ -186,11 +186,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             //LearnElementInfoDetails(htmlElementInfo); //check what properties of HTMLElementInfo are set in this method
             htmlElementInfo.XPath = GenerateXPathFromHtmlElementInfo(htmlElementInfo);
             htmlElementInfo.RelXpath = GenerateRelativeXPathFromHTMLElementInfo(htmlElementInfo, _xpathImpl, _pomSetting);
-            htmlElementInfo.Locators.AddRange(GenerateLocators(htmlElementInfo, _pomSetting));
+            htmlElementInfo.Locators.AddRange(await GenerateLocatorsAsync(htmlElementInfo, _pomSetting));
             htmlElementInfo.Locators.AddRange(GenerateRelativeXPathLocators(htmlElementInfo));
             htmlElementInfo.Locators.AddRange(GenerateXPathLocatorsFromUserTemplates(htmlElementInfo.HTMLElementObject.Attributes));
-            htmlElementInfo.OptionalValuesObjectsList.AddRange(GetOptionValues(htmlElementInfo));
-            htmlElementInfo.Properties.AddRange(GetProperties(htmlElementInfo));
+            htmlElementInfo.OptionalValuesObjectsList.AddRange(await GetOptionalValuesAsync(htmlElementInfo));
+            htmlElementInfo.Properties.AddRange(await GetPropertiesAsync(htmlElementInfo));
             htmlElementInfo.SetLocatorsAndPropertiesCategory(ePomElementCategory.Web);
 
             return htmlElementInfo;
@@ -285,7 +285,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         }
 
-        internal static IEnumerable<ElementLocator> GenerateLocators(HTMLElementInfo htmlElementInfo, PomSetting? pomSetting)
+        internal static async Task<IEnumerable<ElementLocator>> GenerateLocatorsAsync(HTMLElementInfo htmlElementInfo, PomSetting? pomSetting)
         {
             ElementLocator? getPOMSettingElementLocator(eLocateBy locateBy)
             {
@@ -302,7 +302,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 switch (locator.LocateBy)
                 {
                     case eLocateBy.ByID:
-                        string id = htmlElementInfo.HTMLElementObject.GetAttributeValue("id", def: string.Empty);
+                        string id = string.Empty;
+                        if (htmlElementInfo.HTMLElementObject != null)
+                        {
+                            id = htmlElementInfo.HTMLElementObject.GetAttributeValue("id", def: string.Empty);
+                        }
+                        else if (htmlElementInfo.ElementObject is IBrowserElement browserElement)
+                        {
+                            id = await browserElement.AttributeValueAsync("id");
+                        }
                         if (string.IsNullOrEmpty(id))
                         {
                             continue;
@@ -312,7 +320,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                         locator.EnableFriendlyLocator = getPOMSettingElementLocator(eLocateBy.ByID)?.EnableFriendlyLocator ?? false;
                         break;
                     case eLocateBy.ByName:
-                        string name = htmlElementInfo.HTMLElementObject.GetAttributeValue("name", def: string.Empty);
+                        string name = string.Empty;
+                        if (htmlElementInfo.HTMLElementObject != null)
+                        {
+                            name = htmlElementInfo.HTMLElementObject.GetAttributeValue("name", def: string.Empty);
+                        }
+                        else if (htmlElementInfo.ElementObject is IBrowserElement browserElement)
+                        {
+                            name = await browserElement.AttributeValueAsync("name");
+                        }
                         if (string.IsNullOrEmpty(name))
                         {
                             continue;
@@ -343,6 +359,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                         break;
                     case eLocateBy.ByTagName:
                         string tagName = htmlElementInfo.ElementType;
+                        if (htmlElementInfo.HTMLElementObject != null)
+                        {
+                            tagName = htmlElementInfo.HTMLElementObject.Name;
+                        }
+                        else if (htmlElementInfo.ElementObject is IBrowserElement browserElement)
+                        {
+                            tagName = await browserElement.TagNameAsync();
+                        }
                         if (string.IsNullOrEmpty(tagName))
                         {
                             continue;
@@ -356,29 +380,36 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return locators.Where(l => l.IsAutoLearned);
         }
 
-        internal static  IEnumerable<OptionalValue> GetOptionValues(HTMLElementInfo htmlElementInfo)
+        internal static Task<IEnumerable<OptionalValue>> GetOptionalValuesAsync(HTMLElementInfo htmlElementInfo)
         {
             if (!ElementInfo.IsElementTypeSupportingOptionalValues(htmlElementInfo.ElementTypeEnum))
             {
-                return [];
+                return Task.FromResult<IEnumerable<OptionalValue>>([]);
             }
             
             List<OptionalValue> optionalValues = [];
-            foreach (HtmlNode childNode in htmlElementInfo.HTMLElementObject.ChildNodes)
+            if (htmlElementInfo.HTMLElementObject != null)
             {
-                if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
+                foreach (HtmlNode childNode in htmlElementInfo.HTMLElementObject.ChildNodes)
                 {
-                    string[] tempOpVals = childNode.InnerText.Split('\n');
-                    foreach (string cuVal in tempOpVals)
+                    if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
                     {
-                        optionalValues.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
+                        string[] innerTextValues = childNode.InnerText.Split('\n');
+                        foreach (string innerTextValue in innerTextValues)
+                        {
+                            optionalValues.Add(new OptionalValue() { Value = innerTextValue, IsDefault = false });
+                        }
                     }
                 }
             }
-            return optionalValues;
+            else if (htmlElementInfo.ElementObject is IBrowserElement browserElement)
+            {
+                
+            }
+            return Task.FromResult<IEnumerable<OptionalValue>>(optionalValues);
         }
 
-        internal static IEnumerable<ControlProperty> GetProperties(HTMLElementInfo htmlElementInfo)
+        internal static async Task<IEnumerable<ControlProperty>> GetPropertiesAsync(HTMLElementInfo htmlElementInfo)
         {
             List<ControlProperty> properties = [];
 
@@ -427,25 +458,39 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     Value = htmlElementInfo.Value,
                 });
             }
+            Size size = new(htmlElementInfo.Width, htmlElementInfo.Height);
+            if (htmlElementInfo.ElementObject is IBrowserElement)
+            {
+                Size browserElementSize = await ((IBrowserElement)htmlElementInfo.ElementObject).SizeAsync();
+                size.Width = browserElementSize.Width;
+                size.Height = browserElementSize.Height;
+            }
             properties.Add(new()
             {
                 Name = ElementProperty.Width,
-                Value = htmlElementInfo.Width.ToString(),
+                Value = size.Width.ToString(),
             });
             properties.Add(new()
             {
                 Name = ElementProperty.Height,
-                Value = htmlElementInfo.Height.ToString(),
+                Value = size.Height.ToString(),
             });
+            Point position = new(htmlElementInfo.X, htmlElementInfo.Y);
+            if (htmlElementInfo.ElementObject is IBrowserElement)
+            {
+                Point browserElementPosition = await ((IBrowserElement)htmlElementInfo.ElementObject).PositionAsync();
+                position.X = browserElementPosition.X;
+                position.Y = browserElementPosition.Y;
+            }
             properties.Add(new()
             {
                 Name = ElementProperty.X,
-                Value = htmlElementInfo.X.ToString(),
+                Value = position.X.ToString(),
             });
             properties.Add(new()
             {
                 Name = ElementProperty.Y,
-                Value = htmlElementInfo.Y.ToString(),
+                Value = position.Y.ToString(),
             }); 
             if (htmlElementInfo.OptionalValuesObjectsList.Count > 0)
             {
@@ -456,18 +501,36 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     Value = htmlElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") 
                 });
             }
-            foreach (HtmlAttribute htmlAttribute in htmlElementInfo.HTMLElementObject.Attributes)
+            IEnumerable<KeyValuePair<string,string>> htmlAttributes = [];
+            if (htmlElementInfo.HTMLElementObject != null)
             {
-                if (!properties.Any(p => string.Equals(p.Name, htmlAttribute.Name) && string.Equals(p.Value, htmlAttribute.Value)))
-                {
-                    properties.Add(new()
-                    {
-                        Name = htmlAttribute.Name,
-                        Value = htmlAttribute.Value,
-                    });
-                }
+                htmlAttributes = htmlElementInfo.HTMLElementObject.Attributes.Select(a => new KeyValuePair<string, string>(a.Name, a.Value));
             }
-            if (!string.IsNullOrEmpty(htmlElementInfo.HTMLElementObject.InnerText) &&
+            else if (htmlElementInfo.ElementObject is IBrowserElement)
+            {
+                htmlAttributes = await ((IBrowserElement)htmlElementInfo.ElementObject).AttributesAsync();
+            }
+            foreach (KeyValuePair<string, string> htmlAttribute in htmlAttributes)
+            {
+                if (properties.Any(p => string.Equals(p.Name, htmlAttribute.Key) && string.Equals(p.Value, htmlAttribute.Value)))
+                {
+                    continue;
+                }
+                if (string.Equals(htmlAttribute.Key, "style") || 
+                    string.Equals(htmlAttribute.Value, "border: 3px dashed red;") || 
+                    string.Equals(htmlAttribute.Value, "outline: 3px dashed red;"))
+                {
+                    continue;
+                }
+
+                properties.Add(new()
+                {
+                    Name = htmlAttribute.Key,
+                    Value = htmlAttribute.Value,
+                });
+            }
+            if (htmlElementInfo.HTMLElementObject != null && 
+                !string.IsNullOrEmpty(htmlElementInfo.HTMLElementObject.InnerText) &&
                 htmlElementInfo.OptionalValues.Count == 0 && 
                 htmlElementInfo.HTMLElementObject.ChildNodes.Count == 0)
             {

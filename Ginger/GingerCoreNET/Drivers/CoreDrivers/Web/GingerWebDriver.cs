@@ -274,7 +274,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             string isInjected = "no";
             try
             {
-                object? output = await tab.ExecuteJavascriptAsync("return GingerLibLiveSpy.IsLiveSpyExist();");
+                object? output = await tab.ExecuteJavascriptAsync("GingerLibLiveSpy.IsLiveSpyExist();");
                 string? outputString = output?.ToString();
                 if (!string.IsNullOrEmpty(outputString))
                 {
@@ -296,9 +296,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             string liveSpyScript = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLiveSpy);
             await InjectScriptAsync(tab, liveSpyScript);
 
-            //don't know why we execute below 2 scripts, copying it from SeleniumDriver
             await tab.ExecuteJavascriptAsync("define_GingerLibLiveSpy();");
-            await tab.ExecuteJavascriptAsync($"return GingerLibLiveSpy.AddScript({JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min)});");
+            await tab.ExecuteJavascriptAsync($"arg => GingerLibLiveSpy.AddScript(arg);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
+            await tab.ExecuteJavascriptAsync("GingerLibLiveSpy.StartEventListner();");
         }
 
         private protected Task InjectScriptAsync(IBrowserTab tab, string script)
