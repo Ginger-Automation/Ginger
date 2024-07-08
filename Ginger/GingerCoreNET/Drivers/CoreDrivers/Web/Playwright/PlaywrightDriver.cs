@@ -543,11 +543,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 IBrowserElement? browserElement = null;
                 try
-                {
-                    //when we spy the element for the first time, it throws exception because X,Y point of mouse position is undefined for some reason
+                {    
                     browserElement = (await currentTab.GetElementsAsync("GingerLibLiveSpy.ElementFromPoint();")).FirstOrDefault();
                 }
-                catch (Exception) { }
+                catch (Exception) 
+                {
+                    //when we spy the element for the first time, it throws exception because X,Y point of mouse position is undefined for some reason
+                }
                 if (browserElement == null)
                 {
                     return null!;

@@ -89,12 +89,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 }
 
                 IBrowserElement? browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
-                if (browserElement == null)
-                {
-                    continue;
-                }
-
-                if (!await browserElement.IsVisibleAsync())
+                if (browserElement == null || !await browserElement.IsVisibleAsync())
                 {
                     continue;
                 }

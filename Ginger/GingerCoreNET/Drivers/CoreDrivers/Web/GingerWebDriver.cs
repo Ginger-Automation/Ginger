@@ -304,7 +304,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         private protected Task InjectScriptAsync(IBrowserTab tab, string script)
         {
             string injectionableScript = PrepareScriptForInjection(script);
-            //return tab.ExecuteJavascriptAsync(injectionableScript);
             return tab.InjectJavascriptAsync(injectionableScript);
         }
 
