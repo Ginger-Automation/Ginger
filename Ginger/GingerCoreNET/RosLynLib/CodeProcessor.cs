@@ -313,7 +313,7 @@ namespace GingerCoreNET.RosLynLib
                     expression = $"var Result = {expression} return Result;";
                 }
 
-                object result = CSharpScript.EvaluateAsync(expression, ScriptOptions.Default.WithReferences(new Assembly[] { BogusAssembly })).Result;
+                object result = CSharpScript.EvaluateAsync(expression, ScriptOptions.Default.WithReferences(BogusAssembly)).Result;
                 return result.ToString();
             }
             catch (Exception e)
