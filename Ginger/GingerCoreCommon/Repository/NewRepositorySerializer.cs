@@ -240,6 +240,7 @@ namespace Amdocs.Ginger.Repository
                 nameof(RepositoryItemBase.Guid) or
                 nameof(RepositoryItemBase.ParentGuid) or
                 "Type" or
+                "DevelopmentTime" or
                 "ActivitiesGroupID" or
                 "ActivityName" or
                 "Active" or

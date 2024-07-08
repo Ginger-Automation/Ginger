@@ -360,6 +360,9 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
+        public ElementInfo ParentElement { get; set; }
+        public IList<ElementInfo> ChildElements { get; } = [];
+
         ObservableList<OptionalValue> IParentOptionalValuesObject.OptionalValuesList { get { return OptionalValuesObjectsList; } set { OptionalValuesObjectsList = value; } }
 
         void IParentOptionalValuesObject.PropertyChangedEventHandler()

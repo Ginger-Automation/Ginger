@@ -5047,7 +5047,7 @@ namespace GingerCore.Drivers
                         }
                         AppWindow AW = new AppWindow();
                         AW.Title = Driver.Title;
-                        AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
+                        AW.WindowType = AppWindow.eWindowType.WebPage;
                         list.Add(AW);
                     }
                     catch (Exception ex)
@@ -10985,6 +10985,18 @@ namespace GingerCore.Drivers
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in OnNetworkResponseReceived ", ex);
             }
+        }
+
+        private protected override IBrowser GetBrowser()
+        {
+            //overridden method from GingerWebDriver, need to implement this when we refactor SeleniumDriver to be in the similar structure as PlaywrightDriver
+            throw new NotImplementedException();
+        }
+
+        private protected override Task<IBrowserElement> FindBrowserElementAsync(eLocateBy locateBy, string locateValue)
+        {
+            //overridden method from GingerWebDriver, need to implement this when we refactor SeleniumDriver to be in the similar structure as PlaywrightDriver
+            throw new NotImplementedException();
         }
     }
 }
