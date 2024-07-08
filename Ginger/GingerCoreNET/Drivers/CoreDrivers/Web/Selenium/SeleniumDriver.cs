@@ -120,6 +120,23 @@ namespace GingerCore.Drivers
             Edge,
             RemoteWebDriver,
         }
+        public enum ePageLoadStrategy
+        {
+            normal,
+            eager,
+            none,
+        }
+        
+        public enum eUnhandledPromptBehavior
+        {
+            dismissAndNotify,
+            dismiss,
+            accept,
+            acceptAndNotify,
+            ignore,
+        }
+       
+
 
         public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
@@ -295,12 +312,11 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("normal")]
         [UserConfiguredDescription("Defines the current session’s page loading strategy.you can change from the default parameter of normal to eager or none")]
         public string PageLoadStrategy { get; set; }
-
+     
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Start BMP - Browser Mob Proxy (true/false)")]
         public bool StartBMP { get; set; }
-
         [UserConfigured]
         [UserConfiguredDefault(@"C:\...\browsermob\bin\browsermob-proxy.bat")]
         [UserConfiguredDescription("Start BMP .BAT File - full path to BMP BAT file")]
