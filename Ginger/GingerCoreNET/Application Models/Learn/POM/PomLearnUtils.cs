@@ -162,12 +162,23 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             }
         }
 
+        public void StartLearningTime()
+        {
+            POM.StartTimer();
+        }
+        public void StopLearningTime()
+        {
+            POM.StopTimer();
+        }
+
         public void StopLearning()
         {
             if (mAgent != null && ((AgentOperations)mAgent.AgentOperations).Driver != null)
             {
                 ((AgentOperations)mAgent.AgentOperations).Driver.StopProcess = true;
             }
+
+            POM.StopTimer();
         }
 
         public void ClearStopLearning()
@@ -210,7 +221,6 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             LearnScreenShot();
             POM.PageURL = ((DriverBase)((AgentOperations)Agent.AgentOperations).Driver).GetURL();
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
-
             // appending Specific frame title in POM name
             if (!string.IsNullOrEmpty(SpecificFramePath))
             {

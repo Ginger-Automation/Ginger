@@ -1,0 +1,307 @@
+﻿<Page x:Class="Ginger.Drivers.DriversConfigsEditPages.WebAgentConfigEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+ xmlns:sys="clr-namespace:System;assembly=mscorlib"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Actions="clr-namespace:Ginger.BusinessFlowWindows"
+ mc:Ignorable="d" 
+      d:DesignHeight="1200" d:DesignWidth="800"
+      Title="WebAgentConfigEditPage">
+
+    <Grid  x:Name="xPageGrid" Grid.IsSharedSizeScope="True"  Background="{StaticResource $BackgroundColor_White}">
+        
+
+        <TabControl>
+            <TabItem Header="Configurations" Style="{StaticResource $RoundedTab}">
+                <StackPanel Orientation="Vertical" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left Side -->
+                        <Grid Grid.Column="0" >
+                            <StackPanel >
+                                <Expander x:Name="xProxyExpander" ExpandDirection="Down"  Style="{StaticResource $ExpanderStyle}"   IsExpanded="True">
+                                    <Expander.Header>
+                                        <Label Content="Proxy Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                    </Expander.Header>
+                                    <Expander.Content >
+                                        <StackPanel HorizontalAlignment="Left" Margin="10,5,0,0">
+                                            <StackPanel.Resources>
+                                                <Thickness x:Key="ChildGap">0 5 0 5</Thickness>
+                                                <sys:Double x:Key="LabelWidth">180</sys:Double>
+                                                <sys:Double x:Key="ControlWidth">270</sys:Double>
+                                                <sys:Double x:Key="VEControlWidth">280</sys:Double>
+                                            </StackPanel.Resources>
+                                            <CheckBox x:Name="xAutoDetectProxyCB" Content="Auto Detect Proxy" Checked="xAutoDetectProxyCB_Checked" Unchecked="xAutoDetectProxyCB_Unchecked_1"  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="{StaticResource ChildGap}" Style="{StaticResource $CeckBoxStyle}"/>
+                                            <StackPanel x:Name="xProxyPnl">
+                                                <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Proxy:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xProxyVE"    Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="By Pass Local Proxy:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xByPassProxyVE"    Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Proxy Auto Config Url:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xProxyAutoConfigUrlVE"  Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Expander.Content>
+                                </Expander>
+
+                                <Expander x:Name="xBrowserConfigration" ExpandDirection="Down"  Style="{StaticResource $ExpanderStyle}"  >
+                                    <Expander.Header>
+                                        <Label Content="Browser Configurations" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                    </Expander.Header>
+                                    <Expander.Content >
+                                        <StackPanel HorizontalAlignment="Left" Margin="10,5,0,0">
+                                            <StackPanel.Resources>
+                                                <Thickness x:Key="ChildGap">0 5 0 5</Thickness>
+                                                <sys:Double x:Key="LabelWidth">180</sys:Double>
+                                                <sys:Double x:Key="ControlWidth">270</sys:Double>
+                                                <sys:Double x:Key="VEControlWidth">280</sys:Double>
+                                            </StackPanel.Resources>
+                                           
+                                            <StackPanel >
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <CheckBox x:Name="xHeadlessBrowserModeCB" Content="Headless Browser Mode"  Margin="{StaticResource ChildGap}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="{StaticResource LabelWidth}" Style="{StaticResource $CeckBoxStyle}"/>
+
+                                                    <CheckBox x:Name="xBrowserMinimizedCB" Content="Browser Minimized"  Width="{StaticResource VEControlWidth}" Margin="{StaticResource ChildGap}" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+
+                                                </StackPanel>
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Browser Version:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xBrowserVersionVE"    Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Browser Height:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xBrowserHeightVE"   Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Browser Width:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xBrowserWidthVE"   Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Browser Executable Path:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xBrowserExecutablePathVE"    Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Driver File Path:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xDriverFilePathVE"   Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+
+                                                
+
+                                            </StackPanel>
+
+                                            <Expander x:Name="xBrowserSpecificConfiguration" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" >
+                                                <Expander.Header>
+                                                    <Label Content="Browser Specific Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}" FontWeight="Normal"/>
+                                                </Expander.Header>
+                                                <Expander.Content>
+                                                    <StackPanel Margin="30,5,0,0">
+                                                        <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                            <CheckBox x:Name="xBrowserPrivateModeCB" Content="Browser Private Mode"  Margin="{StaticResource ChildGap}"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+                                                        </StackPanel>
+                                                        <StackPanel x:Name="xChromePnl">                                                           
+                                                            <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                                <Label Content="Emulation Device Name:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                                <Actions:UCValueExpression x:Name="xEmulationDeviceNameVE"    Width="{StaticResource VEControlWidth}"/>
+                                                            </StackPanel>
+                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                                <Label Content="Download Folder Path:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                                <Actions:UCValueExpression x:Name="xDownloadFolderPathVE"    Width="{StaticResource VEControlWidth}"/>
+                                                            </StackPanel>
+                                                        </StackPanel>
+
+                                                        <StackPanel x:Name="xChromeFirefoxPnl">
+                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                                <Label Content="Browser User Agent:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                                <Actions:UCValueExpression x:Name="xBrowserUserAgentVE" Width="{StaticResource VEControlWidth}"/>
+                                                            </StackPanel>
+                                                                                                                       
+                                                        </StackPanel>
+                                                        <StackPanel x:Name="xChromeFirefoxIEPnl">
+                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                                <Label Content="User Profile Folder Path:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                                <Actions:UCValueExpression x:Name="xUserProfileFolderPathVE" Width="{StaticResource VEControlWidth}"/>
+                                                            </StackPanel>
+                                                        </StackPanel>
+
+                                                        <StackPanel  x:Name="xEdgeIE">
+
+                                                            <StackPanel Orientation="Horizontal" >
+
+                                                            </StackPanel>
+                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                                <CheckBox x:Name="xIgnoreIEProtectedModeCB" Content="Ignore IE Protected Mode" Width="{StaticResource LabelWidth}"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+                                                                <CheckBox x:Name="xUse64BitbrowserCB" Content="Use 64Bit browser"  Margin="{StaticResource ChildGap}"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource VEControlWidth}"/>
+                                                            </StackPanel>
+                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                                <CheckBox x:Name="xEnsureCleanSessionCB" Content="Ensure Clean Session" Margin="{StaticResource ChildGap}" Width="{StaticResource LabelWidth}"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+                                                                <CheckBox x:Name="xOpenIEModeInEdgeCB" Content="Open IE Mode In Edge" Width="{StaticResource VEControlWidth}"  VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="{StaticResource ChildGap}" Style="{StaticResource $CeckBoxStyle}"/>
+                                                            </StackPanel>
+                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+
+
+
+                                                            </StackPanel>
+                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                                <Label Content="Edge Excutable Path:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                                <Actions:UCValueExpression x:Name="xEdgeExcutablePathVE"   Width="{StaticResource VEControlWidth}"/>
+                                                            </StackPanel>
+                                                        </StackPanel>
+
+                                                    </StackPanel>
+                                                </Expander.Content>
+                                            </Expander>
+
+                                        </StackPanel>
+                                    </Expander.Content>
+                                </Expander>
+
+
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Right Side -->
+                        <Grid Grid.Column="1" >
+                            <StackPanel>
+
+
+
+                                <Expander  x:Name="xSessionManagement"  ExpandDirection="Down" IsExpanded="True"  Style="{StaticResource $ExpanderStyle}"  >
+                                    <Expander.Header>
+                                        <Label Content="Session Management" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                    </Expander.Header>
+                                    <Expander.Content >
+                                        <StackPanel HorizontalAlignment="Left" Margin="10,5,0,0">
+                                            <StackPanel.Resources>
+                                                <Thickness x:Key="ChildGap">0 5 0 5</Thickness>
+                                                <sys:Double x:Key="LabelWidth">180</sys:Double>
+                                                <sys:Double x:Key="ComboBoxWidth">250</sys:Double>
+                                                <sys:Double x:Key="ControlWidth">270</sys:Double>
+                                                <sys:Double x:Key="VEControlWidth">280</sys:Double>
+                                            </StackPanel.Resources>
+
+                                            <StackPanel >
+                                                <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Page Load Strategy:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <ComboBox  Name="xPageLoadStrategyComboBox" Style="{StaticResource $FlatEditInputComboBoxStyle}"  Width="{StaticResource ComboBoxWidth}"  ></ComboBox>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Implicit Wait:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xImplicitWaitVE"   Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Http Server Time Out:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xHttpServerTimeOutVE"    Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Page Load Time Out:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xPageLoadTimeOutVE"    Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Driver Load Waiting Time:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xDriverLoadWaitingTimeVE"    Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Expander.Content>
+                                </Expander>
+
+                                <Expander x:Name="xAdvanceSetting" ExpandDirection="Down"  Style="{StaticResource $ExpanderStyle}" >
+                                    <Expander.Header>
+                                        <Label Content="Advance settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                    </Expander.Header>
+                                    <Expander.Content >
+                                        <StackPanel HorizontalAlignment="Left" Margin="10,5,0,0">
+                                            <StackPanel.Resources>
+                                                <Thickness x:Key="ChildGap">0 5 0 5</Thickness>
+                                                <sys:Double x:Key="LabelWidth">180</sys:Double>
+                                                <sys:Double x:Key="ControlWidth">270</sys:Double>
+                                                <sys:Double x:Key="ComboBoxWidth">250</sys:Double>
+                                                <sys:Double x:Key="VEControlWidth">280</sys:Double>
+                                            </StackPanel.Resources>
+
+                                            <StackPanel >
+
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Selenium User Arguments:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xSeleniumUserArgumentsVE"    Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Debug Address:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xDebugAddressVE"   Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Start BMP BAT File:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xStartBMPBATFileVE"   Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Extension Path:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xExtensionPathVE"   Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Start BMP Port:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <Actions:UCValueExpression x:Name="xStartBMPPortVE"   Width="{StaticResource VEControlWidth}"/>
+                                                </StackPanel>
+
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Unhandled Prompt Behavior:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <ComboBox  Name="xUnhandledPromptBehaviorComboBox" Style="{StaticResource $FlatEditInputComboBoxStyle}"   Width="{StaticResource ComboBoxWidth}"  ></ComboBox>
+                                                </StackPanel>
+
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <Label Content="Browser Log Level:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
+                                                    <ComboBox  Name="xBrowserLogLevelComboBox" Style="{StaticResource $FlatEditInputComboBoxStyle}"   Width="{StaticResource ComboBoxWidth}"  ></ComboBox>
+                                                </StackPanel>
+
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <CheckBox x:Name="xDisableExtensionCB" Content="Disable Extension" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource LabelWidth}"/>
+
+                                                    <CheckBox x:Name="xEnableNativeEventsCB" Content="Enable Native Events" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+                                                </StackPanel>
+
+                                                
+
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <CheckBox x:Name="xStartBMPCB" Content="Start BMP" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource LabelWidth}"/>
+
+                                                    <CheckBox x:Name="xAutoFrameShiftForPOMCB" Content="Handle IFrame Shift Automatically For Pom Element" Margin="{StaticResource ChildGap}" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+                                                </StackPanel>
+
+                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                    <CheckBox x:Name="xHideConsoleWindowCB" Content="Hide Console Window" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource LabelWidth}"/>
+
+
+
+                                                    <CheckBox x:Name="xFrameWindowScreenShotCB" Content="Take Only Active Frame Or Window Screen Shot In Case Of Failure" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="{StaticResource ChildGap}" Style="{StaticResource $CeckBoxStyle}"/>
+                                                </StackPanel>
+
+
+
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Expander.Content>
+                                </Expander>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                    
+                    
+                </StackPanel>
+            </TabItem>
+           </TabControl>
+    </Grid>
+</Page>

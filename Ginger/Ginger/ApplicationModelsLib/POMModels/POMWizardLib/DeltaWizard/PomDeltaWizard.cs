@@ -34,7 +34,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             mPomDeltaUtils = new PomDeltaUtils(pom, agent);
 
             AddPage(Name: "Elements Update Settings", Title: "Elements Update Settings", SubTitle: "Elements Update Settings", Page: new PomDeltaSettingsWizardPage());
-            AddPage(Name: "Elements Compare", Title: "Elements Compare", SubTitle: "Elements Comparison with Latest Status", Page: new PomDeltaElementCompareWizardPage());
+            AddPage(Name: "Elements Compare", Title: "Elements Compare", SubTitle: "Elements Comparison with Latest Status", Page: new PomDeltaElementCompareWizardPage(pom));
             AddPage(Name: "Elements Mapping", Title: "Elements Mapping", SubTitle: "Map deleted element with new element", Page: new PomDeltaDeletedElementMappingWizardPage());
 
         }

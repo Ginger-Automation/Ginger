@@ -195,7 +195,7 @@ namespace Ginger
         }
 
 
-
+        
         private void AddGlobalModelParameters()
         {
             TreeViewItem Parent = AddOrGetCategory("Data");
@@ -418,10 +418,35 @@ namespace Ginger
                 case "Solution":
                     eImageType = eImageType.Solution;
                     break;
+                case "Mock Data":
+                    eImageType = eImageType.Table;
+                    break;
+                case "Address":
+                    eImageType = eImageType.AddressCard;
+                    break;
+                case "Date":
+                    eImageType = eImageType.Timer;
+                    break;
+                case "Finance":
+                    eImageType = eImageType.MoneyCheckDollar;
+                    break;
+                case "Internet":
+                    eImageType = eImageType.IdCard;
+                    break;
+                case "Name":
+                    eImageType = eImageType.IdBadge;
+                    break;
+                case "Phone":
+                    eImageType = eImageType.Phone;
+                    break;
+                case "Random":
+                    eImageType = eImageType.Operations;
+                    break;
                 default:
                     throw new KeyNotFoundException();
             }
             return eImageType;
+
         }
 
         private TreeViewItem AddOrGetCategory(string Category)
@@ -613,7 +638,6 @@ namespace Ginger
         private void AddEnvParams()
         {
             TreeViewItem Parent = AddOrGetCategory("Data");
-            //TreeViewItem child = AddOrGetSubCategory("Environments", Parent);
             TreeViewItem tviEnvs = new TreeViewItem();
             tviEnvs.Selected += CleanHelpText;
             SetItemView(tviEnvs, "Environments", "", eImageType.Environment);
@@ -628,15 +652,11 @@ namespace Ginger
                 tviEnv.Selected += CleanHelpText;
                 tviEnvs.Items.Add(tviEnv);
 
-                TreeViewItem tviEnvApps = new TreeViewItem();
-                SetItemView(tviEnvApps, "Applications", "", eImageType.Application);
-                tviEnv.Items.Add(tviEnvApps);
-
                 foreach (EnvApplication a in env.Applications)
                 {
                     TreeViewItem tviEnvApp = new TreeViewItem();
                     SetItemView(tviEnvApp, a.Name, "", eImageType.Window);
-                    tviEnvApps.Items.Add(tviEnvApp);
+                    tviEnv.Items.Add(tviEnvApp);
                     tviEnvApp.Selected += CleanHelpText;
                     //Add Env URL
                     TreeViewItem tviEnvAppURL = new TreeViewItem();

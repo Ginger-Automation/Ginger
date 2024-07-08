@@ -237,6 +237,8 @@ namespace GingerCore
                 ProcessGeneralFuncations();
                 EvaluateFlowDetails();
                 EvaluateCSharpFunctions();
+                EvaluateBogusDataGenrateFunctions();
+
             }
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
@@ -541,6 +543,11 @@ namespace GingerCore
         private void EvaluateCSharpFunctions()
         {
             mValueCalculated = CodeProcessor.GetResult(mValueCalculated);
+        }
+
+        private void EvaluateBogusDataGenrateFunctions()
+        {
+            mValueCalculated = CodeProcessor.GetBogusDataGenerateresult(mValueCalculated);
         }
 
         private void ReplaceGlobalParameters()
@@ -1760,6 +1767,10 @@ namespace GingerCore
             else if (mValueCalculated.Contains(@"{CS"))
             {
                 return true;
+            }
+            else if(mValueCalculated.Contains(@"{MockDataExp")) 
+            { 
+                return true; 
             }
             return false;
         }

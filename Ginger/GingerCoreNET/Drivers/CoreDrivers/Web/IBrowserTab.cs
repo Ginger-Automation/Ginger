@@ -32,6 +32,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<string> ExecuteJavascriptAsync(string script);
 
+        public Task<string> ExecuteJavascriptAsync(string script, object arg);
+
+        public Task InjectJavascriptAsync(string script);
+
         public Task WaitTillLoadedAsync();
 
         public Task<string> ConsoleLogsAsync();
@@ -60,6 +64,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         /// <returns></returns>
         /// <exception cref="LocatorNotSupportedException">If the provided <see cref="eLocateBy"/> is not supported.</exception>
         public Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string locateValue);
+
+        public Task<IBrowserElement?> GetElementAsync(string javascript);
 
         public Task CloseAsync();
     }

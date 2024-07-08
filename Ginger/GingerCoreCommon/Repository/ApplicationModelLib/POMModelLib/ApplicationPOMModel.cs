@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -41,6 +42,7 @@ namespace Amdocs.Ginger.Repository
 
         public const int cLearnScreenWidth = 1000;
         public const int cLearnScreenHeight = 1000;
+        private Stopwatch _stopwatch;
 
         public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Java, ePlatformType.Windows, ePlatformType.Mobile };
 
@@ -63,6 +65,50 @@ namespace Amdocs.Ginger.Repository
                     mPageLoadFlow = value;
                     OnPropertyChanged(nameof(this.PageLoadFlow));
                 }
+            }
+        }
+
+        private TimeSpan mDevelopmentTime;
+        [IsSerializedForLocalRepository]
+        public TimeSpan DevelopmentTime
+        {
+            get
+            {
+                return mDevelopmentTime;
+            }
+            set
+            {
+                if(mDevelopmentTime != value)
+                {
+                    mDevelopmentTime = value;
+                }
+            }
+        }
+        public void StartTimer()
+        {
+            if (_stopwatch == null)
+            {
+                _stopwatch = new Stopwatch();
+            }
+
+            if (!_stopwatch.IsRunning)
+            {
+                _stopwatch.Start();
+            }
+            else
+            {
+                _stopwatch.Restart();
+            }
+        }
+
+        public void StopTimer()
+        {
+            if (_stopwatch != null && _stopwatch.IsRunning)
+            {
+                _stopwatch.Stop();
+                TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
+                DevelopmentTime = DevelopmentTime.Add(elapsedTime);
+                _stopwatch.Reset();
             }
         }
 

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
@@ -33,10 +34,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         PomDeltaWizard mWizard;
         PomDeltaViewPage mPomDeltaViewPage = null;
         bool mFirstLearnWasDone = false;
+        ApplicationPOMModel pom;
 
-        public PomDeltaElementCompareWizardPage()
+        public PomDeltaElementCompareWizardPage(ApplicationPOMModel pom)
         {
             InitializeComponent();
+            this.pom = pom;
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -64,6 +67,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 try
                 {
                     mWizard.ProcessStarted();
+                    pom.StartTimer();
                     InitilizePomElementsMappingPage();//we recreating page as workaround for clearing grid filters                    
                     xReLearnButton.Visibility = Visibility.Collapsed;
                     xStopLoadButton.ButtonText = "Stop";
@@ -83,6 +87,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     xStopLoadButton.Visibility = Visibility.Collapsed;
                     xReLearnButton.Visibility = Visibility.Visible;
                     mWizard.ProcessEnded();
+                    pom.StopTimer();
                 }
             }
         }
@@ -92,6 +97,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             xStopLoadButton.ButtonText = "Stopping...";
             xStopLoadButton.IsEnabled = false;
             mWizard.mPomDeltaUtils.StopLearning();
+            pom.StopTimer();
         }
 
         private void ReLearnButtonClicked(object sender, RoutedEventArgs e)
