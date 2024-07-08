@@ -936,13 +936,12 @@ namespace GingerCore
             }
             copy.DevelopmentTime = TimeSpan.Zero;
             copy.StopTimer();
-            //copy.DevelopmentTime = copy.DevelopmentTime.Add(srActivity.);
             return copy;
         }
 
         public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extradetails=null)
         {
-
+            
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
             Activity newInstance = null;
@@ -956,7 +955,14 @@ namespace GingerCore
                 newInstance.Type = activityInstance.Type;
                 newInstance.Active = activityInstance.Active;
 
-                newInstance.DevelopmentTime = activityInstance.DevelopmentTime;
+                if(newInstance.Guid == this.Guid)
+                {
+                    newInstance.DevelopmentTime = newInstance.DevelopmentTime.Add(this.DevelopmentTime);
+                }
+                else
+                {
+                    newInstance.DevelopmentTime = activityInstance.DevelopmentTime;
+                }
 
                 if (hostItem != null)
                 {
