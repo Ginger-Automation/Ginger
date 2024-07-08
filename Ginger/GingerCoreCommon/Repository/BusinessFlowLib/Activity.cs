@@ -141,7 +141,7 @@ namespace GingerCore
             }
         }
 
-        
+
         public override string ToString()
         {
             return ActivityName;
@@ -230,7 +230,7 @@ namespace GingerCore
                 }
                 if (mActive != value)
                 {
-                    mActive = value; 
+                    mActive = value;
                     OnPropertyChanged(nameof(Active));
                 }
             }
@@ -579,8 +579,8 @@ namespace GingerCore
                 {
                     mConsumerApplications = value;
                     OnPropertyChanged(nameof(ConsumerApplications));
-                }       
-             }
+                }
+            }
         }
 
         [IsSerializedForLocalRepository]
@@ -925,7 +925,7 @@ namespace GingerCore
                 variable.ParentGuid = variable.Guid;
                 variable.Guid = Guid.NewGuid();
             }
-            foreach(FlowControl fc in copy.Acts.SelectMany(a => a.FlowControls))
+            foreach (FlowControl fc in copy.Acts.SelectMany(a => a.FlowControls))
             {
                 Guid targetGuid = fc.GetGuidFromValue();
                 if (oldNewActionGuidList.Any(oldNew => oldNew.Key == targetGuid))
@@ -934,22 +934,30 @@ namespace GingerCore
                     fc.Value = fc.Value.Replace(targetGuid.ToString(), newTargetGuid.ToString());
                 }
             }
+            copy.DevelopmentTime = TimeSpan.Zero;
+            copy.StopTimer();
+            //copy.DevelopmentTime = copy.DevelopmentTime.Add(srActivity.);
             return copy;
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extradetails=null)
         {
+
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
             Activity newInstance = null;
 
             if (activityInstance.Type == eSharedItemType.Link)
             {
+
                 newInstance = CopySharedRepositoryActivity(this, originFromSharedRepository: true);
                 newInstance.Guid = activityInstance.Guid;
                 newInstance.ActivitiesGroupID = activityInstance.ActivitiesGroupID;
                 newInstance.Type = activityInstance.Type;
                 newInstance.Active = activityInstance.Active;
+
+                newInstance.DevelopmentTime = activityInstance.DevelopmentTime;
+
                 if (hostItem != null)
                 {
                     //replace old instance object with new

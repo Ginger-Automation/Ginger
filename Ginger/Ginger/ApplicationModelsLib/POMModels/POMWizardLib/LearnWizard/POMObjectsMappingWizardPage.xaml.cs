@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
@@ -68,8 +69,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
 
                         xReLearnButton.Visibility = Visibility.Visible;
-
                         Learn();
+                        
                     }
                     break;
 
@@ -106,6 +107,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             // Start the timer
             timer.Start();
+            mWizard.mPomLearnUtils.StartLearningTime();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -121,6 +123,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void StopTimer()
         {
             timer.Stop();
+            mWizard.mPomLearnUtils.StopLearningTime();
         }
         private async void Learn()
         {

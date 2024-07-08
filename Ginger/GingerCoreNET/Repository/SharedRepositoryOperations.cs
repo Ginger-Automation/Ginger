@@ -531,6 +531,7 @@ namespace Ginger.Repository
                                         if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
                                         {
                                             mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
+
                                             BF.MapTAToBF(eUserMsgSelection.None, BF.Activities[i], WorkSpace.Instance.Solution.ApplicationPlatforms, silently: true);
                                         }
                                     }
@@ -578,11 +579,13 @@ namespace Ginger.Repository
             if (sharedActivity != null)
             {
                 var sharedActFullPath = sharedActivity.ContainingFolderFullPath;
+                var backup = sharedActivity;
                 WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(sharedActivity);
                 sharedActivity = (Activity)LinkedActivity.CreateInstance(true, setNewGUID: false);
                 sharedActivity.Guid = LinkedActivity.ParentGuid;
                 sharedActivity.ParentGuid = Guid.Empty;
                 sharedActivity.Type = eSharedItemType.Regular;
+                sharedActivity.DevelopmentTime = backup.DevelopmentTime.Add(LinkedActivity.DevelopmentTime);
                 List<KeyValuePair<Guid, Guid>> oldNewActionGuidList = [];
                 foreach(Act action in sharedActivity.Acts.Cast<Act>())
                 {
