@@ -49,6 +49,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             edgeIEPnlVisibility(browserType);
             chromePnlvisibilitly(browserType);
             chromeFirefoxPnlVisibility(browserType);
+            chromeFirefoxIEPnl(browserType);
         }
 
         /// <summary>
@@ -276,7 +277,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             #endregion
         }
 
-
+       
 
         /// <summary>
         /// Handles the PropertyChanged event of the BrowserTypeParam object.
@@ -302,6 +303,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             edgeIEPnlVisibility(browserType);
             chromePnlvisibilitly(browserType);
             chromeFirefoxPnlVisibility(browserType);
+            chromeFirefoxIEPnl(browserType);
         }
 
 
@@ -356,7 +358,21 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 xChromeFirefoxPnl.Visibility = Visibility.Collapsed;
             }
         }
-
+        /// <summary>
+        /// Sets the visibility of the Chrome/Firefox/IE panel based on the specified browser type.
+        /// </summary>
+        /// <param name="result">The browser type.</param>
+        void chromeFirefoxIEPnl(WebBrowserType result)
+        {
+            if (result == WebBrowserType.Chrome || result == WebBrowserType.FireFox || result == WebBrowserType.InternetExplorer)
+            {
+                xChromeFirefoxIEPnl.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xChromeFirefoxIEPnl.Visibility = Visibility.Collapsed;
+            }
+        }
         private void xAutoDetectProxyCB_Checked(object sender, RoutedEventArgs e)
         {
             xProxyPnl.IsEnabled = false;
