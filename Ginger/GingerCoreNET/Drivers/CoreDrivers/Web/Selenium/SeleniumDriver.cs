@@ -104,6 +104,12 @@ namespace GingerCore.Drivers
         String[] SeleniumUserArgs = null;
         DriverService driverService = null;
         private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
+        static List<ActWebSmartSync.eSyncOperation> operationsWithoutLocator =
+          [
+              ActWebSmartSync.eSyncOperation.AlertIsPresent,
+                ActWebSmartSync.eSyncOperation.PageHasBeenLoaded,
+                ActWebSmartSync.eSyncOperation.UrlMatches
+          ];
 
         public enum eBrowserType
         {
@@ -2194,187 +2200,216 @@ namespace GingerCore.Drivers
         }
 
         /// <summary>
+        /// Retrieves the appropriate locators for the ActWebSmartSync action based on the provided parameters.
+        /// </summary>
+        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
+        /// <param name="pomExecutionUtil">The POMExecutionUtils object used to retrieve information about the current POM.</param>
+        /// <returns>A tuple containing the locateBy and locateValue for the ActWebSmartSync action.</returns>
+        internal (eLocateBy locateBy, string locateValue) GetLocatorsForWebSmartSync(ActWebSmartSync act, POMExecutionUtils pomExecutionUtil)
+        {
+            eLocateBy locateBy = act.ElementLocateBy;
+            string locateValue = act.ElementLocateValueForDriver;
+
+            if (act.ElementLocateBy == eLocateBy.POMElement)
+            {
+                if (pomExecutionUtil.GetCurrentPOM() == null)
+                {
+                    throw new Exception("Relevant POM not found");
+                }
+
+                ElementInfo currentPOMElementInfo = pomExecutionUtil.GetCurrentPOMElementInfo();
+                if (currentPOMElementInfo == null)
+                {
+                    throw new Exception("Unable to find details about the POM");
+                }
+
+                ElementLocator firstLocator = currentPOMElementInfo.Locators.FirstOrDefault(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy));
+
+                if (firstLocator == null)
+                {
+                    throw new Exception("No active or supported  locators found in the current POM");
+                }
+
+                locateBy = firstLocator.LocateBy;
+                locateValue = firstLocator.LocateValue;
+            }
+
+            return (locateBy, locateValue);
+        }
+
+        /// <summary>
+        /// Retrieves the appropriate Selenium By object based on the provided locateBy and locateValue.
+        /// </summary>
+        /// <param name="locateBy">The eLocateBy value representing the type of locator.</param>
+        /// <param name="locateValue">The value of the locator.</param>
+        /// <returns>The Selenium By object representing the locator.</returns>
+        internal static By GetElementLocatorForWebSmartSync(eLocateBy locateBy, string locateValue)
+        {
+            By elementLocator = locateBy switch
+            {
+                eLocateBy.ByXPath or eLocateBy.ByRelXPath => By.XPath(locateValue),
+                eLocateBy.ByID => By.Id(locateValue),
+                eLocateBy.ByName => By.Name(locateValue),
+                eLocateBy.ByClassName => By.ClassName(locateValue),
+                eLocateBy.ByCSSSelector => By.CssSelector(locateValue),
+                eLocateBy.ByLinkText => By.LinkText(locateValue),
+                eLocateBy.ByTagName => By.TagName(locateValue),
+                _ => throw new Exception("Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath and ByTagName."),
+            };
+            return elementLocator;
+        }
+
+        /// <summary>
+        /// Waits for the specified synchronization operation to complete using the provided elementLocator.
+        /// </summary>
+        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
+        /// <param name="elementLocator">The Selenium By object representing the locator.</param>
+        /// <param name="VE">The ValueExpression object used to evaluate dynamic values.</param>
+        /// <param name="wait">The WebDriverWait object used for waiting.</param>
+        internal void WebSmartSyncWaitForLocator(ActWebSmartSync act, By elementLocator, ValueExpression VE, WebDriverWait wait)
+        {
+            switch (act.SyncOperations)
+            {
+                case ActWebSmartSync.eSyncOperation.ElementIsVisible:
+                    wait.Until(ExpectedConditions.ElementIsVisible(elementLocator));
+                    break;
+                case ActWebSmartSync.eSyncOperation.ElementExists:
+                    wait.Until(ExpectedConditions.ElementExists(elementLocator));
+                    break;
+                case ActWebSmartSync.eSyncOperation.AlertIsPresent:
+                    //no need for locators
+                    wait.Until(ExpectedConditions.AlertIsPresent());
+                    break;
+                case ActWebSmartSync.eSyncOperation.ElementIsSelected:
+                    wait.Until(ExpectedConditions.ElementIsSelected(elementLocator));
+                    break;
+                case ActWebSmartSync.eSyncOperation.PageHasBeenLoaded:
+                    wait.Until(ExpectedConditions.PageHasBeenLoaded());
+                    break;
+                case ActWebSmartSync.eSyncOperation.ElementToBeClickable:
+                    wait.Until(ExpectedConditions.ElementToBeClickable(elementLocator));
+                    break;
+                case ActWebSmartSync.eSyncOperation.TextMatches:
+                    VE.Value = act.TxtMatchInput;
+                    string textToMatch = VE.ValueCalculated;
+                    if (String.IsNullOrEmpty(textToMatch))
+                    {
+                        act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                        Reporter.ToLog(eLogLevel.ERROR, act.Error);
+                        return;
+                    }
+                    wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
+                    break;
+                case ActWebSmartSync.eSyncOperation.AttributeMatches:
+                    VE.Value = act.AttributeName;
+                    string attributeName = VE.ValueCalculated;
+                    VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
+                    VE.Value = act.AttributeValue;
+                    string attributeValue = VE.ValueCalculated;
+                    if (string.IsNullOrEmpty(attributeValue) || string.IsNullOrEmpty(attributeName))
+                    {
+                        act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                        Reporter.ToLog(eLogLevel.ERROR, act.Error);
+                        return;
+                    }
+                    wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
+                    break;
+                case ActWebSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
+                    wait.Until(ExpectedConditions.EnabilityOfAllElementsLocatedBy(elementLocator));
+                    break;
+                case ActWebSmartSync.eSyncOperation.FrameToBeAvailableAndSwitchToIt:
+                    wait.Until(ExpectedConditions.FrameToBeAvailableAndSwitchToIt(elementLocator));
+                    break;
+                case ActWebSmartSync.eSyncOperation.InvisibilityOfAllElementsLocatedBy:
+                    wait.Until(ExpectedConditions.InvisibilityOfAllElementsLocatedBy(elementLocator));
+                    break;
+                case ActWebSmartSync.eSyncOperation.InvisibilityOfElementLocated:
+                    wait.Until(ExpectedConditions.InvisibilityOfElementLocated(elementLocator));
+                    break;
+                case ActWebSmartSync.eSyncOperation.PresenceOfAllElementsLocatedBy:
+                    wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(elementLocator));
+                    break;
+                case ActWebSmartSync.eSyncOperation.SelectedOfAllElementsLocatedBy:
+                    wait.Until(ExpectedConditions.SelectedOfAllElementsLocatedBy(elementLocator));
+                    break;
+                case ActWebSmartSync.eSyncOperation.UrlMatches:
+                    VE.Value = act.UrlMatches;
+                    string urlMatches = VE.ValueCalculated;
+                    if (String.IsNullOrEmpty(urlMatches))
+                    {
+                        act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                        Reporter.ToLog(eLogLevel.ERROR, act.Error);
+                        return;
+                    }
+                    wait.Until(ExpectedConditions.UrlMatches(urlMatches));
+                    break;
+                case ActWebSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
+                    wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(elementLocator));
+                    break;
+                default:
+                    act.Error = "Unsupported operation.";
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Handles the synchronization of web elements using various synchronization operations.
         /// </summary>
-        /// <param name="act">The ActWebSmartSync object containing the synchronization details.</param>
+        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
         public void WebSmartSyncHandler(ActWebSmartSync act)
         {
             By elementLocator = null;
-            if (act.SyncOperations != ActWebSmartSync.eSyncOperation.AlertIsPresent && act.SyncOperations != ActWebSmartSync.eSyncOperation.PageHasBeenLoaded && act.SyncOperations != ActWebSmartSync.eSyncOperation.UrlMatches)
+            try
             {
-                eLocateBy locateBy = act.ElementLocateBy;
-                string locateValue = act.ElementLocateValueForDriver;
-
-                if (act.ElementLocateBy == eLocateBy.POMElement)
+                if (!operationsWithoutLocator.Contains(act.SyncOperations))
                 {
-                    POMExecutionUtils pomExcutionUtil = new(act, act.ElementLocateValue);
-                    if (pomExcutionUtil.GetCurrentPOM() == null)
+                    (eLocateBy locateBy, string locateValue) = GetLocatorsForWebSmartSync(act, new POMExecutionUtils(act, act.ElementLocateValue));
+
+                    if (string.IsNullOrEmpty(locateValue))
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Current POM not found from {nameof(POMExecutionUtils)}");
-                        act.Error = "Relevant POM not found";
-                        return;
+                        throw new Exception($"For {act.SyncOperations} operation Locate value is missing or invalid input.");
                     }
 
-                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
-                    if (currentPOMElementInfo == null)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"{nameof(ElementInfo)} not found for the current POM");
-                        act.Error = "Unable to find details about the POM";
-                        return;
-                    }
-
-                    ElementLocator firstLocator = currentPOMElementInfo.Locators.FirstOrDefault(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy));
-
-                    if (firstLocator == null)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"No active or supported locator found in the current POM");
-                        act.Error = "No active or supported  locators found in the current POM";
-                        return;
-                    }
-
-                    locateBy = firstLocator.LocateBy;
-                    locateValue = firstLocator.LocateValue;
-                }
-
-                if (String.IsNullOrEmpty(locateValue))
-                {
-                    act.Error = $"For {act.SyncOperations} operation Locate value is missing or invalid input.";
-                    Reporter.ToLog(eLogLevel.ERROR, act.Error);
-                    return;
-
-                }
-
-                switch (locateBy)
-                {
-                    case eLocateBy.ByXPath:
-                    case eLocateBy.ByRelXPath:
-                        elementLocator = By.XPath(locateValue);
-                        break;
-                    case eLocateBy.ByID:
-                        elementLocator = By.Id(locateValue);
-                        break;
-                    case eLocateBy.ByName:
-                        elementLocator = By.Name(locateValue);
-                        break;
-                    case eLocateBy.ByClassName:
-                        elementLocator = By.ClassName(locateValue);
-                        break;
-                    case eLocateBy.ByCSSSelector:
-                        elementLocator = By.CssSelector(locateValue);
-                        break;
-                    case eLocateBy.ByLinkText:
-                        elementLocator = By.LinkText(locateValue);
-                        break;
-                    case eLocateBy.ByTagName:
-                        elementLocator = By.TagName(locateValue);
-                        break;
-                    default:
-                        act.Error = "Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath and ByTagName.";
-                        return;
+                    elementLocator = GetElementLocatorForWebSmartSync(locateBy, locateValue);
                 }
             }
-            //get time configured in flow-control, if nothing provided then use 30 seconds
-            int MaxTimeout = NewSmartSyncGetMaxTimeout(act);
-            WebDriverWait wait = new(Driver, TimeSpan.FromSeconds(MaxTimeout));
+            catch (Exception ex)
+            {
+                act.Error = ex.Message;
+                return;
 
+            }
+            WebOperations(act, elementLocator);
+
+        }
+
+        /// <summary>
+        /// Performs the specified synchronization operation on the web element using the provided elementLocator.
+        /// </summary>
+        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
+        /// <param name="elementLocator">The Selenium By object representing the locator.</param>
+        private void WebOperations(ActWebSmartSync act, By elementLocator)
+        {
+            //get time configured in flow-control, if nothing provided then use 30 seconds
+            int MaxTimeout = WebSmartSyncGetMaxTimeout(act);
             //store agent's implicit wait in a variable
             int implicitWait = (int)Driver.Manage().Timeouts().ImplicitWait.TotalSeconds;
 
-            //set agent's implicit wait to 1 second
-            Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
-
-            wait.PollingInterval = TimeSpan.FromMilliseconds(500);
-            ValueExpression VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
             try
             {
+                WebDriverWait wait = new(Driver, TimeSpan.FromSeconds(MaxTimeout));
 
-                switch (act.SyncOperations)
-                {
-                    case ActWebSmartSync.eSyncOperation.ElementIsVisible:
-                        wait.Until(ExpectedConditions.ElementIsVisible(elementLocator));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.ElementExists:
-                        wait.Until(ExpectedConditions.ElementExists(elementLocator));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.AlertIsPresent:
-                        //no need for locators
-                        wait.Until(ExpectedConditions.AlertIsPresent());
-                        break;
-                    case ActWebSmartSync.eSyncOperation.ElementIsSelected:
-                        wait.Until(ExpectedConditions.ElementIsSelected(elementLocator));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.PageHasBeenLoaded:
-                        wait.Until(ExpectedConditions.PageHasBeenLoaded());
-                        break;
-                    case ActWebSmartSync.eSyncOperation.ElementToBeClickable:
-                        wait.Until(ExpectedConditions.ElementToBeClickable(elementLocator));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.TextMatches:
-                        VE.Value = act.TxtMatchInput;
-                        string textToMatch = VE.ValueCalculated;
-                        if (String.IsNullOrEmpty(textToMatch))
-                        {
-                            act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
-                            Reporter.ToLog(eLogLevel.ERROR, act.Error);
-                            return;
-                        }
-                        wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.AttributeMatches:
-                        VE.Value = act.AttributeName;
-                        string attributeName = VE.ValueCalculated;
-                        VE = new ValueExpression(GetCurrentProjectEnvironment(), this.BusinessFlow);
-                        VE.Value = act.AttributeValue;
-                        string attributeValue = VE.ValueCalculated;
-                        if (string.IsNullOrEmpty(attributeValue) || string.IsNullOrEmpty(attributeName))
-                        {
-                            act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
-                            Reporter.ToLog(eLogLevel.ERROR, act.Error);
-                            return;
-                        }
-                        wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.EnabilityOfAllElementsLocatedBy:
-                        wait.Until(ExpectedConditions.EnabilityOfAllElementsLocatedBy(elementLocator));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.FrameToBeAvailableAndSwitchToIt:
-                        wait.Until(ExpectedConditions.FrameToBeAvailableAndSwitchToIt(elementLocator));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.InvisibilityOfAllElementsLocatedBy:
-                        wait.Until(ExpectedConditions.InvisibilityOfAllElementsLocatedBy(elementLocator));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.InvisibilityOfElementLocated:
-                        wait.Until(ExpectedConditions.InvisibilityOfElementLocated(elementLocator));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.PresenceOfAllElementsLocatedBy:
-                        wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(elementLocator));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.SelectedOfAllElementsLocatedBy:
-                        wait.Until(ExpectedConditions.SelectedOfAllElementsLocatedBy(elementLocator));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.UrlMatches:
-                        VE.Value = act.UrlMatches;
-                        string urlMatches = VE.ValueCalculated;
-                        if (String.IsNullOrEmpty(urlMatches))
-                        {
-                            act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
-                            Reporter.ToLog(eLogLevel.ERROR, act.Error);
-                            return;
-                        }
-                        wait.Until(ExpectedConditions.UrlMatches(urlMatches));
-                        break;
-                    case ActWebSmartSync.eSyncOperation.VisibilityOfAllElementsLocatedBy:
-                        wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(elementLocator));
-                        break;
-                    default:
-                        act.Error = "Unsupported operation.";
-                        break;
-                }
-                return;
+                //set agent's implicit wait to 1 second
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
+
+                wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+                ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
+
+                WebSmartSyncWaitForLocator(act, elementLocator, VE, wait);
             }
-            catch (ArgumentNullException ex)
+            catch (InvalidSelectorException ex)
             {
-                act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
+                act.Error = $"Invalid input provided for {act.SyncOperations} operation.";
                 Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
             }
             catch (Exception ex)
@@ -2387,10 +2422,14 @@ namespace GingerCore.Drivers
                 //set agent's implicit wait to the original value from the variable above
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)implicitWait));
             }
-        }
 
-       
-        private int NewSmartSyncGetMaxTimeout(ActWebSmartSync act)
+        }
+        /// <summary>
+        /// Retrieves the maximum timeout value for the ActWebSmartSync action.
+        /// </summary>
+        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
+        /// <returns>The maximum timeout value in seconds.</returns>
+        internal int WebSmartSyncGetMaxTimeout(ActWebSmartSync act)
         {
             if (act.Timeout > 0)
             {
