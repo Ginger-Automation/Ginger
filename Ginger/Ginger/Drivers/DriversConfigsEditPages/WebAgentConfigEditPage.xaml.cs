@@ -11,6 +11,7 @@ using GingerCore.GeneralLib;
 using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,74 +24,36 @@ namespace Ginger.Drivers.DriversConfigsEditPages
     /// </summary>
     public partial class WebAgentConfigEditPage : Page
     {
-        private readonly IEnumerable<DriverConfigParam> _driverConfigParams;
+       
         Context context=null;
         Agent mAgent;
 
-        public WebAgentConfigEditPage(Agent mAgent,Agent.eDriverType driverType, Context context, IEnumerable<DriverConfigParam> driverConfigParams)
+
+        /// <summary>
+        /// Initializes a new instance of the WebAgentConfigEditPage class.
+        /// </summary>
+        /// <param name="mAgent">The Agent object.</param>
+        public WebAgentConfigEditPage(Agent mAgent)
         {
-            _driverConfigParams = driverConfigParams;
-            this.context = context;
             this.mAgent = mAgent;
             InitializeComponent();
-          
-          
+
             bindElement();
-            chromePnlvisibilitly();
-            chromeFirefoxPnlVisibility();
-            edgeIEPnlVisibility();
 
-
-        }
-
-        void edgeIEPnlVisibility()
-        {
             DriverConfigParam? browserTypeParam = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, nameof(GingerWebDriver.BrowserType)));
-            if (browserTypeParam != null && Enum.TryParse(browserTypeParam.Value, out Amdocs.Ginger.Common.Drivers.CoreDrivers.Web.WebBrowserType result))
+            if (browserTypeParam != null)
             {
-                if (result == WebBrowserType.Edge || result == WebBrowserType.InternetExplorer)
-                {
-                    xEdgeIE.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xEdgeIE.Visibility = Visibility.Collapsed;
-                }
+                browserTypeParam.PropertyChanged += BrowserTypeParam_PropertyChanged;
             }
-        }
-        void chromePnlvisibilitly()
-        {
-            DriverConfigParam? browserTypeParam = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, nameof(GingerWebDriver.BrowserType)));
-            if (browserTypeParam != null && Enum.TryParse(browserTypeParam.Value, out WebBrowserType result))
-            {
-                if (result == WebBrowserType.Chrome)
-                {
-                    xChromePnl.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xChromePnl.Visibility = Visibility.Collapsed;
-                }
-            }
-
-        }
-        void chromeFirefoxPnlVisibility()
-        {
-            DriverConfigParam? browserTypeParam = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, nameof(GingerWebDriver.BrowserType)));
-            if (browserTypeParam != null && Enum.TryParse(browserTypeParam.Value, out WebBrowserType result))
-            {
-                if (result == WebBrowserType.Chrome || result == WebBrowserType.FireFox)
-                {
-                    xChromeFirefoxPnl.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xChromeFirefoxPnl.Visibility = Visibility.Collapsed;
-                }
-            }
-
+            WebBrowserType browserType = Enum.Parse<WebBrowserType>(browserTypeParam?.Value);
+            edgeIEPnlVisibility(browserType);
+            chromePnlvisibilitly(browserType);
+            chromeFirefoxPnlVisibility(browserType);
         }
 
+        /// <summary>
+        /// Binds the elements of the page.
+        /// </summary>
         void bindElement()
         {
             
@@ -318,6 +281,84 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
 
 
+        /// <summary>
+        /// Handles the PropertyChanged event of the BrowserTypeParam object.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void BrowserTypeParam_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (!string.Equals(e.PropertyName, nameof(DriverConfigParam.Value)))
+            {
+                return;
+            }
+            if (sender is not DriverConfigParam driverConfigParam)
+            {
+                return;
+            }
+            if (!string.Equals(driverConfigParam.Parameter, nameof(GingerWebDriver.BrowserType)))
+            {
+                return;
+            }
+
+            WebBrowserType browserType = Enum.Parse<WebBrowserType>(driverConfigParam.Value);
+            edgeIEPnlVisibility(browserType);
+            chromePnlvisibilitly(browserType);
+            chromeFirefoxPnlVisibility(browserType);
+        }
+
+
+        /// <summary>
+        /// Sets the visibility of the Edge/IE panel based on the specified browser type.
+        /// </summary>
+        /// <param name="result">The browser type.</param>
+        void edgeIEPnlVisibility(WebBrowserType result)
+        {
+
+
+            if (result == WebBrowserType.Edge || result == WebBrowserType.InternetExplorer)
+            {
+                xEdgeIE.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xEdgeIE.Visibility = Visibility.Collapsed;
+            }
+
+        }
+
+        /// <summary>
+        /// Sets the visibility of the Chrome panel based on the specified browser type.
+        /// </summary>
+        /// <param name="result">The browser type.</param>
+        void chromePnlvisibilitly(WebBrowserType result)
+        {
+            if (result == WebBrowserType.Chrome)
+            {
+                xChromePnl.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xChromePnl.Visibility = Visibility.Collapsed;
+            }
+
+
+        }
+        /// <summary>
+        /// Sets the visibility of the Chrome/Firefox panel based on the specified browser type.
+        /// </summary>
+        /// <param name="result">The browser type.</param>
+        void chromeFirefoxPnlVisibility(WebBrowserType result)
+        {
+            if (result == WebBrowserType.Chrome || result == WebBrowserType.FireFox)
+            {
+                xChromeFirefoxPnl.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xChromeFirefoxPnl.Visibility = Visibility.Collapsed;
+            }
+        }
 
         private void xAutoDetectProxyCB_Checked(object sender, RoutedEventArgs e)
         {
@@ -328,30 +369,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
             xProxyPnl.IsEnabled = true;
         }
-        private void Expender_Expanded(object sender, RoutedEventArgs e)
-        {
-            CollapseAllExpanderExceptCurrent((Expander)sender);
-        }
-        private void CollapseAllExpanderExceptCurrent(Expander currentExpander)
-        {
-            if (currentExpander != xProxyExpander && xProxyExpander != null)
-            {
-                xProxyExpander.IsExpanded = false;
-            }
-            if (currentExpander != xSessionManagement && xSessionManagement != null)
-            {
-                xSessionManagement.IsExpanded = false;
-            }
-            if (currentExpander != xBrowserConfigration && xBrowserConfigration != null)
-            {
-                xBrowserConfigration.IsExpanded = false;
-            }
-            if (currentExpander != xAdvanceSetting && xAdvanceSetting != null)
-            {
-                xAdvanceSetting.IsExpanded = false;
-            }
-            
-           
-        }
+
+
     }
 }
+
+

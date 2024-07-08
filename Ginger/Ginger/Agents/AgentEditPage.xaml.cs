@@ -112,7 +112,7 @@ namespace Ginger.Agents
                 {
                     if (mAgent.DriverType == eDriverType.Selenium || mAgent.DriverType == eDriverType.Playwright)
                     {
-                        xAgentConfigFrame.SetContent(new WebAgentConfigEditPage(mAgent,mAgent.DriverType, new Context() { }, mAgent.DriverConfiguration));
+                        xAgentConfigFrame.SetContent(new WebAgentConfigEditPage(mAgent));
                     }
                     else
                     {
@@ -297,6 +297,7 @@ namespace Ginger.Agents
 
             DriverConfigParam browserTypeParam = mAgent.GetParam(nameof(GingerWebDriver.BrowserType));
             browserTypeParam.Value = ((WebBrowserType)BrowserTypeComboBox.SelectedValue).ToString();
+            //xAgentConfigFrame.SetContent(new WebAgentConfigEditPage(mAgent));
             if (xAgentConfigFrame.Content is AgentDriverConfigPage driverConfigPage)
             {
                       driverConfigPage.SetDriverConfigsPageContent();              
