@@ -701,8 +701,8 @@ namespace GingerCore.Actions
         #region ActInputValues
         public void AddInputValueParam(string ParamName)
         {
-            // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv.Param == ParamName select aiv).FirstOrDefault();
+            // check if param already exist then update as it can be saved and loaded + keep other values            
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv.Param == ParamName);
             if (AIV == null)
             {
                 AIV = new ActInputValue();
@@ -714,7 +714,7 @@ namespace GingerCore.Actions
 
         public void RemoveInputParam(string ParamName)
         {
-            InputValues.Remove((from aiv in InputValues where aiv.Param == ParamName select aiv).FirstOrDefault());
+            InputValues.Remove(InputValues.FirstOrDefault(aiv=> aiv.Param == ParamName));
         }
         public void AddOrUpdateOutDataSourceParam(string DSName, string DSTable, string OutputType, string ColName = "", string Active = "", List<string> mColNames = null, string OutDSParamType = "ParamToRow")
         {
@@ -779,7 +779,7 @@ namespace GingerCore.Actions
 
         public void RemoveAllButOneInputParam(string Param)
         {
-            if (!(from aiv in InputValues where aiv.Param == Param select aiv).Any())
+            if (!InputValues.Any(aiv=> aiv.Param == Param))
             {
                 InputValues.Clear();
             }
@@ -787,7 +787,7 @@ namespace GingerCore.Actions
             {
                 while (InputValues.Count > 1)
                 {
-                    InputValues.Remove((from aiv in InputValues where aiv.Param != Param select aiv).FirstOrDefault());
+                    InputValues.Remove(InputValues.FirstOrDefault(aiv => aiv.Param != Param));
                 }
             }
         }
@@ -795,7 +795,7 @@ namespace GingerCore.Actions
         public void AddOrUpdateInputParamValue(string Param, string Value)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv.Param == Param);
             if (AIV == null)
             {
                 AIV = new ActInputValue();
@@ -807,9 +807,9 @@ namespace GingerCore.Actions
             else
             {
                 //Remove duplicate ActInputValues from the InputValues                
-                while (InputValues.Where(aiv => aiv.Param == Param).ToList().Count > 1)
+                while (InputValues.Count(aiv => aiv.Param == Param) > 1)
                 {
-                    InputValues.Remove((from aiv in InputValues where aiv.Param == Param select aiv).LastOrDefault());
+                    InputValues.Remove(InputValues.LastOrDefault(aiv=> aiv.Param == Param));
                 }
             }
             AIV.Value = Value;
@@ -818,7 +818,7 @@ namespace GingerCore.Actions
         public string GetInputParamValue(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv != null && aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv=>aiv != null && aiv.Param == Param);
             if (AIV == null)
             {
                 return null;
@@ -831,7 +831,7 @@ namespace GingerCore.Actions
 
         public ActInputValue GetOrCreateInputParam(string Param, string DefaultValue = null)
         {
-            ActInputValue AIV = (from aiv in InputValues where aiv != null && aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv != null && aiv.Param == Param);
             if (AIV == null)
             {
                 AIV = new ActInputValue() { Param = Param, Value = DefaultValue };
@@ -857,7 +857,7 @@ namespace GingerCore.Actions
         //YW - removed as it was causing problem - need to rethink better.
         //public ActInputValueEnum GetOrCreateEnumInputParam(string Param, object DefaultValue = null)
         //{
-        //    ActInputValueEnum AIV = (ActInputValueEnum)(from aiv in InputValues where aiv.Param == Param select aiv).FirstOrDefault();
+        //    ActInputValueEnum AIV = (ActInputValueEnum)InputValues.FirstOrDefault(aiv=> aiv.Param == Param);
         //    if (AIV == null)
         //    {
         //        AIV = new ActInputValueEnum() { Param = Param, EnumValue = DefaultValue };                
@@ -870,7 +870,7 @@ namespace GingerCore.Actions
         public void AddOrUpdateInputParamCalculatedValue(string Param, string calculatedValue)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv.Param == Param);
             if (AIV == null)
             {
                 AIV = new ActInputValue();
@@ -884,7 +884,7 @@ namespace GingerCore.Actions
         public void AddOrUpdateInputParamValueAndCalculatedValue(string Param, string calculatedValue)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv.Param == Param);
             if (AIV == null)
             {
                 AIV = new ActInputValue();
@@ -899,7 +899,7 @@ namespace GingerCore.Actions
         public string GetInputParamCalculatedValue(string Param, bool decryptValue = true)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv != null && aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv=>aiv != null && aiv.Param == Param);
             if (AIV == null)
             {
                 return null;
@@ -1235,7 +1235,7 @@ namespace GingerCore.Actions
 
         public bool IsInputParamExist(string Param)
         {
-            ActInputValue AIV = (from aiv in InputValues where aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = InputValues.FirstOrDefault(aiv=> aiv.Param == Param);
             if (AIV != null)
             {
                 return true;
@@ -1295,7 +1295,7 @@ namespace GingerCore.Actions
         public void AddOrUpdateReturnParamExpected(string ParamName, string ExpectedValue)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = (from arc in ReturnValues where arc.Param == ParamName select arc).FirstOrDefault();
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc=>arc.Param == ParamName);
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
                 ARC = new ActReturnValue();
@@ -1318,7 +1318,7 @@ namespace GingerCore.Actions
             {
                 sPath = string.Empty;
             }
-            ActReturnValue ARC = (from arc in ReturnValues where arc.ParamCalculated == ParamName && arc.PathCalculated == sPath select arc).FirstOrDefault();
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc=> arc.ParamCalculated == ParamName && arc.PathCalculated == sPath);
             if (ARC == null && (AddNewReturnParams == true || ConfigOutputDS == true))
             {
                 ARC = new ActReturnValue();
@@ -1343,7 +1343,7 @@ namespace GingerCore.Actions
         public string GetReturnParam(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = (from arc in ReturnValues where arc.Param == Param select arc).FirstOrDefault();
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc=> arc.Param == Param);
             if (ARC == null)
             {
                 return null;
@@ -1363,7 +1363,7 @@ namespace GingerCore.Actions
         public string GetDataSourceConfigParam(string OutputParam)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActOutDataSourceConfig ADSC = (from arc in DSOutputConfigParams where arc.OutputType == OutputParam select arc).FirstOrDefault();
+            ActOutDataSourceConfig ADSC = DSOutputConfigParams.FirstOrDefault(arc=> arc.OutputType == OutputParam);
             if (ADSC == null)
             {
                 return null;
@@ -1375,7 +1375,7 @@ namespace GingerCore.Actions
         public string GetCalculatedExpectedParam(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = (from arc in ReturnValues where arc.Param == Param select arc).FirstOrDefault();
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc=> arc.Param == Param);
             if (ARC == null)
             {
                 return null;
@@ -1410,7 +1410,7 @@ namespace GingerCore.Actions
         public string GetStoreToValueParam(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActReturnValue ARC = (from arc in ReturnValues where arc.Param == Param select arc).FirstOrDefault();
+            ActReturnValue ARC = ReturnValues.FirstOrDefault(arc=> arc.Param == Param);
             if (ARC == null)
             {
                 return null;
@@ -1619,7 +1619,7 @@ namespace GingerCore.Actions
 
         public ActReturnValue GetReturnValue(string ParamName)
         {
-            ActReturnValue RC = (from x in ReturnValues where x.Param == ParamName select x).FirstOrDefault();
+            ActReturnValue RC = ReturnValues.FirstOrDefault(x=> x.Param == ParamName);
             return RC;
         }
 

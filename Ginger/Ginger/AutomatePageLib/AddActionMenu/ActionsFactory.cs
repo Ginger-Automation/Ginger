@@ -81,7 +81,7 @@ namespace Ginger.BusinessFlowPages
                 }
                 if (!(selectedAction is ActWithoutDriver))
                 {
-                    selectedAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
+                    selectedAction.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
                 }
                 instance = GenerateSelectedAction(selectedAction, mContext);
             }

@@ -863,7 +863,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
             else
             {
-                mAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
+                mAction.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
             }
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mAction));
         }
@@ -871,7 +871,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void AddSelectedToSRHandler(object sender, RoutedEventArgs e)
         {
-            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
+            List<RepositoryItemBase> list = [];
             List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
             foreach (Act act in SelectedItemsList)
             {
@@ -883,7 +883,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 }
                 else
                 {
-                    mAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
+                    mAction.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
                 }
             }
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));
@@ -891,7 +891,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void CopyAllListHandler(object sender, RoutedEventArgs e)
         {
-            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> list = [];
             foreach (Act act in mContext.Activity.Acts)
             {
                 list.Add(act);
@@ -901,7 +901,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void CutAllListHandler(object sender, RoutedEventArgs e)
         {
-            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> list = [];
             foreach (Act act in mContext.Activity.Acts)
             {
                 list.Add(act);
@@ -911,7 +911,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void CopySelectedHandler(object sender, RoutedEventArgs e)
         {
-            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> list = [];
             foreach (Act act in ListView.List.SelectedItems)
             {
                 list.Add(act);
@@ -921,7 +921,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void CutSelectedHandler(object sender, RoutedEventArgs e)
         {
-            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> list = [];
             foreach (Act act in ListView.List.SelectedItems)
             {
                 list.Add(act);
@@ -937,7 +937,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void CopyHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> list = [];
             list.Add(mAction);
             ClipboardOperationsHandler.SetCopyItems(list);
         }
@@ -945,7 +945,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void CutHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> list = [];
             list.Add(mAction);
             ClipboardOperationsHandler.SetCutItems(ListView, list);
         }

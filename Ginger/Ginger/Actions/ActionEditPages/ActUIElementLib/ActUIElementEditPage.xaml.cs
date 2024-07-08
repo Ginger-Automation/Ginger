@@ -105,7 +105,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (mAction.Context != null && (Context.GetAsContext(mAction.Context)).BusinessFlow != null)
             {
                 string targetapp = (Context.GetAsContext(mAction.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-                platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform; 
             }
             else
             {
