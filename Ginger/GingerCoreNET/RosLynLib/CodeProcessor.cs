@@ -26,6 +26,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -245,14 +246,19 @@ namespace GingerCoreNET.RosLynLib
 
             return null;
         }
-
+        /// <summary>
+        /// function is designed to process a given Expression string and replace occurrences of a specific pattern ({MockDataExp(...)}) 
+        /// with evaluated results obtained from another function (GetBogusExpressionEvaluateResult)
+        /// </summary>
+        /// <param name="Expression"></param>
+        /// <returns></returns>
         public static string GetBogusDataGenerateresult(string Expression)
         {
             if (!Expression.Contains(@"{MockDataExp"))
             {
                 return Expression;
             }
-            string pattern = "{MockDataExp({.*}|[^{}]*)*}";
+            const string pattern = "{MockDataExp({.*}|[^{}]*)*}";
             Pattern = new Regex(pattern, RegexOptions.Compiled);
             Regex Clean = new Regex("{MockDataExp(\\s)*Fun(\\s)*=", RegexOptions.Compiled);
 
@@ -268,28 +274,43 @@ namespace GingerCoreNET.RosLynLib
             }
             return Expression;
         }
+        /// <summary>
+        /// The GetBogusExpressionEvaluteResult function is responsible for evaluating and generating data using Bogus library expressions based on the provided expression. 
+        /// It handles different types of expressions related to data generation and returns the evaluated result as a string.
+        /// If the expression does not start with new Bogus.DataSets.
+        /// it checks for special cases like Randomizer and constructs appropriate var Result = ...; return Result; expressions.
+        /// Handles scenarios with special characters(@) and constructs expressions accordingly like for Between.
+        /// If the expression starts with new Bogus.DataSets., it directly constructs the expression for evaluation.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="error"></param>
+        /// <returns></returns>
         public static string GetBogusExpressionEvaluteResult(string expression, out string error)
         {
             error = string.Empty;
             try
             {
                 Assembly BogusAssembly = Assembly.Load("Bogus");
-
+                /// If the expression does not start with new Bogus.DataSets.
                 if (!expression.Contains("new Bogus.DataSets."))
                 {
+                    /// it checks for special cases like Randomizer and constructs appropriate var Result = ...; return Result; expressions.
                     if (expression.Contains("Randomizer"))
                     {
                         expression = $"var Result = new Bogus.{expression} return Result;";
                     }
                     else
                     {
+                        /// Handles scenarios with special characters(@) and constructs expressions accordingly.
                         if (expression.Contains('@'))
                         {
                             string[] expressionlist = expression.Split('.');
+                            /// Handles scenarios with special case like Between and constructs expressions accordingly
                             if (expressionlist[1].Contains("Between"))
                             {
                                 string expressionsubstring = expressionlist[1].Substring(expressionlist[1].IndexOf('(') + 1,expressionlist[1].IndexOf("))") - expressionlist[1].IndexOf("(") + 1);
                                 string[] Parameter = expressionsubstring.Split(',');
+                                /// Handles scenarios with special case like Between function have inbuilt function as parameter and constructs expressions accordingly
                                 if (expressionlist[1].Contains("Past") && expressionlist[1].Contains("Future"))
                                 {
                                     expressionlist[1] = expressionlist[1].Replace(Parameter[0], $"Result.{Parameter[0]}").Replace(Parameter[1], $"Result.{Parameter[1]}");
@@ -307,7 +328,7 @@ namespace GingerCoreNET.RosLynLib
                             expression = $"var Result = new Bogus.DataSets.{expression} return Result;";
                         }
                     }
-                }
+                }/// If the expression starts with new Bogus.DataSets., it directly constructs the expression for evaluation.
                 else
                 {
                     expression = $"var Result = {expression} return Result;";
