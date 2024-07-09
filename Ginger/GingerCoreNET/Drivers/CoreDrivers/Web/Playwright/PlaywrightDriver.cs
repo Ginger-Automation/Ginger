@@ -845,12 +845,63 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
         {
+            foreach (ElementInfo elementInfo in originalList)
+            {
+                elementInfo.ElementStatus = ElementInfo.eElementStatus.Pending;
+            }
 
+            Task.Run(async () =>
+            {
+                foreach (ElementInfo elementInfo in originalList)
+                {
+                    await SwitchToFrameOfElementAsync(elementInfo);
+                    IBrowserElement? browserElement = await FindBrowserElementAsync(elementInfo);
+                    if (browserElement != null)
+                    {
+                        elementInfo.ElementObject = browserElement;
+                        elementInfo.ElementStatus = ElementInfo.eElementStatus.Passed;
+                    }
+                    else
+                    {
+                        elementInfo.ElementStatus = ElementInfo.eElementStatus.Failed;
+                    }
+                }
+            }).Wait();
         }
 
         public ElementInfo? GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
-            return null;
+            if (latestElement == null)
+            {
+                return null;
+            }
+
+            return originalElements
+                .Where(original => original.ElementObject != null)
+                .Where(original => original.ElementTypeEnum == latestElement.ElementTypeEnum)
+                .Where(original =>
+                {
+                    original.Path ??= string.Empty;
+                    latestElement.Path ??= string.Empty;
+                    return string.Equals(original.Path, latestElement.Path);
+                })
+                .Where(original =>
+                {
+                    ElementLocator? originalByRelXPathLocator = original.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath);
+                    if (originalByRelXPathLocator == null)
+                    {
+                        return false;
+                    }
+
+                    ElementLocator? latestByRelXPathLocator = latestElement.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath);
+                    if (latestByRelXPathLocator == null)
+                    {
+                        return false;
+                    }
+
+                    return string.Equals(originalByRelXPathLocator.LocateValue, latestByRelXPathLocator.LocateValue);
+                })
+                .FirstOrDefault();
         }
 
         public void StartSpying()
