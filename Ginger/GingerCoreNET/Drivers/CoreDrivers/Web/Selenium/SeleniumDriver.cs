@@ -169,12 +169,6 @@ namespace GingerCore.Drivers
 
 
         [UserConfigured]
-        [UserConfiguredDefault("http://127.0.0.1;http://localhost;")]
-        [UserConfiguredDescription("Set multiple By Pass Proxy URLs separated with ';'|| By Pass Proxy works only when Proxy URL is mentioned")]
-        public string ByPassProxy { get; set; }
-
-
-        [UserConfigured]
         [UserConfiguredDescription("Proxy Auto Config Url")]
         public string ProxyAutoConfigUrl { get; set; }
 

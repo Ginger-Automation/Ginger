@@ -73,8 +73,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 options.Proxy = new Proxy()
                 {
-                    Server = Proxy
+                    Server = Proxy,
                 };
+
+                if (!string.IsNullOrEmpty(ByPassProxy))
+                {
+                    options.Proxy.Bypass = string.Join(',', ByPassProxy.Split(';'));
+                }
             }
 
             return options;
