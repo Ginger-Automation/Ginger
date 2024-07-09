@@ -887,6 +887,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 htmlElementInfo.ElementTypeEnum = POMLearner.GetElementType(tag, typeAttributeValue);
                 htmlElementInfo.Properties.AddRange(await POMLearner.GetPropertiesAsync(htmlElementInfo));
+                htmlElementInfo.Locators.AddRange(await POMLearner.GenerateLocatorsAsync(htmlElementInfo, pomSetting));
             }).Wait();
 
             return htmlElementInfo;
