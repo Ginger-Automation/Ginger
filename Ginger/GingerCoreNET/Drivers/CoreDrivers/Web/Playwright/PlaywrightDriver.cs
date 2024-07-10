@@ -35,10 +35,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
         public bool HeadlessBrowserMode { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDescription("Proxy Server:Port")]
-        public string? Proxy { get; set; }
-
         private PlaywrightBrowser? _browser;
         private IBrowserElement? _lastHighlightedElement;
 

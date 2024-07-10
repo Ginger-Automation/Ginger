@@ -162,12 +162,6 @@ namespace GingerCore.Drivers
             }
         }
 
-
-        [UserConfigured]
-        [UserConfiguredDescription("Proxy Server:Port")]
-        public string Proxy { get; set; }
-
-
         [UserConfigured]
         [UserConfiguredDescription("Proxy Auto Config Url")]
         public string ProxyAutoConfigUrl { get; set; }
