@@ -595,16 +595,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             await currentTab.SwitchToMainFrameAsync();
             string pageSource = await _browser.CurrentWindow.CurrentTab.PageSourceAsync();
 
-
-            POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
-            IEnumerable<HTMLElementInfo> htmlElements = await pomLearner.LearnElementsAsync();
-
-            if (foundElementsList != null)
+            if (foundElementsList == null)
             {
-                foundElementsList.AddRange(htmlElements.Cast<ElementInfo>());
+                foundElementsList = new();
             }
 
-            return new(htmlElements);
+            POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
+            await pomLearner.LearnElementsAsync(foundElementsList);
+
+            return new(foundElementsList);
         }
 
         private sealed class PlaywrightBrowserElementProvider : POMLearner.IBrowserElementProvider

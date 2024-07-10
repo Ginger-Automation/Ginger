@@ -59,14 +59,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return new POMLearner(htmlDocument, browserElementProvider, pomSetting, xpathImpl);
         }
 
-        internal Task<IEnumerable<HTMLElementInfo>> LearnElementsAsync()
+        internal Task LearnElementsAsync(IList<ElementInfo> learnedElements)
         {
-            return LearnDocumentElementsAsync(_htmlDocument);
+            return LearnDocumentElementsAsync(_htmlDocument, learnedElements);
         }
 
-        private Task<IEnumerable<HTMLElementInfo>> LearnDocumentElementsAsync(HtmlDocument htmlDocument)
+        private async Task LearnDocumentElementsAsync(HtmlDocument htmlDocument, IList<ElementInfo> learnedElements)
         {
-            return LearnHtmlNodeChildElements(htmlDocument.DocumentNode, htmlNode =>
+            await LearnHtmlNodeChildElements(htmlDocument.DocumentNode, htmlNode =>
             {
                 if (!CheckStaticHtmlNodeExclusion(htmlNode))
                 {
@@ -80,30 +80,28 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 }
 
                 return true;
-            });
+            }, learnedElements);
         }
 
-        private async Task<IEnumerable<HTMLElementInfo>> LearnHtmlNodeChildElements(HtmlNode htmlNode, Predicate<HtmlNode> filter)
+        private async Task LearnHtmlNodeChildElements(HtmlNode htmlNode, Predicate<HtmlNode> filter, IList<ElementInfo> learnedElements)
         {
-            List<HTMLElementInfo> htmlElements = [];
+            //List<HTMLElementInfo> htmlElements = [];
 
             foreach (HtmlNode childNode in htmlNode.ChildNodes)
             {
                 eElementType childNodeType = GetElementType(childNode);
-                IEnumerable<HTMLElementInfo> grandChildElements;
                 HTMLElementInfo? childElement = null;
                 if (!filter(childNode))
                 {
                     if (childNodeType == eElementType.Form)
                     {
                         //in case we have a Form element, then the POM filters don't apply anymore, then we use Form specific filter
-                        grandChildElements = await LearnHtmlNodeChildElements(childNode, FormChildrenElementFilter);
+                        await LearnHtmlNodeChildElements(childNode, FormChildrenElementFilter, learnedElements);
                     }
                     else
                     {
-                        grandChildElements = await LearnHtmlNodeChildElements(childNode, filter);
+                        await LearnHtmlNodeChildElements(childNode, filter, learnedElements);
                     }
-                    htmlElements.AddRange(grandChildElements);
 
                     continue;
                 }
@@ -116,19 +114,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
                 childElement = await CreateHTMLElementInfoAsync(childNode, browserElement);
 
-                htmlElements.Add(childElement);
+                learnedElements.Add(childElement);
 
-                htmlElements.AddRange(await LearnShadowDOMElementsAsync(childElement));
-                htmlElements.AddRange(await LearnFrameElementsAsync(childElement));
+                await LearnShadowDOMElementsAsync(childElement, learnedElements);
+                await LearnFrameElementsAsync(childElement, learnedElements);
                 //TODO: create suggested activities
 
+                IList<ElementInfo> grandChildElements = new List<ElementInfo>();
                 if (childNodeType == eElementType.Form)
                 {
-                    grandChildElements = await LearnHtmlNodeChildElements(childNode, FormChildrenElementFilter);
+                    await LearnHtmlNodeChildElements(childNode, FormChildrenElementFilter, grandChildElements);
                 }
                 else
                 {
-                    grandChildElements = await LearnHtmlNodeChildElements(childNode, filter);
+                    await LearnHtmlNodeChildElements(childNode, filter, grandChildElements);
                 }
                 foreach (HTMLElementInfo grandChildElement in grandChildElements)
                 {
@@ -137,10 +136,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 childElement.ChildElements.Clear();
                 childElement.ChildElements.AddRange(grandChildElements.Cast<ElementInfo>());
 
-                htmlElements.AddRange(grandChildElements);
+                learnedElements.AddRange(grandChildElements);
             }
-
-            return htmlElements;
         }
 
         private static bool CheckStaticHtmlNodeExclusion(HtmlNode htmlNode)
@@ -768,7 +765,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return Convert.ToBase64String(await browserElement.ScreenshotAsync());
         }
 
-        private async Task<IEnumerable<HTMLElementInfo>> LearnShadowDOMElementsAsync(HTMLElementInfo shadowHostElement)
+        private async Task LearnShadowDOMElementsAsync(HTMLElementInfo shadowHostElement, IList<ElementInfo> learnedElements)
         {
             if (_pomSetting == null ||
                 !_pomSetting.LearnShadowDomElements ||
@@ -776,7 +773,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 shadowHostElement.ElementObject == null ||
                 await ((IBrowserElement)shadowHostElement.ElementObject).ShadowRootAsync() != null)
             {
-                return [];
+                return;
             }
 
             IBrowserElement browserElement = (IBrowserElement)shadowHostElement.ElementObject;
@@ -787,36 +784,42 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             string? shadowRootHTML = browserShadowRoot != null ? await browserShadowRoot.HTML() : "";
             if (string.IsNullOrEmpty(shadowRootHTML))
             {
-                return [];
+                return;
             }
 
             HtmlDocument shadowRootHtmlDocument = new();
             shadowRootHtmlDocument.LoadHtml(shadowRootHTML);
 
-            IEnumerable<HTMLElementInfo> htmlElements = await LearnDocumentElementsAsync(shadowRootHtmlDocument);
+            await LearnDocumentElementsAsync(shadowRootHtmlDocument, learnedElements);
 
             await _browserElementProvider.OnShadowDOMExitAsync(shadowHostElement);
-
-            return htmlElements;
         }
 
-        private async Task<IEnumerable<HTMLElementInfo>> LearnFrameElementsAsync(HTMLElementInfo frameElement)
+        private async Task LearnFrameElementsAsync(HTMLElementInfo frameElement, IList<ElementInfo> learnedElements)
         {
             if (frameElement.ElementTypeEnum != eElementType.Iframe)
             {
-                return [];
+                return;
             }
 
             IBrowserElement? browserElement = (IBrowserElement?)frameElement.ElementObject;
             if (browserElement == null)
             {
-                return [];
+                return;
             }
 
-            string iframePageSource = await browserElement.ExecuteJavascriptAsync("element => element.contentDocument.documentElement.outerHTML");
+            string iframePageSource = "";
+            try
+            {
+                iframePageSource = await browserElement.ExecuteJavascriptAsync("element => element.contentDocument.documentElement.outerHTML");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while getting IFrame page source", ex);
+            }
             if (string.IsNullOrEmpty(iframePageSource))
             {
-                return [];
+                return;
             }
 
             HtmlDocument frameHtmlDocument = new();
@@ -824,11 +827,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
             await _browserElementProvider.OnFrameEnterAsync(frameElement);
             
-            IEnumerable<HTMLElementInfo> htmlElements = await LearnDocumentElementsAsync(frameHtmlDocument);
+            await LearnDocumentElementsAsync(frameHtmlDocument, learnedElements);
 
             await _browserElementProvider.OnFrameExitAsync(frameElement);
-
-            return htmlElements;
         }
     }
 }
