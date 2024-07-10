@@ -3,13 +3,10 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using HtmlAgilityPack;
-using Microsoft.Graph;
 using Microsoft.VisualStudio.Services.Common;
-using NPOI.OpenXmlFormats;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -69,20 +66,43 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         private Task<IEnumerable<HTMLElementInfo>> LearnDocumentElementsAsync(HtmlDocument htmlDocument)
         {
-            return LearnHtmlNodeChildElements(htmlDocument.DocumentNode);
+            return LearnHtmlNodeChildElements(htmlDocument.DocumentNode, htmlNode =>
+            {
+                if (!CheckStaticHtmlNodeExclusion(htmlNode))
+                {
+                    return false;
+                }
+
+                eElementType type = GetElementType(htmlNode);
+                if (_pomSetting != null && !_pomSetting.filteredElementType.Contains(type))
+                {
+                    return false;
+                }
+
+                return true;
+            });
         }
 
-        private async Task<IEnumerable<HTMLElementInfo>> LearnHtmlNodeChildElements(HtmlNode htmlNode)
+        private async Task<IEnumerable<HTMLElementInfo>> LearnHtmlNodeChildElements(HtmlNode htmlNode, Predicate<HtmlNode> filter)
         {
             List<HTMLElementInfo> htmlElements = [];
 
             foreach (HtmlNode childNode in htmlNode.ChildNodes)
             {
+                eElementType childNodeType = GetElementType(childNode);
                 IEnumerable<HTMLElementInfo> grandChildElements;
                 HTMLElementInfo? childElement = null;
-                if (!ShouldIncludeHtmlNode(childNode))
+                if (!filter(childNode))
                 {
-                    grandChildElements = await LearnHtmlNodeChildElements(childNode);
+                    if (childNodeType == eElementType.Form)
+                    {
+                        //in case we have a Form element, then the POM filters don't apply anymore, then we use Form specific filter
+                        grandChildElements = await LearnHtmlNodeChildElements(childNode, FormChildrenElementFilter);
+                    }
+                    else
+                    {
+                        grandChildElements = await LearnHtmlNodeChildElements(childNode, filter);
+                    }
                     htmlElements.AddRange(grandChildElements);
 
                     continue;
@@ -102,7 +122,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 htmlElements.AddRange(await LearnFrameElementsAsync(childElement));
                 //TODO: create suggested activities
 
-                grandChildElements = await LearnHtmlNodeChildElements(childNode);
+                if (childNodeType == eElementType.Form)
+                {
+                    grandChildElements = await LearnHtmlNodeChildElements(childNode, FormChildrenElementFilter);
+                }
+                else
+                {
+                    grandChildElements = await LearnHtmlNodeChildElements(childNode, filter);
+                }
                 foreach (HTMLElementInfo grandChildElement in grandChildElements)
                 {
                     grandChildElement.ParentElement = childElement;
@@ -116,15 +143,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return htmlElements;
         }
 
-        private static readonly IEnumerable<string> LearningExcludedItems = ["noscript", "script", "style", "meta", "head", "link", "html", "body"];
-
-        private bool ShouldIncludeHtmlNode(HtmlNode htmlNode)
+        private static bool CheckStaticHtmlNodeExclusion(HtmlNode htmlNode)
         {
-            if (_pomSetting == null || _pomSetting.filteredElementType == null)
-            {
-                return false;
-            }
-
             if (htmlNode.Name.StartsWith("#"))
             {
                 return false;
@@ -135,15 +155,32 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 return false;
             }
 
-            ;
-
-            if (LearningExcludedItems.Any(x => string.Equals(x, htmlNode.Name, StringComparison.OrdinalIgnoreCase)))
+            IEnumerable<string> learningExcludedItems = ["noscript", "script", "style", "meta", "head", "link", "html", "body"];
+            if (learningExcludedItems.Any(x => string.Equals(x, htmlNode.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 return false;
             }
 
-            eElementType type = GetElementType(htmlNode);
-            return _pomSetting.filteredElementType.Contains(type);
+            return true;
+        }
+
+        private static bool FormChildrenElementFilter(HtmlNode htmlNode)
+        {
+            if (!CheckStaticHtmlNodeExclusion(htmlNode))
+            {
+                return false;
+            }
+
+            if (htmlNode.Name != null && htmlNode.Name.StartsWith("input", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            if (htmlNode.Name != null && htmlNode.Name.StartsWith("button", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private async Task<HTMLElementInfo> CreateHTMLElementInfoAsync(HtmlNode htmlNode, IBrowserElement browserElement)
