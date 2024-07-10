@@ -261,7 +261,7 @@ namespace Ginger.SolutionWindows
             {
                 Directory.CreateDirectory(System.IO.Path.Combine(mSolution.Folder, "DataSources"));
                 System.IO.FileStream fs = new System.IO.FileStream(System.IO.Path.Combine(mSolution.Folder, @"DataSources\LiteDB.db"), System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                fs.Write(litedbobj, 0, litedbobj.Count());
+                fs.Write(litedbobj, 0, litedbobj.Length);
                 fs.Close();
                 fs.Dispose();
             }

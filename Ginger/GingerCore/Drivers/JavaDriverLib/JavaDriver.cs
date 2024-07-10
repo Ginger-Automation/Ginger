@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
@@ -449,7 +450,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else
             {
-                PayLoad PL = act.GetPayLoad();
+                PayLoad PL = PayloadHelper.GetPayLoad(act);
                 response = Send(PL);
             }
 
@@ -475,7 +476,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
 
             PayLoad response;
-            PayLoad Request = act.GetPayLoad();
+            PayLoad Request = PayloadHelper.GetPayLoad(act);
             response = Send(Request);
 
             while (!response.IsOK())
@@ -551,11 +552,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                     ElementLocator evaluatedLocator = locateElement.CreateInstance() as ElementLocator;
                     ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
                     evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
-                    payLoad = act.GetPayLoad(evaluatedLocator);
+                    payLoad = PayloadHelper.GetPayLoad(act, evaluatedLocator);
                 }
                 else
                 {
-                    payLoad = act.GetPayLoad(locateElement);
+                    payLoad = PayloadHelper.GetPayLoad(act, locateElement);
                 }
 
                 //if(Convert.ToBoolean(act.GetInputParamValue(ActUIElement.Fields.IsWidgetsElement.ToString())))
@@ -1797,7 +1798,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                                     }
                                 }
                                 int iWinCount = 1;
-                                while (iWinCount < arrWindows.Count())
+                                while (iWinCount < arrWindows.Length)
                                 {
                                     UIAuto.AutomationElementCollection AEList;
                                     UIAuto.PropertyCondition condDialog = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, "window");
@@ -1946,7 +1947,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         private PayLoad SwitchWindow(ActSwitchWindow ActSwitchWindow)
         {
             Stopwatch St = new Stopwatch();
-            PayLoad Request = ActSwitchWindow.GetPayLoad();
+            PayLoad Request = PayloadHelper.GetPayLoad(ActSwitchWindow);
             PayLoad Response = Send(Request);
             String sResponse = Response.Name.ToString();
 

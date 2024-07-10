@@ -356,7 +356,7 @@ namespace GingerCore.DataSource
                     if (row.RowState == DataRowState.Modified)
                     {
                         string updateCommand = "UPDATE " + row.Table.TableName + " SET ";
-                        for (int iRow = 0; iRow < row.ItemArray.Count(); iRow++)
+                        for (int iRow = 0; iRow < row.ItemArray.Length; iRow++)
                         {
                             if (row.Table.Columns[iRow].ColumnName != "GINGER_ID")
                             {
@@ -382,7 +382,7 @@ namespace GingerCore.DataSource
                     else if (row.RowState == DataRowState.Added)
                     {
                         string insertCommand = "INSERT INTO " + row.Table.TableName + " (";
-                        for (int iRow = 0; iRow < row.ItemArray.Count(); iRow++)
+                        for (int iRow = 0; iRow < row.ItemArray.Length; iRow++)
                         {
                             if (row.Table.Columns[iRow].ColumnName != "GINGER_ID")
                             {
@@ -391,7 +391,7 @@ namespace GingerCore.DataSource
                         }
 
                         insertCommand = insertCommand.Substring(0, insertCommand.Length - 1) + ") VALUES (";
-                        for (int iRow = 0; iRow < row.ItemArray.Count(); iRow++)
+                        for (int iRow = 0; iRow < row.ItemArray.Length; iRow++)
                         {
                             if (row.Table.Columns[iRow].ColumnName != "GINGER_ID")
                             {

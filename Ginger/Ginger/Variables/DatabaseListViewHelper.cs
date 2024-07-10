@@ -339,7 +339,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (Reporter.ToUser(eUserMsgKey.DeleteSelectedDB) == eUserMsgSelection.Yes)
             {
                 var dbList = ListView.List.SelectedItems.Cast<Database>().ToList();
-                for(int indx = 0; indx< dbList.Count(); indx++)
+                for(int indx = 0; indx< dbList.Count; indx++)
                 {
                     Databases.Remove(dbList[indx]);
                 }

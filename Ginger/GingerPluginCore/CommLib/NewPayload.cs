@@ -913,7 +913,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     case ListStringType:
                         List<string> list = GetListString();
                         string sList = "";
-                        for (int iCount = 0; iCount < list.Count(); iCount++)
+                        for (int iCount = 0; iCount < list.Count; iCount++)
                         {
                             sList = sList + "::" + list[iCount];
                         }

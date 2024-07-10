@@ -129,7 +129,7 @@ namespace GingerCore.Actions.WebAPI
                 //Add request headers
                 if (mAct.HttpHeaders.Any())
                 {
-                    for (int i = 0; i < mAct.HttpHeaders.Count(); i++)
+                    for (int i = 0; i < mAct.HttpHeaders.Count; i++)
                     {
 
                         var specialCharactersReg = new Regex("^[a-zA-Z0-9 ]*$");
@@ -488,7 +488,7 @@ namespace GingerCore.Actions.WebAPI
 
                     RequestFileContent = CreateRawRequestAndResponse("request");
                     StringBuilder str = new StringBuilder();
-                    for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
+                    for (int i = 0; i < mAct.RequestKeyValues.Count; i++)
                     {
                         FormDataContent.Add(new StringContent(mAct.RequestKeyValues[i].ValueForDriver), mAct.RequestKeyValues[i].ItemName.ToString());
                         str.AppendLine("Content-Disposition: form-data; name=\"" + mAct.RequestKeyValues[i].Param + "\"");
@@ -767,7 +767,7 @@ namespace GingerCore.Actions.WebAPI
                     string GetRequest = "?";
                     if (mAct.RequestKeyValues.Any())
                     {
-                        for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
+                        for (int i = 0; i < mAct.RequestKeyValues.Count; i++)
                         {
                             GetRequest += mAct.RequestKeyValues[i].ItemName.ToString() + "=" + mAct.RequestKeyValues[i].ValueForDriver + "&";
                         }
@@ -810,7 +810,7 @@ namespace GingerCore.Actions.WebAPI
                         {
                             MultipartFormDataContent requestContent = new MultipartFormDataContent();
                             List<KeyValuePair<string, string>> FormDataKeyValues = new List<KeyValuePair<string, string>>();
-                            for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
+                            for (int i = 0; i < mAct.RequestKeyValues.Count; i++)
                             {
                                 if (mAct.RequestKeyValues[i].ValueType == WebAPIKeyBodyValues.eValueType.Text)
                                 {
@@ -929,7 +929,7 @@ namespace GingerCore.Actions.WebAPI
         {
             List<KeyValuePair<string, string>> KeyValues = new List<KeyValuePair<string, string>>();
 
-            for (int i = 0; i < act.RequestKeyValues.Count(); i++)
+            for (int i = 0; i < act.RequestKeyValues.Count; i++)
             {
                 KeyValues.Add(new KeyValuePair<string, string>(act.RequestKeyValues[i].ItemName.ToString(), act.RequestKeyValues[i].ValueForDriver));
             }

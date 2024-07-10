@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -211,9 +211,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
             if (!childNodesList.Any())
                 return;
 
-            if (childNodesList.Count() > 1)
+            if (childNodesList.Count > 1)
             {
-                for (int i = 0; i < childNodesList.Count(); i++)
+                for (int i = 0; i < childNodesList.Count; i++)
                 {
                     List<JsonExtended> duplicateChildren;
                     duplicateChildren = childNodesList.Where(x => x.GetToken().First.Path.Split('.').LastOrDefault() == childNodesList[i].GetToken().First.Path.Split('.').LastOrDefault() && x.GetToken().First.Path != childNodesList[i].GetToken().First.Path).ToList();

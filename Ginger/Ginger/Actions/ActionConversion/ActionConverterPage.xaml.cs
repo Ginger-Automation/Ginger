@@ -241,7 +241,7 @@ namespace Ginger.Actions.ActionConversion
                                 newActivity = (Activity)oldActivity.CreateCopy(false);
                                 newActivity.ActivityName = "New - " + oldActivity.ActivityName;
                                 mBusinessFlow.Activities.Add(newActivity);
-                                mBusinessFlow.Activities.Move(mBusinessFlow.Activities.Count() - 1, mBusinessFlow.Activities.IndexOf(oldActivity) + 1);
+                                mBusinessFlow.Activities.Move(mBusinessFlow.Activities.Count - 1, mBusinessFlow.Activities.IndexOf(oldActivity) + 1);
 
                                 foreach (Act oldAct in oldActivity.Acts.ToList())
                                 {
@@ -252,7 +252,7 @@ namespace Ginger.Actions.ActionConversion
                                         int oldActionIndex = newActivity.Acts.IndexOf(newActivity.Acts.FirstOrDefault(x => x.Guid == oldAct.Guid));
                                         newActivity.Acts.RemoveAt(oldActionIndex);
                                         newActivity.Acts.Add(newAct);
-                                        newActivity.Acts.Move(newActivity.Acts.Count() - 1, oldActionIndex);
+                                        newActivity.Acts.Move(newActivity.Acts.Count - 1, oldActionIndex);
                                     }
                                 }
 

@@ -34,12 +34,12 @@ namespace Amdocs.Ginger.Common.OS
             IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
             List<IPAddress> IPList = ipEntry.AddressList.ToList();
 
-            if (IPList.Count() == 1)
+            if (IPList.Count == 1)
             {
                 // if we have only one return it
                 LocalHostIP = IPList[0].ToString();
             }
-            else if (IPList.Count() > 1)
+            else if (IPList.Count > 1)
             {
                 foreach (IPAddress ip in IPList)
                 {

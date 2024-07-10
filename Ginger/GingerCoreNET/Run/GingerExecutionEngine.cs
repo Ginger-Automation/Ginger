@@ -2934,7 +2934,7 @@ namespace Ginger.Run
                                 try
                                 {
                                     string[] vals = act.ValueExpression.Calculate(FC.Value).Split(new char[] { '=' });
-                                    if (vals.Count() == 2)
+                                    if (vals.Length == 2)
                                     {
                                         ActSetVariableValue setValueAct = new ActSetVariableValue();
                                         PrepActionValueExpression(setValueAct, CurrentBusinessFlow);
@@ -5371,7 +5371,7 @@ namespace Ginger.Run
                             {
                                 VE.Value = FC.Value;
                                 string[] vals = VE.ValueCalculated.Split(new char[] { '=' });
-                                if (vals.Count() == 2)
+                                if (vals.Length == 2)
                                 {
                                     ActSetVariableValue setValueAct = new ActSetVariableValue();
                                     setValueAct.VariableName = vals[0];

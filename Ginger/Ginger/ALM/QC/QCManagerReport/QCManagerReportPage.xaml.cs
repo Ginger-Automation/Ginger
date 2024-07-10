@@ -167,10 +167,10 @@ namespace Ginger.ALM.QC
                     //get the main folder name
                     if (mSelectQcTestSets[0].Path.Contains('\\'))
                     {
-                        string mainFolderPath = mSelectQcTestSets[0].Path.Remove(mSelectQcTestSets[0].Path.LastIndexOf('\\'), mSelectQcTestSets[0].Path.Count() - mSelectQcTestSets[0].Path.LastIndexOf('\\'));
+                        string mainFolderPath = mSelectQcTestSets[0].Path.Remove(mSelectQcTestSets[0].Path.LastIndexOf('\\'), mSelectQcTestSets[0].Path.Length - mSelectQcTestSets[0].Path.LastIndexOf('\\'));
                         foreach (QCTestSetTreeItem ts in mSelectQcTestSets)
                         {
-                            string path = ts.Path.Remove(ts.Path.LastIndexOf('\\'), ts.Path.Count() - ts.Path.LastIndexOf('\\'));
+                            string path = ts.Path.Remove(ts.Path.LastIndexOf('\\'), ts.Path.Length - ts.Path.LastIndexOf('\\'));
                             if (path.Length < mainFolderPath.Length)
                             {
                                 mainFolderPath = path;

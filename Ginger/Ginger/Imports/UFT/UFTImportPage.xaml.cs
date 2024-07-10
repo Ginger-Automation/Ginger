@@ -495,7 +495,7 @@ namespace Ginger.Imports.UFT
                 if (Pos != 0)
                 {
                     //Loop through the Specific bus Function
-                    for (int i = Pos; i < BusCodeLines.Count(); i++)
+                    for (int i = Pos; i < BusCodeLines.Length; i++)
                     {
                         BusLineUpper = BusCodeLines[i].ToUpper();
                         if (BusLineUpper.Contains("END FUNCTION") || BusLineUpper.Contains("END SUB"))
@@ -752,7 +752,7 @@ namespace Ginger.Imports.UFT
                     char[] delChr = { '=' };
                     string[] prmArr = TempParam.Split(delChr);
 
-                    if (prmArr.Count() == 2)
+                    if (prmArr.Length == 2)
                     {
                         sProp = prmArr[0].Replace(":", "").Replace("\"", "").Trim();
                         sValue = prmArr[1].Replace("\"", "").Trim();
@@ -1173,15 +1173,15 @@ namespace Ginger.Imports.UFT
 
             ResultsDataGrid.DataSourceList = CCLs;
             ResultsDataGrid.IsReadOnly = true;
-            RecordsCountLabel.Content = "Records: " + CCLs.Count();
+            RecordsCountLabel.Content = "Records: " + CCLs.Count;
         }
 
         //Handle the Script Conversion Status
         private void ShowStats()
         {
             double count = (from x in mCCL where x.Status != ConvertedCodeLine.eStatus.Unknown select x).Count();
-            string perc = (int)(count / mCCL.Count() * 100) + "%";
-            ConvertedCountLabel.Content = "Converted Lines: " + count + " out of " + mCCL.Count() + " " + perc;
+            string perc = (int)(count / mCCL.Count * 100) + "%";
+            ConvertedCountLabel.Content = "Converted Lines: " + count + " out of " + mCCL.Count + " " + perc;
         }
 
         private void CalendarBusFunction_SelectionChanged(object sender, SelectionChangedEventArgs e)

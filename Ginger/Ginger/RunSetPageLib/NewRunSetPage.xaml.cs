@@ -717,7 +717,7 @@ namespace Ginger.Run
             {
                 mFlowDiagram.Height = 240;
                 mFlowDiagram.CanvasHeight = 240;
-                mFlowDiagram.CanvasWidth = mRunSetConfig.GingerRunners.Count() * 620;
+                mFlowDiagram.CanvasWidth = mRunSetConfig.GingerRunners.Count * 620;
             }
         }
 

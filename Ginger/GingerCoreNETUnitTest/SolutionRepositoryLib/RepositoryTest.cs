@@ -483,7 +483,7 @@ namespace UnitTests.NonUITests
             // Assert
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
             BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
-            Assert.AreEqual(BF2.Activities.Count(), ActivitiesToCreate);
+            Assert.AreEqual(BF2.Activities.Count, ActivitiesToCreate);
             //Assert.AreEqual(BF2. Activities[0].Asserts.Count(), 1);
             //BF2.Description = "aaa";
 
@@ -632,7 +632,7 @@ namespace UnitTests.NonUITests
 
             // check enum restore
             Assert.AreEqual(BF.Status, BusinessFlow.eBusinessFlowStatus.Development, "BF.Status");
-            Assert.AreEqual(BF.Activities.Count(), ActivitiesToCreate + 1, "BF.Activities.Count()");
+            Assert.AreEqual(BF.Activities.Count, ActivitiesToCreate + 1, "BF.Activities.Count()");
 
             //check original list ref obj
             Assert.AreEqual(BF.Activities, OriginalActivitiesObj, "BF.Activities REF");
@@ -691,7 +691,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(BF.Variables.Count, 1, "BF.Variables.Count");
             Assert.AreEqual(BF.Variables[0], sl, "BF.Variables[0] REF");
             Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList[0].Value, "11", "BF.Variables[0].Value");
-            Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count(), 3, "(VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count()");
+            Assert.AreEqual(((VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count, 3, "(VariableSelectionList)BF.Variables[0]).OptionalValuesList.Count()");
         }
 
 

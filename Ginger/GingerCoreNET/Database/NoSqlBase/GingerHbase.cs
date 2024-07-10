@@ -119,7 +119,7 @@ namespace GingerCore.NoSqlBase
 
                 getTablesTask.Wait();
 
-                if (tables.name.Count() == 0)
+                if (tables.name.Count == 0)
                 {
                     return false;
                 }
@@ -565,7 +565,7 @@ namespace GingerCore.NoSqlBase
             });
 
             getTablesTask.Wait();            
-            int i = tables.name.Count();
+            int i = tables.name.Count;
             for (int j = 0; j < i; j++)
             {
                 HBTableList.Add(tables.name[j]);
