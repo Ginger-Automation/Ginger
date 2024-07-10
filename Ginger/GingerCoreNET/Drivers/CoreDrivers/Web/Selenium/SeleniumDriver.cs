@@ -6607,8 +6607,11 @@ namespace GingerCore.Drivers
         {
             IList<string> XPaths = ((HTMLElementInfo)ElementInfo).XPathList;
             ISearchContext tempContext = Driver;
-            int startPointer = XPaths.Count - 1;
-
+            int startPointer=0;
+            if (XPaths != null)
+            {
+                startPointer = XPaths.Count - 1;
+            }
             IWebElement e = null;
 
             if (startPointer > 0)
