@@ -921,6 +921,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return elementInfo;
             }
 
+            IEnumerable<ControlProperty> properties = [];
+            IEnumerable<ElementLocator> locators = [];
+
             Task.Run(async () =>
             {
                 HTMLElementInfo newHtmlElementInfo = await CreateHtmlElementAsync(browserElement);
@@ -936,9 +939,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 string typeAttributeValue = await browserElement.AttributeValueAsync("type");
 
                 htmlElementInfo.ElementTypeEnum = POMLearner.GetElementType(tag, typeAttributeValue);
-                htmlElementInfo.Properties.AddRange(await POMLearner.GetPropertiesAsync(htmlElementInfo));
-                htmlElementInfo.Locators.AddRange(await POMLearner.GenerateLocatorsAsync(htmlElementInfo, pomSetting));
+                properties = await POMLearner.GetPropertiesAsync(htmlElementInfo);
+                locators = await POMLearner.GenerateLocatorsAsync(htmlElementInfo, pomSetting);
             }).Wait();
+
+            //AddRange needs to be called outside of the background thread, since its CollectionChanged event modifies some UI elements
+            htmlElementInfo.Properties.AddRange(properties);
+            htmlElementInfo.Locators.AddRange(locators);
 
             return htmlElementInfo;
         }
