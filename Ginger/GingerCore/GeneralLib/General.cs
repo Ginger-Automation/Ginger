@@ -329,7 +329,7 @@ namespace GingerCore
 
         public static bool CheckComboItems(ComboBox comboBox, List<string> ls)
         {
-            if (comboBox.Items.Count != ls.Count())
+            if (comboBox.Items.Count != ls.Count)
             {
                 return false;
             }

@@ -482,7 +482,7 @@ namespace GingerCore.ALM.JIRA
             if (paramSelectedValue.StartsWith("#$#"))
             {
                 string[] valueParts = paramSelectedValue.Split(new string[] { "#$#" }, StringSplitOptions.None);
-                if (valueParts.Count() == 3)
+                if (valueParts.Length == 3)
                 {
                     linkedVariable = valueParts[1];
                     paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control
@@ -842,11 +842,11 @@ namespace GingerCore.ALM.JIRA
                                             if (!string.IsNullOrEmpty(stepAnonymous.data) && stepAnonymous.data.Contains("=>"))
                                             {
                                                 string[] getStepData = (stepAnonymous.data).Split(new[] { "=>" }, StringSplitOptions.None);
-                                                if (getStepData.Count() > 1 && getStepData[1].Contains("Description:"))
+                                                if (getStepData.Length > 1 && getStepData[1].Contains("Description:"))
                                                 {
                                                     stepDescription = getStepData[1].Split(new[] { "Description:" }, StringSplitOptions.None);
                                                 }
-                                                if (getStepData.Count() > 2 && getStepData[2].Contains("Variables:"))
+                                                if (getStepData.Length > 2 && getStepData[2].Contains("Variables:"))
                                                 {
                                                     stepVariables = getStepData[2].Split(new[] { "Variables:" }, StringSplitOptions.None);
                                                 }
@@ -1075,7 +1075,7 @@ namespace GingerCore.ALM.JIRA
                         if (paramSelectedValue.StartsWith("#$#"))
                         {
                             string[] valueParts = paramSelectedValue.Split(new string[] { "#$#" }, StringSplitOptions.None);
-                            if (valueParts.Count() == 3)
+                            if (valueParts.Length == 3)
                             {
                                 linkedVariable = valueParts[1];
                                 paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control

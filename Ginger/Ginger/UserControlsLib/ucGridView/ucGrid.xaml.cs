@@ -1351,7 +1351,7 @@ namespace Ginger
         {
             if (_DefaultViewName == null || _DefaultViewName == string.Empty)
             {
-                if (_GridViews.Count() >= 1)
+                if (_GridViews.Count >= 1)
                 {
                     _DefaultViewName = _GridViews.Keys.First();
                 }

@@ -378,7 +378,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         private bool CheckFilePathLength(string fileName)
         {
 
-            if (fileName.Count() > 247)
+            if (fileName.Length > 247)
             {
                 mAct.Error = mAct.Error + "FileName is too long for validation, Please define shorter path for execution report under the agent and/or please make test suite + test case + test step shorter" + Environment.NewLine;
                 return false;

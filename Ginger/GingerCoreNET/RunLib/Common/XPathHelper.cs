@@ -457,7 +457,7 @@ namespace GingerCore.Drivers.Common
                             relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "' and @name ='" + name + "']");
                         }
                         elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
-                        if (elemsList == null || (elemsList != null && elemsList.Count() < 2))
+                        if (elemsList == null || (elemsList != null && elemsList.Count < 2))
                         {
                             continue;
                         }

@@ -123,7 +123,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
                 if (ShowMessage)
                 {
-                    Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, OptionalValuesPerParameterDict.Count());
+                    Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, OptionalValuesPerParameterDict.Count);
                 }
             }
         }
@@ -149,7 +149,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
                 if (ShowMessage)
                 {
-                    Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, OptionalValuesPerParameterDict.Count());
+                    Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, OptionalValuesPerParameterDict.Count);
                 }
             }
         }

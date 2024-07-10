@@ -776,7 +776,7 @@ namespace GingerCore.Drivers.AndroidADB
                 bounds = bounds.Replace("[", ",");
                 bounds = bounds.Replace("]", ",");
                 string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                if (boundsXY.Count() == 4)
+                if (boundsXY.Length == 4)
                 {
                     int element_Start_X = (Convert.ToInt16(boundsXY[0]));
                     int element_Start_Y = (Convert.ToInt16(boundsXY[1]));

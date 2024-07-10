@@ -1948,7 +1948,7 @@ namespace Amdocs.Ginger.CoreNET
                 bounds = bounds.Replace("[", ",");
                 bounds = bounds.Replace("]", ",");
                 string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                if (boundsXY.Count() == 4)
+                if (boundsXY.Length == 4)
                 {
                     EI.X = Convert.ToInt32(boundsXY[0]);
                     EI.Y = Convert.ToInt32(boundsXY[1]);
@@ -2954,7 +2954,7 @@ namespace Amdocs.Ginger.CoreNET
                                         bounds = bounds.Replace("[", ",");
                                         bounds = bounds.Replace("]", ",");
                                         string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                                        if (boundsXY.Count() == 4)
+                                        if (boundsXY.Length == 4)
                                         {
                                             element_Start_X = Convert.ToInt64(boundsXY[0]);
                                             element_Start_Y = Convert.ToInt64(boundsXY[1]);
@@ -3130,7 +3130,7 @@ namespace Amdocs.Ginger.CoreNET
                         bounds = bounds.Replace("[", ",");
                         bounds = bounds.Replace("]", ",");
                         string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (boundsXY.Count() == 4)
+                        if (boundsXY.Length == 4)
                         {
                             ElementStartPoints.X = (int)(Convert.ToInt64(boundsXY[0]) / scale_factor_x);
                             ElementStartPoints.Y = (int)(Convert.ToInt64(boundsXY[1]) / scale_factor_y);

@@ -373,6 +373,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         [MemberNotNull(nameof(_browser))]
+        #pragma warning disable CS8774
         private void ThrowIfClosed()
         {
             if (!IsRunning())
@@ -380,6 +381,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new InvalidOperationException($"Cannot perform operation on closed driver.");
             }
         }
+        #pragma warning restore CS8774
 
         [SupportedOSPlatform("windows")]
         public Bitmap? GetScreenShot(Tuple<int, int>? size = null, bool fullPage = false)
@@ -476,7 +478,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }).Wait();
         }
 
-        public void HighLightElement(ElementInfo element, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
+        public void HighLightElement(ElementInfo element, bool locateElementByItLocators = false, IList<ElementInfo>? MappedUIElements = null)
         {
             Task.Run(async () =>
             {
@@ -579,7 +581,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.Run(() => GetActiveWindowAsync().Result).Result;
         }
 
-        public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
+        public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo>? foundElementsList = null, ObservableList<POMPageMetaData>? PomMetaData = null)
         {
             ThrowIfClosed();
             
@@ -717,7 +719,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return new(Task.Run(() => POMLearner.GetPropertiesAsync(htmlElementInfo).Result).Result);
         }
 
-        public ObservableList<ElementLocator> GetElementLocators(ElementInfo elementInfo, PomSetting pomSetting = null)
+        public ObservableList<ElementLocator> GetElementLocators(ElementInfo elementInfo, PomSetting? pomSetting = null)
         {
             if (elementInfo is not HTMLElementInfo htmlElementInfo)
             {
@@ -728,7 +730,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return new(locators);
         }
 
-        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting? pomSetting = null)
         {
             return [];
         }
@@ -838,19 +840,70 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return true;
         }
 
-        public bool TestElementLocators(ElementInfo elementInfo, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
+        public bool TestElementLocators(ElementInfo elementInfo, bool GetOutAfterFoundElement = false, ApplicationPOMModel? mPOM = null)
         {
             return Task.Run(() => TestElementLocatorsAsync(elementInfo, tillFirstPassed: GetOutAfterFoundElement).Result).Result;
         }
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
         {
+            foreach (ElementInfo elementInfo in originalList)
+            {
+                elementInfo.ElementStatus = ElementInfo.eElementStatus.Pending;
+            }
 
+            Task.Run(async () =>
+            {
+                foreach (ElementInfo elementInfo in originalList)
+                {
+                    await SwitchToFrameOfElementAsync(elementInfo);
+                    IBrowserElement? browserElement = await FindBrowserElementAsync(elementInfo);
+                    if (browserElement != null)
+                    {
+                        elementInfo.ElementObject = browserElement;
+                        elementInfo.ElementStatus = ElementInfo.eElementStatus.Passed;
+                    }
+                    else
+                    {
+                        elementInfo.ElementStatus = ElementInfo.eElementStatus.Failed;
+                    }
+                }
+            }).Wait();
         }
 
         public ElementInfo? GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
-            return null;
+            if (latestElement == null)
+            {
+                return null;
+            }
+
+            return originalElements
+                .Where(original => original.ElementObject != null)
+                .Where(original => original.ElementTypeEnum == latestElement.ElementTypeEnum)
+                .Where(original =>
+                {
+                    original.Path ??= string.Empty;
+                    latestElement.Path ??= string.Empty;
+                    return string.Equals(original.Path, latestElement.Path);
+                })
+                .Where(original =>
+                {
+                    ElementLocator? originalByRelXPathLocator = original.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath);
+                    if (originalByRelXPathLocator == null)
+                    {
+                        return false;
+                    }
+
+                    ElementLocator? latestByRelXPathLocator = latestElement.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath);
+                    if (latestByRelXPathLocator == null)
+                    {
+                        return false;
+                    }
+
+                    return string.Equals(originalByRelXPathLocator.LocateValue, latestByRelXPathLocator.LocateValue);
+                })
+                .FirstOrDefault();
         }
 
         public void StartSpying()
@@ -869,6 +922,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return elementInfo;
             }
 
+            IEnumerable<ControlProperty> properties = [];
+            IEnumerable<ElementLocator> locators = [];
+
             Task.Run(async () =>
             {
                 HTMLElementInfo newHtmlElementInfo = await CreateHtmlElementAsync(browserElement);
@@ -884,8 +940,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 string typeAttributeValue = await browserElement.AttributeValueAsync("type");
 
                 htmlElementInfo.ElementTypeEnum = POMLearner.GetElementType(tag, typeAttributeValue);
-                htmlElementInfo.Properties.AddRange(await POMLearner.GetPropertiesAsync(htmlElementInfo));
+                properties = await POMLearner.GetPropertiesAsync(htmlElementInfo);
+                locators = await POMLearner.GenerateLocatorsAsync(htmlElementInfo, pomSetting);
             }).Wait();
+
+            //AddRange needs to be called outside of the background thread, since its CollectionChanged event modifies some UI elements
+            htmlElementInfo.Properties.AddRange(properties);
+            htmlElementInfo.Locators.AddRange(locators);
 
             return htmlElementInfo;
         }
@@ -1464,7 +1525,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return this.BusinessFlow.Environment;
         }
 
-        public OpenQA.Selenium.IWebDriver GetWebDriver()
+        public OpenQA.Selenium.IWebDriver? GetWebDriver()
         {
             return null;
         }

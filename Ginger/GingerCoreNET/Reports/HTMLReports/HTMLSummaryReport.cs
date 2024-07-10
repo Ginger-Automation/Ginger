@@ -225,7 +225,7 @@ namespace Ginger.Reports.HTMLReports
             # " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + @":
         </b><br />
         <b style=""color:#000000;font-family:sans-serif;font-size:12px;font-weight:normal"">
-            " + BizFlows.Count().ToString() +
+            " + BizFlows.Count.ToString() +
         @"</b>
                                                                                             </p>
                                                                                             <v:line from=""50px,125px"" to=""140px,125px"" style=""z-index:2"">

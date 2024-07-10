@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -28,25 +27,19 @@ using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
 using Ginger.Configurations;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
-using System.Xml;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
@@ -310,8 +303,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
         public ObservableList<AccessibilityRuleData> GetRuleList()
         {
-            AccessibilityConfiguration accessibilityConfiguration = new AccessibilityConfiguration();
-            ObservableList<AccessibilityRuleData> ruleDatalist = new ObservableList<AccessibilityRuleData>();
+            AccessibilityConfiguration accessibilityConfiguration = new();
+            ObservableList<AccessibilityRuleData> ruleDatalist = [];
             try
             {
                 ruleDatalist = accessibilityConfiguration.GetAccessibilityRules();

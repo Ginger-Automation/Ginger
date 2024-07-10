@@ -569,7 +569,7 @@ namespace Ginger.Run
             SetTabOnOffSign(FlowControlTab, b);
             if (b)
             {
-                FlowControlCountLabel.Text = "(" + mBusinessFlow.BFFlowControls.Count() + ")";
+                FlowControlCountLabel.Text = "(" + mBusinessFlow.BFFlowControls.Count + ")";
             }
             else
             {

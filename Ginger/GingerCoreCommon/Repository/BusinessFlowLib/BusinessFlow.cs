@@ -611,7 +611,7 @@ namespace GingerCore
 
         public VariableBase GetVariable(string name)
         {
-            VariableBase v = (from v1 in Variables where v1.Name == name select v1).FirstOrDefault();
+            VariableBase v = Variables.FirstOrDefault(v1=> v1.Name == name);
             return v;
         }
 
@@ -619,12 +619,12 @@ namespace GingerCore
         {
             VariableBase var = null;
             if (SolutionVariables != null)
-                var = (from v1 in SolutionVariables where v1.Name == varName select v1).FirstOrDefault();
+                var = SolutionVariables.FirstOrDefault(v1=> v1.Name == varName);
             if (var == null)
             {
-                var = (from v1 in Variables where v1.Name == varName select v1).FirstOrDefault();
+                var = Variables.FirstOrDefault(v1=>v1.Name == varName);
                 if (var == null && CurrentActivity != null)
-                    var = (from v1 in CurrentActivity.Variables where v1.Name == varName select v1).FirstOrDefault();
+                    var = CurrentActivity.Variables.FirstOrDefault(v1=> v1.Name == varName);
             }
 
             //check if linked variable was used and return it instead of original one if yes
@@ -640,12 +640,12 @@ namespace GingerCore
         {
             VariableBase var = null;
             if (SolutionVariables != null)
-                var = (from v1 in SolutionVariables where v1.Name == varName && v1.VariableType == varType select v1).FirstOrDefault();
+                var = SolutionVariables.FirstOrDefault(v1=> v1.Name == varName && v1.VariableType == varType);
             if (var == null)
             {
-                var = (from v1 in Variables where v1.Name == varName && v1.VariableType == varType select v1).FirstOrDefault();
+                var = Variables.FirstOrDefault(v1=>  v1.Name == varName && v1.VariableType == varType);
                 if (var == null && CurrentActivity != null)
-                    var = (from v1 in CurrentActivity.Variables where v1.Name == varName && v1.VariableType == varType select v1).FirstOrDefault();
+                    var = CurrentActivity.Variables.FirstOrDefault(v1=> v1.Name == varName && v1.VariableType == varType);
             }
 
             //check if linked variable was used and return it instead of original one if yes

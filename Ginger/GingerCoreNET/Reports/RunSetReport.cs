@@ -299,7 +299,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return GingerReports.Count();
+                return GingerReports.Count;
             }
         }
 

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -81,7 +81,7 @@ namespace Ginger.Imports.UFT
                     //Create a lst of paramns from function Def
                     char[] delimiterChars = { ',' };
                     string paramsStr = "";
-                    List<string> ParamsLst = new List<string>();
+                    List<string> ParamsLst = [];
 
                     if (CodeLine.Length != 0)
                     {
@@ -92,9 +92,9 @@ namespace Ginger.Imports.UFT
                     }
 
                     //for Descriptive
-                    if (ParamsLst.Count() > Int32.Parse(CFP.NoOfParameters))
+                    if (ParamsLst.Count > Int32.Parse(CFP.NoOfParameters))
                     {
-                        ParamDiff = ParamsLst.Count() - Int32.Parse(CFP.NoOfParameters);
+                        ParamDiff = ParamsLst.Count - Int32.Parse(CFP.NoOfParameters);
                         sParamLocateBy = CFP.LocateBy.Replace("{", "").Replace("}", "").Replace("Param", "").Trim();
                         CollateTill = Int32.Parse(sParamLocateBy) + ParamDiff;
 
@@ -112,16 +112,16 @@ namespace Ginger.Imports.UFT
                         else if (sLocateDesc.ToUpper().Contains("WEBTABLE(")) sLocateDesc = GetStringBetween(sLocateDesc, "WebTable(", "),");
                         else if (sLocateDesc.ToUpper().Contains("WEBIMAGE(")) sLocateDesc = GetStringBetween(sLocateDesc, "WebImage(", "),");
 
-                        if (sLocateDesc.Contains("(")) sLocateDesc = sLocateDesc.Replace("(", "");
-                        if (sLocateDesc.Contains(")")) sLocateDesc = sLocateDesc.Replace(")", "");
-                        if (sLocateDesc.EndsWith(",")) { sLocateDesc = sLocateDesc.Remove(sLocateDesc.Length - 1, 1); }
+                        if (sLocateDesc.Contains('(')) sLocateDesc = sLocateDesc.Replace("(", "");
+                        if (sLocateDesc.Contains(')')) sLocateDesc = sLocateDesc.Replace(")", "");
+                        if (sLocateDesc.EndsWith(',')) { sLocateDesc = sLocateDesc.Remove(sLocateDesc.Length - 1, 1); }
 
                         ActionFromCommonFunction.Add("LocateBy", sLocateDesc);
                         ActionFromCommonFunction.Add("LocateValue", sLocateDesc);
                     }
 
                     // if there is no descriptive
-                    else if (ParamsLst.Count() == Int32.Parse(CFP.NoOfParameters))
+                    else if (ParamsLst.Count == Int32.Parse(CFP.NoOfParameters))
                     {
                         //Fetch the Parameter to Locate By
                         if (CFP.LocateBy != null)

@@ -355,7 +355,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return Activities.Count();
+                return Activities.Count;
             }
         }
 

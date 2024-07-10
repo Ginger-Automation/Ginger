@@ -172,21 +172,5 @@ namespace GingerCore.Actions
             return newAct;
 
         }
-
-        public PayLoad GetPayLoad()
-        {
-            PayLoad PL = new PayLoad("SwitchWindow");
-            if (string.IsNullOrEmpty(LocateValueCalculated) == false)
-            {
-                PL.AddValue(LocateValueCalculated);
-            }
-            else
-            {
-                PL.AddValue(ValueForDriver);
-            }
-
-            PL.ClosePackage();
-            return PL;
-        }
     }
 }

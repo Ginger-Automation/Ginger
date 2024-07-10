@@ -108,7 +108,7 @@ namespace Ginger.DataSource
             if (mDSTableDetails.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
             {
                 string keyName = ((DataRowView)cell.DataContext).Row["GINGER_KEY_NAME"].ToString();
-                if (cell.Column.Header.ToString() == "GINGER__KEY__NAME" && (keyName == "" || getKeyRows(keyName).Count() > 1))
+                if (cell.Column.Header.ToString() == "GINGER__KEY__NAME" && (keyName == "" || getKeyRows(keyName).Count > 1))
                 {
                     if (keyName == "")
                     {
@@ -129,7 +129,7 @@ namespace Ginger.DataSource
                 {
                     DataRow[] foundRows;
                     foundRows = mDSTableDetails.DataTable.Select("GINGER_KEY_NAME='" + keyName + "'");
-                    if (foundRows.Count() < 2)
+                    if (foundRows.Length < 2)
                     {
                         foreach (DataRow dr1 in foundRows)
                         {
@@ -429,7 +429,7 @@ namespace Ginger.DataSource
                         {
                             rowError = "Empty Key Name";
                         }
-                        else if (getKeyRows(keyName).Count() > 1)
+                        else if (getKeyRows(keyName).Count > 1)
                         {
                             rowError = "Duplicate Key Name";
                         }
