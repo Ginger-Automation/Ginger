@@ -30,14 +30,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver, IWindowExplorer, IXPath, IVisualTestingDriver
     {
-        [UserConfigured]
-        [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
-        public bool HeadlessBrowserMode { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDescription("Proxy Server:Port")]
-        public string? Proxy { get; set; }
 
         private PlaywrightBrowser? _browser;
         private IBrowserElement? _lastHighlightedElement;
@@ -73,8 +65,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 options.Proxy = new Proxy()
                 {
-                    Server = Proxy
+                    Server = Proxy,
                 };
+
+                if (!string.IsNullOrEmpty(ByPassProxy))
+                {
+                    options.Proxy.Bypass = string.Join(',', ByPassProxy.Split(';'));
+                }
             }
 
             return options;
