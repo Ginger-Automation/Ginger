@@ -30,10 +30,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver, IWindowExplorer, IXPath, IVisualTestingDriver
     {
-        [UserConfigured]
-        [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
-        public bool HeadlessBrowserMode { get; set; }
 
         private PlaywrightBrowser? _browser;
         private IBrowserElement? _lastHighlightedElement;

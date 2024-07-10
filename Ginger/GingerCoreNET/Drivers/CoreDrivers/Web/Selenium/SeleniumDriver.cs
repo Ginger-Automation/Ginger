@@ -215,11 +215,6 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
-        public bool HeadlessBrowserMode { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Set \"true\" to Launch the Browser minimized")]
         public bool BrowserMinimized { get; set; }
 
