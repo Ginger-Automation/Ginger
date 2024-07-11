@@ -83,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }, learnedElements);
         }
 
-        private async Task LearnHtmlNodeChildElements(HtmlNode htmlNode, Predicate<HtmlNode> filter, IList<ElementInfo> learnedElements)
+        private async Task LearnHtmlNodeChildElements(HtmlNode htmlNode, Predicate<HtmlNode> shouldLearnElement, IList<ElementInfo> learnedElements)
         {
             //List<HTMLElementInfo> htmlElements = [];
 
@@ -91,7 +91,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             {
                 eElementType childNodeType = GetElementType(childNode);
                 HTMLElementInfo? childElement = null;
-                if (!filter(childNode))
+                if (!shouldLearnElement(childNode))
                 {
                     if (childNodeType == eElementType.Form)
                     {
@@ -100,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     }
                     else
                     {
-                        await LearnHtmlNodeChildElements(childNode, filter, learnedElements);
+                        await LearnHtmlNodeChildElements(childNode, shouldLearnElement, learnedElements);
                     }
 
                     continue;
@@ -127,7 +127,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 }
                 else
                 {
-                    await LearnHtmlNodeChildElements(childNode, filter, grandChildElements);
+                    await LearnHtmlNodeChildElements(childNode, shouldLearnElement, grandChildElements);
                 }
                 foreach (HTMLElementInfo grandChildElement in grandChildElements)
                 {
@@ -168,11 +168,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 return false;
             }
 
-            if (htmlNode.Name != null && htmlNode.Name.StartsWith("input", StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-            if (htmlNode.Name != null && htmlNode.Name.StartsWith("button", StringComparison.OrdinalIgnoreCase))
+            string tagName = htmlNode.Name ?? "";
+            if (tagName.StartsWith("input", StringComparison.OrdinalIgnoreCase) || tagName.StartsWith("button", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
