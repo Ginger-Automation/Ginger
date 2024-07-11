@@ -162,18 +162,6 @@ namespace GingerCore.Drivers
             }
         }
 
-
-        [UserConfigured]
-        [UserConfiguredDescription("Proxy Server:Port")]
-        public string Proxy { get; set; }
-
-
-        [UserConfigured]
-        [UserConfiguredDefault("http://127.0.0.1;http://localhost;")]
-        [UserConfiguredDescription("Set multiple By Pass Proxy URLs separated with ';'|| By Pass Proxy works only when Proxy URL is mentioned")]
-        public string ByPassProxy { get; set; }
-
-
         [UserConfigured]
         [UserConfiguredDescription("Proxy Auto Config Url")]
         public string ProxyAutoConfigUrl { get; set; }
@@ -224,11 +212,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Use Browser In Private/Incognito Mode (Please use 64bit Browse with Internet Explorer ")]
         public bool BrowserPrivateMode { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
-        public bool HeadlessBrowserMode { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -6607,8 +6590,11 @@ namespace GingerCore.Drivers
         {
             IList<string> XPaths = ((HTMLElementInfo)ElementInfo).XPathList;
             ISearchContext tempContext = Driver;
-            int startPointer = XPaths.Count - 1;
-
+            int startPointer=0;
+            if (XPaths != null)
+            {
+                startPointer = XPaths.Count - 1;
+            }
             IWebElement e = null;
 
             if (startPointer > 0)
