@@ -600,6 +600,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
             await pomLearner.LearnElementsAsync(foundElementsList);
 
+            //below part should ideally be handled in POMLearner itself but, when we add the learned element to the observable list, it sets the active status as true again
+            foreach (ElementInfo element in foundElementsList)
+            {
+                HTMLElementInfo htmlElementInfo = (HTMLElementInfo)element;
+                if (htmlElementInfo.FriendlyLocators.Count == 0 && htmlElementInfo.Locators.Count >= 1)
+                {
+                    ElementLocator? byTagNameLocator = htmlElementInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByTagName);
+                    if (byTagNameLocator != null)
+                    {
+                        byTagNameLocator.Active = false;
+                    }
+                }
+            }
+
             return new(foundElementsList);
         }
 
