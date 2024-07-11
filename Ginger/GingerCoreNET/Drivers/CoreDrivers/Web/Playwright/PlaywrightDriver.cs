@@ -30,14 +30,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver, IWindowExplorer, IXPath, IVisualTestingDriver
     {
-        [UserConfigured]
-        [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
-        public bool HeadlessBrowserMode { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDescription("Proxy Server:Port")]
-        public string? Proxy { get; set; }
 
         private PlaywrightBrowser? _browser;
         private IBrowserElement? _lastHighlightedElement;
@@ -73,8 +65,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 options.Proxy = new Proxy()
                 {
-                    Server = Proxy
+                    Server = Proxy,
                 };
+
+                if (!string.IsNullOrEmpty(ByPassProxy))
+                {
+                    options.Proxy.Bypass = string.Join(',', ByPassProxy.Split(';'));
+                }
             }
 
             return options;
@@ -595,16 +592,29 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             await currentTab.SwitchToMainFrameAsync();
             string pageSource = await _browser.CurrentWindow.CurrentTab.PageSourceAsync();
 
-
-            POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
-            IEnumerable<HTMLElementInfo> htmlElements = await pomLearner.LearnElementsAsync();
-
-            if (foundElementsList != null)
+            if (foundElementsList == null)
             {
-                foundElementsList.AddRange(htmlElements.Cast<ElementInfo>());
+                foundElementsList = new();
             }
 
-            return new(htmlElements);
+            POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
+            await pomLearner.LearnElementsAsync(foundElementsList);
+
+            //below part should ideally be handled in POMLearner itself but, when we add the learned element to the observable list, it sets the active status as true again
+            foreach (ElementInfo element in foundElementsList)
+            {
+                HTMLElementInfo htmlElementInfo = (HTMLElementInfo)element;
+                if (htmlElementInfo.FriendlyLocators.Count == 0 && htmlElementInfo.Locators.Count >= 1)
+                {
+                    ElementLocator? byTagNameLocator = htmlElementInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByTagName);
+                    if (byTagNameLocator != null)
+                    {
+                        byTagNameLocator.Active = false;
+                    }
+                }
+            }
+
+            return new(foundElementsList);
         }
 
         private sealed class PlaywrightBrowserElementProvider : POMLearner.IBrowserElementProvider
@@ -922,6 +932,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return elementInfo;
             }
 
+            IEnumerable<ControlProperty> properties = [];
+            IEnumerable<ElementLocator> locators = [];
+
             Task.Run(async () =>
             {
                 HTMLElementInfo newHtmlElementInfo = await CreateHtmlElementAsync(browserElement);
@@ -937,9 +950,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 string typeAttributeValue = await browserElement.AttributeValueAsync("type");
 
                 htmlElementInfo.ElementTypeEnum = POMLearner.GetElementType(tag, typeAttributeValue);
-                htmlElementInfo.Properties.AddRange(await POMLearner.GetPropertiesAsync(htmlElementInfo));
-                htmlElementInfo.Locators.AddRange(await POMLearner.GenerateLocatorsAsync(htmlElementInfo, pomSetting));
+                properties = await POMLearner.GetPropertiesAsync(htmlElementInfo);
+                locators = await POMLearner.GenerateLocatorsAsync(htmlElementInfo, pomSetting);
             }).Wait();
+
+            //AddRange needs to be called outside of the background thread, since its CollectionChanged event modifies some UI elements
+            htmlElementInfo.Properties.AddRange(properties);
+            htmlElementInfo.Locators.AddRange(locators);
 
             return htmlElementInfo;
         }

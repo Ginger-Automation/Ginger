@@ -44,10 +44,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         };
 
         [UserConfigured]
+        [UserConfiguredDescription("Proxy Server:Port")]
+        public string? Proxy { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("http://127.0.0.1;http://localhost;")]
+        [UserConfiguredDescription("Set multiple By Pass Proxy URLs separated with ';'|| By Pass Proxy works only when Proxy URL is mentioned")]
+        public string? ByPassProxy { get; set; }
+
+        [UserConfigured]
         [UserConfiguredEnumType(typeof(WebBrowserType))]
         [UserConfiguredDefault("Chrome")]
         [UserConfiguredDescription("Browser Type")]
         public virtual WebBrowserType BrowserType { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
+        public bool HeadlessBrowserMode { get; set; }
 
         public override ePlatformType Platform => ePlatformType.Web;
 
