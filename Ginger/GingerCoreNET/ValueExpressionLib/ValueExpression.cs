@@ -30,11 +30,13 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
+using SikuliStandard.sikuli_REST;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -108,6 +110,8 @@ namespace GingerCore
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
 
         private static Regex rNestedfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\(([^()])*\\)}", RegexOptions.Compiled);
+        private static Regex MockDataExpPattern = new Regex("^\\{MockDataExp Fun=.*\\}$", RegexOptions.Compiled, new TimeSpan(0, 0, 5));
+        private static Regex CsExppattern = new Regex("{CS Exp({.*}|[^{}]*)*}", RegexOptions.Compiled);
 
         // Enable setting value simply by assigned string, 
         // so no need to create new VE class everywhere in code
@@ -1728,50 +1732,59 @@ namespace GingerCore
 
         private bool ContainsFormula(string mValueCalculated)
         {
-            if (rxGlobalParamPattern.IsMatch(mValueCalculated))
+            try
             {
-                return true;
+                if (rxGlobalParamPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxEnvParamPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxEnvUrlPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxe.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (VBSRegex.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rNestedfunc.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxDSPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxFDPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxExecutionJsonDataPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (CsExppattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else  if (MockDataExpPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
             }
-            else if (rxEnvParamPattern.IsMatch(mValueCalculated))
+            catch (RegexMatchTimeoutException ex)
             {
-                return true;
+                Reporter.ToLog(eLogLevel.ERROR, "Timeout Exception", ex);
+                return false;
             }
-            else if (rxEnvUrlPattern.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (rxe.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (VBSRegex.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (rNestedfunc.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (rxDSPattern.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (rxFDPattern.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (rxExecutionJsonDataPattern.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (mValueCalculated.Contains(@"{CS"))
-            {
-                return true;
-            }
-            else if(mValueCalculated.Contains(@"{MockDataExp")) 
-            { 
-                return true; 
-            }
+            
             return false;
         }
 
