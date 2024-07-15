@@ -447,7 +447,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            if (mSelectedElement != null)
+            if (mSelectedElement != null && mSelectedElement.DeltaStatus != eDeltaStatus.Deleted)
             {
                 mWinExplorer.HighLightElement(mSelectedElement.ElementInfo, true, elementInfoList);
 
