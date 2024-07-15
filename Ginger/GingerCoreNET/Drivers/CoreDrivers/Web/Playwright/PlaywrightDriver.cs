@@ -161,7 +161,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         actGotoURLHandler.HandleAsync().Wait();
                         break;
                     default:
-                        act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
+                        act.Error = $"This Action is not supported for Playwright driver";
                         break;
                 }
             }).Wait();
