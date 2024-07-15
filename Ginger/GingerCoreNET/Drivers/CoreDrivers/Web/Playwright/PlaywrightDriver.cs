@@ -42,6 +42,7 @@ using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
+using System.Threading;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -616,7 +617,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
             POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
-            await pomLearner.LearnElementsAsync(foundElementsList);
+            CancellationTokenSource cancellationTokenSource = new();
+            Task learnElementsTask = pomLearner.LearnElementsAsync(foundElementsList, cancellationTokenSource.Token);
+            _ = Task.Run(() =>
+            {
+                while (!StopProcess && !learnElementsTask.IsCompleted) ;
+
+                if (StopProcess)
+                {
+                    cancellationTokenSource.Cancel();
+                }
+            });
+            await learnElementsTask;
 
             //below part should ideally be handled in POMLearner itself but, when we add the learned element to the observable list, it sets the active status as true again
             foreach (ElementInfo element in foundElementsList)
