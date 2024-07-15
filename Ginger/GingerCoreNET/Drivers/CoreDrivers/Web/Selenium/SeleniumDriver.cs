@@ -27,7 +27,6 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
