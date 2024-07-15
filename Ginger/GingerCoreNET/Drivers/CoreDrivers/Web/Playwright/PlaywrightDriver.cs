@@ -638,6 +638,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         private sealed class PlaywrightBrowserElementProvider : POMLearner.IBrowserElementProvider
         {
             private readonly IBrowserTab _browserTab;
+            private int _shadowDOMDepth = 0;
 
             internal PlaywrightBrowserElementProvider(IBrowserTab browserTab)
             {
@@ -646,7 +647,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             public async Task<IBrowserElement?> GetElementAsync(eLocateBy locateBy, string locateValue)
             {
-                return (await _browserTab.GetElementsAsync(locateBy, locateValue)).FirstOrDefault();
+                try
+                {
+                    if (_shadowDOMDepth > 0 && locateBy == eLocateBy.ByXPath)
+                    {
+                        string cssLocateValue = new ShadowDOM().ConvertXPathToCssSelector(locateValue);
+                        return (await _browserTab.GetElementsAsync(eLocateBy.ByCSS, cssLocateValue)).FirstOrDefault();
+                    }
+                    return (await _browserTab.GetElementsAsync(locateBy, locateValue)).FirstOrDefault();
+                }
+                catch(Exception)
+                {
+                    return null;
+                }
             }
 
             public async Task OnFrameEnterAsync(HTMLElementInfo frameElement)
@@ -669,11 +682,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             public Task OnShadowDOMEnterAsync(HTMLElementInfo shadowHostElement)
             {
+                _shadowDOMDepth++;
                 return Task.CompletedTask;
             }
 
             public Task OnShadowDOMExitAsync(HTMLElementInfo shadowHostElement)
             {
+                _shadowDOMDepth--;
                 return Task.CompletedTask;
             }
         }

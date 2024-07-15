@@ -84,13 +84,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         private async Task LearnDocumentElementsAsync(HtmlDocument htmlDocument, IList<ElementInfo> learnedElements)
         {
-            await LearnHtmlNodeChildElements(htmlDocument.DocumentNode, htmlNode =>
+            await LearnHtmlNodeChildElements(htmlDocument.DocumentNode, shouldLearnNode: htmlNode =>
             {
-                if (!CheckStaticHtmlNodeExclusion(htmlNode))
-                {
-                    return false;
-                }
-
                 eElementType type = GetElementType(htmlNode);
                 if (_pomSetting != null && !_pomSetting.filteredElementType.Contains(type))
                 {
@@ -101,64 +96,58 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }, learnedElements);
         }
 
-        private async Task LearnHtmlNodeChildElements(HtmlNode htmlNode, Predicate<HtmlNode> shouldLearnElement, IList<ElementInfo> learnedElements)
+        private async Task LearnHtmlNodeChildElements(HtmlNode htmlNode, Predicate<HtmlNode> shouldLearnNode, IList<ElementInfo> learnedElements, IList<ElementInfo>? childElements = null)
         {
-            //List<HTMLElementInfo> htmlElements = [];
-
             foreach (HtmlNode childNode in htmlNode.ChildNodes)
             {
-                eElementType childNodeType = GetElementType(childNode);
+                eElementType childNodeElementType = GetElementType(childNode);
+                IBrowserElement? browserElement = null;
                 HTMLElementInfo? childElement = null;
-                if (!shouldLearnElement(childNode))
+
+                if (IsNodeLearnable(childNode))
                 {
-                    if (childNodeType == eElementType.Form)
+                    browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
+                    if (browserElement != null)
                     {
-                        //in case we have a Form element, then the POM filters don't apply anymore, then we use Form specific filter
-                        await LearnHtmlNodeChildElements(childNode, FormChildrenElementFilter, learnedElements);
-                    }
-                    else
-                    {
-                        await LearnHtmlNodeChildElements(childNode, shouldLearnElement, learnedElements);
+                        childElement = await CreateHTMLElementInfoAsync(childNode, browserElement);
                     }
 
-                    continue;
+                    if (childElement != null && shouldLearnNode(childNode))
+                    {
+                        learnedElements.Add(childElement);
+                        if (childElements != null)
+                        {
+                            childElements.Add(childElement);
+                        }
+                    }
                 }
-
-                IBrowserElement? browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
-                if (browserElement == null || !await browserElement.IsVisibleAsync())
-                {
-                    continue;
-                }
-
-                childElement = await CreateHTMLElementInfoAsync(childNode, browserElement);
-
-                learnedElements.Add(childElement);
-
-                await LearnShadowDOMElementsAsync(childElement, learnedElements);
-                await LearnFrameElementsAsync(childElement, learnedElements);
-                //TODO: create suggested activities
 
                 IList<ElementInfo> grandChildElements = new List<ElementInfo>();
-                if (childNodeType == eElementType.Form)
+                if (childNodeElementType == eElementType.Form)
                 {
-                    await LearnHtmlNodeChildElements(childNode, FormChildrenElementFilter, grandChildElements);
+                    await LearnHtmlNodeChildElements(childNode, ShouldLearnFormChildNode, learnedElements, grandChildElements);
                 }
-                else
+                else if (!string.Equals(childNode.Name, "head", StringComparison.OrdinalIgnoreCase))
                 {
-                    await LearnHtmlNodeChildElements(childNode, shouldLearnElement, grandChildElements);
+                    await LearnHtmlNodeChildElements(childNode, shouldLearnNode, learnedElements, grandChildElements);
                 }
-                foreach (HTMLElementInfo grandChildElement in grandChildElements)
+                
+                if (childElement != null)
                 {
-                    grandChildElement.ParentElement = childElement;
+                    foreach (ElementInfo grandChildElement in grandChildElements)
+                    {
+                        grandChildElement.ParentElement = childElement;
+                    }
+                    childElement.ChildElements.Clear();
+                    childElement.ChildElements.AddRange(grandChildElements);
+                    
+                    await LearnShadowDOMElementsAsync(childElement, learnedElements);
+                    await LearnFrameElementsAsync(childElement, learnedElements);
                 }
-                childElement.ChildElements.Clear();
-                childElement.ChildElements.AddRange(grandChildElements.Cast<ElementInfo>());
-
-                learnedElements.AddRange(grandChildElements);
             }
         }
 
-        private static bool CheckStaticHtmlNodeExclusion(HtmlNode htmlNode)
+        private static bool IsNodeLearnable(HtmlNode htmlNode)
         {
             if (htmlNode.Name.StartsWith("#"))
             {
@@ -179,18 +168,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return true;
         }
 
-        private static bool FormChildrenElementFilter(HtmlNode htmlNode)
+        private static bool ShouldLearnFormChildNode(HtmlNode htmlNode)
         {
-            if (!CheckStaticHtmlNodeExclusion(htmlNode))
+            try
             {
-                return false;
+                string tagName = htmlNode.Name ?? "";
+                if (tagName.StartsWith("input", StringComparison.OrdinalIgnoreCase) || tagName.StartsWith("button", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
             }
-
-            string tagName = htmlNode.Name ?? "";
-            if (tagName.StartsWith("input", StringComparison.OrdinalIgnoreCase) || tagName.StartsWith("button", StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
+            catch (Exception) { }
 
             return false;
         }
@@ -213,7 +201,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 HTMLElementObject = htmlNode,
                 XPath = htmlNode.XPath,
                 IsAutoLearned = true,
-                ScreenShotImage = await GetElementScreenshotAsync(browserElement),
                 Locators = [],
                 Properties = [
                     new()
@@ -230,6 +217,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     }],
             };
             //LearnElementInfoDetails(htmlElementInfo); //check what properties of HTMLElementInfo are set in this method
+            htmlElementInfo.ScreenShotImage = await GetElementScreenshotAsync(browserElement);
             htmlElementInfo.XPath = GenerateXPathFromHtmlElementInfo(htmlElementInfo);
             htmlElementInfo.RelXpath = GenerateRelativeXPathFromHTMLElementInfo(htmlElementInfo, _xpathImpl, _pomSetting);
             htmlElementInfo.Locators.AddRange(await GenerateLocatorsAsync(htmlElementInfo, _pomSetting));
@@ -768,7 +756,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return xpathHelper.GetElementRelXPath(htmlElementInfo, pomSetting);
         }
 
-        private async Task<string> GetElementScreenshotAsync(IBrowserElement? browserElement)
+        private async Task<string?> GetElementScreenshotAsync(IBrowserElement? browserElement)
         {
             if (_pomSetting == null ||
                 !_pomSetting.LearnScreenshotsOfElements || 
@@ -777,7 +765,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 return string.Empty;
             }
 
-            return Convert.ToBase64String(await browserElement.ScreenshotAsync());
+            try
+            {
+                return Convert.ToBase64String(await browserElement.ScreenshotAsync());
+            }
+            catch(Exception)
+            {
+                return null;
+            }
         }
 
         private async Task LearnShadowDOMElementsAsync(HTMLElementInfo shadowHostElement, IList<ElementInfo> learnedElements)
@@ -786,7 +781,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 !_pomSetting.LearnShadowDomElements ||
                 shadowHostElement.ElementTypeEnum == eElementType.Iframe ||
                 shadowHostElement.ElementObject == null ||
-                await ((IBrowserElement)shadowHostElement.ElementObject).ShadowRootAsync() != null)
+                await ((IBrowserElement)shadowHostElement.ElementObject).ShadowRootAsync() == null)
             {
                 return;
             }
