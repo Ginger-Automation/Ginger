@@ -24,7 +24,6 @@ using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright

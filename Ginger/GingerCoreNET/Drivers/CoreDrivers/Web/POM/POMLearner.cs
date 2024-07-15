@@ -93,14 +93,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     {
                         childElement = await CreateHTMLElementInfoAsync(childNode, browserElement);
                     }
-                }
 
-                if (childElement != null && shouldLearnNode(childNode))
-                {
-                    learnedElements.Add(childElement);
-                    if (childElements != null)
+                    if (childElement != null && shouldLearnNode(childNode))
                     {
-                        childElements.Add(childElement);
+                        learnedElements.Add(childElement);
+                        if (childElements != null)
+                        {
+                            childElements.Add(childElement);
+                        }
                     }
                 }
 
@@ -152,11 +152,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         private static bool ShouldLearnFormChildNode(HtmlNode htmlNode)
         {
-            string tagName = htmlNode.Name ?? "";
-            if (tagName.StartsWith("input", StringComparison.OrdinalIgnoreCase) || tagName.StartsWith("button", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                return true;
+                string tagName = htmlNode.Name ?? "";
+                if (tagName.StartsWith("input", StringComparison.OrdinalIgnoreCase) || tagName.StartsWith("button", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
             }
+            catch (Exception) { }
 
             return false;
         }
@@ -745,7 +749,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
             try
             {
-                return Convert.ToBase64String(await browserElement.ScreenshotAsync().WaitAsync(timeout: TimeSpan.FromSeconds(3)));
+                return Convert.ToBase64String(await browserElement.ScreenshotAsync());
             }
             catch(Exception)
             {

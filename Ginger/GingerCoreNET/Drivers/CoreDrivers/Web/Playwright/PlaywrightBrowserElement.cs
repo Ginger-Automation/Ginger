@@ -819,26 +819,33 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task<byte[]> ScreenshotAsync()
         {
+            int timeout = 3000;
             if (_playwrightLocator != null)
             {
-                return ScreenshotAsync(_playwrightLocator);
+                return ScreenshotAsync(_playwrightLocator, timeout);
             }
             else
             {
-                return ScreenshotAsync(_playwrightElementHandle!);
+                return ScreenshotAsync(_playwrightElementHandle!, timeout);
             }
         }
 
-        public Task<byte[]> ScreenshotAsync(IPlaywrightLocator playwrightLocator)
+        public Task<byte[]> ScreenshotAsync(IPlaywrightLocator playwrightLocator, int timeout)
         {
             ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
-            return playwrightLocator.ScreenshotAsync();
+            return playwrightLocator.ScreenshotAsync(new LocatorScreenshotOptions()
+            {
+                Timeout = timeout,
+            });
         }
 
-        public Task<byte[]> ScreenshotAsync(IPlaywrightElementHandle playwrightElementHandle)
+        public Task<byte[]> ScreenshotAsync(IPlaywrightElementHandle playwrightElementHandle, int timeout)
         {
             ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
-            return playwrightElementHandle.ScreenshotAsync();
+            return playwrightElementHandle.ScreenshotAsync(new ElementHandleScreenshotOptions()
+            {
+                Timeout = timeout,
+            });
         }
 
         public async Task<IBrowserShadowRoot?> ShadowRootAsync()
