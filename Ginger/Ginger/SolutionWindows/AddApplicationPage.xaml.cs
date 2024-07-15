@@ -71,7 +71,6 @@ namespace Ginger.SolutionWindows
             APs.Add(new ApplicationPlatform() { AppName = "MyWindowsApp", Platform = ePlatformType.Windows, Description = "Windows Application" });
             APs.Add(new ApplicationPlatform() { AppName = "MyPowerBuilderApp", Platform = ePlatformType.PowerBuilder, Description = "Power Builder Application" });
             SelectApplicationGrid.DataSourceList = APs;
-            SelectApplicationGrid.RowDoubleClick += SelectApplicationGrid_RowDoubleClick;
             SelectApplicationGrid.SearchVisibility = Visibility.Collapsed;
         }
 
@@ -234,12 +233,6 @@ namespace Ginger.SolutionWindows
 
             agent.AgentOperations.InitDriverConfigs();
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(agent);
-        }
-
-        private void SelectApplicationGrid_RowDoubleClick(object sender, EventArgs e)
-        {
-            OKButton_Click(sender, null);
-            _pageGenericWin.Close();
         }
     }
 }

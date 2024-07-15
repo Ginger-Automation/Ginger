@@ -22,7 +22,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 {
     public class ShadowDOM
     {
@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Gets the inner HTML of the giver root
         /// </summary>
@@ -64,14 +64,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 
         public string ConvertXPathToCssSelector(string XPath)
         {
-            IEnumerable<string> tags = XPath.Split('/').Where((x)=>!string.IsNullOrEmpty(x));
+            IEnumerable<string> tags = XPath.Split('/').Where((x) => !string.IsNullOrEmpty(x));
             StringBuilder strBuilder = new();
 
             foreach (string tag in tags)
             {
                 int indexOfOpenBracket = tag.IndexOf('[');
 
-                if(indexOfOpenBracket!= -1)
+                if (indexOfOpenBracket != -1)
                 {
                     string tagName = tag.Substring(0, indexOfOpenBracket);
                     string count = tag.Substring(indexOfOpenBracket);

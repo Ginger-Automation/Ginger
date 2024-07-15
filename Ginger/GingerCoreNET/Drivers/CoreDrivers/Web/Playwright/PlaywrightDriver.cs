@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.RunLib;
 using GingerCore;
 using GingerCore.Actions;
@@ -143,7 +161,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         actGotoURLHandler.HandleAsync().Wait();
                         break;
                     default:
-                        act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
+                        act.Error = $"This Action is not supported for Playwright driver";
                         break;
                 }
             }).Wait();
@@ -620,6 +638,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         private sealed class PlaywrightBrowserElementProvider : POMLearner.IBrowserElementProvider
         {
             private readonly IBrowserTab _browserTab;
+            private int _shadowDOMDepth = 0;
 
             internal PlaywrightBrowserElementProvider(IBrowserTab browserTab)
             {
@@ -628,7 +647,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             public async Task<IBrowserElement?> GetElementAsync(eLocateBy locateBy, string locateValue)
             {
-                return (await _browserTab.GetElementsAsync(locateBy, locateValue)).FirstOrDefault();
+                try
+                {
+                    if (_shadowDOMDepth > 0 && locateBy == eLocateBy.ByXPath)
+                    {
+                        string cssLocateValue = new ShadowDOM().ConvertXPathToCssSelector(locateValue);
+                        return (await _browserTab.GetElementsAsync(eLocateBy.ByCSS, cssLocateValue)).FirstOrDefault();
+                    }
+                    return (await _browserTab.GetElementsAsync(locateBy, locateValue)).FirstOrDefault();
+                }
+                catch(Exception)
+                {
+                    return null;
+                }
             }
 
             public async Task OnFrameEnterAsync(HTMLElementInfo frameElement)
@@ -651,11 +682,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             public Task OnShadowDOMEnterAsync(HTMLElementInfo shadowHostElement)
             {
+                _shadowDOMDepth++;
                 return Task.CompletedTask;
             }
 
             public Task OnShadowDOMExitAsync(HTMLElementInfo shadowHostElement)
             {
+                _shadowDOMDepth--;
                 return Task.CompletedTask;
             }
         }
