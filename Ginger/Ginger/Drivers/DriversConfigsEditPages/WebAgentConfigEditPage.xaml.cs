@@ -67,7 +67,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             edgeIEPnlVisibility(browserType);
             chromePnlvisibilitly(browserType);
             chromeFirefoxPnlVisibility(browserType);
-            chromeFirefoxIEPnl(browserType);
+            allBrowserNotBravePnl(browserType);
+            proxyPnlVisbility();
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// </summary>
         void bindElement()
         {
-            
+
             #region ProxyConfigration
 
             //Check if the proxy is auto detect
@@ -100,10 +101,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             #endregion
 
             #region sessionManagement
-            //pageLoadStrategy
+            //pageLoadStrategy          
             GingerCore.General.FillComboFromEnumType(xPageLoadStrategyComboBox, typeof(SeleniumDriver.ePageLoadStrategy));
             DriverConfigParam pageLoadStrategy = mAgent.GetOrCreateParam(nameof(SeleniumDriver.PageLoadStrategy));
-            BindingHandler.ObjFieldBinding(xPageLoadStrategyComboBox, ComboBox.TextProperty, pageLoadStrategy, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xPageLoadStrategyComboBox, ComboBox.SelectedValueProperty, pageLoadStrategy, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xPageLoadStrategyComboBox, ComboBox.ToolTipProperty, pageLoadStrategy, nameof(DriverConfigParam.Description));
 
             //ImplicitWait
@@ -213,11 +214,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xOpenIEModeInEdgeCB, CheckBox.IsCheckedProperty, openIEModeInEdge, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xOpenIEModeInEdgeCB, CheckBox.ToolTipProperty, openIEModeInEdge, nameof(DriverConfigParam.Description));
 
-            //Edge Executable Path
-            DriverConfigParam edgeExcutablePath = mAgent.GetOrCreateParam(nameof(SeleniumDriver.EdgeExcutablePath));
-            xEdgeExcutablePathVE.Init(null, edgeExcutablePath, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xEdgeExcutablePathVE, TextBox.ToolTipProperty, edgeExcutablePath, nameof(DriverConfigParam.Description));
-
+            
 
             #endregion
 
@@ -251,19 +248,14 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             //Unhandled promt Behavior
             GingerCore.General.FillComboFromEnumType(xUnhandledPromptBehaviorComboBox, typeof(SeleniumDriver.eUnhandledPromptBehavior));
             DriverConfigParam UnhandledPromptBehavior = mAgent.GetOrCreateParam(nameof(SeleniumDriver.UnhandledPromptBehavior));
-            BindingHandler.ObjFieldBinding(xUnhandledPromptBehaviorComboBox, ComboBox.TextProperty, UnhandledPromptBehavior, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xUnhandledPromptBehaviorComboBox, ComboBox.SelectedValueProperty, UnhandledPromptBehavior, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xUnhandledPromptBehaviorComboBox, ComboBox.ToolTipProperty, UnhandledPromptBehavior, nameof(DriverConfigParam.Description));
 
             //browser Log Level
-            GingerCore.General.FillComboFromList(xBrowserLogLevelComboBox, new List<string> { "0", "1", "2", "3", "4" });
+            GingerCore.General.FillComboFromEnumType(xBrowserLogLevelComboBox, typeof(SeleniumDriver.eBrowserLogLevel));
             DriverConfigParam browserLogLevel = mAgent.GetOrCreateParam(nameof(SeleniumDriver.BrowserLogLevel));
-            BindingHandler.ObjFieldBinding(xBrowserLogLevelComboBox, ComboBox.TextProperty, browserLogLevel, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xBrowserLogLevelComboBox, ComboBox.SelectedValueProperty, browserLogLevel, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xBrowserLogLevelComboBox, ComboBox.ToolTipProperty, browserLogLevel, nameof(DriverConfigParam.Description));
-
-            //Disable Extension
-            DriverConfigParam disableExtension = mAgent.GetOrCreateParam(nameof(SeleniumDriver.DisableExtension));
-            BindingHandler.ObjFieldBinding(xDisableExtensionCB, CheckBox.IsCheckedProperty, disableExtension, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xDisableExtensionCB, CheckBox.ToolTipProperty, disableExtension, nameof(DriverConfigParam.Description));
 
             //Enable Native Events
             DriverConfigParam enableNativeEvents = mAgent.GetOrCreateParam(nameof(SeleniumDriver.EnableNativeEvents));
@@ -293,6 +285,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
 
             #endregion
+
+            if (!string.IsNullOrEmpty(proxyName.Value))
+            {
+                autoDetect.Value = "False";
+                BindingHandler.ObjFieldBinding(xAutoDetectProxyCB, CheckBox.IsCheckedProperty, autoDetect, nameof(DriverConfigParam.Value));
+            }
         }
 
        
@@ -320,8 +318,27 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             WebBrowserType browserType = Enum.Parse<WebBrowserType>(driverConfigParam.Value);
             edgeIEPnlVisibility(browserType);
             chromePnlvisibilitly(browserType);
-            chromeFirefoxPnlVisibility(browserType);
-            chromeFirefoxIEPnl(browserType);
+            chromeFirefoxPnlVisibility(browserType);           
+            allBrowserNotBravePnl(browserType);
+        }
+
+        /// <summary>
+        /// Sets the visibility of the Edge/IE panel based on the specified browser type.
+        /// </summary>
+        /// <param name="result">The browser type.</param>
+        void allBrowserNotBravePnl(WebBrowserType result)
+        {
+
+
+            if (result == WebBrowserType.Brave|| result == WebBrowserType.InternetExplorer)
+            {
+                xAllBrowserNotBravePnl.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xAllBrowserNotBravePnl.Visibility = Visibility.Visible;
+            }
+
         }
 
 
@@ -350,7 +367,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// <param name="result">The browser type.</param>
         void chromePnlvisibilitly(WebBrowserType result)
         {
-            if (result == WebBrowserType.Chrome)
+            if (result == WebBrowserType.Chrome|| result==WebBrowserType.Brave)
             {
                 xChromePnl.Visibility = Visibility.Visible;
             }
@@ -367,7 +384,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// <param name="result">The browser type.</param>
         void chromeFirefoxPnlVisibility(WebBrowserType result)
         {
-            if (result == WebBrowserType.Chrome || result == WebBrowserType.FireFox)
+            if (result == WebBrowserType.Chrome || result == WebBrowserType.FireFox || result == WebBrowserType.Brave)
             {
                 xChromeFirefoxPnl.Visibility = Visibility.Visible;
             }
@@ -379,29 +396,25 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// <summary>
         /// Sets the visibility of the Chrome/Firefox/IE panel based on the specified browser type.
         /// </summary>
-        /// <param name="result">The browser type.</param>
-        void chromeFirefoxIEPnl(WebBrowserType result)
+        /// <param name="result">The browser type.</param>    
+       
+       void proxyPnlVisbility()
         {
-            if (result == WebBrowserType.Chrome || result == WebBrowserType.FireFox || result == WebBrowserType.InternetExplorer)
+            if (xAutoDetectProxyCB.IsChecked == false)
             {
-                xChromeFirefoxIEPnl.Visibility = Visibility.Visible;
+                xProxyPnl.IsEnabled = true;
             }
             else
             {
-                xChromeFirefoxIEPnl.Visibility = Visibility.Collapsed;
+                xProxyPnl.IsEnabled = false;
+
             }
         }
-        private void xAutoDetectProxyCB_Checked(object sender, RoutedEventArgs e)
+        private void xAutoDetectProxyCB_Click(object sender, RoutedEventArgs e)
         {
-            xProxyPnl.IsEnabled = false;
+            proxyPnlVisbility();
+            xProxyVE.ValueTextBox.Text = "";
         }
-
-        private void xAutoDetectProxyCB_Unchecked_1(object sender, RoutedEventArgs e)
-        {
-            xProxyPnl.IsEnabled = true;
-        }
-
-
     }
 }
 
