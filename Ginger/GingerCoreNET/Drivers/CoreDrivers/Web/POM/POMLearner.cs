@@ -767,7 +767,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 !_pomSetting.LearnScreenshotsOfElements || 
                 browserElement == null)
             {
-                return string.Empty;
+                return null;
             }
 
             try
