@@ -125,6 +125,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             timer.Stop();
             mWizard.mPomLearnUtils.StopLearningTime();
         }
+
+        private void BringToFocus()
+        {
+            try
+            {
+                Window window = Window.GetWindow(this);
+                if (window != null)
+                {
+                    window.Activate();
+                }
+            }
+            catch (Exception) { }
+        }
+
         private async void Learn()
         {
             if (!mWizard.IsLearningWasDone)
@@ -141,6 +155,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xStopLoadButton.Visibility = Visibility.Visible;
 
                     await mWizard.mPomLearnUtils.Learn();
+
+                    BringToFocus();
 
                     mWizard.IsLearningWasDone = true;
                 }

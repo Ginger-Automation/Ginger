@@ -613,7 +613,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             if (foundElementsList == null)
             {
-                foundElementsList = new();
+                foundElementsList = [];
+            }
+
+            if (_browser.CurrentWindow.CurrentTab is PlaywrightBrowserTab playwrightBrowserTab)
+            {
+                await playwrightBrowserTab.BringToFrontAsync();
             }
 
             POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
