@@ -167,6 +167,10 @@ namespace GingerCore.Drivers
             {
                 return "SeleniumRemoteWebDriverEditPage";
             }
+            else if (browserType == WebBrowserType.Chrome|| browserType == WebBrowserType.Brave || browserType == WebBrowserType.Edge || browserType == WebBrowserType.InternetExplorer || browserType == WebBrowserType.FireFox )
+            {
+                return "WebAgentConfigEditPage";
+            }
             else
             {
                 return null;

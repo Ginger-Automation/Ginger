@@ -56,7 +56,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             this.mAgent = mAgent;
             InitializeComponent();
 
-            bindElement();
+            BindElement();
 
             DriverConfigParam? browserTypeParam = mAgent.DriverConfiguration.FirstOrDefault(p => string.Equals(p.Parameter, nameof(GingerWebDriver.BrowserType)));
             if (browserTypeParam != null)
@@ -64,17 +64,17 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 browserTypeParam.PropertyChanged += BrowserTypeParam_PropertyChanged;
             }
             WebBrowserType browserType = Enum.Parse<WebBrowserType>(browserTypeParam?.Value);
-            edgeIEPnlVisibility(browserType);
-            chromePnlvisibilitly(browserType);
-            chromeFirefoxPnlVisibility(browserType);
-            allBrowserNotBravePnl(browserType);
-            proxyPnlVisbility();
+            EdgeIEPnlVisibility(browserType);
+            ChromePnlvisibilitly(browserType);
+            ChromeFirefoxPnlVisibility(browserType);
+            AllBrowserNotBravePnl(browserType);
+            ProxyPnlVisbility();
         }
 
         /// <summary>
         /// Binds the elements of the page.
         /// </summary>
-        void bindElement()
+        void BindElement()
         {
 
             #region ProxyConfigration
@@ -288,8 +288,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             if (!string.IsNullOrEmpty(proxyName.Value))
             {
-                autoDetect.Value = "False";
-                BindingHandler.ObjFieldBinding(xAutoDetectProxyCB, CheckBox.IsCheckedProperty, autoDetect, nameof(DriverConfigParam.Value));
+                xAutoDetectProxyCB.IsChecked= false;
             }
         }
 
@@ -316,17 +315,17 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
 
             WebBrowserType browserType = Enum.Parse<WebBrowserType>(driverConfigParam.Value);
-            edgeIEPnlVisibility(browserType);
-            chromePnlvisibilitly(browserType);
-            chromeFirefoxPnlVisibility(browserType);           
-            allBrowserNotBravePnl(browserType);
+            EdgeIEPnlVisibility(browserType);
+            ChromePnlvisibilitly(browserType);
+            ChromeFirefoxPnlVisibility(browserType);           
+            AllBrowserNotBravePnl(browserType);
         }
 
         /// <summary>
         /// Sets the visibility of the Edge/IE panel based on the specified browser type.
         /// </summary>
         /// <param name="result">The browser type.</param>
-        void allBrowserNotBravePnl(WebBrowserType result)
+        void AllBrowserNotBravePnl(WebBrowserType result)
         {
 
 
@@ -346,7 +345,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// Sets the visibility of the Edge/IE panel based on the specified browser type.
         /// </summary>
         /// <param name="result">The browser type.</param>
-        void edgeIEPnlVisibility(WebBrowserType result)
+        void EdgeIEPnlVisibility(WebBrowserType result)
         {
 
 
@@ -365,7 +364,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// Sets the visibility of the Chrome panel based on the specified browser type.
         /// </summary>
         /// <param name="result">The browser type.</param>
-        void chromePnlvisibilitly(WebBrowserType result)
+        void ChromePnlvisibilitly(WebBrowserType result)
         {
             if (result == WebBrowserType.Chrome|| result==WebBrowserType.Brave)
             {
@@ -382,7 +381,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// Sets the visibility of the Chrome/Firefox panel based on the specified browser type.
         /// </summary>
         /// <param name="result">The browser type.</param>
-        void chromeFirefoxPnlVisibility(WebBrowserType result)
+        void ChromeFirefoxPnlVisibility(WebBrowserType result)
         {
             if (result == WebBrowserType.Chrome || result == WebBrowserType.FireFox || result == WebBrowserType.Brave)
             {
@@ -398,7 +397,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// </summary>
         /// <param name="result">The browser type.</param>    
        
-       void proxyPnlVisbility()
+       void ProxyPnlVisbility()
         {
             if (xAutoDetectProxyCB.IsChecked == false)
             {
@@ -412,7 +411,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         }
         private void xAutoDetectProxyCB_Click(object sender, RoutedEventArgs e)
         {
-            proxyPnlVisbility();
+            ProxyPnlVisbility();
             xProxyVE.ValueTextBox.Text = "";
         }
     }

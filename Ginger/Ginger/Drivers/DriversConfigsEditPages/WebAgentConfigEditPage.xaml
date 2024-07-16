@@ -11,9 +11,7 @@
     <Grid  x:Name="xPageGrid" Grid.IsSharedSizeScope="True"   Background="{StaticResource $BackgroundColor_White}">
         
 
-        <TabControl >
-            <TabItem Header="Configurations" Style="{StaticResource $RoundedTab}">
-                <StackPanel Orientation="Vertical" Margin="5,5,0,0">
+    <StackPanel Orientation="Vertical" Margin="5,5,0,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -300,8 +298,6 @@
 
                     
                     
-                </StackPanel>
-            </TabItem>
-           </TabControl>
+                </StackPanel>            
     </Grid>
 </Page>
