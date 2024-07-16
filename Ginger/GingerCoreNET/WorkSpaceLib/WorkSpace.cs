@@ -558,7 +558,7 @@ namespace amdocs.ginger.GingerCoreNET
                 //Change sealights configurations object
                 Solution.SetSealightsOldConifurationsToNewObject();
 
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}' (Solution Id: {1})", solutionFolder,solution.Guid));
                 SolutionLoaded = true;
                 return true;
             }
