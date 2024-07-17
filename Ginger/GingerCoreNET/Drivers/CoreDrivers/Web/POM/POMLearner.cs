@@ -111,13 +111,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
                 if (IsNodeLearnable(childNode))
                 {
+                    bool shouldLearnThisNode = shouldLearnNode(childNode);
                     browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
                     if (browserElement != null)
                     {
-                        childElement = await CreateHTMLElementInfoAsync(childNode, browserElement);
+                        childElement = await CreateHTMLElementInfoAsync(childNode, browserElement, captureScreenshot: shouldLearnThisNode);
                     }
 
-                    if (childElement != null && shouldLearnNode(childNode))
+                    if (childElement != null && shouldLearnThisNode)
                     {
                         learnedElements.Add(childElement);
                         if (childElements != null)
@@ -188,7 +189,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return false;
         }
 
-        private async Task<HTMLElementInfo> CreateHTMLElementInfoAsync(HtmlNode htmlNode, IBrowserElement browserElement)
+        private async Task<HTMLElementInfo> CreateHTMLElementInfoAsync(HtmlNode htmlNode, IBrowserElement browserElement, bool captureScreenshot = true)
         {
             Size size = await browserElement.SizeAsync();
             Point position = await browserElement.PositionAsync();
@@ -222,7 +223,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     }],
             };
             //LearnElementInfoDetails(htmlElementInfo); //check what properties of HTMLElementInfo are set in this method
-            htmlElementInfo.ScreenShotImage = await GetElementScreenshotAsync(browserElement);
+            if (captureScreenshot)
+            {
+                htmlElementInfo.ScreenShotImage = await GetElementScreenshotAsync(browserElement);
+            }
             htmlElementInfo.XPath = GenerateXPathFromHtmlElementInfo(htmlElementInfo);
             htmlElementInfo.RelXpath = GenerateRelativeXPathFromHTMLElementInfo(htmlElementInfo, _xpathImpl, _pomSetting);
             htmlElementInfo.Locators.AddRange(await GenerateLocatorsAsync(htmlElementInfo, _pomSetting));
@@ -767,7 +771,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 !_pomSetting.LearnScreenshotsOfElements || 
                 browserElement == null)
             {
-                return string.Empty;
+                return null;
             }
 
             try
