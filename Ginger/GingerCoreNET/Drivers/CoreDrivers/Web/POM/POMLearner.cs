@@ -230,7 +230,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             htmlElementInfo.XPath = GenerateXPathFromHtmlElementInfo(htmlElementInfo);
             htmlElementInfo.RelXpath = GenerateRelativeXPathFromHTMLElementInfo(htmlElementInfo, _xpathImpl, _pomSetting);
             htmlElementInfo.Locators.AddRange(await GenerateLocatorsAsync(htmlElementInfo, _pomSetting));
-            htmlElementInfo.Locators.AddRange(GenerateRelativeXPathLocators(htmlElementInfo));
+            htmlElementInfo.Locators.AddRange(await GenerateRelativeXPathLocatorsAsync(htmlElementInfo));
             htmlElementInfo.Locators.AddRange(GenerateXPathLocatorsFromUserTemplates(htmlElementInfo.HTMLElementObject.Attributes));
             htmlElementInfo.OptionalValuesObjectsList.AddRange(await GetOptionalValuesAsync(htmlElementInfo));
             htmlElementInfo.Properties.AddRange(await GetPropertiesAsync(htmlElementInfo));
@@ -437,7 +437,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 {
                     if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
                     {
-                        string[] innerTextValues = childNode.InnerText.Split('\n');
+                        string[] innerTextValues = childNode
+                            .InnerText
+                            .Split('\n')
+                            .Where(s => !string.IsNullOrEmpty(s.Trim()))
+                            .Where(s => !string.Equals(s.Trim(), "\r"))
+                            .Select(s => s.Replace("\r", ""))
+                            .ToArray();
                         foreach (string innerTextValue in innerTextValues)
                         {
                             optionalValues.Add(new OptionalValue() { Value = innerTextValue, IsDefault = false });
@@ -587,7 +593,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return properties;
         }
 
-        private IEnumerable<ElementLocator> GenerateRelativeXPathLocators(HTMLElementInfo htmlElementInfo)
+        private async Task<IEnumerable<ElementLocator>> GenerateRelativeXPathLocatorsAsync(HTMLElementInfo htmlElementInfo)
         {
             if (htmlElementInfo.ElementTypeEnum == eElementType.Svg)
             {
@@ -614,7 +620,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             {
                 var relXPathWithExactTextMatch = xpathHelper.CreateRelativeXpathWithTextMatch(htmlElementInfo, isExactMatch: true);
                 if (!string.IsNullOrEmpty(relXPathWithExactTextMatch) &&
-                    _browserElementProvider.GetElementAsync(eLocateBy.ByRelXPath, relXPathWithExactTextMatch) != null)
+                    (await _browserElementProvider.GetElementAsync(eLocateBy.ByRelXPath, relXPathWithExactTextMatch)) != null)
                 {
                     locators.Add(new() 
                     { 
