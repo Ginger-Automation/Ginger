@@ -111,13 +111,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
                 if (IsNodeLearnable(childNode))
                 {
+                    bool shouldLearnThisNode = shouldLearnNode(childNode);
                     browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
                     if (browserElement != null)
                     {
-                        childElement = await CreateHTMLElementInfoAsync(childNode, browserElement, captureScreenshot: shouldLearnNode(childNode));
+                        childElement = await CreateHTMLElementInfoAsync(childNode, browserElement, captureScreenshot: shouldLearnThisNode);
                     }
 
-                    if (childElement != null && shouldLearnNode(childNode))
+                    if (childElement != null && shouldLearnThisNode)
                     {
                         learnedElements.Add(childElement);
                         if (childElements != null)

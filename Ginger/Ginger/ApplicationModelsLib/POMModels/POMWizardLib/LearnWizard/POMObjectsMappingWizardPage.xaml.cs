@@ -136,7 +136,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     window.Activate();
                 }
             }
-            catch (Exception) { }
+            catch (Exception ex) 
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while bring Ginger window to front", ex);
+            }
         }
 
         private async void Learn()
