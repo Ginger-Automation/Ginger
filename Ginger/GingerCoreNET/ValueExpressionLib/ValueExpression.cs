@@ -347,7 +347,6 @@ namespace GingerCore
         {
             Environment, Runset, Runner, BusinessFlow, ActivitiesGroup, Activity, Action, PreviousBusinessFlow, PreviousActivity, PreviousAction, LastFailedAction, ErrorHandlerOriginActivitiesGroup, ErrorHandlerOriginActivity, ErrorHandlerOriginAction, LastFailedBusinessFlow, LastFailedActivity, Solution
         }
-
         public static Tuple<eFlowDetailsObjects, string> GetFlowDetailsParams(string flowDetailsExpression)
         {
             try
@@ -371,6 +370,39 @@ namespace GingerCore
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to wrong format", flowDetailsExpression));
+                return null;
+            }
+        }
+
+        public static Mockdata GetMockDataDatasetsFunction(string MockDataExpression)
+        {
+            try
+            {
+                string objStr = string.Empty;
+                string functions = string.Empty;
+                string Datasetobject = string.Empty;
+                string Locale = string.Empty;
+                int datasetStartindex = MockDataExpression.IndexOf('=');
+                int datasetendindex = MockDataExpression.IndexOf('(');
+                int localestartindex = MockDataExpression.IndexOf('"');
+                int localeendindex = MockDataExpression.IndexOf(')');
+                int functionstartindex = MockDataExpression.IndexOf('.');
+                string funsubstring = MockDataExpression.Substring(functionstartindex + 1, MockDataExpression.Length - functionstartindex - 1);
+                int functionendindex = funsubstring.IndexOf('(');
+                Datasetobject = MockDataExpression.Substring(datasetStartindex + 1, datasetendindex - 1 - datasetStartindex);
+                Locale = MockDataExpression.Substring(localestartindex + 1, localeendindex - 2 - localestartindex);
+                objStr = MockDataExpression.Substring(datasetStartindex + 1, datasetendindex - 1 - datasetStartindex);
+                functions = funsubstring.Substring(0, functionendindex).Replace("\"", "").Trim();
+                Mockdata mockdata = new ();
+                mockdata.MockDataDatasets = objStr;
+                mockdata.Locale = Locale;
+                mockdata.Function = functions;
+                mockdata.MockExpression = MockDataExpression;
+                return mockdata;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to wrong format", MockDataExpression));
                 return null;
             }
         }
@@ -1803,5 +1835,16 @@ namespace GingerCore
             VE.Value = Value;
             return VE.ValueCalculated;
         }
+    }
+
+    public class Mockdata
+    {
+        public string MockDataDatasets { get; set; }
+        
+        public string Locale { get; set; }
+
+        public string Function { get; set; }
+
+        public string MockExpression { get; set; }
     }
 }
