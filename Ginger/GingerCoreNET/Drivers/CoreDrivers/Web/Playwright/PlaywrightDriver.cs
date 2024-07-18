@@ -573,7 +573,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     return null!;
                 }
 
-                string screenshot = Convert.ToBase64String(await browserElement.ScreenshotAsync());
+                string? screenshot = null;
+                try
+                {
+                    screenshot = Convert.ToBase64String(await browserElement.ScreenshotAsync());
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "error while taking element screenshot", ex);
+                }
+
                 string tag = await browserElement.TagNameAsync();
                 string xPath = string.Empty;
                 if (string.Equals(tag, "iframe", StringComparison.OrdinalIgnoreCase) && string.Equals(tag, "frame", StringComparison.OrdinalIgnoreCase))
@@ -1005,8 +1014,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }).Wait();
 
             //AddRange needs to be called outside of the background thread, since its CollectionChanged event modifies some UI elements
+            htmlElementInfo.Properties.Clear();
             htmlElementInfo.Properties.AddRange(properties);
+            htmlElementInfo.Locators.Clear();
             htmlElementInfo.Locators.AddRange(locators);
+
+            if (htmlElementInfo.FriendlyLocators.Count == 0 && htmlElementInfo.Locators.Count >= 1)
+            {
+                ElementLocator? byTagNameLocator = htmlElementInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByTagName);
+                if (byTagNameLocator != null)
+                {
+                    byTagNameLocator.Active = false;
+                }
+            }
 
             return htmlElementInfo;
         }
