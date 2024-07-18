@@ -4,7 +4,6 @@ on:
     workflow_dispatch:
                 
     workflow_call:
-
 jobs:
                     
 
@@ -166,6 +165,7 @@ jobs:
                 #folder: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\'
                 #recursive: true
                  #if {% ${{ folder }}='Ginger'%}
+                uses: ./.github/workflows/CD.yml
                 if: ${{ github.event.inputs.SSLCert = 1 }}
                 run: | 
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll
@@ -238,6 +238,7 @@ jobs:
                 shell: cmd
                 
             -   name: Signing using Signtool 
+                uses: ./.github/workflows/CD.yml
                 if: ${{ github.event.inputs.SSLCert = 1 }}
                 run: | 
                   # smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
