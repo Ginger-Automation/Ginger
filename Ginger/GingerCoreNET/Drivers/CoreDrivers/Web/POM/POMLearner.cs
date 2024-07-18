@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 {
                     bool shouldLearnThisNode = shouldLearnNode(childNode);
                     browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
-                    if (browserElement != null)
+                    if (browserElement != null && await IsBrowserElementVisibleAsync(browserElement))
                     {
                         childElement = await CreateHTMLElementInfoAsync(childNode, browserElement, captureScreenshot: shouldLearnThisNode);
                     }
@@ -151,6 +151,47 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     await LearnFrameElementsAsync(childElement, learnedElements, cancellationToken);
                 }
             }
+        }
+
+        private async Task<bool> IsBrowserElementVisibleAsync(IBrowserElement browserElement)
+        {
+            Size size = await browserElement.SizeAsync();
+            bool isVisible = await browserElement.IsVisibleAsync();
+            
+            if (isVisible && size.Width > 0 && size.Height > 0)
+            {
+                return true;
+            }
+
+            string script = @"element => {
+                let computedStyle = window.getComputedStyle(element);
+                if (!computedStyle) {
+                    return true;
+                }
+                let displayValue = computedStyle.getPropertyValue('display');
+                if (displayValue && displayValue.toLowerCase() === 'none') {
+                    return false;
+                }
+                let widthValue = computedStyle.getPropertyValue('width');
+                if (widthValue && widthValue.toLowerCase() === 'auto') {
+                    return false;
+                }
+                let heightValue = computedStyle.getPropertyValue('height');
+                if (heightValue && heightValue.toLowerCase() === 'auto') {
+                    return false;
+                }
+                return true;
+            }";
+
+            string scriptResult = await browserElement.ExecuteJavascriptAsync(script);
+
+            if (!bool.TryParse(scriptResult, out bool scriptResultBool))
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"error while checking computed styles of element, expected boolean result but found {scriptResult}");
+                return false;
+            }
+
+            return scriptResultBool;
         }
 
         private static bool IsNodeLearnable(HtmlNode htmlNode)
