@@ -1,8 +1,14 @@
 name: Release
 
 on:
-    workflow_dispatch: 
-    
+    workflow_dispatch:
+       inputs:
+            SSLCert:
+                description: Cert
+                type: number 
+                required: true
+                default: '0'
+                
     workflow_call:
 
 jobs:
@@ -90,7 +96,10 @@ jobs:
                     move Ginger-Web-Help\docs .
                     rename docs Library
                     rmdir /s /q Ginger-Web-Help
-                    
+            #-   name: SSL condition check
+            #    if: ${{ github.event.inputs.SSLCert != 1 }}
+            #   run: |
+                
             -   name: Set up certificate
                 #shell: cmd
                 #run: |
@@ -163,6 +172,7 @@ jobs:
                 #folder: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\'
                 #recursive: true
                  #if {% ${{ folder }}='Ginger'%}
+                if: ${{ github.event.inputs.SSLCert = 1 }}
                 run: | 
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Ginger.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\Ginger.dll
@@ -234,6 +244,7 @@ jobs:
                 shell: cmd
                 
             -   name: Signing using Signtool 
+                if: ${{ github.event.inputs.SSLCert = 1 }}
                 run: | 
                   # smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
                    copy D:\a\Installers\Ginger.exe D:\a\Installers\ginger\Ginger.exe
