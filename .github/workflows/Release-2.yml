@@ -3,11 +3,6 @@ name: Release
 on:
     workflow_dispatch:
        inputs:
-            SSLCert:
-                description: Cert
-                type: number 
-                required: true
-                default: '0'
                 
     workflow_call:
 
