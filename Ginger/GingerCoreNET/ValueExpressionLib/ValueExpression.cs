@@ -415,16 +415,14 @@ namespace GingerCore
         {
             objStr = string.Empty;
             functions = string.Empty;
-            string Datasetobject = string.Empty;
             Locale = string.Empty;
             DatasetStartIndex = MockDataExpression.IndexOf('=');
             DatasetEndIndex = MockDataExpression.IndexOf('(');
             LocaleStartIndex = MockDataExpression.IndexOf('"');
             LocaleEndIndex = MockDataExpression.IndexOf(')');
             int functionstartindex = MockDataExpression.IndexOf('.');
-            string funsubstring = MockDataExpression.Substring(functionstartindex + 1); ;
+            string funsubstring = MockDataExpression.Substring(functionstartindex + 1);
             int functionendindex = funsubstring.IndexOf('(');
-            Datasetobject = MockDataExpression.Substring(DatasetStartIndex + 1, DatasetEndIndex - 1 - DatasetStartIndex);
             Locale = MockDataExpression.Substring(LocaleStartIndex + 1, LocaleEndIndex - 2 - LocaleStartIndex);
             objStr = MockDataExpression.Substring(DatasetStartIndex + 1, DatasetEndIndex - 1 - DatasetStartIndex);
             functions = funsubstring.Substring(0, functionendindex).Replace("\"", "").Trim();

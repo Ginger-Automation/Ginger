@@ -37,8 +37,8 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         SelectedContentArgs mSelectedContentArgs;
         Context mContext;
         string mObj;
-        static List<string> Localelst;
-        static List<string> objClasses;
+        List<string> Localelst;
+        List<string> objClasses;
         public ValueExpressionMockDataEditorPage(Context context, SelectedContentArgs SelectedContentArgs, string obj, string function, string Locale, string MockExpression)
         {
             try
@@ -55,7 +55,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
                 Localelst = Localelst ?? GetLocales();
                 Type objType;
-                List<string> methodList = new();
+                List<string> methodList;
 
                 Assembly assembly = Assembly.Load("Bogus"); // or load your target assembly
 
@@ -90,7 +90,6 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             
         private static List<string> GetLocales()
         {
-            // Replace with actual implementation to fetch locales
             return Bogus.Database.GetAllLocales().ToList();
         }
 
