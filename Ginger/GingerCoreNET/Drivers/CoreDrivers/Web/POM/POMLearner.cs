@@ -163,25 +163,35 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 return true;
             }
 
-            string displayCSSValue = await browserElement.ExecuteJavascriptAsync("element => window.getComputedStyle(element).getPropertyValue('display')");
-            if (string.Equals(displayCSSValue, "none", StringComparison.OrdinalIgnoreCase))
+            string script = @"element => {
+                let computedStyle = window.getComputedStyle(element);
+                if (!computedStyle) {
+                    return true;
+                }
+                let displayValue = computedStyle.getPropertyValue('display');
+                if (displayValue && displayValue.toLowerCase() === 'none') {
+                    return false;
+                }
+                let widthValue = computedStyle.getPropertyValue('width');
+                if (widthValue && widthValue.toLowerCase() === 'auto') {
+                    return false;
+                }
+                let heightValue = computedStyle.getPropertyValue('height');
+                if (heightValue && heightValue.toLowerCase() === 'auto') {
+                    return false;
+                }
+                return true;
+            }";
+
+            string scriptResult = await browserElement.ExecuteJavascriptAsync(script);
+
+            if (!bool.TryParse(scriptResult, out bool scriptResultBool))
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"error while checking computed styles of element, expected boolean result but found {scriptResult}");
                 return false;
             }
 
-            string widthCSSValue = await browserElement.ExecuteJavascriptAsync("element => window.getComputedStyle(element).getPropertyValue('width')");
-            if (string.Equals(widthCSSValue, "auto", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            string heightCSSValue = await browserElement.ExecuteJavascriptAsync("element => window.getComputedStyle(element).getPropertyValue('height')");
-            if (string.Equals(heightCSSValue, "auto", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            return true;
+            return scriptResultBool;
         }
 
         private static bool IsNodeLearnable(HtmlNode htmlNode)
