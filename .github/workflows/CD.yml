@@ -27,7 +27,7 @@ on:
                 description: Cert
                 type: number 
                 required: true
-                default: '0'
+                default: '1'
 jobs:
     Create-version-Number:
         runs-on: ubuntu-latest
