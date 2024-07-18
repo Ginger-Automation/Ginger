@@ -34,8 +34,8 @@ on:
                 required: true
                 default: 'false'
                 options:
-                  - true
-                  - false
+                  - 'true'
+                  - 'false'
 jobs:
     Create-version-Number:
         runs-on: ubuntu-latest
