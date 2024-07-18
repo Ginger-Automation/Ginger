@@ -160,12 +160,14 @@ jobs:
                  mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist
               shell: cmd
               
+            -   name: SSL condition check
+                uses: ./.github/workflows/CD.yml
+              
             -   name: Signing using Signtool dll
                 #runs-on: windows-latest
                 #folder: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\'
                 #recursive: true
                  #if {% ${{ folder }}='Ginger'%}
-                uses: ./.github/workflows/CD.yml
                 if: ${{ github.event.inputs.SSLCert = 1 }}
                 run: | 
                  copy D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\GingerCore.dll D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist\GingerCore.dll
@@ -237,8 +239,7 @@ jobs:
                  mkdir D:\a\Installers\ginger
                 shell: cmd
                 
-            -   name: Signing using Signtool 
-                uses: ./.github/workflows/CD.yml
+            -   name: Signing using Signtool
                 if: ${{ github.event.inputs.SSLCert = 1 }}
                 run: | 
                   # smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
