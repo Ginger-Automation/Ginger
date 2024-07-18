@@ -231,21 +231,28 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         public override void UpdateSelectedContent()
         {
-            if (p.GetType() == typeof(ValueExpressionVariableEditorPage))
+            try
             {
-                ((ValueExpressionVariableEditorPage)p).UpdateContent();
+                if (p.GetType() == typeof(ValueExpressionVariableEditorPage))
+                {
+                    ((ValueExpressionVariableEditorPage)p).UpdateContent();
+                }
+                else if (p.GetType() == typeof(ActDataSourcePage))
+                {
+                    ((ActDataSourcePage)p).UpdateContent();
+                }
+                else if (p.GetType() == typeof(ValueExpressionFlowDetailsEditorPage))
+                {
+                    ((ValueExpressionFlowDetailsEditorPage)p).UpdateContent();
+                }
+                else if (p.GetType() == typeof(ValueExpressionMockDataEditorPage))
+                {
+                    ((ValueExpressionMockDataEditorPage)p).UpdateContent();
+                }
             }
-            else if (p.GetType() == typeof(ActDataSourcePage))
+            catch (Exception ex)
             {
-                ((ActDataSourcePage)p).UpdateContent();
-            }
-            else if (p.GetType() == typeof(ValueExpressionFlowDetailsEditorPage))
-            {
-                ((ValueExpressionFlowDetailsEditorPage)p).UpdateContent();
-            }
-            else if(p.GetType() == typeof(ValueExpressionMockDataEditorPage))
-            {
-                ((ValueExpressionMockDataEditorPage)p).UpdateContent();
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to update the selected content", ex);
             }
         }
 

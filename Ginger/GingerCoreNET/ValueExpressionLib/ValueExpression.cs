@@ -378,26 +378,18 @@ namespace GingerCore
         {
             try
             {
-                string objStr = string.Empty;
-                string functions = string.Empty;
-                string Datasetobject = string.Empty;
-                string Locale = string.Empty;
-                int datasetStartindex = MockDataExpression.IndexOf('=');
-                int datasetendindex = MockDataExpression.IndexOf('(');
-                int localestartindex = MockDataExpression.IndexOf('"');
-                int localeendindex = MockDataExpression.IndexOf(')');
-                int functionstartindex = MockDataExpression.IndexOf('.');
-                string funsubstring = MockDataExpression.Substring(functionstartindex + 1, MockDataExpression.Length - functionstartindex - 1);
-                int functionendindex = funsubstring.IndexOf('(');
-                Datasetobject = MockDataExpression.Substring(datasetStartindex + 1, datasetendindex - 1 - datasetStartindex);
-                Locale = MockDataExpression.Substring(localestartindex + 1, localeendindex - 2 - localestartindex);
-                objStr = MockDataExpression.Substring(datasetStartindex + 1, datasetendindex - 1 - datasetStartindex);
-                functions = funsubstring.Substring(0, functionendindex).Replace("\"", "").Trim();
-                Mockdata mockdata = new ();
+                string objStr, functions, Locale;
+                int DatasetStartIndex, DatasetEndIndex, LocaleStartIndex, LocaleEndIndex;
+                MockdataExpressionExtract(MockDataExpression, out objStr, out functions, out Locale,out DatasetStartIndex,out DatasetEndIndex,out LocaleStartIndex,out LocaleEndIndex);
+                Mockdata mockdata = new();
                 mockdata.MockDataDatasets = objStr;
                 mockdata.Locale = Locale;
                 mockdata.Function = functions;
                 mockdata.MockExpression = MockDataExpression;
+                mockdata.DatasetStartIndex = DatasetStartIndex;
+                mockdata.DatasetEndIndex = DatasetEndIndex;
+                mockdata.LocaleStartIndex = LocaleStartIndex;
+                mockdata.LocaleEndIndex = LocaleEndIndex;
                 return mockdata;
             }
             catch (Exception ex)
@@ -405,6 +397,37 @@ namespace GingerCore
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to wrong format", MockDataExpression));
                 return null;
             }
+        }
+        /// <summary>
+        /// This method extracts specific parts from the MockDataExpression string. 
+        /// It initializes several string variables and then uses indices to parse substrings, 
+        /// assigning these substrings to the initialized variables.
+        /// </summary>
+        /// <param name="MockDataExpression">
+        /// <param name="objStr"></param>
+        /// <param name="functions"></param>
+        /// <param name="Locale"></param>
+        /// <param name="DatasetStartIndex"></param> Index of '=' in MockDataExpression.
+        /// <param name="DatasetEndIndex"></param> Index of '(' in MockDataExpression.
+        /// <param name="LocaleStartIndex"></param> Index of '"' in MockDataExpression.
+        /// <param name="LocaleEndIndex"></param> Index of ')' in MockDataExpression.
+        private static void MockdataExpressionExtract(string MockDataExpression, out string objStr, out string functions, out string Locale, out int DatasetStartIndex, out int DatasetEndIndex, out int LocaleStartIndex, out int LocaleEndIndex)
+        {
+            objStr = string.Empty;
+            functions = string.Empty;
+            string Datasetobject = string.Empty;
+            Locale = string.Empty;
+            DatasetStartIndex = MockDataExpression.IndexOf('=');
+            DatasetEndIndex = MockDataExpression.IndexOf('(');
+            LocaleStartIndex = MockDataExpression.IndexOf('"');
+            LocaleEndIndex = MockDataExpression.IndexOf(')');
+            int functionstartindex = MockDataExpression.IndexOf('.');
+            string funsubstring = MockDataExpression.Substring(functionstartindex + 1); ;
+            int functionendindex = funsubstring.IndexOf('(');
+            Datasetobject = MockDataExpression.Substring(DatasetStartIndex + 1, DatasetEndIndex - 1 - DatasetStartIndex);
+            Locale = MockDataExpression.Substring(LocaleStartIndex + 1, LocaleEndIndex - 2 - LocaleStartIndex);
+            objStr = MockDataExpression.Substring(DatasetStartIndex + 1, DatasetEndIndex - 1 - DatasetStartIndex);
+            functions = funsubstring.Substring(0, functionendindex).Replace("\"", "").Trim();
         }
 
         private void ReplaceFlowDetails(string flowDetailsExpression)
@@ -1846,5 +1869,16 @@ namespace GingerCore
         public string Function { get; set; }
 
         public string MockExpression { get; set; }
+
+        public int DatasetStartIndex { get; set; }
+
+        public int DatasetEndIndex { get; set; }
+
+        public int LocaleStartIndex { get; set; }
+
+        public int LocaleEndIndex { get; set; }
+
+        public int FunctionStartIndex { get; set; }
+
     }
 }

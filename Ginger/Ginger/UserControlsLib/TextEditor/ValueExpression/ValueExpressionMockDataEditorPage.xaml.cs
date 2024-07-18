@@ -24,6 +24,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Controls;
+using GingerCore;
+using Org.BouncyCastle.Asn1.Pkcs;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -35,49 +37,55 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         SelectedContentArgs mSelectedContentArgs;
         Context mContext;
         string mObj;
+        static List<string> Localelst;
+        static List<string> objClasses;
         public ValueExpressionMockDataEditorPage(Context context, SelectedContentArgs SelectedContentArgs, string obj, string function, string Locale, string MockExpression)
         {
-            InitializeComponent();
-            mContext = context;
-            mSelectedContentArgs = SelectedContentArgs;
-            mObj = obj;
-            int datasetStartindex = MockExpression.IndexOf('=');
-            int datasetendindex = MockExpression.IndexOf('(');
-            int localestartindex = MockExpression.IndexOf('"');
-            int localeendindex = MockExpression.IndexOf(')');
-            int functionstartindex = MockExpression.IndexOf('.');
-
-            List<string> Localelst = GetLocales();
-            Type objType;
-            List<string> objClasses = new List<string>();
-            List<string> methodList = new List<string>();
-
-            Assembly assembly = Assembly.Load("Bogus"); // or load your target assembly
-
-            string namespaceName = "Bogus.DataSets";
-
-            objClasses = GetObjectClasses(assembly, namespaceName);
-            
-
-            // Example of fetching locales (replace with actual implementation)
-            Localelst = GetLocales();
-
-            string objTypeName = mObj.Equals("Randomizer") ? $"Bogus.{mObj}" : $"Bogus.DataSets.{mObj}";
-            objType = assembly.GetType(objTypeName);
-
-            methodList = GetMethodsOfType(objType);
-            int CaretPossition = SelectedContentArgs.GetCaretPosition();
-            if ((datasetStartindex < CaretPossition) && (CaretPossition < datasetendindex))
+            try
             {
-                FunctionsList.ItemsSource = objClasses.OrderBy(x => x).ToList();
+
+
+                InitializeComponent();
+                mContext = context;
+                mSelectedContentArgs = SelectedContentArgs;
+                mObj = obj;
+                int datasetStartindex = MockExpression.IndexOf('=');
+                int datasetendindex = MockExpression.IndexOf('(');
+                int localestartindex = MockExpression.IndexOf('"');
+                int localeendindex = MockExpression.IndexOf(')');
+                int functionstartindex = MockExpression.IndexOf('.');
+
+                Localelst = Localelst == null ? GetLocales() : Localelst;
+                Type objType;
+                List<string> methodList = new List<string>();
+
+                Assembly assembly = Assembly.Load("Bogus"); // or load your target assembly
+
+                string namespaceName = "Bogus.DataSets";
+
+                objClasses = objClasses == null ? GetObjectClasses(assembly, namespaceName) : objClasses;
+
+                string objTypeName = mObj.Equals("Randomizer") ? $"Bogus.{mObj}" : $"Bogus.DataSets.{mObj}";
+                objType = assembly.GetType(objTypeName);
+
+                methodList = GetMethodsOfType(objType);
+                int CaretPossition = SelectedContentArgs.GetCaretPosition();
+                if ((datasetStartindex < CaretPossition) && (CaretPossition < datasetendindex))
+                {
+                    FunctionsList.ItemsSource = objClasses.OrderBy(x => x).ToList();
+                }
+                else if ((localestartindex < CaretPossition) && (CaretPossition < localeendindex) && (!mObj.Equals("Randomizer") || !mObj.Equals("Finance")))
+                {
+                    FunctionsList.ItemsSource = Localelst.OrderBy(x => x).ToList();
+                }
+                else
+                {
+                    FunctionsList.ItemsSource = methodList.OrderBy(x => x).ToList();
+                }
             }
-            else if ((localestartindex < CaretPossition) && (CaretPossition < localeendindex) && (!mObj.Equals("Randomizer") || !mObj.Equals("Finance")))
+            catch (Exception ex)
             {
-                FunctionsList.ItemsSource = Localelst.OrderBy(x => x).ToList();
-            }
-            else
-            {
-                FunctionsList.ItemsSource = methodList.OrderBy(x => x).ToList();
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load ValueExpressionMockDataEditorPage", ex);
             }
         }
         
@@ -153,62 +161,31 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         private static object SetDefaultValue(ParameterInfo parameter)
         {
             Type parameterType = parameter.ParameterType;
-            TimeOnly defaultSartTime = TimeOnly.MaxValue;
-            if (parameterType == typeof(DateTime) && parameter.Name.Equals("start"))
-            {
-                return "Past(1)";
-            }
-            else if (parameterType == typeof(DateTime) && parameter.Name.Equals("end"))
-            {
-                return "Future(1)";
-            }
 
-            if (parameterType == typeof(DateOnly) && parameter.Name.Equals("start"))
+            return parameterType switch
             {
-                return "PastDateOnly(1)";
-            }
-            else if (parameterType == typeof(DateOnly) && parameter.Name.Equals("end"))
-            {
-                return "FutureDateOnly(1)";
-            }
+                Type type when type == typeof(DateTime) && parameter.Name.Equals("start") => "Past(1)",
+                Type type when type == typeof(DateTime) && parameter.Name.Equals("end") => "Future(1)",
 
-            if (parameterType == typeof(DateTimeOffset) && parameter.Name.Equals("start"))
-            {
-                return "PastOffset(1)";
-            }
-            else if (parameterType == typeof(DateTimeOffset) && parameter.Name.Equals("end"))
-            {
-                return "FutureOffset(1)";
-            }
+                Type type when type == typeof(DateOnly) && parameter.Name.Equals("start") => "PastDateOnly(1)",
+                Type type when type == typeof(DateOnly) && parameter.Name.Equals("end") => "FutureDateOnly(1)",
 
-            if(parameterType == typeof(Array))
-            {
-                return "[1,2,3,4]";
-            }
+                Type type when type == typeof(DateTimeOffset) && parameter.Name.Equals("start") => "PastOffset(1)",
+                Type type when type == typeof(DateTimeOffset) && parameter.Name.Equals("end") => "FutureOffset(1)",
 
-            if (parameterType == typeof(List<int>))
-            {
-                return "[1,2,3,4,5]";
-            }
+                Type type when type == typeof(Array) => "[1,2,3,4]",
 
-            if (parameterType == typeof(string))
-            {
-                if(parameter.Name.Equals("format"))
+                Type type when type == typeof(List<int>) => "[1,2,3,4,5]",
+
+                Type type when type == typeof(string) => parameter.Name switch
                 {
-                    return "'12#34'";
-                }
-                else if (parameter.Name.Equals("symbol"))
-                {
-                    return "'#'";
-                }
-                else
-                {
-                    return "'ABCDEFGHIJKLMNOPQRSTUVWXYZ'";
-                }
-                
-            }
-            //DateTimeOffset
-            return GetDefaultForType(parameterType);
+                    "format" => "'12#34'",
+                    "symbol" => "'#'",
+                    _ => "'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"
+                },
+
+                _ => GetDefaultForType(parameterType)
+            };
         }
 
         public static T[] CreateArrayWithDefaultValues<T>(int length, T defaultValue)
@@ -228,48 +205,44 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         private static string FormatDefaultValue(object defaultValue)
         {
-            if (defaultValue == null)
-                return "null";
-
-            if (defaultValue is string)
-                return $"\"{defaultValue}\"";
-
-            if (defaultValue is char)
-                return $"'{defaultValue}'";
-
-            if (defaultValue is bool)
-                return defaultValue.ToString().ToLower();
-
-            return defaultValue.ToString();
+            switch (defaultValue)
+            {
+                case null:
+                    return "null";
+                case string s:
+                    return $"\"{s}\"";
+                case char c:
+                    return $"'{c}'";
+                case bool b:
+                    return b.ToString().ToLower();
+                default:
+                    return defaultValue.ToString();
+            }
         }
         public void UpdateContent()
         {
+            try
+            {
+                string selectedItem = (string)FunctionsList.SelectedItem;
+                string initialText = mSelectedContentArgs.TextEditor.Text.Substring(0, mSelectedContentArgs.StartPos);
 
-            string selectedItem = (string)FunctionsList.SelectedItem;
-            string initialText = mSelectedContentArgs.TextEditor.Text.Substring(0, mSelectedContentArgs.StartPos);
+                // Parsing the text editor content
+                string objStr, functions, Locale;
+                Mockdata expParams = GingerCore.ValueExpression.GetMockDataDatasetsFunction(mSelectedContentArgs.TextEditor.Text);
 
-            // Parsing the text editor content
-            string editorText = mSelectedContentArgs.TextEditor.Text;
-            int datasetStartIndex = editorText.IndexOf('=');
-            int datasetEndIndex = editorText.IndexOf('(');
-            int localeStartIndex = editorText.IndexOf('"');
-            int localeEndIndex = editorText.IndexOf(')');
-            int functionStartIndex = editorText.IndexOf('.');
+                string editorText = mSelectedContentArgs.TextEditor.Text;
 
-            string functionSubstring = editorText.Substring(functionStartIndex + 1);
-            int functionEndIndex = functionSubstring.IndexOf('(');
+                int caretPosition = mSelectedContentArgs.GetCaretPosition();
+                string resultText = BuildResultText(selectedItem, expParams.MockDataDatasets, expParams.Locale, expParams.Function, caretPosition, expParams.DatasetStartIndex, expParams.DatasetEndIndex, expParams.LocaleStartIndex, expParams.LocaleEndIndex);
 
-            string datasetObject = ExtractSubstring(editorText, datasetStartIndex + 1, datasetEndIndex - datasetStartIndex - 1);
-            string locale = ExtractSubstring(editorText, localeStartIndex + 1, localeEndIndex - localeStartIndex - 2);
-            string objStr = ExtractSubstring(editorText, datasetStartIndex + 1, datasetEndIndex - datasetStartIndex - 1);
-            string functions = functionSubstring.Substring(0, functionEndIndex).Replace("\"", "").Trim();
-
-            int caretPosition = mSelectedContentArgs.GetCaretPosition();
-            string resultText = BuildResultText(selectedItem, objStr, locale, functions, caretPosition, datasetStartIndex, datasetEndIndex, localeStartIndex, localeEndIndex);
-
-            // Append the remaining text and update the text editor content
-            resultText += editorText.Substring(mSelectedContentArgs.EndPos + 1);
-            mSelectedContentArgs.TextEditor.Text = resultText;
+                // Append the remaining text and update the text editor content
+                resultText += editorText.Substring(mSelectedContentArgs.EndPos + 1);
+                mSelectedContentArgs.TextEditor.Text = resultText;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to update content in ValueExpressionMockDataEditorPage", ex);
+            }
         }
 
         static string ExtractSubstring(string text, int startIndex, int length)
@@ -277,38 +250,70 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             return text.Substring(startIndex, length);
         }
 
+        //static string BuildResultText(string selectedItem, string objStr, string locale, string functions, int caretPosition, int datasetStartIndex, int datasetEndIndex, int localeStartIndex, int localeEndIndex)
+        //{
+        //    string resultText = string.Empty;
+
+        //    if(objStr.Equals("Randomizer") || objStr.Equals("Finance"))
+        //    {
+        //        if (datasetStartIndex < caretPosition && caretPosition < datasetEndIndex)
+        //        {
+        //            Assembly assembly = Assembly.Load("Bogus");
+        //            string objTypeName = selectedItem.Equals("Randomizer") ? $"Bogus.{selectedItem}" : $"Bogus.DataSets.{selectedItem}";
+        //            Type objType = assembly.GetType(objTypeName);
+
+        //            List<string> methodList = GetMethodsOfType(objType);
+        //            resultText += "{MockDataExp Fun=" + selectedItem + "()." + methodList.FirstOrDefault() + ";}";
+        //        }
+        //        else
+        //        {
+        //            resultText += "{MockDataExp Fun=" + objStr + "()." + selectedItem + ";}";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (datasetStartIndex < caretPosition && caretPosition < datasetEndIndex)
+        //        {
+        //            Assembly assembly = Assembly.Load("Bogus");
+        //            string objTypeName = selectedItem.Equals("Randomizer") ? $"Bogus.{selectedItem}" : $"Bogus.DataSets.{selectedItem}";
+        //            Type objType = assembly.GetType(objTypeName);
+
+        //            List<string> methodList = GetMethodsOfType(objType);
+        //            resultText += "{MockDataExp Fun=" + selectedItem + "(@\"" + locale + "\")." + methodList.FirstOrDefault() + ";}";
+        //        }
+        //        else if (localeStartIndex < caretPosition && caretPosition < localeEndIndex)
+        //        {
+        //            resultText += "{MockDataExp Fun=" + objStr + "(@\"" + selectedItem + "\")." + functions + "();}";
+        //        }
+        //        else
+        //        {
+        //            resultText += "{MockDataExp Fun=" + objStr + "(@\"" + locale + "\")." + selectedItem + ";}";
+        //        }
+        //    }
+
+
+        //    return resultText;
+        //}
+
         static string BuildResultText(string selectedItem, string objStr, string locale, string functions, int caretPosition, int datasetStartIndex, int datasetEndIndex, int localeStartIndex, int localeEndIndex)
         {
             string resultText = string.Empty;
-            
-            if(objStr.Equals("Randomizer") || objStr.Equals("Finance"))
-            {
-                if (datasetStartIndex < caretPosition && caretPosition < datasetEndIndex)
-                {
-                    Assembly assembly = Assembly.Load("Bogus");
-                    string objTypeName = selectedItem.Equals("Randomizer") ? $"Bogus.{selectedItem}" : $"Bogus.DataSets.{selectedItem}";
-                    Type objType = assembly.GetType(objTypeName);
+            bool isWithinDataset = datasetStartIndex < caretPosition && caretPosition < datasetEndIndex;
+            bool isWithinLocale = localeStartIndex < caretPosition && caretPosition < localeEndIndex;
 
-                    List<string> methodList = GetMethodsOfType(objType);
-                    resultText += "{MockDataExp Fun=" + selectedItem + "()." + methodList.FirstOrDefault() + ";}";
-                }
-                else
-                {
-                    resultText += "{MockDataExp Fun=" + objStr + "()." + selectedItem + ";}";
-                }
+            if (objStr.Equals("Randomizer") || objStr.Equals("Finance"))
+            {
+                resultText += isWithinDataset
+                    ? GenerateResultText(selectedItem, "Bogus", isWithinDataset)
+                    : "{MockDataExp Fun=" + objStr + "()." + selectedItem + ";}";
             }
             else
             {
-                if (datasetStartIndex < caretPosition && caretPosition < datasetEndIndex)
+                if (isWithinDataset)
                 {
-                    Assembly assembly = Assembly.Load("Bogus");
-                    string objTypeName = selectedItem.Equals("Randomizer") ? $"Bogus.{selectedItem}" : $"Bogus.DataSets.{selectedItem}";
-                    Type objType = assembly.GetType(objTypeName);
-
-                    List<string> methodList = GetMethodsOfType(objType);
-                    resultText += "{MockDataExp Fun=" + selectedItem + "(@\"" + locale + "\")." + methodList.FirstOrDefault() + ";}";
+                    resultText += GenerateResultText(selectedItem, "Bogus", isWithinDataset, locale);
                 }
-                else if (localeStartIndex < caretPosition && caretPosition < localeEndIndex)
+                else if (isWithinLocale)
                 {
                     resultText += "{MockDataExp Fun=" + objStr + "(@\"" + selectedItem + "\")." + functions + "();}";
                 }
@@ -317,9 +322,27 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                     resultText += "{MockDataExp Fun=" + objStr + "(@\"" + locale + "\")." + selectedItem + ";}";
                 }
             }
-            
 
             return resultText;
+        }
+
+        private static string GenerateResultText(string selectedItem, string baseNamespace, bool isWithinDataset, string locale = null)
+        {
+            Assembly assembly = Assembly.Load("Bogus");
+            string objTypeName = selectedItem.Equals("Randomizer") ? $"{baseNamespace}.{selectedItem}" : $"{baseNamespace}.DataSets.{selectedItem}";
+            Type objType = assembly.GetType(objTypeName);
+
+            List<string> methodList = GetMethodsOfType(objType);
+            string methodCall = methodList.FirstOrDefault();
+
+            if (locale == null)
+            {
+                return "{MockDataExp Fun=" + selectedItem + "()." + methodCall + ";}";
+            }
+            else
+            {
+                return "{MockDataExp Fun=" + selectedItem + "(@\"" + locale + "\")." + methodCall + ";}";
+            }
         }
     }
 }
