@@ -343,7 +343,14 @@ namespace GingerCoreNET.RosLynLib
                                 /// Handles scenarios with special case like Between function have inbuilt function as parameter and constructs expressions accordingly
                                 if (expressionlist[1].Contains("Past") && expressionlist[1].Contains("Future"))
                                 {
-                                    expressionlist[1] = expressionlist[1].Replace(Parameter[0], $"Result.{Parameter[0]}").Replace(Parameter[1], $"Result.{Parameter[1]}");
+                                    if (expressionlist[1].Contains("BetweenTimeOnly"))
+                                    {
+                                        expressionlist[1] = expressionlist[1].Replace(Parameter[0], $"TimeOnly.FromDateTime(Result.{Parameter[0]})").Replace(Parameter[1], $"TimeOnly.FromDateTime(Result.{Parameter[1]})");
+                                    }
+                                    else
+                                    {
+                                        expressionlist[1] = expressionlist[1].Replace(Parameter[0], $"Result.{Parameter[0]}").Replace(Parameter[1], $"Result.{Parameter[1]}");
+                                    }  
                                 }
                                 expression = $"var Result = new Bogus.DataSets.{expressionlist[0]}; return Result.{expressionlist[1]}";
                             }
@@ -381,7 +388,7 @@ namespace GingerCoreNET.RosLynLib
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, expression + System.Environment.NewLine + " not a valid Bogus data generate expression to evaluate", e);
+                Reporter.ToLog(eLogLevel.ERROR, expression + System.Environment.NewLine + " not a valid Bogus data generate expression to evaluate", e);
             }
             return evalresult;
         }
