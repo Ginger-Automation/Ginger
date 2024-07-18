@@ -28,6 +28,14 @@ on:
                 type: number 
                 required: true
                 default: '1'
+            debug_mode:
+                description: "Add Certificate"
+                type: choice
+                required: true
+                default: 'false'
+                options:
+                  - true
+                  - false
 jobs:
     Create-version-Number:
         runs-on: ubuntu-latest
