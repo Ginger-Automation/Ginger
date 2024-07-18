@@ -43,8 +43,6 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         {
             try
             {
-
-
                 InitializeComponent();
                 mContext = context;
                 mSelectedContentArgs = SelectedContentArgs;
@@ -55,15 +53,15 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 int localeendindex = MockExpression.IndexOf(')');
                 int functionstartindex = MockExpression.IndexOf('.');
 
-                Localelst = Localelst == null ? GetLocales() : Localelst;
+                Localelst = Localelst ?? GetLocales();
                 Type objType;
-                List<string> methodList = new List<string>();
+                List<string> methodList = new();
 
                 Assembly assembly = Assembly.Load("Bogus"); // or load your target assembly
 
                 string namespaceName = "Bogus.DataSets";
 
-                objClasses = objClasses == null ? GetObjectClasses(assembly, namespaceName) : objClasses;
+                objClasses = objClasses ?? GetObjectClasses(assembly, namespaceName);
 
                 string objTypeName = mObj.Equals("Randomizer") ? $"Bogus.{mObj}" : $"Bogus.DataSets.{mObj}";
                 objType = assembly.GetType(objTypeName);
