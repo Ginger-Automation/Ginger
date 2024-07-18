@@ -11,9 +11,7 @@
     <Grid  x:Name="xPageGrid" Grid.IsSharedSizeScope="True"   Background="{StaticResource $BackgroundColor_White}">
         
 
-        <TabControl >
-            <TabItem Header="Configurations" Style="{StaticResource $RoundedTab}">
-                <StackPanel Orientation="Vertical" Margin="5,5,0,0">
+    <StackPanel Orientation="Vertical" Margin="5,5,0,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -108,8 +106,22 @@
                                                 </Expander.Header>
                                                 <Expander.Content>
                                                     <StackPanel Margin="30,5,0,0">
-                                                        
-                                                        <StackPanel x:Name="xChromePnl">                                                           
+                                                <StackPanel  x:Name="xEdgeIE">
+                                                    <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                        <CheckBox x:Name="xIgnoreIEProtectedModeCB" Content="Ignore IE Protected Mode" Width="{StaticResource LabelWidth}"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+                                                        <CheckBox x:Name="xUse64BitbrowserCB" Content="Use 64Bit browser"  Margin="{StaticResource ChildGap}"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource VEControlWidth}"/>
+                                                    </StackPanel>
+                                                    <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                                        <CheckBox x:Name="xEnsureCleanSessionCB" Content="Ensure Clean Session" Margin="{StaticResource ChildGap}" Width="{StaticResource LabelWidth}"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+                                                        <CheckBox x:Name="xOpenIEModeInEdgeCB" Content="Open IE Mode In Edge" Width="{StaticResource VEControlWidth}"  VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="{StaticResource ChildGap}" Style="{StaticResource $CeckBoxStyle}"/>
+                                                    </StackPanel>
+                                                    <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+
+                                                        <CheckBox x:Name="xEnableNativeEventsCB" Content="Enable Native Events" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+
+                                                    </StackPanel>
+                                                </StackPanel>
+                                                <StackPanel x:Name="xChromePnl">                                                           
                                                             <StackPanel Orientation="Horizontal" Margin="{StaticResource ChildGap}">
                                                                 <Label Content="Emulation Device Name:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
                                                                 <Actions:UCValueExpression x:Name="xEmulationDeviceNameVE"    Width="{StaticResource VEControlWidth}"/>
@@ -134,29 +146,7 @@
                                                                 <Actions:UCValueExpression x:Name="xBrowserVersionVE"    Width="{StaticResource VEControlWidth}"/>
                                                             </StackPanel>
                                                         </StackPanel>
-                                                        <StackPanel  x:Name="xEdgeIE">
-
-                                                            <StackPanel Orientation="Horizontal" >
-
-                                                            </StackPanel>
-                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
-                                                                <CheckBox x:Name="xIgnoreIEProtectedModeCB" Content="Ignore IE Protected Mode" Width="{StaticResource LabelWidth}"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
-                                                                <CheckBox x:Name="xUse64BitbrowserCB" Content="Use 64Bit browser"  Margin="{StaticResource ChildGap}"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource VEControlWidth}"/>
-                                                            </StackPanel>
-                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
-                                                                <CheckBox x:Name="xEnsureCleanSessionCB" Content="Ensure Clean Session" Margin="{StaticResource ChildGap}" Width="{StaticResource LabelWidth}"  VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
-                                                                <CheckBox x:Name="xOpenIEModeInEdgeCB" Content="Open IE Mode In Edge" Width="{StaticResource VEControlWidth}"  VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="{StaticResource ChildGap}" Style="{StaticResource $CeckBoxStyle}"/>
-                                                            </StackPanel>
-                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
-
-                                                                <CheckBox x:Name="xEnableNativeEventsCB" Content="Enable Native Events" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
-
-                                                            </StackPanel>
-                                                            <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
-                                                                <Label Content="Edge Excutable Path:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
-                                                                <Actions:UCValueExpression x:Name="xEdgeExcutablePathVE"   Width="{StaticResource VEControlWidth}"/>
-                                                            </StackPanel>
-                                                        </StackPanel>
+                                                        
 
                                                     </StackPanel>
                                                 </Expander.Content>
@@ -231,8 +221,21 @@
                                             </StackPanel.Resources>
 
                                             <StackPanel >
+                                        <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                            <CheckBox x:Name="xStartBMPCB" Content="Start BMP" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource LabelWidth}"/>
 
-                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                            <CheckBox x:Name="xAutoFrameShiftForPOMCB" Content="Auto-handle iFrame shift for POM element" Margin="{StaticResource ChildGap}" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+                                        </StackPanel>
+
+                                        <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
+                                            <CheckBox x:Name="xHideConsoleWindowCB" Content="Hide Console Window" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource LabelWidth}"/>
+
+
+
+                                            <CheckBox x:Name="xFrameWindowScreenShotCB" Content="Capture active frame/window on failure" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="{StaticResource ChildGap}" Style="{StaticResource $CeckBoxStyle}"/>
+                                        </StackPanel>
+
+                                        <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
                                                     <Label Content="Selenium User Arguments:" Style="{StaticResource $LabelStyle}" Width="{StaticResource LabelWidth}"/>
                                                     <Actions:UCValueExpression x:Name="xSeleniumUserArgumentsVE"    Width="{StaticResource VEControlWidth}"/>
                                                 </StackPanel>
@@ -274,19 +277,7 @@
 
                                                 
 
-                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
-                                                    <CheckBox x:Name="xStartBMPCB" Content="Start BMP" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource LabelWidth}"/>
-
-                                                    <CheckBox x:Name="xAutoFrameShiftForPOMCB" Content="Handle IFrame Shift Automatically For Pom Element" Margin="{StaticResource ChildGap}" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
-                                                </StackPanel>
-
-                                                <StackPanel  Orientation="Horizontal" Margin="{StaticResource ChildGap}">
-                                                    <CheckBox x:Name="xHideConsoleWindowCB" Content="Hide Console Window" VerticalAlignment="Center" Margin="{StaticResource ChildGap}" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" Width="{StaticResource LabelWidth}"/>
-
-
-
-                                                    <CheckBox x:Name="xFrameWindowScreenShotCB" Content="Take Only Active Frame Or Window Screen Shot In Case Of Failure" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="{StaticResource ChildGap}" Style="{StaticResource $CeckBoxStyle}"/>
-                                                </StackPanel>
+                                                
 
 
 
@@ -300,8 +291,6 @@
 
                     
                     
-                </StackPanel>
-            </TabItem>
-           </TabControl>
+                </StackPanel>            
     </Grid>
 </Page>

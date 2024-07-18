@@ -110,16 +110,7 @@ namespace Ginger.Agents
                 }
                 if (mAgent.AgentType == eAgentType.Driver)
                 {
-                    if (mAgent.DriverType == eDriverType.Selenium)
-                    {
-                        xAgentConfigFrame.SetContent(new WebAgentConfigEditPage(mAgent));
-                    }
-                    else
-                    {
-                        xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent, _viewMode));
-                    }
-                   
-                   
+                    xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent, _viewMode));
                 }
                 else
                 {

@@ -127,18 +127,36 @@ namespace GingerCore.Drivers
             Normal,
             Eager ,
             None,
-        }        
-
+        }
         public enum eUnhandledPromptBehavior
         {
-            Default,            
-            Ignore,            
-            Accept,            
-            Dismiss,            
-            AcceptAndNotify,          
+            [EnumValueDescription("Default")]
+            Default,
+            [EnumValueDescription("Ignore")]
+            Ignore,
+            [EnumValueDescription("Accept")]
+            Accept,
+            [EnumValueDescription("Dismiss")]
+            Dismiss,
+            [EnumValueDescription("Accept And Notify")]
+            AcceptAndNotify,
+            [EnumValueDescription("Dismiss And Notify")]
             DismissAndNotify
         }
+        eUnhandledPromptBehavior mUnhandledPromptBehavior;
 
+        public eUnhandledPromptBehavior UnhandledPromptBehavior1
+        {
+            get { return mUnhandledPromptBehavior; }
+            set
+            {
+                if (mUnhandledPromptBehavior != value)
+                {
+                    mUnhandledPromptBehavior = value;
+                   
+                }
+            }
+        }
         public enum eBrowserLogLevel
         {
             
@@ -166,6 +184,10 @@ namespace GingerCore.Drivers
             if (browserType == WebBrowserType.RemoteWebDriver)
             {
                 return "SeleniumRemoteWebDriverEditPage";
+            }
+            else if (browserType == WebBrowserType.Chrome|| browserType == WebBrowserType.Brave || browserType == WebBrowserType.Edge || browserType == WebBrowserType.InternetExplorer || browserType == WebBrowserType.FireFox )
+            {
+                return "WebAgentConfigEditPage";
             }
             else
             {
@@ -268,7 +290,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Only for Chrome, Firefox & Edge | Full path for the User Profile folder")]
+        [UserConfiguredDescription("Only for Chrome, Firefox, Edge and Brave | Full path for the User Profile folder")]
         public string UserProfileFolderPath { get; set; }
 
         [UserConfigured]
