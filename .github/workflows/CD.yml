@@ -23,12 +23,12 @@ on:
                 type: number 
                 required: true
                 default: '0'
-            SSLCert:
+            SSLCert1:
                 description: Cert
                 type: number 
                 required: true
                 default: '1'
-            debug_mode:
+            SSLCert:
                 description: "Add Certificate"
                 type: choice
                 required: true
