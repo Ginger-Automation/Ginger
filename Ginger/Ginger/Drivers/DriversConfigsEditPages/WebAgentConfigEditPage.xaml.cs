@@ -246,7 +246,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xStartBMPPortVE, TextBox.ToolTipProperty, startBMPPort, nameof(DriverConfigParam.Description));
 
             //Unhandled promt Behavior
-            GingerCore.General.FillComboFromEnumType(xUnhandledPromptBehaviorComboBox, typeof(SeleniumDriver.eUnhandledPromptBehavior));
+            GingerCore.General.FillComboFromEnumObj(xUnhandledPromptBehaviorComboBox, new SeleniumDriver().UnhandledPromptBehavior1);
             DriverConfigParam UnhandledPromptBehavior = mAgent.GetOrCreateParam(nameof(SeleniumDriver.UnhandledPromptBehavior));
             BindingHandler.ObjFieldBinding(xUnhandledPromptBehaviorComboBox, ComboBox.SelectedValueProperty, UnhandledPromptBehavior, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xUnhandledPromptBehaviorComboBox, ComboBox.ToolTipProperty, UnhandledPromptBehavior, nameof(DriverConfigParam.Description));
