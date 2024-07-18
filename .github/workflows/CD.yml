@@ -23,6 +23,11 @@ on:
                 type: number 
                 required: true
                 default: '0'
+            SSLCert:
+                description: Cert
+                type: number 
+                required: true
+                default: '0'
 jobs:
     Create-version-Number:
         runs-on: ubuntu-latest
