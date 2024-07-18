@@ -250,6 +250,7 @@ jobs:
              # smctl sign --input "D:\a\Installers\Ginger.exe"
             
             -   name: Signtool verify
+                if: ${{ github.event.inputs.SSLCert != 1 }}
                 run: |
                    signtool verify /v /pa "D:\a\Installers\ginger\Ginger.exe"
                 shell: cmd
