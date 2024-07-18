@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 {
                     bool shouldLearnThisNode = shouldLearnNode(childNode);
                     browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
-                    if (browserElement != null)
+                    if (browserElement != null && await IsBrowserElementVisibleAsync(browserElement))
                     {
                         childElement = await CreateHTMLElementInfoAsync(childNode, browserElement, captureScreenshot: shouldLearnThisNode);
                     }
@@ -151,6 +151,37 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     await LearnFrameElementsAsync(childElement, learnedElements, cancellationToken);
                 }
             }
+        }
+
+        private async Task<bool> IsBrowserElementVisibleAsync(IBrowserElement browserElement)
+        {
+            Size size = await browserElement.SizeAsync();
+            bool isVisible = await browserElement.IsVisibleAsync();
+            
+            if (isVisible && size.Width > 0 && size.Height > 0)
+            {
+                return true;
+            }
+
+            string displayCSSValue = await browserElement.ExecuteJavascriptAsync("element => window.getComputedStyle(element).getPropertyValue('display')");
+            if (string.Equals(displayCSSValue, "none", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            string widthCSSValue = await browserElement.ExecuteJavascriptAsync("element => window.getComputedStyle(element).getPropertyValue('width')");
+            if (string.Equals(widthCSSValue, "auto", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            string heightCSSValue = await browserElement.ExecuteJavascriptAsync("element => window.getComputedStyle(element).getPropertyValue('height')");
+            if (string.Equals(heightCSSValue, "auto", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static bool IsNodeLearnable(HtmlNode htmlNode)
