@@ -26,12 +26,12 @@ using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
+using Ginger.SolutionWindows;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
@@ -99,6 +99,9 @@ namespace GingerWPF.BusinessFlowsLib
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Tags, handler: Tags_CollectionChanged);
             CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
+
+            TargetApplicationsPage.OnActivityUpdate -= UpdateInfoSection;
+            TargetApplicationsPage.OnActivityUpdate += UpdateInfoSection;
             UpdateInfoSection();
             //Activities Tab Bindings
             CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Activities, handler: Activities_CollectionChanged);
@@ -223,7 +226,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void mBusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(BusinessFlow.Description))
+            if (e.PropertyName == nameof(BusinessFlow.Description) || e.PropertyName == nameof(BusinessFlow.TargetApplications))
             {
                 UpdateInfoSection();
             }
