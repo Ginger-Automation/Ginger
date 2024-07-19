@@ -101,17 +101,20 @@ namespace Ginger
         {
             if (WindowState == WindowState.Minimized)
             {
-                OnWindowMinimized();
+                PauseDevelopmentTimeTracker();
             }
             else
             {
-                OnWindowRestore();
+                ResumeDevelopmentTimeTracker();
             }
         }
 
         private List<RepositoryItemBase> _itemsWithPausedDevelopmentTimeTracker = [];
 
-        private void OnWindowMinimized()
+        /// <summary>
+        /// Pauses the development time tracker for modified files in the solution.
+        /// </summary>
+        private void PauseDevelopmentTimeTracker()
         {
             if (WorkSpace.Instance == null ||
                 WorkSpace.Instance.SolutionRepository == null ||
@@ -150,11 +153,14 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "error while resuming development tracker", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "error while pausing development tracker", ex);
             }
         }
 
-        private void OnWindowRestore()
+        /// <summary>
+        /// Resumes the development time tracker for paused items.
+        /// </summary>
+        private void ResumeDevelopmentTimeTracker()
         {
             try
             {
