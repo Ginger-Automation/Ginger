@@ -277,7 +277,7 @@ namespace Ginger.Reports
             # " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + @":
         </b><br />
         <b style=""color:#000000;font-family:sans-serif;font-size:12px;font-weight:normal"">
-            " + BizFlows.Count().ToString() +
+            " + BizFlows.Count.ToString() +
         @"</b>
      
        

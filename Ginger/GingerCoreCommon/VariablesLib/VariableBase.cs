@@ -397,7 +397,7 @@ namespace GingerCore.Variables
                                     {
                                         string[] vals = ((string)item.GetType().GetRuntimeProperty("ValueCalculated").GetValue(item)).Split(new[] { '=' });
                                         const int count = 2;
-                                        if (vals.Count() == count && !usedVariables.Contains(vals[0]))
+                                        if (vals.Length == count && !usedVariables.Contains(vals[0]))
                                         {
                                             usedVariables.Add(vals[0]);
                                         }

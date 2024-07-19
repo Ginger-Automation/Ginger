@@ -22,19 +22,14 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
-using Couchbase.Utils;
-using GingerCore.Actions.Common;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using NJsonSchema.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Reflection;
 
 namespace GingerCore.Actions
 {
-
+        
 
 
     public class ActWebSmartSync : Act, IActPluginExecution

@@ -232,7 +232,7 @@ namespace Ginger.Variables
             ObservableList<Button> winButtons = new ObservableList<Button>();
 
             string[] varTypeElems = mVariable.GetType().ToString().Split('.');
-            string varType = varTypeElems[varTypeElems.Count() - 1];
+            string varType = varTypeElems[varTypeElems.Length - 1];
 
             string title = "Edit " + RemoveVariableWord(mVariable.VariableUIType) + " " + GingerDicser.GetTermResValue(eTermResKey.Variable);
 

@@ -206,7 +206,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 rows = txt.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
                 //First create cols width based on col header length, if later we find data is bigger we will recalc and pad
-                int[] ColsWidth = new int[cols.Count()];
+                int[] ColsWidth = new int[cols.Length];
                 int i = 0;
                 foreach (string c in cols)
                 {

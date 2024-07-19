@@ -294,7 +294,7 @@ namespace Ginger.Actions
             UpdateTabsHeaders();
 
             //allowing return values automatically in Edit Action window
-            if (mAction.AddNewReturnParams == null && mAction.ReturnValues.Count() == 0)
+            if (mAction.AddNewReturnParams == null && mAction.ReturnValues.Count == 0)
             {
                 mAction.AddNewReturnParams = true;
             }
@@ -1669,8 +1669,8 @@ namespace Ginger.Actions
             {
                 if (mAction.ReturnValues.Any())
                 {
-                    xOutputValuesTabTextBlock.Text = string.Format("Validations / Assignments ({0})", mAction.ReturnValues.Count());
-                    xOutputValuesTabHeaderTextBlock.Text = string.Format("Output Values ({0})", mAction.ReturnValues.Count());
+                    xOutputValuesTabTextBlock.Text = string.Format("Validations / Assignments ({0})", mAction.ReturnValues.Count);
+                    xOutputValuesTabHeaderTextBlock.Text = string.Format("Output Values ({0})", mAction.ReturnValues.Count);
                 }
                 else
                 {
@@ -1722,7 +1722,7 @@ namespace Ginger.Actions
             {
                 if (mAction.FlowControls.Any())
                 {
-                    xFlowControlTabHeaderTextBlock.Text = string.Format("Flow Control ({0})", mAction.FlowControls.Count());
+                    xFlowControlTabHeaderTextBlock.Text = string.Format("Flow Control ({0})", mAction.FlowControls.Count);
                 }
                 else
                 {

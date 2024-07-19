@@ -73,7 +73,7 @@ namespace Ginger.Repository
         {
             Dispatcher.Invoke(() =>
             {
-                xUsageCountLabel.Content = RepoItemUsages.Count();
+                xUsageCountLabel.Content = RepoItemUsages.Count;
             });
         }
 
@@ -126,7 +126,7 @@ namespace Ginger.Repository
                                             type = RepositoryItemUsage.eUsageTypes.RegularInstance;
                                         }
 
-                                        RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.ActivityName, UsageExtraDetails = "Number of Actions: " + a.Acts.Count().ToString(), UsageItemType = type, Selected = a.Type != eSharedItemType.Link, Status = a.Type == eSharedItemType.Link ? RepositoryItemUsage.eStatus.NA : RepositoryItemUsage.eStatus.NotUpdated };
+                                        RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.ActivityName, UsageExtraDetails = "Number of Actions: " + a.Acts.Count.ToString(), UsageItemType = type, Selected = a.Type != eSharedItemType.Link, Status = a.Type == eSharedItemType.Link ? RepositoryItemUsage.eStatus.NA : RepositoryItemUsage.eStatus.NotUpdated };
                                         itemUsage.SetItemPartesFromEnum(typeof(eItemParts));
 
 
@@ -161,7 +161,7 @@ namespace Ginger.Repository
                                             type = RepositoryItemUsage.eUsageTypes.RegularInstance;
                                         }
 
-                                        RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + a.ActivitiesIdentifiers.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
+                                        RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + a.ActivitiesIdentifiers.Count.ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                         itemUsage.SetItemPartesFromEnum(typeof(ActivitiesGroup.eItemParts));
 
                                         AddUsage(RepoItemUsages, itemUsage);

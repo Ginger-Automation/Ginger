@@ -3462,7 +3462,7 @@ namespace GingerCore.Drivers
                         char[] delimit = new char[] { '=' };
                         string insertval = act.GetInputParamCalculatedValue("Value");
                         string[] vals = insertval.Split(delimit, 2);
-                        if (vals.Count() != 2)
+                        if (vals.Length != 2)
                         {
                             throw new Exception(@"Inot string should be in the format : attribute=value");
                         } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
@@ -5003,12 +5003,12 @@ namespace GingerCore.Drivers
                         }
                         catch (System.InvalidCastException ex)
                         {
-                            count = Driver.CurrentWindowHandle.Count();
+                            count = Driver.CurrentWindowHandle.Length;
                             Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred while casting when we are checking IsRunning", ex);
                         }
                         catch (System.NullReferenceException ex)
                         {
-                            count = Driver.CurrentWindowHandle.Count();
+                            count = Driver.CurrentWindowHandle.Length;
                             Reporter.ToLog(eLogLevel.DEBUG, "Null reference exception occurred when we are checking IsRunning", ex);
                         }
                         catch (System.ObjectDisposedException ex)
@@ -5823,7 +5823,7 @@ namespace GingerCore.Drivers
                     text = ((IWebElement)EI.ElementObject).Text;
                 }
 
-                if (text.Count() > 15)
+                if (text.Length > 15)
                 {
                     text = string.Empty;
                 }

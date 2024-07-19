@@ -526,7 +526,7 @@ namespace Ginger.Repository
                             {
                                 if (!BF.ActivitiesLazyLoad && BF.Guid.ToString() != ExcludeBusinessFlowGuid && BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
                                 {
-                                    for (int i = 0; i < BF.Activities.Count(); i++)
+                                    for (int i = 0; i < BF.Activities.Count; i++)
                                     {
                                         if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
                                         {

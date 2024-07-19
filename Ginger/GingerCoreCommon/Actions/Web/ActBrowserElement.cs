@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -23,11 +25,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using GingerCore.Platforms;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace GingerCore.Actions
 {
@@ -102,8 +100,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                int value;
-                int.TryParse(GetOrCreateInputParam(nameof(ImplicitWait)).Value, out value);
+                int.TryParse(GetOrCreateInputParam(nameof(ImplicitWait)).Value, out var value);
                 return value;
             }
             set
@@ -244,8 +241,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                bool value;
-                bool.TryParse(GetOrCreateInputParam(nameof(NetworkLog)).Value, out value);
+                _ = bool.TryParse(GetOrCreateInputParam(nameof(NetworkLog)).Value, out var value);
                 return value;
             }
             set
@@ -266,76 +262,7 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(NetworkUrl), value);
                 OnPropertyChanged(nameof(NetworkUrl));
             }
-        }
-
-        public NewPayLoad GetActionPayload()
-        {
-            NewPayLoad PL = new NewPayLoad("RunPlatformAction");
-            PL.AddValue("BrowserAction");
-            List<NewPayLoad> PLParams = new List<NewPayLoad>();
-
-            foreach (FieldInfo FI in typeof(ActBrowserElement.Fields).GetFields())
-            {
-                string Name = FI.Name;
-                string Value = GetOrCreateInputParam(Name).ValueForDriver;
-
-                if (string.IsNullOrEmpty(Value))
-                {
-                    object Output = this.GetType().GetProperty(Name) != null ? this.GetType().GetProperty(Name).GetValue(this, null) : string.Empty;
-
-                    if (Output != null)
-                    {
-                        Value = Output.ToString();
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(Value))
-                {
-                    NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
-                    PLParams.Add(FieldPL);
-                }
-            }
-
-            foreach (FieldInfo FI in typeof(Act.Fields).GetFields())
-            {
-                string Name = FI.Name;
-                string Value = GetOrCreateInputParam(Name).ValueForDriver;
-
-                if (string.IsNullOrEmpty(Value))
-                {
-                    object Output = this.GetType().GetProperty(Name) != null ? this.GetType().GetProperty(Name).GetValue(this, null) : string.Empty;
-
-                    if (Output != null)
-                    {
-                        Value = Output.ToString();
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(Value))
-                {
-                    NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
-                    PLParams.Add(FieldPL);
-                }
-            }
-
-
-            foreach (ActInputValue AIV in this.InputValues)
-            {
-                if (!string.IsNullOrEmpty(AIV.ValueForDriver))
-                {
-                    NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
-                    PLParams.Add(AIVPL);
-                }
-            }
-
-
-
-
-            PL.AddListPayLoad(PLParams);
-            PL.ClosePackage();
-
-            return PL;
-        }
+        }       
 
         public string GetName()
         {

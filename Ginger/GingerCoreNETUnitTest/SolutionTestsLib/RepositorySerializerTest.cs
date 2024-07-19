@@ -482,7 +482,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
             Assert.AreEqual(false, businessFlow.LazyLoadFlagForUnitTest);
 
-            int count = businessFlow.Activities.Count();
+            int count = businessFlow.Activities.Count;
 
             Assert.AreEqual(true, businessFlow.LazyLoadFlagForUnitTest);
             Assert.AreEqual(2, count);

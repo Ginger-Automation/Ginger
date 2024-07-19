@@ -2896,7 +2896,7 @@ namespace GingerCore.Drivers
             i++;
             try
             {
-                for (; i < locateValues.Count(); i++)
+                for (; i < locateValues.Length; i++)
                 {
 
                     UIAuto.AutomationElement tempAE = null;
@@ -2959,7 +2959,7 @@ namespace GingerCore.Drivers
             winAPI.SendClick(rootElement);
             str = "True";
             Thread.Sleep(100);
-            for (; i < locateValues.Count() && (Convert.ToBoolean(str)); i++)
+            for (; i < locateValues.Length && (Convert.ToBoolean(str)); i++)
             {
                 str = "False";
                 Reporter.ToLog(eLogLevel.DEBUG, "***** Started Menu click by location for  :  " + locateValues[i]);
@@ -2975,7 +2975,7 @@ namespace GingerCore.Drivers
                                 str = "True";
                                 winAPI.SendClick(menuElement);
                                 Reporter.ToLog(eLogLevel.DEBUG, "***** Got Menu element  :  " + menuElement.Current.Name + "  Now changing the X");
-                                if (menuElement != null && i == (locateValues.Count() - 1))
+                                if (menuElement != null && i == (locateValues.Length - 1))
                                 {
                                     Reporter.ToLog(eLogLevel.DEBUG, "***** Clicked Element Successfully : " + menuElement.Current.Name);
                                     return true + "Clicked element Successfully";
@@ -5264,7 +5264,7 @@ namespace GingerCore.Drivers
             foreach (string str in keys)
             {
                 AECollection = MainDict[str];
-                tempcount = AECollection.Count();
+                tempcount = AECollection.Length;
 
                 if (tempcount == maxcount)
                 {
@@ -5285,7 +5285,7 @@ namespace GingerCore.Drivers
             string controlValue = "";
             if (ActTableElement.eRunColOperator.Equals == WhereOperator)
             {
-                for (int i = 0; i < AECollection.Count(); i++)
+                for (int i = 0; i < AECollection.Length; i++)
                 {
                     targetElement = AECollection[i];
                     if (propVal == ActTableElement.eRunColPropertyValue.Text)
@@ -5306,7 +5306,7 @@ namespace GingerCore.Drivers
 
             if (ActTableElement.eRunColOperator.Contains == WhereOperator)
             {
-                for (int i = 0; i < AECollection.Count(); i++)
+                for (int i = 0; i < AECollection.Length; i++)
                 {
                     targetElement = AECollection[i];
                     if (propVal == ActTableElement.eRunColPropertyValue.Text)
@@ -5576,7 +5576,7 @@ namespace GingerCore.Drivers
             {
                 j--;
                 AEColl = MainDict.Values.ElementAt(j);
-                count = AEColl.Count();
+                count = AEColl.Length;
             }
             if (!AEColl[0].Current.IsOffscreen)
             {
@@ -5793,7 +5793,7 @@ namespace GingerCore.Drivers
             foreach (string str in keys)
             {
                 UIAuto.AutomationElement[] AECollection = MainDict[str];
-                tempcount = AECollection.Count();
+                tempcount = AECollection.Length;
                 if (tempcount > maxcount)
                 {
                     maxcount = tempcount;
@@ -5945,7 +5945,7 @@ namespace GingerCore.Drivers
                 foreach (string str in keys)
                 {
                     UIAuto.AutomationElement[] collection = dictionary[str];
-                    tempcount = collection.Count();
+                    tempcount = collection.Length;
 
                     if (tempcount > maxcount)
                     {
@@ -6009,7 +6009,7 @@ namespace GingerCore.Drivers
             if (gridControls.Count != 0)
             {
                 yPoint = (int)gridControls[0].Current.BoundingRectangle.Y;
-                for (int i = 0; i < gridControls.Count() && gridControls[i] != null; i++)
+                for (int i = 0; i < gridControls.Count && gridControls[i] != null; i++)
                 {
                     if (gridControls[i] != null && yPoint != (int)gridControls[i].Current.BoundingRectangle.Y && (gridControls[i].Current.BoundingRectangle.Y != 0) && (!gridControls[i].Current.LocalizedControlType.Equals("scroll bar")) && (!gridControls[i].Current.LocalizedControlType.Equals("thumb")) && (!gridControls[i].Current.LocalizedControlType.Equals("image")))
                     {
@@ -6096,7 +6096,7 @@ namespace GingerCore.Drivers
             foreach (string str in keys)
             {
                 UIAuto.AutomationElement[] AECollection = tempDictionary[str];
-                tempcount = AECollection.Count();
+                tempcount = AECollection.Length;
                 if (tempcount > maxcount)
                 {
                     maxcount = tempcount;
@@ -6106,7 +6106,7 @@ namespace GingerCore.Drivers
             foreach (string str in keys)
             {
                 UIAuto.AutomationElement[] AECollection = tempDictionary[str];
-                tempcount = AECollection.Count();
+                tempcount = AECollection.Length;
 
                 if (tempcount == maxcount)
                 {

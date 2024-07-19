@@ -160,7 +160,7 @@ namespace Amdocs.Ginger.GingerRuntime
         {
             Console.WriteLine("Executing BFs count");
             ObservableList<BusinessFlow> BFs = SR.GetAllRepositoryItems<BusinessFlow>();
-            Console.WriteLine("BFs count = " + BFs.Count());
+            Console.WriteLine("BFs count = " + BFs.Count);
         }
 
         private void CloseSolution()

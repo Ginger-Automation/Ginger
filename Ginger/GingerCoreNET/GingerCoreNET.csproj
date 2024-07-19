@@ -1418,6 +1418,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ActionsLib\UI\UI Element\" />
     <Folder Include="Reports\Ginger-Web-Client\assets\artifacts\" />
     <Folder Include="SolutionRepositoryLib\RepositoryObjectsLib\PlatformsLib\" />
   </ItemGroup>

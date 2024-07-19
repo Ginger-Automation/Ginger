@@ -196,15 +196,15 @@ namespace Ginger.Imports.QTP
 
             ResultsDataGrid.DataSourceList = CCLs;
             ResultsDataGrid.IsReadOnly = true;
-            RecordsCountLabel.Content = "Records: " + CCLs.Count();
+            RecordsCountLabel.Content = "Records: " + CCLs.Count;
         }
 
         //Handle the Script Conversion Status
         private void ShowStats()
         {
             double count = (from x in mCCL where x.Status != ConvertedCodeLine.eStatus.Unknown select x).Count();
-            string perc = (int)(count / mCCL.Count() * 100) + "%";
-            ConvertedCountLabel.Content = "Converted Lines: " + count + " out of " + mCCL.Count() + " " + perc;
+            string perc = (int)(count / mCCL.Count * 100) + "%";
+            ConvertedCountLabel.Content = "Converted Lines: " + count + " out of " + mCCL.Count + " " + perc;
         }
 
         // Handles browsing of Repository File (xml) from user desktop
@@ -300,7 +300,7 @@ namespace Ginger.Imports.QTP
                     //Loop through the Specific bus Function
                     // force the position to be at 1 
                     Pos = 0;
-                    for (int i = Pos; i < BusCodeLines.Count(); i++)
+                    for (int i = Pos; i < BusCodeLines.Length; i++)
                     {
                         BusLineUpper = BusCodeLines[i].ToUpper();
                         ConvertedCodeLine BusCCL = new ConvertedCodeLine();

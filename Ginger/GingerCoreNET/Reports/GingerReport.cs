@@ -225,7 +225,7 @@ namespace Ginger.Reports
             {
                 if (BusinessFlowReports != null && BusinessFlowReports.Count > 0)
                 {
-                    return BusinessFlowReports.Count();
+                    return BusinessFlowReports.Count;
                 }
                 else if (GingerRunner != null)
                 {
