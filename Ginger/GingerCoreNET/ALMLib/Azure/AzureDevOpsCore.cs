@@ -392,7 +392,7 @@ namespace GingerCore.ALM
 
                 if (TestCaseNotFounCnt == testPoints.Count)
                 {
-                    Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID, "ExternalId not found for all Activity group are either Null or Incorrect");
+                    Reporter.ToLog(eLogLevel.ERROR, "ExternalId not found for all Activity group are either Null or Incorrect");
                     return false;
                 }
 

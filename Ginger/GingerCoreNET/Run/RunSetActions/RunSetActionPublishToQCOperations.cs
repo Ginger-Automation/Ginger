@@ -288,7 +288,7 @@ namespace Ginger.Run.RunSetActions
                             {
                                 if (!General.isVariableUsed(bFlow.ExternalID))
                                 {
-                                    bFlow.ExternalID = activitiesGroup.ExternalID;
+                                    bFlow.ExternalID = !string.IsNullOrEmpty(activitiesGroup.ExternalID) ?  activitiesGroup.ExternalID : bFlow.ExternalID;
                                 }
                             }
                             else
