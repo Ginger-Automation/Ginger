@@ -356,11 +356,10 @@ namespace GingerCore.ALM
                     Reporter.ToLog(eLogLevel.ERROR, $"No TestPoint found for given ProjectName: {projectName}, TestPlanId: {testPlanId}, SuiteId: {suiteId} or BusinessFlow: {bizFlow.Name}");
                     return false;
                 }
-
-                foreach (var item in testPoints)
+                int TestCaseNotFounCnt = 0;
+                foreach (ActivitiesGroup activitiesGroup in bizFlow.ActivitiesGroups)
                 {
-                    int testpointid = item.Id;
-                    var matchingTC = bizFlow.ActivitiesGroups.FirstOrDefault(p => p.ExternalID == item.TestCase.Id);
+                    var matchingTC = testPoints.FirstOrDefault(p => activitiesGroup.ExternalID == p.TestCase.Id);
 
                     if (matchingTC != null)
                     {
@@ -373,11 +372,11 @@ namespace GingerCore.ALM
 
                         }
                         // Creating test run
-                        var runModel = new RunCreateModel(name: item.TestCase.Name, plan: new Microsoft.TeamFoundation.TestManagement.WebApi.ShallowReference(bizFlow.ExternalID), pointIds: new[] { testpointid });
+                        var runModel = new RunCreateModel(name: matchingTC.TestCase.Name, plan: new Microsoft.TeamFoundation.TestManagement.WebApi.ShallowReference(bizFlow.ExternalID), pointIds: new[] { matchingTC.Id });
                         var testrun = testClient.CreateTestRunAsync(runModel, projectName).Result;
 
                         // Updating test results
-                        var caseResult = new TestCaseResult { State = "Completed", Outcome = matchingTC.RunStatus.ToString(), Id = 100000, Comment = commentTestRes };
+                        var caseResult = new TestCaseResult { State = "Completed", Outcome = activitiesGroup.RunStatus.ToString(), Id = 100000, Comment = commentTestRes };
                         testClient.UpdateTestResultsAsync(new[] { caseResult }, projectName, testrun.Id);
 
                         // Updating test run
@@ -386,11 +385,17 @@ namespace GingerCore.ALM
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"No Matching TestCase(ActivityGroup) found for TestPointId: {testpointid}");
-                        Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID, "ExternalId of ActivityGroup is either Null or Incorrect");
-                        return false;
+                        Reporter.ToLog(eLogLevel.ERROR, $"No Matching TestCase(ActivityGroup) found for TestPointId: {matchingTC.Id}");
+                        TestCaseNotFounCnt++;
                     }
                 }
+
+                if (TestCaseNotFounCnt == testPoints.Count)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "ExternalId not found for all Activity group are either Null or Incorrect");
+                    return false;
+                }
+
 
                 result = "Export has been finished Successfully";
                 return true;
