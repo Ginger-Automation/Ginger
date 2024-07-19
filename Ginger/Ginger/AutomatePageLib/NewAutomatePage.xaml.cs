@@ -25,6 +25,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using Amdocs.Ginger.UserControls;
 using Ginger;
@@ -968,6 +969,7 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
+            IEnumerable<RepositoryItemBase> itemsWithDevTimeTracking = PauseBusinessFlowAndActivitiesDevelopmentTimeTracking();
             try
             {
                 //mExecutionIsInProgress = true;
@@ -1032,6 +1034,7 @@ namespace GingerWPF.BusinessFlowsLib
                 //SetUIElementsBehaverDuringExecution();
                 mExecutionEngine.ResetFailedToStartFlagForAgents();
 
+                ResumeBusinessFlowAndActivitiesDevelopmentTimeTracking(itemsWithDevTimeTracking);
             }
         }
 
@@ -1042,6 +1045,7 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
+            IEnumerable<RepositoryItemBase> itemsWithDevTimeTracking = PauseBusinessFlowAndActivitiesDevelopmentTimeTracking();
             try
             {
                 //mExecutionIsInProgress = true;
@@ -1103,6 +1107,8 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     ((AgentOperations)((Agent)activityToExecute.CurrentAgent).AgentOperations).IsFailedToStart = false;
                 }
+
+                ResumeBusinessFlowAndActivitiesDevelopmentTimeTracking(itemsWithDevTimeTracking);
             }
         }
 
@@ -1149,6 +1155,7 @@ namespace GingerWPF.BusinessFlowsLib
                 actionToExecute = (Act)parentActivity.Acts[0];
             }
 
+            IEnumerable<RepositoryItemBase> itemsWithDevTimeTracking = PauseBusinessFlowAndActivitiesDevelopmentTimeTracking();
             try
             {
                 //mExecutionIsInProgress = true;
@@ -1241,6 +1248,51 @@ namespace GingerWPF.BusinessFlowsLib
 
                     ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).IsFailedToStart = false;
                 }
+
+                ResumeBusinessFlowAndActivitiesDevelopmentTimeTracking(itemsWithDevTimeTracking);                
+            }
+        }
+
+        private IEnumerable<RepositoryItemBase> PauseBusinessFlowAndActivitiesDevelopmentTimeTracking()
+        {
+            List<RepositoryItemBase> itemsWithTimerRunning = [];
+
+            try
+            {
+                if (mBusinessFlow.IsTimerRunning())
+                {
+                    itemsWithTimerRunning.Add(mBusinessFlow);
+                    mBusinessFlow.StopTimer();
+                }
+                itemsWithTimerRunning.AddRange(mBusinessFlow.StopTimerWithActivities());
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while pausing development time tracker for business flow and activities", ex);
+            }            
+
+            return itemsWithTimerRunning;
+        }
+
+        private void ResumeBusinessFlowAndActivitiesDevelopmentTimeTracking(IEnumerable<RepositoryItemBase> items)
+        {
+            try
+            {
+                foreach (RepositoryItemBase item in items)
+                {
+                    if (item is BusinessFlow bf)
+                    {
+                        bf.StartTimer();
+                    }
+                    else if (item is Activity activity)
+                    {
+                        activity.StartTimer();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while pausing development time tracker for business flow and activities", ex);
             }
         }
 
