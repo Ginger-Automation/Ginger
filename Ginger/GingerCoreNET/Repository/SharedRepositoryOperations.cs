@@ -585,7 +585,7 @@ namespace Ginger.Repository
                 sharedActivity.Guid = LinkedActivity.ParentGuid;
                 sharedActivity.ParentGuid = Guid.Empty;
                 sharedActivity.Type = eSharedItemType.Regular;
-                sharedActivity.DevelopmentTime = backup.DevelopmentTime.Add(LinkedActivity.DevelopmentTime);
+                sharedActivity.DevelopmentTime = backup.DevelopmentTime.Add(LinkedActivity.LastElapsedDevelopmentTime);
                 List<KeyValuePair<Guid, Guid>> oldNewActionGuidList = [];
                 foreach(Act action in sharedActivity.Acts.Cast<Act>())
                 {
