@@ -19,10 +19,12 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
+using GingerCore;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
@@ -36,13 +38,17 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         {
             mApplicationPOM = pom;
         }
-
+        private void TreeViewItem_Unselected(object sender, RoutedEventArgs e)
+        {
+            mApplicationPOM.StopTimer();
+        }
         Object ITreeViewItem.NodeObject()
         {
             return mApplicationPOM;
         }
         override public string NodePath()
         {
+
             return mApplicationPOM.FilePath;
         }
         override public Type NodeObjectType()
@@ -60,7 +66,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mPOMEditPage == null)
-            {
+            {          
                 mPOMEditPage = new POMEditPage(mApplicationPOM, General.eRIPageViewMode.Standalone);
             }
             return mPOMEditPage;
@@ -85,7 +91,8 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-
+            TreeViewItem.Unselected -= TreeViewItem_Unselected;
+            TreeViewItem.Unselected += TreeViewItem_Unselected;
             AddItemNodeBasicManipulationsOptions(mContextMenu);
 
             AddSourceControlOptions(mContextMenu);
