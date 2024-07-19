@@ -181,6 +181,7 @@ namespace Ginger.SolutionWindows
         private void UpdateApplicationNameChangeInSolution(ApplicationPlatform app)
         {
             int numOfAfectedItems = 0;
+            bool startDirtyTrackOfBF = false;
             if (Reporter.ToUser(eUserMsgKey.UpdateApplicationNameChangeInSolution) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
@@ -189,7 +190,7 @@ namespace Ginger.SolutionWindows
             foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
             {
                 //update the BF target applications 
-                bf.StartDirtyTracking();
+                startDirtyTrackOfBF = false;
                 foreach (var activity in bf.Activities)
                 {
                     //donot check for TargetPlugins, only for TargetApplications 
@@ -209,7 +210,12 @@ namespace Ginger.SolutionWindows
                     {
                         bfTargetApp.StartDirtyTracking();
                         bfTargetApp.AppName = app.AppName;
+                        startDirtyTrackOfBF =  true;                        
                     }
+                }
+                if (startDirtyTrackOfBF)
+                {
+                    bf.StartDirtyTracking();
                 }
             }
 
