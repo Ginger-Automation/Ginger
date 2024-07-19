@@ -106,7 +106,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             elapsedTime = TimeSpan.Zero;
 
             // Start the timer
-            timer.Start();        
+            try 
+            { 
+            timer.Start();
+            }
+            catch (Exception ex)
+            { 
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while starting the timer", ex); 
+            }
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -121,8 +128,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         // You can stop the timer if needed
         private void StopTimer()
         {
-            timer.Stop();
-         }
+            if(timer != null)
+            {
+                try
+                {
+                    timer.Stop();
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error while stopping the timer", ex);
+                }
+            }
+        }
 
         private void BringToFocus()
         {

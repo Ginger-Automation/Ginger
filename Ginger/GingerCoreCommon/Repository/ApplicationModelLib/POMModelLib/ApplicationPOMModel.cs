@@ -38,15 +38,20 @@ namespace Amdocs.Ginger.Repository
     {       
         public ApplicationPOMModel()
         {
-            this.OnDirtyStatusChanged += POM_OnDirtyStatusChanged;            
+            this.OnDirtyStatusChanged += OnDirtyStatusChanged1;            
         }
-        private void POM_OnDirtyStatusChanged(object sender, EventArgs e)
+        private void OnDirtyStatusChanged1(object sender, EventArgs e)
         {
            if (DirtyStatus == eDirtyStatus.Modified)
             {
                 this.StartTimer();
             }
         }
+        /// <summary>
+        /// This method is called before saving the ApplicationPOMModel object.
+        /// It stops the timer and returns false.
+        /// </summary>
+        /// <returns>False</returns>
         public override bool PreSaveHandler()
         {
             this.StopTimer();
