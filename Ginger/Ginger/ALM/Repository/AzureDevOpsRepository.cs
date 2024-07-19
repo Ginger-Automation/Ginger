@@ -222,7 +222,7 @@ namespace Ginger.ALM.Repository
             
         }
 
-        void SetTestPlanUploadPathIfEmpty(string testPlanUploadPath = null)
+        void SetTestPlanUploadPathIfEmpty(string testPlanUploadPath)
         {
             try
             {

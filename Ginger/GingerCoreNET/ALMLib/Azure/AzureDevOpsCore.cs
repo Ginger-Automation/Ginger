@@ -358,7 +358,7 @@ namespace GingerCore.ALM
                 }
                 int TestCaseNotFounCnt = 0;
                 foreach (ActivitiesGroup activitiesGroup in bizFlow.ActivitiesGroups)
-                {;
+                {
                     var matchingTC = testPoints.FirstOrDefault(p => activitiesGroup.ExternalID == p.TestCase.Id);
 
                     if (matchingTC != null)
