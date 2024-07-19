@@ -168,6 +168,14 @@ namespace Ginger.Run.RunSetActions
                 {
                     virtualBF.ExternalID = string.Empty;
                 }
+                if (!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID2))
+                {
+                    virtualBF.ExternalID2 = runSetExec.RunSetConfig.ExternalID2;
+                }
+                else
+                {
+                    virtualBF.ExternalID2 = string.Empty;
+                }
 
                 virtualBF.Activities = new ObservableList<Activity>();
                 foreach (GingerRunner runSetrunner in runSetExec.Runners)
@@ -246,6 +254,21 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
 
+                if (businessFlow != null && !string.IsNullOrEmpty(businessFlow.ExternalID2))
+                {
+                    if (!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID2))
+                    {
+                        if (!General.isVariableUsed(runSetExec.RunSetConfig.ExternalID2))
+                        {
+                            runSetExec.RunSetConfig.ExternalID2 = businessFlow.ExternalID2;
+                        }
+                    }
+                    else
+                    {
+                        runSetExec.RunSetConfig.ExternalID2 = businessFlow.ExternalID2;
+                    }
+                }
+
                 foreach (GingerRunner runSetrunner in runSetExec.Runners)
                 {
                     // if executor is null when run if from file
@@ -265,7 +288,7 @@ namespace Ginger.Run.RunSetActions
                             {
                                 if (!General.isVariableUsed(bFlow.ExternalID))
                                 {
-                                    bFlow.ExternalID = activitiesGroup.ExternalID;
+                                    bFlow.ExternalID = !string.IsNullOrEmpty(activitiesGroup.ExternalID) ?  activitiesGroup.ExternalID : bFlow.ExternalID;
                                 }
                             }
                             else
