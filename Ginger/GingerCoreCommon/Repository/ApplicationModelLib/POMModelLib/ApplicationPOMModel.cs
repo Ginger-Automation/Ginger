@@ -35,14 +35,14 @@ namespace Amdocs.Ginger.Repository
     }
 
     public class ApplicationPOMModel : ApplicationModelBase
-    {       
+    {
         public ApplicationPOMModel()
         {
-            this.OnDirtyStatusChanged += OnDirtyStatusChanged1;            
+            this.OnDirtyStatusChanged += POM_OnDirtyStatusChanged;
         }
-        private void OnDirtyStatusChanged1(object sender, EventArgs e)
+        private void POM_OnDirtyStatusChanged(object sender, EventArgs e)
         {
-           if (DirtyStatus == eDirtyStatus.Modified)
+            if (DirtyStatus == eDirtyStatus.Modified)
             {
                 this.StartTimer();
             }
@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.Repository
             this.StopTimer();
             return false;
         }
-     
+
         public const int cLearnScreenWidth = 1000;
         public const int cLearnScreenHeight = 1000;
         private Stopwatch _stopwatch;
@@ -96,7 +96,7 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                if(mDevelopmentTime != value)
+                if (mDevelopmentTime != value)
                 {
                     mDevelopmentTime = value;
                 }
