@@ -348,7 +348,10 @@ namespace Ginger.BusinessFlowPages
                         businessFlow.ActivitiesGroups.Move(businessFlow.ActivitiesGroups.IndexOf(parentGroup), insertIndex);
                     }
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
-
+                
+                    //since a new activity instance is created, it shouldn't be dirty and should have 0 development time
+                    activityIns.SetDirtyStatusToNoChange();
+                    Activity.StopAndResetTimer(activityIns);
 
                 }
             }

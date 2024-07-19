@@ -165,6 +165,8 @@ namespace GingerCore
             }
         }
 
+        public TimeSpan LastElapsedDevelopmentTime { get; private set; }
+
         public void StartTimer()
         {
             if (_stopwatch == null)
@@ -188,6 +190,7 @@ namespace GingerCore
             {
                 _stopwatch.Stop();
                 TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
+                LastElapsedDevelopmentTime = elapsedTime;
                 DevelopmentTime = DevelopmentTime.Add(elapsedTime);
                 _stopwatch.Reset();
             }
@@ -195,8 +198,8 @@ namespace GingerCore
 
         public static void StopAndResetTimer(Activity act)
         {
-            act.DevelopmentTime = TimeSpan.Zero;
             act.StopTimer();
+            act.DevelopmentTime = TimeSpan.Zero;
         }
 
         private bool mLinkedActive = true;
@@ -980,6 +983,15 @@ namespace GingerCore
             else
             {
                 newInstance = CopySharedRepositoryActivity(this, originFromSharedRepository: false);
+                
+                if (this.Guid == activityInstance.Guid)
+                {
+                    newInstance.DevelopmentTime = this.DevelopmentTime;
+                }
+                else 
+                {
+                    newInstance.DevelopmentTime = activityInstance.DevelopmentTime;
+                }
             }
 
 
