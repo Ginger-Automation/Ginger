@@ -1,21 +1,37 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using HtmlAgilityPack;
-using Microsoft.Graph;
 using Microsoft.VisualStudio.Services.Common;
-using NPOI.OpenXmlFormats;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -62,69 +78,124 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return new POMLearner(htmlDocument, browserElementProvider, pomSetting, xpathImpl);
         }
 
-        internal Task<IEnumerable<HTMLElementInfo>> LearnElementsAsync()
+        internal Task LearnElementsAsync(IList<ElementInfo> learnedElements, CancellationToken cancellationToken = default)
         {
-            return LearnDocumentElementsAsync(_htmlDocument);
+            return LearnDocumentElementsAsync(_htmlDocument, learnedElements, cancellationToken);
         }
 
-        private Task<IEnumerable<HTMLElementInfo>> LearnDocumentElementsAsync(HtmlDocument htmlDocument)
+        private async Task LearnDocumentElementsAsync(HtmlDocument htmlDocument, IList<ElementInfo> learnedElements, CancellationToken cancellationToken)
         {
-            return LearnHtmlNodeChildElements(htmlDocument.DocumentNode);
+            await LearnHtmlNodeChildElements(htmlDocument.DocumentNode, shouldLearnNode: htmlNode =>
+            {
+                eElementType type = GetElementType(htmlNode);
+                if (_pomSetting != null && !_pomSetting.filteredElementType.Contains(type))
+                {
+                    return false;
+                }
+
+                return true;
+            }, learnedElements, cancellationToken);
         }
 
-        private async Task<IEnumerable<HTMLElementInfo>> LearnHtmlNodeChildElements(HtmlNode htmlNode)
+        private async Task LearnHtmlNodeChildElements(HtmlNode htmlNode, Predicate<HtmlNode> shouldLearnNode, IList<ElementInfo> learnedElements, CancellationToken cancellationToken, IList<ElementInfo>? childElements = null)
         {
-            List<HTMLElementInfo> htmlElements = [];
-
             foreach (HtmlNode childNode in htmlNode.ChildNodes)
             {
-                IEnumerable<HTMLElementInfo> grandChildElements;
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+                eElementType childNodeElementType = GetElementType(childNode);
+                IBrowserElement? browserElement = null;
                 HTMLElementInfo? childElement = null;
-                if (!ShouldIncludeHtmlNode(childNode))
-                {
-                    grandChildElements = await LearnHtmlNodeChildElements(childNode);
-                    htmlElements.AddRange(grandChildElements);
 
-                    continue;
+                if (IsNodeLearnable(childNode))
+                {
+                    bool shouldLearnThisNode = shouldLearnNode(childNode);
+                    browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
+                    if (browserElement != null && await IsBrowserElementVisibleAsync(browserElement))
+                    {
+                        childElement = await CreateHTMLElementInfoAsync(childNode, browserElement, captureScreenshot: shouldLearnThisNode);
+                    }
+
+                    if (childElement != null && shouldLearnThisNode)
+                    {
+                        learnedElements.Add(childElement);
+                        if (childElements != null)
+                        {
+                            childElements.Add(childElement);
+                        }
+                    }
                 }
 
-                IBrowserElement? browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
-                if (browserElement == null || !await browserElement.IsVisibleAsync())
+                IList<ElementInfo> grandChildElements = new List<ElementInfo>();
+                if (childNodeElementType == eElementType.Form)
                 {
-                    continue;
+                    await LearnHtmlNodeChildElements(childNode, ShouldLearnFormChildNode, learnedElements, cancellationToken, grandChildElements);
                 }
-
-                childElement = await CreateHTMLElementInfoAsync(childNode, browserElement);
-
-                htmlElements.Add(childElement);
-
-                htmlElements.AddRange(await LearnShadowDOMElementsAsync(childElement));
-                htmlElements.AddRange(await LearnFrameElementsAsync(childElement));
-                //TODO: create suggested activities
-
-                grandChildElements = await LearnHtmlNodeChildElements(childNode);
-                foreach (HTMLElementInfo grandChildElement in grandChildElements)
+                else if (!string.Equals(childNode.Name, "head", StringComparison.OrdinalIgnoreCase))
                 {
-                    grandChildElement.ParentElement = childElement;
+                    await LearnHtmlNodeChildElements(childNode, shouldLearnNode, learnedElements, cancellationToken, grandChildElements);
                 }
-                childElement.ChildElements.Clear();
-                childElement.ChildElements.AddRange(grandChildElements.Cast<ElementInfo>());
-
-                htmlElements.AddRange(grandChildElements);
+                
+                if (childElement != null)
+                {
+                    foreach (ElementInfo grandChildElement in grandChildElements)
+                    {
+                        grandChildElement.ParentElement = childElement;
+                    }
+                    childElement.ChildElements.Clear();
+                    childElement.ChildElements.AddRange(grandChildElements);
+                    
+                    await LearnShadowDOMElementsAsync(childElement, learnedElements, cancellationToken);
+                    await LearnFrameElementsAsync(childElement, learnedElements, cancellationToken);
+                }
             }
-
-            return htmlElements;
         }
 
-        private static readonly IEnumerable<string> LearningExcludedItems = ["noscript", "script", "style", "meta", "head", "link", "html", "body"];
-
-        private bool ShouldIncludeHtmlNode(HtmlNode htmlNode)
+        private async Task<bool> IsBrowserElementVisibleAsync(IBrowserElement browserElement)
         {
-            if (_pomSetting == null || _pomSetting.filteredElementType == null)
+            Size size = await browserElement.SizeAsync();
+            bool isVisible = await browserElement.IsVisibleAsync();
+            
+            if (isVisible && size.Width > 0 && size.Height > 0)
             {
+                return true;
+            }
+
+            string script = @"element => {
+                let computedStyle = window.getComputedStyle(element);
+                if (!computedStyle) {
+                    return true;
+                }
+                let displayValue = computedStyle.getPropertyValue('display');
+                if (displayValue && displayValue.toLowerCase() === 'none') {
+                    return false;
+                }
+                let widthValue = computedStyle.getPropertyValue('width');
+                if (widthValue && widthValue.toLowerCase() === 'auto') {
+                    return false;
+                }
+                let heightValue = computedStyle.getPropertyValue('height');
+                if (heightValue && heightValue.toLowerCase() === 'auto') {
+                    return false;
+                }
+                return true;
+            }";
+
+            string scriptResult = await browserElement.ExecuteJavascriptAsync(script);
+
+            if (!bool.TryParse(scriptResult, out bool scriptResultBool))
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"error while checking computed styles of element, expected boolean result but found {scriptResult}");
                 return false;
             }
 
+            return scriptResultBool;
+        }
+
+        private static bool IsNodeLearnable(HtmlNode htmlNode)
+        {
             if (htmlNode.Name.StartsWith("#"))
             {
                 return false;
@@ -135,18 +206,31 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 return false;
             }
 
-            ;
-
-            if (LearningExcludedItems.Any(x => string.Equals(x, htmlNode.Name, StringComparison.OrdinalIgnoreCase)))
+            IEnumerable<string> learningExcludedItems = ["noscript", "script", "style", "meta", "head", "link", "html", "body"];
+            if (learningExcludedItems.Any(x => string.Equals(x, htmlNode.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 return false;
             }
 
-            eElementType type = GetElementType(htmlNode);
-            return _pomSetting.filteredElementType.Contains(type);
+            return true;
         }
 
-        private async Task<HTMLElementInfo> CreateHTMLElementInfoAsync(HtmlNode htmlNode, IBrowserElement browserElement)
+        private static bool ShouldLearnFormChildNode(HtmlNode htmlNode)
+        {
+            try
+            {
+                string tagName = htmlNode.Name ?? "";
+                if (tagName.StartsWith("input", StringComparison.OrdinalIgnoreCase) || tagName.StartsWith("button", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            catch (Exception) { }
+
+            return false;
+        }
+
+        private async Task<HTMLElementInfo> CreateHTMLElementInfoAsync(HtmlNode htmlNode, IBrowserElement browserElement, bool captureScreenshot = true)
         {
             Size size = await browserElement.SizeAsync();
             Point position = await browserElement.PositionAsync();
@@ -164,7 +248,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 HTMLElementObject = htmlNode,
                 XPath = htmlNode.XPath,
                 IsAutoLearned = true,
-                ScreenShotImage = await GetElementScreenshotAsync(browserElement),
                 Locators = [],
                 Properties = [
                     new()
@@ -181,10 +264,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     }],
             };
             //LearnElementInfoDetails(htmlElementInfo); //check what properties of HTMLElementInfo are set in this method
+            if (captureScreenshot)
+            {
+                htmlElementInfo.ScreenShotImage = await GetElementScreenshotAsync(browserElement);
+            }
             htmlElementInfo.XPath = GenerateXPathFromHtmlElementInfo(htmlElementInfo);
             htmlElementInfo.RelXpath = GenerateRelativeXPathFromHTMLElementInfo(htmlElementInfo, _xpathImpl, _pomSetting);
             htmlElementInfo.Locators.AddRange(await GenerateLocatorsAsync(htmlElementInfo, _pomSetting));
-            htmlElementInfo.Locators.AddRange(GenerateRelativeXPathLocators(htmlElementInfo));
+            htmlElementInfo.Locators.AddRange(await GenerateRelativeXPathLocatorsAsync(htmlElementInfo));
             htmlElementInfo.Locators.AddRange(GenerateXPathLocatorsFromUserTemplates(htmlElementInfo.HTMLElementObject.Attributes));
             htmlElementInfo.OptionalValuesObjectsList.AddRange(await GetOptionalValuesAsync(htmlElementInfo));
             htmlElementInfo.Properties.AddRange(await GetPropertiesAsync(htmlElementInfo));
@@ -391,7 +478,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 {
                     if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
                     {
-                        string[] innerTextValues = childNode.InnerText.Split('\n');
+                        string[] innerTextValues = childNode
+                            .InnerText
+                            .Split('\n')
+                            .Where(s => !string.IsNullOrEmpty(s.Trim()))
+                            .Where(s => !string.Equals(s.Trim(), "\r"))
+                            .Select(s => s.Replace("\r", ""))
+                            .ToArray();
                         foreach (string innerTextValue in innerTextValues)
                         {
                             optionalValues.Add(new OptionalValue() { Value = innerTextValue, IsDefault = false });
@@ -541,7 +634,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return properties;
         }
 
-        private IEnumerable<ElementLocator> GenerateRelativeXPathLocators(HTMLElementInfo htmlElementInfo)
+        private async Task<IEnumerable<ElementLocator>> GenerateRelativeXPathLocatorsAsync(HTMLElementInfo htmlElementInfo)
         {
             if (htmlElementInfo.ElementTypeEnum == eElementType.Svg)
             {
@@ -568,7 +661,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             {
                 var relXPathWithExactTextMatch = xpathHelper.CreateRelativeXpathWithTextMatch(htmlElementInfo, isExactMatch: true);
                 if (!string.IsNullOrEmpty(relXPathWithExactTextMatch) &&
-                    _browserElementProvider.GetElementAsync(eLocateBy.ByRelXPath, relXPathWithExactTextMatch) != null)
+                    (await _browserElementProvider.GetElementAsync(eLocateBy.ByRelXPath, relXPathWithExactTextMatch)) != null)
                 {
                     locators.Add(new() 
                     { 
@@ -719,27 +812,34 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return xpathHelper.GetElementRelXPath(htmlElementInfo, pomSetting);
         }
 
-        private async Task<string> GetElementScreenshotAsync(IBrowserElement? browserElement)
+        private async Task<string?> GetElementScreenshotAsync(IBrowserElement? browserElement)
         {
             if (_pomSetting == null ||
                 !_pomSetting.LearnScreenshotsOfElements || 
                 browserElement == null)
             {
-                return string.Empty;
+                return null;
             }
 
-            return Convert.ToBase64String(await browserElement.ScreenshotAsync());
+            try
+            {
+                return Convert.ToBase64String(await browserElement.ScreenshotAsync());
+            }
+            catch(Exception)
+            {
+                return null;
+            }
         }
 
-        private async Task<IEnumerable<HTMLElementInfo>> LearnShadowDOMElementsAsync(HTMLElementInfo shadowHostElement)
+        private async Task LearnShadowDOMElementsAsync(HTMLElementInfo shadowHostElement, IList<ElementInfo> learnedElements, CancellationToken cancellationToken)
         {
             if (_pomSetting == null ||
                 !_pomSetting.LearnShadowDomElements ||
                 shadowHostElement.ElementTypeEnum == eElementType.Iframe ||
                 shadowHostElement.ElementObject == null ||
-                await ((IBrowserElement)shadowHostElement.ElementObject).ShadowRootAsync() != null)
+                await ((IBrowserElement)shadowHostElement.ElementObject).ShadowRootAsync() == null)
             {
-                return [];
+                return;
             }
 
             IBrowserElement browserElement = (IBrowserElement)shadowHostElement.ElementObject;
@@ -750,36 +850,42 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             string? shadowRootHTML = browserShadowRoot != null ? await browserShadowRoot.HTML() : "";
             if (string.IsNullOrEmpty(shadowRootHTML))
             {
-                return [];
+                return;
             }
 
             HtmlDocument shadowRootHtmlDocument = new();
             shadowRootHtmlDocument.LoadHtml(shadowRootHTML);
 
-            IEnumerable<HTMLElementInfo> htmlElements = await LearnDocumentElementsAsync(shadowRootHtmlDocument);
+            await LearnDocumentElementsAsync(shadowRootHtmlDocument, learnedElements, cancellationToken);
 
             await _browserElementProvider.OnShadowDOMExitAsync(shadowHostElement);
-
-            return htmlElements;
         }
 
-        private async Task<IEnumerable<HTMLElementInfo>> LearnFrameElementsAsync(HTMLElementInfo frameElement)
+        private async Task LearnFrameElementsAsync(HTMLElementInfo frameElement, IList<ElementInfo> learnedElements, CancellationToken cancellationToken)
         {
             if (frameElement.ElementTypeEnum != eElementType.Iframe)
             {
-                return [];
+                return;
             }
 
             IBrowserElement? browserElement = (IBrowserElement?)frameElement.ElementObject;
             if (browserElement == null)
             {
-                return [];
+                return;
             }
 
-            string iframePageSource = await browserElement.ExecuteJavascriptAsync("element => element.contentDocument.documentElement.outerHTML");
+            string iframePageSource = "";
+            try
+            {
+                iframePageSource = await browserElement.ExecuteJavascriptAsync("element => element.contentDocument.documentElement.outerHTML");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while getting IFrame page source", ex);
+            }
             if (string.IsNullOrEmpty(iframePageSource))
             {
-                return [];
+                return;
             }
 
             HtmlDocument frameHtmlDocument = new();
@@ -787,11 +893,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
             await _browserElementProvider.OnFrameEnterAsync(frameElement);
             
-            IEnumerable<HTMLElementInfo> htmlElements = await LearnDocumentElementsAsync(frameHtmlDocument);
+            await LearnDocumentElementsAsync(frameHtmlDocument, learnedElements, cancellationToken);
 
             await _browserElementProvider.OnFrameExitAsync(frameElement);
-
-            return htmlElements;
         }
     }
 }

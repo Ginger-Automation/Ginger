@@ -20,7 +20,12 @@ using DocumentFormat.OpenXml.Drawing;
 using GingerCoreNET.RosLynLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NPOI.SS.Formula.Functions;
+using OpenTracing.Tag;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace GingerCoreNETUnitTest.RosLynTestLib
 {
@@ -300,7 +305,7 @@ namespace GingerCoreNETUnitTest.RosLynTestLib
             string Expression = "{MockDataExp Fun=Randomizer().Number(1,10);}";
             string error = string.Empty;
             string output = CodeProcessor.GetBogusDataGenerateresult(Expression);
-            Assert.IsTrue(output != null && !output.Equals(string.Empty));
+            Assert.IsTrue(output != null && !output.Equals(string.Empty) && Regex.IsMatch(output, @"\d"));
         }
 
         [TestMethod]
@@ -309,7 +314,7 @@ namespace GingerCoreNETUnitTest.RosLynTestLib
             string Expression = "{MockDataExp Fun=Randomizer().Digits(3,0,9);}";
             string error = string.Empty;
             string output = CodeProcessor.GetBogusDataGenerateresult(Expression);
-            Assert.IsTrue(output != null && !output.Equals(string.Empty));
+            Assert.IsTrue(output != null && !output.Equals(string.Empty) && output.Split(",").Select(i => i.Trim()).All(x=> Regex.IsMatch(x, @"\d")));
         }
 
         [TestMethod]
@@ -318,7 +323,7 @@ namespace GingerCoreNETUnitTest.RosLynTestLib
             string Expression = "{MockDataExp Fun=Randomizer().Decimal();}";
             string error = string.Empty;
             string output = CodeProcessor.GetBogusDataGenerateresult(Expression);
-            Assert.IsTrue(output != null && !output.Equals(string.Empty));
+            Assert.IsTrue(output != null && !output.Equals(string.Empty) && Regex.IsMatch(output, "^[+-]?(\\d*\\.)?\\d+$"));
         }
 
         [TestMethod]

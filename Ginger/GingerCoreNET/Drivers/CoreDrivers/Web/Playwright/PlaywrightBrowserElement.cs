@@ -1,4 +1,22 @@
-﻿using Microsoft.Playwright;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -819,26 +837,33 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public Task<byte[]> ScreenshotAsync()
         {
+            int timeout = 3000;
             if (_playwrightLocator != null)
             {
-                return ScreenshotAsync(_playwrightLocator);
+                return ScreenshotAsync(_playwrightLocator, timeout);
             }
             else
             {
-                return ScreenshotAsync(_playwrightElementHandle!);
+                return ScreenshotAsync(_playwrightElementHandle!, timeout);
             }
         }
 
-        public Task<byte[]> ScreenshotAsync(IPlaywrightLocator playwrightLocator)
+        public Task<byte[]> ScreenshotAsync(IPlaywrightLocator playwrightLocator, int timeout)
         {
             ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
-            return playwrightLocator.ScreenshotAsync();
+            return playwrightLocator.ScreenshotAsync(new LocatorScreenshotOptions()
+            {
+                Timeout = timeout,
+            });
         }
 
-        public Task<byte[]> ScreenshotAsync(IPlaywrightElementHandle playwrightElementHandle)
+        public Task<byte[]> ScreenshotAsync(IPlaywrightElementHandle playwrightElementHandle, int timeout)
         {
             ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
-            return playwrightElementHandle.ScreenshotAsync();
+            return playwrightElementHandle.ScreenshotAsync(new ElementHandleScreenshotOptions()
+            {
+                Timeout = timeout,
+            });
         }
 
         public async Task<IBrowserShadowRoot?> ShadowRootAsync()

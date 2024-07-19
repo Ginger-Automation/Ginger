@@ -329,7 +329,7 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     mDeviceCPUInfo = mDriver.GetDeviceCPUInfo();
                     mDeviceMemoryInfo = mDriver.GetDeviceMemoryInfo();
-                    mDeviceNetworkInfo = mDriver.GetDeviceNetworkInfo().Result;
+                    mDeviceNetworkInfo = mDriver.GetDeviceNetworkInfo()?.Result;
                 }
                 catch (Exception ex)
                 {

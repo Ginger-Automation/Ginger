@@ -231,27 +231,38 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void timenow(object sender, EventArgs e)
         {
             // Get control info only if control key is pressed
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            try
             {
-                xStatusLable.Content = "Spying element, please wait...";
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                {
+                    xStatusLable.Content = "Spying element, please wait...";
+                    xCreateNewElement.Visibility = Visibility.Collapsed;
+                    GingerCore.General.DoEvents();
+                    mSpyElement = mWinExplorer.GetControlFromMousePosition();
+                    if (mSpyElement != null)
+                    {
+
+                        mSpyElement.WindowExplorer = mWinExplorer;
+                        mSpyElement.IsAutoLearned = true;
+                        mSpyElement.SetLocatorsAndPropertiesCategory(((DriverBase)mWinExplorer).PomCategory);
+                        xStatusLable.Content = "Element found";
+                        FocusSpyItemOnElementsGrid();
+                        mWinExplorer.HighLightElement(mSpyElement);
+                    }
+                    else
+                    {
+                        xStatusLable.Content = "Failed to spy element.";
+                        xCreateNewElement.Visibility = Visibility.Collapsed;
+                        GingerCore.General.DoEvents();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                xStatusLable.Content = "Failed to spy element.";
                 xCreateNewElement.Visibility = Visibility.Collapsed;
                 GingerCore.General.DoEvents();
-                mSpyElement = mWinExplorer.GetControlFromMousePosition();
-                if (mSpyElement != null)
-                {
-
-                    mSpyElement.WindowExplorer = mWinExplorer;
-                    mSpyElement.IsAutoLearned = true;
-                    mSpyElement.SetLocatorsAndPropertiesCategory(((DriverBase)mWinExplorer).PomCategory);
-                    xStatusLable.Content = "Element found";
-                    FocusSpyItemOnElementsGrid();
-                    mWinExplorer.HighLightElement(mSpyElement);
-                }
-                else
-                {
-                    xStatusLable.Content = "Failed to spy element.";
-                    GingerCore.General.DoEvents();
-                }
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to spy element.", ex);
             }
         }
 

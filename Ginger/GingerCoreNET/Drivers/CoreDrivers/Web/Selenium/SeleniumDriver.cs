@@ -27,7 +27,6 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
@@ -76,6 +75,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DevToolsDomains = OpenQA.Selenium.DevTools.V125.DevToolsSessionDomains;
+using static GingerCore.Actions.ActWebSmartSync;
 
 
 
@@ -100,6 +100,8 @@ namespace GingerCore.Drivers
         private const string TRANSLATOR_FOR_CASE_INSENSITIVE_MATCH = "translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')";
         private const string BRAVE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
         private const string BRAVE_64BIT_BINARY_PATH = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
+        private const string EDGE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
+        private const string EDGE_64BIT_BINARY_PATH = "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe";
 
         String[] SeleniumUserArgs = null;
         DriverService driverService = null;
@@ -119,24 +121,51 @@ namespace GingerCore.Drivers
             Brave,
             Edge,
             RemoteWebDriver,
-        }
+        }     
         public enum ePageLoadStrategy
         {
-            normal,
-            eager,
-            none,
+            Normal,
+            Eager ,
+            None,
         }
-        
         public enum eUnhandledPromptBehavior
         {
-            dismissAndNotify,
-            dismiss,
-            accept,
-            acceptAndNotify,
-            ignore,
+            [EnumValueDescription("Default")]
+            Default,
+            [EnumValueDescription("Ignore")]
+            Ignore,
+            [EnumValueDescription("Accept")]
+            Accept,
+            [EnumValueDescription("Dismiss")]
+            Dismiss,
+            [EnumValueDescription("Accept And Notify")]
+            AcceptAndNotify,
+            [EnumValueDescription("Dismiss And Notify")]
+            DismissAndNotify
         }
-       
+        eUnhandledPromptBehavior mUnhandledPromptBehavior;
 
+        public eUnhandledPromptBehavior UnhandledPromptBehavior1
+        {
+            get { return mUnhandledPromptBehavior; }
+            set
+            {
+                if (mUnhandledPromptBehavior != value)
+                {
+                    mUnhandledPromptBehavior = value;
+                   
+                }
+            }
+        }
+        public enum eBrowserLogLevel
+        {
+            
+            All=0,            
+            Debug = 1,            
+            Info = 2,
+            Warning=3,
+            Severe = 4
+        }
 
         public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
         {
@@ -156,23 +185,15 @@ namespace GingerCore.Drivers
             {
                 return "SeleniumRemoteWebDriverEditPage";
             }
+            else if (browserType == WebBrowserType.Chrome|| browserType == WebBrowserType.Brave || browserType == WebBrowserType.Edge || browserType == WebBrowserType.InternetExplorer || browserType == WebBrowserType.FireFox )
+            {
+                return "WebAgentConfigEditPage";
+            }
             else
             {
                 return null;
             }
         }
-
-
-        [UserConfigured]
-        [UserConfiguredDescription("Proxy Server:Port")]
-        public string Proxy { get; set; }
-
-
-        [UserConfigured]
-        [UserConfiguredDefault("http://127.0.0.1;http://localhost;")]
-        [UserConfiguredDescription("Set multiple By Pass Proxy URLs separated with ';'|| By Pass Proxy works only when Proxy URL is mentioned")]
-        public string ByPassProxy { get; set; }
-
 
         [UserConfigured]
         [UserConfiguredDescription("Proxy Auto Config Url")]
@@ -188,17 +209,12 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Auto Detect Proxy Setting?")]
         public bool AutoDetect { get; set; }
-
+              
         [UserConfigured]
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Path to extension to be enabled")]
         public string ExtensionPath { get; set; }
         // Note: ExtensionPath is a semi-colon delimited string containing one or more extension paths
-
-        [UserConfigured]
-        [UserConfiguredDefault("true")]
-        [UserConfiguredDescription("Disable Chrome Extension. This feature is not available anymore")]
-        public bool DisableExtension { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("true")]
@@ -227,17 +243,12 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
-        public bool HeadlessBrowserMode { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Set \"true\" to Launch the Browser minimized")]
         public bool BrowserMinimized { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("3")]
-        [UserConfiguredDescription("Set the minimum log level to read the console logs from the browser console. Valid values are from 0 to 4: All = 0, Debug = 1, Info = 2, Warning = 3, Severe = 4")]
+        [UserConfiguredDescription("Set the minimum log level to read the console logs from the browser console.")]
         public string BrowserLogLevel { get; set; }
 
         [UserConfigured]
@@ -245,12 +256,7 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
         public bool OpenIEModeInEdge { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDefault("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")]
-        [UserConfiguredDescription("Only if OpenEdgeInIEMode is set to true: location of Edge.exe file in local computer")]
-        public string EdgeExcutablePath { get; set; }
-        //"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
-
+        
         [UserConfigured]
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Provide the path to the browser executable.")]
@@ -284,7 +290,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Only for Chrome, Firefox & Edge | Full path for the User Profile folder")]
+        [UserConfiguredDescription("Only for Chrome, Firefox, Edge and Brave | Full path for the User Profile folder")]
         public string UserProfileFolderPath { get; set; }
 
         [UserConfigured]
@@ -309,7 +315,7 @@ namespace GingerCore.Drivers
         public int PageLoadTimeOut { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("normal")]
+        [UserConfiguredDefault("Normal")]
         [UserConfiguredDescription("Defines the current session’s page loading strategy.you can change from the default parameter of normal to eager or none")]
         public string PageLoadStrategy { get; set; }
      
@@ -349,7 +355,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         // Changed the default from ignore to Actual Default suggested by Selenium i.e. dismissAndNotify
-        [UserConfiguredDefault("dismissAndNotify")]
+        [UserConfiguredDefault("DismissAndNotify")]
         [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
         public string UnhandledPromptBehavior { get; set; }
 
@@ -706,7 +712,7 @@ namespace GingerCore.Drivers
                     //checking the windows 32 and 64 bit version exists or not. if not then user can provide the path mannually.
                     case eBrowserType.Brave:
                         ChromeOptions brave_options = new ChromeOptions();
-                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath))
+                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath)&& BrowserExecutablePath.Contains("brave.exe"))
                         {
 
                             brave_options.BinaryLocation = BrowserExecutablePath;
@@ -721,7 +727,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            throw new Exception("The Brave browser is not available in default path. Please install it or provide the valid executable path in BrowserExecutablePath parameter in agent configuration.");
+                            throw new Exception("The Brave browser path is not available in default path. Please install it or provide the valid executable path in 'Browser Executable Path' parameter in agent configuration.");
 
                         }
                         configChromeDriverAndStart(brave_options);
@@ -730,13 +736,31 @@ namespace GingerCore.Drivers
 
                     #endregion
 
+
                     #region EDGE
                     case eBrowserType.Edge:
                         if (OpenIEModeInEdge)
                         {
                             var ieOptions = new InternetExplorerOptions();
                             ieOptions.AttachToEdgeChrome = true;
-                            ieOptions.EdgeExecutablePath = EdgeExcutablePath;
+                            if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath) && BrowserExecutablePath.Contains("msedge.exe"))
+                            {
+                                ieOptions.EdgeExecutablePath = BrowserExecutablePath;
+                            }
+                            else if (File.Exists(EDGE_32BIT_BINARY_PATH))
+                            {
+                                ieOptions.EdgeExecutablePath = EDGE_32BIT_BINARY_PATH;
+                            }
+                            else if (File.Exists(EDGE_64BIT_BINARY_PATH))
+                            {
+                                ieOptions.EdgeExecutablePath = EDGE_64BIT_BINARY_PATH;
+                            }
+                            else
+                            {
+                                throw new Exception("The Edge browser path is not available in default path. Please install it or provide the valid executable path in 'Browser Executable Path' parameter in agent configuration.");
+
+                            }
+
                             SetBrowserLogLevel(ieOptions);
                             SetBrowserVersion(ieOptions);
                             if (EnsureCleanSession == true)
@@ -789,6 +813,10 @@ namespace GingerCore.Drivers
                             SetBrowserVersion(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
+                            if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                            {
+                                EDOpts.AddArgument("--headless=new");
+                            }
                             SetUnhandledPromptBehavior(EDOpts);
                             if (IsUserProfileFolderPathValid())
                             {
@@ -1270,6 +1298,8 @@ namespace GingerCore.Drivers
             if (mProxy == null)
             {
                 return;
+            
+            
             }
 
             var proxy = new Proxy();
@@ -6607,8 +6637,11 @@ namespace GingerCore.Drivers
         {
             IList<string> XPaths = ((HTMLElementInfo)ElementInfo).XPathList;
             ISearchContext tempContext = Driver;
-            int startPointer = XPaths.Count - 1;
-
+            int startPointer=0;
+            if (XPaths != null)
+            {
+                startPointer = XPaths.Count - 1;
+            }
             IWebElement e = null;
 
             if (startPointer > 0)
@@ -10736,21 +10769,10 @@ namespace GingerCore.Drivers
 
         private void SetBrowserLogLevel(DriverOptions options)
         {
-            if (!BrowserLogLevel.Equals("3"))
+            int numberLogLevel = (int)Enum.Parse<eBrowserLogLevel>(BrowserLogLevel);
+            if (!numberLogLevel.Equals(3))
             {
-                int numberLogLevel;
-                if (int.TryParse(BrowserLogLevel, out numberLogLevel))
-                {
-                    if (numberLogLevel >= 0 && numberLogLevel <= 4)
-                    {
-                        options.SetLoggingPreference(OpenQA.Selenium.LogType.Browser, (OpenQA.Selenium.LogLevel)numberLogLevel);
-                    }
-                    else throw new Exception("Please enter a valid number in the BrowserLogLevel parameter in Agent Configuration");
-                }
-                else
-                {
-                    throw new Exception("Please enter a valid value in the BrowserLogLevel parameter in Agent Configurations");
-                }
+                options.SetLoggingPreference(OpenQA.Selenium.LogType.Browser, (OpenQA.Selenium.LogLevel)numberLogLevel);
             }
         }
 

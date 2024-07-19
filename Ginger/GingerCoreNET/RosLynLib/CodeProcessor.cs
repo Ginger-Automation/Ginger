@@ -19,14 +19,17 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.Repository;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using OfficeOpenXml.Drawing.Slicer.Style;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -65,13 +68,19 @@ namespace GingerCoreNET.RosLynLib
                        "((?'Close-Open'})[^{}]*)+" +
                        ")*" +
                        "(?(Open)(?!))";
-            pattern = "{CS({.*}|[^{}]*)*}";
+            Regex CsExppattern = new Regex("{CS Exp({.*}|[^{}]*)*}", RegexOptions.Compiled);
 
 
             Pattern = new Regex(pattern);
             Regex Clean = new Regex("{CS(\\s)*Exp(\\s)*=");
+            MatchCollection PatternMatchlist = CsExppattern.Matches(Expression);
+            if (PatternMatchlist == null || PatternMatchlist.Count == 0)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, Expression + System.Environment.NewLine + " not a valid c# expression to evaluate");
+                return string.Empty;
+            }
 
-            foreach (Match M in Pattern.Matches(Expression))
+            foreach (Match M in PatternMatchlist)
             {
                 string csharpError = "";
                 string match = M.Value;
@@ -82,9 +91,7 @@ namespace GingerCoreNET.RosLynLib
                 string evalresult = GetEvaluteResult(exp, out csharpError);
                 Expression = Expression.Replace(match, evalresult);
             }
-
             return Expression;
-
         }
 
         public static string GetEvaluteResult(string expression, out string error)
@@ -104,6 +111,15 @@ namespace GingerCoreNET.RosLynLib
                 else if (result.GetType() == typeof(Boolean))
                 {
                     evalresult = result.ToString().ToLower();
+                }
+                else if(result.GetType() == typeof(string))
+                {
+                    evalresult = result.ToString();
+                }
+                else if(result.GetType() == typeof(string[]))
+                {
+                    evalresult = string.Join(",", (string[])result);
+                    evalresult = $"[{evalresult}]";
                 }
                 else
                 {
@@ -254,26 +270,40 @@ namespace GingerCoreNET.RosLynLib
         /// <returns></returns>
         public static string GetBogusDataGenerateresult(string Expression)
         {
-            if (!Expression.Contains(@"{MockDataExp"))
+            try
             {
+                if (!Expression.Contains(@"{MockDataExp"))
+                {
+                    return Expression;
+                }
+                Pattern = new Regex("^\\{MockDataExp Fun=.*\\}$", RegexOptions.Compiled, new TimeSpan(0, 0, 5));
+                Regex Clean = new Regex("{MockDataExp(\\s)*Fun(\\s)*=", RegexOptions.Compiled);
+                MatchCollection PatternMatchlist = Pattern.Matches(Expression);
+                if (PatternMatchlist == null || PatternMatchlist.Count == 0)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, Expression + System.Environment.NewLine + " not a valid c# expression to evaluate");
+                    return string.Empty;
+                }
+
+                foreach (Match M in PatternMatchlist)
+                {
+                    string Error = "";
+                    string match = M.Value;
+                    string exp = match;
+                    exp = exp.Replace(Clean.Match(exp).Value, "");
+                    exp = exp.Remove(exp.Length - 1);
+                    string evalresult = GetBogusExpressionEvaluteResult(exp, out Error);
+                    Expression = Expression.Replace(match, evalresult);
+                }
                 return Expression;
             }
-            const string pattern = "{MockDataExp({.*}|[^{}]*)*}";
-            Pattern = new Regex(pattern, RegexOptions.Compiled);
-            Regex Clean = new Regex("{MockDataExp(\\s)*Fun(\\s)*=", RegexOptions.Compiled);
-
-            foreach (Match M in Pattern.Matches(Expression))
+            catch(RegexMatchTimeoutException ex)
             {
-                string Error = "";
-                string match = M.Value;
-                string exp = match;
-                exp = exp.Replace(Clean.Match(exp).Value, "");
-                exp = exp.Remove(exp.Length - 1);
-                string evalresult = GetBogusExpressionEvaluteResult(exp, out Error);
-                Expression = Expression.Replace(match, evalresult);
+                Reporter.ToLog(eLogLevel.ERROR, "Timeout Exception", ex);
+                return string.Empty;
             }
-            return Expression;
         }
+
         /// <summary>
         /// The GetBogusExpressionEvaluteResult function is responsible for evaluating and generating data using Bogus library expressions based on the provided expression. 
         /// It handles different types of expressions related to data generation and returns the evaluated result as a string.
@@ -285,9 +315,9 @@ namespace GingerCoreNET.RosLynLib
         /// <param name="expression"></param>
         /// <param name="error"></param>
         /// <returns></returns>
-        public static string GetBogusExpressionEvaluteResult(string expression, out string error)
+        public static string GetBogusExpressionEvaluteResult(string expression, out string evalresult)
         {
-            error = string.Empty;
+            evalresult = string.Empty;
             try
             {
                 Assembly BogusAssembly = Assembly.Load("Bogus");
@@ -313,7 +343,14 @@ namespace GingerCoreNET.RosLynLib
                                 /// Handles scenarios with special case like Between function have inbuilt function as parameter and constructs expressions accordingly
                                 if (expressionlist[1].Contains("Past") && expressionlist[1].Contains("Future"))
                                 {
-                                    expressionlist[1] = expressionlist[1].Replace(Parameter[0], $"Result.{Parameter[0]}").Replace(Parameter[1], $"Result.{Parameter[1]}");
+                                    if (expressionlist[1].Contains("BetweenTimeOnly"))
+                                    {
+                                        expressionlist[1] = expressionlist[1].Replace(Parameter[0], $"TimeOnly.FromDateTime(Result.{Parameter[0]})").Replace(Parameter[1], $"TimeOnly.FromDateTime(Result.{Parameter[1]})");
+                                    }
+                                    else
+                                    {
+                                        expressionlist[1] = expressionlist[1].Replace(Parameter[0], $"Result.{Parameter[0]}").Replace(Parameter[1], $"Result.{Parameter[1]}");
+                                    }  
                                 }
                                 expression = $"var Result = new Bogus.DataSets.{expressionlist[0]}; return Result.{expressionlist[1]}";
                             }
@@ -335,13 +372,25 @@ namespace GingerCoreNET.RosLynLib
                 }
 
                 object result = CSharpScript.EvaluateAsync(expression, ScriptOptions.Default.WithReferences(BogusAssembly)).Result;
-                return result.ToString();
+                //c# generate True/False for bool.tostring which fails in subsequent expressions
+                if (result == null)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"{expression} evaluation returned null value");
+                }
+                else if (result.GetType() == typeof(int[]))
+                {
+                    evalresult = string.Join(",", (int[])result);
+                }
+                else
+                {
+                    evalresult = result.ToString();
+                }
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, expression + System.Environment.NewLine + " not a valid Bogus data generate expression to evaluate", e);
+                Reporter.ToLog(eLogLevel.ERROR, expression + System.Environment.NewLine + " not a valid Bogus data generate expression to evaluate", e);
             }
-            return error;
+            return evalresult;
         }
     }
 }

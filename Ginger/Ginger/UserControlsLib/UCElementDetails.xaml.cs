@@ -1095,10 +1095,13 @@ namespace Ginger
 
                 (xActUIPageFrame.Content as ControlActionsPage_New).AddActionClicked(sender, e);
 
-                if (POMElementsUpdated && (xAutoSavePOMChkBox.IsChecked == true
-                    || Reporter.ToUser(eUserMsgKey.SavePOMChanges, SelectedPOM.Name) == eUserMsgSelection.Yes))
+                if (xIntegratePOMChkBox.IsChecked==true)
                 {
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(SelectedPOM);
+                    if (POMElementsUpdated && (xAutoSavePOMChkBox.IsChecked == true
+                        || Reporter.ToUser(eUserMsgKey.SavePOMChanges, SelectedPOM.Name) == eUserMsgSelection.Yes))
+                    {
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(SelectedPOM);
+                    }
                 }
             }
         }

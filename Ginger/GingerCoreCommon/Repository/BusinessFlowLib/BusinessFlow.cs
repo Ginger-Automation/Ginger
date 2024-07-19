@@ -152,6 +152,28 @@ namespace GingerCore
             }
         }
 
+        public void StartTimerWithActivities(IEnumerable<Activity> activitiesToStart)
+        {
+            try
+            {
+                StartTimer();
+
+                foreach (Activity activity in activitiesToStart)
+                {
+                    activity.StartTimer();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while starting timer with activities", ex);
+            }
+        }
+
+        public bool IsTimerRunning()
+        {
+            return _stopwatch != null && _stopwatch.IsRunning;
+        }
+
         public void StopTimer()
         {
             if (_stopwatch != null && _stopwatch.IsRunning)
@@ -161,6 +183,31 @@ namespace GingerCore
                 DevelopmentTime = DevelopmentTime.Add(elapsedTime);
                 _stopwatch.Reset();
             }
+        }
+
+        public IEnumerable<Activity> StopTimerWithActivities()
+        {
+            List<Activity> stoppedActivities = [];
+            try
+            {
+                StopTimer();
+
+
+                foreach (Activity activity in Activities)
+                {
+                    if (activity.IsTimerRunning())
+                    {
+                        stoppedActivities.Add(activity);
+                        activity.StopTimer();
+                    }
+                }
+            }
+            catch(Exception ex) 
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while stopping timer with activities", ex);
+            }
+
+            return stoppedActivities;
         }
 
         // Why here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

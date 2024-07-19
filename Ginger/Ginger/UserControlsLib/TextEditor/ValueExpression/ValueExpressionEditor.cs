@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Plugin.Core;
 using Ginger.Actions;
 using Ginger.UserControlsLib.TextEditor.Common;
+using GingerCore;
 using GingerCore.Variables;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -193,6 +194,15 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 }
             }
 
+            if(txt.StartsWith("{MockDataExp Fun="))
+            {
+                Mockdata expParams = GingerCore.ValueExpression.GetMockDataDatasetsFunction(txt);
+                if (expParams != null)
+                {
+                    p = new ValueExpressionMockDataEditorPage(mContext, SelectedContentArgs,expParams.MockDataDatasets, expParams.Function, expParams.Locale, expParams.MockExpression); 
+                }
+            }
+
             if (txt.StartsWith("{EnvURL App="))
             {
                 //TODO: impl get page for Env
@@ -221,17 +231,28 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         public override void UpdateSelectedContent()
         {
-            if (p.GetType() == typeof(ValueExpressionVariableEditorPage))
+            try
             {
-                ((ValueExpressionVariableEditorPage)p).UpdateContent();
+                if (p.GetType() == typeof(ValueExpressionVariableEditorPage))
+                {
+                    ((ValueExpressionVariableEditorPage)p).UpdateContent();
+                }
+                else if (p.GetType() == typeof(ActDataSourcePage))
+                {
+                    ((ActDataSourcePage)p).UpdateContent();
+                }
+                else if (p.GetType() == typeof(ValueExpressionFlowDetailsEditorPage))
+                {
+                    ((ValueExpressionFlowDetailsEditorPage)p).UpdateContent();
+                }
+                else if (p.GetType() == typeof(ValueExpressionMockDataEditorPage))
+                {
+                    ((ValueExpressionMockDataEditorPage)p).UpdateContent();
+                }
             }
-            else if (p.GetType() == typeof(ActDataSourcePage))
+            catch (Exception ex)
             {
-                ((ActDataSourcePage)p).UpdateContent();
-            }
-            else if (p.GetType() == typeof(ValueExpressionFlowDetailsEditorPage))
-            {
-                ((ValueExpressionFlowDetailsEditorPage)p).UpdateContent();
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to update the selected content", ex);
             }
         }
 

@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
@@ -44,10 +62,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         };
 
         [UserConfigured]
+        [UserConfiguredDescription("Proxy Server:Port")]
+        public string? Proxy { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("http://127.0.0.1;http://localhost;")]
+        [UserConfiguredDescription("Set multiple By Pass Proxy URLs separated with ';'|| By Pass Proxy works only when Proxy URL is mentioned")]
+        public string? ByPassProxy { get; set; }
+
+        [UserConfigured]
         [UserConfiguredEnumType(typeof(WebBrowserType))]
         [UserConfiguredDefault("Chrome")]
         [UserConfiguredDescription("Browser Type")]
         public virtual WebBrowserType BrowserType { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
+        public bool HeadlessBrowserMode { get; set; }
 
         public override ePlatformType Platform => ePlatformType.Web;
 

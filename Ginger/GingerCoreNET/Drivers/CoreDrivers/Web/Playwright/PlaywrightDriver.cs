@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.RunLib;
 using GingerCore;
 using GingerCore.Actions;
@@ -24,20 +42,13 @@ using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
+using System.Threading;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     public sealed class PlaywrightDriver : GingerWebDriver, IVirtualDriver, IIncompleteDriver, IWindowExplorer, IXPath, IVisualTestingDriver
     {
-        [UserConfigured]
-        [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Set \"true\" to run the browser in background (headless mode) for faster Execution")]
-        public bool HeadlessBrowserMode { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDescription("Proxy Server:Port")]
-        public string? Proxy { get; set; }
 
         private PlaywrightBrowser? _browser;
         private IBrowserElement? _lastHighlightedElement;
@@ -73,8 +84,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 options.Proxy = new Proxy()
                 {
-                    Server = Proxy
+                    Server = Proxy,
                 };
+
+                if (!string.IsNullOrEmpty(ByPassProxy))
+                {
+                    options.Proxy.Bypass = string.Join(',', ByPassProxy.Split(';'));
+                }
             }
 
             return options;
@@ -146,7 +162,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         actGotoURLHandler.HandleAsync().Wait();
                         break;
                     default:
-                        act.Error = $"Run Action Failed due to unrecognized action type - {act.GetType().Name}";
+                        act.Error = $"This Action is not supported for Playwright driver";
                         break;
                 }
             }).Wait();
@@ -557,7 +573,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     return null!;
                 }
 
-                string screenshot = Convert.ToBase64String(await browserElement.ScreenshotAsync());
+                string? screenshot = null;
+                try
+                {
+                    screenshot = Convert.ToBase64String(await browserElement.ScreenshotAsync());
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "error while taking element screenshot", ex);
+                }
+
                 string tag = await browserElement.TagNameAsync();
                 string xPath = string.Empty;
                 if (string.Equals(tag, "iframe", StringComparison.OrdinalIgnoreCase) && string.Equals(tag, "frame", StringComparison.OrdinalIgnoreCase))
@@ -595,21 +620,51 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             await currentTab.SwitchToMainFrameAsync();
             string pageSource = await _browser.CurrentWindow.CurrentTab.PageSourceAsync();
 
-
-            POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
-            IEnumerable<HTMLElementInfo> htmlElements = await pomLearner.LearnElementsAsync();
-
-            if (foundElementsList != null)
+            if (foundElementsList == null)
             {
-                foundElementsList.AddRange(htmlElements.Cast<ElementInfo>());
+                foundElementsList = [];
             }
 
-            return new(htmlElements);
+            if (_browser.CurrentWindow.CurrentTab is PlaywrightBrowserTab playwrightBrowserTab)
+            {
+                await playwrightBrowserTab.BringToFrontAsync();
+            }
+
+            POMLearner pomLearner = POMLearner.Create(pageSource, new PlaywrightBrowserElementProvider(currentTab), pomSetting, xpathImpl: this);
+            CancellationTokenSource cancellationTokenSource = new();
+            Task learnElementsTask = pomLearner.LearnElementsAsync(foundElementsList, cancellationTokenSource.Token);
+            _ = Task.Run(() =>
+            {
+                while (!StopProcess && !learnElementsTask.IsCompleted) ;
+
+                if (StopProcess)
+                {
+                    cancellationTokenSource.Cancel();
+                }
+            });
+            await learnElementsTask;
+
+            //below part should ideally be handled in POMLearner itself but, when we add the learned element to the observable list, it sets the active status as true again
+            foreach (ElementInfo element in foundElementsList)
+            {
+                HTMLElementInfo htmlElementInfo = (HTMLElementInfo)element;
+                if (htmlElementInfo.FriendlyLocators.Count == 0 && htmlElementInfo.Locators.Count >= 1)
+                {
+                    ElementLocator? byTagNameLocator = htmlElementInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByTagName);
+                    if (byTagNameLocator != null)
+                    {
+                        byTagNameLocator.Active = false;
+                    }
+                }
+            }
+
+            return new(foundElementsList);
         }
 
         private sealed class PlaywrightBrowserElementProvider : POMLearner.IBrowserElementProvider
         {
             private readonly IBrowserTab _browserTab;
+            private int _shadowDOMDepth = 0;
 
             internal PlaywrightBrowserElementProvider(IBrowserTab browserTab)
             {
@@ -618,7 +673,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             public async Task<IBrowserElement?> GetElementAsync(eLocateBy locateBy, string locateValue)
             {
-                return (await _browserTab.GetElementsAsync(locateBy, locateValue)).FirstOrDefault();
+                try
+                {
+                    if (_shadowDOMDepth > 0 && locateBy == eLocateBy.ByXPath)
+                    {
+                        string cssLocateValue = new ShadowDOM().ConvertXPathToCssSelector(locateValue);
+                        return (await _browserTab.GetElementsAsync(eLocateBy.ByCSS, cssLocateValue)).FirstOrDefault();
+                    }
+                    return (await _browserTab.GetElementsAsync(locateBy, locateValue)).FirstOrDefault();
+                }
+                catch(Exception)
+                {
+                    return null;
+                }
             }
 
             public async Task OnFrameEnterAsync(HTMLElementInfo frameElement)
@@ -641,11 +708,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             public Task OnShadowDOMEnterAsync(HTMLElementInfo shadowHostElement)
             {
+                _shadowDOMDepth++;
                 return Task.CompletedTask;
             }
 
             public Task OnShadowDOMExitAsync(HTMLElementInfo shadowHostElement)
             {
+                _shadowDOMDepth--;
                 return Task.CompletedTask;
             }
         }
@@ -945,8 +1014,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }).Wait();
 
             //AddRange needs to be called outside of the background thread, since its CollectionChanged event modifies some UI elements
+            htmlElementInfo.Properties.Clear();
             htmlElementInfo.Properties.AddRange(properties);
+            htmlElementInfo.Locators.Clear();
             htmlElementInfo.Locators.AddRange(locators);
+
+            if (htmlElementInfo.FriendlyLocators.Count == 0 && htmlElementInfo.Locators.Count >= 1)
+            {
+                ElementLocator? byTagNameLocator = htmlElementInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByTagName);
+                if (byTagNameLocator != null)
+                {
+                    byTagNameLocator.Active = false;
+                }
+            }
 
             return htmlElementInfo;
         }

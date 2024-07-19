@@ -35,9 +35,27 @@ namespace Amdocs.Ginger.Repository
     }
 
     public class ApplicationPOMModel : ApplicationModelBase
-    {       
+    {
         public ApplicationPOMModel()
         {
+            this.OnDirtyStatusChanged += POM_OnDirtyStatusChanged;
+        }
+        private void POM_OnDirtyStatusChanged(object sender, EventArgs e)
+        {
+            if (DirtyStatus == eDirtyStatus.Modified)
+            {
+                this.StartTimer();
+            }
+        }
+        /// <summary>
+        /// This method is called before saving the ApplicationPOMModel object.
+        /// It stops the timer and returns false.
+        /// </summary>
+        /// <returns>False</returns>
+        public override bool PreSaveHandler()
+        {
+            this.StopTimer();
+            return false;
         }
 
         public const int cLearnScreenWidth = 1000;
@@ -78,7 +96,7 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                if(mDevelopmentTime != value)
+                if (mDevelopmentTime != value)
                 {
                     mDevelopmentTime = value;
                 }
@@ -100,7 +118,10 @@ namespace Amdocs.Ginger.Repository
                 _stopwatch.Restart();
             }
         }
-
+        public bool IsTimerRunning()
+        {
+            return _stopwatch != null && _stopwatch.IsRunning;
+        }
         public void StopTimer()
         {
             if (_stopwatch != null && _stopwatch.IsRunning)

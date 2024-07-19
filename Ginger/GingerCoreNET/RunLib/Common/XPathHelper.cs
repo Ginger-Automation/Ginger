@@ -433,7 +433,7 @@ namespace GingerCore.Drivers.Common
             List<object> elemsList = null;
             try
             {
-                while (!relxpath.Contains("//") && elemInfo.ElementObject != null)
+                while (!relxpath.Contains("//") && elemInfo?.ElementObject != null)
                 {
                     string id = mDriver.GetElementID(elemInfo);
                     if (!string.IsNullOrEmpty(id))
