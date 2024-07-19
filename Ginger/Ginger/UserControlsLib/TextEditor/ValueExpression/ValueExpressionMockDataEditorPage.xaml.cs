@@ -176,9 +176,9 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
                 Type type when type == typeof(string) => parameter.Name switch
                 {
-                    "format" => "'12#34'",
+                    "format" => "\"12#34\"",
                     "symbol" => "'#'",
-                    _ => "'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"
+                    _ => "\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\""
                 },
 
                 _ => GetDefaultForType(parameterType)
@@ -261,6 +261,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             }
             else
             {
+                
                 if (isWithinDataset)
                 {
                     resultText += GenerateResultText(selectedItem, "Bogus", isWithinDataset, locale);
@@ -287,7 +288,11 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             List<string> methodList = GetMethodsOfType(objType);
             string methodCall = methodList.FirstOrDefault();
 
-            if (locale == null)
+            if (string.IsNullOrEmpty(locale))
+            {
+                locale = "en";
+            }
+            if (selectedItem is "Randomizer" or "Finance")
             {
                 return "{MockDataExp Fun=" + selectedItem + "()." + methodCall + ";}";
             }
