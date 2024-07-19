@@ -32,10 +32,10 @@ on:
                 description: "Add Certificate"
                 type: choice
                 required: true
-                default: 'false'
+                default: 'No'
                 options:
-                  - 'true'
-                  - 'false'
+                  - 'Yes'
+                  - 'No'
 jobs:
     Create-version-Number:
         runs-on: ubuntu-latest
