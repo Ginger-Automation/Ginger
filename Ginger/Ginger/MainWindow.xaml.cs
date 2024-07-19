@@ -144,10 +144,15 @@ namespace Ginger
                             }
                         }
                     }
-                    else if (modifiedFile is GingerCore.Activity activity)
+                    else if (modifiedFile is GingerCore.Activity activity && activity.IsTimerRunning())
                     {
                         activity.StopTimer();
                         _itemsWithPausedDevelopmentTimeTracker.Add(activity);
+                    }
+                    else if (modifiedFile is ApplicationPOMModel applicationPOMModel && applicationPOMModel.IsTimerRunning())
+                    {
+                        applicationPOMModel.StopTimer();
+                        _itemsWithPausedDevelopmentTimeTracker.Add(applicationPOMModel);
                     }
                 }
             }
@@ -173,9 +178,13 @@ namespace Ginger
                     {
                         bf.StartTimer();
                     }
-                    if (item is GingerCore.Activity activity)
+                    else if (item is GingerCore.Activity activity)
                     {
                         activity.StartTimer();
+                    }
+                    else if (item is ApplicationPOMModel applicationPOMModel)
+                    {
+                        applicationPOMModel.StartTimer();
                     }
                 }
             }
@@ -202,6 +211,7 @@ namespace Ginger
             VersionAndNewsPage versionAndNewsPage = new VersionAndNewsPage();
             versionAndNewsPage.ShowAsWindow();
         }
+
 
         public void Init()
         {

@@ -118,7 +118,10 @@ namespace Amdocs.Ginger.Repository
                 _stopwatch.Restart();
             }
         }
-
+        public bool IsTimerRunning()
+        {
+            return _stopwatch != null && _stopwatch.IsRunning;
+        }
         public void StopTimer()
         {
             if (_stopwatch != null && _stopwatch.IsRunning)
