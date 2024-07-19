@@ -30,7 +30,7 @@ on:
                # default: '1'
             SSLCert:
                 description: "Add Certificate"
-                type: boolens
+                type: choice
                 required: true
                 default: 'false'
                 options:
