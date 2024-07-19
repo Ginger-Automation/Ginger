@@ -84,6 +84,8 @@ namespace Ginger
         public MainWindow()
         {
             InitializeComponent();
+            StateChanged -= MainWindow_StateChanged;
+            StateChanged += MainWindow_StateChanged;
             mRestartApplication = false;
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
@@ -93,6 +95,88 @@ namespace Ginger
             DriverWindowHandler.Init();
 
             GingerCore.General.DoEvents();
+        }
+
+        private void MainWindow_StateChanged(object? sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                OnWindowMinimized();
+            }
+            else
+            {
+                OnWindowRestore();
+            }
+        }
+
+        private List<RepositoryItemBase> _itemsWithPausedDevelopmentTimeTracker = [];
+
+        private void OnWindowMinimized()
+        {
+            if (WorkSpace.Instance == null ||
+                WorkSpace.Instance.SolutionRepository == null ||
+                WorkSpace.Instance.SolutionRepository.ModifiedFiles == null)
+            {
+                return;
+            }
+
+            try
+            {
+                _itemsWithPausedDevelopmentTimeTracker.Clear();
+                List<RepositoryItemBase> modifiedFiles = new(WorkSpace.Instance.SolutionRepository.ModifiedFiles);
+
+                foreach (RepositoryItemBase modifiedFile in modifiedFiles)
+                {
+                    if (modifiedFile is BusinessFlow bf && bf.IsTimerRunning())
+                    {
+                        bf.StopTimer();
+                        _itemsWithPausedDevelopmentTimeTracker.Add(bf);
+
+                        foreach (GingerCore.Activity bfActivity in bf.Activities)
+                        {
+                            if (bfActivity.IsTimerRunning())
+                            {
+                                bfActivity.StopTimer();
+                                _itemsWithPausedDevelopmentTimeTracker.Add(bfActivity);
+                            }
+                        }
+                    }
+                    else if (modifiedFile is GingerCore.Activity activity)
+                    {
+                        activity.StopTimer();
+                        _itemsWithPausedDevelopmentTimeTracker.Add(activity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while resuming development tracker", ex);
+            }
+        }
+
+        private void OnWindowRestore()
+        {
+            try
+            {
+                List<RepositoryItemBase> items = new(_itemsWithPausedDevelopmentTimeTracker);
+                _itemsWithPausedDevelopmentTimeTracker.Clear();
+
+                foreach (RepositoryItemBase item in items)
+                {
+                    if (item is BusinessFlow bf)
+                    {
+                        bf.StartTimer();
+                    }
+                    if (item is GingerCore.Activity activity)
+                    {
+                        activity.StartTimer();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while resuming development tracker", ex);
+            }
         }
 
         private void TelemetryEventHandler(object sender, Telemetry.TelemetryEventArgs e)
