@@ -66,6 +66,8 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using System.Windows.Interop;
+using System.Windows.Threading;
 
 namespace Ginger
 {
