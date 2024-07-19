@@ -121,7 +121,7 @@ namespace Ginger.ALM.Repository
                     //ask user if want to continute
                     if (businessFlow.ALMTestSetLevel == "RunSet")
                     {
-                        SetTestPlanUploadPathIfEmpty(testPlanUploadPath);
+                        SetTestPlanUploadPathIfEmpty(ref testPlanUploadPath);
                     }
                     else
                     {
@@ -136,7 +136,7 @@ namespace Ginger.ALM.Repository
                         }
                         else
                         {
-                            SetTestPlanUploadPathIfEmpty(testPlanUploadPath);
+                            SetTestPlanUploadPathIfEmpty(ref testPlanUploadPath);
                         }
                     }
                 }
@@ -222,7 +222,7 @@ namespace Ginger.ALM.Repository
             
         }
 
-        void SetTestPlanUploadPathIfEmpty(string testPlanUploadPath)
+        void SetTestPlanUploadPathIfEmpty(ref string testPlanUploadPath)
         {
             try
             {
