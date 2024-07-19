@@ -92,6 +92,7 @@ jobs:
                     rmdir /s /q Ginger-Web-Help
                     
             -   name: Set up certificate
+                if: ${{ github.event.inputs.SSLCert != 'No' }}
                 #shell: cmd
                 #run: |
                   #echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/Certificate_pkcs12.p12
@@ -103,6 +104,7 @@ jobs:
                 shell: bash  
                 
             -   name: Set variables 
+                if: ${{ github.event.inputs.SSLCert != 'No' }}
                 id: variables 
                 run: | 
                  echo "::set-output name=version::${GITHUB_REF#refs/tags/v}" 
@@ -123,12 +125,14 @@ jobs:
                  #echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
             
             -   name: Code signing with Software Trust Manager
+                if: ${{ github.event.inputs.SSLCert != 'No' }}
                 uses: digicert/ssm-code-signing@v0.0.2
             
             
             
     
             -   name: Setup SSM KSP on windows latest 
+                if: ${{ github.event.inputs.SSLCert != 'No' }}
                 run: | 
                  curl -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/keylockertools-windows-x64.msi/download -H "x-api-key:%SM_API_KEY%" -o keylockertools-windows-x64.msi 
                     msiexec /i keylockertools-windows-x64.msi /quiet /qn 
@@ -148,17 +152,20 @@ jobs:
              #       nadeemjazmawe/Sign-action-signtool.exe@v0.1
             #    shell: cmd
               
-            -  name: Certificates Sync       
+            -  name: Certificates Sync     
+               if: ${{ github.event.inputs.SSLCert != 'No' }}
                run: |
                   smctl windows certsync
                shell: cmd
                     
-            - name: Create Signed Directory for dll      
+            - name: Create Signed Directory for dll 
+              if: ${{ github.event.inputs.SSLCert != 'No' }}
               run: |
                  mkdir -p D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\dist
               shell: cmd
               
             -   name: Signing using Signtool dll
+                if: ${{ github.event.inputs.SSLCert != 'No' }}
                 #runs-on: windows-latest
                 #folder: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\'
                 #recursive: true
@@ -228,12 +235,14 @@ jobs:
                 with: 
                     filepath: './Ginger/GingerInstallerScriptGithub.iss'       
 
-            -   name: Create Signed Directory       
+            -   name: Create Signed Directory
+                if: ${{ github.event.inputs.SSLCert != 'No' }}
                 run: |
                  mkdir D:\a\Installers\ginger
                 shell: cmd
                 
-            -   name: Signing using Signtool 
+            -   name: Signing using Signtool
+                if: ${{ github.event.inputs.SSLCert != 'No' }}
                 run: | 
                   # smctl windows certsync --keypair-alias=${{ secrets.KEYPAIR_ALIAS }}
                    copy D:\a\Installers\Ginger.exe D:\a\Installers\ginger\Ginger.exe
@@ -243,6 +252,7 @@ jobs:
              # smctl sign --input "D:\a\Installers\Ginger.exe"
             
             -   name: Signtool verify
+                if: ${{ github.event.inputs.SSLCert != 'No' }}
                 run: |
                    signtool verify /v /pa "D:\a\Installers\ginger\Ginger.exe"
                 shell: cmd
