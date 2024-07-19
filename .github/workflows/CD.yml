@@ -23,11 +23,11 @@ on:
                 type: number 
                 required: true
                 default: '0'
-            SSLCert1:
-                description: Cert
-                type: number 
-                required: true
-                default: '1'
+            #SSLCert1:
+              #  description: Cert
+               # type: number 
+               # required: true
+               # default: '1'
             SSLCert:
                 description: "Add Certificate"
                 type: boolens
