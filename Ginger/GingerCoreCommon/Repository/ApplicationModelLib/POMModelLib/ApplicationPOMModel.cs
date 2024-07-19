@@ -38,8 +38,21 @@ namespace Amdocs.Ginger.Repository
     {       
         public ApplicationPOMModel()
         {
+            this.OnDirtyStatusChanged += POM_OnDirtyStatusChanged;            
         }
-
+        private void POM_OnDirtyStatusChanged(object sender, EventArgs e)
+        {
+           if (DirtyStatus == eDirtyStatus.Modified)
+            {
+                this.StartTimer();
+            }
+        }
+        public override bool PreSaveHandler()
+        {
+            this.StopTimer();
+            return false;
+        }
+     
         public const int cLearnScreenWidth = 1000;
         public const int cLearnScreenHeight = 1000;
         private Stopwatch _stopwatch;

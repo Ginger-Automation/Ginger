@@ -106,8 +106,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             elapsedTime = TimeSpan.Zero;
 
             // Start the timer
-            timer.Start();
-            mWizard.mPomLearnUtils.StartLearningTime();
+            timer.Start();        
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -123,8 +122,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void StopTimer()
         {
             timer.Stop();
-            mWizard.mPomLearnUtils.StopLearningTime();
-        }
+         }
 
         private void BringToFocus()
         {
