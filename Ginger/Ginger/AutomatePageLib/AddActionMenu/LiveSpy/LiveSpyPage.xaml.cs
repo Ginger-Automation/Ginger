@@ -235,48 +235,52 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mWindowExplorerDriver != null && ((AgentOperations)mContext.Agent.AgentOperations).Status == Agent.eStatus.Running)    //((GingerCore.Drivers.DriverBase)mWindowExplorerDriver).IsDriverRunning)
             {
-                ///?? why we have specific driver handleing?
-                //if (xWindowSelectionUC.mWindowExplorerDriver.GetType() == typeof(GingerCore.Drivers.SeleniumDriver) 
-                //&& ((GingerCore.Drivers.SeleniumDriver)xWindowSelectionUC.mWindowExplorerDriver).Platform == ePlatformType.Web)
-                //{
-                //    xWindowSelectionUC.mWindowExplorerDriver.StartSpying();
-                //}
-
-                // Get control info only if control key is pressed
-                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                try
                 {
-                    xStatusTextBlock.Text = "Element been identified, please wait...";
-                    xStatusTextBlock.Foreground = (Brush)FindResource("$RunningStatusColor");
-                    GingerCore.General.DoEvents();
-                    mSpyElement = mWindowExplorerDriver.GetControlFromMousePosition();
-                                        
-                    if (mSpyElement != null)
+                    // Get control info only if control key is pressed
+                    if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                     {
-                        mWindowExplorerDriver.UnHighLightElements();
-                        mSpyElement.WindowExplorer = mWindowExplorerDriver;
-                        xWindowSelectionUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
-                        xStatusTextBlock.Text = "Element was identified, see details below.";//string.Format("The element '{0}' was identified", mSpyElement.ElementName);                    
-                        xStatusTextBlock.Foreground = (Brush)FindResource("$PassedStatusColor");
+                        xStatusTextBlock.Text = "Element been identified, please wait...";
+                        xStatusTextBlock.Foreground = (Brush)FindResource("$RunningStatusColor");
                         GingerCore.General.DoEvents();
-                        mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
-                        mWindowExplorerDriver.HighLightElement(mSpyElement);
-                        xUCElementDetails.SelectedElement = mSpyElement;
-                        mSpyElement.SetLocatorsAndPropertiesCategory(((DriverBase)mWindowExplorerDriver).PomCategory);
-                        //update screenshot
-                        BitmapSource source = null;
-                        if (mSpyElement.ScreenShotImage != null)
+                        mSpyElement = mWindowExplorerDriver.GetControlFromMousePosition();
+
+                        if (mSpyElement != null)
                         {
-                            source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSpyElement.ScreenShotImage.ToString()));
+                            mWindowExplorerDriver.UnHighLightElements();
+                            mSpyElement.WindowExplorer = mWindowExplorerDriver;
+                            xWindowSelectionUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
+                            xStatusTextBlock.Text = "Element was identified, see details below.";//string.Format("The element '{0}' was identified", mSpyElement.ElementName);                    
+                            xStatusTextBlock.Foreground = (Brush)FindResource("$PassedStatusColor");
+                            GingerCore.General.DoEvents();
+                            mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
+                            mWindowExplorerDriver.HighLightElement(mSpyElement);
+                            xUCElementDetails.SelectedElement = mSpyElement;
+                            mSpyElement.SetLocatorsAndPropertiesCategory(((DriverBase)mWindowExplorerDriver).PomCategory);
+                            //update screenshot
+                            BitmapSource source = null;
+                            if (mSpyElement.ScreenShotImage != null)
+                            {
+                                source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSpyElement.ScreenShotImage.ToString()));
+                            }
+                            xUCElementDetails.xElementScreenShotFrameTop.ClearAndSetContent(new ScreenShotViewPage(mSpyElement?.ElementName, source, false));
                         }
-                        xUCElementDetails.xElementScreenShotFrameTop.ClearAndSetContent(new ScreenShotViewPage(mSpyElement?.ElementName, source, false));
+                        else
+                        {
+                            xUCElementDetails.SelectedElement = null;
+                            xStatusTextBlock.Text = "Failed to identify the element.";
+                            xStatusTextBlock.Foreground = (Brush)FindResource("$FailedStatusColor");
+                            GingerCore.General.DoEvents();
+                        }
                     }
-                    else
-                    {
-                        xUCElementDetails.SelectedElement = null;
-                        xStatusTextBlock.Text = "Failed to identify the element.";
-                        xStatusTextBlock.Foreground = (Brush)FindResource("$FailedStatusColor");
-                        GingerCore.General.DoEvents();
-                    }
+                }
+                catch (Exception ex)
+                {
+                    xUCElementDetails.SelectedElement = null;
+                    xStatusTextBlock.Text = "Failed to identify the element.";
+                    xStatusTextBlock.Foreground = (Brush)FindResource("$FailedStatusColor");
+                    GingerCore.General.DoEvents();
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to spy element.", ex);
                 }
             }
             else
