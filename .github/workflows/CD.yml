@@ -23,6 +23,14 @@ on:
                 type: number 
                 required: true
                 default: '0'
+            SSLCert:
+                description: "Add Certificate"
+                type: choice
+                required: true
+                default: 'No'
+                options:
+                  - 'Yes'
+                  - 'No'
 jobs:
     Create-version-Number:
         runs-on: ubuntu-latest
