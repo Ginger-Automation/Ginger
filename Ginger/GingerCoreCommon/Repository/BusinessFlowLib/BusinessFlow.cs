@@ -154,11 +154,18 @@ namespace GingerCore
 
         public void StartTimerWithActivities(IEnumerable<Activity> activitiesToStart)
         {
-            StartTimer();
-
-            foreach (Activity activity in activitiesToStart)
+            try
             {
-                activity.StartTimer();
+                StartTimer();
+
+                foreach (Activity activity in activitiesToStart)
+                {
+                    activity.StartTimer();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while starting timer with activities", ex);
             }
         }
 
@@ -180,17 +187,24 @@ namespace GingerCore
 
         public IEnumerable<Activity> StopTimerWithActivities()
         {
-            StopTimer();
-
             List<Activity> stoppedActivities = [];
-
-            foreach (Activity activity in Activities)
+            try
             {
-                if (activity.IsTimerRunning())
+                StopTimer();
+
+
+                foreach (Activity activity in Activities)
                 {
-                    stoppedActivities.Add(activity);
-                    activity.StopTimer();
+                    if (activity.IsTimerRunning())
+                    {
+                        stoppedActivities.Add(activity);
+                        activity.StopTimer();
+                    }
                 }
+            }
+            catch(Exception ex) 
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while stopping timer with activities", ex);
             }
 
             return stoppedActivities;

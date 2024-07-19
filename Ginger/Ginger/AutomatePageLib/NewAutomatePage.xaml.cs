@@ -1257,28 +1257,42 @@ namespace GingerWPF.BusinessFlowsLib
         {
             List<RepositoryItemBase> itemsWithTimerRunning = [];
 
-            if (mBusinessFlow.IsTimerRunning())
+            try
             {
-                itemsWithTimerRunning.Add(mBusinessFlow);
-                mBusinessFlow.StopTimer();
+                if (mBusinessFlow.IsTimerRunning())
+                {
+                    itemsWithTimerRunning.Add(mBusinessFlow);
+                    mBusinessFlow.StopTimer();
+                }
+                itemsWithTimerRunning.AddRange(mBusinessFlow.StopTimerWithActivities());
             }
-            itemsWithTimerRunning.AddRange(mBusinessFlow.StopTimerWithActivities());
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while pausing development time tracker for business flow and activities", ex);
+            }            
 
             return itemsWithTimerRunning;
         }
 
         private void ResumeBusinessFlowAndActivitiesDevelopmentTimeTracking(IEnumerable<RepositoryItemBase> items)
         {
-            foreach (RepositoryItemBase item in items)
+            try
             {
-                if (item is BusinessFlow bf)
+                foreach (RepositoryItemBase item in items)
                 {
-                    bf.StartTimer();
+                    if (item is BusinessFlow bf)
+                    {
+                        bf.StartTimer();
+                    }
+                    else if (item is Activity activity)
+                    {
+                        activity.StartTimer();
+                    }
                 }
-                else if (item is Activity activity)
-                {
-                    activity.StartTimer();
-                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while pausing development time tracker for business flow and activities", ex);
             }
         }
 
