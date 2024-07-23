@@ -161,6 +161,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         ActGotoURLHandler actGotoURLHandler = new(actGotoURL, _browser);
                         actGotoURLHandler.HandleAsync().Wait();
                         break;
+                    case ActVisualTesting actVisualTesting:
+                        actVisualTesting.Execute(this);
+                        break;
                     default:
                         act.Error = $"This Action is not supported for Playwright driver";
                         break;
@@ -220,6 +223,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return isLocatorSupported && isOperationSupported;
             }
             else if (act is ActScreenShot)
+            {
+                return true;
+            }
+            else if (act is ActVisualTesting)
             {
                 return true;
             }
@@ -731,13 +738,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 await SwitchToFrameOfElementAsync(elementInfo);
                 string xpath = GenerateXPathFromHTMLElementInfo(htmlElementInfo);
-                IEnumerable<IBrowserElement> browserElements = await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByXPath, xpath);
+                string childrenXPath = GenerateChildrenXPath(xpath);
+                IEnumerable<IBrowserElement> browserElements = await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByXPath, childrenXPath);
                 List<HTMLElementInfo> htmlElements = [];
                 foreach (IBrowserElement browserElement in browserElements)
                 {
                     HTMLElementInfo newHtmlElement = await CreateHtmlElementAsync(browserElement);
 
-                    if (string.IsNullOrEmpty(newHtmlElement.ID))
+                    if (string.IsNullOrEmpty(newHtmlElement.ID) && htmlElementInfo.HTMLElementObject != null)
                     {
                         newHtmlElement.ID = htmlElementInfo.HTMLElementObject.Id;
                     }
@@ -765,6 +773,27 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
                 return htmlElements.Cast<ElementInfo>().ToList();
             }).Result;
+        }
+
+        private string GenerateChildrenXPath(string parentXPath)
+        {
+            string[] parentXPathSegments = parentXPath.Split("/", StringSplitOptions.RemoveEmptyEntries);
+            string elementType = parentXPathSegments[^1];
+
+            int index = elementType.IndexOf("[");
+            if (index != -1)
+            {
+                elementType = elementType.Substring(0, index);
+            }
+
+            if (elementType == "iframe" || elementType == "frame")
+            {
+                return "/html/*";
+            }
+            else
+            {
+                return parentXPath + "/*";
+            }
         }
 
         public ObservableList<ControlProperty> GetElementProperties(ElementInfo elementInfo)
