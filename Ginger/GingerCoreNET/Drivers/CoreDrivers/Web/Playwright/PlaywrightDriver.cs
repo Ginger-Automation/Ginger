@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver)
+            if (act is ActWithoutDriver or ActScreenShot or ActVisualTesting)
             {
                 return true;
             }
@@ -221,14 +221,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     message += $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
                 }
                 return isLocatorSupported && isOperationSupported;
-            }
-            else if (act is ActScreenShot)
-            {
-                return true;
-            }
-            else if (act is ActVisualTesting)
-            {
-                return true;
             }
             else
             {
@@ -780,13 +772,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             string[] parentXPathSegments = parentXPath.Split("/", StringSplitOptions.RemoveEmptyEntries);
             string elementType = parentXPathSegments[^1];
 
-            int index = elementType.IndexOf("[");
+            int index = elementType.IndexOf('[');
             if (index != -1)
             {
-                elementType = elementType.Substring(0, index);
+                elementType = elementType.AsSpan(0, index).ToString();
             }
 
-            if (elementType == "iframe" || elementType == "frame")
+            if (string.Equals(elementType, "iframe") || string.Equals(elementType, "frame"))
             {
                 return "/html/*";
             }
