@@ -162,7 +162,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         actGotoURLHandler.HandleAsync().Wait();
                         break;
                     case ActVisualTesting actVisualTesting:
-                        actVisualTesting.Execute(this);
+                        if (actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.VRT)
+                        {
+                            actVisualTesting.Execute(this);
+                        }
+                        else
+                        {
+                            act.Error = $"{actVisualTesting.VisualTestingAnalyzer} is not supported by Playwright driver, use Selenium driver instead.";
+                        }
                         break;
                     default:
                         act.Error = $"This Action is not supported for Playwright driver";
@@ -175,7 +182,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver or ActScreenShot or ActVisualTesting)
+            if (act is ActWithoutDriver or ActScreenShot)
             {
                 return true;
             }
@@ -221,6 +228,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     message += $"'{act.ActionType} - {operationName}' is not supported by Playwright driver, use Selenium driver instead.";
                 }
                 return isLocatorSupported && isOperationSupported;
+            }
+            else if (act is ActVisualTesting actVisualTesting)
+            {
+                message = $"{actVisualTesting.VisualTestingAnalyzer} is not supported by Playwright driver, use Selenium driver instead.";
+                return actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.VRT;
             }
             else
             {
