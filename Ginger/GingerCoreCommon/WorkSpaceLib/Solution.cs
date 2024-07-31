@@ -51,9 +51,10 @@ namespace Ginger.SolutionGeneral
         public Solution()
         {
             Tags = new ObservableList<RepositoryItemTag>();
+            DefaultExcludeRule = new AccessibilityConfiguration();
         }
 
-        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, LoggerConfiguration, ReportConfiguration }
+        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, LoggerConfiguration, ReportConfiguration, DefaultExcludeRule }
 
         string mName;
         [IsSerializedForLocalRepository]
@@ -77,6 +78,27 @@ namespace Ginger.SolutionGeneral
 
         [IsSerializedForLocalRepository]
         public ObservableList<RepositoryItemTag> Tags;
+
+
+        private AccessibilityConfiguration mDefaultExcludeRule;
+
+        [IsSerializedForLocalRepository]
+        public AccessibilityConfiguration DefaultExcludeRule
+        {
+            get
+            {
+                return mDefaultExcludeRule;
+            }
+            set
+            {
+                if (mDefaultExcludeRule != value)
+                {
+                    mDefaultExcludeRule = value;
+                    OnPropertyChanged(nameof(DefaultExcludeRule));
+                }
+            }
+        }
+
 
         private string mAccount;
 

@@ -55,6 +55,7 @@
     <None Remove="DLLS\SikuliStandardNet.dll" />
     <None Remove="DLLS\ZephyrEntStdSDK.dll" />
     <None Remove="DLLS\Zepyhr_Ent_Repository_Std.dll" />
+    <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\AccessiblityRules.json" />
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporter.css" />
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporterElements.js" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
@@ -201,6 +202,9 @@
     <EmbeddedResource Include="DLLS\GingerHbaseFilter.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\AccessiblityRules.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporterElements.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -245,9 +249,9 @@
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
-    <PackageReference Include="Deque.AxeCore.Commons" Version="4.8.0" />
+    <PackageReference Include="Deque.AxeCore.Commons" Version="4.9.1" />
   
-    <PackageReference Include="Deque.AxeCore.Selenium" Version="4.8.0" />
+    <PackageReference Include="Deque.AxeCore.Selenium" Version="4.9.1" />
   
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />
   

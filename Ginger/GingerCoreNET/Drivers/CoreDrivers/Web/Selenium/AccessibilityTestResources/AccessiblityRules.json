@@ -1,0 +1,748 @@
+{
+  "accessibilityRules": [
+    {
+      "RuleID": "area-alt",
+      "Description": "Ensure <area> elements of image maps have alternate text",
+      "Impact": "Critical",
+      "Tags": "cat.text-alternatives, wcag2a, wcag244, wcag412, section508, section508.22.a, TTv5, TT6.a, EN-301-549, EN-9.2.4.4, EN-9.4.1.2, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "c487ae"
+    },
+    {
+      "RuleID": "aria-allowed-attr",
+      "Description": "Ensure an element's role supports its ARIA attributes",
+      "Impact": "Critical",
+      "Tags": "cat.aria, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "5c01ea"
+    },
+    {
+      "RuleID": "aria-braille-equivalent",
+      "Description": "Ensure aria-braillelabel and aria-brailleroledescription have a non-braille equivalent",
+      "Impact": "Serious",
+      "Tags": "cat.aria, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "aria-command-name",
+      "Description": "Ensure every ARIA button, link and menuitem has an accessible name",
+      "Impact": "Serious",
+      "Tags": "cat.aria, wcag2a, wcag412, TTv5, TT6.a, EN-301-549, EN-9.4.1.2, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "97a4e1"
+    },
+    {
+      "RuleID": "summary-name",
+      "Description": "Ensure summary elements have discernible text",
+      "Impact": "Serious",
+      "Tags": "cat.name-role-value, wcag2a, wcag412, section508, section508.22.a, TTv5, TT6.a, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "aria-conditional-attr",
+      "Description": "Ensure ARIA attributes are used as described in the specification of the element's role",
+      "Impact": "Serious",
+      "Tags": "cat.aria, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure",
+      "ACT Rules": "5c01ea"
+    },
+    {
+      "RuleID": "aria-deprecated-role",
+      "Description": "Ensure elements do not use deprecated roles",
+      "Impact": "Minor",
+      "Tags": "cat.aria, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure",
+      "ACT Rules": "674b10"
+    },
+    {
+      "RuleID": "aria-hidden-body",
+      "Description": "Ensure aria-hidden=\"\"true\"\" is not present on the document body.",
+      "Impact": "Critical",
+      "Tags": "cat.aria, wcag2a, wcag131, wcag412, EN-301-549, EN-9.1.3.1, EN-9.4.1.2",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "aria-hidden-focus",
+      "Description": "Ensure aria-hidden elements are not focusable nor contain focusable elements",
+      "Impact": "Serious",
+      "Tags": "cat.name-role-value, wcag2a, wcag412, TTv5, TT6.a, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "6cfa84"
+    },
+    {
+      "RuleID": "aria-input-field-name",
+      "Description": "Ensure every ARIA input field has an accessible name",
+      "Impact": "Serious",
+      "Tags": "cat.aria, wcag2a, wcag412, TTv5, TT5.c, EN-301-549, EN-9.4.1.2, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "e086e5"
+    },
+    {
+      "RuleID": "aria-meter-name",
+      "Description": "Ensure every ARIA meter node has an accessible name",
+      "Impact": "Serious",
+      "Tags": "cat.aria, wcag2a, wcag111, EN-301-549, EN-9.1.1.1",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "aria-progressbar-name",
+      "Description": "Ensure every ARIA progressbar node has an accessible name",
+      "Impact": "Serious",
+      "Tags": "cat.aria, wcag2a, wcag111, EN-301-549, EN-9.1.1.1",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "aria-prohibited-attr",
+      "Description": "Ensure ARIA attributes are not prohibited for an element's role",
+      "Impact": "Serious",
+      "Tags": "cat.aria, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "5c01ea"
+    },
+    {
+      "RuleID": "aria-required-attr",
+      "Description": "Ensure elements with ARIA roles have all required ARIA attributes",
+      "Impact": "Critical",
+      "Tags": "cat.aria, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure",
+      "ACT Rules": "4e8ab6"
+    },
+    {
+      "RuleID": "aria-required-children",
+      "Description": "Ensure elements with an ARIA role that require child roles contain them",
+      "Impact": "Critical",
+      "Tags": "cat.aria, wcag2a, wcag131, EN-301-549, EN-9.1.3.1",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "bc4a75, ff89c9"
+    },
+    {
+      "RuleID": "aria-required-parent",
+      "Description": "Ensure elements with an ARIA role that require parent roles are contained by them",
+      "Impact": "Critical",
+      "Tags": "cat.aria, wcag2a, wcag131, EN-301-549, EN-9.1.3.1",
+      "Issue Type": "failure",
+      "ACT Rules": "ff89c9"
+    },
+    {
+      "RuleID": "aria-roles",
+      "Description": "Ensure all elements with a role attribute use a valid value",
+      "Impact": "Critical",
+      "Tags": "cat.aria, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure",
+      "ACT Rules": "674b10"
+    },
+    {
+      "RuleID": "aria-toggle-field-name",
+      "Description": "Ensure every ARIA toggle field has an accessible name",
+      "Impact": "Serious",
+      "Tags": "cat.aria, wcag2a, wcag412, TTv5, TT5.c, EN-301-549, EN-9.4.1.2, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "e086e5"
+    },
+    {
+      "RuleID": "aria-tooltip-name",
+      "Description": "Ensure every ARIA tooltip node has an accessible name",
+      "Impact": "Serious",
+      "Tags": "cat.aria, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "aria-valid-attr-value",
+      "Description": "Ensure all ARIA attributes have valid values",
+      "Impact": "Critical",
+      "Tags": "cat.aria, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "6a7281"
+    },
+    {
+      "RuleID": "aria-valid-attr",
+      "Description": "Ensure attributes that begin with aria- are valid ARIA attributes",
+      "Impact": "Critical",
+      "Tags": "cat.aria, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure",
+      "ACT Rules": "5f99a7"
+    },
+    {
+      "RuleID": "blink",
+      "Description": "Ensure <blink> elements are not used",
+      "Impact": "Serious",
+      "Tags": "cat.time-and-media, wcag2a, wcag222, section508, section508.22.j, TTv5, TT2.b, EN-301-549, EN-9.2.2.2",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "button-name",
+      "Description": "Ensure buttons have discernible text",
+      "Impact": "Critical",
+      "Tags": "cat.name-role-value, wcag2a, wcag412, section508, section508.22.a, TTv5, TT6.a, EN-301-549, EN-9.4.1.2, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "97a4e1, m6b1q3"
+    },
+    {
+      "RuleID": "bypass",
+      "Description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+      "Impact": "Serious",
+      "Tags": "cat.keyboard, wcag2a, wcag241, section508, section508.22.o, TTv5, TT9.a, EN-301-549, EN-9.2.4.1",
+      "Issue Type": "needs review",
+      "ACT Rules": "cf77f2, 047fe0, b40fd1, 3e12e1, ye5d6e"
+    },
+    {
+      "RuleID": "color-contrast",
+      "Description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+      "Impact": "Serious",
+      "Tags": "cat.color, wcag2aa, wcag143, TTv5, TT13.c, EN-301-549, EN-9.1.4.3, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "afw4f7, 09o5cg"
+    },
+    {
+      "RuleID": "definition-list",
+      "Description": "Ensure <dl> elements are structured correctly",
+      "Impact": "Serious",
+      "Tags": "cat.structure, wcag2a, wcag131, EN-301-549, EN-9.1.3.1",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "dlitem",
+      "Description": "Ensure <dt> and <dd> elements are contained by a <dl>",
+      "Impact": "Serious",
+      "Tags": "cat.structure, wcag2a, wcag131, EN-301-549, EN-9.1.3.1",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "document-title",
+      "Description": "Ensure each HTML document contains a non-empty <title> element",
+      "Impact": "Serious",
+      "Tags": "cat.text-alternatives, wcag2a, wcag242, TTv5, TT12.a, EN-301-549, EN-9.2.4.2, ACT",
+      "Issue Type": "failure",
+      "ACT Rules": "2779a5"
+    },
+    {
+      "RuleID": "duplicate-id-aria",
+      "Description": "Ensure every id attribute value used in ARIA and in labels is unique",
+      "Impact": "Critical",
+      "Tags": "cat.parsing, wcag2a, wcag412, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "needs review",
+      "ACT Rules": "3ea0c8"
+    },
+    {
+      "RuleID": "form-field-multiple-labels",
+      "Description": "Ensure form field does not have multiple label elements",
+      "Impact": "Moderate",
+      "Tags": "cat.forms, wcag2a, wcag332, TTv5, TT5.c, EN-301-549, EN-9.3.3.2",
+      "Issue Type": "needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "frame-focusable-content",
+      "Description": "Ensure <frame> and <iframe> elements with focusable content do not have tabindex=-1",
+      "Impact": "Serious",
+      "Tags": "cat.keyboard, wcag2a, wcag211, TTv5, TT4.a, EN-301-549, EN-9.2.1.1",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "akn7bn"
+    },
+    {
+      "RuleID": "frame-title-unique",
+      "Description": "Ensure <iframe> and <frame> elements contain a unique title attribute",
+      "Impact": "Serious",
+      "Tags": "cat.text-alternatives, wcag2a, wcag412, TTv5, TT12.d, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "needs review",
+      "ACT Rules": "4b1c6c"
+    },
+    {
+      "RuleID": "frame-title",
+      "Description": "Ensure <iframe> and <frame> elements have an accessible name",
+      "Impact": "Serious",
+      "Tags": "cat.text-alternatives, wcag2a, wcag412, section508, section508.22.i, TTv5, TT12.d, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "cae760"
+    },
+    {
+      "RuleID": "html-has-lang",
+      "Description": "Ensure every HTML document has a lang attribute",
+      "Impact": "Serious",
+      "Tags": "cat.language, wcag2a, wcag311, TTv5, TT11.a, EN-301-549, EN-9.3.1.1, ACT",
+      "Issue Type": "failure",
+      "ACT Rules": "b5c3f8"
+    },
+    {
+      "RuleID": "html-lang-valid",
+      "Description": "Ensure the lang attribute of the <html> element has a valid value",
+      "Impact": "Serious",
+      "Tags": "cat.language, wcag2a, wcag311, TTv5, TT11.a, EN-301-549, EN-9.3.1.1, ACT",
+      "Issue Type": "failure",
+      "ACT Rules": "bf051a"
+    },
+    {
+      "RuleID": "html-xml-lang-mismatch",
+      "Description": "Ensure that HTML elements with both valid lang and xml:lang attributes agree on the base language of the page",
+      "Impact": "Moderate",
+      "Tags": "cat.language, wcag2a, wcag311, EN-301-549, EN-9.3.1.1, ACT",
+      "Issue Type": "failure",
+      "ACT Rules": "5b7ae0"
+    },
+    {
+      "RuleID": "image-alt",
+      "Description": "Ensure <img> elements have alternate text or a role of none or presentation",
+      "Impact": "Critical",
+      "Tags": "cat.text-alternatives, wcag2a, wcag111, section508, section508.22.a, TTv5, TT7.a, TT7.b, EN-301-549, EN-9.1.1.1, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "23a2a8"
+    },
+    {
+      "RuleID": "input-button-name",
+      "Description": "Ensure input buttons have discernible text",
+      "Impact": "Critical",
+      "Tags": "cat.name-role-value, wcag2a, wcag412, section508, section508.22.a, TTv5, TT5.c, EN-301-549, EN-9.4.1.2, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "97a4e1"
+    },
+    {
+      "RuleID": "input-image-alt",
+      "Description": "Ensure <input type=\"\"image\"\"> elements have alternate text",
+      "Impact": "Critical",
+      "Tags": "cat.text-alternatives, wcag2a, wcag111, wcag412, section508, section508.22.a, TTv5, TT7.a, EN-301-549, EN-9.1.1.1, EN-9.4.1.2, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "59796f"
+    },
+    {
+      "RuleID": "label",
+      "Description": "Ensure every form element has a label",
+      "Impact": "Critical",
+      "Tags": "cat.forms, wcag2a, wcag412, section508, section508.22.n, TTv5, TT5.c, EN-301-549, EN-9.4.1.2, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "e086e5"
+    },
+    {
+      "RuleID": "link-in-text-block",
+      "Description": "Ensure links are distinguished from surrounding text in a way that does not rely on color",
+      "Impact": "Serious",
+      "Tags": "cat.color, wcag2a, wcag141, TTv5, TT13.a, EN-301-549, EN-9.1.4.1",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "link-name",
+      "Description": "Ensure links have discernible text",
+      "Impact": "Serious",
+      "Tags": "cat.name-role-value, wcag2a, wcag244, wcag412, section508, section508.22.a, TTv5, TT6.a, EN-301-549, EN-9.2.4.4, EN-9.4.1.2, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "c487ae"
+    },
+    {
+      "RuleID": "list",
+      "Description": "Ensure that lists are structured correctly",
+      "Impact": "Serious",
+      "Tags": "cat.structure, wcag2a, wcag131, EN-301-549, EN-9.1.3.1",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "listitem",
+      "Description": "Ensure <li> elements are used semantically",
+      "Impact": "Serious",
+      "Tags": "cat.structure, wcag2a, wcag131, EN-301-549, EN-9.1.3.1",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "marquee",
+      "Description": "Ensure <marquee> elements are not used",
+      "Impact": "Serious",
+      "Tags": "cat.parsing, wcag2a, wcag222, TTv5, TT2.b, EN-301-549, EN-9.2.2.2",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "meta-refresh",
+      "Description": "Ensure <meta http-equiv=\"\"refresh\"\"> is not used for delayed refresh",
+      "Impact": "Critical",
+      "Tags": "cat.time-and-media, wcag2a, wcag221, TTv5, TT8.a, EN-301-549, EN-9.2.2.1",
+      "Issue Type": "failure",
+      "ACT Rules": "bc659a, bisz58"
+    },
+    {
+      "RuleID": "meta-viewport",
+      "Description": "Ensure <meta name=\"\"viewport\"\"> does not disable text scaling and zooming",
+      "Impact": "Critical",
+      "Tags": "cat.sensory-and-visual-cues, wcag2aa, wcag144, EN-301-549, EN-9.1.4.4, ACT",
+      "Issue Type": "failure",
+      "ACT Rules": "b4f0c3"
+    },
+    {
+      "RuleID": "nested-interactive",
+      "Description": "Ensure interactive controls are not nested as they are not always announced by screen readers or can cause focus problems for assistive technologies",
+      "Impact": "Serious",
+      "Tags": "cat.keyboard, wcag2a, wcag412, TTv5, TT6.a, EN-301-549, EN-9.4.1.2",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "307n5z"
+    },
+    {
+      "RuleID": "no-autoplay-audio",
+      "Description": "Ensure <video> or <audio> elements do not autoplay audio for more than 3 seconds without a control mechanism to stop or mute the audio",
+      "Impact": "Moderate",
+      "Tags": "cat.time-and-media, wcag2a, wcag142, TTv5, TT2.a, EN-301-549, EN-9.1.4.2, ACT",
+      "Issue Type": "needs review",
+      "ACT Rules": "80f0bf"
+    },
+    {
+      "RuleID": "object-alt",
+      "Description": "Ensure <object> elements have alternate text",
+      "Impact": "Serious",
+      "Tags": "cat.text-alternatives, wcag2a, wcag111, section508, section508.22.a, EN-301-549, EN-9.1.1.1",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "8fc3b6"
+    },
+    {
+      "RuleID": "role-img-alt",
+      "Description": "Ensure [role=\"\"img\"\"] elements have alternate text",
+      "Impact": "Serious",
+      "Tags": "cat.text-alternatives, wcag2a, wcag111, section508, section508.22.a, TTv5, TT7.a, EN-301-549, EN-9.1.1.1, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "23a2a8"
+    },
+    {
+      "RuleID": "scrollable-region-focusable",
+      "Description": "Ensure elements that have scrollable content are accessible by keyboard",
+      "Impact": "Serious",
+      "Tags": "cat.keyboard, wcag2a, wcag211, wcag213, TTv5, TT4.a, EN-301-549, EN-9.2.1.1, EN-9.2.1.3",
+      "Issue Type": "failure",
+      "ACT Rules": "0ssw9k"
+    },
+    {
+      "RuleID": "select-name",
+      "Description": "Ensure select element has an accessible name",
+      "Impact": "Critical",
+      "Tags": "cat.forms, wcag2a, wcag412, section508, section508.22.n, TTv5, TT5.c, EN-301-549, EN-9.4.1.2, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "e086e5"
+    },
+    {
+      "RuleID": "server-side-image-map",
+      "Description": "Ensure that server-side image maps are not used",
+      "Impact": "Minor",
+      "Tags": "cat.text-alternatives, wcag2a, wcag211, section508, section508.22.f, TTv5, TT4.a, EN-301-549, EN-9.2.1.1",
+      "Issue Type": "needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "svg-img-alt",
+      "Description": "Ensure <svg> elements with an img, graphics-document or graphics-symbol role have an accessible text",
+      "Impact": "Serious",
+      "Tags": "cat.text-alternatives, wcag2a, wcag111, section508, section508.22.a, TTv5, TT7.a, EN-301-549, EN-9.1.1.1, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "7d6734"
+    },
+    {
+      "RuleID": "td-headers-attr",
+      "Description": "Ensure that each cell in a table that uses the headers attribute refers only to other cells in that table",
+      "Impact": "Serious",
+      "Tags": "cat.tables, wcag2a, wcag131, section508, section508.22.g, TTv5, TT14.b, EN-301-549, EN-9.1.3.1",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "a25f45"
+    },
+    {
+      "RuleID": "th-has-data-cells",
+      "Description": "Ensure that <th> elements and elements with role=columnheader/rowheader have data cells they describe",
+      "Impact": "Serious",
+      "Tags": "cat.tables, wcag2a, wcag131, section508, section508.22.g, TTv5, TT14.b, EN-301-549, EN-9.1.3.1",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "d0f69e"
+    },
+    {
+      "RuleID": "valid-lang",
+      "Description": "Ensure lang attributes have valid values",
+      "Impact": "Serious",
+      "Tags": "cat.language, wcag2aa, wcag312, TTv5, TT11.b, EN-301-549, EN-9.3.1.2, ACT",
+      "Issue Type": "failure",
+      "ACT Rules": "de46e4"
+    },
+    {
+      "RuleID": "video-caption",
+      "Description": "Ensure <video> elements have captions",
+      "Impact": "Critical",
+      "Tags": "cat.text-alternatives, wcag2a, wcag122, section508, section508.22.a, TTv5, TT17.a, EN-301-549, EN-9.1.2.2",
+      "Issue Type": "needs review",
+      "ACT Rules": "eac66b"
+    },
+    {
+      "RuleID": "autocomplete-valid",
+      "Description": "Ensure the autocomplete attribute is correct and suitable for the form field",
+      "Impact": "Serious",
+      "Tags": "cat.forms, wcag21aa, wcag135, EN-301-549, EN-9.1.3.5, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "73f2c2"
+    },
+    {
+      "RuleID": "avoid-inline-spacing",
+      "Description": "Ensure that text spacing set through style attributes can be adjusted with custom stylesheets",
+      "Impact": "Serious",
+      "Tags": "cat.structure, wcag21aa, wcag1412, EN-301-549, EN-9.1.4.12, ACT",
+      "Issue Type": "failure",
+      "ACT Rules": "24afc2, 9e45ec, 78fd32"
+    },
+    {
+      "RuleID": "target-size",
+      "Description": "Ensure touch targets have sufficient size and space",
+      "Impact": "Serious",
+      "Tags": "cat.sensory-and-visual-cues, wcag22aa, wcag258",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "accesskeys",
+      "Description": "Ensure every accesskey attribute value is unique",
+      "Impact": "Serious",
+      "Tags": "cat.keyboard, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "aria-allowed-role",
+      "Description": "Ensure role attribute has an appropriate value for the element",
+      "Impact": "Minor",
+      "Tags": "cat.aria, best-practice",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "aria-dialog-name",
+      "Description": "Ensure every ARIA dialog and alertdialog node has an accessible name",
+      "Impact": "Serious",
+      "Tags": "cat.aria, best-practice",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "aria-text",
+      "Description": "Ensure role=\"\"text\"\" is used on elements with no focusable descendants",
+      "Impact": "Serious",
+      "Tags": "cat.aria, best-practice",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "aria-treeitem-name",
+      "Description": "Ensure every ARIA treeitem node has an accessible name",
+      "Impact": "Serious",
+      "Tags": "cat.aria, best-practice",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "empty-heading",
+      "Description": "Ensure headings have discernible text",
+      "Impact": "Minor",
+      "Tags": "cat.name-role-value, best-practice",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "ffd0e9"
+    },
+    {
+      "RuleID": "empty-table-header",
+      "Description": "Ensure table headers have discernible text",
+      "Impact": "Minor",
+      "Tags": "cat.name-role-value, best-practice",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "frame-tested",
+      "Description": "Ensure <iframe> and <frame> elements contain the axe-core script",
+      "Impact": "Critical",
+      "Tags": "cat.structure, best-practice, review-item",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "heading-order",
+      "Description": "Ensure the order of headings is semantically correct",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "image-redundant-alt",
+      "Description": "Ensure image alternative is not repeated as text",
+      "Impact": "Minor",
+      "Tags": "cat.text-alternatives, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "label-title-only",
+      "Description": "Ensure that every form element has a visible label and is not solely labeled using hidden labels, or the title or aria-describedby attributes",
+      "Impact": "Serious",
+      "Tags": "cat.forms, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "landmark-banner-is-top-level",
+      "Description": "Ensure the banner landmark is at top level",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "landmark-complementary-is-top-level",
+      "Description": "Ensure the complementary landmark or aside is at top level",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "landmark-contentinfo-is-top-level",
+      "Description": "Ensure the contentinfo landmark is at top level",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "landmark-main-is-top-level",
+      "Description": "Ensure the main landmark is at top level",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "landmark-no-duplicate-banner",
+      "Description": "Ensure the document has at most one banner landmark",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "landmark-no-duplicate-contentinfo",
+      "Description": "Ensure the document has at most one contentinfo landmark",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "landmark-no-duplicate-main",
+      "Description": "Ensure the document has at most one main landmark",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "landmark-one-main",
+      "Description": "Ensure the document has a main landmark",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "landmark-unique",
+      "Description": "Ensure landmarks are unique",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "meta-viewport-large",
+      "Description": "Ensure <meta name=\"\"viewport\"\"> can scale a significant amount",
+      "Impact": "Minor",
+      "Tags": "cat.sensory-and-visual-cues, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "page-has-heading-one",
+      "Description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+      "Impact": "Moderate",
+      "Tags": "cat.semantics, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "presentation-role-conflict",
+      "Description": "Elements marked as presentational should not have global ARIA or tabindex to ensure all screen readers ignore them",
+      "Impact": "Minor",
+      "Tags": "cat.aria, best-practice, ACT",
+      "Issue Type": "failure",
+      "ACT Rules": "46ca7f"
+    },
+    {
+      "RuleID": "region",
+      "Description": "Ensure all page content is contained by landmarks",
+      "Impact": "Moderate",
+      "Tags": "cat.keyboard, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "scope-attr-valid",
+      "Description": "Ensure the scope attribute is used correctly on tables",
+      "Impact": "Moderate",
+      "Tags": "cat.tables, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "skip-link",
+      "Description": "Ensure all skip links have a focusable target",
+      "Impact": "Moderate",
+      "Tags": "cat.keyboard, best-practice",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "tabindex",
+      "Description": "Ensure tabindex attribute values are not greater than 0",
+      "Impact": "Serious",
+      "Tags": "cat.keyboard, best-practice",
+      "Issue Type": "failure",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "table-duplicate-name",
+      "Description": "Ensure the <caption> element does not contain the same text as the summary attribute",
+      "Impact": "Minor",
+      "Tags": "cat.tables, best-practice",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": ""
+    },
+    {
+      "RuleID": "color-contrast-enhanced",
+      "Description": "Ensure the contrast between foreground and background colors meets WCAG 2 AAA enhanced contrast ratio thresholds",
+      "Impact": "Serious",
+      "Tags": "cat.color, wcag2aaa, wcag146, ACT",
+      "Issue Type": "failure, needs review",
+      "ACT Rules": "09o5cg"
+    },
+    {
+      "RuleID": "identical-links-same-purpose",
+      "Description": "Ensure that links with the same accessible name serve a similar purpose",
+      "Impact": "Minor",
+      "Tags": "cat.semantics, wcag2aaa, wcag249",
+      "Issue Type": "needs review",
+      "ACT Rules": "b20e66"
+    },
+    {
+      "RuleID": "meta-refresh-no-exceptions",
+      "Description": "Ensure <meta http-equiv=\"\"refresh\"\"> is not used for delayed refresh",
+      "Impact": "Minor",
+      "Tags": "cat.time-and-media, wcag2aaa, wcag224, wcag325",
+      "Issue Type": "failure",
+      "ACT Rules": "bisz58"
+    }
+  ]
+}

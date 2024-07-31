@@ -92,6 +92,10 @@ namespace Ginger.ConfigurationsLib
             externalConfigMenu.Add(eImageType.Exchange, "Ask Lisa Configuration", GetAskLisaConfigsPage, ConsoleKey.X, "Ask Lisa Configurations", "Ask Lisa Configuration AID");
             twoLevelMenu.Add(externalConfigMenu);
 
+            TopMenuItem accessiblityRulesMenu = new TopMenuItem(eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", ConsoleKey.T, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", "Name & rules of the Accessibility which been present current json");
+            accessiblityRulesMenu.Add(eImageType.Application, "", GeAccessiblityRulePage, ConsoleKey.T, "", "AID");
+            twoLevelMenu.Add(accessiblityRulesMenu);
+
             return twoLevelMenu;
         }
 
@@ -154,6 +158,11 @@ namespace Ginger.ConfigurationsLib
         private static Page OthersPage()
         {
             return new Page();
+        }
+
+        private static Page GeAccessiblityRulePage()
+        {
+            return (new AccessiblityRulePage());
         }
     }
 }

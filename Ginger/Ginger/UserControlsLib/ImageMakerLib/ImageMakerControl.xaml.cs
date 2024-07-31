@@ -286,6 +286,10 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Building:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Building);
                     break;
+
+                case eImageType.Accessibility:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UniversalAccess);
+                    break;
                 #endregion
 
 
