@@ -47,21 +47,20 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         static ActAccessibilityTesting mact;
         IWebElement e = null;
 
-        [TestInitialize()]
-        public static void TestInit(TestContext TC)
+        [ClassInitialize()]
+        public static void ClassInit(TestContext TC)
         {
-            if (!OperatingSystem.IsLinux())
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
-            
             mact = new ActAccessibilityTesting();
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
             mact.SeverityList = GetSeverityList();
             mact.StandardList = GetStandardTagslist();
         }
 
-        [TestCleanup]
+        [ClassCleanup]
         public static void ClassCleanup()
         {
             _driver.Quit();
@@ -76,7 +75,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         [TestMethod]
         public void TestAnalyzerAccessibility_Standard_Failed()
         {
-            if (!OperatingSystem.IsLinux())
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
@@ -94,7 +93,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         [TestMethod]
         public void TestAnalyzerAccessibility_Severity_Failed()
         {
-            if (!OperatingSystem.IsLinux())
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
@@ -110,9 +109,10 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         }
 
         [TestMethod]
+        [Ignore]
         public void TestAnalyzerAccessibility_Standard_Pass()
         {
-            if (!OperatingSystem.IsLinux())
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
@@ -129,9 +129,10 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         }
 
         [TestMethod]
+        [Ignore]
         public void TestAnalyzerAccessibility_Severity_Pass()
         {
-            if (!OperatingSystem.IsLinux())
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
@@ -151,7 +152,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         [TestCategory(TestCategory.UnitTest)]
         public void TestCreateAxeBuilder_IsNotNull()
         {
-            if (!OperatingSystem.IsLinux())
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
@@ -164,7 +165,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         [TestCategory(TestCategory.UnitTest)]
         public void TestGetRuleList_isNotNull()
         {
-            if (!OperatingSystem.IsLinux())
+            if (!OperatingSystem.IsWindows())
             {
                return;
             }

@@ -32,7 +32,7 @@ namespace Ginger.Configurations
         private string mName;
         [IsSerializedForLocalRepository]
         public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
-        public override string ItemName { get => "Accessibility Configuration"; set { /* set logic here */ } }
+        
 
         string mDefaultExcludeRules;
         [IsSerializedForLocalRepository]
@@ -52,5 +52,6 @@ namespace Ginger.Configurations
             }
         }
 
+        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }
