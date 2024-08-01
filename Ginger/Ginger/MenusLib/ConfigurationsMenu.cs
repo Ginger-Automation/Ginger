@@ -93,7 +93,7 @@ namespace Ginger.ConfigurationsLib
             twoLevelMenu.Add(externalConfigMenu);
 
             TopMenuItem accessiblityRulesMenu = new TopMenuItem(eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", ConsoleKey.T, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", "Name & rules of the Accessibility which been present current json");
-            accessiblityRulesMenu.Add(eImageType.Application, "", GeAccessiblityRulePage, ConsoleKey.T, "", "AID");
+            accessiblityRulesMenu.Add(eImageType.Application, "", GetAccessibilityRulePage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(accessiblityRulesMenu);
 
             return twoLevelMenu;
@@ -160,9 +160,9 @@ namespace Ginger.ConfigurationsLib
             return new Page();
         }
 
-        private static Page GeAccessiblityRulePage()
+        private static Page GetAccessibilityRulePage()
         {
-            return (new AccessiblityRulePage());
+            return (new AccessibilityRulePage());
         }
     }
 }

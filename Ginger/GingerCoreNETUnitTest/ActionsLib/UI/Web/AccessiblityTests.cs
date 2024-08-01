@@ -30,13 +30,16 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 
 namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
 {
     [TestClass]
-    [TestCategory(TestCategory.UnitTest)]
+    [TestCategory(TestCategory.IntegrationTest)]
+    [Ignore]
     public class AccessiblityTests
     {
 
@@ -44,26 +47,40 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         static ActAccessibilityTesting mact;
         IWebElement e = null;
 
-        [ClassInitialize()]
-        public static void ClassInit(TestContext TC)
+        [TestInitialize()]
+        public static void TestInit(TestContext TC)
         {
-            //// Initialize the WebDriver (Chrome in this case)
-            _driver = new ChromeDriver();
+            if (!OperatingSystem.IsLinux())
+            {
+                return;
+            }
+            
             mact = new ActAccessibilityTesting();
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
             mact.SeverityList = GetSeverityList();
             mact.StandardList = GetStandardTagslist();
         }
 
-        [ClassCleanup]
+        [TestCleanup]
         public static void ClassCleanup()
         {
             _driver.Quit();
         }
 
+        public void InitDriver()
+        {
+            //// Initialize the WebDriver (Chrome in this case)
+            _driver = new ChromeDriver();
+        }
+
         [TestMethod]
         public void TestAnalyzerAccessibility_Standard_Failed()
         {
+            if (!OperatingSystem.IsLinux())
+            {
+                return;
+            }
+            InitDriver();
             _driver.Navigate().GoToUrl($"https://ginger.amdocs.com/");
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
@@ -77,6 +94,11 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         [TestMethod]
         public void TestAnalyzerAccessibility_Severity_Failed()
         {
+            if (!OperatingSystem.IsLinux())
+            {
+                return;
+            }
+            InitDriver();
             _driver.Navigate().GoToUrl($"https://ginger.amdocs.com/");
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.BySeverity);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity))
@@ -90,6 +112,11 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         [TestMethod]
         public void TestAnalyzerAccessibility_Standard_Pass()
         {
+            if (!OperatingSystem.IsLinux())
+            {
+                return;
+            }
+            InitDriver();
             string htmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder("Html"), "TestAccessiblity.html");
             _driver.Navigate().GoToUrl(htmlFilePath);
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard);
@@ -104,6 +131,11 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         [TestMethod]
         public void TestAnalyzerAccessibility_Severity_Pass()
         {
+            if (!OperatingSystem.IsLinux())
+            {
+                return;
+            }
+            InitDriver();
             string htmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder("Html"), "TestAccessiblity.html");
             _driver.Navigate().GoToUrl(htmlFilePath);
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.BySeverity);
@@ -116,15 +148,26 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         }
 
         [TestMethod]
+        [TestCategory(TestCategory.UnitTest)]
         public void TestCreateAxeBuilder_IsNotNull()
         {
+            if (!OperatingSystem.IsLinux())
+            {
+                return;
+            }
+            InitDriver();
             AxeBuilder axeBuilder = mact.CreateAxeBuilder(_driver);
             Assert.AreNotEqual(null, axeBuilder);
         }
 
         [TestMethod]
+        [TestCategory(TestCategory.UnitTest)]
         public void TestGetRuleList_isNotNull()
         {
+            if (!OperatingSystem.IsLinux())
+            {
+               return;
+            }
             ObservableList<AccessibilityRuleData> ruleList = mact.GetRuleList();
             Assert.AreNotEqual(null, ruleList);
             Assert.AreEqual(93, ruleList.Count);

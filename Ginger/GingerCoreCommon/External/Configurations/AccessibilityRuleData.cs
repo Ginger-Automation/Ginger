@@ -65,8 +65,16 @@ namespace Ginger.Configurations
 
         public ObservableList<AccessibilityRuleData> GetAccessibilityRules(string AccessbiltyString)
         {
-            ObservableList<AccessibilityRuleData> accessibilityRules = new ObservableList<AccessibilityRuleData>();
-            Root data = JsonConvert.DeserializeObject<Root>(AccessbiltyString);
+            Root data = new();
+            try
+            {
+                data = JsonConvert.DeserializeObject<Root>(AccessbiltyString);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to deserialize accessibility rules.", ex);
+            }
+
             return data.accessibilityRules;
         }
 

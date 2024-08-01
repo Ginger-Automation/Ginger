@@ -29,7 +29,10 @@ namespace Ginger.Configurations
 {
     public class AccessibilityConfiguration : RepositoryItemBase
     {
-        public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        private string mName;
+        [IsSerializedForLocalRepository]
+        public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
+        public override string ItemName { get => "Accessibility Configuration"; set { /* set logic here */ } }
 
         string mDefaultExcludeRules;
         [IsSerializedForLocalRepository]

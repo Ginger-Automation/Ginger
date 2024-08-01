@@ -24,15 +24,15 @@ using System.Windows.Shapes;
 namespace Ginger.SolutionWindows
 {
     /// <summary>
-    /// Interaction logic for AccessiblityRulePage.xaml
+    /// Interaction logic for AccessibilityRulePage.xaml
     /// </summary>
-    public partial class AccessiblityRulePage : Page
+    public partial class AccessibilityRulePage : Page
     {
         Solution mSolution;
         string AppName;
         List<string> DefaultExcludeRulesList;
         private AccessibilityConfiguration mAccessibilityConfiguration;
-        public AccessiblityRulePage()
+        public AccessibilityRulePage()
         {
             InitializeComponent();
             mSolution = WorkSpace.Instance.Solution;
@@ -41,7 +41,7 @@ namespace Ginger.SolutionWindows
             LoadGridData();
             SetAppsGrid();
             mAccessibilityConfiguration = new();
-            DefaultExcludeRulesList = WorkSpace.Instance.Solution.DefaultExcludeRule.DefaultExcludeRules != null ? WorkSpace.Instance.Solution.DefaultExcludeRule.DefaultExcludeRules.Split(',').ToList() : new();
+            DefaultExcludeRulesList = WorkSpace.Instance.Solution.DefaultExcludeRule.DefaultExcludeRules?.Split(',').ToList() ?? new List<string>();
         }
 
         private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -55,7 +55,7 @@ namespace Ginger.SolutionWindows
 
         private void SetAppsGrid()
         {
-            xAccessiblityRulesGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", saveAllHandler: SaveHandler, null, true);
+            xAccessibilityRulesGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", saveAllHandler: SaveHandler, null, true);
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView()
@@ -76,8 +76,9 @@ namespace Ginger.SolutionWindows
             });
             view.GridColsView.Add(new GridColView()
             {
-                Field = nameof(AccessibilityRuleData.Tags),
-                WidthWeight = 30,
+                Field = nameof(AccessibilityRuleData.Description),
+                Header = "Description",
+                WidthWeight = 40,
                 ReadOnly = true
             });
             view.GridColsView.Add(new GridColView()
@@ -90,15 +91,15 @@ namespace Ginger.SolutionWindows
             });
             view.GridColsView.Add(new GridColView()
             {
-                Field = nameof(AccessibilityRuleData.Description),
-                Header = "Description",
-                WidthWeight = 40,
+                Field = nameof(AccessibilityRuleData.Tags),
+                WidthWeight = 30,
                 ReadOnly = true
             });
 
+            xAccessibilityRulesGrid.AddLabel("Note: We will analyze the active items from the list below for accessibility. Testing and deactivating items won't be taken into account for accessibility testing.");
 
-            xAccessiblityRulesGrid.SetAllColumnsDefaultView(view);
-            xAccessiblityRulesGrid.InitViewItems();
+            xAccessibilityRulesGrid.SetAllColumnsDefaultView(view);
+            xAccessibilityRulesGrid.InitViewItems();
         }
 
         private void LoadGridData()
@@ -106,7 +107,7 @@ namespace Ginger.SolutionWindows
             ActAccessibilityTesting actAccessibilityTesting = new ActAccessibilityTesting();
             List<AccessibilityRuleData> sortedList = actAccessibilityTesting.RulesItemsdata.OrderByDescending(data => !data.Active).ToList();
             ObservableList<AccessibilityRuleData> accessibilityRuleDatas = [.. sortedList];
-            xAccessiblityRulesGrid.DataSourceList = accessibilityRuleDatas;
+            xAccessibilityRulesGrid.DataSourceList = accessibilityRuleDatas;
         }
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
@@ -117,7 +118,7 @@ namespace Ginger.SolutionWindows
                 // Do something with data, for example:
                 data.Active = checkBox.IsChecked ?? false;
                 WorkSpace.Instance.Solution.DefaultExcludeRule.StartDirtyTracking();
-                if (data.Active == false)
+                if (!data.Active)
                 {
                     if (!DefaultExcludeRulesList.Any(x => x.Equals(data.RuleID)))
                     {
