@@ -66,7 +66,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             _driver.Quit();
         }
 
-        public void InitDriver()
+        public static void InitDriver()
         {
             //// Initialize the WebDriver (Chrome in this case)
             _driver = new ChromeDriver();
