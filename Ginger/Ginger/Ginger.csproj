@@ -745,6 +745,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="AccountReport.Contracts">
+      <HintPath>..\..\..\..\..\Downloads\AccountReport.Contracts 2\AccountReport.Contracts.dll</HintPath>
+    </Reference>
     <Reference Include="ACL_Data_Contract">
       <HintPath>..\GingerCoreNET\DLLS\ACL_Data_Contract.dll</HintPath>
     </Reference>
