@@ -88,13 +88,32 @@
                 </StackPanel>
             </DataTemplate>
         </Grid.Resources>
-        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto"  >
-            <Ginger:ucGrid x:Name="grdExecutionsHistory" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" IsReadOnly="False" ShowTagsFilter="Collapsed" ShowTitle="Collapsed">
-                <Ginger:ucGrid.Title>
+        <DockPanel>
+            
+            <StackPanel x:Name="xButtonPnl" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
+                <Label x:Name="xRangelbl" FontSize="14"  Margin="0,0,0,0">Showing 1 to 25 of 00 entries </Label>
+                <usercontrols:ucButton x:Name="btnFirst" ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="AnglesArrowLeft" Click="btnFirst_Click" Margin="5,0,0,0">
+                </usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="btnPrevious" ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="AngleArrowLeft" Click="btnPrevious_Click" Margin="5,0,0,0">
+                </usercontrols:ucButton>
+                <Label x:Name="xPageNumber" Content="Page 1" FontSize="14"  Margin="5,0,0,0"/>
+                <usercontrols:ucButton x:Name="btnNext" ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="AngleArrowRight" Click="btnNext_Click" Margin="5,0,0,0">
+                </usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="btnLast" ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="AnglesArrowRight" Click="btnLast_Click" Margin="5,0,0,0">
+                </usercontrols:ucButton>
+                <ComboBox x:Name="xPageSizeComboBox" Width="10" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="10,0,0,0" FontWeight="Bold" SelectionChanged="xPageSizeComboBox_SelectionChanged" />
+                <usercontrols:ImageMakerControl x:Name="xGraphQlLoading" ImageType="Processing"  HorizontalAlignment="Center" Width="20" Visibility="Hidden"  Foreground="LightBlue" Margin="5,0,0,0"/>
+            </StackPanel>
+            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto"  >
+                <Ginger:ucGrid x:Name="xGridExecutionsHistory" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" IsReadOnly="False" ShowTagsFilter="Collapsed" ShowTitle="Collapsed">
+                                    
+                    
+                    <Ginger:ucGrid.Title>
                     <GingerCore:ucTextDicResource Text="[RunSets] Executions"/>
                 </Ginger:ucGrid.Title>
-            </Ginger:ucGrid>
+            </Ginger:ucGrid>            
         </ScrollViewer>
+        </DockPanel>
         <StackPanel x:Name="Loading" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" >
             <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="40" Visibility="Visible"  Foreground="LightBlue" />
             <Label x:Name="LoadingRunset"  HorizontalAlignment="Left" Content="Loading..." FontSize="20"/>
