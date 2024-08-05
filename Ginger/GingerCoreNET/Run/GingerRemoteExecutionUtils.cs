@@ -92,7 +92,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             return runSetReports;
         }
-       private static string GetReportDataServiceUrl()
+       public static string GetReportDataServiceUrl()
         {
             var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralLoggerEndPointUrl;
 
