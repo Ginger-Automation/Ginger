@@ -1,8 +1,11 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
+using Ginger.Run;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
@@ -40,10 +43,9 @@ namespace Ginger.SolutionWindows
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
             LoadGridData();
             SetAppsGrid();
-            mAccessibilityConfiguration = new();
-            DefaultExcludeRulesList = WorkSpace.Instance.Solution.DefaultExcludeRule.DefaultExcludeRules?.Split(',').ToList() ?? new List<string>();
+            mAccessibilityConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>();
+            mAccessibilityConfiguration.DefaultExcludeRule = mAccessibilityConfiguration.DefaultExcludeRule != null ? mAccessibilityConfiguration.DefaultExcludeRule : new ();
         }
-
         private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(WorkSpace.Solution))
@@ -117,24 +119,21 @@ namespace Ginger.SolutionWindows
             {
                 // Do something with data, for example:
                 data.Active = checkBox.IsChecked ?? false;
-                WorkSpace.Instance.Solution.DefaultExcludeRule.StartDirtyTracking();
+                mAccessibilityConfiguration.StartDirtyTracking();
                 if (!data.Active)
                 {
-                    if (!DefaultExcludeRulesList.Any(x => x.Equals(data.RuleID)))
+                    if (!mAccessibilityConfiguration.DefaultExcludeRule.Any(x => x.Equals(data.RuleID)))
                     {
-                        DefaultExcludeRulesList.Add(data.RuleID);
-
-                        mAccessibilityConfiguration.DefaultExcludeRules = String.Join(",", DefaultExcludeRulesList.Select(x => x));
-                        WorkSpace.Instance.Solution.DefaultExcludeRule = mAccessibilityConfiguration;
+                        mAccessibilityConfiguration.DefaultExcludeRule.Add(data);
                     }
+                    
                 }
                 else
                 {
-                    if (DefaultExcludeRulesList.Any(x => x.Equals(data.RuleID)))
+                    if (mAccessibilityConfiguration.DefaultExcludeRule.Any(x => x.Equals(data.RuleID)))
                     {
-                        DefaultExcludeRulesList.Remove(data.RuleID);
-                        mAccessibilityConfiguration.DefaultExcludeRules = String.Join(",", DefaultExcludeRulesList.Select(x => x));
-                        WorkSpace.Instance.Solution.DefaultExcludeRule = mAccessibilityConfiguration;
+                        mAccessibilityConfiguration.DefaultExcludeRule.Remove(data);
+                        
                     }
                 }
             }

@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,24 +35,37 @@ namespace Ginger.Configurations
         public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
         
 
-        string mDefaultExcludeRules;
+
+        ObservableList<AccessibilityRuleData> mDefaultExcludeRule;
         [IsSerializedForLocalRepository]
-        public string DefaultExcludeRules
+        public ObservableList<AccessibilityRuleData> DefaultExcludeRule
         {
             get
             {
-                return mDefaultExcludeRules;
+                return mDefaultExcludeRule;
             }
             set
             {
-                if (mDefaultExcludeRules != value)
+                if (mDefaultExcludeRule != value)
                 {
-                    mDefaultExcludeRules = value;
-                    OnPropertyChanged(nameof(DefaultExcludeRules));
+                    mDefaultExcludeRule = value;
+                    OnPropertyChanged(nameof(DefaultExcludeRule));
                 }
             }
         }
 
-        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override string ItemName
+        {
+            get
+            {
+                return this.Name;
+            }
+            set
+            {
+                this.Name = value;
+            }
+        }
+
+        public override string GetNameForFileName() { return Name; }
     }
 }

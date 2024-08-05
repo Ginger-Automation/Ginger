@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -19,6 +19,7 @@ limitations under the License.
 using System.IO;
 using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.Repository;
+using Ginger.Configurations;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -65,6 +66,8 @@ namespace Amdocs.Ginger.CoreNET.Repository
             SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", SolutionRepository.cSolutionRootFolderSign + "RunSetConfigs", true, GingerDicser.GetTermResValue(eTermResKey.RunSets), PropertyNameForFileName: nameof(RunSetConfig.Name));
 
             SR.AddItemInfo<RemoteServiceGrid>("*.Ginger.RemoteServiceGrid.xml", SolutionRepository.cSolutionRootFolderSign + "RemoteServiceGrid", true, "RemoteServiceGrid", PropertyNameForFileName: nameof(RemoteServiceGrid.Name));
+
+            SR.AddItemInfo<AccessibilityConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, "AccessibilityConfiguration", PropertyNameForFileName: nameof(AccessibilityConfiguration.Name));
 
             return SR;
         }

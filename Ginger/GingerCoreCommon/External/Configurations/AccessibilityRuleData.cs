@@ -24,6 +24,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Run;
+using GingerCore;
 using Newtonsoft.Json;
 
 namespace Ginger.Configurations
@@ -43,14 +45,14 @@ namespace Ginger.Configurations
         /// <summary>
         /// Gets or sets the Rule Id associated with the accessibility rule.
         /// </summary>
-        
+        [IsSerializedForLocalRepository]
         public string RuleID { get { return mRuleID; } set { if (mRuleID != value) { mRuleID = value; OnPropertyChanged(nameof(RuleID)); } } }
 
         private string mTags;
         /// <summary>
         /// Gets or sets the tags associated with the accessibility rule.
         /// </summary>
-        
+
         public string Tags { get { return mTags; } set { if (mTags != value) { mTags = value; OnPropertyChanged(nameof(Tags)); } } }
 
         private string mImpact;
@@ -70,7 +72,7 @@ namespace Ginger.Configurations
             {
                 data = JsonConvert.DeserializeObject<Root>(AccessbiltyString);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to deserialize accessibility rules.", ex);
             }
@@ -83,10 +85,12 @@ namespace Ginger.Configurations
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-    }
+}
 
     public class Root
     {
         public ObservableList<AccessibilityRuleData> accessibilityRules { get; set; }
     }
+
+
 }

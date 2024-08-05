@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
+using Ginger.Configurations;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.ALM;
@@ -614,6 +615,20 @@ namespace GingerCoreNET.GeneralLib
                 return $"{HtmlReportUrl}#/BusinessFlow/{ExecutionId}/{BusinessFlowInstanceGuid}";
             }
             return "";
+        }
+
+        public static bool CreateDefaultAccessiblityconfiguration()
+        {
+            if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<AccessibilityConfiguration>().Any())
+            {
+                AccessibilityConfiguration newAccessibilityConfiguration = new AccessibilityConfiguration() { Name = "Accessibility" };
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newAccessibilityConfiguration);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 

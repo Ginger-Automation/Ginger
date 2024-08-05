@@ -28,6 +28,7 @@ using GingerCore;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OfficeOpenXml.Attributes;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
@@ -39,7 +40,6 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
 {
     [TestClass]
     [TestCategory(TestCategory.IntegrationTest)]
-    [Ignore]
     public class AccessiblityTests
     {
 
@@ -54,10 +54,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             {
                 return;
             }
-            mact = new ActAccessibilityTesting();
-            mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
-            mact.SeverityList = GetSeverityList();
-            mact.StandardList = GetStandardTagslist();
+            _driver = new ChromeDriver();
         }
 
         [ClassCleanup]
@@ -71,83 +68,94 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             //// Initialize the WebDriver (Chrome in this case)
             _driver = new ChromeDriver();
         }
+        public static void CleanDriver()
+        {
+            _driver.Quit();
+        }
 
         [TestMethod]
+        [TestProperty("ExecutionOrder", "1")]
         public void TestAnalyzerAccessibility_Standard_Failed()
         {
             if (!OperatingSystem.IsWindows())
             {
                 return;
             }
-            InitDriver();
             _driver.Navigate().GoToUrl($"https://ginger.amdocs.com/");
+            mact = new ActAccessibilityTesting();
+            mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
             {
                 mact.SeverityList = new ObservableList<OperationValues>();
+                mact.StandardList = GetStandardTagslist();
             }
             mact.AnalyzerAccessibility(_driver, e);
             Assert.AreEqual(mact.Status,Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);
         }
 
         [TestMethod]
+        [TestProperty("ExecutionOrder", "2")]
         public void TestAnalyzerAccessibility_Severity_Failed()
         {
             if (!OperatingSystem.IsWindows())
             {
                 return;
             }
-            InitDriver();
             _driver.Navigate().GoToUrl($"https://ginger.amdocs.com/");
+            mact = new ActAccessibilityTesting();
+            mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.BySeverity);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity))
             {
+                mact.SeverityList = GetSeverityList();
                 mact.SeverityList.RemoveAt(1);
             }
             mact.AnalyzerAccessibility(_driver, e);
             Assert.AreEqual(mact.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);
         }
-
         [TestMethod]
-        [Ignore]
+        [TestProperty("ExecutionOrder", "3")]
         public void TestAnalyzerAccessibility_Standard_Pass()
         {
             if (!OperatingSystem.IsWindows())
             {
                 return;
             }
-            InitDriver();
             string htmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder("Html"), "TestAccessiblity.html");
             _driver.Navigate().GoToUrl(htmlFilePath);
+            mact = new ActAccessibilityTesting();
+            mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
             {
                 mact.SeverityList = new ObservableList<OperationValues>();
+                mact.StandardList = GetStandardTagslist();
             }
             mact.AnalyzerAccessibility(_driver, e);
             Assert.AreEqual(mact.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
-
         [TestMethod]
-        [Ignore]
+        [TestProperty("ExecutionOrder", "4")]
         public void TestAnalyzerAccessibility_Severity_Pass()
         {
             if (!OperatingSystem.IsWindows())
             {
                 return;
             }
-            InitDriver();
             string htmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder("Html"), "TestAccessiblity.html");
             _driver.Navigate().GoToUrl(htmlFilePath);
+            mact = new ActAccessibilityTesting();
+            mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.BySeverity);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity))
             {
+                mact.SeverityList = GetSeverityList();
                 mact.SeverityList.RemoveAt(1);
             }
             mact.AnalyzerAccessibility(_driver, e);
             Assert.AreEqual(mact.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
-
         [TestMethod]
         [TestCategory(TestCategory.UnitTest)]
         public void TestCreateAxeBuilder_IsNotNull()
@@ -156,11 +164,9 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             {
                 return;
             }
-            InitDriver();
             AxeBuilder axeBuilder = mact.CreateAxeBuilder(_driver);
             Assert.AreNotEqual(null, axeBuilder);
         }
-
         [TestMethod]
         [TestCategory(TestCategory.UnitTest)]
         public void TestGetRuleList_isNotNull()

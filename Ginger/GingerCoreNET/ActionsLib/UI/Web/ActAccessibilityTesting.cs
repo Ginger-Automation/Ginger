@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
@@ -305,7 +306,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         public ObservableList<AccessibilityRuleData> GetRuleList()
         {
             AccessibilityRuleData AccessibilityRuleDataObjet = new AccessibilityRuleData();
-            List<string> DefaultExcludeRuleList = WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.DefaultExcludeRule.DefaultExcludeRules != null ? WorkSpace.Instance.Solution.DefaultExcludeRule.DefaultExcludeRules.Split(',').ToList() : new();
+            AccessibilityConfiguration mAccessibilityConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>();
+            mAccessibilityConfiguration.DefaultExcludeRule = mAccessibilityConfiguration.DefaultExcludeRule != null ? mAccessibilityConfiguration.DefaultExcludeRule : new();
             ObservableList<AccessibilityRuleData> ruleDatalist = new ObservableList<AccessibilityRuleData>();
             try
             {
@@ -313,7 +315,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 ruleDatalist = AccessibilityRuleDataObjet.GetAccessibilityRules(AccessbiltyString);
                 foreach (AccessibilityRuleData ruleData in ruleDatalist)
                 {
-                    if (DefaultExcludeRuleList != null && DefaultExcludeRuleList.Contains(ruleData.RuleID))
+                    if (mAccessibilityConfiguration.DefaultExcludeRule != null && mAccessibilityConfiguration.DefaultExcludeRule.Select(x=>x.RuleID).Contains(ruleData.RuleID))
                     {
                         ruleData.Active = false;
                     }
@@ -369,6 +371,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             Passes = 8,
             All = 15
         }
+
+        public override eImageType Image { get { return eImageType.Accessibility; } }
 
         private static string GetAccessiblityrules()
         {
@@ -853,21 +857,37 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             bool ActionResult = true;
             IEnumerable<string> AcceptableSeverity = Enumerable.Empty<string>().ToList();
             IEnumerable<string> Violationseverity = Enumerable.Empty<string>().ToList();
-            if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard) && SeverityList != null && SeverityList.Any())
+            if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
             {
-                AcceptableSeverity = SeverityList.Select(x => x.Value.ToLower()).ToList();
                 Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
-                ActionResult = Violationseverity.Intersect(AcceptableSeverity).Any();
-            }
-            else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity) && SeverityList != null && SeverityList.Any())
-            {
-                List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
-                Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
-                foreach (string severity in sevritylist)
+                if (SeverityList != null && SeverityList.Any())
                 {
-                    ActionResult = Violationseverity.Any(y => y.Equals(severity));
+                    AcceptableSeverity = SeverityList.Select(x => x.Value.ToLower()).ToList();
+                    ActionResult = Violationseverity.Intersect(AcceptableSeverity).Any();
+                }
+                else
+                {
+                    ActionResult = Violationseverity.Any();
                 }
             }
+            else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity))
+            {
+                Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
+                if (SeverityList != null && SeverityList.Any())
+                {
+                    List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
+                    foreach (string severity in sevritylist)
+                    {
+                        ActionResult = Violationseverity.Any(y => y.Equals(severity));
+                    }
+                }
+                else
+                {
+                    ActionResult = Violationseverity.Any();
+                }
+
+            }
+            
             var jsonresponse = JsonConvert.SerializeObject(axeResult, Newtonsoft.Json.Formatting.Indented);
             RawResponseValues = jsonresponse;
             AddOrUpdateReturnParamActual(ParamName: "Raw Response", ActualValue: jsonresponse);
