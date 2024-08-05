@@ -54,7 +54,6 @@ namespace GraphQLClient.Clients
         public async Task<GraphQLResponse<GraphQLRunsetResponse>> GetRunsets(string query)
         {
             var request = new GraphQLRequest { Query = query };
-
             try
             {
                 var response = await client.SendQueryAsync<GraphQLRunsetResponse>(request);
@@ -73,7 +72,9 @@ namespace GraphQLClient.Clients
                 }
                 var beforePage = query.IndexOf("before") >= 0;
                 if (!beforePage)
+                {
                     ItemsFetchedSoFar += response.Data.Runsets.Nodes.Count;
+                }
                 CurrentRecordCount = response.Data.Runsets.Nodes.Count;
 
 

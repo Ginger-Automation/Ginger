@@ -27,6 +27,7 @@ using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Reports;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Utility;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Ginger.Reports;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -35,6 +36,7 @@ using GingerCore;
 using GingerWPF.WizardLib;
 using GraphQL;
 using GraphQLClient.Clients;
+using MathNet.Numerics.LinearAlgebra.Factorization;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
@@ -73,8 +75,11 @@ namespace Ginger.Run
         private ExecutionReportGraphQLClient executionReportGraphQLClient;
         private RadioButton remoteRadioButton;
         private RadioButton localRadioButton;
+        private Button openExecutionFolder;
+        private Button deleteExecutionResults;
+        private Button deleteAllExecutionResults;
 
-      
+
         public ObservableList<RunSetReport> ExecutionsHistoryList
         {
             get { return mExecutionsHistoryList; }
@@ -97,41 +102,53 @@ namespace Ginger.Run
 
         public RunSetsExecutionsHistoryPage(eExecutionHistoryLevel executionHistoryLevel, RunSetConfig runsetConfig = null)
         {
-                    InitializeComponent();
+            InitializeComponent();
 
             mExecutionHistoryLevel = executionHistoryLevel;
             RunsetConfig = runsetConfig;
             _runsetFromReportLoader = new();
-            graphQlClient = new GraphQlClient("https://usstlattstl01/OnlineReportMS/api/graphql");
-            executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
 
+            AssignGraphQLObjectEndPoint();
             this.Unloaded += OnUnloaded;
             SetGridView();
-            CheckCentralizedExecutionLoggerConfig();
+            
         }
 
+        void AssignGraphQLObjectEndPoint()
+        {
+            string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
+            if (!string.IsNullOrEmpty(endPoint))
+            {
+                endPoint = endPoint + "api/graphql";
+                graphQlClient = new GraphQlClient(endPoint);
+                executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
+            }
+        }
         /// <summary>
         /// Checks the centralized execution logger configuration and sets the appropriate radio button and loads the executions history data.
         /// </summary>
         void CheckCentralizedExecutionLoggerConfig()
         {
-            if (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportHTMLServiceUrl()))
+            GraphQlLoadingVisible();
+            if (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportDataServiceUrl()))
             {
-                xPageSizeComboBox.SelectedIndex = 0;
                 RadioButton_Remote(null, null);
             }
             else
             {
                 RadioButton_Local(null, null);
             }
+            GraphQlLoadingCollapsed();
         }
         /// <summary>
         /// Event handler for the remote radio button. Shows the button panel and loads the executions history data using GraphQL.
         /// </summary>
-        private void RadioButton_Remote(object sender, RoutedEventArgs e)
+        private async void RadioButton_Remote(object sender, RoutedEventArgs e)
         {
             xButtonPnl.Visibility = Visibility.Visible;
-            LoadExecutionsHistoryDataGraphQl();
+            GraphQlLoadingVisible();
+           await LoadExecutionsHistoryDataGraphQl();
+            GraphQlLoadingCollapsed();
         }
         /// <summary>
         /// Event handler for the local radio button. Hides the button panel and loads the executions history data using LiteDB.
@@ -140,16 +157,19 @@ namespace Ginger.Run
         {
             xButtonPnl.Visibility = Visibility.Collapsed;
             LoadExecutionsHistoryDataLiteDb();
+            //localRadioButton.IsChecked = true;
         }
-      
+
         ///<summary>
         /// Refreshes the data based on the selected radio button.
         /// </summary>
-        void RefreshData()
+        private async Task RefreshDataAsync()
         {
+            GraphQlLoadingVisible();
+
             if (remoteRadioButton.IsChecked == true)
             {
-                LoadExecutionsHistoryDataGraphQl();
+                await LoadExecutionsHistoryDataGraphQl();
             }
             else if (localRadioButton.IsChecked == true)
             {
@@ -159,6 +179,7 @@ namespace Ginger.Run
             {
                 CheckCentralizedExecutionLoggerConfig();
             }
+            GraphQlLoadingCollapsed();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -176,7 +197,7 @@ namespace Ginger.Run
         /// </summary>
         public void ReloadData()
         {
-            if (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportHTMLServiceUrl()))
+            if (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportDataServiceUrl()))
             {
                 remoteRadioButton.IsChecked = true;
                 remoteRadioButton.IsEnabled = true;
@@ -207,11 +228,11 @@ namespace Ginger.Run
                 new() {
                     Field = nameof(RunSetReport.GUID),
                     Header = "Execution ID",
-                    WidthWeight = 18
+                    WidthWeight = 25
                 },
                 new() {
                     Field = RunSetReport.Fields.Name,
-                    WidthWeight = 20,
+                    WidthWeight = 30,
                     ReadOnly = true
                 },
                 new()
@@ -226,41 +247,41 @@ namespace Ginger.Run
                 {
                     Field = RunSetReport.Fields.SourceApplication,
                     Header = "Requested From",
-                    WidthWeight = 10,
+                    WidthWeight = 15,
                     ReadOnly = true,
                 },
                 new()
                 {
                     Field = RunSetReport.Fields.SourceApplicationUser,
                     Header = "Requested By",
-                    WidthWeight = 10,
+                    WidthWeight = 15,
                     ReadOnly = true,
                 },
                 new()
                 {
                     Field = RunSetReport.Fields.StartTimeStamp,
                     Header = "Start Time",
-                    WidthWeight = 10,
+                    WidthWeight = 15,
                     ReadOnly = true
                 },
                 new()
                 {
                     Field = RunSetReport.Fields.EndTimeStamp,
                     Header = "End Time",
-                    WidthWeight = 10,
+                    WidthWeight = 15,
                     ReadOnly = true
                 },
                 new()
                 {
                     Field = RunSetReport.Fields.ExecutionDurationHHMMSS,
                     Header = "Duration",
-                    WidthWeight = 10,
+                    WidthWeight = 15,
                     ReadOnly = true
                 },
                 new()
                 {
                     Field = "Actions",
-                    WidthWeight = 24,
+                    WidthWeight = 15,
                     StyleType = GridColView.eGridColStyleType.Template,
                     CellTemplate = GetActionsDataTemplate()
                 }
@@ -270,16 +291,16 @@ namespace Ginger.Run
             xGridExecutionsHistory.InitViewItems();
 
             xGridExecutionsHistory.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
-            if (RunsetConfig != null)
-            {
-                xGridExecutionsHistory.AddToolbarTool("@Open_16x16.png", "Open Execution Results Main Folder", new RoutedEventHandler(GetExecutionResultsFolder));
-                xGridExecutionsHistory.AddToolbarTool("@Delete_16x16.png", "Delete Selected Execution Results", new RoutedEventHandler(DeleteSelectedExecutionResults));
-                xGridExecutionsHistory.AddToolbarTool("@Trash_16x16.png", "Delete All Execution Results", new RoutedEventHandler(DeleteAllSelectedExecutionResults));
-            }
+
+            xGridExecutionsHistory.AddToolbarTool("@Open_16x16.png", "Open Execution Results Main Folder", new RoutedEventHandler(GetExecutionResultsFolder));
+            xGridExecutionsHistory.AddToolbarTool("@Delete_16x16.png", "Delete Selected Execution Results", new RoutedEventHandler(DeleteSelectedExecutionResults));
+            xGridExecutionsHistory.AddToolbarTool("@Trash_16x16.png", "Delete All Execution Results", new RoutedEventHandler(DeleteAllSelectedExecutionResults));
+
             WeakEventManager<ucGrid, RoutedEventArgs>.AddHandler(source: xGridExecutionsHistory, eventName: nameof(ucGrid.RowDoubleClick), handler: OpenExecutionResultsFolder);
+            xGridExecutionsHistory.AddLabel("Load Execution History Data:");
 
             string groupName = "ExecutionLoggerGroup";
-            if (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportHTMLServiceUrl()))
+            if (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportDataServiceUrl()))
             {
                 remoteRadioButton = xGridExecutionsHistory.AddRadioButton("Remote ", "xRemote", groupName, new RoutedEventHandler(RadioButton_Remote), isChecked: true);
                 localRadioButton = xGridExecutionsHistory.AddRadioButton("Local", "xLocal", groupName, new RoutedEventHandler(RadioButton_Local));
@@ -303,12 +324,7 @@ namespace Ginger.Run
             }
         }
 
-        private string GetContentXAMLFromDataTemplate(DataTemplate dataTemplate)
-        {
-            using StringWriter stringWriter = new();
-            XamlWriter.Save(dataTemplate.LoadContent(), stringWriter);
-            return stringWriter.ToString();
-        }     
+      
 
         public string NameInDb<T>()
         {
@@ -407,30 +423,15 @@ namespace Ginger.Run
         /// <summary>
         /// Loads the execution history data using GraphQL.
         /// </summary>
-        private async void LoadExecutionsHistoryDataGraphQl()
+        private async Task LoadExecutionsHistoryDataGraphQl()
         {
             xGridExecutionsHistory.Visibility = Visibility.Collapsed;
             Loading.Visibility = Visibility.Visible;
             mExecutionsHistoryList.Clear();
-            LoadRemoteDataFromGraphQL();
-            ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();
-            if (mExecutionsHistoryList != null && mExecutionsHistoryList.Count > 0)
-            {
-                IEnumerable<RunSetReport> sortedAndFilteredExecutionHistoryList = mExecutionsHistoryList
-                   .Where(report => report.RunSetExecutionStatus != eRunStatus.Automated)
-                   .OrderByDescending(item => item.StartTimeStamp);
+            await LoadRemoteDataFromGraphQL();
+            SetContentInGrid();
 
-                foreach (RunSetReport runSetReport in sortedAndFilteredExecutionHistoryList)
-                {
-                    runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
-                    runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
-                    executionsHistoryListSortedByDate.Add(runSetReport);
-                }
-            }
 
-            xGridExecutionsHistory.DataSourceList = executionsHistoryListSortedByDate;
-            xGridExecutionsHistory.Visibility = Visibility.Visible;
-            Loading.Visibility = Visibility.Collapsed;
         }
         /// <summary>
         /// Sets the content in the grid by populating the data source list with sorted and filtered execution history.
@@ -461,17 +462,26 @@ namespace Ginger.Run
         /// </summary>
         private async Task LoadRemoteDataFromGraphQL()
         {
-            int recordLimit = (int)xPageSizeComboBox.SelectedItem;
-            graphQlClient.ResetPagination();
+            try
+            {
+                int recordLimit = (int)xPageSizeComboBox.SelectedItem;
+                graphQlClient.ResetPagination();
 
-            response = RunsetConfig == null
-                ? executionReportGraphQLClient.ExecuteReportQuery(recordLimit, WorkSpace.Instance.Solution.Guid)
-                : executionReportGraphQLClient.ExecuteReportQuery(recordLimit, WorkSpace.Instance.Solution.Guid, RunsetConfig.Guid);
+                response = RunsetConfig == null
+                    ? executionReportGraphQLClient.ExecuteReportQuery(recordLimit, WorkSpace.Instance.Solution.Guid)
+                    : executionReportGraphQLClient.ExecuteReportQuery(recordLimit, WorkSpace.Instance.Solution.Guid, RunsetConfig.Guid);
 
-            var data = await response;
-            AddRemoteDataToList(data);
-            UpdatePageInfo("firstPage");
-            UpdateButtonStates();
+                var data = await response;
+                AddRemoteDataToList(data);
+                UpdatePageInfo("firstPage");
+                UpdateButtonStates();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
+                Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
+                
+            }
         }
 
         /// <summary>
@@ -479,14 +489,24 @@ namespace Ginger.Run
         /// </summary>
         private async Task AddDataOnButtonClick(int recordLimit, string pageButton = null, string endCursor = null, string startCursor = null, bool firstPage = false, bool lastPage = false, bool afterOrBefore = true)
         {
-            response = RunsetConfig == null
+            try
+            {
+                response = RunsetConfig == null
                 ? executionReportGraphQLClient.ExecuteReportQuery(recordLimit, WorkSpace.Instance.Solution.Guid, endCursor: endCursor, startCursor: startCursor, firstPage: firstPage, lastPage: lastPage, afterOrBefore: afterOrBefore)
                 : executionReportGraphQLClient.ExecuteReportQuery(recordLimit, WorkSpace.Instance.Solution.Guid, RunsetConfig.Guid, endCursor: endCursor, startCursor: startCursor, firstPage: firstPage, lastPage: lastPage, afterOrBefore: afterOrBefore);
 
-            var data = await response;
-            AddRemoteDataToList(data);
-            UpdatePageInfo(pageButton);
-            UpdateButtonStates();
+                var data = await response;
+                AddRemoteDataToList(data);
+                UpdatePageInfo(pageButton);
+                UpdateButtonStates();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
+                Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
+                
+
+            }
         }
 
         /// <summary>
@@ -497,29 +517,54 @@ namespace Ginger.Run
             int recordCount = (int)xPageSizeComboBox.SelectedItem;
             int totalEntries = graphQlClient.TotalCount;
             int itemsFetched = graphQlClient.ItemsFetchedSoFar;
-            int start = itemsFetched - recordCount + 1;
+            int currentCount = graphQlClient.CurrentRecordCount;
+            int start, end;
+
+            // Calculate the record range (start and end)
+            CalculatePageRange(pageAction, recordCount, totalEntries, itemsFetched, currentCount, out start, out end);
+
+            // Calculate the page number
+            int pageNumber = CalculatePageNumber(pageAction, recordCount, totalEntries, itemsFetched, start);
+            if (pageAction == "lastPage")
+            {
+                graphQlClient.ItemsFetchedSoFar = totalEntries;
+            }
+
+            // Update the UI with the calculated range and page number
+            xRangelbl.Content = $"Showing {start} to {end} of {totalEntries} entries";
+            xPageNumber.Content = $"Page {pageNumber}";
+        }
+
+        /// <summary>
+        /// Calculates the range of page numbers based on the given page action, record count, total entries, items fetched, and current count.
+        /// </summary>
+        /// <param name="pageAction">The page action (e.g., "firstPage", "lastPage", "nextPage", "previousPage").</param>
+        /// <param name="recordCount">The number of records per page.</param>
+        /// <param name="totalEntries">The total number of entries.</param>
+        /// <param name="itemsFetched">The number of items fetched.</param>
+        /// <param name="currentCount">The current count of items.</param>
+        /// <param name="start">The start page number of the range.</param>
+        /// <param name="end">The end page number of the range.</param>
+        public static void CalculatePageRange(string pageAction, int recordCount, int totalEntries, int itemsFetched, int currentCount, out int start, out int end)
+        {
+            start = itemsFetched - recordCount + 1;
             if (start < 1)
             {
                 start = 1;
             }
-            int end = itemsFetched;
-            int pageNumber = (itemsFetched / recordCount+1);
-            if (pageNumber < 1)
-            {
-                pageNumber = 1;
-            }
+            end = itemsFetched;
 
             switch (pageAction)
             {
                 case "firstPage":
                     start = 1;
                     end = Math.Min(recordCount, totalEntries);
-                    pageNumber = 1;
                     break;
+
                 case "lastPage":
-                    float result = MathF.Floor(graphQlClient.TotalCount / (int)xPageSizeComboBox.SelectedItem);
-                    int remainingRecords = graphQlClient.TotalCount - (int)result * (int)xPageSizeComboBox.SelectedItem;
-                    recordCount = remainingRecords == 0 ? (int)xPageSizeComboBox.SelectedItem : remainingRecords;
+                    float result = MathF.Floor(totalEntries / recordCount);
+                    int remainingRecords = totalEntries - (int)result * recordCount;
+                    recordCount = remainingRecords == 0 ? recordCount : remainingRecords;
 
                     start = totalEntries - recordCount + 1;
                     if (start < 1)
@@ -527,41 +572,71 @@ namespace Ginger.Run
                         start = 1;
                     }
                     end = totalEntries;
-                    pageNumber = (int)result + (remainingRecords == 0 ? 0 : 1);
-                    graphQlClient.ItemsFetchedSoFar = graphQlClient.TotalCount;
+
                     break;
+
                 case "nextPage":
-                    if(graphQlClient.CurrentRecordCount< (int)xPageSizeComboBox.SelectedItem)
+                    if (currentCount < recordCount)
                     {
-                        start = graphQlClient.TotalCount - graphQlClient.CurrentRecordCount+1;
+                        start = totalEntries - currentCount + 1;
                     }
                     end = Math.Min(itemsFetched, totalEntries);
-                    
-                    if(itemsFetched % recordCount == 0)
+                    break;
+
+                case "previousPage":
+                    start = itemsFetched - recordCount + 1;
+                    end = itemsFetched;
+                    if (end < 1)
+                    {
+                        end = recordCount;
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Calculates the page number based on the page action and other parameters.
+        /// </summary>
+        /// <param name="pageAction">The action performed on the page (firstPage, lastPage, nextPage, previousPage).</param>
+        /// <param name="recordCount">The number of records per page.</param>
+        /// <param name="totalEntries">The total number of entries.</param>
+        /// <param name="itemsFetched">The number of items fetched.</param>
+        /// <param name="start">The starting index of the current page.</param>
+        /// <returns>The calculated page number.</returns>
+        public static int CalculatePageNumber(string pageAction, int recordCount, int totalEntries, int itemsFetched, int start)
+        {
+            int pageNumber = 1;
+
+            switch (pageAction)
+            {
+                case "firstPage":
+                    pageNumber = 1;
+                    break;
+
+                case "lastPage":
+                    float result = MathF.Floor(totalEntries / recordCount);
+                    int remainingRecords = totalEntries - (int)result * recordCount;
+                    pageNumber = (int)result + (remainingRecords == 0 ? 0 : 1);
+                    break;
+
+                case "nextPage":
+                    if (itemsFetched % recordCount == 0)
                     {
                         pageNumber = (itemsFetched / recordCount);
                     }
                     else
                     {
-                        pageNumber = (itemsFetched / recordCount)+1;
+                        pageNumber = (itemsFetched / recordCount) + 1;
                     }
                     break;
+
                 case "previousPage":
-                    start = Math.Max(1, itemsFetched - 2 * recordCount + 1);
-                    start= itemsFetched - recordCount+1;
-                    end = itemsFetched ;
-                    if (end < 1)
-                    {
-                        end = recordCount;
-                    }
                     pageNumber = (start - 1) / recordCount + 1;
                     break;
             }
 
-            xRangelbl.Content = $"Showing {start} to {end} of {totalEntries} entries";
-            xPageNumber.Content = $"Page {pageNumber}";
+            return pageNumber;
         }
-
 
         /// <summary>
         /// Updates the enabled/disabled state of pagination buttons based on current pagination state.
@@ -617,7 +692,7 @@ namespace Ginger.Run
 
             SetContentInGrid();
         }
-        
+
 
         private void DeleteSelectedExecutionResults(object sender, RoutedEventArgs e)
         {
@@ -662,17 +737,27 @@ namespace Ginger.Run
 
             if (xGridExecutionsHistory.Grid.SelectedItems.Count > 0)
             {
-                LoadExecutionsHistoryDataGraphQl();
+                RefreshDataAsync();
             }
         }
 
         private void RefreshGrid(object sender, RoutedEventArgs e)
         {
-            RefreshData();
+            RefreshDataAsync();
         }
 
         private void GetExecutionResultsFolder(object sender, RoutedEventArgs e)
         {
+            foreach (RunSetReport runSetReport in xGridExecutionsHistory.Grid.SelectedItems)
+            {
+
+                if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
+                {
+                     Reporter.ToUser(eUserMsgKey.RemoteExecutionReportFolder);
+                    return;
+                }
+
+            }
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
                 System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), UseShellExecute = true });
@@ -783,7 +868,7 @@ namespace Ginger.Run
                         }
                     });
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToUser(eUserMsgKey.RunSetLoadFromReportError, ex.Message);
                 }
@@ -948,7 +1033,7 @@ namespace Ginger.Run
             });
             return wasAllAdded;
         }
- private async void btnFirst_Click(object sender, RoutedEventArgs e)
+        private async void btnFirst_Click(object sender, RoutedEventArgs e)
         {
             GraphQlLoadingVisible();
             btnFirst.IsEnabled = false;
@@ -964,9 +1049,9 @@ namespace Ginger.Run
 
             float result = MathF.Floor(graphQlClient.TotalCount / (int)xPageSizeComboBox.SelectedItem);
             int remainingRecords = graphQlClient.TotalCount - (int)result * (int)xPageSizeComboBox.SelectedItem;
-           int  recordCount = remainingRecords == 0 ? (int)xPageSizeComboBox.SelectedItem : remainingRecords;
-           
-            if(graphQlClient.ItemsFetchedSoFar % (int)xPageSizeComboBox.SelectedItem == 0)
+            int recordCount = remainingRecords == 0 ? (int)xPageSizeComboBox.SelectedItem : remainingRecords;
+
+            if (graphQlClient.ItemsFetchedSoFar % (int)xPageSizeComboBox.SelectedItem == 0)
             {
                 recordCount = (int)xPageSizeComboBox.SelectedItem;
             }
@@ -1031,12 +1116,12 @@ namespace Ginger.Run
             xGraphQlLoading.Visibility = Visibility.Hidden;
         }
 
-        private async void xPageSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void xPageSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             GraphQlLoadingVisible();
-           await LoadRemoteDataFromGraphQL();
+            CheckCentralizedExecutionLoggerConfig();
             GraphQlLoadingCollapsed();
         }
-                
+
     }
 }

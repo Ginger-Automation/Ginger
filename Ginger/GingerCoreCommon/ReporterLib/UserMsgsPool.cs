@@ -194,7 +194,9 @@ namespace Amdocs.Ginger.Common
         ShareApplicationToEnvironment,
         SaveSolution,
         LocatorTestInProgress,
-        DeleteSelectedDB
+        DeleteSelectedDB,
+        RemoteExecutionReportFolder,
+        RemoteExecutionHistoryEndPoint,
     }
 
     public static class UserMsgsPool
@@ -878,6 +880,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteRecoverFolderWarn, new UserMsg(eUserMsgType.WARN, "Delete Unrecovered files?",
    "Unrecovered items will be deleted. Do you want to continue?",
    eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionReportFolder, new UserMsg(eUserMsgType.INFO, "Remote Data Source", "Open execution folder not supported for remote data source.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionHistoryEndPoint, new UserMsg(eUserMsgType.INFO, "Remote Data Source", "Unable to reach server, Please check your Endpoint URL or Internet Connection", eUserMsgOption.OK, eUserMsgSelection.OK));
 
         }
     }
