@@ -1527,7 +1527,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 while (true)
                 {
-                    string s_Script = $"return document.elementFromPoint({ptX}, {ptY});";
+                    string s_Script = $"document.elementFromPoint({ptX}, {ptY});";
 
                     IBrowserElement? ele = await _browser.CurrentWindow.CurrentTab.GetElementAsync(s_Script);
 
