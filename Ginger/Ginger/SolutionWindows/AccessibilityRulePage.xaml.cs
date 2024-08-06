@@ -40,7 +40,6 @@ namespace Ginger.SolutionWindows
             InitializeComponent();
             mSolution = WorkSpace.Instance.Solution;
             string allProperties = string.Empty;
-            actAccessibilityTesting = new ActAccessibilityTesting();
             LoadGridData();
             SetAppsGrid();
             mAccessibilityConfiguration = !WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<AccessibilityConfiguration>().Any() ? new AccessibilityConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>();

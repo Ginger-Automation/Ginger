@@ -306,7 +306,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         public ObservableList<AccessibilityRuleData> GetRuleList()
         {
             AccessibilityRuleData AccessibilityRuleDataObjet = new AccessibilityRuleData();
-            AccessibilityConfiguration mAccessibilityConfiguration = new ();
+            AccessibilityConfiguration mAccessibilityConfiguration;
             if (WorkSpace.Instance.SolutionRepository != null)
             {
                 if(!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<AccessibilityConfiguration>().Any())
@@ -323,7 +323,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 mAccessibilityConfiguration = new ();
             }
             mAccessibilityConfiguration.ExcludedRules = mAccessibilityConfiguration.ExcludedRules != null ? mAccessibilityConfiguration.ExcludedRules : new();
-            ObservableList<AccessibilityRuleData> ruleDatalist = new ();
+            ObservableList<AccessibilityRuleData> ruleDatalist;
             try
             {
                 string AccessbiltyString = GetAccessiblityrules();
@@ -339,13 +339,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                         ruleData.Active = true;
                     }
                 }
+                return ruleDatalist;
             }
             catch (Exception ex)
             {
                 Error = "Error: during accessibility testing:" + ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, $"Error: during accessibility testing in GetRuleList. Configuration: {mAccessibilityConfiguration?.Name}", ex);
             }
-            return ruleDatalist;
+            return [];
         }
 
         private Dictionary<string, object> _items;

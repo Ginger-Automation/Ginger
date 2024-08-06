@@ -44,7 +44,6 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
     {
 
         private static IWebDriver _driver;
-        ActAccessibilityTesting mact;
         IWebElement e = null;
 
         [ClassInitialize()]
@@ -82,7 +81,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
                 return;
             }
             _driver.Navigate().GoToUrl($"https://ginger.amdocs.com/");
-            mact = new ActAccessibilityTesting();
+            ActAccessibilityTesting mact = new ActAccessibilityTesting();
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
@@ -103,7 +102,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
                 return;
             }
             _driver.Navigate().GoToUrl($"https://ginger.amdocs.com/");
-            mact = new ActAccessibilityTesting();
+            ActAccessibilityTesting mact = new ActAccessibilityTesting();
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.BySeverity);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity))
@@ -124,7 +123,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             }
             string htmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder("Html"), "TestAccessiblity.html");
             _driver.Navigate().GoToUrl(htmlFilePath);
-            mact = new ActAccessibilityTesting();
+            ActAccessibilityTesting mact = new ActAccessibilityTesting();
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
@@ -145,7 +144,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             }
             string htmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder("Html"), "TestAccessiblity.html");
             _driver.Navigate().GoToUrl(htmlFilePath);
-            mact = new ActAccessibilityTesting();
+            ActAccessibilityTesting mact = new ActAccessibilityTesting();
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page);
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.BySeverity);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity))
@@ -164,7 +163,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             {
                 return;
             }
-            mact = new ActAccessibilityTesting();
+            ActAccessibilityTesting mact = new ActAccessibilityTesting();
             AxeBuilder axeBuilder = mact.CreateAxeBuilder(_driver);
             Assert.AreNotEqual(null, axeBuilder);
         }
@@ -176,7 +175,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             {
                return;
             }
-            mact = new ActAccessibilityTesting();
+            ActAccessibilityTesting mact = new ActAccessibilityTesting();
             ObservableList<AccessibilityRuleData> ruleList = mact.GetRuleList();
             Assert.AreNotEqual(null, ruleList);
             Assert.AreEqual(92, ruleList.Count);
