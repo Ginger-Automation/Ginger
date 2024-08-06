@@ -80,7 +80,7 @@ public class ExecutionReportGraphQLClient
         }
         catch (Exception ex)
         {
-            throw new ApplicationException("Error executing the GraphQL query.", ex);
+            throw new Exception("Error executing the GraphQL query.", ex);
         }
 
     }
