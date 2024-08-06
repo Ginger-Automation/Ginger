@@ -36,20 +36,20 @@ namespace Ginger.Configurations
         
 
 
-        ObservableList<AccessibilityRuleData> mDefaultExcludeRule;
+        ObservableList<AccessibilityRuleData> mExcludedRules;
         [IsSerializedForLocalRepository]
-        public ObservableList<AccessibilityRuleData> DefaultExcludeRule
+        public ObservableList<AccessibilityRuleData> ExcludedRules
         {
             get
             {
-                return mDefaultExcludeRule;
+                return mExcludedRules;
             }
             set
             {
-                if (mDefaultExcludeRule != value)
+                if (mExcludedRules != value)
                 {
-                    mDefaultExcludeRule = value;
-                    OnPropertyChanged(nameof(DefaultExcludeRule));
+                    mExcludedRules = value;
+                    OnPropertyChanged(nameof(ExcludedRules));
                 }
             }
         }

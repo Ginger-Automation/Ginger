@@ -33,31 +33,23 @@ namespace Ginger.SolutionWindows
     {
         Solution mSolution;
         string AppName;
-        List<string> DefaultExcludeRulesList;
         private AccessibilityConfiguration mAccessibilityConfiguration;
+        private static ActAccessibilityTesting actAccessibilityTesting; 
         public AccessibilityRulePage()
         {
             InitializeComponent();
             mSolution = WorkSpace.Instance.Solution;
             string allProperties = string.Empty;
-            WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+            actAccessibilityTesting = new ActAccessibilityTesting();
             LoadGridData();
             SetAppsGrid();
-            mAccessibilityConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>();
-            mAccessibilityConfiguration.DefaultExcludeRule = mAccessibilityConfiguration.DefaultExcludeRule != null ? mAccessibilityConfiguration.DefaultExcludeRule : new ();
-        }
-        private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(WorkSpace.Solution))
-            {
-                mSolution = WorkSpace.Instance.Solution;
-                LoadGridData();
-            }
+            mAccessibilityConfiguration = !WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<AccessibilityConfiguration>().Any() ? new AccessibilityConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>();
+            mAccessibilityConfiguration.ExcludedRules = mAccessibilityConfiguration.ExcludedRules != null ? mAccessibilityConfiguration.ExcludedRules : new ();
         }
 
         private void SetAppsGrid()
         {
-            xAccessibilityRulesGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", saveAllHandler: SaveHandler, null, true);
+            xAccessibilityRulesGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", null, null, true);
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView()
@@ -98,7 +90,7 @@ namespace Ginger.SolutionWindows
                 ReadOnly = true
             });
 
-            xAccessibilityRulesGrid.AddLabel("Note: We will analyze the active items from the list below for accessibility. Testing and deactivating items won't be taken into account for accessibility testing.");
+            xAccessibilityRulesGrid.AddLabel("Note: Ginger will only analyze the active accessibility testing rules; inactive rules will not be considered.");
 
             xAccessibilityRulesGrid.SetAllColumnsDefaultView(view);
             xAccessibilityRulesGrid.InitViewItems();
@@ -106,7 +98,6 @@ namespace Ginger.SolutionWindows
 
         private void LoadGridData()
         {
-            ActAccessibilityTesting actAccessibilityTesting = new ActAccessibilityTesting();
             List<AccessibilityRuleData> sortedList = actAccessibilityTesting.RulesItemsdata.OrderByDescending(data => !data.Active).ToList();
             ObservableList<AccessibilityRuleData> accessibilityRuleDatas = [.. sortedList];
             xAccessibilityRulesGrid.DataSourceList = accessibilityRuleDatas;
@@ -122,26 +113,26 @@ namespace Ginger.SolutionWindows
                 mAccessibilityConfiguration.StartDirtyTracking();
                 if (!data.Active)
                 {
-                    if (!mAccessibilityConfiguration.DefaultExcludeRule.Any(x => x.Equals(data.RuleID)))
+                    if(!mAccessibilityConfiguration.ExcludedRules.Any())
                     {
-                        mAccessibilityConfiguration.DefaultExcludeRule.Add(data);
+                        GingerCoreNET.GeneralLib.General.CreateDefaultAccessiblityconfiguration();
+                        mAccessibilityConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>();
+                        mAccessibilityConfiguration.ExcludedRules = mAccessibilityConfiguration.ExcludedRules != null ? mAccessibilityConfiguration.ExcludedRules : new();
                     }
-                    
+
+                    if (!mAccessibilityConfiguration.ExcludedRules.Any(x => x.Equals(data.RuleID)))
+                    {
+                        mAccessibilityConfiguration.ExcludedRules.Add(data);
+                    }
                 }
                 else
                 {
-                    if (mAccessibilityConfiguration.DefaultExcludeRule.Any(x => x.Equals(data.RuleID)))
+                    if (mAccessibilityConfiguration.ExcludedRules.Any(x => x.Equals(data.RuleID)))
                     {
-                        mAccessibilityConfiguration.DefaultExcludeRule.Remove(data);
-                        
+                        mAccessibilityConfiguration.ExcludedRules.Remove(data);
                     }
                 }
             }
-        }
-
-        private void SaveHandler(object sender, RoutedEventArgs e)
-        {
-            mSolution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.DefaultExcludeRule);
         }
     }
 }

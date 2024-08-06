@@ -306,16 +306,31 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         public ObservableList<AccessibilityRuleData> GetRuleList()
         {
             AccessibilityRuleData AccessibilityRuleDataObjet = new AccessibilityRuleData();
-            AccessibilityConfiguration mAccessibilityConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>();
-            mAccessibilityConfiguration.DefaultExcludeRule = mAccessibilityConfiguration.DefaultExcludeRule != null ? mAccessibilityConfiguration.DefaultExcludeRule : new();
-            ObservableList<AccessibilityRuleData> ruleDatalist = new ObservableList<AccessibilityRuleData>();
+            AccessibilityConfiguration mAccessibilityConfiguration = new ();
+            if (WorkSpace.Instance.SolutionRepository != null)
+            {
+                if(!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<AccessibilityConfiguration>().Any())
+                {
+                    mAccessibilityConfiguration = new();
+                }
+                else
+                {
+                    mAccessibilityConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>();
+                }
+            }
+            else
+            {
+                mAccessibilityConfiguration = new ();
+            }
+            mAccessibilityConfiguration.ExcludedRules = mAccessibilityConfiguration.ExcludedRules != null ? mAccessibilityConfiguration.ExcludedRules : new();
+            ObservableList<AccessibilityRuleData> ruleDatalist = new ();
             try
             {
                 string AccessbiltyString = GetAccessiblityrules();
                 ruleDatalist = AccessibilityRuleDataObjet.GetAccessibilityRules(AccessbiltyString);
                 foreach (AccessibilityRuleData ruleData in ruleDatalist)
                 {
-                    if (mAccessibilityConfiguration.DefaultExcludeRule != null && mAccessibilityConfiguration.DefaultExcludeRule.Select(x=>x.RuleID).Contains(ruleData.RuleID))
+                    if (mAccessibilityConfiguration.ExcludedRules != null && mAccessibilityConfiguration.ExcludedRules.Select(x=>x.RuleID).Contains(ruleData.RuleID))
                     {
                         ruleData.Active = false;
                     }
@@ -328,7 +343,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             catch (Exception ex)
             {
                 Error = "Error: during accessibility testing:" + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Error: during accessibility testing", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Error: during accessibility testing in GetRuleList. Configuration: {mAccessibilityConfiguration?.Name}", ex);
             }
             return ruleDatalist;
         }
@@ -376,7 +391,15 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
         private static string GetAccessiblityrules()
         {
-            return EmbeddedResourceProvider.ReadEmbeddedFile("AccessiblityRules.json");
+            try
+            {
+                return EmbeddedResourceProvider.ReadEmbeddedFile("AccessiblityRules.json");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error reading accessibility rules from embedded file", ex);
+                return string.Empty;
+            }
         }
 
         public void CreateAxeHtmlReport(ISearchContext context, AxeResult results, string destination, ReportTypes requestedResults)

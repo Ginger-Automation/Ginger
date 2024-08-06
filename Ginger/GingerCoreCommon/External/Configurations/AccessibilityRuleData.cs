@@ -68,6 +68,7 @@ namespace Ginger.Configurations
         public ObservableList<AccessibilityRuleData> GetAccessibilityRules(string AccessbiltyString)
         {
             Root data = new();
+            data.accessibilityRules = [];
             try
             {
                 data = JsonConvert.DeserializeObject<Root>(AccessbiltyString);

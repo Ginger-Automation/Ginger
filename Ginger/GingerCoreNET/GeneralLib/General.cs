@@ -619,14 +619,22 @@ namespace GingerCoreNET.GeneralLib
 
         public static bool CreateDefaultAccessiblityconfiguration()
         {
-            if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<AccessibilityConfiguration>().Any())
+            try
             {
-                AccessibilityConfiguration newAccessibilityConfiguration = new AccessibilityConfiguration() { Name = "Accessibility" };
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newAccessibilityConfiguration);
-                return true;
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<AccessibilityConfiguration>().Any())
+                {
+                    AccessibilityConfiguration newAccessibilityConfiguration = new AccessibilityConfiguration() { Name = "Accessibility" };
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newAccessibilityConfiguration);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating default accessibility configuration", ex);
                 return false;
             }
         }

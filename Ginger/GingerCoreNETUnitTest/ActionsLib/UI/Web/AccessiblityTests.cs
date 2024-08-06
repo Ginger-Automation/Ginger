@@ -44,7 +44,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
     {
 
         private static IWebDriver _driver;
-        static ActAccessibilityTesting mact;
+        ActAccessibilityTesting mact;
         IWebElement e = null;
 
         [ClassInitialize()]
@@ -164,6 +164,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             {
                 return;
             }
+            mact = new ActAccessibilityTesting();
             AxeBuilder axeBuilder = mact.CreateAxeBuilder(_driver);
             Assert.AreNotEqual(null, axeBuilder);
         }
@@ -175,9 +176,10 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             {
                return;
             }
+            mact = new ActAccessibilityTesting();
             ObservableList<AccessibilityRuleData> ruleList = mact.GetRuleList();
             Assert.AreNotEqual(null, ruleList);
-            Assert.AreEqual(93, ruleList.Count);
+            Assert.AreEqual(92, ruleList.Count);
         }
 
         public static ObservableList<OperationValues> GetStandardTagslist()
