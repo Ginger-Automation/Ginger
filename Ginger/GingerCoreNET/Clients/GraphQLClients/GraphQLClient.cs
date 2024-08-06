@@ -26,8 +26,15 @@ namespace GraphQLClient.Clients
 
         public GraphQlClient(string endpoint)
         {
-            client = new GraphQLHttpClient(endpoint, new NewtonsoftJsonSerializer());
-            ResetPagination();
+            try
+            {
+                client = new GraphQLHttpClient(endpoint, new NewtonsoftJsonSerializer());
+                ResetPagination();
+            }
+            catch (UriFormatException ex)
+            {
+                throw new ArgumentException("Invalid URL format", nameof(endpoint), ex);
+            }
         }
 
         /// <summary>

@@ -1175,12 +1175,21 @@ namespace Ginger
             toolbar.Items.Add(pnl);
             return b;
         }
-        public RadioButton AddRadioButton(string content,string name, string groupName, RoutedEventHandler? handler, bool isEnabled = true, bool isChecked = false)
+        public RadioButton AddRadioButton(string content, string groupName, RoutedEventHandler? handler, bool isEnabled = true, bool isChecked = false)
         {
             DockPanel pnl = new DockPanel();
             pnl.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
             pnl.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             pnl.LastChildFill = false;
+
+            if (string.IsNullOrEmpty(content))
+            {
+                throw new ArgumentException("Content cannot be null or empty", nameof(content));
+            }
+            if (string.IsNullOrEmpty(groupName))
+            {
+                throw new ArgumentException("GroupName cannot be null or empty", nameof(groupName));
+            }
 
             RadioButton b = new RadioButton();
             b.Margin = new Thickness(3, 0, 0, 0);
@@ -1193,7 +1202,7 @@ namespace Ginger
             b.GroupName = groupName; // Set the group name for grouping radio buttons together
             b.IsEnabled = isEnabled; // Set the enabled/disabled state of the radio button
             b.IsChecked = isChecked; // Set the checked/unchecked state of the radio button
-            b.Name = name;
+  
 
             if (handler != null)
             {

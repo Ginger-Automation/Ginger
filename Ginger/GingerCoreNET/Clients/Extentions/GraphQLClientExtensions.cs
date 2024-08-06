@@ -1,5 +1,6 @@
 ﻿using AccountReport.Contracts.GraphQL.ResponseModels;
 using GraphQL;
+using System;
 
 namespace GraphQLClient.Extensions
 {
@@ -10,6 +11,10 @@ namespace GraphQLClient.Extensions
         /// </summary>
         public static PageInfo GetPageInfo(GraphQLResponse<GraphQLRunsetResponse> response)
         {
+            if (response?.Data?.Runsets?.PageInfo == null)
+            {
+                throw new ArgumentNullException(nameof(response), "The response or its PageInfo is null.");
+            }
             return new PageInfo
             {
                 EndCursor = response.Data.Runsets.PageInfo.EndCursor,

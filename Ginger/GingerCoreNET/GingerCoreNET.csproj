@@ -37,9 +37,6 @@
     <EmbeddedResource Remove="GeneralLib\JSON\**" />
     <EmbeddedResource Remove="NewFolder1\**" />
     <EmbeddedResource Remove="NewFolder\**" />
-    <None Remove="DataBaseAbstarct\**" />
-    <None Remove="GeneralLib\JSON\**" />
-    <None Remove="NewFolder1\**" />
     <None Remove="NewFolder\**" />
   </ItemGroup>
 
