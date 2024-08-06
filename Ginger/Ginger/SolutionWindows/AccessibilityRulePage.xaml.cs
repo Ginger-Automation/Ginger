@@ -34,7 +34,7 @@ namespace Ginger.SolutionWindows
         Solution mSolution;
         string AppName;
         private AccessibilityConfiguration mAccessibilityConfiguration;
-        private static ActAccessibilityTesting actAccessibilityTesting; 
+        private static ActAccessibilityTesting actAccessibilityTesting = new ActAccessibilityTesting(); 
         public AccessibilityRulePage()
         {
             InitializeComponent();
