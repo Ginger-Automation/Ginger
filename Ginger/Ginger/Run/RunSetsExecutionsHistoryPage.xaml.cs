@@ -71,9 +71,9 @@ namespace Ginger.Run
         private HttpClient? _httpClient;
         private Task<GraphQLResponse<GraphQLRunsetResponse>> response;
         private GraphQLResponse<GraphQLRunsetResponse> data;
-        private GraphQlClient graphQlClient=null;
+        private GraphQlClient graphQlClient = null;
         private ExecutionReportGraphQLClient executionReportGraphQLClient;
-        private bool GaraphQLClientFlag=false;
+        private bool GaraphQLClientLoadFlag = false;
         private bool isLoading = true;
         private RadioButton remoteRadioButton;
         private RadioButton localRadioButton;
@@ -117,20 +117,20 @@ namespace Ginger.Run
 
             mExecutionHistoryLevel = executionHistoryLevel;
             RunsetConfig = runsetConfig;
-            _runsetFromReportLoader = new();  
+            _runsetFromReportLoader = new();
             this.Unloaded += OnUnloaded;
-            
+
             SetGridView();
             ReloadData();
-            
+
             isLoading = false;
 
 
             }
 
-        void  AssignGraphQLObjectEndPoint()
+        void AssignGraphQLObjectEndPoint()
             {
-            
+
             try
                 {
                 string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
@@ -139,17 +139,17 @@ namespace Ginger.Run
                     endPoint = endPoint + "api/graphql";
                     graphQlClient = new GraphQlClient(endPoint);
                     executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
-                    GaraphQLClientFlag = true;
+                    GaraphQLClientLoadFlag = true;
                     }
-                
+
                 }
             catch (Exception ex)
                 {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
                 Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
-               
+
                 }
-            
+
             }
         /// <summary>
         /// Checks the centralized execution logger configuration and sets the appropriate radio button and loads the executions history data.
@@ -157,7 +157,7 @@ namespace Ginger.Run
         void CheckCentralizedExecutionLoggerConfig()
             {
             GraphQlLoadingVisible();
-            if (GaraphQLClientFlag)
+            if (GaraphQLClientLoadFlag)
                 {
                 RadioButton_Remote(null, null);
                 }
@@ -194,11 +194,11 @@ namespace Ginger.Run
             {
             GraphQlLoadingVisible();
 
-            if (remoteRadioButton.IsChecked == true)
+            if ((bool)remoteRadioButton.IsChecked)
                 {
                 await LoadExecutionsHistoryDataGraphQl();
                 }
-            else if (localRadioButton.IsChecked == true)
+            else if ((bool)localRadioButton.IsChecked)
                 {
                 LoadExecutionsHistoryDataLiteDb();
                 }
@@ -221,11 +221,11 @@ namespace Ginger.Run
         public void ReloadData()
             {
             AssignGraphQLObjectEndPoint();
-            if (GaraphQLClientFlag)
+            if (GaraphQLClientLoadFlag)
                 {
                 remoteRadioButton.IsChecked = true;
-                remoteRadioButton.IsEnabled = true;               
-                    
+                remoteRadioButton.IsEnabled = true;
+
                 }
             else
                 {
@@ -325,7 +325,7 @@ namespace Ginger.Run
             xGridExecutionsHistory.AddLabel("Load Execution History Data:");
 
             string groupName = "ExecutionLoggerGroup";
-            if (GaraphQLClientFlag == true)
+            if (GaraphQLClientLoadFlag)
                 {
                 remoteRadioButton = xGridExecutionsHistory.AddRadioButton("Remote ", groupName, new RoutedEventHandler(RadioButton_Remote), isChecked: true);
                 localRadioButton = xGridExecutionsHistory.AddRadioButton("Local", groupName, new RoutedEventHandler(RadioButton_Local));
@@ -472,9 +472,8 @@ namespace Ginger.Run
         /// <summary>
         /// Handles pagination button click events.
         /// </summary>
-        private async Task LoadRemoteDataFromGraphQL(int recordLimit, ePageAction pageButton , string endCursor = null, string startCursor = null, bool firstPage = false, bool lastPage = false, bool afterOrBefore = true)
+        private async Task LoadRemoteDataFromGraphQL(int recordLimit, ePageAction pageButton, string endCursor = null, string startCursor = null, bool firstPage = false, bool lastPage = false, bool afterOrBefore = true)
             {
-            //AssignGraphQLObjectEndPoint();
             try
                 {
                 if (mExecutionHistoryLevel == eExecutionHistoryLevel.Solution)
@@ -486,8 +485,8 @@ namespace Ginger.Run
                     response = executionReportGraphQLClient.ExecuteReportQuery(recordLimit, WorkSpace.Instance.Solution.Guid, RunsetConfig.Guid, endCursor: endCursor, startCursor: startCursor, firstPage: firstPage, lastPage: lastPage, afterOrBefore: afterOrBefore);
                     }
 
-                var data = await response;
-                AddRemoteDataToList(data);
+
+                AddRemoteDataToList(await response);
                 UpdatePageInfo(pageButton);
                 UpdateButtonStates();
                 }
@@ -717,7 +716,7 @@ namespace Ginger.Run
                     string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);
                     TextFileRepository.DeleteLocalData(runSetFolder);
                     }
-                else if (remoteRadioButton.IsChecked == true)
+                else if ((bool)remoteRadioButton.IsChecked)
                     {
                     Reporter.ToUser(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed);
                     remoteDeletionFlag = true;
@@ -1037,7 +1036,7 @@ namespace Ginger.Run
 
             float result = MathF.Floor(graphQlClient.TotalCount / (int)xPageSizeComboBox.SelectedItem);
             int remainingRecords = graphQlClient.TotalCount - (int)result * (int)xPageSizeComboBox.SelectedItem;
-            int recordCount = remainingRecords == 0 ? (int)xPageSizeComboBox.SelectedItem : remainingRecords;
+            int recordCount;
 
             if (graphQlClient.ItemsFetchedSoFar % (int)xPageSizeComboBox.SelectedItem == 0)
                 {
