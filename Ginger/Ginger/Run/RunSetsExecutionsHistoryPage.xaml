@@ -104,7 +104,7 @@
                 </usercontrols:ucButton>
                 <usercontrols:ucButton x:Name="btnLast" ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="AnglesArrowRight" Click="btnLast_Click" Margin="5,0,0,0">
                 </usercontrols:ucButton>
-                <ComboBox x:Name="xPageSizeComboBox" Width="10" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" SelectedIndex="0" Margin="10,0,0,0" FontWeight="Bold" SelectionChanged="xPageSizeComboBox_SelectionChanged" />
+                <ComboBox x:Name="xPageSizeComboBox" Width="10" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}"  Margin="10,0,0,0" SelectedIndex="0" FontWeight="Bold" SelectionChanged="xPageSizeComboBox_SelectionChanged" />
                 <usercontrols:ImageMakerControl x:Name="xGraphQlLoading" ImageType="Processing"  HorizontalAlignment="Center" Width="20" Visibility="Hidden"  Foreground="LightBlue" Margin="5,0,0,0"/>
                 </StackPanel>
             </StackPanel>

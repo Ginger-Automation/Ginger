@@ -25,7 +25,16 @@ public class ExecutionReportGraphQLClient
     /// </summary>
     public async Task<GraphQLResponse<GraphQLRunsetResponse>> ExecuteReportQuery(int recordLimit, Guid solutionId, Guid? runSetId = null, string endCursor = null, string startCursor = null, bool firstPage = false, bool lastPage = false, bool afterOrBefore = true)
     {
-        string paraList = "executionId, entityId, name, description, sourceApplication, sourceApplicationUser, startTime, endTime, elapsedEndTimeStamp, status";
+        const string paraList = "executionId, entityId, name, description, sourceApplication, sourceApplicationUser, startTime, endTime, elapsedEndTimeStamp, status";
+
+        if (recordLimit <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(recordLimit), "Record limit must be greater than zero.");
+        }
+        if (solutionId == Guid.Empty)
+        {
+            throw new ArgumentException("Solution ID cannot be empty.", nameof(solutionId));
+        }
 
         var queryInfo = new GraphQLQueryInfo
         {
@@ -65,6 +74,14 @@ public class ExecutionReportGraphQLClient
         }
 
         var generatedQuery = RunsetQueryBuilder.CreateQuery(queryInfo, paraList);
-        return await graphQlClient.GetRunsets(generatedQuery);
+        try
+        {
+            return await graphQlClient.GetRunsets(generatedQuery);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Error executing the GraphQL query.", ex);
+        }
+
     }
 }
