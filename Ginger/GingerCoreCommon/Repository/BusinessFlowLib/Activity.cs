@@ -1266,7 +1266,7 @@ namespace GingerCore
         public override void PostSaveHandler()
         {
             // saving from Shared repository tab
-            GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations.UpdateSharedRepositoryLinkedInstances(this);
+            GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations?.UpdateSharedRepositoryLinkedInstances(this);
         }
 
         public bool IsAutoLearned { get; set; }
