@@ -29,7 +29,7 @@ namespace GingerCore.Actions.WebServices
 {
     public class ActWebAPIRest : ActWebAPIBase, IActPluginExecution
     {
-        public override string ActionDescription { get { return "WebAPI REST Action"; } }
+        public override string ActionDescription { get { return "Web API REST Action"; } }
         public override string ActionUserDescription { get { return "Performs REST action"; } }
         public override string ActionEditPage { get { return "WebServices.ActWebAPIEditPage"; } }
         public override bool ValueConfigsNeeded { get { return false; } }
