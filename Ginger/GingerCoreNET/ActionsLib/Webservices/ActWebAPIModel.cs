@@ -33,6 +33,12 @@ namespace GingerCore.Actions.WebServices.WebAPI
 {
     public class ActWebAPIModel : Act, IActPluginExecution, IActPluginPostRun
     {
+        public ActWebAPIModel()
+        {
+            //Disable Auto Screenshot on failure by default. User can override it if needed
+            AutoScreenShotOnFailure = false;
+        }
+
         public override String ActionType
         {
             get
@@ -101,7 +107,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
+            List<ObservableList<ActInputValue>> list = [];
             List<ActInputValue> AIVList = APIModelParamsValue.Cast<ActInputValue>().ToList();
             list.Add(General.ConvertListToObservableList(AIVList));
             return list;
