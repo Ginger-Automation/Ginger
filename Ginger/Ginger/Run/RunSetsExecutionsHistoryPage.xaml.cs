@@ -653,6 +653,7 @@ namespace Ginger.Run
                 {
                 var runSetReport = new RunSetReport
                     {
+
                     GUID = node.ExecutionId.ToString(),
                     RunSetGuid = node.EntityId.Value,
                     Name = node.Name,
