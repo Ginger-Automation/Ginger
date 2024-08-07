@@ -359,7 +359,7 @@ namespace Ginger.Run
         /// <summary>
         /// Loads the execution history data from LiteDB.
         /// </summary>
-        private async void LoadExecutionsHistoryDataLiteDb()
+        private async Task LoadExecutionsHistoryDataLiteDb()
             {
             xGridExecutionsHistory.Visibility = Visibility.Collapsed;
             Loading.Visibility = Visibility.Visible;
@@ -554,7 +554,7 @@ namespace Ginger.Run
                     break;
 
                 case ePageAction.lastPage:
-                    float result = MathF.Floor(totalEntries / recordCount);
+                    float result = MathF.Floor((float)totalEntries / recordCount);
                     int remainingRecords = totalEntries - (int)result * recordCount;
                     recordCount = remainingRecords == 0 ? recordCount : remainingRecords;
 
@@ -583,6 +583,8 @@ namespace Ginger.Run
                         end = recordCount;
                         }
                     break;
+                default:
+                     break;
                 }
             }
 
@@ -624,6 +626,8 @@ namespace Ginger.Run
 
                 case ePageAction.previousPage:
                     pageNumber = (start - 1) / recordCount + 1;
+                    break;
+                default:
                     break;
                 }
 
@@ -738,7 +742,7 @@ namespace Ginger.Run
             {
 
 
-            if (remoteRadioButton.IsChecked == true)
+            if ((bool)remoteRadioButton.IsChecked)
                 {
                 Reporter.ToUser(eUserMsgKey.RemoteExecutionReportFolder);
                 return;
