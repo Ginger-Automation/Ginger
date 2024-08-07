@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
@@ -265,10 +266,29 @@ namespace Ginger.Run.RunSetActions
                         }
                     }
                     long emailSize = CalculateAttachmentsSize(RunSetActionHTMLReportSendEmail.Email);
-
+             
                     if (ReportItem != null)
                     {
-                        if (((EmailHtmlReportAttachment)ReportItem).IsLinkEnabled || emailSize > 10000000)
+                        
+                        if (((EmailHtmlReportAttachment)ReportItem).IsAccountReportLinkEnabled || emailSize > 10000000)
+                            {
+                            // TODO: add warning or something !!!!
+
+                            if (RunSetActionHTMLReportSendEmail.EmailAttachments.IndexOf(ReportItem) > -1)
+                                {
+                                if (RunSetActionHTMLReportSendEmail.Email.Attachments.Count > 0)
+                                    {
+                                    RunSetActionHTMLReportSendEmail.Email.Attachments.RemoveAt(RunSetActionHTMLReportSendEmail.EmailAttachments.IndexOf(ReportItem));
+                                    }
+                                }
+                            string accountReportURL = GingerRemoteExecutionUtils.GetReportHTMLServiceUrl() + "?ExecutionId=" + WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
+                            if (!string.IsNullOrEmpty(accountReportURL))
+                                {
+                                emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + accountReportURL + "' style ='font-size:16px;color:blue;text-decoration:underline'> Click Here to View Online Account Report </a>");
+                                emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
+                                }
+                            }
+                        else if (((EmailHtmlReportAttachment)ReportItem).IsLinkEnabled || emailSize > 10000000)
                         {
                             // TODO: add warning or something !!!!
 
