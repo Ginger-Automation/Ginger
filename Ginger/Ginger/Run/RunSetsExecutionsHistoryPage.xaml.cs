@@ -584,7 +584,8 @@ namespace Ginger.Run
                         }
                     break;
                 default:
-                     break;
+                    return;
+                   
                 }
             }
 
@@ -608,7 +609,7 @@ namespace Ginger.Run
                     break;
 
                 case ePageAction.lastPage:
-                    float result = MathF.Floor(totalEntries / recordCount);
+                    float result = MathF.Floor((float)totalEntries / recordCount);
                     int remainingRecords = totalEntries - (int)result * recordCount;
                     pageNumber = (int)result + (remainingRecords == 0 ? 0 : 1);
                     break;
@@ -628,7 +629,7 @@ namespace Ginger.Run
                     pageNumber = (start - 1) / recordCount + 1;
                     break;
                 default:
-                    break;
+                    return 0;
                 }
 
             return pageNumber;

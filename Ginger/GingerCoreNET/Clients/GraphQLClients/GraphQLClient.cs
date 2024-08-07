@@ -90,7 +90,7 @@ namespace GraphQLClient.Clients
             }
             catch (Exception ex)
             {
-                throw new Exception("Error fetching runsets", ex);
+                throw new ArgumentException("Error fetching runsets", ex);
             }
         }
     }
