@@ -169,7 +169,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Centralized Html Report Service URL is missing in General Report Configurations.\nPlease go to Configurations > Reports > Execution Logger Configurations to configure the HTML Report URL");
+                Reporter.ToLog(eLogLevel.ERROR, "Centralized Html Report Service URL is missing in General Report Configurations.\nPlease go to Configurations > Reports > Execution Logger Configurations to configure the HTML Report URL");
                 return string.Empty;
             }
         }
