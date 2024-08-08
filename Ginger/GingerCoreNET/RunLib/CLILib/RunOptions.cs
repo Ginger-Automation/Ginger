@@ -132,7 +132,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("sourceApplicationUser", Required = false, HelpText = "Set Source Application username")]
         public string SourceApplicationUser { get; set; }
 
-        //Aman
+        //Flag for Opening GingerUI thru CLI
         [Option('k', "oflag", Required = false, HelpText = "Keep the Ginger UI Open")]
         public bool KeepGingerUIOpen { get; set; }
         }
