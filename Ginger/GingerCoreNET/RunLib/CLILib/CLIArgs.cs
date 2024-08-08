@@ -69,6 +69,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 options.SourceApplicationUser = System.Environment.UserName;
             }
 
+            if (cliHelper.GingerCLIView)
+            {
+                options.KeepGingerUIOpen = cliHelper.GingerCLIView;
+            }
+
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl)
             {
 

@@ -50,6 +50,7 @@ namespace Amdocs.Ginger.Common
 
         void ShowAutoRunWindow();
 
+        void ShowGingerUIwindow();
         bool Send_Outlook(bool actualSend = true, string MailTo = null, string Event = null, string Subject = null, string Body = null, string MailCC = null, List<string> Attachments = null, List<KeyValuePair<string, string>> EmbededAttachment = null);
 
         void DisplayAsOutlookMail();

@@ -381,7 +381,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.RunAnalyzer = !runOptions.DoNotAnalyze;
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
-
+            mCLIHelper.GingerCLIView = runOptions.KeepGingerUIOpen;
             mCLIHelper.SourceControlURL = runOptions.URL;
             mCLIHelper.SourcecontrolUser = runOptions.User;
             mCLIHelper.sourceControlType = runOptions.SCMType;

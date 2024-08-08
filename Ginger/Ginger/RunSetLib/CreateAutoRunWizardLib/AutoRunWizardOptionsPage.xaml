@@ -21,7 +21,13 @@
                 </CheckBox.Content>
             </CheckBox>
             <!--<Label Style="{StaticResource $LabelStyle}" FontSize="10" Margin="20,0,0,0" Content="(Relevent only in case running on Windows)"/>-->
-
+            
+            <CheckBox x:Name="xGingerCLIWindowShow" Margin="5" Style="{StaticResource $CeckBoxStyle}">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Open Ginger while Executing through CLI"/>
+                </CheckBox.Content>
+            </CheckBox>
+            
             <CheckBox x:Name="xRunAnalyzerCheckBox" Style="{StaticResource $CeckBoxStyle}" Margin="5">
                 <CheckBox.Content>
                     <GingerCore:ucTextDicResource Text="Run Analyzer before execution"/>

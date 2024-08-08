@@ -23,7 +23,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     [Verb("run", HelpText = "Open Solution and execute run set")]
     public class RunOptions : OptionsBase
-    {
+        {
         public static string Verb => CLIOptionClassHelper.GetClassVerb<RunOptions>();
 
         [Option('s', "solution", Required = true, HelpText = "Set solution folder")]
@@ -131,6 +131,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         [Option("sourceApplicationUser", Required = false, HelpText = "Set Source Application username")]
         public string SourceApplicationUser { get; set; }
-    }
+
+        //Aman
+        [Option('k', "oflag", Required = false, HelpText = "Keep the Ginger UI Open")]
+        public bool KeepGingerUIOpen { get; set; }
+        }
 
 }

@@ -78,6 +78,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public bool SelfHealingCheckInConfigured;
 
+
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
         {
@@ -91,6 +92,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 OnPropertyChanged(nameof(ShowAutoRunWindow));
             }
         }
+
+        private bool mGingerCLIView;
+        public bool GingerCLIView
+        {
+            get
+            {
+                return mGingerCLIView;
+            }
+            set
+            {
+                mGingerCLIView = value;
+                OnPropertyChanged(nameof(GingerCLIView));
+            }
+        }
+
 
         bool mDownloadUpgradeSolutionFromSourceControl;
         public bool DownloadUpgradeSolutionFromSourceControl
@@ -271,7 +287,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                 }
 
-                HandleAutoRunWindow();
+                if (GingerCLIView)
+                {
+                    HandleGingerUIOpen();
+                }
+                else
+                {
+                    HandleAutoRunWindow();
+                }
+
 
                 mRunSetConfig.SelfHealingConfiguration = mRunsetExecutor.RunSetConfig.SelfHealingConfiguration;
 
@@ -298,7 +322,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void PostExecution()
         {
-            if (ShowAutoRunWindow)
+            if (GingerCLIView)
+            {
+                //keep ginger open
+            }
+            else if (ShowAutoRunWindow)
             {
                 TargetFrameworkHelper.Helper.WaitForAutoRunWindowClose();
             }
@@ -464,6 +492,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        private void HandleGingerUIOpen()
+        {
+            if (GingerCLIView)
+            {
+            Reporter.ToLog(eLogLevel.INFO, "Showing Ginger UI Window");
+            TargetFrameworkHelper.Helper.ShowGingerUIwindow();
+            }
+            else
+            {
+            Reporter.ToLog(eLogLevel.INFO, "Not Showing Ginger UI Window");
+            }
+        }
 
         private void SelectRunset()
         {

@@ -73,6 +73,7 @@ namespace Ginger
         public DotNetFrameworkHelper()
         {
         }
+        public new static MainWindow MainWindow { get; set; }
 
         public IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow)
         {
@@ -211,6 +212,12 @@ namespace Ginger
                     Thread.Sleep(100);  // run something on main window so we know it is active and pumping messages
                 });
             }
+        }
+
+        public void ShowGingerUIwindow()
+        {
+            MainWindow = new MainWindow();
+            MainWindow.Show();
         }
 
         public void WaitForAutoRunWindowClose()
