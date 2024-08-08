@@ -299,7 +299,8 @@ namespace GingerCore.Drivers.CommunicationProtocol
         {
             if (s != null)
             {
-                CheckBuffer(s.Length + 5); // String is 1(type) + 4(len) + data           
+                int byteCount = UTF16.GetByteCount(s);
+                CheckBuffer(byteCount + 5); // String is 1(type) + 4(len) + data           
             }
             else
             {
@@ -329,7 +330,8 @@ namespace GingerCore.Drivers.CommunicationProtocol
         //3 Add - Enum
         public void AddEnumValue(object val)
         {
-            CheckBuffer(val.ToString().Length + 5);
+            int byteCount = UTF16.GetByteCount(val.ToString());
+            CheckBuffer(byteCount + 5);
             WriteValueType(EnumValueType);
             WriteString(val.ToString());
         }
@@ -337,8 +339,8 @@ namespace GingerCore.Drivers.CommunicationProtocol
         //4 Add - StringUTF16
         public void AddStringUTF16(string val)
         {
-            int len = UTF16.GetByteCount(val);
-            CheckBuffer(len + 5);
+            int byteCount = UTF16.GetByteCount(val);
+            CheckBuffer(byteCount + 5);
             WriteValueType(StringUTF16Type);
             WriteUnicodeString(val);
         }
