@@ -559,11 +559,14 @@ namespace Ginger.Actions
                 if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
                 {
                     xScreenshotsConfigsPnl.Visibility = Visibility.Collapsed;
-                    xScreenShotsPnl.Visibility = Visibility.Collapsed;
+                    xScreenShotsPnl.Visibility = Visibility.Collapsed;                  
                 }
                 else
                 {
                     BindingHandler.ObjFieldBinding(xTakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.TakeScreenShot));
+                    
+                    BindingHandler.ObjFieldBinding(xAutoScreenShotOnFailureCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.AutoScreenShotOnFailure));
+
                     xWindowsToCaptureCombo.BindControl(mAction, nameof(Act.WindowsToCapture));
                     //remove full page for other platforms excepts web
                     if (mAction.Platform != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)

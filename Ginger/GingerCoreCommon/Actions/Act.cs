@@ -138,6 +138,7 @@ namespace GingerCore.Actions
             public static string OutDataSourceTableName = "OutDataSourceTableName";
             public static string OutDSParamMapType = "OutDSParamMapType";
             public static string SupportSimulation = "SupportSimulation";
+            public static string AutoScreenShotOnFailure = "AutoScreenShotOnFailure";
         }
 
         // Being set by GingerRunner in PrepAction
@@ -174,13 +175,35 @@ namespace GingerCore.Actions
         public bool SupportSimulation
         {
             get
-            { return mSupportSimulation; }
+            { 
+                return mSupportSimulation; 
+            }
             set
             {
                 if (mSupportSimulation != value)
                 {
                     mSupportSimulation = value;
                     OnPropertyChanged(Fields.SupportSimulation);
+                }
+            }
+        }
+
+        ///<summary>
+        /// Gets a value indicating whether automatic screenshot capture is enabled on failure.
+        /// </summary>
+        private bool mAutoScreenShotOnFailure = true;
+        [IsSerializedForLocalRepository]
+        public bool AutoScreenShotOnFailure
+        {
+            get { 
+                return mAutoScreenShotOnFailure;
+            }
+            set {
+
+                if (mAutoScreenShotOnFailure != value)
+                {
+                    mAutoScreenShotOnFailure = value;
+                    OnPropertyChanged(Fields.AutoScreenShotOnFailure);
                 }
             }
         }

@@ -75,7 +75,7 @@ csharp_style_prefer_extended_property_pattern = true:suggestion
 csharp_style_var_for_built_in_types = true:none
 csharp_style_var_when_type_is_apparent = true:none
 csharp_style_var_elsewhere = true:none
-csharp_indent_braces = true
+csharp_indent_braces = false
 
 [*.vb]
 #### Naming styles ####
