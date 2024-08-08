@@ -266,28 +266,26 @@ namespace Ginger.Run.RunSetActions
                         }
                     }
                     long emailSize = CalculateAttachmentsSize(RunSetActionHTMLReportSendEmail.Email);
-             
+
                     if (ReportItem != null)
                     {
-                        
-                        if (((EmailHtmlReportAttachment)ReportItem).IsAccountReportLinkEnabled || emailSize > 10000000)
-                            {
-                            // TODO: add warning or something !!!!
 
+                        if (((EmailHtmlReportAttachment)ReportItem).IsAccountReportLinkEnabled)
+                        {
                             if (RunSetActionHTMLReportSendEmail.EmailAttachments.IndexOf(ReportItem) > -1)
-                                {
+                            {
                                 if (RunSetActionHTMLReportSendEmail.Email.Attachments.Count > 0)
-                                    {
-                                    RunSetActionHTMLReportSendEmail.Email.Attachments.RemoveAt(RunSetActionHTMLReportSendEmail.EmailAttachments.IndexOf(ReportItem));
-                                    }
-                                }
-                            string accountReportURL = GingerRemoteExecutionUtils.GetReportHTMLServiceUrl() + "?ExecutionId=" + WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
-                            if (!string.IsNullOrEmpty(accountReportURL))
                                 {
-                                emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + accountReportURL + "' style ='font-size:16px;color:blue;text-decoration:underline'> Click Here to View Online Account Report </a>");
-                                emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
+                                    RunSetActionHTMLReportSendEmail.Email.Attachments.RemoveAt(RunSetActionHTMLReportSendEmail.EmailAttachments.IndexOf(ReportItem));
                                 }
                             }
+                            string accountReportURL = GingerRemoteExecutionUtils.GetOnlineHTMLReportlink(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID);
+                            if (!string.IsNullOrEmpty(accountReportURL))
+                            {
+                                emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + accountReportURL + "' style ='font-size:16px;color:blue;text-decoration:underline'> Click Here to View Online Account Report </a>");
+                                emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
+                            }
+                        }
                         else if (((EmailHtmlReportAttachment)ReportItem).IsLinkEnabled || emailSize > 10000000)
                         {
                             // TODO: add warning or something !!!!
@@ -1070,8 +1068,8 @@ namespace Ginger.Run.RunSetActions
             var columnValue = fieldsValuesHTMLTableCellsRowOne;
             var columnCount = 0;
             //TODO : Remove SourceApplication & SourceApplicationUser from if condition when need to add in report.
-            foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true && 
-            x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && x.FieldKey !="SourceApplication" && x.FieldKey !="SourceApplicationUser")))
+            foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true &&
+            x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && x.FieldKey != "SourceApplication" && x.FieldKey != "SourceApplicationUser")))
             {
                 // change row from one to two
                 if (totalColumnCount > 6 && ++columnCount > 6)

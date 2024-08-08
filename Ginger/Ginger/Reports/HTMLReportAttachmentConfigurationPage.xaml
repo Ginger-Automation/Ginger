@@ -18,18 +18,20 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" x:Name="Panel" Margin="0,5,0,0">
                     <Label Style="{StaticResource @LabelStyle}" FontSize="12" HorizontalAlignment="Left" Content="HTML Report Attachment Option : " Margin="0,0,5,0"></Label>
-                    <RadioButton x:Name="xAccountReportLink" Tag="AccountLink"  GroupName="LinkOptionRadio" Content="Online Account Report Link" Width="170" VerticalAlignment="Center" Checked="xAccountReportLink_Checked"  Style="{StaticResource @InputRadioButtonStyle}"/>
+                    <StackPanel ToolTip="To use the Account Report link in the email, please configure the centralized Execution Logger settings in the Configuration tab." VerticalAlignment="Center">
+                        <RadioButton x:Name="xAccountReportLink" Tag="AccountLink"  GroupName="LinkOptionRadio" Content="Online Account Report Link" Width="170" VerticalAlignment="Center" Checked="xAccountReportLink_Checked"   Style="{StaticResource @InputRadioButtonStyle}"/>
+                    </StackPanel>
                     <RadioButton x:Name="RadioZippedReportOption" Tag="ZippedReport" GroupName="LinkOptionRadio" Content="Attached Zip Report" Width="140" VerticalAlignment="Center" Checked="RadioZippedOption_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
-                    <RadioButton x:Name="RadioLinkOption" Tag="Link"  GroupName="LinkOptionRadio" Content="Link to Shared Repository" Width="160" VerticalAlignment="Center" Checked="LinkOption_Checked"  Style="{StaticResource @InputRadioButtonStyle}"/>
+                    <RadioButton x:Name="RadioLinkOption" Tag="Link"  GroupName="LinkOptionRadio" Content="Link to Shared Report" Width="160" VerticalAlignment="Center" Checked="LinkOption_Checked"  Style="{StaticResource @InputRadioButtonStyle}"/>
                 </StackPanel>
                 <Label x:Name="ZipReportlbl" Style="{StaticResource @LabelStyle}" FontSize="10" Height="40" Margin="0,0,0,0" HorizontalAlignment="Left" >
-                    <TextBlock Height="30">Notice: In case the zipped report file size together with the other attachments) will exceed 10 MB then the report won't be attached and <LineBreak/>'Link to Shared Report' option will be used. It is recommended to provide alternative SHARED folder, e.g \\Machine Name\\Share\\ReportPath\\</TextBlock>
+                    <TextBlock Height="30">Note: In case the zipped report file size together with the other attachments) will exceed 10 MB then the report won't be attached and <LineBreak/>'Link to Shared Report' option will be used. It is recommended to provide alternative SHARED folder, e.g \\Machine Name\\Share\\ReportPath\\</TextBlock>
                 </Label>
                 <Label x:Name="Linklbl" Style="{StaticResource @LabelStyle}" FontSize="10" Height="40" Margin="0,0,10,0" HorizontalAlignment="Left" Visibility="Collapsed">
-                    <TextBlock Height="30">Notice: It is recommended to provide alternative SHARED folder,<LineBreak/>e.g \\Machine Name\\Share\\ReportPath\\</TextBlock>
+                    <TextBlock Height="30">Note: It is recommended to provide alternative SHARED folder,<LineBreak/>e.g \\Machine Name\\Share\\ReportPath\\</TextBlock>
                 </Label>
                 <Label x:Name="AccountReportlbl" Style="{StaticResource @LabelStyle}" FontSize="10" Height="40" Margin="0,0,10,0" HorizontalAlignment="Left" Visibility="Collapsed">
-                    <TextBlock Height="30">Notice: By selecting this option, you can attach the account report link to the email operation.</TextBlock>
+                    <TextBlock Height="30">Note: By selecting this option, you can add the account report link to the email.<LineBreak/> To use the Account Report link in the email, please configure the centralized Execution Logger settings in the Configuration tab.</TextBlock>
                 </Label>
                 <CheckBox x:Name="UseAlternativeHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5,9,5,5" Content="Save HTML report to alternative folder/shared path" Checked="UseAlternativeHTMLReportFolderCbx_Checked" Unchecked="UseAlternativeHTMLReportFolderCbx_Unchecked"></CheckBox>
                 <StackPanel x:Name="HTMLReportFolderPanel" Orientation="Vertical" IsEnabled="False">

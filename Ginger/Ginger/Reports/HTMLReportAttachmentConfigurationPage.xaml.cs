@@ -31,26 +31,26 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.Reports
-    {
+{
     /// <summary>
     /// Interaction logic for HTMLReportAttachmentConfigurationPage.xaml
     /// </summary>
     public partial class HTMLReportAttachmentConfigurationPage : Page
-        {
+    {
         GenericWindow _pageGenericWin = null;
         EmailHtmlReportAttachment mEmailAttachment = new EmailHtmlReportAttachment();
         private bool IsLinkEnabled;
         private bool AccountReportLinkEnabled;
 
         public HTMLReportAttachmentConfigurationPage(EmailHtmlReportAttachment emailAttachment)
-            {
+        {
             InitializeComponent();
             mEmailAttachment = emailAttachment;
             Init();
-            }
+        }
 
         private void Init()
-            {
+        {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DefaultTemplatePickerCbx, ComboBox.SelectedValueProperty, mEmailAttachment, nameof(EmailHtmlReportAttachment.SelectedHTMLReportTemplateID));
             HTMLReportFolderTextBox.Init(null, mEmailAttachment, nameof(EmailAttachment.ExtraInformation), true, true, UCValueExpression.eBrowserType.Folder, "*.*", null);
 
@@ -61,26 +61,26 @@ namespace Ginger.Reports
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             if (WorkSpace.Instance.Solution != null && HTMLReportConfigurations.Count > 0)
-                {
+            {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = nameof(HTMLReportConfiguration.Name);
                 DefaultTemplatePickerCbx.SelectedValuePath = nameof(HTMLReportConfiguration.ID);
-                }
-
-            if (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportHTMLServiceUrl()) && !string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportDataServiceUrl()))
-                {
-                xAccountReportLink.IsEnabled = true;
-                xAccountReportLink.IsChecked = true;
-                }
-            else
-                {
-                xAccountReportLink.IsEnabled = false;
-                RadioZippedReportOption.IsChecked = true;
-                }
             }
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+            if (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportHTMLServiceUrl()) && !string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportDataServiceUrl()))
             {
+                xAccountReportLink.IsEnabled = true;
+                xAccountReportLink.IsChecked = true;
+            }
+            else
+            {
+                xAccountReportLink.IsEnabled = false;
+                RadioZippedReportOption.IsChecked = true;
+            }
+        }
+
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        {
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button SaveAllButton = new Button();
             SaveAllButton.Content = "Ok";
@@ -88,188 +88,188 @@ namespace Ginger.Reports
             winButtons.Add(SaveAllButton);
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, false);
-            }
+        }
 
         public void RadioButtonInit(bool IsLinkEnabled, bool IsAccountReportLinkEnabled)
-            {
+        {
             if (IsAccountReportLinkEnabled)
-                {
+            {
                 xAccountReportLink.IsChecked = true;
-                }
-            else if (IsLinkEnabled)
-                {
-                RadioLinkOption.IsChecked = true;
-                }
-            else
-                {
-                RadioZippedReportOption.IsChecked = true;
-                }
             }
+            else if (IsLinkEnabled)
+            {
+                RadioLinkOption.IsChecked = true;
+            }
+            else
+            {
+                RadioZippedReportOption.IsChecked = true;
+            }
+        }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
-            {
+        {
             ValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             string extraInformationCalculated = string.Empty;
             mVE.Value = mEmailAttachment.ExtraInformation;
             extraInformationCalculated = mVE.ValueCalculated;
             if ((bool)UseAlternativeHTMLReportFolderCbx.IsChecked)
-                {
+            {
                 if ((extraInformationCalculated == null) || (extraInformationCalculated.Length < 3))
-                    {
+                {
                     Reporter.ToUser(eUserMsgKey.FolderNameTextBoxIsEmpty);
                     return;
-                    }
+                }
                 else if (extraInformationCalculated.Length > 100)
-                    {
+                {
                     Reporter.ToUser(eUserMsgKey.FolderNamesAreTooLong);
                     return;
-                    }
                 }
+            }
 
             if (mEmailAttachment != null)
-                {
+            {
                 mEmailAttachment.Name = DefaultTemplatePickerCbx.Text;
                 mEmailAttachment.IsLinkEnabled = IsLinkEnabled;
-                mEmailAttachment.IsAccountReportLinkEnabled= AccountReportLinkEnabled;
-                }
+                mEmailAttachment.IsAccountReportLinkEnabled = AccountReportLinkEnabled;
+            }
 
             _pageGenericWin.Close();
-            }
+        }
         private void UseAlternativeHTMLReportFolderCbx_Checked(object sender, RoutedEventArgs e)
-            {
+        {
             if ((bool)UseAlternativeHTMLReportFolderCbx.IsChecked)
-                {
-                HTMLReportFolderPanel.IsEnabled = true;
-                }
-            }
-        private void xAccountReportLink_Checked(object sender, RoutedEventArgs e)
             {
+                HTMLReportFolderPanel.IsEnabled = true;
+            }
+        }
+        private void xAccountReportLink_Checked(object sender, RoutedEventArgs e)
+        {
 
             try
-                {
+            {
                 AccountReportLinkEnabled = true;
                 IsLinkEnabled = false;
                 ZipReportlbl.Visibility = Visibility.Collapsed;
                 Linklbl.Visibility = Visibility.Collapsed;
                 AccountReportlbl.Visibility = Visibility.Visible;
-                }
-            catch (Exception ex)
-                {
-                String err = ex.Message;
-                }
-
-
             }
-        private void LinkOption_Checked(object sender, RoutedEventArgs e)
+            catch (Exception ex)
             {
+                String err = ex.Message;
+            }
+
+
+        }
+        private void LinkOption_Checked(object sender, RoutedEventArgs e)
+        {
             try
-                {
+            {
                 IsLinkEnabled = true;
                 AccountReportLinkEnabled = false;
                 ZipReportlbl.Visibility = Visibility.Collapsed;
                 Linklbl.Visibility = Visibility.Visible;
                 AccountReportlbl.Visibility = Visibility.Collapsed;
-                }
-            catch (Exception ex)
-                {
-                String err = ex.Message;
-                }
             }
-        private void RadioZippedOption_Checked(object sender, RoutedEventArgs e)
+            catch (Exception ex)
             {
+                String err = ex.Message;
+            }
+        }
+        private void RadioZippedOption_Checked(object sender, RoutedEventArgs e)
+        {
             try
-                {
+            {
                 IsLinkEnabled = false;
                 AccountReportLinkEnabled = false;
                 ZipReportlbl.Visibility = Visibility.Visible;
                 Linklbl.Visibility = Visibility.Collapsed;
                 AccountReportlbl.Visibility = Visibility.Collapsed;
-                }
+            }
             catch (Exception ex)
-                {
+            {
                 String err = ex.Message;
-                }
             }
+        }
         private void UseAlternativeHTMLReportFolderCbx_Unchecked(object sender, RoutedEventArgs e)
-            {
+        {
             if (!(bool)UseAlternativeHTMLReportFolderCbx.IsChecked)
-                {
-                HTMLReportFolderPanel.IsEnabled = false;
-                }
-            }
-        private void HTMLReportFolderTextBox_TextChanged(object sender, TextChangedEventArgs e)
             {
-
+                HTMLReportFolderPanel.IsEnabled = false;
             }
+        }
+        private void HTMLReportFolderTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
 
         private void DefaultTemplatePickerCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
-            {
+        {
             mEmailAttachment.SelectedHTMLReportTemplateID = ((HTMLReportConfiguration)DefaultTemplatePickerCbx.SelectedItem).ID;
-            }
+        }
 
         public static bool HasWritePermission(string FilePath)
-            {
+        {
             try
-                {
+            {
                 if (!FilePath.Trim().EndsWith("\\"))
-                    {
+                {
                     FilePath += @"\";
-                    }
+                }
                 FileSystemSecurity security;
                 if (File.Exists(FilePath))
-                    {
+                {
                     security = FileSystemAclExtensions.GetAccessControl(new FileInfo(FilePath));// File.GetAccessControl(FilePath);
-                    }
+                }
                 else
-                    {
+                {
                     security = FileSystemAclExtensions.GetAccessControl(new DirectoryInfo(FilePath)); //Directory.GetAccessControl(System.IO.Path.GetDirectoryName(FilePath));
-                    }
+                }
                 var rules = security.GetAccessRules(true, true, typeof(NTAccount));
 
                 var currentUser = new WindowsPrincipal(WindowsIdentity.GetCurrent());
                 bool result = false;
                 foreach (FileSystemAccessRule rule in rules)
-                    {
+                {
                     if (0 == (rule.FileSystemRights &
                         (FileSystemRights.WriteData | FileSystemRights.Write)))
-                        {
+                    {
                         continue;
-                        }
+                    }
 
                     if (rule.IdentityReference.Value.StartsWith("S-1-"))
-                        {
+                    {
                         var sid = new SecurityIdentifier(rule.IdentityReference.Value);
                         if (!currentUser.IsInRole(sid))
-                            {
+                        {
                             continue;
-                            }
-                        }
-                    else
-                        {
-                        if (!currentUser.IsInRole(rule.IdentityReference.Value))
-                            {
-                            continue;
-                            }
-                        }
-
-                    if (rule.AccessControlType == AccessControlType.Deny)
-                        {
-                        return false;
-                        }
-
-                    if (rule.AccessControlType == AccessControlType.Allow)
-                        {
-                        result = true;
                         }
                     }
-                return result;
-                }
-            catch
-                {
-                return false;
-                }
-            }
+                    else
+                    {
+                        if (!currentUser.IsInRole(rule.IdentityReference.Value))
+                        {
+                            continue;
+                        }
+                    }
 
-       
+                    if (rule.AccessControlType == AccessControlType.Deny)
+                    {
+                        return false;
+                    }
+
+                    if (rule.AccessControlType == AccessControlType.Allow)
+                    {
+                        result = true;
+                    }
+                }
+                return result;
+            }
+            catch
+            {
+                return false;
+            }
         }
+
+
     }
+}
