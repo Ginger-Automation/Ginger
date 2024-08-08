@@ -30,6 +30,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
 {
     public class ActDiameter : Act
     {
+        public ActDiameter()
+        {
+            //Disable Auto Screenshot on failure by default. User can override it if needed
+            AutoScreenShotOnFailure = false;
+        }
+
         public override string ActionType { get { return ActionDescription; } }
 
         public override string ActionDescription { get { return "Diameter Action"; } }

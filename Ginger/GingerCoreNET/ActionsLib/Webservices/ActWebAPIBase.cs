@@ -36,7 +36,12 @@ namespace GingerCore.Actions.WebServices
 {
     public class ActWebAPIBase : Act, IActPluginPostRun
     {
-        public override string ActionDescription { get { return "WebAPI Action"; } }
+        public ActWebAPIBase()
+        {
+            //Disable Auto Screenshot on failure by default. User can override it if needed
+            AutoScreenShotOnFailure = false;
+        }
+        public override string ActionDescription { get { return "Web API Action"; } }
 
         public override eImageType Image { get { return eImageType.Exchange; } }
 

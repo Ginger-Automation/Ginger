@@ -27,7 +27,7 @@ namespace GingerCore.Actions.WebServices
 {
     public class ActWebAPISoap : ActWebAPIBase, IActPluginExecution
     {
-        public override string ActionDescription { get { return "WebAPI SOAP Action"; } }
+        public override string ActionDescription { get { return "Web API SOAP Action"; } }
         public override string ActionUserDescription { get { return "Performs SOAP action"; } }
         public override string ActionEditPage { get { return "WebServices.ActWebAPIEditPage"; } }
         public override bool ValueConfigsNeeded { get { return false; } }

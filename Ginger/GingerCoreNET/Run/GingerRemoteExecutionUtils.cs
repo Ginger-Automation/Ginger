@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET
 {
     public class GingerRemoteExecutionUtils
     {
-        public List<RunSetReport> GetSolutionRunsetsExecutionInfo(Guid soluionGuid)
+       public List<RunSetReport> GetSolutionRunsetsExecutionInfo(Guid soluionGuid)
         {
             var runSetReports = new List<RunSetReport>();
             var baseURI = GetReportDataServiceUrl();
@@ -61,8 +61,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             return runSetReports;
         }
-
-        public List<RunSetReport> GetRunsetExecutionInfo(Guid soluionGuid, Guid runsetGuid)
+      public List<RunSetReport> GetRunsetExecutionInfo(Guid soluionGuid, Guid runsetGuid)
         {
             var runSetReports = new List<RunSetReport>();
             var baseURI = GetReportDataServiceUrl();
@@ -93,7 +92,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             return runSetReports;
         }
-        private static string GetReportDataServiceUrl()
+       public static string GetReportDataServiceUrl()
         {
             var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralLoggerEndPointUrl;
 
@@ -103,7 +102,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             return baseURI;
         }
-        private List<RunSetReport> ConvertResponsInRunsetReport(string result)
+ private List<RunSetReport> ConvertResponsInRunsetReport(string result)
         {
             var runsetHLInfoResponses = JsonConvert.DeserializeObject<List<RunsetHLInfoResponse>>(result);
             List<RunSetReport> runSetReports = new List<RunSetReport>();
@@ -143,7 +142,7 @@ namespace Amdocs.Ginger.CoreNET
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Centralized Html Report Service URL is missing in General Report Configurations.\nPlease go to Configurations > Reports > Execution Logger Configurations to configure the HTML Report URL");
             }
         }
-        private static string GetReportHTMLServiceUrl()
+        public static string GetReportHTMLServiceUrl()
         {
             var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralizedHtmlReportServiceURL;
 
@@ -160,5 +159,5 @@ namespace Amdocs.Ginger.CoreNET
             }
             return baseURI;
         }
-    }
+       }
 }

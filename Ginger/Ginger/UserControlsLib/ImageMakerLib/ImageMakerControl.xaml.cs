@@ -623,6 +623,12 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.NormalUser:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserGear);
                     break;
+                case eImageType.AnglesArrowLeft:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AnglesLeft);
+                    break;
+                case eImageType.AnglesArrowRight:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AnglesRight);
+                    break;
                 #endregion
 
 
