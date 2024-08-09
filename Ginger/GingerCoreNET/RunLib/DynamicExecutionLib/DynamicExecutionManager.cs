@@ -664,8 +664,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     businessFlow.ID = businessFlowRun.BusinessFlowGuid;
                     businessFlow.InstanceID = businessFlowRun.BusinessFlowInstanceGuid;
                     if (!string.IsNullOrEmpty(businessFlowRun.ExternalID))
-                    { 
-                        businessFlow.ExternalID = businessFlowRun.ExternalID; 
+                    {
+                        businessFlow.ExternalID = businessFlowRun.ExternalID;
                     }
 
                     businessFlow.Exist = true;
@@ -813,7 +813,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             EmailHtmlReportAttachment reportAttachment = ((EmailHtmlReportAttachment)mailAttachment);
                             mailReportConfig.IncludeAttachmentReport = true;
                             mailReportConfig.AttachmentReportTemplateID = reportAttachment.SelectedHTMLReportTemplateID;
-                            if (reportAttachment.IsLinkEnabled)
+                            if (reportAttachment.IsAccountReportLinkEnabled)
+                            {
+                                mailReportConfig.AttachmentReportAttachType = MailReportOperationExecConfig.ReportAttachType.Link;
+                            }
+                            else if (reportAttachment.IsLinkEnabled)
                             {
                                 mailReportConfig.AttachmentReportAttachType = MailReportOperationExecConfig.ReportAttachType.Link;
                             }
@@ -1021,7 +1025,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runSetConfig.SourceApplicationUser = gingerExecConfig.SourceApplicationUser;
             }
 
-            if(!String.IsNullOrEmpty(gingerExecConfig.Runset.ExternalID))
+            if (!String.IsNullOrEmpty(gingerExecConfig.Runset.ExternalID))
             {
                 runSetConfig.ExternalID = gingerExecConfig.Runset.ExternalID;
             }
@@ -1197,7 +1201,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             else
                             {
                                 //using Virtual BF
-                                bf = new BusinessFlow() { Name = businessFlowConfig.Name,ExternalID = businessFlowConfig.ExternalID };
+                                bf = new BusinessFlow() { Name = businessFlowConfig.Name, ExternalID = businessFlowConfig.ExternalID };
                                 ///Add Shared Activities 
                                 if (businessFlowConfig.SharedActivities != null && businessFlowConfig.SharedActivities.Count > 0)
                                 {
@@ -1218,7 +1222,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         {
                                             shActivity.Guid = (Guid)sharedActivity.InstanceID;
                                         }
-                                        if(sharedActivity.SharedActivityID != null)
+                                        if (sharedActivity.SharedActivityID != null)
                                         {
                                             shActivity.ParentGuid = sharedActivity.SharedActivityID.Value;
                                         }
