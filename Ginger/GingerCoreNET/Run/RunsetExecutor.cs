@@ -466,6 +466,7 @@ namespace Ginger.Run
                         }
                     }
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Ginger Execution Id: {0}", RunSetConfig.ExecutionID));
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("{0} Source Application: '{1}' And Source Application User: '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSetConfig.SourceApplication, RunSetConfig.SourceApplicationUser));
 
                     RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
