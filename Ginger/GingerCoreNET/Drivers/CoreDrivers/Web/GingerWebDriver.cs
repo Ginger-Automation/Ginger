@@ -27,15 +27,12 @@ using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
-using Microsoft.Graph;
-using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static GingerCore.Platforms.PlatformsInfo.PlatformInfoBase;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
@@ -515,6 +512,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 elementType = tag;
             }
 
+            Size size = await browserElement.SizeAsync();
+            Point position = await browserElement.PositionAsync();
+
             HTMLElementInfo newHtmlElement = new()
             {
                 ElementObject = browserElement,
@@ -525,6 +525,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 XPath = await GenerateXPathFromBrowserElementAsync(browserElement),
                 ElementType = elementType ?? string.Empty,
                 ElementTypeEnum = POMLearner.GetElementType(tag, typeAttributeValue),
+                Width = size.Width,
+                Height = size.Height,
+                X = position.X,
+                Y = position.Y,
             };
             
             return newHtmlElement;
