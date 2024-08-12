@@ -162,7 +162,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         actGotoURLHandler.HandleAsync().Wait();
                         break;
                     case ActVisualTesting actVisualTesting:
-                        if (actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.VRT)
+                        if (actVisualTesting.VisualTestingAnalyzer != ActVisualTesting.eVisualTestingAnalyzer.Applitools)
                         {
                             actVisualTesting.Execute(this);
                         }
@@ -232,7 +232,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             else if (act is ActVisualTesting actVisualTesting)
             {
                 message = $"{actVisualTesting.VisualTestingAnalyzer} is not supported by Playwright driver, use Selenium driver instead.";
-                return actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.VRT;
+                return actVisualTesting.VisualTestingAnalyzer != ActVisualTesting.eVisualTestingAnalyzer.Applitools;
             }
             else
             {
