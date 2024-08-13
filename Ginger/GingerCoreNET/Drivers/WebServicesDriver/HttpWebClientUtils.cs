@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.Repository;
-using Ginger.Run;
 using GingerCore.Actions.WebServices;
 using Newtonsoft.Json;
 using System;
@@ -30,6 +29,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -58,64 +58,42 @@ namespace GingerCore.Actions.WebAPI
         public bool RequestContstructor(ActWebAPIBase act, string ProxySettings, bool useProxyServerSettings)
         {
             mAct = act;
+            Handler = new HttpClientHandler();
 
-            //Client Init & TimeOut
-            Client = InitilizeClient();
-
-            //EndPointURL
-            if (!SetEndPointURL())
+            if (SetNetworkCredentials(Handler) && SetCertificates(Handler))
             {
-                return false;
+                SetProxySettings(ProxySettings, useProxyServerSettings, Handler);
+                SetAutoDecompression(Handler);
+
+                InitilizeClient(Handler);
+
+                if (SetEndPointURL() && SetAuthorization())
+                {
+                    SetSecurityType();
+                    AddHeadersToClient();
+
+                    if (act.GetType() == typeof(ActWebAPISoap))
+                    {
+                        return RequestConstracotSOAP((ActWebAPISoap)act);
+                    }
+                    else
+                    {
+                        return RequestConstractorREST(Handler);
+                    }
+                }
             }
 
-            //NetworkCredentials
-            if (!SetNetworkCredentials())
-            {
-                return false;
-            }
-
-            //Certificates 
-            if (!SetCertificates())
-            {
-                return false;
-            }
-
-            //SecurityType
-            SetSecurityType();
-
-            //Authorization
-            if (!SetAuthorization())
-            {
-                return false;
-            }
-
-            //ProxySettings
-            SetProxySettings(ProxySettings, useProxyServerSettings);
-
-            //Headers
-            AddHeadersToClient();
-
-            //SetAutoDecompression
-            SetAutoDecompression();
-
-            if (act.GetType() == typeof(ActWebAPISoap))
-            {
-                return RequestConstracotSOAP((ActWebAPISoap)act);
-            }
-            else
-            {
-                return RequestConstractorREST((ActWebAPIRest)act);
-            }
+            return false;
         }
 
-        private void SetAutoDecompression()
+        private void SetAutoDecompression(HttpClientHandler handler)
         {
             if (mAct.HttpHeaders.Any())
             {
                 var encodType = mAct.HttpHeaders.FirstOrDefault(x => (x != null && x.Param != null && x.Param.ToUpper() == "ACCEPT-ENCODING" && x.ValueForDriver.ToUpper() == "GZIP,DEFLATE"));
                 if (encodType != null)
                 {
-                    Handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+                    handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
                 }
             }
         }
@@ -173,29 +151,29 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
-        private void SetProxySettings(string ProxySettings, bool useProxyServerSettings)
+        private void SetProxySettings(string ProxySettings, bool useProxyServerSettings, HttpClientHandler handler)
         {
             //Set proxy settings from local Server Proxy settings
             if (useProxyServerSettings)
             {
-                Handler.Proxy = new WebProxy() { BypassProxyOnLocal = true };
+                handler.Proxy = new WebProxy() { BypassProxyOnLocal = true };
             }
             //Set proxy settings from local
             else if (string.IsNullOrEmpty(ProxySettings))
             {
-                Handler.Proxy = WebRequest.GetSystemWebProxy();
+                handler.Proxy = WebRequest.GetSystemWebProxy();
             }
             //Use proxy from Webservices window
             else if (!string.IsNullOrEmpty(ProxySettings))
             {
                 WebProxy wsProxy = new WebProxy(ProxySettings, false)
                 {
-                    UseDefaultCredentials = Handler.UseDefaultCredentials,
-                    Credentials = Handler.Credentials,
+                    UseDefaultCredentials = handler.UseDefaultCredentials,
+                    Credentials = handler.Credentials,
                 };
 
-                Handler.Proxy = wsProxy;
-                Handler.PreAuthenticate = true;
+                handler.Proxy = wsProxy;
+                handler.PreAuthenticate = true;
             }
         }
 
@@ -258,54 +236,49 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
-        private bool SetCertificates()
+        private bool SetCertificates(HttpClientHandler handler)
         {
             string CertificateTypeRadioButton = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton);
 
             if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.AllSSL.ToString())
             {
                 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-                Handler.ServerCertificateCustomValidationCallback += (_, certificate, chain, errors) => { return true; };
+                handler.ServerCertificateCustomValidationCallback += (_, certificate, chain, errors) => { return true; };
             }
             else if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.Custom.ToString())
             {
                 //Use Custom Certificate:
-                Handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
                 string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
 
                 if (!string.IsNullOrEmpty(path))
                 {
-                    string CertificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
-                    string CertificateName = Path.GetFileName(ActWebAPIBase.Fields.CertificatePath);
-                    string targetPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\EmailCertificates");
-                    string Certificatepath = Path.Combine(targetPath, CertificateName);
-                    if (!string.IsNullOrEmpty(Certificatepath))
-                    {
-                        GingerRunner.eActionExecutorType ActionExecutorType = GingerRunner.eActionExecutorType.RunWithoutDriver;
-
-                        ServicePointManager.ServerCertificateValidationCallback = delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                    string certificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
+                    //string certificateName = Path.GetFileName(path);
+                    //string targetPath = Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\EmailCertificates");
+                    //string certificatePath = Path.Combine(targetPath, certificateName);
+                    if (!string.IsNullOrEmpty(path))
+                    {                        
+                        if (string.IsNullOrEmpty(certificateKey))
                         {
-                            X509Certificate2 actualCertificate;
-                            if (!string.IsNullOrEmpty(CertificateKey))
+                            handler.ClientCertificates.Add(new X509Certificate2(path));
+                        }
+                        else
+                        {
+                            handler.ClientCertificates.Add(new X509Certificate2(path, certificateKey));
+                        }
+
+                        ServicePointManager.ServerCertificateValidationCallback += delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                        {
+                            if (sslPolicyErrors == SslPolicyErrors.None)
                             {
-                                actualCertificate = new X509Certificate2(Certificatepath, CertificateKey);
-                            }
-                            else
-                            {
-                                actualCertificate = new X509Certificate2(Certificatepath);
-                            }
-                            if (certificate.Equals(actualCertificate))
-                            {
-                                Handler.ClientCertificates.Add(actualCertificate);
-                                mAct.ExInfo = "Uploaded certificate is vaslidated";
                                 return true;
                             }
-                            else
-                            {
-                                mAct.Error = "Uploaded certificate is not validated as it is not matching with (base certificate)";
-                                return false;
-                            }
+
+                            mAct.Error = GetCertificateChainErrorStatusInfo(chain);
+                            mAct.ExInfo = "Server side certificate not valid.";
+                            return false;
                         };
                     }
                     else
@@ -324,13 +297,26 @@ namespace GingerCore.Actions.WebAPI
             return true;
         }
 
-        private bool SetNetworkCredentials()
+        private static string GetCertificateChainErrorStatusInfo(X509Chain chain)
+        {
+            foreach (var status in chain.ChainStatus)
+            {
+                if (status.Status != X509ChainStatusFlags.NoError)
+                {
+                    return $"Chain error: {status.StatusInformation}";
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private bool SetNetworkCredentials(HttpClientHandler handler)
         {
             //check if Network Credentials are required:
             string NetworkCredentialsRadioButton = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton);
             if (NetworkCredentialsRadioButton == ApplicationAPIUtils.eNetworkCredentials.Custom.ToString())
             {
-                Handler.UseDefaultCredentials = false;
+                handler.UseDefaultCredentials = false;
                 UserCredentials = new NetworkCredential("", "", "");
                 string URLDomain = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.URLDomain.ToString());
                 string CustomUserName = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.URLUser);
@@ -349,14 +335,14 @@ namespace GingerCore.Actions.WebAPI
                 {
                     UserCredentials.UserName = CustomUserName;
                     UserCredentials.Password = CustomPassword;
-                    Handler.Credentials = UserCredentials;
+                    handler.Credentials = UserCredentials;
                 }
             }
             else if (NetworkCredentialsRadioButton == ApplicationAPIUtils.eNetworkCredentials.Default.ToString())
             {
                 //Use Default Network Credentials:
-                Handler.UseDefaultCredentials = true;
-                Handler.Credentials = CredentialCache.DefaultNetworkCredentials;
+                handler.UseDefaultCredentials = true;
+                handler.Credentials = CredentialCache.DefaultNetworkCredentials;
             }
             return true;
         }
@@ -378,12 +364,11 @@ namespace GingerCore.Actions.WebAPI
             return true;
         }
 
-        private HttpClient InitilizeClient()
+        private void InitilizeClient(HttpMessageHandler handler)
         {
             try
             {
-                Handler = new HttpClientHandler();
-                Client = new HttpClient(Handler);
+                Client = new HttpClient(handler);
 
                 int miliseconds = 0;
                 if (!string.IsNullOrEmpty(Convert.ToString(mAct.Timeout)))
@@ -395,14 +380,11 @@ namespace GingerCore.Actions.WebAPI
                 {
                     Client.Timeout = TimeSpan.FromMilliseconds(miliseconds);
                 }
-
-                return Client;
             }
             catch (Exception ex)
             {
                 mAct.Error = "Failed to created the HTTP Client";
                 mAct.ExInfo += ex.Message + Environment.NewLine + ex.InnerException;
-                return null;
             }
         }
 
@@ -722,7 +704,6 @@ namespace GingerCore.Actions.WebAPI
         {
             if (mAct.GetInputParamCalculatedValue(ActWebAPIRest.Fields.CookieMode) != ApplicationAPIUtils.eCookieMode.None.ToString())
             {
-
                 CookieCollection responseCookies = Handler.CookieContainer.GetCookies(Client.BaseAddress);
                 foreach (Cookie RespCookie in responseCookies)
                 {
@@ -738,9 +719,7 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
-
-
-        private bool RequestConstractorREST(ActWebAPIRest act)
+        private bool RequestConstractorREST(HttpClientHandler handler)
         {
             //Request Method:
             HttpMethod RequestMethod = new HttpMethod(mAct.GetInputParamCalculatedValue(ActWebAPIRest.Fields.RequestType).ToUpper());
@@ -750,7 +729,7 @@ namespace GingerCore.Actions.WebAPI
             //Request Content Type: 
             SetContentType();
             //Cookie Settings:
-            SetCookies();
+            SetCookies(handler);
             //Request Body:
             SetRequestContent(RequestMethod);
             return true;
@@ -850,7 +829,7 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
-        private void SetCookies()
+        private void SetCookies(HttpClientHandler handler)
         {
             ApplicationAPIUtils.eCookieMode contentType = (ApplicationAPIUtils.eCookieMode)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eCookieMode>(ActWebAPIRest.Fields.CookieMode);
             switch (contentType)
@@ -872,11 +851,11 @@ namespace GingerCore.Actions.WebAPI
                             cooki.Domain = domainName.Host;
                         }
                         RequestMessage.Headers.Add(ck.Name, ck.Value);
-                        Handler.CookieContainer.Add(cooki);
+                        handler.CookieContainer.Add(cooki);
                     }
                     break;
                 case ApplicationAPIUtils.eCookieMode.HeaderCookie:
-                    Handler.UseCookies = false;
+                    handler.UseCookies = false;
                     break;
             }
         }
