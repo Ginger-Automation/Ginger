@@ -43,6 +43,10 @@ using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
 using System.Threading;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
+using Deque.AxeCore.Commons;
+using Deque.AxeCore.Playwright;
+using Amdocs.Ginger.CoreNET.Execution;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -59,7 +63,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             IPlaywright playwright = Microsoft.Playwright.Playwright.CreateAsync().Result;
             PlaywrightBrowser.Options browserOptions = BuildPlaywrightBrowserOptions();
-            _browser = new(playwright, BrowserType, browserOptions, OnBrowserClose);
+            if (BrowserPrivateMode)
+            {
+                _browser = new PlaywrightNonPersistentBrowser(playwright, BrowserType, browserOptions, OnBrowserClose);
+            }
+            else
+            {
+                _browser = new PlaywrightPersistentBrowser(playwright, BrowserType, browserOptions, OnBrowserClose);
+            }
         }
 
         private void ValidateBrowserTypeSupport(WebBrowserType browserType)
@@ -142,15 +153,25 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 switch (act)
                 {
                     case ActBrowserElement actBrowserElement:
-                        ActBrowserElementHandler actBrowserElementHandler = new(actBrowserElement, _browser, new ActBrowserElementHandler.Context
-                        {
-                            BusinessFlow = BusinessFlow,
-                            Environment = Environment,
-                        });
+                        ActBrowserElementHandler actBrowserElementHandler = new(
+                            actBrowserElement, 
+                            _browser, 
+                            new ActBrowserElementHandler.Context
+                            {
+                                BusinessFlow = BusinessFlow,
+                                Environment = Environment,
+                            });
                         actBrowserElementHandler.HandleAsync().Wait();
                         break;
                     case ActUIElement actUIElement:
-                        ActUIElementHandler actUIElementHandler = new(actUIElement, _browser, BusinessFlow, Environment);
+                        ActUIElementHandler actUIElementHandler = new(
+                            actUIElement, 
+                            new BrowserElementLocator(_browser.CurrentWindow.CurrentTab, 
+                            new()
+                            {
+                                BusinessFlow = BusinessFlow,
+                                Environment = Environment,
+                            }));
                         actUIElementHandler.HandleAsync().Wait();
                         break;
                     case ActScreenShot actScreenShot:
@@ -170,6 +191,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         {
                             act.Error = $"{actVisualTesting.VisualTestingAnalyzer} is not supported by Playwright driver, use Selenium driver instead.";
                         }
+                        break;
+                    case ActAccessibilityTesting actAccessibilityTesting:
+                        ActAccessibilityTestingHandler actAccessibilityTestingHandler = new(
+                            actAccessibilityTesting, 
+                            _browser.CurrentWindow.CurrentTab, 
+                            new BrowserElementLocator(_browser.CurrentWindow.CurrentTab, new()
+                            {
+                                BusinessFlow = BusinessFlow,
+                                Environment = Environment,
+                            }));
+                        actAccessibilityTestingHandler.HandleAsync().Wait();
                         break;
                     default:
                         act.Error = $"This Action is not supported for Playwright driver";
