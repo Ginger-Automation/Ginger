@@ -330,10 +330,11 @@ namespace GingerCore.Drivers.CommunicationProtocol
         //3 Add - Enum
         public void AddEnumValue(object val)
         {
-            int byteCount = UTF16.GetByteCount(val.ToString());
+            var value = val.ToString();
+            int byteCount = UTF16.GetByteCount(value);
             CheckBuffer(byteCount + 5);
             WriteValueType(EnumValueType);
-            WriteString(val.ToString());
+            WriteString(value);
         }
 
         //4 Add - StringUTF16
