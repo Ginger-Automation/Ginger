@@ -10,7 +10,7 @@ namespace Ginger
     {
     public class DevTimeTrackerIdle
     {
-        private readonly DispatcherTimer idleTimer;
+        private DispatcherTimer idleTimer;
         private DateTime lastActivity;
         private bool isPaused;
 
