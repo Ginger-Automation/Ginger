@@ -29,6 +29,7 @@ using GingerWPF.UserControlsLib;
 using System;
 using System.Windows.Controls;
 using GingerCore;
+using Ginger.ExternalConfigurations;
 
 namespace Ginger.ConfigurationsLib
 {
@@ -90,6 +91,7 @@ namespace Ginger.ConfigurationsLib
             externalConfigMenu.Add(eImageType.Applitools, "Applitools Configuration", GetApplitoolsExteranalConfigsPage, ConsoleKey.X, "Applitools External Configurations", "Applitools Configuration AID");
             externalConfigMenu.Add(eImageType.Sealights, "Sealights Configuration", GetSealightsExteranalConfigsPage, ConsoleKey.X, "Sealights External Configurations", "Sealights Configuration AID");
             externalConfigMenu.Add(eImageType.Exchange, "Ask Lisa Configuration", GetAskLisaConfigsPage, ConsoleKey.X, "Ask Lisa Configurations", "Ask Lisa Configuration AID");
+            externalConfigMenu.Add(eImageType.Exchange, "Ginger Analytics Configuration", GetAskLisaConfigsPage, ConsoleKey.X, "Ginger Analytics Configuration", "Ginger Analytics Configuration AID");
             twoLevelMenu.Add(externalConfigMenu);
 
             return twoLevelMenu;
@@ -149,6 +151,11 @@ namespace Ginger.ConfigurationsLib
         private static Page GetAskLisaConfigsPage()
         {
             return new AskLisaConfigurationsPage();
+        }
+
+        private static Page GetGingerAnalyticsPage()
+        {
+            return new GingerAnalyticsConfigurationPage();
         }
         //Remove when we add other pages
         private static Page OthersPage()

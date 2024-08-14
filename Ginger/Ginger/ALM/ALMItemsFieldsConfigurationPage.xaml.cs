@@ -135,7 +135,7 @@ namespace Ginger.ALM
         {
             Boolean refreshFlag = (Boolean)e.Argument;
 
-            ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, true, fieldsWorker);
+            ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, refreshFlag, fieldsWorker);
 
             fieldsWorker.ReportProgress(GingerCore.ALM.RQM.ImportFromRQM.totalValues);
             e.Result = GingerCore.ALM.RQM.ImportFromRQM.totalValues;
