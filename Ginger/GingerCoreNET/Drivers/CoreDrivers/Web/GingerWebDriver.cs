@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Amdocs.Ginger.CoreNET.GeneralLib;
@@ -72,6 +71,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         [UserConfiguredDefault("Chrome")]
         [UserConfiguredDescription("Browser Type")]
         public virtual WebBrowserType BrowserType { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Use Browser In Private/Incognito Mode (Please use 64bit Browse with Internet Explorer ")]
+        public bool BrowserPrivateMode { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
