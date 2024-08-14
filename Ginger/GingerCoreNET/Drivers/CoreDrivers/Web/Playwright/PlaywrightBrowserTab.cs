@@ -32,6 +32,9 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using System.Drawing;
 using NPOI.OpenXmlFormats.Dml;
+using Deque.AxeCore.Commons;
+using static Ginger.Run.GingerRunner;
+using Deque.AxeCore.Playwright;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -430,6 +433,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 throw new InvalidOperationException("Cannot perform operation, tab is already closed.");
             }
+        }
+
+        public async Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null)
+        {
+            return await _playwrightPage.RunAxe(options);
         }
 
         internal bool PlaywrightPageEquals(IPlaywrightPage playwrightPage)

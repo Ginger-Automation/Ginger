@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Testing Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .hidden {
+            position: absolute;
+            left: -10000px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        nav a {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Accessibility Testing Page</h1>
+        <nav aria-label="Main navigation">
+            <a href="#main-content">Skip to main content</a>
+            <a href="#section1">Section 1</a>
+            <a href="#section2">Section 2</a>
+            <a href="#form">Form</a>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <section id="section1">
+            <h2>Section 1: Images</h2>
+            <img src="image.jpg" alt="A descriptive text about the image">
+            <img src="decorative-image.jpg" alt="" aria-hidden="true">
+        </section>
+
+        <section id="section2">
+            <h2>Section 2: Links and Buttons</h2>
+            <p>Visit the <a href="https://example.com" title="Go to example.com">example website</a> for more information.</p>
+            <button type="button" aria-label="More information">More Info</button>
+        </section>
+
+        <section id="form">
+            <h2>Form</h2>
+            <form action="#" method="post">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" aria-required="true">
+                <br><br>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" aria-required="true">
+                <br><br>
+                <fieldset>
+                    <legend>Gender</legend>
+                    <label><input type="radio" name="gender" value="male"> Male</label>
+                    <label><input type="radio" name="gender" value="female"> Female</label>
+                </fieldset>
+                <br>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+
+        <section id="keyboard-navigation">
+            <h2>Keyboard Navigation</h2>
+            <p>Use <kbd>Tab</kbd> and <kbd>Shift + Tab</kbd> to navigate through interactive elements.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Accessibility Testing</p>
+    </footer>
+</body>
+</html>
