@@ -103,12 +103,6 @@ namespace Ginger
 
             GingerCore.General.DoEvents();
 
-            this.Closed += MainWindow_Closed;
-        }
-
-        private void MainWindow_Closed(object? sender, EventArgs e)
-        {
-            DetachEventHandlers();
         }
 
         private void MainWindow_StateChanged(object? sender, EventArgs e)
@@ -569,6 +563,8 @@ namespace Ginger
 
             if (userSelection == eUserMsgSelection.Yes)
             {
+                DetachEventHandlers();
+
                 AppCleanUp();
             }
             else
