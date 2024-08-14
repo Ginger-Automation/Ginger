@@ -72,13 +72,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
         }
 
-        public async Task<bool> RunSetEnd(RunSetConfig runsetConfig , IExecutionLoggerManager executionManager)
+        public async Task<bool> RunSetEnd(RunSetConfig runsetConfig, IExecutionLoggerManager executionManager)
         {
 
             bool isDataUploadedSuccessfully = await SendRunsetEndDataToCentralDbTaskAsync(runsetConfig);
-            
-            
-
             Reporter.HideStatusMessage();
             return isDataUploadedSuccessfully;
         }
@@ -231,10 +228,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         }
 
         private async Task SendDataOnActionEndTask(Act action)
-        {                   
-            AccountReportAction accountReportAction = AccountReportEntitiesDataMapping.MapActionEndData(action, mContext);           
-            await AccountReportApiHandler.SendScreenShotsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.ScreenShots.ToList());               
-            await AccountReportApiHandler.SendArtifactsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.Artifacts);            
+        {
+            AccountReportAction accountReportAction = AccountReportEntitiesDataMapping.MapActionEndData(action, mContext);
+            await AccountReportApiHandler.SendScreenShotsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.ScreenShots.ToList());
+            await AccountReportApiHandler.SendArtifactsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.Artifacts);
             await AccountReportApiHandler.SendActionExecutionDataToCentralDBAsync(accountReportAction, true);
         }
 
