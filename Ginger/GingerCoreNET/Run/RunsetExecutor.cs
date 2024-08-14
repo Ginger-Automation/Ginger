@@ -610,12 +610,13 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //ExecutionLoggerManager.RunSetEnd();
                 Runners[0].Executor.ExecutionLoggerManager.RunSetEnd();
-
+               
+                bool isReportStoredToRemote=false;
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && Runners.Count > 0)
                 {
                     if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
-                        await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig , Runners[0].Executor.ExecutionLoggerManager);
+                        isReportStoredToRemote = await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig , Runners[0].Executor.ExecutionLoggerManager);
 
                     }
                 }
@@ -636,6 +637,10 @@ namespace Ginger.Run
                     // Process all post execution RunSet Operations
                     Reporter.ToLog(eLogLevel.INFO, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
+                }
+                if (isReportStoredToRemote && Runners[0].Executor.ExecutionLoggerManager.Configuration.DeleteLocalDataOnPublish.Equals(eDeleteLocalDataOnPublish.Yes))
+                {
+                    Runners[0].Executor.ExecutionLoggerManager.mExecutionLogger.DeleteLocalData(RunSetConfig.LastRunsetLoggerFolder, RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
                 }
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Creating {0} Execution Report", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 CreateGingerExecutionReportAutomaticly();

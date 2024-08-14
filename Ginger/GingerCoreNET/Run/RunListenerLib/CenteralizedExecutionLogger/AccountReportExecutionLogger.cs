@@ -77,10 +77,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             bool isDataUploadedSuccessfully = await SendRunsetEndDataToCentralDbTaskAsync(runsetConfig);
             
-            if(isDataUploadedSuccessfully && executionManager.Configuration.DeleteLocalDataOnPublish.Equals(eDeleteLocalDataOnPublish.Yes))
-            {
-                executionManager.mExecutionLogger.DeleteLocalData(runsetConfig.LastRunsetLoggerFolder, runsetConfig.LiteDbId , runsetConfig.ExecutionID ?? Guid.Empty);
-            }
+            
 
             Reporter.HideStatusMessage();
             return isDataUploadedSuccessfully;
