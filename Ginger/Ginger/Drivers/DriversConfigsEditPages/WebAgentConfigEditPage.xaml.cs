@@ -42,8 +42,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
     /// </summary>
     public partial class WebAgentConfigEditPage : Page
     {
-       
-        Context context=null;
+
         Agent mAgent;
 
 
@@ -69,6 +68,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             ChromeFirefoxPnlVisibility(browserType);
             AllBrowserNotBravePnl(browserType);
             ProxyPnlVisbility();
+            PlaywightDriverParamVisibility();
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             //Ensure Clean Session
             DriverConfigParam ensureCleanSession = mAgent.GetOrCreateParam(nameof(SeleniumDriver.EnsureCleanSession));
             BindingHandler.ObjFieldBinding(xEnsureCleanSessionCB, CheckBox.IsCheckedProperty, ensureCleanSession, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xEnsureCleanSessionCB, CheckBox.ToolTipProperty, ensureCleanSession, nameof(DriverConfigParam.Description));            
+            BindingHandler.ObjFieldBinding(xEnsureCleanSessionCB, CheckBox.ToolTipProperty, ensureCleanSession, nameof(DriverConfigParam.Description));
 
             //ignore IE Protected Mode
             DriverConfigParam ignoreIEProtectedMode = mAgent.GetOrCreateParam(nameof(SeleniumDriver.IgnoreIEProtectedMode));
@@ -214,7 +214,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xOpenIEModeInEdgeCB, CheckBox.IsCheckedProperty, openIEModeInEdge, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xOpenIEModeInEdgeCB, CheckBox.ToolTipProperty, openIEModeInEdge, nameof(DriverConfigParam.Description));
 
-            
+
 
             #endregion
 
@@ -288,11 +288,62 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             if (!string.IsNullOrEmpty(proxyName.Value))
             {
-                xAutoDetectProxyCB.IsChecked= false;
+                xAutoDetectProxyCB.IsChecked = false;
             }
         }
 
-       
+        /// <summary>
+        /// Sets the visibility of the Playwright driver parameters based on the specified driver type.
+        /// </summary>
+        void PlaywightDriverParamVisibility()
+        {
+            if (mAgent.DriverType == Agent.eDriverType.Playwright)
+            {
+                // Proxy Settings
+                xAutoDetectProxyCB.Visibility = Visibility.Collapsed;
+                xProxyPanel.Visibility = Visibility.Visible;
+                xByPassProxyPanel.Visibility = Visibility.Visible;
+                xProxyAutoConfigUrlPanel.Visibility = Visibility.Collapsed;
+
+                // Browser Configuration
+                xBrowserMinimizedCB.Visibility = Visibility.Collapsed;
+                xHeadlessBrowserModePanel.Visibility = Visibility.Visible;
+                xBrowserPrivateModePanel.Visibility = Visibility.Visible;
+                xBrowserHeightPanel.Visibility = Visibility.Collapsed;
+                xBrowserWidthPanel.Visibility = Visibility.Collapsed;
+                xBrowserExecutablePathPanel.Visibility = Visibility.Collapsed;
+                xDriverFilePathPanel.Visibility = Visibility.Collapsed;
+                xUserProfileFolderPathPanel.Visibility = Visibility.Collapsed;
+                xIgnoreIEProtectedModePanel.Visibility = Visibility.Collapsed;
+                xEnsureCleanSessionPanel.Visibility = Visibility.Collapsed;
+                xEnableNativeEventsPanel.Visibility = Visibility.Collapsed;
+                xEmulationDeviceNamePanel.Visibility = Visibility.Collapsed;
+                xDownloadFolderPathPanel.Visibility = Visibility.Collapsed;
+                xChromeFirefoxPnl.Visibility = Visibility.Collapsed;
+                xAllBrowserNotBravePnl.Visibility = Visibility.Collapsed;
+                xBrowserSpecificConfiguration.Visibility = Visibility.Collapsed;
+
+                // Session Management
+                xPageLoadStrategyComboBoxPanel.Visibility = Visibility.Collapsed;
+                xImplicitWaitPanel.Visibility = Visibility.Collapsed;
+                xHttpServerTimeOutPanel.Visibility = Visibility.Collapsed;
+                xPageLoadTimeOutPanel.Visibility = Visibility.Collapsed;
+                xDriverLoadWaitingTimePanel.Visibility = Visibility.Visible;
+
+                // Advanced Settings
+                xAdvanceSetting.Visibility = Visibility.Collapsed;
+                xSeleniumUserArgumentsPanel.Visibility = Visibility.Collapsed;
+                xStartBMPCBPanel.Visibility = Visibility.Collapsed;
+                xHideConsoleWindowPanel.Visibility = Visibility.Collapsed;
+                xDebugAddressPanel.Visibility = Visibility.Collapsed;
+                xStartBMPBATFilePanel.Visibility = Visibility.Collapsed;
+                xExtensionPathPanel.Visibility = Visibility.Collapsed;
+                xStartBMPPortPanel.Visibility = Visibility.Collapsed;
+                xUnhandledPromptBehaviorComboBoxPanel.Visibility = Visibility.Collapsed;
+                xBrowserLogLevelComboBoxPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
 
         /// <summary>
         /// Handles the PropertyChanged event of the BrowserTypeParam object.
@@ -317,7 +368,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             WebBrowserType browserType = Enum.Parse<WebBrowserType>(driverConfigParam.Value);
             EdgeIEPnlVisibility(browserType);
             ChromePnlvisibilitly(browserType);
-            ChromeFirefoxPnlVisibility(browserType);           
+            ChromeFirefoxPnlVisibility(browserType);
             AllBrowserNotBravePnl(browserType);
         }
 
@@ -329,7 +380,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
 
 
-            if (result == WebBrowserType.Brave|| result == WebBrowserType.InternetExplorer)
+            if (result == WebBrowserType.Brave || result == WebBrowserType.InternetExplorer)
             {
                 xAllBrowserNotBravePnl.Visibility = Visibility.Collapsed;
             }
@@ -366,7 +417,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// <param name="result">The browser type.</param>
         void ChromePnlvisibilitly(WebBrowserType result)
         {
-            if (result == WebBrowserType.Chrome|| result==WebBrowserType.Brave)
+            if (result == WebBrowserType.Chrome || result == WebBrowserType.Brave)
             {
                 xChromePnl.Visibility = Visibility.Visible;
             }
@@ -396,8 +447,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// Sets the visibility of the Chrome/Firefox/IE panel based on the specified browser type.
         /// </summary>
         /// <param name="result">The browser type.</param>    
-       
-       void ProxyPnlVisbility()
+
+        void ProxyPnlVisbility()
         {
             if (xAutoDetectProxyCB.IsChecked == false)
             {
