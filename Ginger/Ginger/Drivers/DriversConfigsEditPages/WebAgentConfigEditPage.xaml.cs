@@ -308,7 +308,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 // Browser Configuration
                 xBrowserMinimizedCB.Visibility = Visibility.Collapsed;
                 xHeadlessBrowserModePanel.Visibility = Visibility.Visible;
-                xBrowserPrivateModePanel.Visibility = Visibility.Collapsed;
+                xBrowserPrivateModePanel.Visibility = Visibility.Visible;
                 xBrowserHeightPanel.Visibility = Visibility.Collapsed;
                 xBrowserWidthPanel.Visibility = Visibility.Collapsed;
                 xBrowserExecutablePathPanel.Visibility = Visibility.Collapsed;
