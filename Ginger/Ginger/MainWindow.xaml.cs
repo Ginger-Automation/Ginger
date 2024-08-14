@@ -76,7 +76,7 @@ namespace Ginger
         public enum eSolutionTabType { None, BusinessFlows, Run, Configurations, Resources };
         public eSolutionTabType SelectedSolutionTab;
 
-        private DevTimeTrackerIdle dttIdle; //for Pause/resume the development time
+        private readonly DevTimeTrackerIdle devTimeTrackerIdle; //for Pause/resume the development time
 
         private bool mAskUserIfToClose = true;
 
@@ -87,8 +87,8 @@ namespace Ginger
         {
             InitializeComponent();
 
-            dttIdle = new();
-            dttIdle.AttachActivityHandlers(this);
+            devTimeTrackerIdle = new();
+            devTimeTrackerIdle.AttachActivityHandlers(this);
 
             StateChanged -= MainWindow_StateChanged;
             StateChanged += MainWindow_StateChanged;
@@ -102,17 +102,32 @@ namespace Ginger
             DriverWindowHandler.Init();
 
             GingerCore.General.DoEvents();
+
+            this.Closed += MainWindow_Closed;
+        }
+
+        private void MainWindow_Closed(object? sender, EventArgs e)
+        {
+            DetachEventHandlers();
         }
 
         private void MainWindow_StateChanged(object? sender, EventArgs e)
         {
             if (WindowState == WindowState.Minimized)
             {
-                dttIdle.PauseDevelopmentTimeTracker();
+                devTimeTrackerIdle.PauseDevelopmentTimeTracker();
             }
             else
             {
-                dttIdle.ResumeDevelopmentTimeTracker();
+                devTimeTrackerIdle.ResumeDevelopmentTimeTracker();
+            }
+        }
+
+        private void DetachEventHandlers()
+        {
+            if (devTimeTrackerIdle != null)
+            {
+                devTimeTrackerIdle.DetachActivityHandlers(this);
             }
         }
 
