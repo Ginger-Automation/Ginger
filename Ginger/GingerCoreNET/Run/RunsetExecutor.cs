@@ -169,7 +169,7 @@ namespace Ginger.Run
         {
             //Configure Runner for execution
             runner.Status = eRunStatus.Pending;
-            if(runner.Executor != null && runner.Executor is GingerExecutionEngine previousExectionEngine)
+            if (runner.Executor != null && runner.Executor is GingerExecutionEngine previousExectionEngine)
             {
                 previousExectionEngine.ClearBindings();
             }
@@ -182,7 +182,7 @@ namespace Ginger.Run
                 if (appagent.AgentName != null)
                 {
                     ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                    appagent.Agent = agents.FirstOrDefault(a=> a.Name == appagent.AgentName);
+                    appagent.Agent = agents.FirstOrDefault(a => a.Name == appagent.AgentName);
                 }
             }
 
@@ -192,7 +192,7 @@ namespace Ginger.Run
             {
                 ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                BusinessFlow businessFlow = businessFlows.FirstOrDefault(x=> x.Guid == businessFlowRun.BusinessFlowGuid);
+                BusinessFlow businessFlow = businessFlows.FirstOrDefault(x => x.Guid == businessFlowRun.BusinessFlowGuid);
                 //Fail over to try and find by name
                 if (businessFlow == null)
                 {
@@ -334,7 +334,7 @@ namespace Ginger.Run
 
         private void CloseAllAgents()
         {
-            foreach(GingerRunner runner in Runners)
+            foreach (GingerRunner runner in Runners)
             {
                 if (runner.Executor != null)
                 {
@@ -497,7 +497,7 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && Runners.Count > 0)
                 {
-                    if(((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
+                    if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
                         await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetStart(RunSetConfig);
                     }
@@ -538,14 +538,14 @@ namespace Ginger.Run
                         Task t = new Task(() =>
                         {
                             if (!doContinueRun)
-                        {
-                            GR.Executor.RunRunner();
-                        }
-                        else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
-                        {
-                            GR.Executor.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                            GR.Executor.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
-                        }
+                            {
+                                GR.Executor.RunRunner();
+                            }
+                            else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
+                            {
+                                GR.Executor.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
+                                GR.Executor.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
+                            }
                         }, TaskCreationOptions.LongRunning);
                         runnersTasks.Add(t);
                         t.Start();
@@ -611,11 +611,12 @@ namespace Ginger.Run
                 //ExecutionLoggerManager.RunSetEnd();
                 Runners[0].Executor.ExecutionLoggerManager.RunSetEnd();
 
+                bool isReportStoredToRemote = false;
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && Runners.Count > 0)
                 {
                     if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
-                        await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig , Runners[0].Executor.ExecutionLoggerManager);
+                        isReportStoredToRemote = await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig, Runners[0].Executor.ExecutionLoggerManager);
 
                     }
                 }
@@ -637,6 +638,10 @@ namespace Ginger.Run
                     Reporter.ToLog(eLogLevel.INFO, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
                 }
+                if (isReportStoredToRemote && Runners[0].Executor.ExecutionLoggerManager.Configuration.DeleteLocalDataOnPublish.Equals(eDeleteLocalDataOnPublish.Yes))
+                {
+                    Runners[0].Executor.ExecutionLoggerManager.mExecutionLogger.DeleteLocalData(RunSetConfig.LastRunsetLoggerFolder, RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
+                }
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Creating {0} Execution Report", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 CreateGingerExecutionReportAutomaticly();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -644,7 +649,7 @@ namespace Ginger.Run
                 CloseAllEnvironments();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when trying to Run runset ", ex);
             }
