@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -39,6 +39,8 @@ namespace Amdocs.Ginger.Repository
 
         [IsSerializedForLocalRepository]
         public string ID { get; set; }
+
+        public string TypeIndetifier { get; set; }
 
         [IsSerializedForLocalRepository]
         public string Name { get; set; }

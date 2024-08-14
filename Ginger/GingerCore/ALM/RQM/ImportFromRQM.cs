@@ -56,6 +56,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace GingerCore.ALM.RQM
@@ -924,43 +925,44 @@ namespace GingerCore.ALM.RQM
 
         public static ObservableList<ExternalItemFieldBase> GetOnlineItemFields(BackgroundWorker bw)
         {
+
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
-            //TODO : receive as parameters:
 
-            RqmRepository rqmRep = new RqmRepository(RQMCore.ConfigPackageFolderPath);
-            List<IProjectDefinitions> rqmProjectsDataList;
-            string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
-
-            //------------------------------- Improved solution
-
-            string baseUri_ = string.Empty;
-            string selfLink_ = string.Empty;
-            int maxPageNumber_ = 0;
-            int totalCategoryTypeCount = 0;
-
-
-            string categoryValue = string.Empty;  // --> itemfield.PossibleValues.Add(ccNode.Name);
-            string categoryTypeID = string.Empty; //--> itemfield.ID
             try
             {
+                //TODO : receive as parameters:
+
+                RqmRepository rqmRep = new RqmRepository(RQMCore.ConfigPackageFolderPath);
+                List<IProjectDefinitions> rqmProjectsDataList;
+                string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
+                LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
+
+                //------------------------------- Improved solution
+
+                string baseUri_ = string.Empty;
+                string selfLink_ = string.Empty;
+                int maxPageNumber_ = 0;
+                int totalCategoryTypeCount = 0;
+
+
+                string categoryValue = string.Empty;  // --> itemfield.PossibleValues.Add(ccNode.Name);
+                string categoryTypeID = string.Empty; //--> itemfield.ID
+
                 //TODO: Populate list fields with CategoryTypes
+                Reporter.ToLog(eLogLevel.DEBUG, $"Starting fields retrieve process... ");
                 populatedValue = "Starting fields retrieve process... ";
-                if(bw != null)
+                if (bw != null)
                 {
                     bw.ReportProgress(totalValues, populatedValue);
                 }
                 RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + RQMCore.ALMProjectGroupName + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + ALMCore.DefaultAlmConfig.ALMProjectGUID + "/categoryType"));
                 XmlDocument categoryTypeList = new XmlDocument();
-
-
                 if (!string.IsNullOrEmpty(categoryType.responseText))
                 {
 
                     categoryTypeList.LoadXml(categoryType.responseText);
                 }
-                
                 //TODO: Get 'next' and 'last links
                 XmlNodeList linkList_ = categoryTypeList.GetElementsByTagName("link");
                 if (linkList_.Count > 0)
@@ -986,7 +988,7 @@ namespace GingerCore.ALM.RQM
                         maxPageNumber_ = System.Convert.ToInt32(tempString_.Substring(tempString_.LastIndexOf('=') + 1));
                     }
                     string newUri_ = string.Empty;
-                    List<string> categoryTypeUriPages = new List<string>();
+                    List<string> categoryTypeUriPages = new();
                     ConcurrentBag<ExternalItemFieldBase> catTypeRsult = new ConcurrentBag<ExternalItemFieldBase>();
 
                     for (int k = 0; k <= maxPageNumber_; k++)
@@ -1004,7 +1006,7 @@ namespace GingerCore.ALM.RQM
                     }
 
                     //Parallel computing solution
-                    List<XmlNode> entryList = new List<XmlNode>();
+                    List<XmlNode> entryList = new();
                     if (categoryTypeUriPages.Count > 1)
                     {
                         Parallel.ForEach(categoryTypeUriPages.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, categoryTypeUri =>
@@ -1035,12 +1037,12 @@ namespace GingerCore.ALM.RQM
 
                                 RqmResponseData categoryTypeDetail = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(getIDlink));
 
-                                XmlDocument categoryTypeListing = new XmlDocument();
+                                XmlDocument categoryTypeListing = new();
                                 if (!string.IsNullOrEmpty(categoryTypeDetail.responseText))
                                 {
                                     categoryTypeListing.LoadXml(categoryTypeDetail.responseText);
                                 }
-                                
+
 
                                 string categoryTypeName = string.Empty; // -->itemfield.Name
                                 string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
@@ -1073,13 +1075,13 @@ namespace GingerCore.ALM.RQM
                                 }
 
                                 catTypeRsult.Add(itemfield);
-                                populatedValue = $"Populating field :{ categoryTypeName } \r\nNumber of fields populated :{catTypeRsult.Count}";
-                                
-                                if (bw!= null)
+                                populatedValue = $"Populating field :{categoryTypeName} \r\nNumber of fields populated :{catTypeRsult.Count}";
+
+                                if (bw != null)
                                 {
                                     bw.ReportProgress(catTypeRsult.Count, populatedValue);
                                 }
-                                
+
 
                             }
                             );
@@ -1096,7 +1098,7 @@ namespace GingerCore.ALM.RQM
                         {
                             categoryTypeList.LoadXml(categoryType.responseText);
                         }
-                        
+
                         //TODO: Get all ID links under entry:
                         XmlNodeList categoryTypeEntry_ = categoryTypeList.GetElementsByTagName("entry");
 
@@ -1106,7 +1108,6 @@ namespace GingerCore.ALM.RQM
                         }
                         ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                         {
-
                             XmlNodeList innerNodes = singleEntry.ChildNodes;
                             XmlNode linkNode = innerNodes.Item(4);
                             ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
@@ -1122,7 +1123,7 @@ namespace GingerCore.ALM.RQM
                             {
                                 categoryTypeListing.LoadXml(categoryTypeDetail.responseText);
                             }
-                            
+
                             string categoryTypeName = string.Empty; // -->itemfield.Name
                             string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
                             string categoryTypeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
@@ -1135,6 +1136,7 @@ namespace GingerCore.ALM.RQM
 
                             itemfield.ItemType = categoryTypeItemType;
                             itemfield.ID = categoryTypeID;
+                            itemfield.TypeIndetifier = typeIdentifier;
                             itemfield.Name = categoryTypeName;
                             if (itemfield.SelectedValue == null)
                             {
@@ -1151,161 +1153,228 @@ namespace GingerCore.ALM.RQM
                                 itemfield.ToUpdate = false;
                                 itemfield.Mandatory = false;
                             }
-
+                            Reporter.ToLog(eLogLevel.DEBUG, $"field name:{itemfield.Name} field Id ={itemfield.ID} field Type ={itemfield.Type} field mandetory ={itemfield.Mandatory} field ItemType={itemfield.ItemType} field toupdate= {itemfield.ToUpdate}");
                             catTypeRsult.Add(itemfield);
-                            populatedValue = $"Populating field :{ categoryTypeName } \r\n Number of fields populated :{ catTypeRsult.Count}";
-                            
-                            if (bw!= null)
+                            populatedValue = $"Populating field :{categoryTypeName} \r\n Number of fields populated :{catTypeRsult.Count}";
+
+                            if (bw != null)
                             {
                                 bw.ReportProgress(catTypeRsult.Count, populatedValue);
                             }
-                            
                         }
                         );
                     }
                     foreach (ExternalItemFieldBase field in catTypeRsult)
                     {
-                        System.Diagnostics.Debug.WriteLine($"field name:{ field.Name } field Id ={ field.ID } field Type ={ field.Type } field mandetory ={field.Mandatory } field ItemType={ field.ItemType } field toupdate= {field.ToUpdate}");
+
                         fields.Add(field);
-                        totalCategoryTypeCount++;                       
+                        totalCategoryTypeCount++;
                     }//TODO: Add Values to CategoryTypes Parallel
                     populatedValue = "Starting values retrieve process... ";
-                    if(bw!= null)
+                    if (bw != null)
                     {
                         bw.ReportProgress(totalValues, populatedValue);
                     }
-                    RqmResponseData category = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + RQMCore.ALMProjectGroupName + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + ALMCore.DefaultAlmConfig.ALMProjectGUID + "/category"));
-                    XmlDocument CategoryList = new XmlDocument();
-                    CategoryList.LoadXml(category.responseText);
-                    totalValues = 0;
-                    populatedValue = string.Empty;
 
-                    //TODO: Get 'next' and 'last links
-                    XmlNodeList linkList = CategoryList.GetElementsByTagName("link");
-                    XmlNode selfPageNode = linkList.Item(1);
-                    XmlNode lastPageNode = linkList.Item(3);
-
-                    string selfLink = selfPageNode.Attributes["href"].Value.ToString();
-                    string baseUri = selfLink.EndsWith("/") ? selfLink.Substring(0, selfLink.Length - 1) : selfLink.Substring(0, selfLink.Length);
-
-                    string tempString = lastPageNode.Attributes["href"].Value.ToString();
-                    bool checkResult = int.TryParse(tempString.Substring(tempString.LastIndexOf('=') + 1), out int maxPageNumber);
-                    string newUri = string.Empty;
-                    List<string> categoryUriPages = new List<string>();
-
-                    for (int i = 0; i <= maxPageNumber; i++) //scale testing
+                    #region new Gat Values by filed Category Type
+                    foreach (ExternalItemFieldBase field in fields)
                     {
-                        if (maxPageNumber > 0)
+                        string baseUrl = $"{rqmSserverUrl}{RQMCore.ALMProjectGroupName}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALMCore.DefaultAlmConfig.ALMProjectGUID}/category/?fields=feed/entry/content/category/";
+
+
+                        // Construct URL
+                        string fullUrl = $"{baseUrl}(categoryType[@href='{field.TypeIndetifier}']|*))";
+                        Reporter.ToLog(eLogLevel.DEBUG, $"fullUrl : {fullUrl}");
+                        RqmResponseData categoryfieldlist = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData,
+                        new Uri(fullUrl));
+
+                        XDocument doc = XDocument.Parse(categoryfieldlist.responseText);
+                        XNamespace ns = "http://www.w3.org/2005/Atom";
+
+                        // Query the XML to get all titles inside entry nodes
+                        var titles = doc.Descendants(ns + "entry")
+                                        .Select(entry => entry.Element(ns + "title")?.Value)
+                                        .Where(title => title != null);
+
+                        populatedValue = $"Number of values populated :{titles.Count()}";
+
+                        if (bw != null)
                         {
-                            newUri = baseUri + i.ToString();
-                            categoryUriPages.Add(newUri);
+                            bw.ReportProgress(catTypeRsult.Count, populatedValue);
                         }
-                        else
+
+                        if (titles != null && titles.Any())
                         {
-                            newUri = baseUri;
-                            categoryUriPages.Add(newUri);
-
-                        }
-                    }
-
-                    //Improved with Parallel GetRQMData
-                    if (categoryUriPages.Count > 0)
-                    {
-                        int iDCount = 0;
-
-                        List<Uri> uriList = new List<Uri>();
-                        foreach (string pageUri in categoryUriPages)
-                        {
-                            Uri listURIEntry = new Uri(pageUri);
-                            uriList.Add(listURIEntry);
-                        }
-
-                        //Get all Pages of values:
-                        populatedValue = "Retrieving value pages... ";
-                        List<RqmResponseData> XmlPageList = RQMConnect.Instance.RQMRep.GetRqmDataParallel(loginData, uriList);
-
-                        //For each category page
-                        foreach (RqmResponseData category_ in XmlPageList)
-                        {
-                            XmlDocument CategoryList_ = new XmlDocument();
-                            if (!string.IsNullOrEmpty(category_.responseText))
+                            foreach (var title in titles)
                             {
-                                CategoryList_.LoadXml(category_.responseText);
+                                field.PossibleValues.Add(title);
                             }
 
-                            XmlNodeList categoryIDs = CategoryList_.GetElementsByTagName("id");
-
-                            iDCount += categoryIDs.Count;
-
-                            //Make a list of Category ID links (uri's)
-                            if (categoryIDs.Count > 0)
+                            // Set the first item as SelectedValue if PossibleValues is not empty
+                            if (field.PossibleValues.Count > 0)
                             {
-                                List<Uri> idLinkList = new List<Uri>();
-                                for (int n = 1; n < categoryIDs.Count; n++)
-                                {
-                                    Uri idLink = new Uri(categoryIDs.Item(n).InnerText);
-                                    //idLinkList.Add(categoryIDs.Item(n).InnerText);
-                                    idLinkList.Add(idLink);
-                                }
-
-                                //Retrieves Category XML Pages in parallel per Page
-                                List<RqmResponseData> CategoryIDLink = RQMConnect.Instance.RQMRep.GetRqmDataParallel(loginData, idLinkList);
-
-                                ExternalItemFieldBase valuesItemfield = new ExternalItemFieldBase();
-
-                                //get all category and their values -- shold be changed to ForeachParallel for faster performance:
-                                populatedValue = "Populating values... ";
-                                foreach (RqmResponseData LinkData in CategoryIDLink)
-                                //Parallel.ForEach(CategoryIDLink.AsParallel(), singleLink =>
-                                {
-                                    if (!string.IsNullOrEmpty(LinkData.responseText))
-                                    {
-                                        XmlDocument categoryValueXML = new XmlDocument();
-
-                                        categoryValueXML.LoadXml(LinkData.responseText);
-
-                                        XmlNode categoryTypeNode;
-                                        string catTypeLink = string.Empty;
-
-
-                                        if (!string.IsNullOrEmpty(categoryValueXML.InnerText.ToString()))
-                                        {
-                                            categoryTypeNode = categoryValueXML.GetElementsByTagName("ns2:categoryType").Item(0); //need to consider changes in tag i.e. ns3/ns4...
-                                            catTypeLink = categoryTypeNode.Attributes["href"].Value.ToString();
-
-                                            categoryTypeID = catTypeLink.Substring(catTypeLink.LastIndexOf(':') + 1);
-                                            categoryValue = categoryValueXML.GetElementsByTagName("ns4:title").Item(0).InnerText;  // --> itemfield.PossibleValues.Add(ccNode.Name);
-
-                                            valuesItemfield.ID = categoryTypeID;
-
-                                            if (fields.Count > 0) //category list has at least 1 entry
-                                            {
-                                                for (int j = 0; j < fields.Count; j++) //run through list
-                                                {
-                                                    if ((fields[j].ID.ToString() == categoryTypeID))
-                                                    {
-                                                        fields[j].PossibleValues.Add(categoryValue);
-                                                        fields[j].SelectedValue = fields[j].PossibleValues[0];
-                                                    }
-                                                }
-                                            }
-
-                                            totalValues++;
-
-                                            System.Diagnostics.Debug.WriteLine($"Total number of populated values is :{ totalValues }/{ iDCount * (categoryUriPages.Count + 1)}"); //TODO pass this to a string to print in the UI
-                                                                                                                                                                                      //bw.ReportProgress(totalValues);
-                                            populatedValue = $"Populating value:{categoryValue}\r\n Total Values:{ totalValues}";
-                                            if(bw != null)
-                                            {
-                                                bw.ReportProgress(totalValues, populatedValue);
-                                            }
-                                            
-                                        }
-                                    }
-                                } //simple foreach closing                                                   
+                                field.SelectedValue = field.PossibleValues[0];
                             }
                         }
                     }
+
+
+
+                    #endregion
+
+                    #region Get Values for category type Prvious code for referance
+
+                    //RqmResponseData category = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + RQMCore.ALMProjectGroupName + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + ALMCore.DefaultAlmConfig.ALMProjectGUID + "/category"));
+                    //XmlDocument CategoryList = new XmlDocument();
+                    //CategoryList.LoadXml(category.responseText);
+                    //totalValues = 0;
+                    //populatedValue = string.Empty;
+
+                    ////TODO: Get 'next' and 'last links
+                    //XmlNodeList linkList = CategoryList.GetElementsByTagName("link");
+                    //XmlNode selfPageNode = linkList.Item(1);
+                    //XmlNode lastPageNode = linkList.Item(3);
+
+                    //string selfLink = selfPageNode.Attributes["href"].Value.ToString();
+                    //string baseUri = selfLink.EndsWith("/") ? selfLink.Substring(0, selfLink.Length - 1) : selfLink.Substring(0, selfLink.Length);
+
+                    //string tempString = lastPageNode.Attributes["href"].Value.ToString();
+                    //bool checkResult = int.TryParse(tempString.Substring(tempString.LastIndexOf('=') + 1), out int maxPageNumber);
+                    //string newUri = string.Empty;
+                    //List<string> categoryUriPages = new List<string>();
+
+                    //for (int i = 0; i <= maxPageNumber; i++) //scale testing
+                    //{
+                    //    if (maxPageNumber > 0)
+                    //    {
+                    //        newUri = baseUri + i.ToString();
+                    //        categoryUriPages.Add(newUri);
+                    //    }
+                    //    else
+                    //    {
+                    //        newUri = baseUri;
+                    //        categoryUriPages.Add(newUri);
+
+                    //    }
+                    //}
+                    //Reporter.ToLog(eLogLevel.DEBUG, $"categoryUriPages = {JsonConvert.SerializeObject(categoryUriPages)}");
+                    ////Improved with Parallel GetRQMData
+                    //if (categoryUriPages.Count > 0)
+                    //{
+                    //    int iDCount = 0;
+
+                    //    List<Uri> uriList = new List<Uri>();
+                    //    foreach (string pageUri in categoryUriPages)
+                    //    {
+                    //        Uri listURIEntry = new Uri(pageUri);
+                    //        uriList.Add(listURIEntry);
+                    //    }
+
+                    //    //Get all Pages of values:
+                    //    populatedValue = "Retrieving value pages... ";
+                    //    List<RqmResponseData> XmlPageList = RQMConnect.Instance.RQMRep.GetRqmDataParallel(loginData, uriList);
+                    //    Reporter.ToLog(eLogLevel.DEBUG, $"XmlPageList = {JsonConvert.SerializeObject(XmlPageList)}");
+                    //    //For each category page
+                    //    foreach (RqmResponseData category_ in XmlPageList)
+                    //    {
+                    //        XmlDocument CategoryList_ = new XmlDocument();
+                    //        if (!string.IsNullOrEmpty(category_.responseText))
+                    //        {
+                    //            CategoryList_.LoadXml(category_.responseText);
+                    //        }
+
+                    //        XmlNodeList categoryIDs = CategoryList_.GetElementsByTagName("id");
+
+                    //        iDCount += categoryIDs.Count;
+
+                    //        //Make a list of Category ID links (uri's)
+                    //        if (categoryIDs.Count > 0)
+                    //        {
+                    //            List<Uri> idLinkList = new List<Uri>();
+                    //            for (int n = 1; n < categoryIDs.Count; n++)
+                    //            {
+                    //                Uri idLink = new Uri(categoryIDs.Item(n).InnerText);
+                    //                //idLinkList.Add(categoryIDs.Item(n).InnerText);
+                    //                idLinkList.Add(idLink);
+                    //            }
+                    //            //List<Uri> newidLinkList = new ();
+
+                    //            //foreach (Uri idlink in idLinkList)
+                    //            //{
+                    //            //    foreach(ExternalItemFieldBase externalItem in catTypeRsult)
+                    //            //    {
+                    //            //        if (idlink.IsAbsoluteUri.ToString().Contains(externalItem.ID))
+                    //            //        {
+                    //            //            newidLinkList.Add(idlink);
+                    //            //            break;
+                    //            //        }
+
+                    //            //    }
+
+                    //            //}
+
+                    //            //Reporter.ToLog(eLogLevel.DEBUG, $"newidLinkList = {JsonConvert.SerializeObject(newidLinkList)}");
+
+                    //            //Retrieves Category XML Pages in parallel per Page
+                    //            List<RqmResponseData> CategoryIDLink = RQMConnect.Instance.RQMRep.GetRqmDataParallel(loginData, idLinkList);
+                    //            Reporter.ToLog(eLogLevel.DEBUG, $"CategoryIDLink = {JsonConvert.SerializeObject(CategoryIDLink)}");
+                    //            ExternalItemFieldBase valuesItemfield = new ExternalItemFieldBase();
+
+                    //            //get all category and their values -- shold be changed to ForeachParallel for faster performance:
+                    //            populatedValue = "Populating values... ";
+                    //            foreach (RqmResponseData LinkData in CategoryIDLink)
+                    //            //Parallel.ForEach(CategoryIDLink.AsParallel(), singleLink =>
+                    //            {
+                    //                if (!string.IsNullOrEmpty(LinkData.responseText))
+                    //                {
+                    //                    XmlDocument categoryValueXML = new XmlDocument();
+
+                    //                    categoryValueXML.LoadXml(LinkData.responseText);
+
+                    //                    XmlNode categoryTypeNode;
+                    //                    string catTypeLink = string.Empty;
+
+
+                    //                    if (!string.IsNullOrEmpty(categoryValueXML.InnerText.ToString()))
+                    //                    {
+                    //                        categoryTypeNode = categoryValueXML.GetElementsByTagName("ns2:categoryType").Item(0); //need to consider changes in tag i.e. ns3/ns4...
+                    //                        catTypeLink = categoryTypeNode.Attributes["href"].Value.ToString();
+
+                    //                        categoryTypeID = catTypeLink.Substring(catTypeLink.LastIndexOf(':') + 1);
+                    //                        categoryValue = categoryValueXML.GetElementsByTagName("ns4:title").Item(0).InnerText;  // --> itemfield.PossibleValues.Add(ccNode.Name);
+
+                    //                        valuesItemfield.ID = categoryTypeID;
+
+                    //                        if (fields.Count > 0) //category list has at least 1 entry
+                    //                        {
+                    //                            for (int j = 0; j < fields.Count; j++) //run through list
+                    //                            {
+                    //                                if ((fields[j].ID.ToString() == categoryTypeID))
+                    //                                {
+                    //                                    fields[j].PossibleValues.Add(categoryValue);
+                    //                                    fields[j].SelectedValue = fields[j].PossibleValues[0];
+                    //                                }
+                    //                            }
+                    //                        }
+
+                    //                        totalValues++;
+
+                    //                        Reporter.ToLog(eLogLevel.DEBUG, $"Total number of populated values is :{totalValues}/{iDCount * (categoryUriPages.Count + 1)}"); //TODO pass this to a string to print in the UI
+                    //                                                                                                                                                            //bw.ReportProgress(totalValues);
+                    //                        populatedValue = $"Populating value:{categoryValue}\r\n Total Values:{totalValues}";
+                    //                        if (bw != null)
+                    //                        {
+                    //                            bw.ReportProgress(totalValues, populatedValue);
+                    //                        }
+
+                    //                    }
+                    //                }
+                    //            } //simple foreach closing                                                   
+                    //        }
+                    //    }
+                    //}
+
+                    #endregion
                 }
             }
             catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
@@ -1313,7 +1382,6 @@ namespace GingerCore.ALM.RQM
             SaveItemFields(fields);
             return fields;
         }
-
 
         public static ObservableList<ExternalItemFieldBase> GetOnlineItemFieldsForDefect(BackgroundWorker bw)
         {
