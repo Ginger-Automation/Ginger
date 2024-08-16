@@ -57,6 +57,33 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         private PlaywrightBrowser? _browser;
         private IBrowserElement? _lastHighlightedElement;
 
+        /// <summary>
+        /// Gets the name of the driver configuration edit page based on the driver subtype and driver configuration parameters.
+        /// </summary>
+        /// <param name="driverSubType">The driver subtype.</param>
+        /// <param name="driverConfigParams">The driver configuration parameters.</param>
+        /// <returns>The name of the driver configuration edit page if the browser type is Chrome, Edge, or FireFox; otherwise, null.</returns>
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
+        {
+            if (driverConfigParams == null)
+            {
+                return null;
+            }
+            DriverConfigParam browserTypeParam = driverConfigParams.FirstOrDefault(param => string.Equals(param.Parameter, nameof(BrowserType)));
+
+            if (browserTypeParam == null || !Enum.TryParse(browserTypeParam.Value, out WebBrowserType browserType))
+            {
+                return null;
+            }
+            else if (browserType == WebBrowserType.Chrome || browserType == WebBrowserType.Edge || browserType == WebBrowserType.FireFox)
+            {
+                return "WebAgentConfigEditPage";
+            }
+            else
+            {
+                return null;
+            }
+        }
         public override void StartDriver()
         {
             ValidateBrowserTypeSupport(BrowserType);
