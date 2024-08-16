@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public string ID { get; set; }
 
-        public string TypeIndetifier { get; set; }
+        public string TypeIdentifier { get; set; }
 
         [IsSerializedForLocalRepository]
         public string Name { get; set; }
