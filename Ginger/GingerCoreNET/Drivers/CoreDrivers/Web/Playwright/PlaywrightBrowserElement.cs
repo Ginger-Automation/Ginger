@@ -25,6 +25,9 @@ using System.Threading.Tasks;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
 using System.Drawing;
+using Deque.AxeCore.Commons;
+using GingerCore.Actions;
+using Deque.AxeCore.Playwright;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -898,6 +901,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
             return playwrightElementHandle.EvaluateAsync<bool>("element => element.shadowRoot != null");
+        }
+
+        public async Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null)
+        {
+            if (_playwrightLocator == null)
+            {
+                throw new Exception("Unable to analyze this page");
+            }
+
+            return await _playwrightLocator.RunAxe(options);
         }
     }
 }

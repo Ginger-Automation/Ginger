@@ -254,6 +254,8 @@
   
     <PackageReference Include="Deque.AxeCore.Commons" Version="4.9.1" />
   
+    <PackageReference Include="Deque.AxeCore.Playwright" Version="4.9.1" />
+  
     <PackageReference Include="Deque.AxeCore.Selenium" Version="4.9.1" />
   
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />

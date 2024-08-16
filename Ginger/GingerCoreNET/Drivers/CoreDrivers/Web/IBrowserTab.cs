@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using Deque.AxeCore.Commons;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -84,6 +85,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string locateValue);
 
         public Task<IBrowserElement?> GetElementAsync(string javascript);
+
+        public Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null);
 
         public Task CloseAsync();
     }
