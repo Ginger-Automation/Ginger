@@ -106,8 +106,8 @@ namespace Ginger.Actions
             xSeverityCB.Init(mAct, nameof(mAct.SeverityList));
 
             xLocateValueVE.BindControl(Context.GetAsContext(mAct.Context), mAct, Act.Fields.LocateValue);
-            xTargetRadioButton.Init(typeof(ActAccessibilityTesting.eTarget), xTargetRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page.ToString()), TargetRadioButton_Clicked);
-            xAnalyzerRadioButton.Init(typeof(ActAccessibilityTesting.eAnalyzer), xAnalyzerRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard.ToString()), AnalyzerRadioButton_Clicked);
+            xTargetRadioButton.Init(typeof(ActAccessibilityTesting.eTarget), xTargetRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, nameof(ActAccessibilityTesting.eTarget.Page)), TargetRadioButton_Clicked);
+            xAnalyzerRadioButton.Init(typeof(ActAccessibilityTesting.eAnalyzer), xAnalyzerRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, nameof(ActAccessibilityTesting.eAnalyzer.ByStandard)), AnalyzerRadioButton_Clicked);
             BindControlForTarget();
             BindControlForAnalyzer();
             SetLocateValueFrame();
@@ -115,7 +115,7 @@ namespace Ginger.Actions
 
         private void BindControlForTarget()
         {
-            if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
+            if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == nameof(ActAccessibilityTesting.eTarget.Element)))
             {
                 xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
             }
@@ -126,18 +126,17 @@ namespace Ginger.Actions
         }
         private void BindControlForAnalyzer()
         {
-            if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString()))
+            if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard)))
             {
                 xStdStack.Visibility = System.Windows.Visibility.Visible;
                 xSeveritylbl.Content = "Acceptable Severities :";
             }
-            else if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString()))
+            else if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.BySeverity)))
             {
                 xStdStack.Visibility = System.Windows.Visibility.Collapsed;
                 xSeveritylbl.Content = "Severities :";
             }
         }
-
 
         private ePlatformType GetActionPlatform()
         {
@@ -145,7 +144,7 @@ namespace Ginger.Actions
             if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
             {
                 string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-                platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform; 
             }
             else
             {
@@ -233,13 +232,13 @@ namespace Ginger.Actions
         public ObservableList<OperationValues> GetStandardTagslist()
         {
             ObservableList<OperationValues> StandardTagList = new ObservableList<OperationValues>();
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag2a.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag2a.ToString()) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag2aa.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag2aa.ToString()) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag21a.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag21a.ToString()) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag21aa.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag21aa.ToString()) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag22a.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag22a.ToString()) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag22aa.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag22aa.ToString()) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.bestpractice.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.bestpractice.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag2a), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag2a)) });
+            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag2aa), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag2aa)) });
+            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag21a), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag21a)) });
+            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag21aa), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag21aa)) });
+            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag22a), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag22a)) });
+            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag22aa), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.wcag22aa)) });
+            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.bestpractice), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), nameof(ActAccessibilityTesting.eTags.bestpractice)) });
             return StandardTagList;
         }
 
@@ -247,10 +246,10 @@ namespace Ginger.Actions
         {
             ObservableList<OperationValues> SeverityList = new ObservableList<OperationValues>();
 
-            SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Critical.ToString() });
-            SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Serious.ToString() });
-            SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Moderate.ToString() });
-            SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Minor.ToString() });
+            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Critical) });
+            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Serious) });
+            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Moderate) });
+            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Minor) });
             return SeverityList;
         }
 

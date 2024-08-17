@@ -16,14 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore.Platforms;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Amdocs.Ginger.CoreNET.Run
+namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 {
-    public interface IActPluginExecution
+    internal interface IBrowserShadowRoot
     {
-        PlatformAction GetAsPlatformAction();
-
-        string GetName();
+        public Task<string> HTML();
     }
 }

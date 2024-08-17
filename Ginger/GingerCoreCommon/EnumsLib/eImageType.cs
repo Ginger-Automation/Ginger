@@ -325,6 +325,11 @@ namespace Amdocs.Ginger.Common.Enums
         Support,
         Asterisk,
         Smile,
+        AddressCard,
+        IdCard,
+        IdBadge,
+        Phone,
+        MoneyCheckDollar,
         #endregion
 
         #region Source control Images     
@@ -349,6 +354,9 @@ namespace Amdocs.Ginger.Common.Enums
         PlusSquare,
         DataTable,
         Robot,
+        Accessibility,
+        AnglesArrowLeft,
+        AnglesArrowRight,
 
         #region Comparison Status Images
         Unchanged,

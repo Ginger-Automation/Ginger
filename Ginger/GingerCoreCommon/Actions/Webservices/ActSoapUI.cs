@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -29,6 +29,12 @@ namespace GingerCore.Actions
 {
     public class ActSoapUI : Act
     {
+        public ActSoapUI()
+        {
+            //Disable Auto Screenshot on failure by default. User can override it if needed
+            AutoScreenShotOnFailure = false;
+        }
+
         public override string ActionDescription { get { return "SoapUI Wrapper Action"; } }
         public override string ActionUserDescription { get { return "Run SoapUI commands on Dos/Unix system"; } }
 

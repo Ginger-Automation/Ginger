@@ -226,7 +226,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return BusinessFlows.Count();
+                return BusinessFlows.Count;
             }
         }
 

@@ -330,7 +330,7 @@ namespace GingerCore.ALM.QCRestAPI
                             if (paramSelectedValue.StartsWith("#$#"))
                             {
                                 string[] valueParts = paramSelectedValue.Split(new string[] { "#$#" }, StringSplitOptions.None);
-                                if (valueParts.Count() == 3)
+                                if (valueParts.Length == 3)
                                 {
                                     linkedVariable = valueParts[1];
                                     paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control
@@ -952,7 +952,7 @@ namespace GingerCore.ALM.QCRestAPI
                 if (paramSelectedValue.StartsWith("#$#"))
                 {
                     string[] valueParts = paramSelectedValue.Split(new string[] { "#$#" }, StringSplitOptions.None);
-                    if (valueParts.Count() == 3)
+                    if (valueParts.Length == 3)
                     {
                         linkedVariable = valueParts[1];
                         paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control

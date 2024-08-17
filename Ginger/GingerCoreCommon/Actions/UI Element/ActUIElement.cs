@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -16,41 +16,23 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
-using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Platforms;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
 
 namespace GingerCore.Actions.Common
 {
     public class ActUIElement : Act, IActPluginExecution
     {
-        // --------------------------------------------------------------------------------------------
-        // TODO: remove after we take LocateBy, LocateValue from Act.cs
-        // Creating dummy enum to avoid confusion until we delete the one in Act.cs
-
-        // Put them back when you want to verify all is good.
-        // Do not leave uncomment - since it will create problem when doing backup when 2 attrs are the exact same
-
-        //public new enum eLocatorType
-        //{
-        //     DUMMY_Locate_By_DO_NOT_USE_The_New_Is_eLocateBy
-        //}
-        //public new float LocateBy;  // DUMMY_Locate_By_DO_NOT_USE_The_New_Is_ ElementLocateBy on this
-        //public new float LocateValue;  // DUMMY_Locate_By_DO_NOT_USE_The_New_I ElementLocateValue on this
-        // --------------------------------------------------------------------------------------------
-
         public const string EElementActionTypeGeneric = "Generic";
 
         public override string ActionDescription { get { return "UIElement Action"; } }
@@ -867,7 +849,7 @@ namespace GingerCore.Actions.Common
             else
             {
                 string[] xy = ElementLocateValueForDriver.Split(',');
-                if ((xy != null) && (xy.Count() > 1))
+                if ((xy != null) && (xy.Length > 1))
                 {
                     if (!double.TryParse(xy[0].Split('=')[1], out X))
                     {
@@ -902,9 +884,9 @@ namespace GingerCore.Actions.Common
             else
             {
                 string[] xy = locateValue.Split(',');
-                if ((xy != null) && (xy.Count() > 1))
+                if ((xy != null) && (xy.Length > 1))
                 {
-                    if (xy[0].Contains("="))
+                    if (xy[0].Contains('='))
                     {
                         if (!double.TryParse(xy[0].Split('=')[1], out X))
                         {
@@ -962,37 +944,7 @@ namespace GingerCore.Actions.Common
                     return false;
             }
         }
-
-        public Drivers.CommunicationProtocol.PayLoad GetPayLoad(ElementLocator elementLocator = null)
-        {
-            string payLoadName = @"UIElementAction";
-            if (Convert.ToBoolean(this.GetInputParamValue(Fields.IsWidgetsElement)))
-            {
-                payLoadName = @"WidgetsUIElementAction";
-            }
-            PayLoad PL = new PayLoad(payLoadName);
-            // Make it generic function in Act.cs to be used by other actions
-            List<PayLoad> PLParams = new List<PayLoad>();
-            foreach (ActInputValue AIV in this.InputValues)
-            {
-                if (!string.IsNullOrEmpty(AIV.Value))
-                {
-                    PayLoad AIVPL = new PayLoad("AIV", AIV.Param, AIV.ValueForDriver);
-                    PLParams.Add(AIVPL);
-                }
-            }
-            PL.AddListPayLoad(PLParams);
-
-            //for Java POM Element
-            if (elementLocator != null)
-            {
-                PL.AddKeyValuePair(elementLocator.LocateBy.ToString(), elementLocator.LocateValue);
-            }
-
-            PL.ClosePackage();
-
-            return PL;
-        }
+     
 
         public override ActionDetails Details
         {
@@ -1029,59 +981,6 @@ namespace GingerCore.Actions.Common
                 // TODO: push others
                 return d;
             }
-        }
-
-
-
-        public NewPayLoad GetActionPayload()
-        {
-            // Need work to cover all options per platfrom !!!!!!!!!!!!!!!!!!!!
-            //TODO:     // Make it generic function in Act.cs to be used by other actions
-
-            NewPayLoad PL = new NewPayLoad("RunPlatformAction");
-            PL.AddValue("UIElementAction");
-            List<NewPayLoad> PLParams = new List<NewPayLoad>();
-
-            foreach (FieldInfo FI in typeof(ActUIElement.Fields).GetFields())
-            {
-                string Name = FI.Name;
-                string Value = GetOrCreateInputParam(Name).ValueForDriver;
-
-                if (string.IsNullOrEmpty(Value))
-                {
-                    object Output = this.GetType().GetProperty(Name) != null ? this.GetType().GetProperty(Name).GetValue(this, null) : string.Empty;
-
-                    if (Output != null)
-                    {
-                        Value = Output.ToString();
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(Value))
-                {
-                    NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
-                    PLParams.Add(FieldPL);
-                }
-            }
-            /*
-            PL.AddValue(this.ElementLocateBy.ToString());
-            PL.AddValue(GetOrCreateInputParam(Fields.ElementLocateValue).ValueForDriver); // Need Value for driver
-            PL.AddValue(this.ElementType.ToString());
-            PL.AddValue(this.ElementAction.ToString());
-  */
-
-            foreach (ActInputValue AIV in this.InputValues)
-            {
-                if (!string.IsNullOrEmpty(AIV.Value))
-                {
-                    NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
-                    PLParams.Add(AIVPL);
-                }
-            }
-            PL.AddListPayLoad(PLParams);
-            PL.ClosePackage();
-
-            return PL;
         }
 
         public string GetName()
@@ -1142,7 +1041,7 @@ namespace GingerCore.Actions.Common
             }
 
 
-            Dictionary<string, string> Locators = new Dictionary<string, string>();
+            Dictionary<string, string> Locators = [];
             Locators.Add(ElementLocateBy.ToString(), ElementLocateValueForDriver);
 
 

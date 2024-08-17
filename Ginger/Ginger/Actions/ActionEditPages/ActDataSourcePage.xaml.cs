@@ -339,13 +339,13 @@ namespace Ginger.Actions
                                 }
                                 Cond = Cond.Replace("''", "~QUOTE~");
                                 string[] arrAndCond = Cond.Trim().Split(new string[] { "AND" }, StringSplitOptions.None);
-                                for (int iAndCount = 0; iAndCount < arrAndCond.Count(); iAndCount++)
+                                for (int iAndCount = 0; iAndCount < arrAndCond.Length; iAndCount++)
                                 {
                                     ActDSConditon.eCondition wCond;
                                     ActDSConditon.eOperator wOpr = ActDSConditon.eOperator.Equals;
                                     string wColVal = "";
                                     string[] arrORCond = arrAndCond[iAndCount].Trim().Split(new string[] { "OR" }, StringSplitOptions.None);
-                                    for (int iOrCount = 0; iOrCount < arrORCond.Count(); iOrCount++)
+                                    for (int iOrCount = 0; iOrCount < arrORCond.Length; iOrCount++)
                                     {
                                         if (iAndCount == 0 && iOrCount == 0)
                                         {
@@ -419,7 +419,7 @@ namespace Ginger.Actions
                                                 wColVal = arrORCond[iOrCount].Substring(arrORCond[iOrCount].IndexOf("'%") + 2, arrORCond[iOrCount].LastIndexOf("%'") - arrORCond[iOrCount].IndexOf("'%") - 2);
                                             }
                                         }
-                                        else if (condVal.Count() > 2 && condVal[1] == "NOT" && condVal[2] == "LIKE")
+                                        else if (condVal.Length > 2 && condVal[1] == "NOT" && condVal[2] == "LIKE")
                                         {
                                             if (arrORCond[iOrCount].IndexOf("'%") != -1 && arrORCond[iOrCount].IndexOf("%'") == -1)
                                             {
@@ -437,11 +437,11 @@ namespace Ginger.Actions
                                                 wColVal = arrORCond[iOrCount].Substring(arrORCond[iOrCount].IndexOf("'%") + 2, arrORCond[iOrCount].LastIndexOf("%'") - arrORCond[iOrCount].IndexOf("'%") - 2);
                                             }
                                         }
-                                        else if (condVal.Count() > 2 && condVal[1].ToUpper() == "IS" && condVal[2].ToUpper() == "NULL")
+                                        else if (condVal.Length > 2 && condVal[1].ToUpper() == "IS" && condVal[2].ToUpper() == "NULL")
                                         {
                                             wOpr = ActDSConditon.eOperator.IsNull;
                                         }
-                                        else if (condVal.Count() > 3 && condVal[1].ToUpper() == "IS" && condVal[2].ToUpper() == "NOT" & condVal[3].ToUpper() == "NULL")
+                                        else if (condVal.Length > 3 && condVal[1].ToUpper() == "IS" && condVal[2].ToUpper() == "NOT" & condVal[3].ToUpper() == "NULL")
                                         {
                                             wOpr = ActDSConditon.eOperator.IsNotNull;
                                         }

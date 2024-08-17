@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -29,5 +29,11 @@ namespace GingerCore.Actions
         public ProjEnvironment RunOnEnvironment;
         public ObservableList<DataSourceBase> DSList;
         public abstract void Execute();
+
+        protected ActWithoutDriver()
+        {
+            //Disable Auto Screenshot on failure by default. User can override it if needed
+            AutoScreenShotOnFailure = false;  
+        }
     }
 }

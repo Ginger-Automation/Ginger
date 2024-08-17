@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -22,7 +22,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Run;
+using GingerCore;
+using Newtonsoft.Json;
 
 namespace Ginger.Configurations
 {
@@ -35,7 +39,6 @@ namespace Ginger.Configurations
         /// <summary>
         /// Gets or sets the Active associated with the accessibility rule.
         /// </summary>
-        [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         private string mRuleID;
@@ -49,7 +52,7 @@ namespace Ginger.Configurations
         /// <summary>
         /// Gets or sets the tags associated with the accessibility rule.
         /// </summary>
-        [IsSerializedForLocalRepository]
+
         public string Tags { get { return mTags; } set { if (mTags != value) { mTags = value; OnPropertyChanged(nameof(Tags)); } } }
 
         private string mImpact;
@@ -62,10 +65,33 @@ namespace Ginger.Configurations
         public string ACTRules { get { return mACTRules; } set { if (mACTRules != value) { mACTRules = value; OnPropertyChanged(nameof(ACTRules)); } } }
         public override string ItemName { get; set; }
 
+        public ObservableList<AccessibilityRuleData> GetAccessibilityRules(string AccessbiltyString)
+        {
+            Root data = new();
+            data.accessibilityRules = [];
+            try
+            {
+                data = JsonConvert.DeserializeObject<Root>(AccessbiltyString);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to deserialize accessibility rules.", ex);
+            }
+
+            return data.accessibilityRules;
+        }
+
         public void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+}
+
+    public class Root
+    {
+        public ObservableList<AccessibilityRuleData> accessibilityRules { get; set; }
     }
+
+
 }

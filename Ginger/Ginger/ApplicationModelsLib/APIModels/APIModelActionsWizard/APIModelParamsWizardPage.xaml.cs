@@ -94,7 +94,7 @@ namespace Ginger.ApiModelsFolder
                 foreach (ApplicationAPIModel aamb in mAddApiModelActionWizardPage.AAMList)
                 {
                     EAIV.ExtraDetails += aamb.Name;
-                    if (mAddApiModelActionWizardPage.AAMList.IndexOf(aamb) != mAddApiModelActionWizardPage.AAMList.Count() - 1)
+                    if (mAddApiModelActionWizardPage.AAMList.IndexOf(aamb) != mAddApiModelActionWizardPage.AAMList.Count - 1)
                     {
                         EAIV.ExtraDetails += " | ";
                     }

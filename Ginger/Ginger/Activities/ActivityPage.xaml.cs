@@ -628,6 +628,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
             //create back up
             mActivity.SaveBackup();
+            mActivity.StartTimer();
             UpdateActivityViewMode(Ginger.General.eRIPageViewMode.Automation);
         }
 

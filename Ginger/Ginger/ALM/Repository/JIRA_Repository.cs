@@ -174,7 +174,7 @@ namespace Ginger.ALM.Repository
                 }
                 else
                 {
-                    return false;
+                    return ExportBFToALMXtended(businessFlow, performSaveAfterExport, almConectStyle);
                 }
             }
             else

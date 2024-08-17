@@ -1175,6 +1175,46 @@ namespace Ginger
             toolbar.Items.Add(pnl);
             return b;
         }
+        public RadioButton AddRadioButton(string content, string groupName, RoutedEventHandler? handler, bool isEnabled = true, bool isChecked = false)
+        {
+            DockPanel pnl = new DockPanel();
+            pnl.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+            pnl.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+            pnl.LastChildFill = false;
+
+            if (string.IsNullOrEmpty(content))
+            {
+                throw new ArgumentException("Content cannot be null or empty", nameof(content));
+            }
+            if (string.IsNullOrEmpty(groupName))
+            {
+                throw new ArgumentException("GroupName cannot be null or empty", nameof(groupName));
+            }
+
+            RadioButton b = new RadioButton();
+            b.Margin = new Thickness(3, 0, 0, 0);
+            b.Height = Double.NaN;
+            b.Width = Double.NaN;
+            b.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
+            b.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+            b.Padding = new Thickness(2, 0, 0, 0);
+            b.Content = content;
+            b.GroupName = groupName; // Set the group name for grouping radio buttons together
+            b.IsEnabled = isEnabled; // Set the enabled/disabled state of the radio button
+            b.IsChecked = isChecked; // Set the checked/unchecked state of the radio button
+  
+
+            if (handler != null)
+            {
+                b.AddHandler(RadioButton.ClickEvent, handler);
+            }
+
+            pnl.Children.Add(b); // using dock panel for getting regular check box design
+            toolbar.Items.Add(pnl);
+            return b;
+        }
+
+
 
         #endregion ##### External Methods
 
@@ -1351,7 +1391,7 @@ namespace Ginger
         {
             if (_DefaultViewName == null || _DefaultViewName == string.Empty)
             {
-                if (_GridViews.Count() >= 1)
+                if (_GridViews.Count >= 1)
                 {
                     _DefaultViewName = _GridViews.Keys.First();
                 }

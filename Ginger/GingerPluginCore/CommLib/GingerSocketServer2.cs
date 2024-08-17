@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         // Thread signal.  
         public ManualResetEvent allDone = new ManualResetEvent(false);
         public Action<GingerSocketInfo> MessageHandler { get; set; }
-        public int ClientsCounter { get { return Clients.Count(); } }
+        public int ClientsCounter { get { return Clients.Count; } }
         public string IPInfo;
         Task mTask;
         public bool isReady = false;

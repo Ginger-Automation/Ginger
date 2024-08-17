@@ -383,7 +383,7 @@ namespace GingerCoreNET.DriversLib
             {
                 ParameterInfo[] PIs = AH.MethodInfo.GetParameters();
 
-                object[] parameters = new object[PIs.Count()];
+                object[] parameters = new object[PIs.Length];
 
                 int paramnum = 0;
                 foreach (ParameterInfo PI in PIs)

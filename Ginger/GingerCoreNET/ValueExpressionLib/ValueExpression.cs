@@ -30,11 +30,13 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
+using SikuliStandard.sikuli_REST;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -108,6 +110,8 @@ namespace GingerCore
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
 
         private static Regex rNestedfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\(([^()])*\\)}", RegexOptions.Compiled);
+        private static Regex MockDataExpPattern = new Regex("^\\{MockDataExp Fun=.*\\}$", RegexOptions.Compiled, new TimeSpan(0, 0, 5));
+        private static Regex CsExppattern = new Regex("{CS Exp({.*}|[^{}]*)*}", RegexOptions.Compiled);
 
         // Enable setting value simply by assigned string, 
         // so no need to create new VE class everywhere in code
@@ -237,6 +241,8 @@ namespace GingerCore
                 ProcessGeneralFuncations();
                 EvaluateFlowDetails();
                 EvaluateCSharpFunctions();
+                EvaluateBogusDataGenrateFunctions();
+
             }
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
@@ -341,7 +347,6 @@ namespace GingerCore
         {
             Environment, Runset, Runner, BusinessFlow, ActivitiesGroup, Activity, Action, PreviousBusinessFlow, PreviousActivity, PreviousAction, LastFailedAction, ErrorHandlerOriginActivitiesGroup, ErrorHandlerOriginActivity, ErrorHandlerOriginAction, LastFailedBusinessFlow, LastFailedActivity, Solution
         }
-
         public static Tuple<eFlowDetailsObjects, string> GetFlowDetailsParams(string flowDetailsExpression)
         {
             try
@@ -367,6 +372,60 @@ namespace GingerCore
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to wrong format", flowDetailsExpression));
                 return null;
             }
+        }
+
+        public static Mockdata GetMockDataDatasetsFunction(string MockDataExpression)
+        {
+            try
+            {
+                string objStr, functions, Locale;
+                int DatasetStartIndex, DatasetEndIndex, LocaleStartIndex, LocaleEndIndex;
+                MockdataExpressionExtract(MockDataExpression, out objStr, out functions, out Locale,out DatasetStartIndex,out DatasetEndIndex,out LocaleStartIndex,out LocaleEndIndex);
+                Mockdata mockdata = new();
+                mockdata.MockDataDatasets = objStr;
+                mockdata.Locale = Locale;
+                mockdata.Function = functions;
+                mockdata.MockExpression = MockDataExpression;
+                mockdata.DatasetStartIndex = DatasetStartIndex;
+                mockdata.DatasetEndIndex = DatasetEndIndex;
+                mockdata.LocaleStartIndex = LocaleStartIndex;
+                mockdata.LocaleEndIndex = LocaleEndIndex;
+                return mockdata;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to wrong format", MockDataExpression));
+                return null;
+            }
+        }
+        /// <summary>
+        /// This method extracts specific parts from the MockDataExpression string. 
+        /// It initializes several string variables and then uses indices to parse substrings, 
+        /// assigning these substrings to the initialized variables.
+        /// </summary>
+        /// <param name="MockDataExpression">
+        /// <param name="objStr"></param>
+        /// <param name="functions"></param>
+        /// <param name="Locale"></param>
+        /// <param name="DatasetStartIndex"></param> Index of '=' in MockDataExpression.
+        /// <param name="DatasetEndIndex"></param> Index of '(' in MockDataExpression.
+        /// <param name="LocaleStartIndex"></param> Index of '"' in MockDataExpression.
+        /// <param name="LocaleEndIndex"></param> Index of ')' in MockDataExpression.
+        private static void MockdataExpressionExtract(string MockDataExpression, out string objStr, out string functions, out string Locale, out int DatasetStartIndex, out int DatasetEndIndex, out int LocaleStartIndex, out int LocaleEndIndex)
+        {
+            objStr = string.Empty;
+            functions = string.Empty;
+            Locale = string.Empty;
+            DatasetStartIndex = MockDataExpression.IndexOf('=');
+            DatasetEndIndex = MockDataExpression.IndexOf('(');
+            LocaleStartIndex = MockDataExpression.IndexOf('"');
+            LocaleEndIndex = MockDataExpression.IndexOf(')');
+            int functionstartindex = MockDataExpression.IndexOf('.');
+            string funsubstring = MockDataExpression.Substring(functionstartindex + 1);
+            int functionendindex = funsubstring.IndexOf('(');
+            Locale = MockDataExpression.Substring(LocaleStartIndex + 1, LocaleEndIndex - 2 - LocaleStartIndex);
+            objStr = MockDataExpression.Substring(DatasetStartIndex + 1, DatasetEndIndex - 1 - DatasetStartIndex);
+            functions = funsubstring.Substring(0, functionendindex).Replace("\"", "").Trim();
         }
 
         private void ReplaceFlowDetails(string flowDetailsExpression)
@@ -541,6 +600,11 @@ namespace GingerCore
         private void EvaluateCSharpFunctions()
         {
             mValueCalculated = CodeProcessor.GetResult(mValueCalculated);
+        }
+
+        private void EvaluateBogusDataGenrateFunctions()
+        {
+            mValueCalculated = CodeProcessor.GetBogusDataGenerateresult(mValueCalculated);
         }
 
         private void ReplaceGlobalParameters()
@@ -1721,46 +1785,59 @@ namespace GingerCore
 
         private bool ContainsFormula(string mValueCalculated)
         {
-            if (rxGlobalParamPattern.IsMatch(mValueCalculated))
+            try
             {
-                return true;
+                if (rxGlobalParamPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxEnvParamPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxEnvUrlPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxe.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (VBSRegex.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rNestedfunc.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxDSPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxFDPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (rxExecutionJsonDataPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else if (CsExppattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
+                else  if (MockDataExpPattern.IsMatch(mValueCalculated))
+                {
+                    return true;
+                }
             }
-            else if (rxEnvParamPattern.IsMatch(mValueCalculated))
+            catch (RegexMatchTimeoutException ex)
             {
-                return true;
+                Reporter.ToLog(eLogLevel.ERROR, "Timeout Exception", ex);
+                return false;
             }
-            else if (rxEnvUrlPattern.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (rxe.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (VBSRegex.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (rNestedfunc.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (rxDSPattern.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (rxFDPattern.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (rxExecutionJsonDataPattern.IsMatch(mValueCalculated))
-            {
-                return true;
-            }
-            else if (mValueCalculated.Contains(@"{CS"))
-            {
-                return true;
-            }
+            
             return false;
         }
 
@@ -1779,5 +1856,27 @@ namespace GingerCore
             VE.Value = Value;
             return VE.ValueCalculated;
         }
+    }
+
+    public class Mockdata
+    {
+        public string MockDataDatasets { get; set; }
+        
+        public string Locale { get; set; }
+
+        public string Function { get; set; }
+
+        public string MockExpression { get; set; }
+
+        public int DatasetStartIndex { get; set; }
+
+        public int DatasetEndIndex { get; set; }
+
+        public int LocaleStartIndex { get; set; }
+
+        public int LocaleEndIndex { get; set; }
+
+        public int FunctionStartIndex { get; set; }
+
     }
 }

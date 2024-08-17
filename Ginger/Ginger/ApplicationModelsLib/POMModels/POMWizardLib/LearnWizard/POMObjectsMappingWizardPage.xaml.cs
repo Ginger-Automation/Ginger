@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
@@ -68,8 +69,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
 
                         xReLearnButton.Visibility = Visibility.Visible;
-
                         Learn();
+                        
                     }
                     break;
 
@@ -105,7 +106,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             elapsedTime = TimeSpan.Zero;
 
             // Start the timer
+            try 
+            { 
             timer.Start();
+            }
+            catch (Exception ex)
+            { 
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while starting the timer", ex); 
+            }
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -120,8 +128,35 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         // You can stop the timer if needed
         private void StopTimer()
         {
-            timer.Stop();
+            if(timer != null)
+            {
+                try
+                {
+                    timer.Stop();
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error while stopping the timer", ex);
+                }
+            }
         }
+
+        private void BringToFocus()
+        {
+            try
+            {
+                Window window = Window.GetWindow(this);
+                if (window != null)
+                {
+                    window.Activate();
+                }
+            }
+            catch (Exception ex) 
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while bring Ginger window to front", ex);
+            }
+        }
+
         private async void Learn()
         {
             if (!mWizard.IsLearningWasDone)
@@ -138,6 +173,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xStopLoadButton.Visibility = Visibility.Visible;
 
                     await mWizard.mPomLearnUtils.Learn();
+
+                    BringToFocus();
 
                     mWizard.IsLearningWasDone = true;
                 }

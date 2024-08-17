@@ -141,7 +141,7 @@ namespace GingerCore
             }
         }
 
-        
+
         public override string ToString()
         {
             return ActivityName;
@@ -165,6 +165,8 @@ namespace GingerCore
             }
         }
 
+        public TimeSpan LastElapsedDevelopmentTime { get; private set; }
+
         public void StartTimer()
         {
             if (_stopwatch == null)
@@ -182,15 +184,27 @@ namespace GingerCore
             }
         }
 
+        public bool IsTimerRunning()
+        {
+            return _stopwatch != null && _stopwatch.IsRunning;
+        }
+
         public void StopTimer()
         {
             if (_stopwatch != null && _stopwatch.IsRunning)
             {
                 _stopwatch.Stop();
                 TimeSpan elapsedTime = new TimeSpan(_stopwatch.Elapsed.Hours, _stopwatch.Elapsed.Minutes, _stopwatch.Elapsed.Seconds);
+                LastElapsedDevelopmentTime = elapsedTime;
                 DevelopmentTime = DevelopmentTime.Add(elapsedTime);
                 _stopwatch.Reset();
             }
+        }
+
+        public static void StopAndResetTimer(Activity act)
+        {
+            act.StopTimer();
+            act.DevelopmentTime = TimeSpan.Zero;
         }
 
         private bool mLinkedActive = true;
@@ -230,7 +244,7 @@ namespace GingerCore
                 }
                 if (mActive != value)
                 {
-                    mActive = value; 
+                    mActive = value;
                     OnPropertyChanged(nameof(Active));
                 }
             }
@@ -579,8 +593,8 @@ namespace GingerCore
                 {
                     mConsumerApplications = value;
                     OnPropertyChanged(nameof(ConsumerApplications));
-                }       
-             }
+                }
+            }
         }
 
         [IsSerializedForLocalRepository]
@@ -913,19 +927,18 @@ namespace GingerCore
         {
             Activity copy = (Activity)srActivity.CreateInstance(originFromSharedRepository, setNewGUID: false);
             copy.Guid = Guid.NewGuid();
+            StopAndResetTimer(copy);
             List<KeyValuePair<Guid, Guid>> oldNewActionGuidList = [];
             foreach (Act action in copy.Acts.Cast<Act>())
             {
                 action.ParentGuid = action.Guid;
-                action.Guid = Guid.NewGuid();
                 oldNewActionGuidList.Add(new(action.ParentGuid, action.Guid));
             }
             foreach (VariableBase variable in copy.Variables)
             {
                 variable.ParentGuid = variable.Guid;
-                variable.Guid = Guid.NewGuid();
             }
-            foreach(FlowControl fc in copy.Acts.SelectMany(a => a.FlowControls))
+            foreach (FlowControl fc in copy.Acts.SelectMany(a => a.FlowControls))
             {
                 Guid targetGuid = fc.GetGuidFromValue();
                 if (oldNewActionGuidList.Any(oldNew => oldNew.Key == targetGuid))
@@ -937,19 +950,31 @@ namespace GingerCore
             return copy;
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extradetails=null)
         {
+            
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
             Activity newInstance = null;
 
             if (activityInstance.Type == eSharedItemType.Link)
             {
+
                 newInstance = CopySharedRepositoryActivity(this, originFromSharedRepository: true);
                 newInstance.Guid = activityInstance.Guid;
                 newInstance.ActivitiesGroupID = activityInstance.ActivitiesGroupID;
                 newInstance.Type = activityInstance.Type;
                 newInstance.Active = activityInstance.Active;
+
+                if(newInstance.Guid == this.Guid)
+                {
+                    newInstance.DevelopmentTime = newInstance.DevelopmentTime.Add(this.DevelopmentTime);
+                }
+                else
+                {
+                    newInstance.DevelopmentTime = activityInstance.DevelopmentTime;
+                }
+
                 if (hostItem != null)
                 {
                     //replace old instance object with new
@@ -961,6 +986,15 @@ namespace GingerCore
             else
             {
                 newInstance = CopySharedRepositoryActivity(this, originFromSharedRepository: false);
+                
+                if (this.Guid == activityInstance.Guid)
+                {
+                    newInstance.DevelopmentTime = this.DevelopmentTime;
+                }
+                else 
+                {
+                    newInstance.DevelopmentTime = activityInstance.DevelopmentTime;
+                }
             }
 
 
@@ -1230,7 +1264,7 @@ namespace GingerCore
         public override void PostSaveHandler()
         {
             // saving from Shared repository tab
-            GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations.UpdateSharedRepositoryLinkedInstances(this);
+            GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations?.UpdateSharedRepositoryLinkedInstances(this);
         }
 
         public bool IsAutoLearned { get; set; }

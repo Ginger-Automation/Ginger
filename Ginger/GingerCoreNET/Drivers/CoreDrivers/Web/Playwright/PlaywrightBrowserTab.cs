@@ -1,4 +1,22 @@
-﻿using Microsoft.Playwright;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,14 +24,17 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.Json;
 using System.Threading.Tasks;
-using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
-using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
 using IPlaywrightPage = Microsoft.Playwright.IPage;
-using IPlaywrightDialog = Microsoft.Playwright.IDialog;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
+using IPlaywrightJSHandle = Microsoft.Playwright.IJSHandle;
+using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using System.Drawing;
+using NPOI.OpenXmlFormats.Dml;
+using Deque.AxeCore.Commons;
+using static Ginger.Run.GingerRunner;
+using Deque.AxeCore.Playwright;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -24,7 +45,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             eLocateBy.ByID,
             eLocateBy.ByCSS,
+            eLocateBy.ByName,
             eLocateBy.ByXPath,
+            eLocateBy.ByTagName,
+            eLocateBy.ByRelXPath,
             eLocateBy.POMElement,
         };
 
@@ -80,6 +104,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
             return _playwrightPage.EvaluateAsync<string>(script);
+        }
+
+        public Task<string> ExecuteJavascriptAsync(string script, object arg)
+        {
+            ThrowIfClosed();
+            return _playwrightPage.EvaluateAsync<string>(script, arg);
+        }
+
+        public Task InjectJavascriptAsync(string script)
+        {
+            ThrowIfClosed();
+            return _playwrightPage.AddScriptTagAsync(new PageAddScriptTagOptions()
+            {
+                Content = script,
+            });
         }
 
         public Task<string> PageSourceAsync()
@@ -259,6 +298,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return elements;
         }
 
+        public async Task<IBrowserElement?> GetElementAsync(string javascript)
+        {
+            ThrowIfClosed();
+            IPlaywrightJSHandle jsHandle = await _currentFrame.EvaluateHandleAsync(javascript);
+            IPlaywrightElementHandle? elementHandle = jsHandle.AsElement();
+            if (elementHandle == null)
+            {
+                return null;
+            }
+            return new PlaywrightBrowserElement(elementHandle);
+        }
+
         public Task<byte[]> ScreenshotAsync()
         {
             return ScreenshotInternalAsync(fullPage: false);
@@ -329,7 +380,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locator = _currentFrame.Locator($"css={value}");
                     break;
                 case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
                     locator = _currentFrame.Locator($"xpath={value}");
+                    break;
+                case eLocateBy.ByName:
+                    locator = _currentFrame.Locator($"css=[name='{value}']");
+                    break;
+                case eLocateBy.ByTagName:
+                    locator = _currentFrame.Locator($"css={value}");
                     break;
                 default:
                     throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
@@ -375,6 +433,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 throw new InvalidOperationException("Cannot perform operation, tab is already closed.");
             }
+        }
+
+        public async Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null)
+        {
+            return await _playwrightPage.RunAxe(options);
         }
 
         internal bool PlaywrightPageEquals(IPlaywrightPage playwrightPage)

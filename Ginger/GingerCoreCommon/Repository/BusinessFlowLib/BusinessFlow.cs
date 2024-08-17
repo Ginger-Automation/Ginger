@@ -152,6 +152,28 @@ namespace GingerCore
             }
         }
 
+        public void StartTimerWithActivities(IEnumerable<Activity> activitiesToStart)
+        {
+            try
+            {
+                StartTimer();
+
+                foreach (Activity activity in activitiesToStart)
+                {
+                    activity.StartTimer();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while starting timer with activities", ex);
+            }
+        }
+
+        public bool IsTimerRunning()
+        {
+            return _stopwatch != null && _stopwatch.IsRunning;
+        }
+
         public void StopTimer()
         {
             if (_stopwatch != null && _stopwatch.IsRunning)
@@ -161,6 +183,31 @@ namespace GingerCore
                 DevelopmentTime = DevelopmentTime.Add(elapsedTime);
                 _stopwatch.Reset();
             }
+        }
+
+        public IEnumerable<Activity> StopTimerWithActivities()
+        {
+            List<Activity> stoppedActivities = [];
+            try
+            {
+                StopTimer();
+
+
+                foreach (Activity activity in Activities)
+                {
+                    if (activity.IsTimerRunning())
+                    {
+                        stoppedActivities.Add(activity);
+                        activity.StopTimer();
+                    }
+                }
+            }
+            catch(Exception ex) 
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while stopping timer with activities", ex);
+            }
+
+            return stoppedActivities;
         }
 
         // Why here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -611,7 +658,7 @@ namespace GingerCore
 
         public VariableBase GetVariable(string name)
         {
-            VariableBase v = (from v1 in Variables where v1.Name == name select v1).FirstOrDefault();
+            VariableBase v = Variables.FirstOrDefault(v1=> v1.Name == name);
             return v;
         }
 
@@ -619,12 +666,12 @@ namespace GingerCore
         {
             VariableBase var = null;
             if (SolutionVariables != null)
-                var = (from v1 in SolutionVariables where v1.Name == varName select v1).FirstOrDefault();
+                var = SolutionVariables.FirstOrDefault(v1=> v1.Name == varName);
             if (var == null)
             {
-                var = (from v1 in Variables where v1.Name == varName select v1).FirstOrDefault();
+                var = Variables.FirstOrDefault(v1=>v1.Name == varName);
                 if (var == null && CurrentActivity != null)
-                    var = (from v1 in CurrentActivity.Variables where v1.Name == varName select v1).FirstOrDefault();
+                    var = CurrentActivity.Variables.FirstOrDefault(v1=> v1.Name == varName);
             }
 
             //check if linked variable was used and return it instead of original one if yes
@@ -640,12 +687,12 @@ namespace GingerCore
         {
             VariableBase var = null;
             if (SolutionVariables != null)
-                var = (from v1 in SolutionVariables where v1.Name == varName && v1.VariableType == varType select v1).FirstOrDefault();
+                var = SolutionVariables.FirstOrDefault(v1=> v1.Name == varName && v1.VariableType == varType);
             if (var == null)
             {
-                var = (from v1 in Variables where v1.Name == varName && v1.VariableType == varType select v1).FirstOrDefault();
+                var = Variables.FirstOrDefault(v1=>  v1.Name == varName && v1.VariableType == varType);
                 if (var == null && CurrentActivity != null)
-                    var = (from v1 in CurrentActivity.Variables where v1.Name == varName && v1.VariableType == varType select v1).FirstOrDefault();
+                    var = CurrentActivity.Variables.FirstOrDefault(v1=> v1.Name == varName && v1.VariableType == varType);
             }
 
             //check if linked variable was used and return it instead of original one if yes
@@ -1190,6 +1237,7 @@ namespace GingerCore
                         copyItem.ActivitiesGroupID = this.Activities[i].ActivitiesGroupID;
                         copyItem.Type = this.Activities[i].Type;
                         copyItem.Active = this.Activities[i].Active;
+                        copyItem.DevelopmentTime = this.Activities[i].DevelopmentTime;
                         this.Activities[i] = copyItem;
                     }
                     else

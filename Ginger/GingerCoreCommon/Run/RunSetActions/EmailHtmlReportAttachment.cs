@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -37,6 +37,21 @@ namespace Ginger.Run.RunSetActions
             {
                 mIsLinkEnabled = value;
                 OnPropertyChanged(nameof(IsLinkEnabled));
+            }
+        }
+
+        bool mIsAccountReportLinkEnabled;
+        [IsSerializedForLocalRepository]
+        public bool IsAccountReportLinkEnabled
+        {
+            get
+            {
+                return mIsAccountReportLinkEnabled;
+            }
+            set
+            {
+                mIsAccountReportLinkEnabled = value;
+                OnPropertyChanged(nameof(IsAccountReportLinkEnabled));
             }
         }
 

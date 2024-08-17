@@ -217,9 +217,9 @@ namespace GingerCore.SourceControl
             {
                 Console.WriteLine("GITHub - GetFileStatus");
                 Path = System.IO.Path.GetFullPath(Path);
-                int RepositoryFolderCount = RepositoryRootFolder.Count();
+                int RepositoryFolderCount = RepositoryRootFolder.Length;
                 string localFilePath = string.Empty;
-                if (Path.Count() > (RepositoryFolderCount))
+                if (Path.Length > (RepositoryFolderCount))
                 {
                     localFilePath = Path.Substring(RepositoryFolderCount);
                 }
@@ -370,7 +370,7 @@ namespace GingerCore.SourceControl
             try
             {
                 string relativePath = System.IO.Path.GetFullPath(Path);
-                relativePath = relativePath.Substring(RepositoryRootFolder.Count());
+                relativePath = relativePath.Substring(RepositoryRootFolder.Length);
 
                 if (relativePath.StartsWith(@"\"))
                 {
@@ -1249,7 +1249,7 @@ namespace GingerCore.SourceControl
             try
             {
                 relativePath = System.IO.Path.GetFullPath(path);
-                relativePath = relativePath.Substring(SolutionFolder.Count());
+                relativePath = relativePath.Substring(SolutionFolder.Length);
 
                 SourceControlItemInfoDetails SCIID = new SourceControlItemInfoDetails();
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))

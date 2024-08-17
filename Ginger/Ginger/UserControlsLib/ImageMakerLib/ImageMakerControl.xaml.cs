@@ -286,6 +286,10 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Building:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Building);
                     break;
+
+                case eImageType.Accessibility:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UniversalAccess);
+                    break;
                 #endregion
 
 
@@ -618,6 +622,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.NormalUser:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserGear);
+                    break;
+                case eImageType.AnglesArrowLeft:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AnglesLeft);
+                    break;
+                case eImageType.AnglesArrowRight:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AnglesRight);
                     break;
                 #endregion
 
@@ -995,6 +1005,21 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Asterisk:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Asterisk);
+                    break;
+                case eImageType.MoneyCheckDollar:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MoneyCheckDollar);
+                    break;
+                case eImageType.AddressCard:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_AddressCard);
+                    break;
+                case eImageType.IdCard:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_IdCard);
+                    break;
+                case eImageType.IdBadge:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_IdBadge);
+                    break;
+                case eImageType.Phone:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Phone);
                     break;
                 #endregion
 

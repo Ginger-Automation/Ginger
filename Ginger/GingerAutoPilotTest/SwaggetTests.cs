@@ -77,11 +77,11 @@ namespace UnitTests.NonUITests.AutoPilot
             ApplicationAPIModel RequestToTest = requests.Where(x => x.Name == @"Deletes a pet").ElementAt(0);
 
             //Assert
-            Assert.AreEqual(1, RequestToTest.HttpHeaders.Count());
+            Assert.AreEqual(1, RequestToTest.HttpHeaders.Count);
 
 
             RequestToTest = requests.Where(x => x.Name == @"Find purchase order by ID").ElementAt(0);
-            Assert.AreEqual(6, RequestToTest.ReturnValues.Count(), "SwaggerCheckResponseParameterCount");
+            Assert.AreEqual(6, RequestToTest.ReturnValues.Count, "SwaggerCheckResponseParameterCount");
 
 
             RequestToTest = requests.Where(x => x.Name == @"Place an order for a pet").ElementAt(0);
@@ -104,14 +104,14 @@ namespace UnitTests.NonUITests.AutoPilot
             ApplicationAPIModel RequestToTest = requests.Where(x => x.Name == @"Deletes a pet").ElementAt(0);
 
             //Assert
-            Assert.AreEqual(1, RequestToTest.HttpHeaders.Count());
+            Assert.AreEqual(1, RequestToTest.HttpHeaders.Count);
 
 
             RequestToTest = requests.Where(x => x.Name == @"Find purchase order by ID").ElementAt(0);
-            Assert.AreEqual(6, RequestToTest.ReturnValues.Count(), "SwaggerCheckResponseParameterCount");
+            Assert.AreEqual(6, RequestToTest.ReturnValues.Count, "SwaggerCheckResponseParameterCount");
 
             RequestToTest = requests.Where(x => x.Name == @"Add a new pet to the store-JSON").ElementAt(0);
-            Assert.AreEqual(8, RequestToTest.ReturnValues.Count(), "SwaggerCheckResponseParameterCount");
+            Assert.AreEqual(8, RequestToTest.ReturnValues.Count, "SwaggerCheckResponseParameterCount");
             Assert.AreEqual("/pet", RequestToTest.EndpointURL);
 
             RequestToTest = requests.Where(x => x.Name == @"Place an order for a pet-JSON").ElementAt(0);
@@ -138,14 +138,14 @@ namespace UnitTests.NonUITests.AutoPilot
             ApplicationAPIModel RequestToTest = requests.Where(x => x.Name == @"Get commission type list").ElementAt(0);
 
             //Assert
-            Assert.AreEqual(6, RequestToTest.ReturnValues.Count());
+            Assert.AreEqual(6, RequestToTest.ReturnValues.Count);
 
 
             RequestToTest = requests.Where(x => x.Name == @"Create new account-JSON").ElementAt(0);
-            Assert.AreEqual(3, RequestToTest.ReturnValues.Count(), "SwaggerCheckResponseParameterCount");
+            Assert.AreEqual(3, RequestToTest.ReturnValues.Count, "SwaggerCheckResponseParameterCount");
 
             RequestToTest = requests.Where(x => x.Name == @"Update account-JSON").ElementAt(0);
-            Assert.AreEqual(3, RequestToTest.ReturnValues.Count(), "SwaggerCheckResponseParameterCount");
+            Assert.AreEqual(3, RequestToTest.ReturnValues.Count, "SwaggerCheckResponseParameterCount");
             string requestBody = @"{" + Environment.NewLine + "\"accountId\": \"<ACCOUNTID>\"," + Environment.NewLine + "\"name\": \"<NAME>\"," + Environment.NewLine + "\"parentAccount\": \"<PARENTACCOUNT>\""  + Environment.NewLine + "}";
             Assert.AreEqual(requestBody.Replace(" ", ""), RequestToTest.RequestBody.Replace(" ", ""), "CheckResponseBody");
 
@@ -165,11 +165,11 @@ namespace UnitTests.NonUITests.AutoPilot
             ApplicationAPIModel RequestToTest = requests.Where(x => x.Name == @"Deletes a pet").ElementAt(0);
 
             //Assert
-            Assert.AreEqual(1, RequestToTest.HttpHeaders.Count());
+            Assert.AreEqual(1, RequestToTest.HttpHeaders.Count);
 
 
             RequestToTest = requests.Where(x => x.Name == @"Find purchase order by ID").ElementAt(0);
-            Assert.AreEqual(6, RequestToTest.ReturnValues.Count(), "SwaggerCheckResponseParameterCount");
+            Assert.AreEqual(6, RequestToTest.ReturnValues.Count, "SwaggerCheckResponseParameterCount");
 
 
             RequestToTest = requests.Where(x => x.Name == @"Place an order for a pet").ElementAt(0);

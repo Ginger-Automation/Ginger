@@ -269,7 +269,7 @@ namespace GingerCoreNET.Application_Models
                         {
                             string updatedXpath = string.Empty;
                             string[] xpathVals = matchingExistingLocator.LocateValue.Split(new char[] { '/' });
-                            for (int indx = 0; indx < xpathVals.Count(); indx++)
+                            for (int indx = 0; indx < xpathVals.Length; indx++)
                             {
                                 if (indx == 0)
                                 {
@@ -329,7 +329,7 @@ namespace GingerCoreNET.Application_Models
                         {
                             string updatedXpath = string.Empty;
                             string[] xpathVals = matchingExistingFLocator.LocateValue.Split('/');
-                            for (int indx = 0; indx < xpathVals.Count(); indx++)
+                            for (int indx = 0; indx < xpathVals.Length; indx++)
                             {
                                 if (indx == 0)
                                 {

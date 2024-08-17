@@ -117,21 +117,26 @@ namespace Ginger.ALM.Repository
                 matchingTS = ((AzureDevOpsCore)ALMIntegration.Instance.AlmCore).GetTestSuiteById(businessFlow.ExternalID);
                 if (matchingTS != null)
                 {
+
                     //ask user if want to continute
-                    userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
-                    if (userSelec == eUserMsgSelection.Cancel)
+                    if (businessFlow.ALMTestSetLevel == "RunSet")
                     {
-                        return false;
-                    }
-                    else if (userSelec == eUserMsgSelection.No)
-                    {
-                        matchingTS = null;
+                        SetTestPlanUploadPathIfEmpty(ref testPlanUploadPath);
                     }
                     else
                     {
-                        if (String.IsNullOrEmpty(testPlanUploadPath))
+                        userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
+                        if (userSelec == eUserMsgSelection.Cancel)
                         {
-                            testPlanUploadPath = ALMCore.DefaultAlmConfig.ALMProjectName;
+                            return false;
+                        }
+                        else if (userSelec == eUserMsgSelection.No)
+                        {
+                            matchingTS = null;
+                        }
+                        else
+                        {
+                            SetTestPlanUploadPathIfEmpty(ref testPlanUploadPath);
                         }
                     }
                 }
@@ -207,8 +212,7 @@ namespace Ginger.ALM.Repository
                 }
                 return true;
             }
-            else
-                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+            else if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
             {
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
@@ -218,6 +222,21 @@ namespace Ginger.ALM.Repository
             
         }
 
+        void SetTestPlanUploadPathIfEmpty(ref string testPlanUploadPath)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(testPlanUploadPath))
+                {
+                    testPlanUploadPath = ALMCore.DefaultAlmConfig.ALMProjectName;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG,"test Plan upload path is empty or null");
+            }
+            
+        }
         public override eUserMsgKey GetDownloadPossibleValuesMessage()
         {
             return eUserMsgKey.AskIfToDownloadPossibleValuesShortProcesss;

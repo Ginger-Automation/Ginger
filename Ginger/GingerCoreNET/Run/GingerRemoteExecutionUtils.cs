@@ -43,15 +43,15 @@ namespace Amdocs.Ginger.CoreNET
                     var response = httpClient.GetAsync(endpoint).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid  : { soluionGuid } GetSolutionRunsetsExecutionInfo() :{ response.Content.ReadAsStringAsync().Result.ToString()}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid  : {soluionGuid} GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result.ToString()}");
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{ response.Content.ReadAsStringAsync().Result.ToString()}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result.ToString()}");
                         }
-                        
+
                     }
                     else
                     {
@@ -61,7 +61,6 @@ namespace Amdocs.Ginger.CoreNET
             }
             return runSetReports;
         }
-
         public List<RunSetReport> GetRunsetExecutionInfo(Guid soluionGuid, Guid runsetGuid)
         {
             var runSetReports = new List<RunSetReport>();
@@ -81,9 +80,9 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{ response.Content.ReadAsStringAsync().Result.ToString()}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result.ToString()}");
                         }
-                        
+
                     }
                     else
                     {
@@ -93,7 +92,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             return runSetReports;
         }
-        private static string GetReportDataServiceUrl()
+        public static string GetReportDataServiceUrl()
         {
             var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralLoggerEndPointUrl;
 
@@ -117,7 +116,7 @@ namespace Amdocs.Ginger.CoreNET
                     RunSetGuid = runsetHLInfo.EntityId,
                     Name = runsetHLInfo.RunsetName,
                     Description = "",
-                    StartTimeStamp = DateTime.Parse(runsetHLInfo.StartTime , CultureInfo.InvariantCulture).ToUniversalTime(),
+                    StartTimeStamp = DateTime.Parse(runsetHLInfo.StartTime, CultureInfo.InvariantCulture).ToUniversalTime(),
                     EndTimeStamp = DateTime.Parse(runsetHLInfo.EndTime, CultureInfo.InvariantCulture).ToUniversalTime(),
                     Elapsed = runsetHLInfo.Duration,
                     ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert((runsetHLInfo.Duration / 1000).ToString()),
@@ -143,7 +142,7 @@ namespace Amdocs.Ginger.CoreNET
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Centralized Html Report Service URL is missing in General Report Configurations.\nPlease go to Configurations > Reports > Execution Logger Configurations to configure the HTML Report URL");
             }
         }
-        private static string GetReportHTMLServiceUrl()
+        public static string GetReportHTMLServiceUrl()
         {
             var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralizedHtmlReportServiceURL;
 
@@ -160,5 +159,20 @@ namespace Amdocs.Ginger.CoreNET
             }
             return baseURI;
         }
+
+        public static string GetOnlineHTMLReportlink(Guid? executionGuid)
+        {
+            var htmlServiceUrl = GetReportHTMLServiceUrl();
+            if (!string.IsNullOrEmpty(htmlServiceUrl))
+            {
+                return htmlServiceUrl + "?ExecutionId=" + executionGuid;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Centralized Html Report Service URL is missing in General Report Configurations.\nPlease go to Configurations > Reports > Execution Logger Configurations to configure the HTML Report URL");
+                return string.Empty;
+            }
+        }
+
     }
 }

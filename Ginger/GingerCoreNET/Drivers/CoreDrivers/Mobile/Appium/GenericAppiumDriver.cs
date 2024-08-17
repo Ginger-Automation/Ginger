@@ -744,6 +744,12 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
 
+                    case ActUIElement.eElementAction.ClickXY:
+                        ITouchAction tc;
+                        tc = new TouchAction(Driver);
+                        tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate)), Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate))).Perform();
+                        break;
+
                     default:
                         mSeleniumDriver.HandleActUIElement(act);
                         break;
@@ -1121,7 +1127,7 @@ namespace Amdocs.Ginger.CoreNET
                         act.RawResponseValues = GetDeviceMetricsString("cpuinfo").Result;
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceNetwork:
-                        act.AddOrUpdateReturnParamActual("Device's network information", GetDeviceNetworkInfo().Result);
+                        act.AddOrUpdateReturnParamActual("Device's network information", GetDeviceNetworkInfo()?.Result);
                         act.RawResponseValues = GetDeviceMetricsString("networkinfo").Result;
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceRAMUsage:
@@ -1633,7 +1639,7 @@ namespace Amdocs.Ginger.CoreNET
             catch (Exception exc)
             {
                 Reporter.ToLog(eLogLevel.WARN, "An error ocured while fetching the current Package details", exc);
-                return "Package";
+                return null;
             }
         }
 
@@ -1948,7 +1954,7 @@ namespace Amdocs.Ginger.CoreNET
                 bounds = bounds.Replace("[", ",");
                 bounds = bounds.Replace("]", ",");
                 string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                if (boundsXY.Count() == 4)
+                if (boundsXY.Length == 4)
                 {
                     EI.X = Convert.ToInt32(boundsXY[0]);
                     EI.Y = Convert.ToInt32(boundsXY[1]);
@@ -2954,7 +2960,7 @@ namespace Amdocs.Ginger.CoreNET
                                         bounds = bounds.Replace("[", ",");
                                         bounds = bounds.Replace("]", ",");
                                         string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                                        if (boundsXY.Count() == 4)
+                                        if (boundsXY.Length == 4)
                                         {
                                             element_Start_X = Convert.ToInt64(boundsXY[0]);
                                             element_Start_Y = Convert.ToInt64(boundsXY[1]);
@@ -3130,7 +3136,7 @@ namespace Amdocs.Ginger.CoreNET
                         bounds = bounds.Replace("[", ",");
                         bounds = bounds.Replace("]", ",");
                         string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (boundsXY.Count() == 4)
+                        if (boundsXY.Length == 4)
                         {
                             ElementStartPoints.X = (int)(Convert.ToInt64(boundsXY[0]) / scale_factor_x);
                             ElementStartPoints.Y = (int)(Convert.ToInt64(boundsXY[1]) / scale_factor_y);
@@ -3381,15 +3387,23 @@ namespace Amdocs.Ginger.CoreNET
         private async Task<string> GetDeviceMetricsString(string dataType)
         {
             string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/getPerformanceData";
-            string requestBody = "{\"packageName\": \"" + GetCurrentPackage() + "\", \"dataType\": \"" + dataType + "\"}";
-            restClient = new RestClient(url);
-            return await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
+            string package = GetCurrentPackage();
+            if (!string.IsNullOrEmpty(package))
+            {
+                string requestBody = "{\"packageName\": \"" + package + "\", \"dataType\": \"" + dataType + "\"}";
+                restClient = new RestClient(url);
+                return await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private async Task<Dictionary<string, string>> GetDeviceMetricsDict(string dataType)
         {
             string response = await GetDeviceMetricsString(dataType);
-            if (response.Contains("error"))
+            if (response == null || response.Contains("error"))
             {
                 return new Dictionary<string, string>();
             }
@@ -3418,15 +3432,22 @@ namespace Amdocs.Ginger.CoreNET
         public async Task<string> GetDeviceNetworkInfo()
         {
             string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/getPerformanceData";
-            string requestBody = "{\"packageName\": \"" + GetCurrentPackage() + "\", \"dataType\": \"networkinfo\"}";
-            restClient = new RestClient(url);
-            string response = await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
-            if (response.Contains("error"))
+            string package = GetCurrentPackage();
+            if (!string.IsNullOrEmpty(package))
+            {
+                string requestBody = "{\"packageName\": \"" + package + "\", \"dataType\": \"networkinfo\"}";
+                restClient = new RestClient(url);
+                string response = await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
+                if (response.Contains("error"))
+                {
+                    return null;
+                }
+                return response;
+            }
+            else
             {
                 return null;
             }
-
-            return response;
         }
 
         public Dictionary<string, string> GetDeviceBatteryInfo()
@@ -3464,17 +3485,24 @@ namespace Amdocs.Ginger.CoreNET
 
         public async Task<bool> IsRealDeviceAsync()
         {
-            string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/device/network_speed";
-            string requestBody = "{\"netspeed\": \"lte\"}";
-            restClient = new RestClient(url);
-            string response = await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
-            if (response.Contains("error"))
+            try
+            {
+                string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/device/network_speed";
+                string requestBody = "{\"netspeed\": \"lte\"}";
+                restClient = new RestClient(url);
+                string response = await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
+                if (response.Contains("error"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch(Exception ex)
             {
                 return true;
-            }
-            else
-            {
-                return false;
             }
         }
 

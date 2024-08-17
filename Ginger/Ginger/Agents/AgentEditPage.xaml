@@ -16,11 +16,11 @@
         <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.Resources>
                 <sys:Double
-                    x:Key="HorizontalLabelWidth">130</sys:Double>
+                    x:Key="HorizontalLabelWidth">140</sys:Double>
             </Grid.Resources>
             <Grid.RowDefinitions>
                 <RowDefinition Height="160"/>
-                <RowDefinition Height="260"/>
+                <RowDefinition Height="200"/>
                 <RowDefinition Height="240*"/>
             </Grid.RowDefinitions>
 

@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.GingerRuntime
             {
                 if (args.Any())
                 {
-                    if (args.Count() == 1 && args[0].ToLower().Trim() == "menu")
+                    if (args.Length == 1 && args[0].ToLower().Trim() == "menu")
                     {
                         Console.WriteLine();
                         Console.WriteLine("---------------------------------------------------");

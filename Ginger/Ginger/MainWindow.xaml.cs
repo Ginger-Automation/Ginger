@@ -66,6 +66,8 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using System.Windows.Interop;
+using System.Windows.Threading;
 
 namespace Ginger
 {
@@ -73,6 +75,8 @@ namespace Ginger
     {
         public enum eSolutionTabType { None, BusinessFlows, Run, Configurations, Resources };
         public eSolutionTabType SelectedSolutionTab;
+
+        private readonly DevTimeTrackerIdle devTimeTrackerIdle; //for Pause/resume the development time
 
         private bool mAskUserIfToClose = true;
 
@@ -82,6 +86,13 @@ namespace Ginger
         public MainWindow()
         {
             InitializeComponent();
+
+            devTimeTrackerIdle = new();
+            devTimeTrackerIdle.AttachActivityHandlers(this);
+
+            StateChanged -= MainWindow_StateChanged;
+            StateChanged += MainWindow_StateChanged;
+
             mRestartApplication = false;
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
@@ -91,6 +102,27 @@ namespace Ginger
             DriverWindowHandler.Init();
 
             GingerCore.General.DoEvents();
+
+        }
+
+        private void MainWindow_StateChanged(object? sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                devTimeTrackerIdle.PauseDevelopmentTimeTracker();
+            }
+            else
+            {
+                devTimeTrackerIdle.ResumeDevelopmentTimeTracker();
+            }
+        }
+
+        private void DetachEventHandlers()
+        {
+            if (devTimeTrackerIdle != null)
+            {
+                devTimeTrackerIdle.DetachActivityHandlers(this);
+            }
         }
 
         private void TelemetryEventHandler(object sender, Telemetry.TelemetryEventArgs e)
@@ -103,13 +135,14 @@ namespace Ginger
 
 
         }
-
+        
         private void XVersionAndNewsIcon_MouseDown(object sender, MouseButtonEventArgs e)
         {
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
             VersionAndNewsPage versionAndNewsPage = new VersionAndNewsPage();
             versionAndNewsPage.ShowAsWindow();
         }
+
 
         public void Init()
         {
@@ -530,6 +563,8 @@ namespace Ginger
 
             if (userSelection == eUserMsgSelection.Yes)
             {
+                DetachEventHandlers();
+
                 AppCleanUp();
             }
             else

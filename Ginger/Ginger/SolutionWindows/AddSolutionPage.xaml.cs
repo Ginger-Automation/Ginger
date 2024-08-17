@@ -134,6 +134,7 @@ namespace Ginger.SolutionWindows
                 GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
                 mSolution.SolutionOperations.SetReportsConfigurations();
+                GingerCoreNET.GeneralLib.General.CreateDefaultAccessiblityconfiguration();
 
                 //Save again to keep all defualt configurations setup
                 mSolution.SolutionOperations.SaveSolution(false);
@@ -261,7 +262,7 @@ namespace Ginger.SolutionWindows
             {
                 Directory.CreateDirectory(System.IO.Path.Combine(mSolution.Folder, "DataSources"));
                 System.IO.FileStream fs = new System.IO.FileStream(System.IO.Path.Combine(mSolution.Folder, @"DataSources\LiteDB.db"), System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                fs.Write(litedbobj, 0, litedbobj.Count());
+                fs.Write(litedbobj, 0, litedbobj.Length);
                 fs.Close();
                 fs.Dispose();
             }

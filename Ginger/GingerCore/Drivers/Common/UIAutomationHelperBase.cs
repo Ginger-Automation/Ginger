@@ -330,7 +330,7 @@ namespace GingerCore.Drivers.Common
         public static void HighlightRect(System.Drawing.Rectangle r, System.Windows.Forms.Screen scr, UIAElementInfo WEI)
         {
             FontFamily CurrentFontFamily = null;
-            for (int i = 0; i < System.Drawing.FontFamily.Families.Count(); i++)
+            for (int i = 0; i < System.Drawing.FontFamily.Families.Length; i++)
             {
                 CurrentFontFamily = System.Drawing.FontFamily.Families[i];
                 if (CurrentFontFamily.Name == "Courier New")
@@ -353,7 +353,7 @@ namespace GingerCore.Drivers.Common
             // Find the font to draw only once
             if (CurrentFontFamily == null)
             {
-                for (int i = 0; i < System.Drawing.FontFamily.Families.Count(); i++)
+                for (int i = 0; i < System.Drawing.FontFamily.Families.Length; i++)
                 {
                     CurrentFontFamily = System.Drawing.FontFamily.Families[i];
                     if (CurrentFontFamily.Name == "Courier New")

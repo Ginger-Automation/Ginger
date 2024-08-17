@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Common.UIElement
             Windows,
             PowerBuilder,
             ASCFForm,
-            SeleniumWebPage,
+            WebPage,
             InternalBrowserWebPageDocument,
             JFrmae,
             Appium,

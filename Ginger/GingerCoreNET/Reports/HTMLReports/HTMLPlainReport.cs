@@ -51,7 +51,7 @@ namespace Ginger.Reports.HTMLReports
             //TODO: get exec time
             s += new XElement("h4", "Total Execution elapsed time: " + RI.TotalExecutionTime.ToString());
 
-            s += new XElement("h5", "Total " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + ": " + RI.BusinessFlows.Count()).ToString();
+            s += new XElement("h5", "Total " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + ": " + RI.BusinessFlows.Count).ToString();
             int Passcount = RI.TotalBusinessFlowsPassed;
             int Failcount = RI.TotalBusinessFlowsFailed;
             int StopCount = RI.TotalBusinessFlowsStopped;

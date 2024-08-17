@@ -517,7 +517,7 @@ namespace GingerTest
             string convertedLocateValue = ((GingerCore.Actions.Common.ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString();
 
             ////Assert
-            Assert.AreEqual(mBF.Activities.Count(), 1);
+            Assert.AreEqual(mBF.Activities.Count, 1);
             Assert.AreEqual(targetType, convertedType);
             Assert.AreEqual(targetLocateType, convertedLocateType);
             Assert.AreEqual(targetLocateValue, convertedLocateValue);
@@ -533,7 +533,7 @@ namespace GingerTest
 
             ////Assert
             Assert.IsFalse(mBF.Activities[0].Acts[0] is IObsoleteAction);
-            Assert.AreEqual(mBF.Activities[0].Acts.Count(), 1);
+            Assert.AreEqual(mBF.Activities[0].Acts.Count, 1);
         }
 
         [TestMethod]
@@ -557,7 +557,7 @@ namespace GingerTest
             string convertedLocateValue = ((GingerCore.Actions.Common.ActUIElement)mBF.Activities[1].Acts[0]).ElementLocateValue.ToString();
 
             ////Assert
-            Assert.AreEqual(mBF.Activities.Count(), 2);
+            Assert.AreEqual(mBF.Activities.Count, 2);
             Assert.AreEqual(targetType, convertedType);
             Assert.AreEqual(targetLocateType, convertedLocateType);
             Assert.AreEqual(targetLocateValue, convertedLocateValue);
@@ -576,8 +576,8 @@ namespace GingerTest
 
             ////Assert
             Assert.IsFalse(mBF.Activities[0].Acts[0] is IObsoleteAction);
-            Assert.AreEqual(mBF.Activities.Count(), 1);
-            Assert.AreEqual(mBF.Activities[0].Acts.Count(), 1);
+            Assert.AreEqual(mBF.Activities.Count, 1);
+            Assert.AreEqual(mBF.Activities[0].Acts.Count, 1);
         }
 
         [TestMethod]
@@ -598,7 +598,7 @@ namespace GingerTest
             string convertedLocateValue = ((GingerCore.Actions.Common.ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString();
 
             ////Assert
-            Assert.AreEqual(mBF.Activities.Count(), 1);
+            Assert.AreEqual(mBF.Activities.Count, 1);
             Assert.AreEqual(targetType, convertedType);
             Assert.AreEqual(targetLocateType, convertedLocateType);
             Assert.AreEqual(targetLocateValue, convertedLocateValue);
@@ -614,8 +614,8 @@ namespace GingerTest
 
             ////Assert
             Assert.IsFalse(mBF.Activities[0].Acts[0] is IObsoleteAction);
-            Assert.AreEqual(mBF.Activities.Count(), 1);
-            Assert.AreEqual(mBF.Activities[0].Acts.Count(), 1);
+            Assert.AreEqual(mBF.Activities.Count, 1);
+            Assert.AreEqual(mBF.Activities[0].Acts.Count, 1);
         }
 
         #region Web actions convertor Test

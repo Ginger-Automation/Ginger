@@ -96,7 +96,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private ePlatformType GetActionPlatform()
         {
             string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform; 
             return platform;
         }
 

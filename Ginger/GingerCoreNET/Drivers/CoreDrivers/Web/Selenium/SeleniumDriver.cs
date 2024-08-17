@@ -27,7 +27,6 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
@@ -76,6 +75,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DevToolsDomains = OpenQA.Selenium.DevTools.V125.DevToolsSessionDomains;
+using static GingerCore.Actions.ActWebSmartSync;
 
 
 
@@ -100,6 +100,8 @@ namespace GingerCore.Drivers
         private const string TRANSLATOR_FOR_CASE_INSENSITIVE_MATCH = "translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')";
         private const string BRAVE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
         private const string BRAVE_64BIT_BINARY_PATH = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
+        private const string EDGE_32BIT_BINARY_PATH = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
+        private const string EDGE_64BIT_BINARY_PATH = "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe";
 
         String[] SeleniumUserArgs = null;
         DriverService driverService = null;
@@ -119,6 +121,50 @@ namespace GingerCore.Drivers
             Brave,
             Edge,
             RemoteWebDriver,
+        }     
+        public enum ePageLoadStrategy
+        {
+            Normal,
+            Eager ,
+            None,
+        }
+        public enum eUnhandledPromptBehavior
+        {
+            [EnumValueDescription("Default")]
+            Default,
+            [EnumValueDescription("Ignore")]
+            Ignore,
+            [EnumValueDescription("Accept")]
+            Accept,
+            [EnumValueDescription("Dismiss")]
+            Dismiss,
+            [EnumValueDescription("Accept And Notify")]
+            AcceptAndNotify,
+            [EnumValueDescription("Dismiss And Notify")]
+            DismissAndNotify
+        }
+        eUnhandledPromptBehavior mUnhandledPromptBehavior;
+
+        public eUnhandledPromptBehavior UnhandledPromptBehavior1
+        {
+            get { return mUnhandledPromptBehavior; }
+            set
+            {
+                if (mUnhandledPromptBehavior != value)
+                {
+                    mUnhandledPromptBehavior = value;
+                   
+                }
+            }
+        }
+        public enum eBrowserLogLevel
+        {
+            
+            All=0,            
+            Debug = 1,            
+            Info = 2,
+            Warning=3,
+            Severe = 4
         }
 
         public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
@@ -139,23 +185,15 @@ namespace GingerCore.Drivers
             {
                 return "SeleniumRemoteWebDriverEditPage";
             }
+            else if (browserType == WebBrowserType.Chrome|| browserType == WebBrowserType.Brave || browserType == WebBrowserType.Edge || browserType == WebBrowserType.InternetExplorer || browserType == WebBrowserType.FireFox )
+            {
+                return "WebAgentConfigEditPage";
+            }
             else
             {
                 return null;
             }
         }
-
-
-        [UserConfigured]
-        [UserConfiguredDescription("Proxy Server:Port")]
-        public string Proxy { get; set; }
-
-
-        [UserConfigured]
-        [UserConfiguredDefault("http://127.0.0.1;http://localhost;")]
-        [UserConfiguredDescription("Set multiple By Pass Proxy URLs separated with ';'|| By Pass Proxy works only when Proxy URL is mentioned")]
-        public string ByPassProxy { get; set; }
-
 
         [UserConfigured]
         [UserConfiguredDescription("Proxy Auto Config Url")]
@@ -171,17 +209,12 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Auto Detect Proxy Setting?")]
         public bool AutoDetect { get; set; }
-
+              
         [UserConfigured]
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Path to extension to be enabled")]
         public string ExtensionPath { get; set; }
         // Note: ExtensionPath is a semi-colon delimited string containing one or more extension paths
-
-        [UserConfigured]
-        [UserConfiguredDefault("true")]
-        [UserConfiguredDescription("Disable Chrome Extension. This feature is not available anymore")]
-        public bool DisableExtension { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("true")]
@@ -210,17 +243,12 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Only for Chrome & Firefox | Set \"true\" to run the browser in background (headless mode) for faster Execution")]
-        public bool HeadlessBrowserMode { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Set \"true\" to Launch the Browser minimized")]
         public bool BrowserMinimized { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("3")]
-        [UserConfiguredDescription("Set the minimum log level to read the console logs from the browser console. Valid values are from 0 to 4: All = 0, Debug = 1, Info = 2, Warning = 3, Severe = 4")]
+        [UserConfiguredDescription("Set the minimum log level to read the console logs from the browser console.")]
         public string BrowserLogLevel { get; set; }
 
         [UserConfigured]
@@ -228,12 +256,7 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
         public bool OpenIEModeInEdge { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDefault("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")]
-        [UserConfiguredDescription("Only if OpenEdgeInIEMode is set to true: location of Edge.exe file in local computer")]
-        public string EdgeExcutablePath { get; set; }
-        //"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
-
+        
         [UserConfigured]
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Provide the path to the browser executable.")]
@@ -267,7 +290,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Only for Chrome, Firefox & Edge | Full path for the User Profile folder")]
+        [UserConfiguredDescription("Only for Chrome, Firefox, Edge and Brave | Full path for the User Profile folder")]
         public string UserProfileFolderPath { get; set; }
 
         [UserConfigured]
@@ -292,15 +315,14 @@ namespace GingerCore.Drivers
         public int PageLoadTimeOut { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("normal")]
+        [UserConfiguredDefault("Normal")]
         [UserConfiguredDescription("Defines the current session’s page loading strategy.you can change from the default parameter of normal to eager or none")]
         public string PageLoadStrategy { get; set; }
-
+     
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Start BMP - Browser Mob Proxy (true/false)")]
         public bool StartBMP { get; set; }
-
         [UserConfigured]
         [UserConfiguredDefault(@"C:\...\browsermob\bin\browsermob-proxy.bat")]
         [UserConfiguredDescription("Start BMP .BAT File - full path to BMP BAT file")]
@@ -333,7 +355,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         // Changed the default from ignore to Actual Default suggested by Selenium i.e. dismissAndNotify
-        [UserConfiguredDefault("dismissAndNotify")]
+        [UserConfiguredDefault("DismissAndNotify")]
         [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
         public string UnhandledPromptBehavior { get; set; }
 
@@ -690,7 +712,7 @@ namespace GingerCore.Drivers
                     //checking the windows 32 and 64 bit version exists or not. if not then user can provide the path mannually.
                     case eBrowserType.Brave:
                         ChromeOptions brave_options = new ChromeOptions();
-                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath))
+                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath)&& BrowserExecutablePath.Contains("brave.exe"))
                         {
 
                             brave_options.BinaryLocation = BrowserExecutablePath;
@@ -705,7 +727,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            throw new Exception("The Brave browser is not available in default path. Please install it or provide the valid executable path in BrowserExecutablePath parameter in agent configuration.");
+                            throw new Exception("The Brave browser path is not available in default path. Please install it or provide the valid executable path in 'Browser Executable Path' parameter in agent configuration.");
 
                         }
                         configChromeDriverAndStart(brave_options);
@@ -714,13 +736,31 @@ namespace GingerCore.Drivers
 
                     #endregion
 
+
                     #region EDGE
                     case eBrowserType.Edge:
                         if (OpenIEModeInEdge)
                         {
                             var ieOptions = new InternetExplorerOptions();
                             ieOptions.AttachToEdgeChrome = true;
-                            ieOptions.EdgeExecutablePath = EdgeExcutablePath;
+                            if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath) && BrowserExecutablePath.Contains("msedge.exe"))
+                            {
+                                ieOptions.EdgeExecutablePath = BrowserExecutablePath;
+                            }
+                            else if (File.Exists(EDGE_32BIT_BINARY_PATH))
+                            {
+                                ieOptions.EdgeExecutablePath = EDGE_32BIT_BINARY_PATH;
+                            }
+                            else if (File.Exists(EDGE_64BIT_BINARY_PATH))
+                            {
+                                ieOptions.EdgeExecutablePath = EDGE_64BIT_BINARY_PATH;
+                            }
+                            else
+                            {
+                                throw new Exception("The Edge browser path is not available in default path. Please install it or provide the valid executable path in 'Browser Executable Path' parameter in agent configuration.");
+
+                            }
+
                             SetBrowserLogLevel(ieOptions);
                             SetBrowserVersion(ieOptions);
                             if (EnsureCleanSession == true)
@@ -773,6 +813,10 @@ namespace GingerCore.Drivers
                             SetBrowserVersion(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
+                            if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                            {
+                                EDOpts.AddArgument("--headless=new");
+                            }
                             SetUnhandledPromptBehavior(EDOpts);
                             if (IsUserProfileFolderPathValid())
                             {
@@ -1254,6 +1298,8 @@ namespace GingerCore.Drivers
             if (mProxy == null)
             {
                 return;
+            
+            
             }
 
             var proxy = new Proxy();
@@ -2205,36 +2251,55 @@ namespace GingerCore.Drivers
         /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
         /// <param name="pomExecutionUtil">The POMExecutionUtils object used to retrieve information about the current POM.</param>
         /// <returns>A tuple containing the locateBy and locateValue for the ActWebSmartSync action.</returns>
-        internal (eLocateBy locateBy, string locateValue) GetLocatorsForWebSmartSync(ActWebSmartSync act, POMExecutionUtils pomExecutionUtil)
+        internal List<ElementLocator> GetLocatorsForWebSmartSync(ActWebSmartSync act, POMExecutionUtils pomExecutionUtil)
         {
-            eLocateBy locateBy = act.ElementLocateBy;
-            string locateValue = act.ElementLocateValueForDriver;
-
+            List<ElementLocator> activeSupportedLocators = new List<ElementLocator>();
             if (act.ElementLocateBy == eLocateBy.POMElement)
             {
                 if (pomExecutionUtil.GetCurrentPOM() == null)
                 {
-                    throw new Exception("Relevant POM not found");
+                    throw new Exception("Relevant POM not found. Ensure that the POM context is correctly initialized before invoking this operation.");
+                    
                 }
 
                 ElementInfo currentPOMElementInfo = pomExecutionUtil.GetCurrentPOMElementInfo();
                 if (currentPOMElementInfo == null)
                 {
-                    throw new Exception("Unable to find details about the POM");
+                    throw new Exception("Unable to find details about the POM. Check if the POM element information is correctly set.");
                 }
 
-                ElementLocator firstLocator = currentPOMElementInfo.Locators.FirstOrDefault(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy));
 
-                if (firstLocator == null)
+                if (act.UseAllLocators)
                 {
-                    throw new Exception("No active or supported  locators found in the current POM");
+                    activeSupportedLocators = currentPOMElementInfo.Locators
+                        .Where(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy))
+                        .ToList();
+                }
+                else
+                {
+                    var singleLocator = currentPOMElementInfo.Locators
+                        .FirstOrDefault(l => l.Active && ActWebSmartSync.SupportedLocatorsTypeList.Contains(l.LocateBy));
+
+                    if (singleLocator != null)
+                    {
+                        activeSupportedLocators.Add(singleLocator);
+                    }
+                }
+                if (activeSupportedLocators.Count==0)
+                {
+                    throw new Exception("No active or supported locators found in the current POM. Verify the POM configuration.");
                 }
 
-                locateBy = firstLocator.LocateBy;
-                locateValue = firstLocator.LocateValue;
+            }
+            else
+            {
+                ElementLocator elementLocator = new ElementLocator();
+                elementLocator.LocateBy = act.ElementLocateBy;
+                elementLocator.LocateValue = act.ElementLocateValueForDriver;
+                activeSupportedLocators.Add(elementLocator);
             }
 
-            return (locateBy, locateValue);
+            return activeSupportedLocators;
         }
 
         /// <summary>
@@ -2254,7 +2319,7 @@ namespace GingerCore.Drivers
                 eLocateBy.ByCSSSelector => By.CssSelector(locateValue),
                 eLocateBy.ByLinkText => By.LinkText(locateValue),
                 eLocateBy.ByTagName => By.TagName(locateValue),
-                _ => throw new Exception("Supported locator values include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath and ByTagName."),
+                _ => throw new Exception("Unsupported locator type. Supported locator types include: ByXPath, ByID, ByName, ByClassName, ByCssSelector, ByLinkText, ByRelativeXpath, and ByTagName."),
             };
             return elementLocator;
         }
@@ -2294,9 +2359,7 @@ namespace GingerCore.Drivers
                     string textToMatch = VE.ValueCalculated;
                     if (String.IsNullOrEmpty(textToMatch))
                     {
-                        act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
-                        Reporter.ToLog(eLogLevel.ERROR, act.Error);
-                        return;
+                        throw new InvalidDataException("For TextMatches operation,The input value is missing or invalid input.");
                     }
                     wait.Until(ExpectedConditions.TextMatches(elementLocator, textToMatch));
                     break;
@@ -2308,9 +2371,7 @@ namespace GingerCore.Drivers
                     string attributeValue = VE.ValueCalculated;
                     if (string.IsNullOrEmpty(attributeValue) || string.IsNullOrEmpty(attributeName))
                     {
-                        act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
-                        Reporter.ToLog(eLogLevel.ERROR, act.Error);
-                        return;
+                        throw new InvalidDataException("For AttributeMatches operation,The input value is missing or invalid input.");
                     }
                     wait.Until(ExpectedConditions.AttributeMatches(elementLocator, attributeName, attributeValue));
                     break;
@@ -2337,9 +2398,7 @@ namespace GingerCore.Drivers
                     string urlMatches = VE.ValueCalculated;
                     if (String.IsNullOrEmpty(urlMatches))
                     {
-                        act.Error = $"For {act.SyncOperations} operation input value is missing or invalid input.";
-                        Reporter.ToLog(eLogLevel.ERROR, act.Error);
-                        return;
+                        throw new InvalidDataException("For UrlMatches operation,The input value is missing or invalid input.");
                     }
                     wait.Until(ExpectedConditions.UrlMatches(urlMatches));
                     break;
@@ -2357,73 +2416,115 @@ namespace GingerCore.Drivers
         /// </summary>
         /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
         public void WebSmartSyncHandler(ActWebSmartSync act)
-        {
+        {   List<ElementLocator> locatorList = new List<ElementLocator>();
             By elementLocator = null;
             try
             {
                 if (!operationsWithoutLocator.Contains(act.SyncOperations))
                 {
-                    (eLocateBy locateBy, string locateValue) = GetLocatorsForWebSmartSync(act, new POMExecutionUtils(act, act.ElementLocateValue));
+                    locatorList = GetLocatorsForWebSmartSync(act, new POMExecutionUtils(act, act.ElementLocateValue));
 
-                    if (string.IsNullOrEmpty(locateValue))
+                    if (act.ElementLocateBy != eLocateBy.POMElement && string.IsNullOrEmpty(locatorList[0].LocateValue))
                     {
                         throw new Exception($"For {act.SyncOperations} operation Locate value is missing or invalid input.");
                     }
-
-                    elementLocator = GetElementLocatorForWebSmartSync(locateBy, locateValue);
-                }
+                }                
             }
             catch (Exception ex)
             {
                 act.Error = ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
                 return;
-
             }
-            WebOperations(act, elementLocator);
-
-        }
-
-        /// <summary>
-        /// Performs the specified synchronization operation on the web element using the provided elementLocator.
-        /// </summary>
-        /// <param name="act">The ActWebSmartSync action containing the synchronization details.</param>
-        /// <param name="elementLocator">The Selenium By object representing the locator.</param>
-        private void WebOperations(ActWebSmartSync act, By elementLocator)
-        {
-            //get time configured in flow-control, if nothing provided then use 30 seconds
             int MaxTimeout = WebSmartSyncGetMaxTimeout(act);
             //store agent's implicit wait in a variable
             int implicitWait = (int)Driver.Manage().Timeouts().ImplicitWait.TotalSeconds;
-
-            try
+            //set agent's implicit wait to 1 second
+            Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
+            WebDriverWait wait;
+            ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
+            if (act.UseAllLocators && act.ElementLocateBy == eLocateBy.POMElement)
             {
-                WebDriverWait wait = new(Driver, TimeSpan.FromSeconds(MaxTimeout));
-
-                //set agent's implicit wait to 1 second
-                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)1));
-
-                wait.PollingInterval = TimeSpan.FromMilliseconds(500);
-                ValueExpression VE = new(GetCurrentProjectEnvironment(), this.BusinessFlow);
-
-                WebSmartSyncWaitForLocator(act, elementLocator, VE, wait);
+                for (int i = 0; i < locatorList.Count; i++)
+                {
+                    try
+                    {
+                        wait = new(Driver, TimeSpan.FromSeconds(MaxTimeout));
+                        wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+                        elementLocator = GetElementLocatorForWebSmartSync(locatorList[i].LocateBy, locatorList[i].LocateValue);
+                        WebSmartSyncWaitForLocator(act, elementLocator, VE, wait);
+                        break;
+                    }
+                   catch( WebDriverTimeoutException ex)
+                    {
+                        if(i == locatorList.Count - 1)
+                        {
+                            act.Error = $"{act.SyncOperations} was not completed within the allotted time or Unable to locate element.";
+                            Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                            break;
+                        }
+                        continue;
+                    }
+                    catch (InvalidSelectorException ex)
+                    {
+                        act.Error = $"Invalid input provided for {act.SyncOperations} operation.";
+                        Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                        break;
+                    }
+                    catch(InvalidDataException ex)
+                    {
+                        act.Error = $"Invalid input provided for {act.SyncOperations} operation.";
+                        Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        act.Error = $"unexpected error occured!";
+                        Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                    }
+                    finally
+                    {
+                        //set agent's implicit wait to the original value from the variable above
+                        Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)implicitWait));
+                    }
+                }
             }
-            catch (InvalidSelectorException ex)
+            else
             {
-                act.Error = $"Invalid input provided for {act.SyncOperations} operation.";
-                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
-            }
-            catch (Exception ex)
-            {
-                act.Error = $"{act.SyncOperations} was not completed within the allotted {MaxTimeout} seconds.";
-                Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
-            }
-            finally
-            {
-                //set agent's implicit wait to the original value from the variable above
-                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)implicitWait));
+                try
+                {
+                   wait = new(Driver, TimeSpan.FromSeconds(MaxTimeout));
+                   wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+                   if (!operationsWithoutLocator.Contains(act.SyncOperations))
+                       elementLocator = GetElementLocatorForWebSmartSync(locatorList[0].LocateBy, locatorList[0].LocateValue);
+                    WebSmartSyncWaitForLocator(act, elementLocator, VE, wait);
+                }
+                catch (InvalidSelectorException ex)
+                {
+                    act.Error = $"Invalid input provided for {act.SyncOperations} operation.";
+                    Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                }
+                catch (WebDriverTimeoutException ex)
+                {
+                    act.Error = $"{act.SyncOperations} was not completed within the allotted {MaxTimeout} seconds.";
+                    Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                }
+                catch (Exception ex)
+                {
+                    act.Error = $"unexpected error occured!";
+                    Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
+                }
+                finally
+                {
+                    //set agent's implicit wait to the original value from the variable above
+                    Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)implicitWait));
+                }
             }
 
         }
+
+
+
         /// <summary>
         /// Retrieves the maximum timeout value for the ActWebSmartSync action.
         /// </summary>
@@ -3361,7 +3462,7 @@ namespace GingerCore.Drivers
                         char[] delimit = new char[] { '=' };
                         string insertval = act.GetInputParamCalculatedValue("Value");
                         string[] vals = insertval.Split(delimit, 2);
-                        if (vals.Count() != 2)
+                        if (vals.Length != 2)
                         {
                             throw new Exception(@"Inot string should be in the format : attribute=value");
                         } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
@@ -4902,12 +5003,12 @@ namespace GingerCore.Drivers
                         }
                         catch (System.InvalidCastException ex)
                         {
-                            count = Driver.CurrentWindowHandle.Count();
+                            count = Driver.CurrentWindowHandle.Length;
                             Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred while casting when we are checking IsRunning", ex);
                         }
                         catch (System.NullReferenceException ex)
                         {
-                            count = Driver.CurrentWindowHandle.Count();
+                            count = Driver.CurrentWindowHandle.Length;
                             Reporter.ToLog(eLogLevel.DEBUG, "Null reference exception occurred when we are checking IsRunning", ex);
                         }
                         catch (System.ObjectDisposedException ex)
@@ -5047,7 +5148,7 @@ namespace GingerCore.Drivers
                         }
                         AppWindow AW = new AppWindow();
                         AW.Title = Driver.Title;
-                        AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
+                        AW.WindowType = AppWindow.eWindowType.WebPage;
                         list.Add(AW);
                     }
                     catch (Exception ex)
@@ -5722,7 +5823,7 @@ namespace GingerCore.Drivers
                     text = ((IWebElement)EI.ElementObject).Text;
                 }
 
-                if (text.Count() > 15)
+                if (text.Length > 15)
                 {
                     text = string.Empty;
                 }
@@ -6536,8 +6637,11 @@ namespace GingerCore.Drivers
         {
             IList<string> XPaths = ((HTMLElementInfo)ElementInfo).XPathList;
             ISearchContext tempContext = Driver;
-            int startPointer = XPaths.Count - 1;
-
+            int startPointer=0;
+            if (XPaths != null)
+            {
+                startPointer = XPaths.Count - 1;
+            }
             IWebElement e = null;
 
             if (startPointer > 0)
@@ -10665,21 +10769,10 @@ namespace GingerCore.Drivers
 
         private void SetBrowserLogLevel(DriverOptions options)
         {
-            if (!BrowserLogLevel.Equals("3"))
+            int numberLogLevel = (int)Enum.Parse<eBrowserLogLevel>(BrowserLogLevel);
+            if (!numberLogLevel.Equals(3))
             {
-                int numberLogLevel;
-                if (int.TryParse(BrowserLogLevel, out numberLogLevel))
-                {
-                    if (numberLogLevel >= 0 && numberLogLevel <= 4)
-                    {
-                        options.SetLoggingPreference(OpenQA.Selenium.LogType.Browser, (OpenQA.Selenium.LogLevel)numberLogLevel);
-                    }
-                    else throw new Exception("Please enter a valid number in the BrowserLogLevel parameter in Agent Configuration");
-                }
-                else
-                {
-                    throw new Exception("Please enter a valid value in the BrowserLogLevel parameter in Agent Configurations");
-                }
+                options.SetLoggingPreference(OpenQA.Selenium.LogType.Browser, (OpenQA.Selenium.LogLevel)numberLogLevel);
             }
         }
 
@@ -10985,6 +11078,18 @@ namespace GingerCore.Drivers
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in OnNetworkResponseReceived ", ex);
             }
+        }
+
+        private protected override IBrowser GetBrowser()
+        {
+            //overridden method from GingerWebDriver, need to implement this when we refactor SeleniumDriver to be in the similar structure as PlaywrightDriver
+            throw new NotImplementedException();
+        }
+
+        private protected override Task<IBrowserElement> FindBrowserElementAsync(eLocateBy locateBy, string locateValue)
+        {
+            //overridden method from GingerWebDriver, need to implement this when we refactor SeleniumDriver to be in the similar structure as PlaywrightDriver
+            throw new NotImplementedException();
         }
     }
 }

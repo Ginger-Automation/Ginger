@@ -582,7 +582,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 if (!string.IsNullOrEmpty(ComplexTypeChild.ChoiceGroup) && ComplexTypeChild.ChoiceGroup != LastCommentedGroupID)
                 {
-                    int Choices = ComplexTypeElementsList.Where(x => x.ChoiceGroup == ComplexTypeChild.ChoiceGroup).ToList().Count();
+                    int Choices = ComplexTypeElementsList.Where(x => x.ChoiceGroup == ComplexTypeChild.ChoiceGroup).ToList().Count;
                     bool ChooseIsEqualToListCount = ComplexTypeElementsList.Count == Choices;
                     if (Choices != 0 && !ChooseIsEqualToListCount)
                     {
@@ -1169,7 +1169,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             for (int i = 0; i < 3; i++)
             {
-                if (WorkURL.Count() <= i)
+                if (WorkURL.Length <= i)
                 {
                     break;
                 }
@@ -2251,11 +2251,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 return false;
             }
 
-            for (int i = 1; i < Nodes.Count(); i++)
+            for (int i = 1; i < Nodes.Length; i++)
             {
-                for (int j = i + 2; j < Nodes.Count(); j++)
+                for (int j = i + 2; j < Nodes.Length; j++)
                 {
-                    if ((j - i) * 2 > Nodes.Count())
+                    if ((j - i) * 2 > Nodes.Length)
                     {
                         break;
                     }

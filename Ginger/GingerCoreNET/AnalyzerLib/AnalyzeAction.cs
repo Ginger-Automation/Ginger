@@ -128,7 +128,7 @@ namespace Ginger.AnalyzerLib
                         }
                         if (f.FlowControlAction == eFlowControlAction.GoToNextActivity)
                         {
-                            if (BusinessFlow.Activities.IndexOf(parentActivity) == (BusinessFlow.Activities.Count() - 1))
+                            if (BusinessFlow.Activities.IndexOf(parentActivity) == (BusinessFlow.Activities.Count - 1))
                             {
                                 AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                                 AA.Description = "Flow control is mapped to " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " which does not exist"; ;

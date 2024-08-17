@@ -220,7 +220,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 int activityIndex = 0;
                 businessFlowToConvert.ConvertedActionsCount = 0;
-                for (; activityIndex < businessFlowToConvert.BusinessFlow.Activities.Count(); activityIndex++)
+                for (; activityIndex < businessFlowToConvert.BusinessFlow.Activities.Count; activityIndex++)
                 {
                     if (!mStopConversion)
                     {
@@ -267,7 +267,7 @@ namespace Amdocs.Ginger.CoreNET
                                                         bool convertToPOMAction, ObservableList<Guid> selectedPOMObjectName, Activity currentActivity)
         {
             int actionIndex = 0;
-            for (; actionIndex < currentActivity.Acts.Count(); actionIndex++)
+            for (; actionIndex < currentActivity.Acts.Count; actionIndex++)
             {
                 Act act = (Act)currentActivity.Acts[actionIndex];
                 if (!mStopConversion)

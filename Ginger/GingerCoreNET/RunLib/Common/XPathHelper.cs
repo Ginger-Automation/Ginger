@@ -433,7 +433,7 @@ namespace GingerCore.Drivers.Common
             List<object> elemsList = null;
             try
             {
-                while (!relxpath.Contains("//") && elemInfo.ElementObject != null)
+                while (!relxpath.Contains("//") && elemInfo?.ElementObject != null)
                 {
                     string id = mDriver.GetElementID(elemInfo);
                     if (!string.IsNullOrEmpty(id))
@@ -457,7 +457,7 @@ namespace GingerCore.Drivers.Common
                             relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "' and @name ='" + name + "']");
                         }
                         elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
-                        if (elemsList == null || (elemsList != null && elemsList.Count() < 2))
+                        if (elemsList == null || (elemsList != null && elemsList.Count < 2))
                         {
                             continue;
                         }

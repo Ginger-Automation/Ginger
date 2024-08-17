@@ -1,19 +1,27 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.UIElement;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
-using Amdocs.Ginger.Repository;
-using Applitools.Utils;
-using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Actions.Common;
-using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -21,9 +29,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 {
     internal sealed class ActUIElementHandler
     {
-        //split by comma outside brackets
-        private static readonly Regex FramesFromElementPathSplitter = new(@",(?![^\[]*[\]])");
-
         private static readonly IEnumerable<string> SupportedInputTypesForIsValuePopulated = new List<string>()
         {
             "date",
@@ -41,16 +46,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         };
 
         private readonly ActUIElement _act;
-        private readonly IBrowser _browser;
-        private readonly BusinessFlow _businessFlow;
-        private readonly ProjEnvironment _environment;
+        private readonly IBrowserElementLocator _elementLocator;
 
-        internal ActUIElementHandler(ActUIElement act, IBrowser browser, BusinessFlow businessFlow, ProjEnvironment environment)
+        internal ActUIElementHandler(ActUIElement act, IBrowserElementLocator elementLocator)
         {
             _act = act;
-            _browser = browser;
-            _businessFlow = businessFlow;
-            _environment = environment;
+            _elementLocator = elementLocator;
         }
 
         internal async Task HandleAsync()
@@ -154,7 +155,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task<IBrowserElement> GetFirstMatchingElementAsync()
         {
-            IEnumerable<IBrowserElement> elements = await GetAllMatchingElementsAsync();
+            IEnumerable<IBrowserElement> elements = await _elementLocator.FindMatchingElements(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
 
             IBrowserElement? firstElement = elements.FirstOrDefault();
             if (firstElement == null)
@@ -164,81 +165,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
             return firstElement;
         }
-        private Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsAsync()
+
+        private async Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsAsync()
         {
-            if (_act.ElementLocateBy == eLocateBy.POMElement)
-            {
-                return GetAllMatchingElementsFromPOMAsync();
-            }
-            else
-            {
-                eLocateBy locateBy = _act.ElementLocateBy;
-                string locateValue = _act.ElementLocateValueForDriver;
-
-                return _browser
-                .CurrentWindow
-                .CurrentTab
-                .GetElementsAsync(locateBy, locateValue);
-            }
-        }
-
-        private async Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsFromPOMAsync()
-        {
-            string locateValue = _act.ElementLocateValueForDriver;
-            Func<Guid, ApplicationPOMModel> pomByIdProvider = WorkSpace
-                .Instance
-                .SolutionRepository
-                .GetRepositoryItemByGuid<ApplicationPOMModel>;
-            
-            POMLocatorParser pomLocatorParser = POMLocatorParser.Create(locateValue, pomByIdProvider);
-            if (pomLocatorParser.ElementInfo == null)
-            {
-                return [];
-            }
-
-            await SwitchToFrameOfElementAsync(pomLocatorParser.ElementInfo);
-
-            POMElementLocator<IBrowserElement>.ElementsProvider elementsProvider =
-                _browser
-                .CurrentWindow
-                .CurrentTab
-                .GetElementsAsync;
-
-            POMElementLocator<IBrowserElement> pomElementLocator = new(new POMElementLocator<IBrowserElement>.Args
-            {
-                AutoUpdatePOM = false,
-                BusinessFlow = _businessFlow,
-                Environment = _environment,
-                ElementInfo = pomLocatorParser.ElementInfo,
-                ElementsProvider = elementsProvider,
-            });
-            POMElementLocator<IBrowserElement>.LocateResult result = await pomElementLocator.LocateAsync();
-
-            return result.Elements;
-        }
-
-        private async Task SwitchToFrameOfElementAsync(ElementInfo elementInfo)
-        {
-            string pathToElement = elementInfo.Path;
-            if (!elementInfo.IsAutoLearned)
-            {
-                GingerCore.ValueExpression valueExpression = new(_environment, _businessFlow);
-                pathToElement = valueExpression.Calculate(pathToElement);
-            }
-
-            if (string.IsNullOrEmpty(pathToElement))
-            {
-                return;
-            }
-
-            await _browser.CurrentWindow.CurrentTab.SwitchToMainFrameAsync();
-
-            string[] iframesPaths = FramesFromElementPathSplitter.Split(pathToElement);
-
-            foreach (string iframePath in iframesPaths)
-            {
-                await _browser.CurrentWindow.CurrentTab.SwitchFrameAsync(eLocateBy.ByRelXPath, iframePath);                
-            }
+            return await _elementLocator.FindMatchingElements(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
         }
 
         private async Task HandleClickOperationAsync()

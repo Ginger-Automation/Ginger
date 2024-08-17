@@ -59,7 +59,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                         bf.ConversionStatus = eConversionStatus.Pending;
                         if (IsValidWebServiceBusinessFlow(bf.BusinessFlow))
                         {
-                            for (int activityIndex = 0; activityIndex < bf.BusinessFlow.Activities.Count(); activityIndex++)
+                            for (int activityIndex = 0; activityIndex < bf.BusinessFlow.Activities.Count; activityIndex++)
                             {
                                 Activity activity = bf.BusinessFlow.Activities[activityIndex];
                                 RepositoryItemKey ta = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.ItemName == activity.TargetApplication).Key;

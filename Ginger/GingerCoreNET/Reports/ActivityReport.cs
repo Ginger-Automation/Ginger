@@ -176,7 +176,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return ActionReports.Count();
+                return ActionReports.Count;
             }
         }
 
@@ -283,7 +283,7 @@ namespace Ginger.Reports
                     foreach (string variable in VariablesBeforeExec)
                     {
                         String[] elementsBefore = variable.Split(new string[] { "_:_" }, StringSplitOptions.None);
-                        if (elementsBefore.Count() >= 3)
+                        if (elementsBefore.Length >= 3)
                         {
                             DataRow dr = dt.NewRow();
                             dr["Name"] = elementsBefore[0];
@@ -298,7 +298,7 @@ namespace Ginger.Reports
                     foreach (string variable in VariablesAfterExec)
                     {
                         String[] elementsAfter = variable.Split(new string[] { "_:_" }, StringSplitOptions.None);
-                        if (elementsAfter.Count() >= 2)
+                        if (elementsAfter.Length >= 2)
                         {
 
 

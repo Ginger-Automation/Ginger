@@ -22,19 +22,14 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
-using Couchbase.Utils;
-using GingerCore.Actions.Common;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using NJsonSchema.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Reflection;
 
 namespace GingerCore.Actions
 {
-
+        
 
 
     public class ActWebSmartSync : Act, IActPluginExecution
@@ -281,6 +276,23 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(UrlMatches));
             }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to use all locators.
+        /// </summary>
+        public bool UseAllLocators
+        {
+            get
+            {
+                return bool.Parse(GetInputParamValue(nameof(UseAllLocators)) ?? "false");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(UseAllLocators), value.ToString());
+                OnPropertyChanged(nameof(UseAllLocators));
+            }
+        }
+    
 
         /// <summary>
         /// Overrides the ToString() method to provide a string representation of the action.
