@@ -66,6 +66,8 @@ namespace Ginger.Actions
 
             xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*", ValueTextBox_ClickBrowse);
 
+            xAppPackageVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
+
             UpdateBaseLineImage(true);
 
             
@@ -196,6 +198,7 @@ namespace Ginger.Actions
             xXY2Pnl.Visibility = Visibility.Collapsed;
             xPhotoSimulationPnl.Visibility = Visibility.Collapsed;
             xAuthSimulationPnl.Visibility = Visibility.Collapsed;
+            xAppPnl.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
             {
@@ -215,12 +218,19 @@ namespace Ginger.Actions
                     xXY1Pnl.Visibility = Visibility.Visible;
                     xXY2Pnl.Visibility = Visibility.Visible;
                     break;
+
                 case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
                 case ActMobileDevice.eMobileDeviceAction.SimulateBarcode:
                     xPhotoSimulationPnl.Visibility = Visibility.Visible;
                     break;
+
                 case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
                     xAuthSimulationPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.CloseApp:
+                case ActMobileDevice.eMobileDeviceAction.OpenApp:
+                    xAppPnl.Visibility = Visibility.Visible;
                     break;
             }
         }

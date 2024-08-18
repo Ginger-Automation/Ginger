@@ -55,5 +55,10 @@
             <UserControlsLib1:UcLabel Content="*Action will work only with a UFTM mobile device"></UserControlsLib1:UcLabel>
             <UserControlsLib1:UcLabel Content="*Andoid device will simulate FingerPrint, iOS devices will simulate FaceID"></UserControlsLib1:UcLabel>
         </StackPanel>
+
+        <StackPanel x:Name="xAppPnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
+            <Label Style="{StaticResource $LabelStyle}" Content="Application package:"/>
+            <Actions:UCValueExpression x:Name="xAppPackageVE" VerticalAlignment="Top" Width="200"/>
+        </StackPanel>
     </DockPanel>
 </Page>

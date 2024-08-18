@@ -960,6 +960,28 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        private string GetAppPackage(ActMobileDevice act)
+        {
+            string appPackage = null;
+            if (string.IsNullOrEmpty(act.ActionAppPackage.Value) || act.ActionAppPackage.Value.ToLower().Trim() == "default")
+            {
+                if (DevicePlatformType == eDevicePlatformType.Android)
+                {
+                    appPackage = AppiumCapabilities.Where(x => x.Parameter == "appPackage" || x.Parameter == "appium:appPackage").FirstOrDefault().Value;
+                }
+                else
+                {
+                    appPackage = AppiumCapabilities.Where(x => x.Parameter == "bundleId" || x.Parameter == "appium:bundleId").FirstOrDefault().Value;
+                }
+
+                return appPackage;
+            }
+            else
+            {
+                 return act.ActionAppPackage.Value;
+            }
+        }
+
         private void MobileDeviceActionHandler(ActMobileDevice act)
         {
             ITouchAction tc;
@@ -1079,18 +1101,14 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.OpenApp:
                         if (AppType == eAppType.NativeHybride)
                         {
-                            Driver.LaunchApp();
-                        }
-                        else
-                        {
-                            act.Error = "Operation not supported for this mobile OS or application type.";
+                            Driver.ActivateApp(GetAppPackage(act));
                         }
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.CloseApp:
+                    case ActMobileDevice.eMobileDeviceAction.CloseApp:                        
                         if (AppType == eAppType.NativeHybride)
                         {
-                            Driver.CloseApp();
+                            Driver.TerminateApp(GetAppPackage(act));
                         }
                         else
                         {

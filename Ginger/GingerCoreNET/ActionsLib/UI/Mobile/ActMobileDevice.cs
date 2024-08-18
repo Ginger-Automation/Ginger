@@ -167,6 +167,19 @@ namespace GingerCore.Actions
             }
         }
 
+        public ActInputValue ActionAppPackage
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ActionAppPackage), "default");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ActionAppPackage), value.ToString());
+                OnPropertyChanged(nameof(ActionAppPackage));
+            }
+        }
+
         public string mSimulatedPhotoPath;
         public ActInputValue SimulatedPhotoPath
         {
