@@ -53,9 +53,10 @@ using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Appium.Interactions;
 using OpenQA.Selenium.Appium.Interfaces;
 using OpenQA.Selenium.Appium.iOS;
-using OpenQA.Selenium.Appium.MultiTouch;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using RestSharp;
 using System;
@@ -68,6 +69,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using AppiumInteractions = OpenQA.Selenium.Appium.Interactions;
+
+
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -711,7 +715,8 @@ namespace Amdocs.Ginger.CoreNET
                             int numberOfMaxLoops = (element_Y - 500) / 200;
                             while (!e.Displayed && numberOfMaxLoops > 0)
                             {
-                                (BuildTouchAction(Driver, element_X, 500, element_X, 300, 200)).Perform();
+                                //(BuildTouchAction(Driver, element_X, 500, element_X, 300, 200)).Perform();
+                                SwipeByXY(element_X, 500, element_X, 300, TimeSpan.FromMilliseconds(200));
                                 numberOfMaxLoops--;
                             }
                         }
@@ -720,7 +725,8 @@ namespace Amdocs.Ginger.CoreNET
                             int numberOfMaxLoops = 12;
                             while (numberOfMaxLoops > 0)
                             {
-                                (BuildTouchAction(Driver, 500, 500, 500, 300, 200)).Perform();
+                                //(BuildTouchAction(Driver, 500, 500, 500, 300, 200)).Perform();
+                                SwipeByXY(500, 500, 500, 300, TimeSpan.FromMilliseconds(200));
                                 e = LocateElement(act);
                                 if (e != null && e.Displayed)
                                 {
@@ -745,9 +751,10 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.ClickXY:
-                        ITouchAction tc;
-                        tc = new TouchAction(Driver);
-                        tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate)), Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate))).Perform();
+                        //ITouchAction tc;
+                        //tc = new TouchAction(Driver);
+                        //tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate)), Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate))).Perform();
+                        TapXY(Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate)), Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate)));
                         break;
 
                     default:
@@ -791,7 +798,7 @@ namespace Amdocs.Ginger.CoreNET
                                 y = Convert.ToInt64(act.LocateValueCalculated.Split(',')[1]);
                             }
                             catch { x = 0; y = 0; }
-                            TapXY(x, y);
+                            TapXY((int)x, (int)y);
                         }
                         else
                         {
@@ -803,9 +810,10 @@ namespace Amdocs.Ginger.CoreNET
                         try
                         {
                             e = LocateElement(act);
-                            TouchAction t = new TouchAction(Driver);
-                            t.Tap(e, 1, 1);
-                            Driver.PerformTouchAction(t);
+                            //TouchAction t = new TouchAction(Driver);
+                            //t.Tap(e, 1, 1);
+                            //Driver.PerformTouchAction(t);
+                            TapElement(e, 1, 1);
                         }
                         catch (Exception ex)
                         {
@@ -984,19 +992,21 @@ namespace Amdocs.Ginger.CoreNET
 
         private void MobileDeviceActionHandler(ActMobileDevice act)
         {
-            ITouchAction tc;
+            //ITouchAction tc;
             try
             {
                 switch (act.MobileDeviceAction)
                 {
                     case ActMobileDevice.eMobileDeviceAction.PressXY:
-                        tc = new TouchAction(Driver);
-                        tc.Press(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
+                        //tc = new TouchAction(Driver);
+                        //tc.Press(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
+                        PressXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver), TimeSpan.FromSeconds(1));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LongPressXY:
-                        tc = new TouchAction(Driver);
-                        tc.LongPress(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
+                        //tc = new TouchAction(Driver);
+                       // tc.LongPress(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
+                        PressXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver), TimeSpan.FromSeconds(3));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.TapXY:
@@ -1117,13 +1127,15 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
-                        ITouchAction swipe;
-                        swipe = BuildTouchAction(Driver,
-                            Convert.ToInt32(act.X1.ValueForDriver),
-                            Convert.ToInt32(act.Y1.ValueForDriver),
-                            Convert.ToInt32(act.X2.ValueForDriver),
-                            Convert.ToInt32(act.Y2.ValueForDriver), 1000);
-                        swipe.Perform();
+                        //ITouchAction swipe;
+                        //swipe = BuildTouchAction(Driver,
+                        //    Convert.ToInt32(act.X1.ValueForDriver),
+                        //    Convert.ToInt32(act.Y1.ValueForDriver),
+                        //    Convert.ToInt32(act.X2.ValueForDriver),
+                        //    Convert.ToInt32(act.Y2.ValueForDriver), 1000);
+                        //swipe.Perform();
+                        SwipeByXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
+                                  Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver), TimeSpan.FromSeconds(1));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetPageSource:
@@ -1373,12 +1385,122 @@ namespace Amdocs.Ginger.CoreNET
             return (ICollection<IWebElement>)Driver.FindElements(By.XPath(".//*"));
         }
 
-        public void TapXY(long x, long y)
+        public void TapXY(int pageX, int pageY)
         {
-            TouchAction t = new TouchAction(Driver);
-            t.Tap(x, y);
-            Driver.PerformTouchAction(t);
+            //OpenQA.Selenium.Appium.Interactions.PointerInputDevice finger = new OpenQA.Selenium.Appium.Interactions.PointerInputDevice(PointerKind.Touch, "finger");
+            //ActionBuilder tapBuild = new ActionBuilder();
+            //tapBuild.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageX, pageY, TimeSpan.Zero));
+            //tapBuild.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            //tapBuild.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            //((IActionExecutor)Driver).PerformActions(tapBuild.ToActionSequenceList());
+
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageX, pageY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
+
+        public void TapElement(IWebElement element, int elementX, int elementY)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(element, elementX, elementY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void DoubleTapXY(int pageX, int pageY)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageX, pageY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePause(TimeSpan.FromMilliseconds(100)));// small wait before second tap
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void DoubleTapElement(IWebElement element, int elementX, int elementY)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(element, elementX, elementY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePause(TimeSpan.FromMilliseconds(100)));// small wait before second tap
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+
+        public void PressXY(int pageX, int pageY, TimeSpan pressDuration)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageX, pageY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePause(pressDuration));// Hold for specified duration
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void PressElement(IWebElement element, int elementX, int elementY, TimeSpan pressDuration)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(element, elementX, elementY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePause(pressDuration));// Hold for specified duration
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void PerformLongPress(long x, long y)
+        {
+            //TouchAction tc = new TouchAction(Driver);
+            //tc.LongPress(x, y).Perform();
+            PressXY((int)x, (int)y, TimeSpan.FromSeconds(3));
+
+            if (IsRecording)
+            {
+                var mobDevAction = GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.LongPressXY);
+                mobDevAction.X1.Value = x.ToString();
+                mobDevAction.Y1.Value = y.ToString();
+                RecordingOperations(mobDevAction);
+            }
+        }
+
+        public void DragAndDropByXY(int pageDragX, int pageDragY, int pageDropX, int pageDropY, TimeSpan dragDuration)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageDragX, pageDragY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePause(TimeSpan.FromMilliseconds(200)));
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageDropX, pageDropY, dragDuration));
+            actionBuilder.AddAction(finger.CreatePause(TimeSpan.FromMilliseconds(200)));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void SwipeByXY(int pageStartX, int pageStartY, int pageEndX, int pageEndY,  TimeSpan swipeSpeed)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageStartX, pageStartY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageEndX, pageEndY, swipeSpeed));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+
 
         public void PerformBackButtonPress()
         {
@@ -1554,11 +1676,6 @@ namespace Amdocs.Ginger.CoreNET
                 case eDevicePlatformType.Android:
                     ((AndroidDriver)Driver).LongPressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));
                     break;
-                    //case eDevicePlatformType.iOS:
-                    //    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
-                    //    commandArgs.Add("name", key);
-                    //    Driver.ExecuteScript("mobile: pressButton", commandArgs);
-                    //    break;
             }
         }
 
@@ -1617,24 +1734,26 @@ namespace Amdocs.Ginger.CoreNET
                     throw new ArgumentException("swipeScreen(): dir: '" + side + "' NOT supported");
             }
 
-            (BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();            
+            //(BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();
+            SwipeByXY((int)startX, (int)startY, (int)endX, (int)endY, TimeSpan.FromMilliseconds(200));
         }
 
-        public ITouchAction BuildTouchAction(AppiumDriver driver, double startX, double startY, double endX, double endY, int waitDuration = 200)
-        {
-            ITouchAction touchAction;
-            touchAction = new TouchAction(driver)
-            .Press(startX, startY)
-            .Wait(waitDuration)
-            .MoveTo(endX, endY)
-            .Release();
+        //public ITouchAction BuildTouchAction(AppiumDriver driver, double startX, double startY, double endX, double endY, int waitDuration = 200)
+        //{
+        //    ITouchAction touchAction;
+        //    touchAction = new TouchAction(driver)
+        //    .Press(startX, startY)
+        //    .Wait(waitDuration)
+        //    .MoveTo(endX, endY)
+        //    .Release();
 
-            return touchAction;
-        }
+        //    return touchAction;
+        //}
 
         public void DoDrag(int startX, int startY, int endX, int endY)
         {
-            (BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();
+            //(BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();
+            DragAndDropByXY(startX, startY, endX, endY, TimeSpan.FromMilliseconds(200));
         }
 
         private string GetCurrentPackage()
@@ -2828,7 +2947,7 @@ namespace Amdocs.Ginger.CoreNET
                     RecordingEvent?.Invoke(this, args);
                 }
             }
-            TapXY(x, y);
+            TapXY((int)x, (int)y);
         }
 
         public bool TestLocatorOutput(ElementInfo Elem, ElementLocator LocatorToTest)
@@ -2843,19 +2962,7 @@ namespace Amdocs.Ginger.CoreNET
             return false;
         }
 
-        public void PerformLongPress(long x, long y)
-        {
-            TouchAction tc = new TouchAction(Driver);
-            tc.LongPress(x, y).Perform();
-
-            if (IsRecording)
-            {
-                var mobDevAction = GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.LongPressXY);
-                mobDevAction.X1.Value = x.ToString();
-                mobDevAction.Y1.Value = y.ToString();
-                RecordingOperations(mobDevAction);
-            }
-        }
+   
 
         public void PerformDrag(Point start, Point end)
         {
