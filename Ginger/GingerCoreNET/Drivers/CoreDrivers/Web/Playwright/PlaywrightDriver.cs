@@ -47,6 +47,7 @@ using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -198,6 +199,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                             {
                                 BusinessFlow = BusinessFlow,
                                 Environment = Environment,
+                                POMExecutionUtils = new POMExecutionUtils(act, actUIElement.ElementLocateValue),
+                                Agent = BusinessFlow.CurrentActivity.CurrentAgent,
                             }));
                         actUIElementHandler.HandleAsync().Wait();
                         break;
@@ -227,6 +230,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                             {
                                 BusinessFlow = BusinessFlow,
                                 Environment = Environment,
+                                POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValue)
                             }));
                         actAccessibilityTestingHandler.HandleAsync().Wait();
                         break;
