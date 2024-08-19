@@ -37,8 +37,6 @@ namespace Ginger.Actions
         private string initialDirectory;
         eBrowserType mBrowserType;
 
-        public bool FilePathChanged { get; private set; }
-
         public eBrowserType BrowserType
         {
             get
@@ -183,7 +181,6 @@ namespace Ginger.Actions
                             System.IO.Directory.CreateDirectory(filePath);
                         }
                     }
-                    FilePathChanged = false;
 
                     if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
                     {
@@ -192,10 +189,6 @@ namespace Ginger.Actions
                         InitialDirectory = filePath
                     }) is string fileName)
                     {
-                        if (!string.Equals(ValueTextBox.Text,fileName, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            FilePathChanged = true;
-                        }
                         ValueTextBox.Text = fileName;
                     }
                     break;

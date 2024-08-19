@@ -27,6 +27,7 @@ using GingerCore.Actions.WebServices;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -370,57 +371,41 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseSSLCertificate(object sender, RoutedEventArgs e)
         {
-            bool ImportFileFlag = false;
-            Boolean.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile), out ImportFileFlag);
-            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+            Boolean.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile), out var ImportFileFlag);
+            string solutionFolder = WorkSpace.Instance.Solution.Folder;
+            string certFilePath = CertificatePath.ValueTextBox.Text;
 
-            if ((CertificatePath.ValueTextBox.Text != null) && (HasFilePathChanged() || (ImportFileFlag && !CertificatePath.ValueTextBox.Text.Contains(SolutionFolder))))
+            if (CertificatePath.ValueTextBox.Text != null)
             {
-                // replace Absolute file name with relative to solution
-                string FileName = CertificatePath.ValueTextBox.Text.ToUpper();
-                if (FileName.Contains(SolutionFolder))
-                {
-                    FileName = FileName.Replace(SolutionFolder, @"~\");
-                    CertificatePath.ValueTextBox.Text = FileName;
-                }
-
-                if (DoesPathContainsAPICertificatesDirectory(FileName))
-                {
-                    return;
-                }
-
+                certFilePath = certFilePath.Replace(@"~\", solutionFolder, StringComparison.InvariantCultureIgnoreCase);
                 if (ImportFileFlag)
                 {
-                    string targetPath = System.IO.Path.Combine(SolutionFolder, webServicesCertificatePath);
-                    if (!System.IO.Directory.Exists(targetPath))
+                    if (!certFilePath.Contains(webServicesCertificatePath, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        System.IO.Directory.CreateDirectory(targetPath);
+                        string targetDirPath = Path.Combine(solutionFolder, webServicesCertificatePath);
+                        string destFilePath = Path.Combine(targetDirPath, Path.GetFileName(certFilePath));
+                        destFilePath = GetUniqueFilePath(destFilePath);
+
+                        if (!Directory.Exists(targetDirPath))
+                        {
+                            Directory.CreateDirectory(targetDirPath);
+                        }
+
+                        File.Copy(certFilePath, destFilePath, true);
+                        certFilePath = destFilePath;
                     }
-
-                    string destFile = System.IO.Path.Combine(targetPath, System.IO.Path.GetFileName(FileName));
-
-                    destFile = GetUniqueFilePath(destFile);
-
-                    System.IO.File.Copy(FileName, destFile, true);
-                    CertificatePath.ValueTextBox.Text = @"~\" + webServicesCertificatePath + @"\" + System.IO.Path.GetFileName(destFile);
                 }
+                
+                CertificatePath.ValueTextBox.Text = certFilePath.Replace(solutionFolder, @"~\", StringComparison.InvariantCultureIgnoreCase);
             }
-        }
-        private bool DoesPathContainsAPICertificatesDirectory(string FileName)
-        {
-            return FileName.Contains(webServicesCertificatePath.ToUpper());
-        }
-        private bool HasFilePathChanged()
-        {
-            return CertificatePath.FilePathChanged;
         }
         private static string GetUniqueFilePath(string destinationFilePath)
         {
             int fileNum = 1;
-            string copySufix = "_COPY";
-            string targetDirPath = System.IO.Path.GetDirectoryName(destinationFilePath);
-            string fileNameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(destinationFilePath);
-            while (System.IO.File.Exists(destinationFilePath))
+            string copySufix = "_copy";
+            string targetDirPath = Path.GetDirectoryName(destinationFilePath);
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(destinationFilePath);
+            while (File.Exists(destinationFilePath))
             {
                 fileNum++;
                 if (fileNameWithoutExt.Contains(copySufix, StringComparison.CurrentCulture))
@@ -428,8 +413,8 @@ namespace Ginger.Actions.WebServices
                     fileNameWithoutExt = fileNameWithoutExt.Substring(0, fileNameWithoutExt.IndexOf(copySufix));
                 }
 
-                fileNameWithoutExt = fileNameWithoutExt + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destinationFilePath);
-                destinationFilePath = System.IO.Path.Combine(targetDirPath, fileNameWithoutExt);
+                fileNameWithoutExt = fileNameWithoutExt + copySufix + fileNum.ToString() + Path.GetExtension(destinationFilePath);
+                destinationFilePath = Path.Combine(targetDirPath, fileNameWithoutExt);
             }
 
             return destinationFilePath;
@@ -437,9 +422,8 @@ namespace Ginger.Actions.WebServices
 
         private void DoNotCertificateImportFile_Checked(object sender, RoutedEventArgs e)
         {
-            bool ImportFileFlag = false;
-            Boolean.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile), out ImportFileFlag);
-            if (ImportFileFlag)
+            Boolean.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile), out var ImportFileFlag);
+            if (ImportFileFlag && ((CheckBox)sender).IsLoaded)
             {
                 BrowseSSLCertificate(sender, e);
             }
@@ -679,6 +663,5 @@ namespace Ginger.Actions.WebServices
             }
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw request preview, see log for details.");
         }
-
     }
 }
