@@ -237,8 +237,8 @@ namespace GingerCore.Actions.WebAPI
 
             if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.AllSSL.ToString())
             {
-                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-                handler.ServerCertificateCustomValidationCallback += (_, _, chain, errors) => { return true; };
+                ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
+                handler.ServerCertificateCustomValidationCallback += (_, _, _, _) => { return true; };
             }
             else if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.Custom.ToString())
             {

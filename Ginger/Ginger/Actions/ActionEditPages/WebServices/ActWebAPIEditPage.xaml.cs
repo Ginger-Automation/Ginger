@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -412,8 +413,13 @@ namespace Ginger.Actions.WebServices
                 {
                     fileNameWithoutExt = fileNameWithoutExt.Substring(0, fileNameWithoutExt.IndexOf(copySufix));
                 }
+                StringBuilder sb = new  StringBuilder();
+                sb.Append(fileNameWithoutExt);
+                sb.Append(copySufix);
+                sb.Append(fileNum);
+                sb.Append(Path.GetExtension(destinationFilePath));
 
-                fileNameWithoutExt = fileNameWithoutExt + copySufix + fileNum.ToString() + Path.GetExtension(destinationFilePath);
+                fileNameWithoutExt = sb.ToString();
                 destinationFilePath = Path.Combine(targetDirPath, fileNameWithoutExt);
             }
 
