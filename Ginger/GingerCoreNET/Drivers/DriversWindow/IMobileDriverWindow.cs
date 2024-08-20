@@ -47,11 +47,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 
         void PerformTap(long x, long y);
 
-        void PerformLongPress(long x, long y);
+        void PerformLongPress(long x, long y, TimeSpan? pressDuration = null);
 
-        void PerformDrag(System.Drawing.Point start, System.Drawing.Point end);
+        void PerformDrag(System.Drawing.Point start, System.Drawing.Point end, TimeSpan pressDuration, TimeSpan dragDuration);
 
-        void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1);
+        void PerformScreenSwipe(eSwipeSide swipeSide, double swipeScale, TimeSpan swipeDuration);
 
         void SwitchToLandscape();
 

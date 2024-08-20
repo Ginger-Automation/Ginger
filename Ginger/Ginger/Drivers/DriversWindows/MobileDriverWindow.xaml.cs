@@ -658,6 +658,7 @@ namespace Ginger.Drivers.DriversWindows
         }
 
         DateTime mClickStartTime;
+        DateTime mMoveStartTime;
         private void xDeviceScreenshotImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             mClickStartTime = DateTime.Now;
@@ -677,6 +678,7 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_MouseMove(object sender, MouseEventArgs e)
         {
+            mMoveStartTime = DateTime.Now;
             if (mIsMousePressed == true)
             {
                 //it's a drag
@@ -720,19 +722,23 @@ namespace Ginger.Drivers.DriversWindows
             }
             mIsMousePressed = false;
 
+            TimeSpan pressDuration;
+            
             if (mIsItDragAction == true)
             {
                 //do drag
                 mIsItDragAction = false;
-                DeviceScreenshotImageMouseDragAsync(mMouseStartPoint, mMouseEndPoint);
+                pressDuration = mMoveStartTime - mClickStartTime;
+                TimeSpan dragDuration = clickEndTime - mMoveStartTime;
+                DeviceScreenshotImageMouseDragAsync(mMouseStartPoint, mMouseEndPoint, pressDuration, dragDuration);
             }
             else
             {
-                TimeSpan clickDuration = clickEndTime - mClickStartTime;
-                if (clickDuration.TotalSeconds > 1)
+                pressDuration = clickEndTime - mClickStartTime;
+                if (pressDuration.TotalSeconds > 1)
                 {
                     //do long press
-                    DeviceScreenshotImageMouseClickAsync(mMouseEndPoint, true);
+                    DeviceScreenshotImageMouseClickAsync(mMouseEndPoint, true, pressDuration);
                 }
                 else
                 {
@@ -744,15 +750,13 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            //System.Windows.Point mMousePoint = e.GetPosition((System.Windows.Controls.Image)sender);
-            //DeviceScreenshotImageMouseDragAsync(mMousePoint, new System.Windows.Point(mMousePoint.X, mMousePoint.Y + e.Delta));
             if (e.Delta > 0)
             {
-                PerformScreenSwipe(eSwipeSide.Up, 0.25);
+                PerformScreenSwipe(eSwipeSide.Up, 0.25, TimeSpan.FromMilliseconds(200));
             }
             else
             {
-                PerformScreenSwipe(eSwipeSide.Down, 0.25);
+                PerformScreenSwipe(eSwipeSide.Down, 0.25, TimeSpan.FromMilliseconds(200));
             }
         }
 
@@ -1144,32 +1148,32 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xSwipeLeft_Click(object sender, RoutedEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Left);
+            PerformScreenSwipe(eSwipeSide.Left, 1, TimeSpan.FromMilliseconds(200));
         }
 
         private void xSwipeRight_Click(object sender, RoutedEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Right);
+            PerformScreenSwipe(eSwipeSide.Right, 1, TimeSpan.FromMilliseconds(200));
         }
 
         private void xSwipeUp_Click(object sender, RoutedEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Up, 0.25);
+            PerformScreenSwipe(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
         }
 
         private void xSwipeUp_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Up, 0.5);
+            PerformScreenSwipe(eSwipeSide.Up, 1.5, TimeSpan.FromMilliseconds(200));
         }
 
         private void xSwipeDown_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Down, 0.5);
+            PerformScreenSwipe(eSwipeSide.Down, 1.5, TimeSpan.FromMilliseconds(200));
         }
 
         private void xSwipeDown_Click(object sender, RoutedEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Down, 0.25);
+            PerformScreenSwipe(eSwipeSide.Down, 1, TimeSpan.FromMilliseconds(200));
         }
 
         private void xDeviceSettingsBtn_Click(object sender, RoutedEventArgs e)
@@ -1500,7 +1504,7 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private async void DeviceScreenshotImageMouseClickAsync(System.Windows.Point clickedPoint, bool performLongPress = false)
+        private async void DeviceScreenshotImageMouseClickAsync(System.Windows.Point clickedPoint, bool performLongPress = false, TimeSpan? clickDuration=null)
         {
             try
             {
@@ -1516,7 +1520,7 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         try
                         {
-                            mDriver.PerformLongPress(pointOnMobile_X, pointOnMobile_Y);
+                            mDriver.PerformLongPress(pointOnMobile_X, pointOnMobile_Y, clickDuration);
                         }
                         catch (Exception ex)
                         {
@@ -1552,7 +1556,7 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private async void DeviceScreenshotImageMouseDragAsync(System.Windows.Point startPoint, System.Windows.Point endPoint)
+        private async void DeviceScreenshotImageMouseDragAsync(System.Windows.Point startPoint, System.Windows.Point endPoint, TimeSpan pressDuration, TimeSpan dragDuration)
         {
             try
             {
@@ -1564,7 +1568,7 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     try
                     {
-                        mDriver.PerformDrag(new System.Drawing.Point((int)startPoint.X, (int)startPoint.Y), new System.Drawing.Point((int)endPoint.X, (int)endPoint.Y));
+                        mDriver.PerformDrag(new System.Drawing.Point((int)startPoint.X, (int)startPoint.Y), new System.Drawing.Point((int)endPoint.X, (int)endPoint.Y), pressDuration, dragDuration);
                     }
                     catch (Exception ex)
                     {
@@ -1637,11 +1641,11 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1)
+        private void PerformScreenSwipe(eSwipeSide swipeSide, double swipeScale, TimeSpan swipeDuration)
         {
             try
             {
-                mDriver.PerformScreenSwipe(swipeSide, impact);
+                mDriver.PerformScreenSwipe(swipeSide, swipeScale, swipeDuration);
 
                 if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
                 {

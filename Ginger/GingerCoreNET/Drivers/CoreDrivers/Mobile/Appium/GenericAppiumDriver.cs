@@ -821,6 +821,31 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
 
+
+                    case ActGenElement.eGenElementAction.DoubleTapElement:
+                        try
+                        {
+                            e = LocateElement(act);
+                            DoubleTapElement(e, 1, 1);
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                        }
+                        break;
+
+                    case ActGenElement.eGenElementAction.PressElement:
+                        try
+                        {
+                            e = LocateElement(act);
+                            PressElement(e, 1, 1, TimeSpan.FromSeconds(1));
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                        }
+                        break;
+
                     case ActGenElement.eGenElementAction.SetValue:
                         e = LocateElement(act);
                         if (e != null)
@@ -971,7 +996,7 @@ namespace Amdocs.Ginger.CoreNET
         private string GetAppPackage(ActMobileDevice act)
         {
             string appPackage = null;
-            if (string.IsNullOrEmpty(act.ActionAppPackage.Value) || act.ActionAppPackage.Value.ToLower().Trim() == "default")
+            if (string.IsNullOrEmpty(act.ActionAppPackage.ValueForDriver) || act.ActionAppPackage.ValueForDriver.ToLower().Trim() == "default")
             {
                 if (DevicePlatformType == eDevicePlatformType.Android)
                 {
@@ -997,20 +1022,50 @@ namespace Amdocs.Ginger.CoreNET
             {
                 switch (act.MobileDeviceAction)
                 {
+                    case ActMobileDevice.eMobileDeviceAction.TapXY:
+                        TapXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.DoubleTapXY:
+                        DoubleTapXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
+                        break;
+
                     case ActMobileDevice.eMobileDeviceAction.PressXY:
-                        //tc = new TouchAction(Driver);
-                        //tc.Press(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
-                        PressXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver), TimeSpan.FromSeconds(1));
+                        PressXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver), 
+                                        TimeSpan.FromMilliseconds(Convert.ToInt32(act.PressDuration.ValueForDriver)));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LongPressXY:
-                        //tc = new TouchAction(Driver);
-                       // tc.LongPress(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
                         PressXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver), TimeSpan.FromSeconds(3));
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.TapXY:
-                        TapXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
+                    case ActMobileDevice.eMobileDeviceAction.DragXYXY:
+                        DragAndDropByXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
+                                           Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver),
+                                            TimeSpan.FromMilliseconds(Convert.ToInt32(act.PressDuration.ValueForDriver)),
+                                            TimeSpan.FromMilliseconds(Convert.ToInt32(act.DragDuration.ValueForDriver)));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
+                        SwipeByXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
+                                  Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver),
+                                  TimeSpan.FromMilliseconds(Convert.ToInt32(act.SwipeDuration.ValueForDriver)));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeDown:
+                        SwipeScreen(eSwipeSide.Down, Convert.ToDouble(act.SwipeScale.ValueForDriver), TimeSpan.FromMilliseconds(Convert.ToInt32(act.SwipeDuration.ValueForDriver)));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeUp:
+                        SwipeScreen(eSwipeSide.Up, Convert.ToDouble(act.SwipeScale.ValueForDriver), TimeSpan.FromMilliseconds(Convert.ToInt32(act.SwipeDuration.ValueForDriver)));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
+                        SwipeScreen(eSwipeSide.Left, Convert.ToDouble(act.SwipeScale.ValueForDriver), TimeSpan.FromMilliseconds(Convert.ToInt32(act.SwipeDuration.ValueForDriver)));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeRight:
+                        SwipeScreen(eSwipeSide.Right, Convert.ToDouble(act.SwipeScale.ValueForDriver), TimeSpan.FromMilliseconds(Convert.ToInt32(act.SwipeDuration.ValueForDriver)));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressBackButton:
@@ -1078,30 +1133,10 @@ namespace Amdocs.Ginger.CoreNET
                         {
                             act.Error = "Operation not supported for this mobile OS or application type.";
                         }
-                        break;
-
-                    case ActMobileDevice.eMobileDeviceAction.SwipeDown:
-                        SwipeScreen(eSwipeSide.Down, 1);
-                        break;
-
-                    case ActMobileDevice.eMobileDeviceAction.SwipeUp:
-                        SwipeScreen(eSwipeSide.Up, 1);
-                        break;
-                    case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
-                        SwipeScreen(eSwipeSide.Left);
-                        break;
-
-                    case ActMobileDevice.eMobileDeviceAction.SwipeRight:
-                        SwipeScreen(eSwipeSide.Right);
-                        break;
+                        break;                   
 
                     case ActMobileDevice.eMobileDeviceAction.TakeScreenShot:
                         ActScreenShotHandler(act);
-                        break;
-
-                    case ActMobileDevice.eMobileDeviceAction.DragXYXY:
-                        DoDrag(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
-                            Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetCurrentApplicationInfo:
@@ -1126,18 +1161,6 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
-                        //ITouchAction swipe;
-                        //swipe = BuildTouchAction(Driver,
-                        //    Convert.ToInt32(act.X1.ValueForDriver),
-                        //    Convert.ToInt32(act.Y1.ValueForDriver),
-                        //    Convert.ToInt32(act.X2.ValueForDriver),
-                        //    Convert.ToInt32(act.Y2.ValueForDriver), 1000);
-                        //swipe.Perform();
-                        SwipeByXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
-                                  Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver), TimeSpan.FromSeconds(1));
-                        break;
-
                     case ActMobileDevice.eMobileDeviceAction.GetPageSource:
                         act.AddOrUpdateReturnParamActual("Page Source", Driver.PageSource);
                         break;
@@ -1145,31 +1168,38 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.LockDevice:
                             PerformLockButtonPress(eLockOperation.Lock);
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
                             PerformLockButtonPress(eLockOperation.UnLock);
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
                         AddReturnParamFromDict(GetDeviceBatteryInfo(), act);
                         act.RawResponseValues = GetDeviceMetricsString("batteryinfo").Result;
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceCPUUsage:
                         AddReturnParamFromDict(GetDeviceCPUInfo(), act);
                         act.RawResponseValues = GetDeviceMetricsString("cpuinfo").Result;
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceNetwork:
                         act.AddOrUpdateReturnParamActual("Device's network information", GetDeviceNetworkInfo()?.Result);
                         act.RawResponseValues = GetDeviceMetricsString("networkinfo").Result;
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceRAMUsage:
                         AddReturnParamFromDict(GetDeviceMemoryInfo(), act);
                         act.RawResponseValues = GetDeviceMetricsString("memoryinfo").Result;
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceGeneralInfo:
                         foreach (KeyValuePair<string, object> entry in GetDeviceGeneralInfo())
                         {
                             act.AddOrUpdateReturnParamActual(entry.Key, entry.Value.ToString());
                         }
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
                         string photoString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
                         string photoSimulationResponse = SimulatePhotoOrBarcode(photoString, "camera");
@@ -1178,6 +1208,7 @@ namespace Amdocs.Ginger.CoreNET
                             act.Error = photoSimulationResponse;
                         }
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.SimulateBarcode:
                         string barcodeString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
                         string barcodeSimulationResponse = SimulatePhotoOrBarcode(barcodeString, "barcode");
@@ -1186,6 +1217,7 @@ namespace Amdocs.Ginger.CoreNET
                             act.Error = barcodeSimulationResponse;
                         }
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
                         {
                             string biometricsAnswer = string.Empty;
@@ -1213,9 +1245,11 @@ namespace Amdocs.Ginger.CoreNET
                             }
                             break;
                         }
+
                     case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
                         CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
                         break;
+
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
@@ -1387,13 +1421,6 @@ namespace Amdocs.Ginger.CoreNET
 
         public void TapXY(int pageX, int pageY)
         {
-            //OpenQA.Selenium.Appium.Interactions.PointerInputDevice finger = new OpenQA.Selenium.Appium.Interactions.PointerInputDevice(PointerKind.Touch, "finger");
-            //ActionBuilder tapBuild = new ActionBuilder();
-            //tapBuild.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageX, pageY, TimeSpan.Zero));
-            //tapBuild.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
-            //tapBuild.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
-            //((IActionExecutor)Driver).PerformActions(tapBuild.ToActionSequenceList());
-
             AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
             ActionBuilder actionBuilder = new ActionBuilder();
             actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageX, pageY, TimeSpan.Zero));
@@ -1450,6 +1477,25 @@ namespace Amdocs.Ginger.CoreNET
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
 
+        public void PerformLongPress(long x, long y, TimeSpan? clickDuration = null)
+        {
+            if (clickDuration == null)
+            {
+                clickDuration = TimeSpan.FromSeconds(3);
+            }
+
+            PressXY((int)x, (int)y, (TimeSpan)clickDuration);
+
+            if (IsRecording)
+            {
+                var mobDevAction = GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.LongPressXY);
+                mobDevAction.X1.Value = x.ToString();
+                mobDevAction.Y1.Value = y.ToString();
+                mobDevAction.PressDuration.Value = ((TimeSpan)clickDuration).TotalMilliseconds.ToString();
+                RecordingOperations(mobDevAction);
+            }
+        }
+
         public void PressElement(IWebElement element, int elementX, int elementY, TimeSpan pressDuration)
         {
             AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
@@ -1461,41 +1507,26 @@ namespace Amdocs.Ginger.CoreNET
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
 
-        public void PerformLongPress(long x, long y)
-        {
-            //TouchAction tc = new TouchAction(Driver);
-            //tc.LongPress(x, y).Perform();
-            PressXY((int)x, (int)y, TimeSpan.FromSeconds(3));
-
-            if (IsRecording)
-            {
-                var mobDevAction = GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.LongPressXY);
-                mobDevAction.X1.Value = x.ToString();
-                mobDevAction.Y1.Value = y.ToString();
-                RecordingOperations(mobDevAction);
-            }
-        }
-
-        public void DragAndDropByXY(int pageDragX, int pageDragY, int pageDropX, int pageDropY, TimeSpan dragDuration)
+        public void DragAndDropByXY(int pageDragX, int pageDragY, int pageDropX, int pageDropY, TimeSpan pressDuration, TimeSpan dragDuration)
         {
             AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
             ActionBuilder actionBuilder = new ActionBuilder();
             actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageDragX, pageDragY, TimeSpan.Zero));
             actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
-            actionBuilder.AddAction(finger.CreatePause(TimeSpan.FromMilliseconds(200)));
+            actionBuilder.AddAction(finger.CreatePause(pressDuration));
             actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageDropX, pageDropY, dragDuration));
             actionBuilder.AddAction(finger.CreatePause(TimeSpan.FromMilliseconds(200)));
             actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
 
-        public void SwipeByXY(int pageStartX, int pageStartY, int pageEndX, int pageEndY,  TimeSpan swipeSpeed)
+        public void SwipeByXY(int pageStartX, int pageStartY, int pageEndX, int pageEndY,  TimeSpan swipeDuration)
         {
             AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
             ActionBuilder actionBuilder = new ActionBuilder();
             actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageStartX, pageStartY, TimeSpan.Zero));
             actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
-            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageEndX, pageEndY, swipeSpeed));
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageEndX, pageEndY, swipeDuration));
             actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
@@ -1631,7 +1662,7 @@ namespace Amdocs.Ginger.CoreNET
                         case eLockOperation.UnLock:
                             ((AndroidDriver)Driver).Unlock();
                             System.Threading.Thread.Sleep(200);
-                            SwipeScreen(eSwipeSide.Up);
+                            SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
                             break;
                     }
                     break;
@@ -1697,7 +1728,7 @@ namespace Amdocs.Ginger.CoreNET
             return Pagesource;
         }
 
-        public void SwipeScreen(eSwipeSide side, double impact = 1)
+        public void SwipeScreen(eSwipeSide side, double swipeScale, TimeSpan swipeDuration)
         {
             System.Drawing.Size sz = Driver.Manage().Window.Size;
             double startX;
@@ -1710,51 +1741,33 @@ namespace Amdocs.Ginger.CoreNET
                     startX = sz.Width * 0.5;
                     startY = sz.Height * 0.3;
                     endX = sz.Width * 0.5;
-                    endY = startY + (sz.Height * 0.4 * impact);
+                    endY = startY + (sz.Height * 0.4 * swipeScale);
                     break;
                 case eSwipeSide.Up: // center of header
                     startX = sz.Width * 0.5;
                     startY = sz.Height * 0.7;
                     endX = sz.Width * 0.5;
-                    endY = startY - (sz.Height * 0.4 * impact);
+                    endY = startY - (sz.Height * 0.4 * swipeScale);
                     break;
                 case eSwipeSide.Right: // center of left side
                     startX = sz.Width * 0.3;
                     startY = sz.Height * 0.5;
-                    endX = startX + (sz.Width * 0.4 * impact);
+                    endX = startX + (sz.Width * 0.4 * swipeScale);
                     endY = sz.Height * 0.5;
                     break;
                 case eSwipeSide.Left: // center of right side
                     startX = sz.Width * 0.7;
                     startY = sz.Height * 0.5;
-                    endX = startX - (sz.Width * 0.4 * impact);
+                    endX = startX - (sz.Width * 0.4 * swipeScale);
                     endY = sz.Height * 0.5;
                     break;
                 default:
                     throw new ArgumentException("swipeScreen(): dir: '" + side + "' NOT supported");
             }
 
-            //(BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();
-            SwipeByXY((int)startX, (int)startY, (int)endX, (int)endY, TimeSpan.FromMilliseconds(200));
+            SwipeByXY((int)startX, (int)startY, (int)endX, (int)endY, swipeDuration);
         }
-
-        //public ITouchAction BuildTouchAction(AppiumDriver driver, double startX, double startY, double endX, double endY, int waitDuration = 200)
-        //{
-        //    ITouchAction touchAction;
-        //    touchAction = new TouchAction(driver)
-        //    .Press(startX, startY)
-        //    .Wait(waitDuration)
-        //    .MoveTo(endX, endY)
-        //    .Release();
-
-        //    return touchAction;
-        //}
-
-        public void DoDrag(int startX, int startY, int endX, int endY)
-        {
-            //(BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();
-            DragAndDropByXY(startX, startY, endX, endY, TimeSpan.FromMilliseconds(200));
-        }
+       
 
         private string GetCurrentPackage()
         {
@@ -2964,9 +2977,9 @@ namespace Amdocs.Ginger.CoreNET
 
    
 
-        public void PerformDrag(Point start, Point end)
+        public void PerformDrag(Point start, Point end, TimeSpan pressDuration,  TimeSpan dragDuration)
         {
-            DoDrag(start.X, start.Y, end.X, end.Y);
+            DragAndDropByXY(start.X, start.Y, end.X, end.Y, pressDuration, dragDuration);
 
             if (IsRecording)
             {
@@ -2977,6 +2990,9 @@ namespace Amdocs.Ginger.CoreNET
 
                 mobDevAction.X2.Value = end.X.ToString();
                 mobDevAction.Y2.Value = end.Y.ToString();
+
+                mobDevAction.PressDuration.Value = pressDuration.TotalMilliseconds.ToString();
+                mobDevAction.DragDuration.Value = dragDuration.TotalMilliseconds.ToString();
                 RecordingOperations(mobDevAction);
             }
         }
@@ -3346,13 +3362,15 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1)
+        public void PerformScreenSwipe(eSwipeSide swipeSide, double swipeScale, TimeSpan swipeDuration)
         {
-            SwipeScreen(swipeSide, impact);
+            SwipeScreen(swipeSide, swipeScale, swipeDuration);
 
             if (IsRecording)
             {
                 ActMobileDevice mobAct = new ActMobileDevice();
+                mobAct.SwipeScale.Value = swipeScale.ToString();
+                mobAct.SwipeDuration.Value = ((TimeSpan)swipeDuration).TotalMilliseconds.ToString();
                 switch (swipeSide)
                 {
                     case eSwipeSide.Up:
