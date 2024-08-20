@@ -371,34 +371,34 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseSSLCertificate(object sender, RoutedEventArgs e)
         {
-            Boolean.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile), out var ImportFileFlag);
-            string solutionFolder = WorkSpace.Instance.Solution.Folder;
-            string certFilePath = CertificatePath.ValueTextBox.Text;
-
             if (CertificatePath.ValueTextBox.Text != null)
             {
-                certFilePath = certFilePath.Replace(@"~\", solutionFolder, StringComparison.InvariantCultureIgnoreCase);
-                if (ImportFileFlag)
+                string certFilePath = CertificatePath.ValueTextBox.Text.Replace(@"~\", WorkSpace.Instance.Solution.Folder, StringComparison.InvariantCultureIgnoreCase);
+
+                if (IsToImportCertificateFile() && !certFilePath.Contains(webServicesCertificatePath, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (!certFilePath.Contains(webServicesCertificatePath, StringComparison.InvariantCultureIgnoreCase))
+                    string targetDirPath = Path.Combine(WorkSpace.Instance.Solution.Folder, webServicesCertificatePath);
+                    string destFilePath = GetUniqueFilePath(Path.Combine(targetDirPath, Path.GetFileName(certFilePath)));
+
+                    if (!Directory.Exists(targetDirPath))
                     {
-                        string targetDirPath = Path.Combine(solutionFolder, webServicesCertificatePath);
-                        string destFilePath = Path.Combine(targetDirPath, Path.GetFileName(certFilePath));
-                        destFilePath = GetUniqueFilePath(destFilePath);
-
-                        if (!Directory.Exists(targetDirPath))
-                        {
-                            Directory.CreateDirectory(targetDirPath);
-                        }
-
-                        File.Copy(certFilePath, destFilePath, true);
-                        certFilePath = destFilePath;
+                        Directory.CreateDirectory(targetDirPath);
                     }
+
+                    File.Copy(certFilePath, destFilePath, true);
+                    certFilePath = destFilePath;
                 }
-                
-                CertificatePath.ValueTextBox.Text = certFilePath.Replace(solutionFolder, @"~\", StringComparison.InvariantCultureIgnoreCase);
+
+                CertificatePath.ValueTextBox.Text = certFilePath.Replace(WorkSpace.Instance.Solution.Folder, @"~\", StringComparison.InvariantCultureIgnoreCase);
             }
         }
+
+        private bool IsToImportCertificateFile()
+        {
+            bool.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile), out var importFileFlag);
+            return importFileFlag;
+        }
+
         private static string GetUniqueFilePath(string destinationFilePath)
         {
             int fileNum = 1;
@@ -422,8 +422,7 @@ namespace Ginger.Actions.WebServices
 
         private void DoNotCertificateImportFile_Checked(object sender, RoutedEventArgs e)
         {
-            Boolean.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile), out var ImportFileFlag);
-            if (ImportFileFlag && ((CheckBox)sender).IsLoaded)
+            if (IsToImportCertificateFile() && ((CheckBox)sender).IsLoaded)
             {
                 BrowseSSLCertificate(sender, e);
             }

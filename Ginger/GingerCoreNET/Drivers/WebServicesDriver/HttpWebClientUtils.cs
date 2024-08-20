@@ -60,30 +60,25 @@ namespace GingerCore.Actions.WebAPI
             mAct = act;
             Handler = new HttpClientHandler();
 
-            if (SetNetworkCredentials(Handler) && SetCertificates(Handler))
+            if (!SetNetworkCredentials(Handler) || !SetCertificates(Handler))
             {
-                SetProxySettings(ProxySettings, useProxyServerSettings, Handler);
-                SetAutoDecompression(Handler);
-
-                InitilizeClient(Handler);
-
-                if (SetEndPointURL() && SetAuthorization())
-                {
-                    SetSecurityType();
-                    AddHeadersToClient();
-
-                    if (act.GetType() == typeof(ActWebAPISoap))
-                    {
-                        return RequestConstracotSOAP((ActWebAPISoap)act);
-                    }
-                    else
-                    {
-                        return RequestConstractorREST(Handler);
-                    }
-                }
+                return false;
             }
 
-            return false;
+            SetProxySettings(ProxySettings, useProxyServerSettings, Handler);
+            SetAutoDecompression(Handler);
+
+            InitilizeClient(Handler);
+
+            if (!SetEndPointURL() || !SetAuthorization())
+            {
+                return false;
+            }
+
+            SetSecurityType();
+            AddHeadersToClient();
+
+            return act.GetType() == typeof(ActWebAPISoap) ? RequestConstracotSOAP((ActWebAPISoap)act) : RequestConstractorREST(Handler);
         }
 
         private void SetAutoDecompression(HttpClientHandler handler)
@@ -243,21 +238,18 @@ namespace GingerCore.Actions.WebAPI
             if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.AllSSL.ToString())
             {
                 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-                handler.ServerCertificateCustomValidationCallback += (_, certificate, chain, errors) => { return true; };
+                handler.ServerCertificateCustomValidationCallback += (_, _, chain, errors) => { return true; };
             }
             else if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.Custom.ToString())
             {
                 //Use Custom Certificate:
                 handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
                 string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
 
                 if (!string.IsNullOrEmpty(path))
                 {
                     string certificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
-                    //string certificateName = Path.GetFileName(path);
-                    //string targetPath = Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\EmailCertificates");
-                    //string certificatePath = Path.Combine(targetPath, certificateName);
+
                     if (!string.IsNullOrEmpty(path))
                     {                        
                         if (string.IsNullOrEmpty(certificateKey))
