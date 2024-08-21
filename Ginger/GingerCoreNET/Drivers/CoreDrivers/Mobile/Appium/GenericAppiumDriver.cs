@@ -54,7 +54,6 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.Interactions;
-using OpenQA.Selenium.Appium.Interfaces;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
@@ -330,33 +329,9 @@ namespace Amdocs.Ginger.CoreNET
                 string error = string.Format("Failed to start Appium session.{0}Error: '{1}'", System.Environment.NewLine, ex.Message);
                 Reporter.ToLog(eLogLevel.ERROR, error, ex);
                 ErrorMessageFromDriver = error;
-
-                //if (!WorkSpace.Instance.RunningInExecutionMode)
-                //{
-                //    Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
-                //}
                 return false;
             }
         }
-
-        //private static ICommandExecutor CreateRealExecutor(Uri remoteAddress, TimeSpan commandTimeout, IWebProxy proxy)
-        //{
-        //    var seleniumAssembly = Assembly.Load("WebDriver");
-        //    var commandType = seleniumAssembly.GetType("OpenQA.Selenium.Remote.HttpCommandExecutor");
-        //    ICommandExecutor commandExecutor = null;
-
-        //    if (null != commandType)
-        //    {
-        //        commandExecutor =
-        //            Activator.CreateInstance(commandType, new object[] { remoteAddress, commandTimeout }) as
-        //                ICommandExecutor;              
-        //    }
-
-        //    commandExecutor = new HttpCommandExecutor(remoteAddress, commandTimeout);
-        //    ((HttpCommandExecutor)commandExecutor).Proxy = proxy;
-
-        //    return commandExecutor;
-        //}
 
         private DriverOptions GetCapabilities()
         {
@@ -469,26 +444,6 @@ namespace Amdocs.Ginger.CoreNET
             mIsDeviceConnected = false;
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
-
-        //public List<IWebElement> LocateElements(eLocateBy LocatorType, string LocValue)
-        //{
-        //    if (AppType == eAppType.Web)
-        //        return mSeleniumDriver.LocateElements(LocatorType, LocValue);
-
-        //        IReadOnlyCollection<IWebElement> elem = null;
-
-        //    switch (LocatorType)
-        //    {
-        //        //need to override regular selenium driver locator if needed, 
-        //        //if not then to run the regular selenium driver locator for it to avoid duplication
-
-        //        default:
-        //            elem = mSeleniumDriver.LocateElements(LocatorType, LocValue);
-        //            break;
-        //    }
-
-        //    return elem.ToList();           
-        //}
 
         public IWebElement LocateElement(Act act)
         {
@@ -751,9 +706,6 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.ClickXY:
-                        //ITouchAction tc;
-                        //tc = new TouchAction(Driver);
-                        //tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate)), Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate))).Perform();
                         TapXY(Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate)), Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate)));
                         break;
 
@@ -810,9 +762,6 @@ namespace Amdocs.Ginger.CoreNET
                         try
                         {
                             e = LocateElement(act);
-                            //TouchAction t = new TouchAction(Driver);
-                            //t.Tap(e, 1, 1);
-                            //Driver.PerformTouchAction(t);
                             TapElement(e, 1, 1);
                         }
                         catch (Exception ex)
@@ -854,7 +803,7 @@ namespace Amdocs.Ginger.CoreNET
                             //make sure value was cleared- trying to handle clear issue in WebViews
                             try
                             {
-                                //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Searc, or say "OK Google".
+                                //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Search, or say "OK Google".
                                 //Wasting time when not needed
                                 string elemntContent = e.Text; //.GetAttribute("name");
                                 if (string.IsNullOrEmpty(elemntContent) == false)
@@ -875,16 +824,12 @@ namespace Amdocs.Ginger.CoreNET
                             switch (DevicePlatformType)
                             {
                                 case eDevicePlatformType.Android:
-                                    //e.Clear();
                                     e.SendKeys(act.GetInputParamCalculatedValue("Value"));
                                     break;
                                 case eDevicePlatformType.iOS:
-                                    //e.Clear();
                                     e.SendKeys(act.GetInputParamCalculatedValue("Value"));
-                                    //((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
                                     break;
                             }
-                            //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 100);
                         }
                         else
                         {
@@ -1366,7 +1311,6 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.AddOrUpdateReturnParamActual(entry.Key, entry.Value);
             }
-
         }
 
         public override void HighlightActElement(Act act)
@@ -1385,34 +1329,6 @@ namespace Amdocs.Ginger.CoreNET
                 act.Error = "Error occurred while taking device screen shot, Details: " + ex.Message;
             }
         }
-
-        //private void CreateScreenShot(Act act)
-        //{
-        //    Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-        //    string filename = Path.GetTempFileName();
-        //    ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
-        //    Bitmap tmp = new System.Drawing.Bitmap(filename);
-        //    act.AddScreenShot(tmp);
-        //}
-
-        //public Screenshot GetScreenShot()
-        //{
-        //    Screenshot ss=null;
-        //    try
-        //    {
-        //        ss = Driver.GetScreenshot ();
-
-        //    }
-        //    catch
-        //    {
-        //        Bitmap bmp = new Bitmap (1024, 768);
-        //        var ms = new MemoryStream ();
-        //        bmp.Save (ms, System.Drawing.Imaging.ImageFormat.Png);
-        //        var byteImage = ms.ToArray ();
-        //        ss = new Screenshot (Convert.ToBase64String (byteImage));
-        //    }
-        //     return ss;
-        //}
 
         public ICollection<IWebElement> GetAllElements()
         {
@@ -1530,8 +1446,6 @@ namespace Amdocs.Ginger.CoreNET
             actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
-
-
 
         public void PerformBackButtonPress()
         {

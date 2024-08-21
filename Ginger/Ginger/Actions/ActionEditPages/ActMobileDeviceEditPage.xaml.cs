@@ -237,6 +237,7 @@ namespace Ginger.Actions
                     xXY1Pnl.Visibility = Visibility.Visible;
                     xXY2Pnl.Visibility = Visibility.Visible;
                     xSwipePnl.Visibility = Visibility.Visible;
+                    xSwipeScalePnl.Visibility = Visibility.Collapsed;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.SwipeDown:
@@ -244,6 +245,7 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
                 case ActMobileDevice.eMobileDeviceAction.SwipeRight:
                     xSwipePnl.Visibility = Visibility.Visible;
+                    xSwipeScalePnl.Visibility = Visibility.Visible;
                     break;
 
                 case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
