@@ -27,7 +27,9 @@ using GingerCore.Actions.WebServices;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -38,6 +40,7 @@ namespace Ginger.Actions.WebServices
     /// </summary>
     public partial class ActWebAPIEditPage : Page
     {
+        private const string webServicesCertificatePath = @"Documents\WebServices\Certificates";
         ActWebAPIBase mAct;
         ApplicationAPIUtils.eWebApiType mWebApiType;
 
@@ -56,6 +59,13 @@ namespace Ginger.Actions.WebServices
             InitializeComponent();
             BindUiControls();
             InitializeUIByActionType();
+
+            CertificatePath.ValueTextBox.LostFocus += ValueTextBox_LostFocus;
+        }
+
+        private void ValueTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            BrowseSSLCertificate(sender, e);
         }
 
         private void InitializeUIByActionType()
@@ -362,49 +372,65 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseSSLCertificate(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if (CertificatePath.ValueTextBox.Text != null)
             {
-                // replace Absolute file name with relative to solution
-                string FileName = CertificatePath.ValueTextBox.Text.ToUpper();
-                if (FileName.Contains(SolutionFolder))
-                {
-                    FileName = FileName.Replace(SolutionFolder, @"~\");
-                }
+                string certFilePath = CertificatePath.ValueTextBox.Text.Replace(@"~\", WorkSpace.Instance.Solution.Folder, StringComparison.InvariantCultureIgnoreCase);
 
-                CertificatePath.ValueTextBox.Text = FileName;
-
-                bool ImportFileFlag = false;
-                Boolean.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile), out ImportFileFlag);
-                if (ImportFileFlag)
+                if (IsToImportCertificateFile() && !certFilePath.Contains(webServicesCertificatePath, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    //TODO import Certificate File to solution folder
-                    string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\WebServices\Certificates");
-                    if (!System.IO.Directory.Exists(targetPath))
+                    string targetDirPath = Path.Combine(WorkSpace.Instance.Solution.Folder, webServicesCertificatePath);
+                    string destFilePath = GetUniqueFilePath(Path.Combine(targetDirPath, Path.GetFileName(certFilePath)));
+
+                    if (!Directory.Exists(targetDirPath))
                     {
-                        System.IO.Directory.CreateDirectory(targetPath);
+                        Directory.CreateDirectory(targetDirPath);
                     }
 
-                    string destFile = System.IO.Path.Combine(targetPath, System.IO.Path.GetFileName(FileName));
-
-                    int fileNum = 1;
-                    string copySufix = "_Copy";
-                    while (System.IO.File.Exists(destFile))
-                    {
-                        fileNum++;
-                        string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
-                        if (newFileName.IndexOf(copySufix) != -1)
-                        {
-                            newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
-                        }
-
-                        newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
-                        destFile = System.IO.Path.Combine(targetPath, newFileName);
-                    }
-
-                    System.IO.File.Copy(FileName, destFile, true);
-                    CertificatePath.ValueTextBox.Text = @"~\Documents\WebServices\Certificates\" + System.IO.Path.GetFileName(destFile);
+                    File.Copy(certFilePath, destFilePath, true);
+                    certFilePath = destFilePath;
                 }
+
+                CertificatePath.ValueTextBox.Text = certFilePath.Replace(WorkSpace.Instance.Solution.Folder, @"~\", StringComparison.InvariantCultureIgnoreCase);
+            }
+        }
+
+        private bool IsToImportCertificateFile()
+        {
+            bool.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile), out var importFileFlag);
+            return importFileFlag;
+        }
+
+        private static string GetUniqueFilePath(string destinationFilePath)
+        {
+            int fileNum = 1;
+            string copySufix = "_copy";
+            string targetDirPath = Path.GetDirectoryName(destinationFilePath);
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(destinationFilePath);
+            while (File.Exists(destinationFilePath))
+            {
+                fileNum++;
+                if (fileNameWithoutExt.Contains(copySufix, StringComparison.CurrentCulture))
+                {
+                    fileNameWithoutExt = fileNameWithoutExt.Substring(0, fileNameWithoutExt.IndexOf(copySufix));
+                }
+                StringBuilder sb = new  StringBuilder();
+                sb.Append(fileNameWithoutExt);
+                sb.Append(copySufix);
+                sb.Append(fileNum);
+                sb.Append(Path.GetExtension(destinationFilePath));
+
+                fileNameWithoutExt = sb.ToString();
+                destinationFilePath = Path.Combine(targetDirPath, fileNameWithoutExt);
+            }
+
+            return destinationFilePath;
+        }
+
+        private void DoNotCertificateImportFile_Checked(object sender, RoutedEventArgs e)
+        {
+            if (IsToImportCertificateFile() && ((CheckBox)sender).IsLoaded)
+            {
+                BrowseSSLCertificate(sender, e);
             }
         }
 
@@ -642,6 +668,5 @@ namespace Ginger.Actions.WebServices
             }
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw request preview, see log for details.");
         }
-
     }
 }
