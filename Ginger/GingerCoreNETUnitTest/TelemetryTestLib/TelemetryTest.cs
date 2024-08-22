@@ -47,7 +47,7 @@ namespace GingerCoreNETUnitTest.TelemetryTestLib
 
 
             // Arrange
-            Telemetry.CheckVersionAndNews();
+            Amdocs.Ginger.CoreNET.TelemetryLib.Telemetry.CheckVersionAndNews();
 
             // Act
 
