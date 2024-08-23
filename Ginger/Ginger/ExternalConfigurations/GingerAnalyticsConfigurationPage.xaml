@@ -56,10 +56,10 @@
                         <Label x:Name="xClientSecretLabel" Content="Client Secret:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
                         <Label x:Name="xClientSecretValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xClientSecretTextBox" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" MinWidth="400"  Width="Auto" LostKeyboardFocus="xClientSecretTextBox_LostKeyboardFocus"/>
+                    <Activities:UCValueExpression x:Name="xClientSecretTextBox" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" Width="400" LostKeyboardFocus="xClientSecretTextBox_LostKeyboardFocus"/>
                 </Grid>
                 <Grid>
-                    <Button x:Name="xTestConBtn" Click="xTestConBtn_Click" Content="Test Connection" Width="100" Background="White" Style="{StaticResource $InputButtonStyle}" Margin="200,15,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                    <Button x:Name="xTestConBtn" Click="xTestConBtn_Click" Content="Test Connection" Width="100" Background="White" Style="{StaticResource $InputButtonStyle}" Margin="10,15,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
                 </Grid>
             </StackPanel>
         </Grid>

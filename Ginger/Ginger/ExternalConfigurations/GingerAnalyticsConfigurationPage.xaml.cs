@@ -29,14 +29,14 @@ using IdentityModel.Client;
 using Ginger.ValidationRules;
 
 namespace Ginger.ExternalConfigurations
-    {
+{
     /// <summary>
     /// Interaction logic for GingerAnalyticsConfigurationPage.xaml
     /// </summary>
     public partial class GingerAnalyticsConfigurationPage : GingerUIPage
     {
         private GingerAnalyticsConfiguration gingerAnalyticsUserConfig;
-
+        ValueExpression valueExpression;
         public GingerAnalyticsConfigurationPage()
         {
             InitializeComponent();
@@ -45,7 +45,7 @@ namespace Ginger.ExternalConfigurations
         private void Init()
         {
             gingerAnalyticsUserConfig = WorkSpace.Instance.Solution.GingerAnalyticsConfiguration;
-
+            valueExpression = new ValueExpression();
             gingerAnalyticsUserConfig.StartDirtyTracking();
             SetControls();
 
@@ -63,23 +63,13 @@ namespace Ginger.ExternalConfigurations
 
         }
 
-    private void ApplyValidationRules()
-    {
+        private void ApplyValidationRules()
+        {
             // check if fields have been populated (font-end validation)
             xGAAURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
             xISURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
             xClientIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("ClientID cannot be empty"));
             xClientSecretTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("ClientSecret cannot be empty"));
-            //GingerAnalyticsConfigPropertyChange();
-    }
-
-        private void GingerAnalyticsConfigPropertyChange()
-        {
-            // need in order to trigger the validation's rules on init binding (load/init form)
-            gingerAnalyticsUserConfig.OnPropertyChanged(nameof(GingerAnalyticsConfiguration.AccountUrl));
-            gingerAnalyticsUserConfig.OnPropertyChanged(nameof(GingerAnalyticsConfiguration.IdentityServiceURL));
-            gingerAnalyticsUserConfig.OnPropertyChanged(nameof(GingerAnalyticsConfiguration.ClientId));
-            gingerAnalyticsUserConfig.OnPropertyChanged(nameof(GingerAnalyticsConfiguration.ClientSecret));
         }
 
         private async void xTestConBtn_Click(object sender, RoutedEventArgs e)
@@ -87,37 +77,37 @@ namespace Ginger.ExternalConfigurations
             if (string.IsNullOrEmpty(gingerAnalyticsUserConfig.AccountUrl) || string.IsNullOrEmpty(gingerAnalyticsUserConfig.IdentityServiceURL)
                 || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientId) || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientSecret))
             {
-                Reporter.ToUser(eUserMsgKey.MissedMandatotryFields);
+                Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
                 return;
             }
 
 
             if (gingerAnalyticsUserConfig != null && gingerAnalyticsUserConfig.Token.Equals("token"))
             {
-                string clientId = EncryptionHandler.DecryptwithKey(gingerAnalyticsUserConfig.ClientId);
+                string clientId = CredentialsCalculation(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.ClientId);
 
-                string clientSecret = EncryptionHandler.DecryptwithKey(gingerAnalyticsUserConfig.ClientSecret);
+                string clientSecret = CredentialsCalculation(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.ClientSecret);
 
-                string address = gingerAnalyticsUserConfig.IdentityServiceURL;
+                string address = CredentialsCalculation(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.IdentityServiceURL);
 
                 bool isAuthorized = await RequestToken(clientId, clientSecret, address);
 
                 if (isAuthorized)
-                    {
+                {
                     Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionSuccess);
-                    }
+                }
                 else
-                    {
+                {
                     Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionFail);
-                    }
+                }
             }
-            else if(gingerAnalyticsUserConfig != null && !gingerAnalyticsUserConfig.Token.Equals("token"))
+            else if (gingerAnalyticsUserConfig != null && !gingerAnalyticsUserConfig.Token.Equals("token"))
             {
                 Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionSuccess);
             }
             else
             {
-            Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionFail);
+                Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionFail);
             }
 
         }
@@ -149,14 +139,14 @@ namespace Ginger.ExternalConfigurations
                 var client = new HttpClient(handler);
 
                 var disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
-                    {
+                {
                     Address = address,
                     Policy =
                        {
                        RequireHttps = true,
                        ValidateIssuerName = true
                        }
-                    });
+                });
 
                 var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
                 {
@@ -178,10 +168,35 @@ namespace Ginger.ExternalConfigurations
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Failed to connect to the server",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to the server", ex);
                 return false;
             }
         }
+        /// <summary>
+        /// Calculates the actual value from the input string based on its type.
+        /// If the input is a value expression, it computes the expression to get the value.
+        /// If the input is an encrypted string, it decrypts the string to retrieve the original value.
+        /// Returns the input as is if it doesn't match the above conditions.
+        /// </summary>
+        /// <param name="value">The input string which might be a value expression or an encrypted string.</param>
+        /// <returns>The calculated or decrypted value, or the input string if no processing is needed.</returns>
+        private string CredentialsCalculation(string value)
+        {
 
+            if (ValueExpression.IsThisAValueExpression(value))
+            {
+                valueExpression.DecryptFlag = true;
+                value = valueExpression.Calculate(value);
+                valueExpression.DecryptFlag = false;
+                return value;
+            }
+            else if (EncryptionHandler.IsStringEncrypted(value))
+            {
+                value = EncryptionHandler.DecryptwithKey(value);
+                return value;
+            }
+
+            return value;
+        }
     }
 }
