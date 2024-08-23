@@ -585,5 +585,8 @@ namespace Ginger.SolutionGeneral
 
         [IsSerializedForLocalRepository]
         public AskLisaConfiguration AskLisaConfiguration { get; set; } = new AskLisaConfiguration();
+
+        [IsSerializedForLocalRepository]
+        public GingerAnalyticsConfiguration GingerAnalyticsConfiguration { get; set; } = new GingerAnalyticsConfiguration();
     }
 }

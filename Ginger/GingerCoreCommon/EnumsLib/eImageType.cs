@@ -178,6 +178,7 @@ namespace Amdocs.Ginger.Common.Enums
         ActiveAll,
         ExpandToFullScreen,
         Exchange,
+        GingerAnalytics,
         Export,
         Filter,
         ImportFile,

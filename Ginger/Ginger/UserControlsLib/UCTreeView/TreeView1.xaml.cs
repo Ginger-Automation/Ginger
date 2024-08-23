@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -231,7 +232,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 xAddActionButton.Visibility = Visibility.Collapsed;
             }
         }
-
+     
         private void xTreeViewTree_ItemSelected(object sender, EventArgs e)
         {
             if (xTreeViewTree.CurrentSelectedTreeViewItem != null & AllowTreeTools == true)
@@ -441,5 +442,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             this.xAddButton.ButtonImageType = eImageType.MoveLeft;
         }
-    }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+            {
+
+            }
+        }
 }
