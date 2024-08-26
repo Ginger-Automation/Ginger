@@ -1239,12 +1239,7 @@ namespace GingerCore.ALM.RQM
             try
             {
                 //TODO: Populate list fields with CategoryTypes
-                populatedValue = "Starting fields retrieve process... ";
-                if (bw != null)
-                {
-                    bw.ReportProgress(totalValues, populatedValue);
-                }
-                
+                PopulateLogOnFieldMappingwinodw(bw, "Starting fields retrieve process... ");
                 string defectfieldurl = ALMCore.DefaultAlmConfig.DefectFieldAPI;
                 RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(defectfieldurl),true);
                 XmlDocument categoryTypeList = new XmlDocument();
