@@ -4207,7 +4207,7 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                POMExecutionUtils pomExcutionUtil = new POMExecutionUtils(act, act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : (act is ActAccessibilityTesting ? ((ActAccessibilityTesting)act).LocateValue : ((ActVisualTesting)act).LocateValue));
+                POMExecutionUtils pomExcutionUtil = new POMExecutionUtils(act, RetrieveActionValue(act));
 
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
@@ -4269,7 +4269,17 @@ namespace GingerCore.Drivers
             return elem;
         }
 
-
+        private static string RetrieveActionValue(Act act)
+        {
+            if(act is ActUIElement)
+            {
+                return ((ActUIElement)act).ElementLocateValue;
+            }
+            else
+            {
+                return act.LocateValue;
+            }
+        }
 
         private void SwitchFrame(ElementInfo EI)
         {

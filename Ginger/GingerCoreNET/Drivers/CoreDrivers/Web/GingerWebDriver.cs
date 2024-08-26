@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
@@ -194,9 +195,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         private protected async Task UnhighlightElementAsync(IBrowserElement element)
         {
-            await element.ExecuteJavascriptAsync("element => element.style.outline=''");
-            await element.ExecuteJavascriptAsync("element => element.style.backgroundColor=''");
-            await element.ExecuteJavascriptAsync("element => element.style.border=''");
+            try
+            {
+                await element.ExecuteJavascriptAsync("element => element.style.outline=''");
+                await element.ExecuteJavascriptAsync("element => element.style.backgroundColor=''");
+                await element.ExecuteJavascriptAsync("element => element.style.border=''");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while unhighlighting element", ex);
+            }
         }
 
         private protected Task SwitchToFrame(eLocateBy locateBy, string locateValue)
