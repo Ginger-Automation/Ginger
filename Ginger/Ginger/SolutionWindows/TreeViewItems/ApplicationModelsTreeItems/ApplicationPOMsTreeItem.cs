@@ -39,12 +39,17 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         public RepositoryFolder<ApplicationPOMModel> mPOMModelFolder;
         private POMModelsPage mPOMModelsPage;
         private ObservableList<ApplicationPOMModel> mChildPoms = null;
+        private ApplicationPlatform? _applicationPlatform;
 
         public ApplicationPOMsTreeItem(RepositoryFolder<ApplicationPOMModel> POMModelFolder)
         {
             mPOMModelFolder = POMModelFolder;
         }
 
+        public ApplicationPOMsTreeItem(RepositoryFolder<ApplicationPOMModel> POMModelFolder, ApplicationPlatform? applicationPlatform) : this(POMModelFolder)
+        {
+            _applicationPlatform = applicationPlatform;
+        }
         Object ITreeViewItem.NodeObject()
         {
             return mPOMModelFolder;
@@ -150,7 +155,11 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             if (GingerCore.General.GetInputWithValidation("Add Page Object Model", "Page Object Model Name:", ref NewPOMName, null, false, emptyPOM))
             {
                 ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
-                if (TargetApplications != null && TargetApplications.Count > 0)
+                if (_applicationPlatform != null)
+                {
+                    emptyPOM.TargetApplicationKey = _applicationPlatform.Key;
+                }
+                else if (TargetApplications != null && TargetApplications.Count > 0)
                 {
                     emptyPOM.TargetApplicationKey = TargetApplications[0].Key;
                 }
