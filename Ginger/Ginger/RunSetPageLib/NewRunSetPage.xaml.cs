@@ -1754,7 +1754,7 @@ namespace Ginger.Run
             else
             {
                 mRunSetsExecutionsPage.RunsetConfig = mRunSetConfig;
-                mRunSetsExecutionsPage.ReloadData();
+                mRunSetsExecutionsPage.ReloadExecutionHistoryData();
             }
 
             UpdateRunsetExecutionHistoryTabHeader();
