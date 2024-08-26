@@ -40,8 +40,9 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
                 return Task.CompletedTask;
             }
 
-            public Task DeleteAsync(TRecord record)
+            public Task<bool> DeleteAsync(TRecord record)
             {
+                bool wasFound = false;
                 for (var index = 0; index < _records.Count; index++)
                 {
                     var savedRecord = _records[index];
@@ -50,15 +51,16 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
                         savedRecord != null && savedRecord.Equals(record))
                     {
                         _records.RemoveAt(index);
+                        wasFound = true;
                         break;
                     }
                 }
-                return Task.CompletedTask;
+                return Task.FromResult(wasFound);
             }
 
-            public Task MarkFailedToUpload(TRecord record)
+            public Task<bool> MarkFailedToUpload(TRecord record)
             {
-                return Task.CompletedTask;
+                return Task.FromResult(true);
             }
         }
 

@@ -35,7 +35,7 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
             mockLocalDB
                 .Setup(m => m.MarkFailedToUpload(It.Is<string>(r => !string.Equals(r, records[1]))))
                 .Callback(() => recordsMarkedInLocalDB++)
-                .Returns(Task.CompletedTask);
+                .ReturnsAsync(true);
             ILogger logger = TelemetryStepTestUtils.NewConsoleLogger();
             MarkUnsuccessfulInLocalDBTelemetryStep<string> step = new(bufferSize: 1, mockLocalDB.Object, logger);
             step.StartConsumer();

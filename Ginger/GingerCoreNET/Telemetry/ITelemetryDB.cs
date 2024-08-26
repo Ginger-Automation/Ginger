@@ -10,7 +10,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
     internal interface ITelemetryDB<TRecord>
     {
         public Task AddAsync(TRecord record);
-        public Task DeleteAsync(TRecord record);
-        public Task MarkFailedToUpload(TRecord record);
+        public Task<bool> DeleteAsync(TRecord record);
+        public Task<bool> MarkFailedToUpload(TRecord record);
     }
 }

@@ -26,7 +26,11 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             {
                 try
                 {
-                    await _localDB.MarkFailedToUpload(record);
+                    bool wasFound = await _localDB.MarkFailedToUpload(record);
+                    if (!wasFound)
+                    {
+                        _logger?.LogError("no record found in local DB");
+                    }
                 }
                 catch (Exception ex)
                 {
