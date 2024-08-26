@@ -4207,7 +4207,7 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                POMExecutionUtils pomExcutionUtil = new POMExecutionUtils(act, act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : (act is ActAccessibilityTesting ? ((ActAccessibilityTesting)act).LocateValue : ((ActVisualTesting)act).LocateValue));
+                POMExecutionUtils pomExcutionUtil = new POMExecutionUtils(act, RetrieveActionValue(act));
 
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
@@ -4269,7 +4269,16 @@ namespace GingerCore.Drivers
             return elem;
         }
 
-
+        private static string RetrieveActionValue(Act act)
+        {
+            return act switch
+            {
+                ActUIElement uiElement => uiElement.ElementLocateValue,
+                ActAccessibilityTesting accessibilityTesting => accessibilityTesting.LocateValue,
+                ActBrowserElement browserElement => browserElement.LocateValue,
+                _ => throw new ArgumentException("Unsupported type", nameof(act))
+            };
+        }
 
         private void SwitchFrame(ElementInfo EI)
         {
