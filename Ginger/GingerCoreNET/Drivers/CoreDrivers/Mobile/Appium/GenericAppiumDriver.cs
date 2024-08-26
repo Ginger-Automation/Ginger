@@ -1079,7 +1079,7 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.OpenApp:
                         if (AppType == eAppType.NativeHybride)
                         {
-                            Driver.LaunchApp();
+                            Driver.ActivateApp((GetAppPackage(act)));
                         }
                         else
                         {
@@ -1090,7 +1090,7 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.CloseApp:
                         if (AppType == eAppType.NativeHybride)
                         {
-                            Driver.CloseApp();
+                            Driver.TerminateApp((GetAppPackage(act)));
                         }
                         else
                         {
@@ -1193,6 +1193,28 @@ namespace Amdocs.Ginger.CoreNET
             catch (Exception ex)
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+            }
+        }
+
+        private string GetAppPackage(ActMobileDevice act)
+        {
+            string appPackage = null;
+            if (string.IsNullOrEmpty(act.ActionAppPackage.ValueForDriver) || act.ActionAppPackage.ValueForDriver.ToLower().Trim() == "default")
+            {
+                if (DevicePlatformType == eDevicePlatformType.Android)
+                {
+                    appPackage = AppiumCapabilities.Where(x => x.Parameter == "appPackage" || x.Parameter == "appium:appPackage").FirstOrDefault().Value;
+                }
+                else
+                {
+                    appPackage = AppiumCapabilities.Where(x => x.Parameter == "bundleId" || x.Parameter == "appium:bundleId").FirstOrDefault().Value;
+                }
+
+                return appPackage;
+            }
+            else
+            {
+                return act.ActionAppPackage.Value;
             }
         }
 
