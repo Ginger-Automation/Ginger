@@ -60,6 +60,7 @@ using OpenQA.Selenium.Remote;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -172,6 +173,21 @@ namespace Amdocs.Ginger.CoreNET
             set => mIsDeviceConnected = value;
         }
 
+        public bool IsUftLabDevice
+        {
+            get
+            {
+                if (DeviceSource == eDeviceSource.MicroFoucsUFTMLab)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         RestClient restClient;
 
         public bool ShowWindow
@@ -179,19 +195,19 @@ namespace Amdocs.Ginger.CoreNET
             get => LoadDeviceWindow;
         }
 
-        public override ePomElementCategory? PomCategory 
+        public override ePomElementCategory? PomCategory
         {
             get
             {
                 if (AppType == eAppType.NativeHybride)
                 {
-                    switch(DevicePlatformType)
+                    switch (DevicePlatformType)
                     {
                         case eDevicePlatformType.iOS:
-                            return ePomElementCategory.iOS;                            
+                            return ePomElementCategory.iOS;
                         case eDevicePlatformType.Android:
                         default:
-                            return ePomElementCategory.Android;                       
+                            return ePomElementCategory.Android;
                     }
                 }
                 else
@@ -238,7 +254,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public override void StartDriver()
         {
-            mIsDeviceConnected = ConnectToAppium();            
+            mIsDeviceConnected = ConnectToAppium();
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -294,7 +310,7 @@ namespace Amdocs.Ginger.CoreNET
                     ErrorMessageFromDriver = error;
                     return false;
                 }
-                           
+
                 if (Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device")
                 {
                     string error = string.Format("Failed to start Appium session.{0}Error: Mobile device is already in use. Please close all other sessions and try again.", System.Environment.NewLine);
@@ -392,7 +408,7 @@ namespace Amdocs.Ginger.CoreNET
                         else if (UserCapability.Parameter.Trim().ToLower() == "platformVersion".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:platformVersion".ToLower())
                         {
                             driverOptions.PlatformVersion = UserCapability.Value;
-                        }                        
+                        }
                         else if (UserCapability.Parameter.Trim().ToLower() == "deviceName".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:deviceName".ToLower())
                         {
                             driverOptions.DeviceName = UserCapability.Value;
@@ -415,7 +431,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to set Appium capability '{0}'='{1}'", UserCapability.Parameter, UserCapability.Value), ex);
                 }
@@ -557,7 +573,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     case ActUIElement.eElementAction.JavaScriptClick:
                     case ActUIElement.eElementAction.Submit:
-                        e = LocateElement(act);                       
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             e.Click();
@@ -570,7 +586,7 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActUIElement.eElementAction.SetValue:
                     case ActUIElement.eElementAction.SetText:
-                        e = LocateElement(act);                       
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             e.SendKeys(act.GetInputParamCalculatedValue("Value"));
@@ -583,7 +599,7 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActUIElement.eElementAction.GetText:
                     case ActUIElement.eElementAction.GetFont:
-                        e = LocateElement(act);                        
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             /// As text attribute does not exist on iOS devices
@@ -603,7 +619,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.GetTextLength:
-                        e = LocateElement(act);                        
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             /// As text attribute does not exist on iOS devices
@@ -629,7 +645,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.IsValuePopulated:
-                        e = LocateElement(act);                        
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             switch (act.ElementType)
@@ -650,7 +666,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.GetSize:
-                        e = LocateElement(act);                        
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("contentSize").ToString());
@@ -956,7 +972,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             else
             {
-                 return act.ActionAppPackage.Value;
+                return act.ActionAppPackage.Value;
             }
         }
 
@@ -976,7 +992,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressXY:
-                        PressXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver), 
+                        PressXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
                                         TimeSpan.FromMilliseconds(Convert.ToInt32(act.PressDuration.ValueForDriver)));
                         break;
 
@@ -1078,7 +1094,7 @@ namespace Amdocs.Ginger.CoreNET
                         {
                             act.Error = "Operation not supported for this mobile OS or application type.";
                         }
-                        break;                   
+                        break;
 
                     case ActMobileDevice.eMobileDeviceAction.TakeScreenShot:
                         ActScreenShotHandler(act);
@@ -1095,7 +1111,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.CloseApp:                        
+                    case ActMobileDevice.eMobileDeviceAction.CloseApp:
                         if (AppType == eAppType.NativeHybride)
                         {
                             Driver.TerminateApp(GetAppPackage(act));
@@ -1111,11 +1127,11 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LockDevice:
-                            PerformLockButtonPress(eLockOperation.Lock);
+                        PerformLockButtonPress(eLockOperation.Lock);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
-                            PerformLockButtonPress(eLockOperation.UnLock);
+                        PerformLockButtonPress(eLockOperation.UnLock);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
@@ -1205,28 +1221,6 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        private string GetAppPackage(ActMobileDevice act)
-        {
-            string appPackage = null;
-            if (string.IsNullOrEmpty(act.ActionAppPackage.ValueForDriver) || act.ActionAppPackage.ValueForDriver.ToLower().Trim() == "default")
-            {
-                if (DevicePlatformType == eDevicePlatformType.Android)
-                {
-                    appPackage = AppiumCapabilities.Where(x => x.Parameter == "appPackage" || x.Parameter == "appium:appPackage").FirstOrDefault().Value;
-                }
-                else
-                {
-                    appPackage = AppiumCapabilities.Where(x => x.Parameter == "bundleId" || x.Parameter == "appium:bundleId").FirstOrDefault().Value;
-                }
-
-                return appPackage;
-            }
-            else
-            {
-                return act.ActionAppPackage.Value;
-            }
-        }
-
         public string SimulatePhotoOrBarcode(string photoString, string action)
         {
             Bitmap picture = null;
@@ -1287,7 +1281,7 @@ namespace Amdocs.Ginger.CoreNET
                     Array.Clear(bytes);
                 }
             }
-            
+
             Dictionary<string, string> sensorSimulationMap = new Dictionary<string, string>
             {
                 { "uploadMedia", encodeString },
@@ -1458,7 +1452,7 @@ namespace Amdocs.Ginger.CoreNET
             Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
 
-        public void SwipeByXY(int pageStartX, int pageStartY, int pageEndX, int pageEndY,  TimeSpan swipeDuration)
+        public void SwipeByXY(int pageStartX, int pageStartY, int pageEndX, int pageEndY, TimeSpan swipeDuration)
         {
             AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
             ActionBuilder actionBuilder = new ActionBuilder();
@@ -1703,7 +1697,7 @@ namespace Amdocs.Ginger.CoreNET
 
             SwipeByXY((int)startX, (int)startY, (int)endX, (int)endY, swipeDuration);
         }
-       
+
 
         private string GetCurrentPackage()
         {
@@ -1740,7 +1734,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    var detail= ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier");
+                    var detail = ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier");
                     if (detail != null)
                     {
                         return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
@@ -1969,7 +1963,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
 
                     ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
-                    EI.IsAutoLearned = true;                    
+                    EI.IsAutoLearned = true;
 
                     if (pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
                     {
@@ -1997,10 +1991,10 @@ namespace Amdocs.Ginger.CoreNET
 
                     if (pomSetting.filteredElementType == null ||
                         (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
-                    {                        
+                    {
                         foundElementsList.Add(EI);
                     }
-                }            
+                }
 
                 return foundElementsList.ToList();
             }
@@ -2740,7 +2734,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     default:
-                        elem = mSeleniumDriver.LocateElementByLocator(EL, Driver); 
+                        elem = mSeleniumDriver.LocateElementByLocator(EL, Driver);
                         break;
                 }
             }
@@ -2844,7 +2838,7 @@ namespace Amdocs.Ginger.CoreNET
         }
 
         int checkSessionCounter = 0;
-        public Byte[] GetScreenshotImage()        
+        public Byte[] GetScreenshotImage()
         {
             checkSessionCounter++;
             //check session is still valid
@@ -2854,7 +2848,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     return Driver.GetScreenshot().AsByteArray;
                 }
-            }            
+            }
             else
             {
                 return Driver.GetScreenshot().AsByteArray;
@@ -2911,9 +2905,9 @@ namespace Amdocs.Ginger.CoreNET
             return false;
         }
 
-   
 
-        public void PerformDrag(Point start, Point end, TimeSpan pressDuration,  TimeSpan dragDuration)
+
+        public void PerformDrag(Point start, Point end, TimeSpan pressDuration, TimeSpan dragDuration)
         {
             DragAndDropByXY(start.X, start.Y, end.X, end.Y, pressDuration, dragDuration);
 
@@ -3153,7 +3147,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             mScreenScaleFactorCorrectionX = 1;
             mScreenScaleFactorCorrectionY = 1;
-           
+
 
             //override with user configuration
             double userScreenScaleFactorCorrectionX;
@@ -3166,10 +3160,10 @@ namespace Amdocs.Ginger.CoreNET
             {
                 mScreenScaleFactorCorrectionY = userScreenScaleFactorCorrectionY;
             }
-        }       
+        }
 
         public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
-        {           
+        {
             double scale_factor_x = 1, scale_factor_y = 1;
             CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
             scale_factor_x = (SrcWidth / mScreenScaleFactorCorrectionX) / ActWidth;
@@ -3378,6 +3372,36 @@ namespace Amdocs.Ginger.CoreNET
                 case eDevicePlatformType.iOS:
                     Driver.ActivateApp("com.apple.Preferences");
                     break;
+            }
+        }
+
+        public void OpenDeviceExternalView()
+        {
+            //open URL in browser
+            try
+            {
+                //build the URL to use
+                Uri serverUri = new Uri(this.AppiumServer);
+                var uribuilder = new UriBuilder
+                {
+                    Scheme = serverUri.Scheme,
+                    Port = serverUri.Port,
+                    Host = serverUri.Host,
+                    //Path = string.Format(@"/integration8/en/#/remote?deviceId={0}", GetDeviceUDID())
+                };
+                string deviceViewUrl = string.Format(@"{0}integration8/en/#/remote?deviceId={1}", uribuilder.Uri.ToString(), GetDeviceUDID().ToString());
+
+                // Launch the browser with the URL
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                    FileName = deviceViewUrl,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to open the external device URL in browser", ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to open the external device URL in browser, Error: " + ex.Message);
             }
         }
 

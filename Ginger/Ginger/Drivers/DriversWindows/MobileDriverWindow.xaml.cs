@@ -232,6 +232,10 @@ namespace Ginger.Drivers.DriversWindows
                             SetOrientationButton();
                             xSwipeBtn.Visibility = Visibility.Visible;
                             xCordBtn.Visibility = Visibility.Visible;
+                            if (mDriver.IsUftLabDevice)
+                            {
+                                xExternalViewBtn.Visibility = Visibility.Visible;
+                            }
                             DoContinualDeviceScreenshotRefresh();
 
                             Dictionary<string, object> mDeviceGeneralInfo;
@@ -723,7 +727,7 @@ namespace Ginger.Drivers.DriversWindows
             mIsMousePressed = false;
 
             TimeSpan pressDuration;
-            
+
             if (mIsItDragAction == true)
             {
                 //do drag
@@ -1044,25 +1048,23 @@ namespace Ginger.Drivers.DriversWindows
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //if (((Window)sender).IsKeyboardFocused)
-            //{            
-                mUserClosing = true;
+            mUserClosing = true;
 
-                if (!mSelfClosing)
+            if (!mSelfClosing)
+            {
+                //    if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, "Close Mobile Agent?") == eUserMsgSelection.Yes)
+                //    {
+                try
                 {
-                    if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, "Close Mobile Agent?") == eUserMsgSelection.Yes)
-                    {
-                        try
-                        {
-                            mAgent.AgentOperations.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to close Agent, Error: " + ex.Message);
-                        }
-                    }
+                    mAgent.AgentOperations.Close();
                 }
-            //}
+                catch (Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to close Agent, Error: " + ex.Message);
+                }
+                //    }
+            }
+
             mWindowIsOpen = false;
         }
 
@@ -1249,6 +1251,7 @@ namespace Ginger.Drivers.DriversWindows
                 xPortraiteBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xLandscapeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                xExternalViewBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xPinBtn_Click(null, null);
 
                 //Loading Pnl
@@ -1730,6 +1733,23 @@ namespace Ginger.Drivers.DriversWindows
                 mCordsStackZIndex = 1;
             }
             Canvas.SetLeft(xCordsStack, mCordsStackZIndex);
+        }
+
+        private void xExternalViewBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mDriver.OpenDeviceExternalView();
+        }
+
+        private void xZoomInBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Width = this.Width * 1.1;
+            this.Height = this.Height * 1.1;
+        }
+
+        private void xZoomOutBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Width = this.Width * 0.9;
+            this.Height = this.Height * 0.9;
         }
     }
 }

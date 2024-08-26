@@ -27,6 +27,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
     {
         bool IsDeviceConnected { get; set; }
 
+        bool IsUftLabDevice { get;}
+
         eAutoScreenshotRefreshMode DeviceAutoScreenshotRefreshMode { get; set; }
 
         eDevicePlatformType GetDevicePlatformType();
@@ -62,6 +64,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
         void PerformSendKey(string key);
 
         void OpenDeviceSettings();
+
+        void OpenDeviceExternalView();
 
         Dictionary<string, string> GetDeviceCPUInfo();
 
