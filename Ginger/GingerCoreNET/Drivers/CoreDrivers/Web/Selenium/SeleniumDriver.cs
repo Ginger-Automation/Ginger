@@ -4271,13 +4271,14 @@ namespace GingerCore.Drivers
 
         private static string RetrieveActionValue(Act act)
         {
-            return act switch
+            if(act is ActUIElement)
             {
-                ActUIElement uiElement => uiElement.ElementLocateValue,
-                ActAccessibilityTesting accessibilityTesting => accessibilityTesting.LocateValue,
-                ActBrowserElement browserElement => browserElement.LocateValue,
-                _ => throw new ArgumentException("Unsupported type", nameof(act))
-            };
+                return ((ActUIElement)act).ElementLocateValue;
+            }
+            else
+            {
+                return act.LocateValue;
+            }
         }
 
         private void SwitchFrame(ElementInfo EI)
