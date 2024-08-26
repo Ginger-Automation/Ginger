@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Telemetry
 {
-    internal sealed class TelemetryTraceRecord : TelemetryBaseRecord
+    internal sealed class TelemetryFeatureRecord : TelemetryBaseRecord
     {
-        internal Dictionary<string, string> Attributes { get; } = [];
+        public required string FeatureId { get; init; }
+
+        public TimeSpan? Duration { get; init; }
     }
 }

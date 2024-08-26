@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Telemetry
 {
-    internal sealed class TelemetryLiteDB : ITelemetryDB<TelemetryLogRecord>, IDisposable
+    internal sealed class TelemetryLiteDB : ITelemetryDB<TelemetryLogRecord>, ITelemetryDB<TelemetryFeatureRecord>, IDisposable
     {
         private readonly LiteDatabase _db;
 
@@ -80,6 +80,49 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             logInDB.FailedToUpload = true;
             logInDB.LastUpdateTimestamp = DateTime.UtcNow;
             collection.Update(logInDB);
+
+            return Task.FromResult(true);
+        }
+        public Task AddAsync(TelemetryFeatureRecord feature)
+        {
+            if (feature == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(feature));
+            }
+
+            ILiteCollection<TelemetryFeatureRecord> collection = _db.GetCollection<TelemetryFeatureRecord>();
+            collection.Insert(feature);
+
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> DeleteAsync(TelemetryFeatureRecord feature)
+        {
+            if (feature == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(feature));
+            }
+
+            ILiteCollection<TelemetryFeatureRecord> collection = _db.GetCollection<TelemetryFeatureRecord>();
+            return Task.FromResult(collection.Delete(new BsonValue(feature.Id)));
+        }
+
+        public Task<bool> MarkFailedToUpload(TelemetryFeatureRecord feature)
+        {
+            if (feature == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(feature));
+            }
+
+            ILiteCollection<TelemetryFeatureRecord> collection = _db.GetCollection<TelemetryFeatureRecord>();
+            TelemetryFeatureRecord featureInDB = collection.FindById(new BsonValue(feature.Id));
+            if (featureInDB == null)
+            {
+                return Task.FromResult(false);
+            }
+            featureInDB.FailedToUpload = true;
+            featureInDB.LastUpdateTimestamp = DateTime.UtcNow;
+            collection.Update(featureInDB);
 
             return Task.FromResult(true);
         }
