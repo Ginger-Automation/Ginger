@@ -276,8 +276,9 @@ namespace GingerCoreNET.RosLynLib
                 {
                     return Expression;
                 }
-                Pattern = new Regex("^\\{MockDataExp Fun=.*\\}$", RegexOptions.Compiled, new TimeSpan(0, 0, 5));
+                Pattern = new Regex("{MockDataExp({.*}|[^{}]*)*}", RegexOptions.Compiled,new TimeSpan(0,0,5));
                 Regex Clean = new Regex("{MockDataExp(\\s)*Fun(\\s)*=", RegexOptions.Compiled);
+
                 MatchCollection PatternMatchlist = Pattern.Matches(Expression);
                 if (PatternMatchlist == null || PatternMatchlist.Count == 0)
                 {
