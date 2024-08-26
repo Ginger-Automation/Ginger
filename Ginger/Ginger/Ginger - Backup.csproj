@@ -1,4 +1,4 @@
-﻿<Project Sdk="Xpf.Sdk/1.4.0-cibuild001814">
+﻿<Project Sdk="Xpf.Sdk/1.1.0">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -735,7 +735,6 @@
     <PackageReference Include="UIAComWrapperNetstandard" Version="1.0.1">
       <Aliases>UIAComWrapperNetstandard</Aliases>
     </PackageReference>
-    <PackageReference Include="Xpf.Sdk" Version="1.4.0-cibuild001814" />
   </ItemGroup>
 
   <ItemGroup>

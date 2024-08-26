@@ -25,9 +25,9 @@
         </ComboBox>
         <TextBox x:Name="xValueExpressionTxtbox" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}"  Height="21" Margin="0,0,22,0" IsReadOnly="false" BorderThickness="0,0,0,1" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Visibility="Collapsed"></TextBox>
 
-        <window:WindowsFormsHost x:Name="dateWindow" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}"  Visibility="Collapsed" Width="190">
+        <!--<window:WindowsFormsHost x:Name="dateWindow" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}"  Visibility="Collapsed" Width="190">
             <wf:DateTimePicker  x:Name="dpDate" TextChanged="dpDate_TextChanged" Format="Custom"></wf:DateTimePicker>
-        </window:WindowsFormsHost>
+        </window:WindowsFormsHost>-->
 
         <TextBox x:Name="txtNumberValue"   Style="{StaticResource @TextBoxStyle}"  ToolTip="Only Numeric Value Allowed." Visibility="Collapsed"/>
         

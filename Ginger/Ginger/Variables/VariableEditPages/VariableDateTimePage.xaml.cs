@@ -42,22 +42,22 @@ namespace Ginger.Variables
             variableDateTime.PauseDirtyTracking();
             if (string.IsNullOrEmpty(variableDateTime.Value))
             {
-                dtpInitialDate.Value = Convert.ToDateTime(variableDateTime.InitialDateTime);
+                //dtpInitialDate.Value = Convert.ToDateTime(variableDateTime.InitialDateTime);
             }
             else
             {
-                dtpInitialDate.Value = Convert.ToDateTime(variableDateTime.Value);
+                //dtpInitialDate.Value = Convert.ToDateTime(variableDateTime.Value);
             }
 
-            dtpInitialDate.CustomFormat = variableDateTime.DateTimeFormat;
-            dtpInitialDate.MinDate = Convert.ToDateTime(variableDateTime.MinDateTime);
-            dtpInitialDate.MaxDate = Convert.ToDateTime(variableDateTime.MaxDateTime);
+            //dtpInitialDate.CustomFormat = variableDateTime.DateTimeFormat;
+            //dtpInitialDate.MinDate = Convert.ToDateTime(variableDateTime.MinDateTime);
+            //dtpInitialDate.MaxDate = Convert.ToDateTime(variableDateTime.MaxDateTime);
 
-            dpMinDate.Value = Convert.ToDateTime(variableDateTime.MinDateTime);
-            dpMinDate.CustomFormat = variableDateTime.DateTimeFormat;
+            //dpMinDate.Value = Convert.ToDateTime(variableDateTime.MinDateTime);
+            //dpMinDate.CustomFormat = variableDateTime.DateTimeFormat;
 
-            dpMaxDate.Value = Convert.ToDateTime(variableDateTime.MaxDateTime);
-            dpMaxDate.CustomFormat = variableDateTime.DateTimeFormat;
+            //dpMaxDate.Value = Convert.ToDateTime(variableDateTime.MaxDateTime);
+            //dpMaxDate.CustomFormat = variableDateTime.DateTimeFormat;
 
             txtDateFormat.Text = variableDateTime.DateTimeFormat;
 
@@ -69,59 +69,59 @@ namespace Ginger.Variables
 
         private void dpMinDate_TextChanged(object sender, EventArgs e)
         {
-            if (dpMinDate.Value <= dtpInitialDate.MaxDate)
-            {
-                dtpInitialDate.MinDate = dpMinDate.Value;
-                variableDateTime.MinDateTime = dpMinDate.Value.ToString();
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Minimum date :[{dpMinDate.Value}], should be <= Maximum Date:[{dtpInitialDate.MaxDate}]");
-                dpMinDate.Focus();
-                return;
-            }
+            //if (dpMinDate.Value <= dtpInitialDate.MaxDate)
+            //{
+            //    dtpInitialDate.MinDate = dpMinDate.Value;
+            //    variableDateTime.MinDateTime = dpMinDate.Value.ToString();
+            //}
+            //else
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, $"Minimum date :[{dpMinDate.Value}], should be <= Maximum Date:[{dtpInitialDate.MaxDate}]");
+            //    dpMinDate.Focus();
+            //    return;
+            //}
         }
 
         private void dpMaxDate_TextChanged(object sender, EventArgs e)
         {
-            if (dpMaxDate.Value >= dtpInitialDate.MinDate)
-            {
-                dtpInitialDate.MaxDate = dpMaxDate.Value;
-                variableDateTime.MaxDateTime = dpMaxDate.Value.ToString();
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Maximum date :[{dpMaxDate.Value}], should be >= Minimum Date:[{dtpInitialDate.MinDate}]");
-                dpMaxDate.Focus();
-                return;
-            }
+            //if (dpMaxDate.Value >= dtpInitialDate.MinDate)
+            //{
+            //    dtpInitialDate.MaxDate = dpMaxDate.Value;
+            //    variableDateTime.MaxDateTime = dpMaxDate.Value.ToString();
+            //}
+            //else
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, $"Maximum date :[{dpMaxDate.Value}], should be >= Minimum Date:[{dtpInitialDate.MinDate}]");
+            //    dpMaxDate.Focus();
+            //    return;
+            //}
 
         }
 
         private void dtpInitialDate_TextChanged(object sender, EventArgs e)
         {
-            if (!variableDateTime.CheckDateTimeWithInRange(dtpInitialDate.Value.ToString()))
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{variableDateTime.MaxDateTime}], Minimum Date:[{variableDateTime.MinDateTime}]");
-                dtpInitialDate.Focus();
-                return;
-            }
-            else
-            {
-                variableDateTime.InitialDateTime = dtpInitialDate.Value.ToString();
-            }
+            //if (!variableDateTime.CheckDateTimeWithInRange(dtpInitialDate.Value.ToString()))
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{variableDateTime.MaxDateTime}], Minimum Date:[{variableDateTime.MinDateTime}]");
+            //    dtpInitialDate.Focus();
+            //    return;
+            //}
+            //else
+            //{
+            //    variableDateTime.InitialDateTime = dtpInitialDate.Value.ToString();
+            //}
         }
 
         private void UpdateIntialDateTimePicker()
         {
             if (!String.IsNullOrEmpty(((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue)?.Content?.ToString()))
             {
-                dtpInitialDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
-                if (dpMinDate != null || dpMaxDate != null)
-                {
-                    dpMinDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
-                    dpMaxDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
-                }
+                //dtpInitialDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
+                //if (dpMinDate != null || dpMaxDate != null)
+                //{
+                //    dpMinDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
+                //    dpMaxDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
+                //}
             }
 
         }

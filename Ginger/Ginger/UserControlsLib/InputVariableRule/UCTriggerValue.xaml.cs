@@ -92,7 +92,7 @@ namespace Ginger.UserControlsLib
                 txtNumberValue.ClearControlsBindings();
                 xValueExpressionTxtbox.ClearControlsBindings();
                 xValueExpressionTxtbox.Visibility = Visibility.Collapsed;
-                dateWindow.Visibility = Visibility.Collapsed;
+                //dateWindow.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Collapsed;
                 xVariablesValuesComboBox.Visibility = Visibility.Visible;               
                 xVariablesValuesComboBox.ItemsSource = ((VariableSelectionList)selectedVar).OptionalValuesList.Select(x => x.Value).ToList();
@@ -104,7 +104,7 @@ namespace Ginger.UserControlsLib
             {
                 txtNumberValue.ClearControlsBindings();
                 xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
-                dateWindow.Visibility = Visibility.Collapsed;
+                //dateWindow.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Collapsed;
                 xValueExpressionTxtbox.Visibility = Visibility.Visible;               
                 BindingHandler.ObjFieldBinding(xValueExpressionTxtbox, TextBox.TextProperty, this, nameof(TriggerValue));
@@ -118,11 +118,11 @@ namespace Ginger.UserControlsLib
                 xValueExpressionTxtbox.Visibility = Visibility.Collapsed;
                 xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Collapsed;
-                dateWindow.Visibility = Visibility.Visible;
-                dpDate.CustomFormat = ((VariableDateTime)selectedVar).DateTimeFormat;                
-                dpDate.Value = DateTime.Parse(Convert.ToDateTime(((VariableDateTime)selectedVar).Value).ToString(dpDate.CustomFormat, System.Globalization.CultureInfo.InvariantCulture));
-                dpDate.MinDate =  Convert.ToDateTime(((VariableDateTime)selectedVar).MinDateTime);
-                dpDate.MaxDate =  Convert.ToDateTime(((VariableDateTime)selectedVar).MaxDateTime);
+                //dateWindow.Visibility = Visibility.Visible;
+                //dpDate.CustomFormat = ((VariableDateTime)selectedVar).DateTimeFormat;                
+                //dpDate.Value = DateTime.Parse(Convert.ToDateTime(((VariableDateTime)selectedVar).Value).ToString(dpDate.CustomFormat, System.Globalization.CultureInfo.InvariantCulture));
+                //dpDate.MinDate =  Convert.ToDateTime(((VariableDateTime)selectedVar).MinDateTime);
+                //dpDate.MaxDate =  Convert.ToDateTime(((VariableDateTime)selectedVar).MaxDateTime);
             }
 
             if (selectedVar != null &&  selectedVar.VariableType == "Number")
@@ -130,7 +130,7 @@ namespace Ginger.UserControlsLib
                 xValueExpressionTxtbox.ClearControlsBindings();
                 xValueExpressionTxtbox.Visibility = Visibility.Collapsed;
                 xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
-                dateWindow.Visibility = Visibility.Collapsed;
+                //dateWindow.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Visible;                
                 BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, this, nameof(TriggerValue));
                 txtNumberValue.AddValidationRule(new NumberValidationRule());
@@ -168,7 +168,7 @@ namespace Ginger.UserControlsLib
                 }
                 else if (SourceVariable.VariableType == "DateTime" && !string.IsNullOrEmpty(newValue))
                 {                    
-                    dpDate.Value = DateTime.Parse(Convert.ToDateTime(newValue).ToString(((VariableDateTime)SourceVariable).DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture));
+                    //dpDate.Value = DateTime.Parse(Convert.ToDateTime(newValue).ToString(((VariableDateTime)SourceVariable).DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture));
                 }
                 else if (SourceVariable.VariableType == "Number")
                 {
@@ -191,16 +191,16 @@ namespace Ginger.UserControlsLib
         private void dpDate_TextChanged(object sender, EventArgs e)
         {
             VariableDateTime vdt = (VariableDateTime)SourceVariable;
-            if (!(vdt.CheckDateTimeWithInRange(dpDate.Value.ToString())))
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{vdt.MaxDateTime}], Minimum Date:[{vdt.MinDateTime}]");
-                dpDate.Focus();
-                return;
-            }
-            else
-            {
-                TriggerValue = Convert.ToDateTime(dpDate.Value).ToString(vdt.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
-            }
+            //if (!(vdt.CheckDateTimeWithInRange(dpDate.Value.ToString())))
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{vdt.MaxDateTime}], Minimum Date:[{vdt.MinDateTime}]");
+            //    dpDate.Focus();
+            //    return;
+            //}
+            //else
+            //{
+            //    TriggerValue = Convert.ToDateTime(dpDate.Value).ToString(vdt.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+            //}
         }
 
         public static DataTemplate GetTemplate(string sourcevariable, string triggervalue)

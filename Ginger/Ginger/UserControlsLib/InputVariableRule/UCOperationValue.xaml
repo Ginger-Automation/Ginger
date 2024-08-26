@@ -46,9 +46,9 @@
         <usercontrol:MultiSelectComboBox Grid.Column="1" x:Name="MC" />
 
 
-        <window:WindowsFormsHost Grid.Column="1" x:Name="dateWindow" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}"  Visibility="Collapsed" Width="165">
+        <!--<window:WindowsFormsHost Grid.Column="1" x:Name="dateWindow" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}"  Visibility="Collapsed" Width="165">
             <wf:DateTimePicker  x:Name="dpDate" TextChanged="dpDate_TextChanged" Format="Custom"></wf:DateTimePicker>
-        </window:WindowsFormsHost>
+        </window:WindowsFormsHost>-->
 
         <TextBox Grid.Column="1" x:Name="txtNumberValue"   Style="{StaticResource @TextBoxStyle}"  ToolTip="Only Numeric Value Allowed." Visibility="Collapsed"/>
         
