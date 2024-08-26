@@ -218,7 +218,7 @@ namespace Ginger.Run
         /// Loads remote execution history data asynchronously.
         /// Shows loading indicators, fetches the data, and hides the loading indicators.
         /// </summary>
-        private async void LoadRemoteData()
+        private async Task LoadRemoteData()
         {
             xButtonPnl.Visibility = Visibility.Visible;
             GraphQlLoadingVisible();
