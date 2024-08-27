@@ -10,8 +10,8 @@ namespace Amdocs.Ginger.Common.Telemetry
     {
         public void AddLog(eLogLevel level, string msg);
 
-        public void AddFeatureUsage(IFeatureTracker.FeatureTrackingResult usage);
+        public void AddLog(eLogLevel level, string msg, Dictionary<string, string> attributes);
 
-        public IFeatureTracker NewFeatureTracker(FeatureId featureId);
+        public IFeatureTracker StartFeatureTracking(FeatureId featureId);
     }
 }

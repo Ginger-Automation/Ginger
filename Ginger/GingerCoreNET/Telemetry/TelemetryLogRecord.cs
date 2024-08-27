@@ -12,6 +12,6 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         public required string Message { get; init; }
 
-        public Dictionary<string, string> Attributes { get; } = [];
+        public Dictionary<string, string> Attributes { get; init; } = [];
     }
 }

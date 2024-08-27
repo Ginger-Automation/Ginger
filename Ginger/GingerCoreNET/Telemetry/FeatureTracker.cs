@@ -9,33 +9,37 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 {
     internal sealed class FeatureTracker : IFeatureTracker
     {
-        private long? _startTime;
+        private readonly long _startTime;
+        private readonly Action<TelemetryFeatureRecord> _onStop;
 
         public FeatureId FeatureId { get; }
+        private Dictionary<string,string> Attributes { get; }
 
-        internal FeatureTracker(FeatureId featureId)
+        internal FeatureTracker(FeatureId featureId, Action<TelemetryFeatureRecord> onStop)
         {
-            _startTime = null;
+            _startTime = DateTime.UtcNow.Ticks;
+            _onStop = onStop;
             FeatureId = featureId;
+            Attributes = [];
         }
 
-        public void StartTracking()
+        public void StopTracking()
         {
-            _startTime = DateTime.Now.Ticks;
+            _onStop(new TelemetryFeatureRecord()
+            {
+                AppVersion = "1.2.3",
+                CreationTimestamp = DateTime.UtcNow,
+                LastUpdateTimestamp = DateTime.UtcNow,
+                UserId = "abcd",
+                FeatureId = FeatureId.ToString(),
+                Duration = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - _startTime),
+                Attributes = Attributes,
+            });
         }
 
-        public IFeatureTracker.FeatureTrackingResult StopTracking()
+        public void Dispose()
         {
-            if (_startTime == null)
-            {
-                throw new InvalidOperationException("Tracking must be started first");
-            }
-
-            return new IFeatureTracker.FeatureTrackingResult()
-            {
-                FeatureId = FeatureId,
-                Duration = TimeSpan.FromTicks(DateTime.Now.Ticks - _startTime.Value),
-            };
+            StopTracking();
         }
     }
 }
