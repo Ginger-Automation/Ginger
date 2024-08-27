@@ -49,6 +49,11 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         public void AddLog(eLogLevel level, string msg, Dictionary<string,string> attributes)
         {
+            if (level != eLogLevel.ERROR)
+            {
+                return;
+            }
+
             AddLog(new TelemetryLogRecord()
             {
                 AppVersion = ApplicationInfo.ApplicationBackendVersion,
