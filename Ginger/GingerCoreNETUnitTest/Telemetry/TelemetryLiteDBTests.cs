@@ -45,7 +45,7 @@ namespace GingerCoreNETUnitTest.Telemetry
         [TestMethod]
         public async Task AddAsync_NullLog_ThrowArgumentNullException()
         {
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _db.AddAsync(null));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _db.AddAsync((TelemetryLogRecord)null));
         }
 
         [TestMethod]
@@ -78,7 +78,7 @@ namespace GingerCoreNETUnitTest.Telemetry
         [TestMethod]
         public async Task DeleteAsync_NullLog_ThrowArgumentNullException()
         {
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _db.DeleteAsync(null));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _db.DeleteAsync((TelemetryLogRecord)null));
         }
 
         [TestMethod]
@@ -105,7 +105,7 @@ namespace GingerCoreNETUnitTest.Telemetry
         [TestMethod]
         public async Task MarkFailedToUploadAsync_NullLog_ThrowArgumentNullException()
         {
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _db.MarkFailedToUpload(null));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _db.MarkFailedToUpload((TelemetryLogRecord)null));
         }
 
         [TestMethod]

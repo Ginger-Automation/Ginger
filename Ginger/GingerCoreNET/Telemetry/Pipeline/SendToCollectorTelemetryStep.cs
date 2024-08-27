@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             _markUnsuccessfulInLocalDBStep = markUnsuccessfulInLocalDBStep;
         }
 
-        internal override async Task ProcessRecordsAsync(IEnumerable<TRecord> records)
+        protected override async Task ProcessRecordsAsync(IEnumerable<TRecord> records)
         {
             ITelemetryCollector<TRecord>.AddResult result;
             try

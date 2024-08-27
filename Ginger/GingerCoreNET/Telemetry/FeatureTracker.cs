@@ -1,4 +1,6 @@
-﻿using Amdocs.Ginger.Common.Telemetry;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Telemetry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,10 +29,10 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         {
             _onStop(new TelemetryFeatureRecord()
             {
-                AppVersion = "1.2.3",
+                AppVersion = ApplicationInfo.ApplicationBackendVersion,
                 CreationTimestamp = DateTime.UtcNow,
                 LastUpdateTimestamp = DateTime.UtcNow,
-                UserId = "abcd",
+                UserId = WorkSpace.Instance.UserProfile.UserName,
                 FeatureId = FeatureId.ToString(),
                 Duration = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - _startTime),
                 Attributes = Attributes,

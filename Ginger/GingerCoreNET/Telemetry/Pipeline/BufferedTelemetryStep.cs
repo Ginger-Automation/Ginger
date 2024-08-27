@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             _queue.Enqueue(record);
         }
 
-        internal abstract Task ProcessRecordsAsync(IEnumerable<TRecord> records);
+        protected abstract Task ProcessRecordsAsync(IEnumerable<TRecord> records);
 
         private async Task ConsumerActionAsync(CancellationToken cancellationToken)
         {
