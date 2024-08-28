@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                 AxeResult? result;
                 AxeRunOptions options = CreateAxeRunOptions();
 
-                if (GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Page)
+                if (_act.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Page)
                 {
                     result = await TestPageAccessibilityAsync(options);
                 }
@@ -133,15 +133,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
 
             return axeRunOptions;
-        }
-
-        private ActAccessibilityTesting.eTarget GetAccessibilityTarget()
-        {
-            if (Enum.TryParse(_act.GetInputParamValue(ActAccessibilityTesting.Fields.Target), out ActAccessibilityTesting.eTarget target))
-            {
-                return target;
-            }
-            return ActAccessibilityTesting.eTarget.Page;
         }
 
         private async Task<AxeResult?> TestPageAccessibilityAsync(AxeRunOptions options)

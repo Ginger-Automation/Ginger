@@ -223,15 +223,27 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         }
                         break;
                     case ActAccessibilityTesting actAccessibilityTesting:
-                        ActAccessibilityTestingHandler actAccessibilityTestingHandler = new(
-                            actAccessibilityTesting, 
-                            _browser.CurrentWindow.CurrentTab, 
-                            new BrowserElementLocator(_browser.CurrentWindow.CurrentTab, new()
+                        ActAccessibilityTestingHandler actAccessibilityTestingHandler;
+                        if (actAccessibilityTesting.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
+                        {
+                            BrowserElementLocator browserElementLocator = new(_browser.CurrentWindow.CurrentTab, new()
                             {
                                 BusinessFlow = BusinessFlow,
                                 Environment = Environment,
-                                POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValue)
-                            }));
+                                POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValueCalculated)
+                            });
+                            actAccessibilityTestingHandler = new(
+                            actAccessibilityTesting,
+                            _browser.CurrentWindow.CurrentTab,
+                            browserElementLocator);
+                        }
+                        else
+                        {
+                            actAccessibilityTestingHandler = new(
+                            actAccessibilityTesting,
+                            _browser.CurrentWindow.CurrentTab, 
+                            browserElementLocator: null);
+                        }
                         actAccessibilityTestingHandler.HandleAsync().Wait();
                         break;
                     default:
