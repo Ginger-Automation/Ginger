@@ -226,15 +226,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         ActAccessibilityTestingHandler actAccessibilityTestingHandler;
                         if (actAccessibilityTesting.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
                         {
-                            actAccessibilityTestingHandler = new(
-                            actAccessibilityTesting,
-                            _browser.CurrentWindow.CurrentTab,
-                            new BrowserElementLocator(_browser.CurrentWindow.CurrentTab, new()
+                            BrowserElementLocator browserElementLocator = new(_browser.CurrentWindow.CurrentTab, new()
                             {
                                 BusinessFlow = BusinessFlow,
                                 Environment = Environment,
                                 POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValueCalculated)
-                            }));
+                            });
+                            actAccessibilityTestingHandler = new(
+                            actAccessibilityTesting,
+                            _browser.CurrentWindow.CurrentTab,
+                            browserElementLocator);
                         }
                         else
                         {
