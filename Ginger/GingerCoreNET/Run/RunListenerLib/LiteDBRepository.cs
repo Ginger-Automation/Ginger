@@ -401,35 +401,42 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
-            base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
-            LiteDbRunner runner = new LiteDbRunner();
-            runner.AllBusinessFlowsColl.AddRange(liteDbBFList);
-            if (lastRunnertStatus == eRunStatus.Stopped && gingerRunner.RunsetStatus != eRunStatus.Stopped && runner.BusinessFlowsColl.Count > gingerRunner.BusinessFlows.Count)
+            try
             {
-                runner.AllBusinessFlowsColl.RemoveRange(0, gingerRunner.BusinessFlows.Count);
-            }
+                base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
+                LiteDbRunner runner = new LiteDbRunner();
+                runner.AllBusinessFlowsColl.AddRange(liteDbBFList);
+                if (lastRunnertStatus == eRunStatus.Stopped && gingerRunner.RunsetStatus != eRunStatus.Stopped && runner.BusinessFlowsColl.Count > gingerRunner.BusinessFlows.Count)
+                {
+                    runner.AllBusinessFlowsColl.RemoveRange(0, gingerRunner.BusinessFlows.Count);
+                }
 
-            SetRunnerChildCounts(runner, gingerRunner.BusinessFlows);
+                SetRunnerChildCounts(runner, gingerRunner.BusinessFlows);
 
-            runner.SetReportData(gingerReport);
-            SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
-            if (ExecutionLoggerManager.RunSetReport == null)
-            {
-                ExecutionLoggerManager.RunSetReport = new RunSetReport();
-                ExecutionLoggerManager.RunSetReport.GUID = Guid.NewGuid().ToString();
+                runner.SetReportData(gingerReport);
+                SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
+                if (ExecutionLoggerManager.RunSetReport == null)
+                {
+                    ExecutionLoggerManager.RunSetReport = new RunSetReport();
+                    ExecutionLoggerManager.RunSetReport.GUID = Guid.NewGuid().ToString();
+                }
+                if (lastRunnertStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                {
+                    var runnerItem = ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Find(x => x.Name == runner.Name);
+                    ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Remove(runnerItem);
+                }
+                if (runner.RunStatus != eRunStatus.Stopped.ToString())
+                {
+                    liteDbBFList.Clear();
+                }
+                ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
+                lastRunnertStatus = gingerRunner.RunsetStatus;
+                ClearSeq();
             }
-            if (lastRunnertStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+            catch (Exception ex)
             {
-                var runnerItem = ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Find(x => x.Name == runner.Name);
-                ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Remove(runnerItem);
+                Reporter.ToLog(eLogLevel.ERROR, "An error occurred while attempting to set Report runner.", ex);
             }
-            if (runner.RunStatus != eRunStatus.Stopped.ToString())
-            {
-                liteDbBFList.Clear();
-            }
-            ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
-            lastRunnertStatus = gingerRunner.RunsetStatus;
-            ClearSeq();
         }
         private void SetRunnerChildCounts(LiteDbRunner runner, ObservableList<BusinessFlow> businessFlows)
         {
