@@ -15,6 +15,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 {
     internal sealed class TelemetryMonitor : ITelemetryMonitor
     {
+        private const int QueueBufferSize = 1;
+
         private readonly AddToLocalDBTelemetryStep<TelemetryLogRecord> _logPipelineEntry;
         private readonly AddToLocalDBTelemetryStep<TelemetryFeatureRecord> _featurePipelineEntry;
 
@@ -29,10 +31,10 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         private static AddToLocalDBTelemetryStep<TRecord> CreatePipeline<TRecord>(ITelemetryCollector<TRecord> collector, ITelemetryDB<TRecord> db, ILogger? logger)
         {
-            DeleteFromLocalDBTelemetryStep<TRecord> deleteFromLocalDBTelemetryStep = new(bufferSize: 4, db, logger);
-            MarkUnsuccessfulInLocalDBTelemetryStep<TRecord> markUnsuccessfulInLocalDBTelemetryStep = new(bufferSize: 4, db, logger);
-            SendToCollectorTelemetryStep<TRecord> sendToCollectorTelemetryStep = new(bufferSize: 4, collector, deleteFromLocalDBTelemetryStep, markUnsuccessfulInLocalDBTelemetryStep, logger);
-            AddToLocalDBTelemetryStep<TRecord> addToLocalDBTelemetryStep = new(bufferSize: 4, db, sendToCollectorTelemetryStep, logger);
+            DeleteFromLocalDBTelemetryStep<TRecord> deleteFromLocalDBTelemetryStep = new(QueueBufferSize, db, logger);
+            MarkUnsuccessfulInLocalDBTelemetryStep<TRecord> markUnsuccessfulInLocalDBTelemetryStep = new(QueueBufferSize, db, logger);
+            SendToCollectorTelemetryStep<TRecord> sendToCollectorTelemetryStep = new(QueueBufferSize, collector, deleteFromLocalDBTelemetryStep, markUnsuccessfulInLocalDBTelemetryStep, logger);
+            AddToLocalDBTelemetryStep<TRecord> addToLocalDBTelemetryStep = new(QueueBufferSize, db, sendToCollectorTelemetryStep, logger);
 
             deleteFromLocalDBTelemetryStep.StartConsumer();
             markUnsuccessfulInLocalDBTelemetryStep.StartConsumer();

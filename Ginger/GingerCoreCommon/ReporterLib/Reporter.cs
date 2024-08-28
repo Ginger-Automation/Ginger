@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
+using Amdocs.Ginger.Common.Telemetry;
 
 namespace Amdocs.Ginger.Common
 {
@@ -31,6 +32,8 @@ namespace Amdocs.Ginger.Common
         public static ReporterData ReporterData = new ReporterData();
 
         public static bool ReportAllAlsoToConsole { get; set; }
+
+        public static ITelemetryMonitor TelemetryMonitor { get; set; }
 
 
         #region ToLog
@@ -53,9 +56,52 @@ namespace Amdocs.Ginger.Common
             }
 
             WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
+
+            if (TelemetryMonitor != null)
+            {
+                string msg;
+                if (exceptionToLog != null)
+                {
+                    msg = $"{messageToLog}\n{exceptionToLog}";
+                }
+                else
+                {
+                    msg = messageToLog;
+                }
+                TelemetryMonitor.AddLog(logLevel, msg);
+            }
         }
         #endregion ToLog
 
+        public static IFeatureTracker StartFeatureTracking(FeatureId featureId)
+        {
+            if (TelemetryMonitor == null)
+            {
+                return new MockFeatureTracker(featureId);
+            }
+
+            return TelemetryMonitor.StartFeatureTracking(featureId);
+        }
+
+        private sealed class MockFeatureTracker : IFeatureTracker
+        {
+            public FeatureId FeatureId { get; }
+
+            internal MockFeatureTracker(FeatureId featureId)
+            {
+                FeatureId = featureId;
+            }
+
+            public void Dispose()
+            {
+                return;
+            }
+
+            public void StopTracking()
+            {
+                return;
+            }
+        }
 
 
         #region ToUser        

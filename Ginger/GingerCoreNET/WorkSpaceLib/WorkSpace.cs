@@ -21,10 +21,12 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.SelfHealingLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using Amdocs.Ginger.CoreNET.Telemetry;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -294,14 +296,39 @@ namespace amdocs.ginger.GingerCoreNET
             //NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
         }
 
+        public ITelemetryMonitor NewTelemetryMonitor()
+        {
+            string userProfileAppDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string telemetryDBFilePath = Path.Combine(userProfileAppDataDir, "Amdocs", "Ginger", "telemetry.db");
+            TelemetryLiteDB telemetryDB = new(telemetryDBFilePath);
 
-        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper)
+            return new TelemetryMonitor(
+                new MockTelemetryCollector<TelemetryLogRecord>(),
+                new MockTelemetryCollector<TelemetryFeatureRecord>(),
+                telemetryDB,
+                telemetryDB);
+        }
+
+        private sealed class MockTelemetryCollector<TRecord> : ITelemetryCollector<TRecord>
+        {
+            public Task<ITelemetryCollector<TRecord>.AddResult> AddAsync(IEnumerable<TRecord> records)
+            {
+                return Task.FromResult(new ITelemetryCollector<TRecord>.AddResult()
+                {
+                    Successful = false,
+                });
+            }
+        }
+
+
+        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper, ITelemetryMonitor telemetryMonitor = null)
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
             Reporter.WorkSpaceReporter = workSpaceReporterBase;
+            Reporter.TelemetryMonitor = telemetryMonitor;
 
             string phase = string.Empty;
 
