@@ -158,7 +158,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             catch (Exception ex)
             {
-                Console.WriteLine("SetCollection Error - " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "An error occurred while attempting to insert data into LiteDB.", ex);
             }
         }
 
@@ -173,7 +173,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             catch (Exception ex)
             {
-                Console.WriteLine("SaveImage - " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "An error occurred while attempting to save image.", ex);
             }
         }
 
@@ -191,7 +191,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             catch (Exception ex)
             {
-                Console.WriteLine("GetImage - " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "An error occurred while attempting to get image.", ex);
             }
         }
     }
