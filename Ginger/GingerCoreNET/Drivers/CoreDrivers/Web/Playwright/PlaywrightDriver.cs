@@ -487,7 +487,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
 
                 byte[] screenshot;
-                if (fullPage)
+                 if (fullPage)
                 {
                     screenshot = await tab.ScreenshotAsync();
                 }
@@ -1574,6 +1574,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public void ChangeAppWindowSize(int width, int height)
         {
             ThrowIfClosed();
+            if (width <= 0 || height <= 0)
+            {
+                //for VRT action, it passes widht and height as 0 to maximize which causes issues with Playwright, so ignoring those
+                return;
+            }
             Size size = new(width, height);
             Task.Run(() => _browser.CurrentWindow.CurrentTab.SetViewportSizeAsync(size).Wait()).Wait();
         }
