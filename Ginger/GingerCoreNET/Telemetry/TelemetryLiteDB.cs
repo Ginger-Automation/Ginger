@@ -25,8 +25,19 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             BsonMapper bsonMapper = new();
 
             bsonMapper.RegisterType(
-                serialize: dateTime => new BsonValue(dateTime.ToString("O")),
-                deserialize: bsonValue => DateTime.Parse(bsonValue.AsString));
+                serialize: dateTime =>
+                {
+                    if (dateTime.Kind != DateTimeKind.Utc)
+                    {
+                        dateTime = TimeZoneInfo.ConvertTimeFromUtc(dateTime, TimeZoneInfo.Local);
+                    }
+                    return new BsonValue(dateTime.ToString("O"));
+                },
+                deserialize: bsonValue =>
+                {
+                    DateTime dateTime = DateTime.Parse(bsonValue.AsString);
+                    return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+                });
 
             bsonMapper.RegisterType(
                 serialize: guid => new BsonValue(guid.ToString()),
