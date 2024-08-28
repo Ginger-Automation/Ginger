@@ -12,5 +12,6 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         public Task AddAsync(TRecord record);
         public Task<bool> DeleteAsync(TRecord record);
         public Task<bool> MarkFailedToUpload(TRecord record);
+        public Task<IEnumerable<TRecord>> GetFailedToUploadRecords(int size);
     }
 }

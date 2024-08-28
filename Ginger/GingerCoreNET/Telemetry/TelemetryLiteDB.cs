@@ -94,6 +94,20 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
             return Task.FromResult(true);
         }
+
+        public Task<IEnumerable<TelemetryLogRecord>> GetFailedToUploadRecords(int size)
+        {
+            if (size <= 0)
+            {
+                throw new ArgumentOutOfRangeException($"'{nameof(size)}' cannot be less than or equal to 0");
+            }
+
+            ILiteCollection<TelemetryLogRecord> collection = _db.GetCollection<TelemetryLogRecord>();
+            return Task.FromResult<IEnumerable<TelemetryLogRecord>>(collection
+                .Find(log => log.FailedToUpload, limit: size)
+                .OrderBy(log => log.LastUpdateTimestamp));
+        }
+
         public Task AddAsync(TelemetryFeatureRecord feature)
         {
             if (feature == null)
@@ -136,6 +150,19 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             collection.Update(featureInDB);
 
             return Task.FromResult(true);
+        }
+
+        Task<IEnumerable<TelemetryFeatureRecord>> ITelemetryDB<TelemetryFeatureRecord>.GetFailedToUploadRecords(int size)
+        {
+            if (size <= 0)
+            {
+                throw new ArgumentOutOfRangeException($"'{nameof(size)}' cannot be less than or equal to 0");
+            }
+
+            ILiteCollection<TelemetryFeatureRecord> collection = _db.GetCollection<TelemetryFeatureRecord>();
+            return Task.FromResult<IEnumerable<TelemetryFeatureRecord>>(collection
+                .Find(log => log.FailedToUpload, limit: size)
+                .OrderBy(log => log.LastUpdateTimestamp));
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Common.Telemetry
 {
-    public interface ITelemetryMonitor
+    public interface ITelemetryMonitor : IDisposable
     {
         public void AddLog(eLogLevel level, string msg);
 

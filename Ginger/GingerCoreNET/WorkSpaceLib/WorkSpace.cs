@@ -212,6 +212,12 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     WorkSpace.Instance.LocalGingerGrid.Stop();
                 }
+                
+                if (Reporter.TelemetryMonitor != null)
+                {
+                    Reporter.TelemetryMonitor.Dispose();
+                }
+
                 //WorkSpace.Instance.Telemetry.SessionEnd();
                 mWorkSpace = null;
             }
@@ -296,30 +302,10 @@ namespace amdocs.ginger.GingerCoreNET
             //NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
         }
 
-        public ITelemetryMonitor NewTelemetryMonitor()
+        public static ITelemetryMonitor NewTelemetryMonitor()
         {
-            string userProfileAppDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string telemetryDBFilePath = Path.Combine(userProfileAppDataDir, "Amdocs", "Ginger", "telemetry.db");
-            TelemetryLiteDB telemetryDB = new(telemetryDBFilePath);
-
-            return new TelemetryMonitor(
-                new MockTelemetryCollector<TelemetryLogRecord>(),
-                new MockTelemetryCollector<TelemetryFeatureRecord>(),
-                telemetryDB,
-                telemetryDB);
+            return new TelemetryMonitor();
         }
-
-        private sealed class MockTelemetryCollector<TRecord> : ITelemetryCollector<TRecord>
-        {
-            public Task<ITelemetryCollector<TRecord>.AddResult> AddAsync(IEnumerable<TRecord> records)
-            {
-                return Task.FromResult(new ITelemetryCollector<TRecord>.AddResult()
-                {
-                    Successful = false,
-                });
-            }
-        }
-
 
         public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper, ITelemetryMonitor telemetryMonitor = null)
         {

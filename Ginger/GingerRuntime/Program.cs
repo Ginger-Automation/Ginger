@@ -151,7 +151,7 @@ namespace Amdocs.Ginger.GingerRuntime
             InitWorkSpace(false);
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console   
-            WorkSpace.Instance.InitWorkspace(new GingerRuntimeWorkspaceReporter(), new DotnetCoreHelper(), WorkSpace.Instance.NewTelemetryMonitor());
+            WorkSpace.Instance.InitWorkspace(new GingerRuntimeWorkspaceReporter(), new DotnetCoreHelper(), WorkSpace.NewTelemetryMonitor());
             CLIProcessor CLI = new CLIProcessor();
             await CLI.ExecuteArgs(args);
         }
