@@ -93,18 +93,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     List<string> sevritylist = _act.SeverityList.Select(x => x.Value.ToLower()).ToList();
                     string[] SeverityExcludeRules = RuleData.Where(x => !ExcludeRules.Contains(x.RuleID) && sevritylist.Contains(x.Impact.ToLower())).Select(i => i.RuleID.ToString()).ToArray();
                     ExcludeRules = ExcludeRules.Concat(SeverityExcludeRules).ToArray();
-                    if (ExcludeRules != null && ExcludeRules.Any())
+                }
+                if (ExcludeRules != null && ExcludeRules.Any())
+                {
+                    var rulesMap = new Dictionary<string, RuleOptions>();
+                    foreach (var rule in ExcludeRules)
                     {
-                        var rulesMap = new Dictionary<string, RuleOptions>();
-                        foreach (var rule in ExcludeRules)
+                        rulesMap[rule] = new RuleOptions
                         {
-                            rulesMap[rule] = new RuleOptions
-                            {
-                                Enabled = false
-                            };
-                        }
-                        axeRunOptions.Rules = rulesMap;
+                            Enabled = false
+                        };
                     }
+                    axeRunOptions.Rules = rulesMap;
                 }
 
             }

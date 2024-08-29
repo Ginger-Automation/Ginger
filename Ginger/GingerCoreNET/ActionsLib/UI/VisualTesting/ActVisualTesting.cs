@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -395,7 +396,12 @@ namespace GingerCore.Actions
                     break;
                 case eChangeAppWindowSize.Custom:
                     mDriver.ChangeAppWindowSize(Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowWidth))), Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowHeight))));
-                    Size size = mDriver.GetWebDriver().Manage().Window.Size;
+                    IWebDriver webDriver = mDriver.GetWebDriver();
+                    if (webDriver == null)
+                    {
+                        return true;
+                    }
+                    Size size = webDriver.Manage().Window.Size;
                     if (Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowWidth))) + 5 < size.Width)//+5 added to check with actual viewport/size of the browser which can be different by 2 0r 3 points
                     {
                         this.Error = string.Format("Unable to set custom width of web page to {0}, min supported width is {1}.", GetInputParamCalculatedValue(nameof(SetAppWindowWidth)), size.Width.ToString());
