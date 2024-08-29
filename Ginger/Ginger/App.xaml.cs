@@ -172,7 +172,7 @@ namespace Ginger
             }
 
             //log it
-            Reporter.ToLog(eLogLevel.ERROR, ex.ToString(), ex);
+            Reporter.ToLog(eLogLevel.ERROR, ex.ToString(), ex, TelemetryMetadata.WithTags("ApplicationUnhandledException"));
 
             //add to dictionary to make sure same exception won't show more than 3 times
             if (mExceptionsDic.ContainsKey(ex.Message))

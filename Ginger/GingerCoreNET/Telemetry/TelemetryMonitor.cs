@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             {
                 Collector = new MockTelemetryCollector<TelemetryLogRecord>(_ => Task.FromResult(new ITelemetryCollector<TelemetryLogRecord>.AddResult()
                 {
-                    Successful = true,
+                    Successful = false,
                 })),
                 TelemetryDB = NewTelemetryLiteDB(),
                 AddToLocalDBTelemetryStepBufferSize = 4,
@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             {
                 Collector = new MockTelemetryCollector<TelemetryFeatureRecord>(_ => Task.FromResult(new ITelemetryCollector<TelemetryFeatureRecord>.AddResult()
                 {
-                    Successful = true,
+                    Successful = false,
                 })),
                 TelemetryDB = NewTelemetryLiteDB(),
                 AddToLocalDBTelemetryStepBufferSize = 4,
@@ -80,10 +80,10 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         public void AddLog(eLogLevel level, string msg)
         {
-            AddLog(level, msg, attributes: []);
+            AddLog(level, msg, metadata: new());
         }
 
-        public void AddLog(eLogLevel level, string msg, Dictionary<string,string> attributes)
+        public void AddLog(eLogLevel level, string msg, TelemetryMetadata metadata)
         {
             if (level != eLogLevel.ERROR)
             {
@@ -98,7 +98,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 Level = level.ToString(),
                 UserId = WorkSpace.Instance.UserProfile.UserName,
                 Message = msg,
-                Attributes = attributes,
+                Metadata = metadata.ToJSON(),
             });
         }
 

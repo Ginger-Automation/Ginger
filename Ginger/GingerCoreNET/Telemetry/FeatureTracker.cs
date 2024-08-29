@@ -15,14 +15,15 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         private readonly Action<TelemetryFeatureRecord> _onStop;
 
         public FeatureId FeatureId { get; }
-        private Dictionary<string,string> Attributes { get; }
+        
+        public TelemetryMetadata Metadata { get; }
 
         internal FeatureTracker(FeatureId featureId, Action<TelemetryFeatureRecord> onStop)
         {
             _startTime = DateTime.UtcNow.Ticks;
             _onStop = onStop;
             FeatureId = featureId;
-            Attributes = [];
+            Metadata = new();
         }
 
         public void StopTracking()
@@ -35,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 UserId = WorkSpace.Instance.UserProfile.UserName,
                 FeatureId = FeatureId.ToString(),
                 Duration = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - _startTime),
-                Attributes = Attributes,
+                Metadata = Metadata.ToJSON(),
             });
         }
 

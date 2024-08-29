@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.Common
 
         #region ToLog
         public static eAppReporterLoggingLevel AppLoggingLevel { get; set; }
-        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
+        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, TelemetryMetadata metadata = null)
         {
             if (WorkSpaceReporter == null || (logLevel == eLogLevel.DEBUG && AppLoggingLevel != eAppReporterLoggingLevel.Debug))
             {
@@ -68,7 +68,14 @@ namespace Amdocs.Ginger.Common
                 {
                     msg = messageToLog;
                 }
-                TelemetryMonitor.AddLog(logLevel, msg);
+                if (metadata != null)
+                {
+                    TelemetryMonitor.AddLog(logLevel, msg, metadata);
+                }
+                else
+                {
+                    TelemetryMonitor.AddLog(logLevel, msg);
+                }
             }
         }
         #endregion ToLog
@@ -87,9 +94,12 @@ namespace Amdocs.Ginger.Common
         {
             public FeatureId FeatureId { get; }
 
+            public TelemetryMetadata Metadata { get; }
+
             internal MockFeatureTracker(FeatureId featureId)
             {
                 FeatureId = featureId;
+                Metadata = new();
             }
 
             public void Dispose()

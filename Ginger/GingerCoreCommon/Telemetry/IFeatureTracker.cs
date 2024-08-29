@@ -10,6 +10,8 @@ namespace Amdocs.Ginger.Common.Telemetry
     {
         public FeatureId FeatureId { get; }
 
+        public TelemetryMetadata Metadata { get; }
+
         public void StopTracking();
     }
 }
