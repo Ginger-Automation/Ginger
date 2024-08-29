@@ -110,15 +110,15 @@ namespace Ginger.SolutionWindows
                 // Do something with data, for example:
                 data.Active = checkBox.IsChecked ?? false;
                 mAccessibilityConfiguration.StartDirtyTracking();
+                if (!mAccessibilityConfiguration.ExcludedRules.Any())
+                {
+                    GingerCoreNET.GeneralLib.General.CreateDefaultAccessiblityconfiguration();
+                    mAccessibilityConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>();
+                    mAccessibilityConfiguration.ExcludedRules = mAccessibilityConfiguration.ExcludedRules != null ? mAccessibilityConfiguration.ExcludedRules : new();
+                }
+
                 if (!data.Active)
                 {
-                    if(!mAccessibilityConfiguration.ExcludedRules.Any())
-                    {
-                        GingerCoreNET.GeneralLib.General.CreateDefaultAccessiblityconfiguration();
-                        mAccessibilityConfiguration = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<AccessibilityConfiguration>();
-                        mAccessibilityConfiguration.ExcludedRules = mAccessibilityConfiguration.ExcludedRules != null ? mAccessibilityConfiguration.ExcludedRules : new();
-                    }
-
                     if (!mAccessibilityConfiguration.ExcludedRules.Any(x => x.RuleID.Equals(data.RuleID,StringComparison.CurrentCultureIgnoreCase)))
                     {
                         mAccessibilityConfiguration.ExcludedRules.Add(data);
@@ -128,7 +128,12 @@ namespace Ginger.SolutionWindows
                 {
                     if (mAccessibilityConfiguration.ExcludedRules.Any(x => x.RuleID.Equals(data.RuleID,StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        mAccessibilityConfiguration.ExcludedRules.RemoveItem(data);
+                       AccessibilityRuleData itemToRemove = mAccessibilityConfiguration.ExcludedRules.FirstOrDefault(x => x.RuleID.Equals(data.RuleID, StringComparison.CurrentCultureIgnoreCase));
+                        if (itemToRemove != null)
+                        {
+                            mAccessibilityConfiguration.ExcludedRules.Remove(itemToRemove);
+                        }
+
                     }
                 }
             }
