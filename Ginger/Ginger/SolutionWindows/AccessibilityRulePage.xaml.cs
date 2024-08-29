@@ -119,16 +119,16 @@ namespace Ginger.SolutionWindows
                         mAccessibilityConfiguration.ExcludedRules = mAccessibilityConfiguration.ExcludedRules != null ? mAccessibilityConfiguration.ExcludedRules : new();
                     }
 
-                    if (!mAccessibilityConfiguration.ExcludedRules.Any(x => x.Equals(data.RuleID)))
+                    if (!mAccessibilityConfiguration.ExcludedRules.Any(x => x.RuleID.Equals(data.RuleID,StringComparison.CurrentCultureIgnoreCase)))
                     {
                         mAccessibilityConfiguration.ExcludedRules.Add(data);
                     }
                 }
                 else
                 {
-                    if (mAccessibilityConfiguration.ExcludedRules.Any(x => x.Equals(data.RuleID)))
+                    if (mAccessibilityConfiguration.ExcludedRules.Any(x => x.RuleID.Equals(data.RuleID,StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        mAccessibilityConfiguration.ExcludedRules.Remove(data);
+                        mAccessibilityConfiguration.ExcludedRules.RemoveItem(data);
                     }
                 }
             }
