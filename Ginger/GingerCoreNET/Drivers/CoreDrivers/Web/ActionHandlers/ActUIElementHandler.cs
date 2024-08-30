@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common.UIElement;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
@@ -141,6 +142,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     case ActUIElement.eElementAction.SetValue:
                         await HandleSetValueOperationAsync();
                         break;
+                    case ActUIElement.eElementAction.ClickAndValidate:
+                        await HandleClickAndValidateAsync();
+                        break;
+                    case ActUIElement.eElementAction.JavaScriptClick:
+                        await HandleJavaScriptClickAsync();
+                        break;
+                    case ActUIElement.eElementAction.MouseClick:
+                        await HandleMouseClickAsync();
+                        break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActUIElement.eElementAction), _act.ElementAction);
                         _act.Error = $"Operation '{operationName}' is not supported";
@@ -173,6 +183,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task HandleClickOperationAsync()
         {
+
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ClickAsync();
         }
@@ -478,5 +489,57 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             string value = _act.GetInputParamCalculatedValue("Value");
             await element.SetAttributeValueAsync(name: "value", value);
         }
+
+        private async Task HandleClickAndValidateAsync()
+        {
+            IBrowserElement elementToClick = await GetFirstMatchingElementAsync();
+            ActUIElement.eElementAction clickType = Enum.Parse<ActUIElement.eElementAction>(_act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString());
+
+            if (clickType == ActUIElement.eElementAction.Click)
+            {
+                await elementToClick.ClickAsync();
+            }
+            else if (clickType == ActUIElement.eElementAction.JavaScriptClick)
+            {
+                string script = "element => element.click()";
+                await elementToClick.ExecuteJavascriptAsync(script);
+            }
+            else
+            {
+                _act.Error = $"Operation '{clickType}' is not supported by Playwright driver";
+            }
+            eLocateBy validateElementLocateBy = Enum.Parse<eLocateBy>(_act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString());
+            string validationElementLocatorValue = _act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue).ToString();
+            IEnumerable<IBrowserElement> validationElementSearchResult = await _elementLocator.FindMatchingElements(validateElementLocateBy, validationElementLocatorValue);
+            IBrowserElement? elementToValidate = validationElementSearchResult.FirstOrDefault();
+            if (elementToValidate == null)
+            {
+                 throw new EntityNotFoundException($"No element found for validation by locator '{validateElementLocateBy}' and value '{validationElementLocatorValue}'");
+            }
+
+            string validationType = _act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString();
+            bool validationResult = validationType switch
+            {
+                nameof(ActUIElement.eElementAction.IsEnabled) => await elementToValidate.IsEnabledAsync(),
+                nameof(ActUIElement.eElementAction.IsVisible) => await elementToValidate.IsVisibleAsync(),
+                _ => throw new NotImplementedException($"Unsupported validation type '{validationType}'")
+            };
+
+        }
+
+        private async Task HandleJavaScriptClickAsync()
+        {
+            IBrowserElement elementToClick = await GetFirstMatchingElementAsync();
+            string script = "element => element.click()";
+            await elementToClick.ExecuteJavascriptAsync(script);
+           
+        }
+
+        private async Task HandleMouseClickAsync()
+        {
+            IBrowserElement elementToClick = await GetFirstMatchingElementAsync();
+            await elementToClick.MouseLeftClick();
+        }
+
     }
 }

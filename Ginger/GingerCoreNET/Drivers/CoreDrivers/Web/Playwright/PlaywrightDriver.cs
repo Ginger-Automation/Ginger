@@ -1763,6 +1763,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActUIElement.eElementAction.SelectByText,
             ActUIElement.eElementAction.SelectByIndex,
             ActUIElement.eElementAction.SetValue,
+            ActUIElement.eElementAction.ClickAndValidate,
+            ActUIElement.eElementAction.JavaScriptClick,
+            ActUIElement.eElementAction.MouseClick,
         };
 
 

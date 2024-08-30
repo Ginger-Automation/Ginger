@@ -49,6 +49,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task DoubleClickAsync();
 
         public Task DoubleClickAsync(int x, int y);
+        public Task MouseLeftClick();
 
         public Task HoverAsync();
 

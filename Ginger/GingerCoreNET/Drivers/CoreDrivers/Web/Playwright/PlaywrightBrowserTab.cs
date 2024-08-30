@@ -292,7 +292,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             for (int index = 0; index < matchedElementCount; index++)
             {
-                elements[index] = new PlaywrightBrowserElement(locator.Nth(index));
+                elements[index] = new PlaywrightBrowserElement(locator.Nth(index), _playwrightPage);
             }
 
             return elements;
@@ -307,7 +307,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 return null;
             }
-            return new PlaywrightBrowserElement(elementHandle);
+            return new PlaywrightBrowserElement(elementHandle, _playwrightPage);
         }
 
         public Task<byte[]> ScreenshotAsync()
@@ -406,7 +406,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return null;
             }
 
-            return new PlaywrightBrowserElement(locator);
+            return new PlaywrightBrowserElement(locator, _playwrightPage);
         }
 
         private static async Task<bool> DoesLocatorExistsAsync(IPlaywrightLocator locator)

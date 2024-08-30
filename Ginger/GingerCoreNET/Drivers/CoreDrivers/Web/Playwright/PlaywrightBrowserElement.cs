@@ -24,6 +24,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
+using IPlaywrightPage = Microsoft.Playwright.IPage;
 using System.Drawing;
 using Deque.AxeCore.Commons;
 using GingerCore.Actions;
@@ -34,20 +35,22 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     internal sealed class PlaywrightBrowserElement : IBrowserElement
     {
-        //TODO: rename it to _playwrightLocator to maintain the naming format
         private readonly IPlaywrightLocator? _playwrightLocator;
         private readonly IPlaywrightElementHandle? _playwrightElementHandle;
+        private readonly IPlaywrightPage _playwrightPage;
 
-        internal PlaywrightBrowserElement(IPlaywrightLocator playwrightLocator)
+        internal PlaywrightBrowserElement(IPlaywrightLocator playwrightLocator, IPlaywrightPage playwrightPage)
         {
             ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
             _playwrightLocator = playwrightLocator;
+            _playwrightPage = playwrightPage;
         }
 
-        internal PlaywrightBrowserElement(IPlaywrightElementHandle playwrightElementHandle)
+        internal PlaywrightBrowserElement(IPlaywrightElementHandle playwrightElementHandle, IPlaywrightPage playwrightPage)
         {
             ArgumentNullException.ThrowIfNull(playwrightElementHandle);
             _playwrightElementHandle = playwrightElementHandle;
+            _playwrightPage = playwrightPage;
         }
 
         public Task ClickAsync()
@@ -188,6 +191,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     X = x,
                     Y = y
                 }
+            });
+        }
+        public async Task MouseLeftClick()
+        {
+            Point position = await PositionAsync();
+            Size size = await SizeAsync();
+            Point centerOfElement = new(x: position.X + size.Width / 2, y: position.Y + size.Height / 2);
+            await _playwrightPage.Mouse.ClickAsync(centerOfElement.X, centerOfElement.Y, new MouseClickOptions()
+            {
+                Button = MouseButton.Left,
             });
         }
 
