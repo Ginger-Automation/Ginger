@@ -17,7 +17,7 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
     public class AddToLocalDBTelemetryStepTests
     {
         [TestMethod]
-        public async Task Process_ExceptionAddingRecord_NotForwardedToNextStep()
+        public async Task Process_ExceptionAddingAllRecords_NoneForwardedToNextStep()
         {
             string[] records =
             [
@@ -48,7 +48,7 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
         }
 
         [TestMethod]
-        public async Task Process_ExceptionAddingRecord_RemainingForwardedToNextStep()
+        public async Task Process_ExceptionAddingSomeRecords_RemainingForwardedToNextStep()
         {
             string[] records =
             [
@@ -81,6 +81,37 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
             await Task.Delay(100);
 
             Assert.AreEqual(expected: records.Length - 1, actual: forwardedRecordCount);
+        }
+
+        [TestMethod]
+        public async Task Process_AllRecordsAddedSuccessfully_AllForwardedToNextStep()
+        {
+            string[] records =
+            [
+                "test-record-1",
+                "test-record-2",
+                "test-record-3"
+            ];
+            Mock<ITelemetryDB<string>> mockLocalDB = new(MockBehavior.Strict);
+            mockLocalDB
+                .Setup(m => m.AddAsync(It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
+            var logger = TelemetryStepTestUtils.NewConsoleLogger();
+            var forwardedRecordCount = 0;
+            Mock<ITelemetryStep<string>> mockSendToCollectorStep = new();
+            mockSendToCollectorStep
+                .Setup(m => m.Process(It.IsAny<string>()))
+                .Callback(() => forwardedRecordCount++);
+            AddToLocalDBTelemetryStep<string> step = new(bufferSize: 1, mockLocalDB.Object, mockSendToCollectorStep.Object, logger);
+            step.StartConsumer();
+
+            foreach (var record in records)
+            {
+                step.Process(record);
+            }
+            await Task.Delay(100);
+
+            Assert.AreEqual(expected: records.Length, actual: forwardedRecordCount);
         }
     }
 }

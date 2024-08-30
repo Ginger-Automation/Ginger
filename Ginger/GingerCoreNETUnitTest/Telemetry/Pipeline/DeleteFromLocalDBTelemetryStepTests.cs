@@ -17,7 +17,7 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
     public class DeleteFromLocalDBTelemetryStepTests
     {
         [TestMethod]
-        public async Task Process_ExceptionDeletingRecord_RemainingDeletedFromLocalDB()
+        public async Task Process_ExceptionDeletingSomeRecords_RemainingDeletedFromLocalDB()
         {
             string[] records =
             [

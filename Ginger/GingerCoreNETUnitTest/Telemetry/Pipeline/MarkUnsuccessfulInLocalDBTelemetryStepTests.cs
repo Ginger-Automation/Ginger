@@ -17,7 +17,7 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
     public class MarkUnsuccessfulInLocalDBTelemetryStepTests
     {
         [TestMethod]
-        public async Task Process_ExceptionMarkingRecord_RemainingMarkedInLocalDB()
+        public async Task Process_ExceptionMarkingSomeRecords_RemainingMarkedInLocalDB()
         {
             string[] records =
             [
