@@ -70,17 +70,27 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
 
             while (!_monitoringCancellationToken.IsCancellationRequested)
             {
+                IEnumerable<TRecord> records;
                 try
                 {
-                    var records = await _telemetryDB.GetFailedToUploadRecords(_pollingSize);
-                    foreach (var record in records)
-                    {
-                        _sendToCollectorStep.Process(record);
-                    }
+                     records = await _telemetryDB.GetFailedToUploadRecords(_pollingSize);
                 }
                 catch (Exception ex)
                 {
-                    _logger?.LogError("error while retrying to send records \n{ex}", ex);
+                    records = Array.Empty<TRecord>();
+                    _logger?.LogError("unable to get FailedToUpload records\n{ex}", ex);
+                }
+
+                foreach (TRecord record in records)
+                {
+                    try
+                    {
+                        _sendToCollectorStep.Process(record);
+                    }
+                    catch (Exception ex) 
+                    {
+                        _logger?.LogError("unable to send records to SendToCollector step\n{ex}", ex);
+                    }
                 }
 
                 await Task.Delay(_pollingInterval);
