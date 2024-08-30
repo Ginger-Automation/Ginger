@@ -71,35 +71,41 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                         collection = db.GetCollection<T>(collectionName);
                     }
                 }
+                catch(UnauthorizedAccessException ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Access denied while trying to get collection: {collectionName}", ex);
+                }
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Collection: {collectionName}", ex);
-                    throw;
                 }
                 return collection;
         }
 
-/*        
- *        This function is not used anywhere
- *        public bool DeleteCollectionItems<T>(LiteCollection<T> baseColl, Query query)
-        {
-            bool result = false;
-            try
-            {
-                using (var db = new LiteDatabase(this.ConnectionString))
-                {
-                    result = baseColl.Delete(query) > 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("DeleteCollectionItems Error - " + ex.Message);
-            }
-            return result;
-        }
-*/        public bool DeleteDocumentByLiteDbRunSet(LiteDbRunSet liteDbRunSet, eExecutedFrom executedFrom = eExecutedFrom.Run)
+        
+        //This function is not used anywhere
+        //public bool DeleteCollectionItems<T>(LiteCollection<T> baseColl, Query query)
+        //{
+        //    bool result = false;
+        //    try
+        //    {
+        //        using (var db = new LiteDatabase(this.ConnectionString))
+        //        {
+        //            result = baseColl.Delete(query) > 0;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("DeleteCollectionItems Error - " + ex.Message);
+        //    }
+        //    return result;
+        //}
+
+        public bool DeleteDocumentByLiteDbRunSet(LiteDbRunSet liteDbRunSet, eExecutedFrom executedFrom = eExecutedFrom.Run)
         {
             bool result = true;
+            try
+            {
             var runSetLiteColl = GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
             var runnerssLiteColl = GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
             foreach (LiteDbRunner ldbRunner in liteDbRunSet.RunnersColl)
@@ -132,6 +138,12 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             if (executedFrom == eExecutedFrom.Run)
             {
                 runSetLiteColl.Delete(liteDbRunSet._id);
+            }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to delete document for RunSet: {liteDbRunSet._id}", ex);
+                result = false;
             }
             return result;
         }
