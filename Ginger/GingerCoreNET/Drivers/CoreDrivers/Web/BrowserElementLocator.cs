@@ -1,5 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Amdocs.Ginger.Repository;
@@ -21,6 +23,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         {
             internal required BusinessFlow BusinessFlow { get; init; }
             internal required ProjEnvironment Environment { get; init; }
+            internal required POMExecutionUtils POMExecutionUtils { get; init; }
+            internal IAgent? Agent { get; init; }
         }
 
         //split by comma outside brackets
@@ -84,6 +88,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 Environment = _context.Environment,
                 ElementInfo = pomLocatorParser.ElementInfo,
                 ElementsProvider = elementsProvider,
+                POMExecutionUtils = _context.POMExecutionUtils,
+                Agent = _context.Agent,
             });
             POMElementLocator<IBrowserElement>.LocateResult result = await pomElementLocator.LocateAsync();
 

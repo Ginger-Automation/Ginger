@@ -88,7 +88,6 @@ namespace GingerCoreNETUnitTest.RosLynTestLib
             Assert.IsTrue(output != null && !output.Equals(string.Empty));
         }
 
-
         [TestMethod]
         public void PastDate_FetchPastDateOnly_IsNotnullAndEmpty()
         {
@@ -360,6 +359,15 @@ namespace GingerCoreNETUnitTest.RosLynTestLib
             string error = string.Empty;
             string output = CodeProcessor.GetBogusDataGenerateresult(Expression);
             Assert.IsTrue(output != null && output.Equals(string.Empty));
+        }
+
+        [TestMethod]
+        public void TestBogusData_MultipleExpression_IsNotnullAndEmpty()
+        {
+            string Expression = "{MockDataExp Fun=Address(@\"en\").FullAddress();}\r\n{MockDataExp Fun=Address(@\"en\").Country();}";
+            string error = string.Empty;
+            string output = CodeProcessor.GetBogusDataGenerateresult(Expression);
+            Assert.IsTrue(output != null && !output.Equals(string.Empty));
         }
     }
 }

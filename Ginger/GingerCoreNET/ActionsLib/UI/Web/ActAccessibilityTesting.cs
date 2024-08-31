@@ -390,6 +390,15 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
         public override eImageType Image { get { return eImageType.Accessibility; } }
 
+        public eTarget GetAccessibilityTarget()
+        {
+            if (Enum.TryParse(GetInputParamValue(Fields.Target), out eTarget target))
+            {
+                return target;
+            }
+            return eTarget.Page;
+        }
+
         private static string GetAccessiblityrules()
         {
             try

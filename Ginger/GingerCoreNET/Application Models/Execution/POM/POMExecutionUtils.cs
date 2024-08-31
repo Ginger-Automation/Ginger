@@ -51,7 +51,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         }
 
-
+        public POMExecutionUtils(eExecutedFrom executedFrom, string elementLocateValue)
+        {
+            ExecutedFrom = executedFrom;
+            PomElementGUID = elementLocateValue.ToString().Split('_');
+        }
 
 
 
