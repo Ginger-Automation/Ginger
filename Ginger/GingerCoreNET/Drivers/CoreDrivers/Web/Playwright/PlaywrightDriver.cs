@@ -223,6 +223,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         }
                         break;
                     case ActAccessibilityTesting actAccessibilityTesting:
+                        if (!BrowserPrivateMode)
+                        {
+                            act.Error = $"Playwright Driver must be in Private mode for using Accessibility actions";
+                            break;
+                        }
                         ActAccessibilityTestingHandler actAccessibilityTestingHandler;
                         if (actAccessibilityTesting.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
                         {
@@ -257,7 +262,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver or ActScreenShot)
+            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting)
             {
                 return true;
             }
@@ -306,8 +311,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
             else if (act is ActVisualTesting actVisualTesting)
             {
-                message = $"{actVisualTesting.VisualTestingAnalyzer} is not supported by Playwright driver, use Selenium driver instead.";
-                return actVisualTesting.VisualTestingAnalyzer != ActVisualTesting.eVisualTestingAnalyzer.Applitools;
+                if (actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.Applitools)
+                {
+                    message = $"{actVisualTesting.VisualTestingAnalyzer} is not supported by Playwright driver, use Selenium driver instead.";
+                    return false;
+                }
+                return true;
             }
             else
             {
