@@ -44,13 +44,8 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
                 mockDeleteFromLocalDBStep.Object, 
                 mockMarkUnsuccessfulInLocalDBStep.Object, 
                 logger);
-            step.StartConsumer();
 
-            foreach (string record in records)
-            {
-                step.Process(record);
-            }
-            await Task.Delay(100);
+            await step.Process(records);
 
             Assert.AreEqual(expected: 0, recordsForwardedForDeleteFromLocalDBStep);
         }
@@ -83,13 +78,8 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
                 mockDeleteFromLocalDBStep.Object,
                 mockMarkUnsuccessfulInLocalDBStep.Object,
                 logger);
-            step.StartConsumer();
 
-            foreach (string record in records)
-            {
-                step.Process(record);
-            }
-            await Task.Delay(100);
+            await step.Process(records);
 
             Assert.AreEqual(expected: records.Length, recordsMarkedUnsuccessfulInLocalDB);
         }
@@ -125,13 +115,8 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
                 mockDeleteFromLocalDBStep.Object,
                 mockMarkUnsuccessfulInLocalDBStep.Object,
                 logger);
-            step.StartConsumer();
 
-            foreach (string record in records)
-            {
-                step.Process(record);
-            }
-            await Task.Delay(100);
+            await step.Process(records);
 
             Assert.AreEqual(expected: records.Length, recordsForwardedForDeleteFromLocalDBStep);
         }
@@ -167,13 +152,8 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
                 mockDeleteFromLocalDBStep.Object,
                 mockMarkUnsuccessfulInLocalDBStep.Object,
                 logger);
-            step.StartConsumer();
 
-            foreach (string record in records)
-            {
-                step.Process(record);
-            }
-            await Task.Delay(100);
+            await step.Process(records);
 
             Assert.AreEqual(expected: 0, recordsMarkedUnsuccessfulInLocalDB);
         }

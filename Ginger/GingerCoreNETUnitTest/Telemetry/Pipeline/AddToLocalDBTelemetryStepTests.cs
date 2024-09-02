@@ -36,13 +36,8 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
                 .Setup(m => m.Process(It.IsAny<string>()))
                 .Callback(() => forwardedRecordCount++);
             AddToLocalDBTelemetryStep<string> step = new(bufferSize: 1, mockLocalDB.Object, mockSendToCollectorStep.Object, logger);
-            step.StartConsumer();
 
-            foreach (var record in records)
-            {
-                step.Process(record);
-            }
-            await Task.Delay(100);
+            await step.Process(records);
 
             Assert.AreEqual(expected: 0, actual: forwardedRecordCount);
         }
@@ -72,13 +67,8 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
                 .Setup(m => m.Process(It.IsAny<string>()))
                 .Callback(() => forwardedRecordCount++);
             AddToLocalDBTelemetryStep<string> step = new(bufferSize: 1, mockLocalDB.Object, mockSendToCollectorStep.Object, logger);
-            step.StartConsumer();
 
-            foreach (var record in records)
-            {
-                step.Process(record);
-            }
-            await Task.Delay(100);
+            await step.Process(records);
 
             Assert.AreEqual(expected: records.Length - 1, actual: forwardedRecordCount);
         }
@@ -103,13 +93,8 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
                 .Setup(m => m.Process(It.IsAny<string>()))
                 .Callback(() => forwardedRecordCount++);
             AddToLocalDBTelemetryStep<string> step = new(bufferSize: 1, mockLocalDB.Object, mockSendToCollectorStep.Object, logger);
-            step.StartConsumer();
 
-            foreach (var record in records)
-            {
-                step.Process(record);
-            }
-            await Task.Delay(100);
+            await step.Process(records);
 
             Assert.AreEqual(expected: records.Length, actual: forwardedRecordCount);
         }

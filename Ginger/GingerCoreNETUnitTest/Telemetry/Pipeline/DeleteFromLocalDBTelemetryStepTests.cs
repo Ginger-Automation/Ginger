@@ -38,13 +38,8 @@ namespace GingerCoreNETUnitTest.Telemetry.Pipeline
                 .ReturnsAsync(true);
             ILogger logger = TelemetryStepTestUtils.NewConsoleLogger();
             DeleteFromLocalDBTelemetryStep<string> step = new(bufferSize: 1, mockLocalDB.Object, logger);
-            step.StartConsumer();
 
-            foreach (string record in records)
-            {
-                step.Process(record);
-            }
-            await Task.Delay(100);
+            await step.Process(records);
 
             Assert.AreEqual(expected: records.Length - 1, actual: recordsDeletedFromLocalDB);
         }

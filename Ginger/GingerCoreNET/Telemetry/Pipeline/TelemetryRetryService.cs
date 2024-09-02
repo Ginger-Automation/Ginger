@@ -72,6 +72,13 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             StopMonitoring();
         }
 
+        public void StartMonitoring()
+        {
+            _logger?.LogDebug("starting telemetry monitoring task");
+
+            _monitoringTask.Start();
+        }
+
         public void StopMonitoring()
         {
             _logger?.LogDebug("cancelling telemetry monitoring task");
@@ -83,13 +90,6 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             }
 
             _monitoringCancellationToken.Cancel();
-        }
-
-        public void StartMonitoring()
-        {
-            _logger?.LogDebug("starting telemetry monitoring task");
-
-            _monitoringTask.Start();
         }
 
         internal async Task ProcessRecordsAsync(int pollingSize)

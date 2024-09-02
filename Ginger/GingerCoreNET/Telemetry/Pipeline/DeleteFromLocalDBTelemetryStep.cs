@@ -20,7 +20,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             _localDB = localDB;
         }
 
-        protected override async Task ConsumeRecordsAsync(IEnumerable<TRecord> records)
+        protected internal override async Task Process(IEnumerable<TRecord> records)
         {
             foreach (TRecord record in records)
             {
