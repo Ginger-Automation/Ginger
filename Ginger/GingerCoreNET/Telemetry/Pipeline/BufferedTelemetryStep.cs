@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
                     var records = _queue.Dequeue();
                     try
                     {
-                        await ConsumerRecordsAsync(records);
+                        await ConsumeRecordsAsync(records);
                     }
                     catch (Exception ex)
                     {
@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             });
         }
 
-        protected abstract Task ConsumerRecordsAsync(IEnumerable<TRecord> records);
+        protected abstract Task ConsumeRecordsAsync(IEnumerable<TRecord> records);
 
         internal void StartConsumer()
         {
