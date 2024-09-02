@@ -492,32 +492,38 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task HandleClickAndValidateAsync()
         {
-            IBrowserElement elementToClick = await GetFirstMatchingElementAsync();
-            ActUIElement.eElementAction clickType = Enum.Parse<ActUIElement.eElementAction>(_act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString());
+            ActUIElement.eElementAction clickType = Enum.Parse<ActUIElement.eElementAction>(_act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString() ?? "");
 
             if (clickType == ActUIElement.eElementAction.Click)
             {
-                await elementToClick.ClickAsync();
+                await HandleClickOperationAsync();
             }
             else if (clickType == ActUIElement.eElementAction.JavaScriptClick)
             {
-                string script = "element => element.click()";
-                await elementToClick.ExecuteJavascriptAsync(script);
+                await HandleJavaScriptClickAsync();
+            }
+            else if (clickType == ActUIElement.eElementAction.MouseClick)
+            {
+                await HandleMouseClickAsync();
             }
             else
             {
                 _act.Error = $"Operation '{clickType}' is not supported by Playwright driver";
             }
-            eLocateBy validateElementLocateBy = Enum.Parse<eLocateBy>(_act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString());
-            string validationElementLocatorValue = _act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue).ToString();
+            eLocateBy validateElementLocateBy = Enum.Parse<eLocateBy>(_act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString() ?? "");
+            string validationElementLocatorValue = _act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue).ToString() ?? "";
             IEnumerable<IBrowserElement> validationElementSearchResult = await _elementLocator.FindMatchingElements(validateElementLocateBy, validationElementLocatorValue);
-            IBrowserElement? elementToValidate = validationElementSearchResult.FirstOrDefault();
-            if (elementToValidate == null)
+            IBrowserElement? elementToValidate;
+            if (validationElementSearchResult.Any())
             {
-                 throw new EntityNotFoundException($"No element found for validation by locator '{validateElementLocateBy}' and value '{validationElementLocatorValue}'");
+                elementToValidate = validationElementSearchResult.FirstOrDefault();
+            }
+            else
+            {
+                throw new EntityNotFoundException($"No element found for validation by locator '{validateElementLocateBy}' and value '{validationElementLocatorValue}'");
             }
 
-            string validationType = _act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString();
+            string validationType = _act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString() ?? "";
             bool validationResult = validationType switch
             {
                 nameof(ActUIElement.eElementAction.IsEnabled) => await elementToValidate.IsEnabledAsync(),
@@ -530,9 +536,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         private async Task HandleJavaScriptClickAsync()
         {
             IBrowserElement elementToClick = await GetFirstMatchingElementAsync();
-            string script = "element => element.click()";
+            const string script = "element => element.click()";
             await elementToClick.ExecuteJavascriptAsync(script);
-           
+
         }
 
         private async Task HandleMouseClickAsync()
