@@ -21,7 +21,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             _sendToCollectorStep = sendToCollectorStep;
         }
 
-        protected override async Task ProcessRecordsAsync(IEnumerable<TRecord> records)
+        protected override async Task ConsumerRecordsAsync(IEnumerable<TRecord> records)
         {
             foreach (TRecord record in records)
             {

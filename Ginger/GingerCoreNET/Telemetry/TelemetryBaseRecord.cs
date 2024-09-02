@@ -14,7 +14,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         
         public required DateTime LastUpdateTimestamp { get; set; }
 
-        public required string AppVersion { get; init; } 
+        public required string AppVersion { get; init; }
 
         public required string UserId { get; init; }
 

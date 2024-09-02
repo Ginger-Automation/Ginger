@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
 {
-    internal sealed class TelemetryRetryService<TRecord> : IDisposable
+    internal sealed class TelemetryRetryService<TRecord> : ITelemetryRetryService<TRecord>
     {
         internal sealed class Config<TTRecord>
         {
@@ -47,56 +47,75 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             _logger = config.Logger;
 
             _monitoringCancellationToken = new();
-            _monitoringTask = new(async () => await MonitoringTaskAction(), _monitoringCancellationToken.Token);
+            _monitoringTask = CreateMonitoringTask();
+        }
+
+        private Task CreateMonitoringTask()
+        {
+            return new Task(async () =>
+            {
+                _logger?.LogDebug("telemetry monitoring task started");
+
+                while (!_monitoringCancellationToken.IsCancellationRequested)
+                {
+                    await ProcessRecordsAsync(_pollingSize);
+                    await Task.Delay(_pollingInterval);
+                }
+
+                _logger?.LogDebug("telemetry monitoring task stopped");
+
+            });
         }
 
         public void Dispose()
         {
+            StopMonitoring();
+        }
+
+        public void StopMonitoring()
+        {
             _logger?.LogDebug("cancelling telemetry monitoring task");
+
+            if (_monitoringCancellationToken.IsCancellationRequested)
+            {
+                _logger?.LogDebug("telemetry monitoring task cancellation already requested");
+                return;
+            }
 
             _monitoringCancellationToken.Cancel();
         }
 
-        internal void StartMonitoring()
+        public void StartMonitoring()
         {
             _logger?.LogDebug("starting telemetry monitoring task");
 
             _monitoringTask.Start();
         }
 
-        private async Task MonitoringTaskAction()
+        internal async Task ProcessRecordsAsync(int pollingSize)
         {
-            _logger?.LogDebug("telemetry monitoring task started");
-
-            while (!_monitoringCancellationToken.IsCancellationRequested)
+            IEnumerable<TRecord> records;
+            try
             {
-                IEnumerable<TRecord> records;
+                records = await _telemetryDB.GetFailedToUploadRecords(pollingSize);
+            }
+            catch (Exception ex)
+            {
+                records = Array.Empty<TRecord>();
+                _logger?.LogError("unable to get FailedToUpload records\n{ex}", ex);
+            }
+
+            foreach (TRecord record in records)
+            {
                 try
                 {
-                     records = await _telemetryDB.GetFailedToUploadRecords(_pollingSize);
+                    _sendToCollectorStep.Process(record);
                 }
                 catch (Exception ex)
                 {
-                    records = Array.Empty<TRecord>();
-                    _logger?.LogError("unable to get FailedToUpload records\n{ex}", ex);
+                    _logger?.LogError("unable to send records to SendToCollector step\n{ex}", ex);
                 }
-
-                foreach (TRecord record in records)
-                {
-                    try
-                    {
-                        _sendToCollectorStep.Process(record);
-                    }
-                    catch (Exception ex) 
-                    {
-                        _logger?.LogError("unable to send records to SendToCollector step\n{ex}", ex);
-                    }
-                }
-
-                await Task.Delay(_pollingInterval);
             }
-
-            _logger?.LogDebug("telemetry monitoring task stopped");
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         private static TelemetryPipeline<TelemetryLogRecord> CreateLogPipeline()
         {
-            TelemetryPipeline<TelemetryLogRecord>.Options<TelemetryLogRecord> options = new()
+            TelemetryPipeline<TelemetryLogRecord>.Config<TelemetryLogRecord> options = new()
             {
                 Collector = new MockTelemetryCollector<TelemetryLogRecord>(_ => Task.FromResult(new ITelemetryCollector<TelemetryLogRecord>.AddResult()
                 {
@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         private static TelemetryPipeline<TelemetryFeatureRecord> CreateFeaturePipeline()
         {
-            TelemetryPipeline<TelemetryFeatureRecord>.Options<TelemetryFeatureRecord> options = new()
+            TelemetryPipeline<TelemetryFeatureRecord>.Config<TelemetryFeatureRecord> options = new()
             {
                 Collector = new MockTelemetryCollector<TelemetryFeatureRecord>(_ => Task.FromResult(new ITelemetryCollector<TelemetryFeatureRecord>.AddResult()
                 {

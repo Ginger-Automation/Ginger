@@ -23,9 +23,34 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             _name = name;
             _queue = new(bufferSize);
             _consumerCancellationTokenSource = new();
-            _consumerTask = new Task(async () => await ConsumerActionAsync(_consumerCancellationTokenSource.Token));
+            _consumerTask = CreateConsumerTask();
             _logger = logger;
         }
+
+        private Task CreateConsumerTask()
+        {
+            return new Task(async () =>
+            {
+                _logger?.LogDebug("consumer task started for {name}", _name);
+
+                while (!_consumerCancellationTokenSource.IsCancellationRequested)
+                {
+                    var records = _queue.Dequeue();
+                    try
+                    {
+                        await ConsumerRecordsAsync(records);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger?.LogError("error while processing records for {name}\n{ex}", _name, ex);
+                    }
+                }
+
+                _logger?.LogDebug("consumer task stopped for {name}", _name);
+            });
+        }
+
+        protected abstract Task ConsumerRecordsAsync(IEnumerable<TRecord> records);
 
         internal void StartConsumer()
         {
@@ -44,28 +69,6 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
         public void Process(TRecord record)
         {
             _queue.Enqueue(record);
-        }
-
-        protected abstract Task ProcessRecordsAsync(IEnumerable<TRecord> records);
-
-        private async Task ConsumerActionAsync(CancellationToken cancellationToken)
-        {
-            _logger?.LogDebug("consumer task started for {name}", _name);
-
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                var records = _queue.Dequeue();
-                try
-                {
-                    await ProcessRecordsAsync(records);
-                }
-                catch (Exception ex)
-                {
-                    _logger?.LogError("error while processing records for {name}\n{ex}", _name, ex);
-                }
-            }
-
-            _logger?.LogDebug("consumer task stopped for {name}", _name);
         }
     }
 }

@@ -15,9 +15,9 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
         private readonly SendToCollectorTelemetryStep<TRecord> _sendToCollectorTelemetryStep;
         private readonly MarkUnsuccessfulInLocalDBTelemetryStep<TRecord> _markUnsuccessfulInLocalDBTelemetryStep;
         private readonly DeleteFromLocalDBTelemetryStep<TRecord> _deleteFromLocalDBTelemetryStep;
-        private readonly TelemetryRetryService<TRecord> _retryService;
+        private readonly ITelemetryRetryService<TRecord> _retryService;
 
-        internal sealed class Options<TTRecord>
+        internal sealed class Config<TTRecord>
         {
             internal required ITelemetryDB<TTRecord> TelemetryDB { get; init; }
             internal required ITelemetryCollector<TTRecord> Collector { get; init; }
@@ -30,13 +30,20 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             internal int RetryServicePollingSize { get; init; } = 10;
         }
 
-        internal TelemetryPipeline(Options<TRecord> options)
+        internal TelemetryPipeline(Config<TRecord> config)
         {
-            _deleteFromLocalDBTelemetryStep = new(options.DeleteFromLocalDBTelemetryStepBufferSize, options.TelemetryDB, options.Logger);
-            _markUnsuccessfulInLocalDBTelemetryStep = new(options.MarkUnsuccessfulInLocalDBTelemetryStepBufferSize, options.TelemetryDB, options.Logger);
-            _sendToCollectorTelemetryStep = new(options.SendToCollectorTelemetryStepBufferSize, options.Collector, _deleteFromLocalDBTelemetryStep, _markUnsuccessfulInLocalDBTelemetryStep, options.Logger);
-            _addToLocalDBTelemetryStep = new(options.AddToLocalDBTelemetryStepBufferSize, options.TelemetryDB, _sendToCollectorTelemetryStep, options.Logger);
-            _retryService = new(options.TelemetryDB, _sendToCollectorTelemetryStep, options.Logger);
+            _deleteFromLocalDBTelemetryStep = new(config.DeleteFromLocalDBTelemetryStepBufferSize, config.TelemetryDB, config.Logger);
+            _markUnsuccessfulInLocalDBTelemetryStep = new(config.MarkUnsuccessfulInLocalDBTelemetryStepBufferSize, config.TelemetryDB, config.Logger);
+            _sendToCollectorTelemetryStep = new(config.SendToCollectorTelemetryStepBufferSize, config.Collector, _deleteFromLocalDBTelemetryStep, _markUnsuccessfulInLocalDBTelemetryStep, config.Logger);
+            _addToLocalDBTelemetryStep = new(config.AddToLocalDBTelemetryStepBufferSize, config.TelemetryDB, _sendToCollectorTelemetryStep, config.Logger);
+            _retryService = new TelemetryRetryService<TRecord>(new TelemetryRetryService<TRecord>.Config<TRecord>()
+            {
+                PollingInterval = TimeSpan.FromSeconds(30),
+                PollingSize = 10,
+                SendToCollectorStep = _sendToCollectorTelemetryStep,
+                TelemetryDB = config.TelemetryDB,
+                Logger = config.Logger,
+            });
 
             _deleteFromLocalDBTelemetryStep.StartConsumer();
             _markUnsuccessfulInLocalDBTelemetryStep.StartConsumer();
