@@ -195,7 +195,7 @@ namespace GingerCore.Actions
 
 
                 string filename = System.IO.Path.Combine(SolutionFolder, @"Documents\", Guid.NewGuid().ToString().ToUpper() + ".pdf");
-                PdfDocument document = new PdfDocument(filename);
+                PdfDocument document = new PdfDocument();
                 chartFrame.Location = new XPoint(30, 30);
                 chartFrame.Size = new XSize(500, 600);
                 chartFrame.Add(chart);
@@ -204,12 +204,15 @@ namespace GingerCore.Actions
                 page.Size = PageSize.Letter;
 
                 XGraphics gfx = XGraphics.FromPdfPage(page);
-                chartFrame.Draw(gfx);
+                chartFrame.Draw(gfx);                
                 document.Close();
+                document.Save(FileName);
+
                 Process.Start(new ProcessStartInfo() { FileName = FileName, UseShellExecute = true });
             }
-            catch
+            catch(Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while createing PDF chart", ex);
                 this.Error = "Something went wrong when generating the PDF reports";
             }
         }

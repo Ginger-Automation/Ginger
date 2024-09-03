@@ -311,7 +311,7 @@ namespace GingerCore
             //Select fields from selected template configuration
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             HTMLReportConfiguration defaultTemplate = null;
-            if (mContext.RunsetAction != null)
+            if (mContext?.RunsetAction != null)
             {
                 RunSetActionSendDataToExternalSource runSetAction = (RunSetActionSendDataToExternalSource)mContext.RunsetAction;
                 defaultTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.ID == runSetAction.selectedHTMLReportTemplateID));

@@ -27,7 +27,6 @@ using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Reports;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Utility;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Ginger.Reports;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -36,24 +35,20 @@ using GingerCore;
 using GingerWPF.WizardLib;
 using GraphQL;
 using GraphQLClient.Clients;
-using MathNet.Numerics.LinearAlgebra.Factorization;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Markup;
-using System.Windows.Media;
 using static Amdocs.Ginger.CoreNET.BPMN.Exportation.RunSetExecutionHistoryToBPMNExporter;
+using static Ginger.Actions.ActionEditPage;
 
 namespace Ginger.Run
 {
@@ -342,7 +337,8 @@ namespace Ginger.Run
                     Header = "Status",
                     WidthWeight = 8,
                     ReadOnly = true,
-                    BindingMode = BindingMode.OneWay
+                    BindingMode = BindingMode.OneWay,
+                    PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty))
                 },
                 new()
                 {
@@ -739,8 +735,8 @@ namespace Ginger.Run
                     Description = node.Description,
                     SourceApplication = node.SourceApplication,
                     SourceApplicationUser = node.SourceApplicationUser,
-                    StartTimeStamp = DateTime.Parse(node.StartTime.ToString(), CultureInfo.InvariantCulture).ToUniversalTime(),
-                    EndTimeStamp = DateTime.Parse(node.EndTime.ToString(), CultureInfo.InvariantCulture).ToUniversalTime(),
+                    StartTimeStamp = node.StartTime.Value.ToUniversalTime(),
+                    EndTimeStamp = node.EndTime.Value.ToUniversalTime(),
                     Elapsed = node.ElapsedEndTimeStamp,
                     DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.Remote
                 };
