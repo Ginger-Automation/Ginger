@@ -52,54 +52,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }, NewBsonMapper());
         }
 
-        private readonly int size = 1_00_000;
-
-        private void TruncateToSize()
-        {
-            using LiteDatabase db = NewLiteDb();
-            ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
-
-            List<TelemetryLogRecord> logs = [];
-            for (int i = 0; i < 20_00_000; i++)
-            {
-                logs.Add(new TelemetryLogRecord()
-                {
-                    AppVersion = "",
-                    CreationTimestamp = DateTime.UtcNow,
-                    LastUpdateTimestamp = DateTime.UtcNow,
-                    Level = "",
-                    Message = "",
-                    UserId = "",
-                });
-            }
-            collection.InsertBulk(logs, batchSize: 5000);
-
-            long start = DateTime.Now.Ticks;
-            TelemetryLogRecord outOfSizeLog = collection
-                .Find(Query.All(nameof(TelemetryBaseRecord.LastUpdateTimestamp), Query.Descending), 
-                    skip: size, 
-                    limit: 1)
-                .FirstOrDefault();
-            TimeSpan skipTime = TimeSpan.FromTicks(DateTime.Now.Ticks - start);
-
-            start = DateTime.Now.Ticks;
-            int count = collection.Count();
-            TimeSpan countTime = TimeSpan.FromTicks(DateTime.Now.Ticks - start);
-
-            collection.DeleteMany(log => true);
-            db.Rebuild();
-
-            if (count <= size)
-            {
-                return;
-            }
-
-            collection.DeleteMany(log => log.LastUpdateTimestamp <= outOfSizeLog.LastUpdateTimestamp);
-        }
-
         public Task AddAsync(TelemetryLogRecord log)
         {
-            TruncateToSize();
             if (log == null)
             {
                 throw new ArgumentNullException(paramName: nameof(log));
