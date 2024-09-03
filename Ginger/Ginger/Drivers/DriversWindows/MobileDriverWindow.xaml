@@ -4,8 +4,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         mc:Ignorable="d" 
-        Title="Loading Device..." Height="685" Width="323"
-        MinHeight="600" MinWidth="300" WindowStyle="ToolWindow" ResizeMode="CanResizeWithGrip" 
+        Title="Loading Device..." Height="685" Width="323" 
+        MinHeight="600" MinWidth="300" WindowStyle="ToolWindow" ResizeMode="CanMinimize" 
         WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded"
         Topmost="False" KeyDown="Window_KeyDown">
     <Grid x:Name="xWindowGrid" Background="Transparent">
@@ -24,16 +24,16 @@
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
             <TabControl x:Name="xItemsTabs" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}">
-                    <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="1" >
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}">
-                                <DockPanel >
-                                    <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                    <TextBlock  Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-                        
+                <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="1" >
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}">
+                            <DockPanel >
+                                <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock  Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
+
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" >
 
                         <Ginger:ucGrid x:Name="xDeviceDetailsGrid" Width="346" HorizontalAlignment="Left" IsReadOnly="False" Title="Device Details" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
@@ -46,20 +46,18 @@
                                 </Label.Content>
                             </Label>
                         </StackPanel>
-
                     </StackPanel>
-
                 </TabItem>
 
-                    <TabItem x:Name="xDeviceMetricsTab" Style="{StaticResource $CoolTab}" TabIndex="2" >
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}">
-                                <DockPanel >
-                                    <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                    <TextBlock  Text="Metrics" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
+                <TabItem x:Name="xDeviceMetricsTab" Style="{StaticResource $CoolTab}" TabIndex="2" >
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}">
+                            <DockPanel >
+                                <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock  Text="Metrics" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
 
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
                         <Ginger:ucGrid x:Name="xDeviceMetricsGrid" Width="346" HorizontalAlignment="Left" Title="Metrics Details"  IsReadOnly="false"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
@@ -74,8 +72,8 @@
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
-                </TabControl>
-            </StackPanel>
+            </TabControl>
+        </StackPanel>
 
         <Grid x:Name="xDeviceViewGrid" Margin="5" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>

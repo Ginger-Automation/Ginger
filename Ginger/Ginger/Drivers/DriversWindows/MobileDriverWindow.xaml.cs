@@ -1214,7 +1214,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
 
                 this.Width = 320;
-                this.Height = 650;
+                this.Height = 650;                
                 xMessageLbl.Content = "Connecting to Device...";
 
                 //Configurations
@@ -1740,16 +1740,36 @@ namespace Ginger.Drivers.DriversWindows
             mDriver.OpenDeviceExternalView();
         }
 
+        double imageSourceWidthPrecentage = 0.2;
         private void xZoomInBtn_Click(object sender, RoutedEventArgs e)
         {
-            this.Width = this.Width * 1.1;
-            this.Height = this.Height * 1.1;
+            imageSourceWidthPrecentage += 0.05;
+            AdjustWindowSize(imageSourceWidthPrecentage);
         }
 
         private void xZoomOutBtn_Click(object sender, RoutedEventArgs e)
         {
-            this.Width = this.Width * 0.9;
-            this.Height = this.Height * 0.9;
+            imageSourceWidthPrecentage -= 0.05;
+            AdjustWindowSize(imageSourceWidthPrecentage);
+        }
+
+        private void AdjustWindowSize(double widthPrecentage)
+        {
+
+            if (xDeviceScreenshotImage.Source != null && widthPrecentage > 0.2 && widthPrecentage < 0.5)
+            {
+                double imageSourceHightWidthRatio = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.Source.Width;
+                double previousCanasWidth = xDeviceScreenshotCanvas.ActualWidth;
+                double previousCanasHeight = xDeviceScreenshotCanvas.ActualHeight;
+
+                //Update canvas size
+                xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width * widthPrecentage);
+                xDeviceScreenshotCanvas.Height = xDeviceScreenshotCanvas.Width * imageSourceHightWidthRatio;
+
+                //Update window size
+                this.Width = this.Width + (xDeviceScreenshotCanvas.Width - previousCanasWidth);
+                this.Height = this.Height + (xDeviceScreenshotCanvas.Height - previousCanasHeight);
+            }
         }
     }
 }
