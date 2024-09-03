@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +8,13 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Telemetry
 {
-    internal sealed class TelemetryLiteDB : ITelemetryDB<TelemetryLogRecord>, ITelemetryDB<TelemetryFeatureRecord>, IDisposable
+    internal sealed class TelemetryLiteDB : ITelemetryDB<TelemetryLogRecord>, ITelemetryDB<TelemetryFeatureRecord>
     {
-        private readonly LiteDatabase _db;
+        private readonly string _dbFilePath;
 
         internal TelemetryLiteDB(string dbFilePath)
         {
-            _db = new(new ConnectionString()
-            {
-                Filename = dbFilePath,
-                Connection = ConnectionType.Shared,
-            }, NewBsonMapper());
+            _dbFilePath = dbFilePath;
         }
 
         private BsonMapper NewBsonMapper()
@@ -46,19 +43,70 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             return bsonMapper;
         }
 
-        public void Dispose()
+        private LiteDatabase NewLiteDb()
         {
-            _db.Dispose();
+            return new LiteDatabase(new ConnectionString()
+            {
+                Filename = _dbFilePath,
+                Connection = ConnectionType.Shared,
+            }, NewBsonMapper());
+        }
+
+        private readonly int size = 1_00_000;
+
+        private void TruncateToSize()
+        {
+            using LiteDatabase db = NewLiteDb();
+            ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
+
+            List<TelemetryLogRecord> logs = [];
+            for (int i = 0; i < 20_00_000; i++)
+            {
+                logs.Add(new TelemetryLogRecord()
+                {
+                    AppVersion = "",
+                    CreationTimestamp = DateTime.UtcNow,
+                    LastUpdateTimestamp = DateTime.UtcNow,
+                    Level = "",
+                    Message = "",
+                    UserId = "",
+                });
+            }
+            collection.InsertBulk(logs, batchSize: 5000);
+
+            long start = DateTime.Now.Ticks;
+            TelemetryLogRecord outOfSizeLog = collection
+                .Find(Query.All(nameof(TelemetryBaseRecord.LastUpdateTimestamp), Query.Descending), 
+                    skip: size, 
+                    limit: 1)
+                .FirstOrDefault();
+            TimeSpan skipTime = TimeSpan.FromTicks(DateTime.Now.Ticks - start);
+
+            start = DateTime.Now.Ticks;
+            int count = collection.Count();
+            TimeSpan countTime = TimeSpan.FromTicks(DateTime.Now.Ticks - start);
+
+            collection.DeleteMany(log => true);
+            db.Rebuild();
+
+            if (count <= size)
+            {
+                return;
+            }
+
+            collection.DeleteMany(log => log.LastUpdateTimestamp <= outOfSizeLog.LastUpdateTimestamp);
         }
 
         public Task AddAsync(TelemetryLogRecord log)
         {
+            TruncateToSize();
             if (log == null)
             {
                 throw new ArgumentNullException(paramName: nameof(log));
             }
 
-            ILiteCollection<TelemetryLogRecord> collection = _db.GetCollection<TelemetryLogRecord>();
+            using LiteDatabase db = NewLiteDb();
+            ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
             collection.Insert(log);
 
             return Task.CompletedTask;
@@ -71,7 +119,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 throw new ArgumentNullException(paramName: nameof(log));
             }
 
-            ILiteCollection<TelemetryLogRecord> collection = _db.GetCollection<TelemetryLogRecord>();
+            using LiteDatabase db = NewLiteDb();
+            ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
             return Task.FromResult(collection.Delete(new BsonValue(log.Id)));
         }
 
@@ -82,13 +131,21 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 throw new ArgumentNullException(paramName: nameof(log));
             }
 
-            ILiteCollection<TelemetryLogRecord> collection = _db.GetCollection<TelemetryLogRecord>();
+            using LiteDatabase db = NewLiteDb();
+            ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
             TelemetryLogRecord logInDB = collection.FindById(new BsonValue(log.Id));
             if (logInDB == null)
             {
                 return Task.FromResult(false);
             }
-            logInDB.FailedToUpload = true;
+            if (logInDB.FailedToUpload)
+            {
+                logInDB.RetryAttempt++;
+            }
+            else
+            {
+                logInDB.FailedToUpload = true;
+            }
             logInDB.LastUpdateTimestamp = DateTime.UtcNow;
             collection.Update(logInDB);
 
@@ -102,7 +159,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 throw new ArgumentOutOfRangeException($"'{nameof(size)}' cannot be less than or equal to 0");
             }
 
-            ILiteCollection<TelemetryLogRecord> collection = _db.GetCollection<TelemetryLogRecord>();
+            using LiteDatabase db = NewLiteDb();
+            ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
             return Task.FromResult<IEnumerable<TelemetryLogRecord>>(collection
                 .Find(log => log.FailedToUpload, limit: size)
                 .OrderBy(log => log.LastUpdateTimestamp));
@@ -115,7 +173,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 throw new ArgumentNullException(paramName: nameof(feature));
             }
 
-            ILiteCollection<TelemetryFeatureRecord> collection = _db.GetCollection<TelemetryFeatureRecord>();
+            using LiteDatabase db = NewLiteDb();
+            ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
             collection.Insert(feature);
 
             return Task.CompletedTask;
@@ -128,7 +187,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 throw new ArgumentNullException(paramName: nameof(feature));
             }
 
-            ILiteCollection<TelemetryFeatureRecord> collection = _db.GetCollection<TelemetryFeatureRecord>();
+            using LiteDatabase db = NewLiteDb();
+            ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
             return Task.FromResult(collection.Delete(new BsonValue(feature.Id)));
         }
 
@@ -139,7 +199,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 throw new ArgumentNullException(paramName: nameof(feature));
             }
 
-            ILiteCollection<TelemetryFeatureRecord> collection = _db.GetCollection<TelemetryFeatureRecord>();
+            using LiteDatabase db = NewLiteDb();
+            ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
             TelemetryFeatureRecord featureInDB = collection.FindById(new BsonValue(feature.Id));
             if (featureInDB == null)
             {
@@ -159,7 +220,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 throw new ArgumentOutOfRangeException($"'{nameof(size)}' cannot be less than or equal to 0");
             }
 
-            ILiteCollection<TelemetryFeatureRecord> collection = _db.GetCollection<TelemetryFeatureRecord>();
+            using LiteDatabase db = NewLiteDb();
+            ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
             return Task.FromResult<IEnumerable<TelemetryFeatureRecord>>(collection
                 .Find(log => log.FailedToUpload, limit: size)
                 .OrderBy(log => log.LastUpdateTimestamp));

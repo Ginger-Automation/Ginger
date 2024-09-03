@@ -19,5 +19,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         public required string UserId { get; init; }
 
         public bool FailedToUpload { get; set; }
+
+        public int RetryAttempt { get; set; }
     }
 }

@@ -32,7 +32,6 @@ namespace GingerCoreNETUnitTest.Telemetry
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            _db.Dispose();
             File.Delete(GetLiteDBFilePath());
         }
 
