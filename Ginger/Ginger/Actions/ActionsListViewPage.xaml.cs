@@ -194,7 +194,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
                 
                 mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
-
+                 
                 mActionsListView.ListSelectionMode = SelectionMode.Extended;
 
                 mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
@@ -204,10 +204,6 @@ namespace GingerWPF.BusinessFlowsLib
                 // Enable Virtualization for Actions ListView to improve the loading time/performance
                 mActionsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
 
-                if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
-                {
-                    mActionsListView.IsDragDropCompatible = false;
-                }
             }
             else
             {
@@ -217,6 +213,15 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     UpdateActivity(mActionsListHelper.Context.Activity);
                 }
+            }
+
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
+            {
+                mActionsListView.IsDragDropCompatible = false;
+            }
+            else
+            {
+                mActionsListView.IsDragDropCompatible = true;
             }
 
             if (mActivity != null)

@@ -223,15 +223,32 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         }
                         break;
                     case ActAccessibilityTesting actAccessibilityTesting:
-                        ActAccessibilityTestingHandler actAccessibilityTestingHandler = new(
-                            actAccessibilityTesting, 
-                            _browser.CurrentWindow.CurrentTab, 
-                            new BrowserElementLocator(_browser.CurrentWindow.CurrentTab, new()
+                        if (!BrowserPrivateMode)
+                        {
+                            act.Error = $"Playwright Driver must be in Private mode for using Accessibility actions";
+                            break;
+                        }
+                        ActAccessibilityTestingHandler actAccessibilityTestingHandler;
+                        if (actAccessibilityTesting.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
+                        {
+                            BrowserElementLocator browserElementLocator = new(_browser.CurrentWindow.CurrentTab, new()
                             {
                                 BusinessFlow = BusinessFlow,
                                 Environment = Environment,
-                                POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValue)
-                            }));
+                                POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValueCalculated)
+                            });
+                            actAccessibilityTestingHandler = new(
+                            actAccessibilityTesting,
+                            _browser.CurrentWindow.CurrentTab,
+                            browserElementLocator);
+                        }
+                        else
+                        {
+                            actAccessibilityTestingHandler = new(
+                            actAccessibilityTesting,
+                            _browser.CurrentWindow.CurrentTab, 
+                            browserElementLocator: null);
+                        }
                         actAccessibilityTestingHandler.HandleAsync().Wait();
                         break;
                     default:
@@ -245,7 +262,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver or ActScreenShot)
+            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting)
             {
                 return true;
             }
@@ -294,8 +311,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
             else if (act is ActVisualTesting actVisualTesting)
             {
-                message = $"{actVisualTesting.VisualTestingAnalyzer} is not supported by Playwright driver, use Selenium driver instead.";
-                return actVisualTesting.VisualTestingAnalyzer != ActVisualTesting.eVisualTestingAnalyzer.Applitools;
+                if (actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.Applitools)
+                {
+                    message = $"{actVisualTesting.VisualTestingAnalyzer} is not supported by Playwright driver, use Selenium driver instead.";
+                    return false;
+                }
+                return true;
             }
             else
             {
@@ -487,7 +508,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
 
                 byte[] screenshot;
-                if (fullPage)
+                 if (fullPage)
                 {
                     screenshot = await tab.ScreenshotAsync();
                 }
@@ -1574,6 +1595,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public void ChangeAppWindowSize(int width, int height)
         {
             ThrowIfClosed();
+            if (width <= 0 || height <= 0)
+            {
+                //for VRT action, it passes widht and height as 0 to maximize which causes issues with Playwright, so ignoring those
+                return;
+            }
             Size size = new(width, height);
             Task.Run(() => _browser.CurrentWindow.CurrentTab.SetViewportSizeAsync(size).Wait()).Wait();
         }
