@@ -29,10 +29,14 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         {
             TelemetryPipeline<TelemetryLogRecord>.Config<TelemetryLogRecord> options = new()
             {
-                Collector = new MockTelemetryCollector<TelemetryLogRecord>(_ => Task.FromResult(new ITelemetryCollector<TelemetryLogRecord>.AddResult()
+                Collector = new MockTelemetryCollector<TelemetryLogRecord>(async _ =>
                 {
-                    Successful = false,
-                })),
+                    await Task.Delay(200);
+                    return new ITelemetryCollector<TelemetryLogRecord>.AddResult()
+                    {
+                        Successful = false,
+                    };
+                }),
                 TelemetryDB = NewTelemetryLiteDB(),
                 AddToLocalDBTelemetryStepBufferSize = 4,
                 SendToCollectorTelemetryStepBufferSize = 4,
@@ -49,10 +53,14 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         {
             TelemetryPipeline<TelemetryFeatureRecord>.Config<TelemetryFeatureRecord> options = new()
             {
-                Collector = new MockTelemetryCollector<TelemetryFeatureRecord>(_ => Task.FromResult(new ITelemetryCollector<TelemetryFeatureRecord>.AddResult()
+                Collector = new MockTelemetryCollector<TelemetryFeatureRecord>(async _ =>
                 {
-                    Successful = false,
-                })),
+                    await Task.Delay(200);
+                    return new ITelemetryCollector<TelemetryFeatureRecord>.AddResult()
+                    {
+                        Successful = false,
+                    };
+                }),
                 TelemetryDB = NewTelemetryLiteDB(),
                 AddToLocalDBTelemetryStepBufferSize = 4,
                 SendToCollectorTelemetryStepBufferSize = 4,
