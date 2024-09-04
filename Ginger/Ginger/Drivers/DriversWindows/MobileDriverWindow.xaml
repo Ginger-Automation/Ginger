@@ -4,11 +4,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         mc:Ignorable="d" 
-        Title="Loading Device..." Height="685" Width="323"
-        MinHeight="600" MinWidth="300" WindowStyle="SingleBorderWindow"
+        Title="Loading Device..." Height="685" Width="323" 
+        MinHeight="600" MinWidth="300" WindowStyle="ToolWindow" ResizeMode="CanMinimize" 
         WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded"
         Topmost="False" KeyDown="Window_KeyDown">
-    <Grid x:Name="xWindowGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="xWindowGrid" Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="xMeticsCol" Width="350"/>
             <ColumnDefinition Width="35*"/>
@@ -24,16 +24,16 @@
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
             <TabControl x:Name="xItemsTabs" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}">
-                    <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="1" >
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}">
-                                <DockPanel >
-                                    <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                    <TextBlock  Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-                        
+                <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="1" >
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}">
+                            <DockPanel >
+                                <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock  Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
+
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" >
 
                         <Ginger:ucGrid x:Name="xDeviceDetailsGrid" Width="346" HorizontalAlignment="Left" IsReadOnly="False" Title="Device Details" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
@@ -46,20 +46,18 @@
                                 </Label.Content>
                             </Label>
                         </StackPanel>
-
                     </StackPanel>
-
                 </TabItem>
 
-                    <TabItem x:Name="xDeviceMetricsTab" Style="{StaticResource $CoolTab}" TabIndex="2" >
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}">
-                                <DockPanel >
-                                    <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                    <TextBlock  Text="Metrics" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
+                <TabItem x:Name="xDeviceMetricsTab" Style="{StaticResource $CoolTab}" TabIndex="2" >
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}">
+                            <DockPanel >
+                                <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock  Text="Metrics" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
 
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
                         <Ginger:ucGrid x:Name="xDeviceMetricsGrid" Width="346" HorizontalAlignment="Left" Title="Metrics Details"  IsReadOnly="false"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
@@ -74,12 +72,11 @@
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
-                </TabControl>
-            </StackPanel>
+            </TabControl>
+        </StackPanel>
 
         <Grid x:Name="xDeviceViewGrid" Margin="5" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
-
                 <ColumnDefinition Width="12"/>
                 <ColumnDefinition Width="100*"/>
                 <ColumnDefinition Width="12"/>
@@ -97,10 +94,10 @@
             <UserControls:ImageMakerControl x:Name="xRecordingImage" Grid.Row="0" Grid.Column="1" Height="16" Width="16" ImageType="Recording" Foreground="Red" ImageForeground="Red" HorizontalAlignment="Right" VerticalAlignment="Center" SetBorder="False" ToolTip="Recording..." Margin="0,0,80,0" Visibility="Collapsed" />
             <UserControls:ucButton x:Name="xConfigurationsBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="15" ButtonImageType="Config" Click="xConfigurationsBtn_Click" ToolTip="Show Configurations" Margin="0,0,25,0" />
             <UserControls:ucButton x:Name="xPinBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="14" ButtonImageType="Pin" Click="xPinBtn_Click" ToolTip="Dock Window" Margin="0,1,5,0" />
-            <UserControls:ucButton x:Name="xCordBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="13" ButtonImageType="Target" Click="xCordBtn_Click" ToolTip="Show Mouse Coordinates" Margin="45,0,0,0" Visibility="Collapsed" />
-            <UserControls:ucButton x:Name="xSwipeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="13" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="25,0,0,0" Visibility="Collapsed" />
-            <UserControls:ucButton x:Name="xPortraiteBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="16" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Portrait" Margin="5,0,0,0" Visibility="Collapsed"/>
-            <UserControls:ucButton x:Name="xLandscapeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="16" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Landscape" Margin="5,0,0,0" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
+            <UserControls:ucButton x:Name="xCordBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="13" ButtonImageType="Target" Click="xCordBtn_Click" ToolTip="Show Mouse Coordinates" Margin="65,0,0,0" Visibility="Collapsed" />
+            <UserControls:ucButton x:Name="xSwipeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="13" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="45,0,0,0" Visibility="Collapsed" />
+            <UserControls:ucButton x:Name="xPortraiteBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="16" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Portrait" Margin="26,0,0,0" Visibility="Collapsed"/>
+            <UserControls:ucButton x:Name="xLandscapeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="16" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Landscape" Margin="26,0,0,0" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
                 <UserControls:ucButton.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -110,6 +107,7 @@
                     </TransformGroup>
                 </UserControls:ucButton.RenderTransform>
             </UserControls:ucButton>
+            <UserControls:ucButton x:Name="xExternalViewBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="13" ButtonImageType="ShareExternal" Click="xExternalViewBtn_Click" ToolTip="Open Device External View" Margin="5,0,0,0" Visibility="Collapsed" />
             <UserControls:ucButton x:Name="xMetricsBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="15" ButtonImageType="Parameter" Click="xMetricsBtn_Click" ToolTip="Show Device Metrics" Margin="0,0,50,0" />
 
             <!--Sides-->
@@ -211,6 +209,10 @@
                     </ComboBox>
                 </StackPanel>
                 <UserControls:ucButton x:Name="xClearHighlightBtn" ButtonType="ImageButton"  HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Invisible" Click="xClearHighlightsBtn_Click" ToolTip="Clear Highlights" Margin="0,5,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <UserControls:ucButton x:Name="xZoomInBtn" ButtonType="ImageButton"  HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="PlusSquare" Click="xZoomInBtn_Click" ToolTip="Zoom In" Margin="10,0,0,0"/>
+                    <UserControls:ucButton x:Name="xZoomOutBtn" ButtonType="ImageButton"  HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="MinusSquare" Click="xZoomOutBtn_Click" ToolTip="Zoom Out" Margin="10,0,0,0"/>
+                </StackPanel>
                 <UserControls:ucButton x:Name="xDeviceSettingsBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Config" Click="xDeviceSettingsBtn_Click" ButtonText="Device Settings" Margin="0,10,0,0"/>
             </StackPanel>
         </ScrollViewer>
