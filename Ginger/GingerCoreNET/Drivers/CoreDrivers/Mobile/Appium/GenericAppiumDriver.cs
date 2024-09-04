@@ -961,11 +961,11 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (DevicePlatformType == eDevicePlatformType.Android)
                 {
-                    appPackage = AppiumCapabilities.Where(x => x.Parameter == "appPackage" || x.Parameter == "appium:appPackage").FirstOrDefault().Value;
+                    appPackage = AppiumCapabilities.FirstOrDefault(x => x.Parameter == "appPackage" || x.Parameter == "appium:appPackage").Value;
                 }
                 else
                 {
-                    appPackage = AppiumCapabilities.Where(x => x.Parameter == "bundleId" || x.Parameter == "appium:bundleId").FirstOrDefault().Value;
+                    appPackage = AppiumCapabilities.FirstOrDefault(x => x.Parameter == "bundleId" || x.Parameter == "appium:bundleId").Value;
                 }
 
                 return appPackage;

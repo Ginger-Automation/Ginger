@@ -1052,8 +1052,6 @@ namespace Ginger.Drivers.DriversWindows
 
             if (!mSelfClosing)
             {
-                //    if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, "Close Mobile Agent?") == eUserMsgSelection.Yes)
-                //    {
                 try
                 {
                     mAgent.AgentOperations.Close();
@@ -1062,7 +1060,6 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to close Agent, Error: " + ex.Message);
                 }
-                //    }
             }
 
             mWindowIsOpen = false;
