@@ -12,6 +12,10 @@ namespace Amdocs.Ginger.Common.Telemetry
 
         public void AddLog(eLogLevel level, string msg, TelemetryMetadata metadata);
 
+        public void AddFeatureUsage(FeatureId featureId);
+
+        public void AddFeatureUsage(FeatureId featureId, TelemetryMetadata metadata);
+
         public IFeatureTracker StartFeatureTracking(FeatureId featureId);
     }
 }

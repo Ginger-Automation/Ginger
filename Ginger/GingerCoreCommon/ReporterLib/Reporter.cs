@@ -68,17 +68,29 @@ namespace Amdocs.Ginger.Common
                 {
                     msg = messageToLog;
                 }
-                if (metadata != null)
+                if (metadata == null)
                 {
-                    TelemetryMonitor.AddLog(logLevel, msg, metadata);
+                    TelemetryMonitor.AddLog(logLevel, msg);
                 }
                 else
                 {
-                    TelemetryMonitor.AddLog(logLevel, msg);
+                    TelemetryMonitor.AddLog(logLevel, msg, metadata);
                 }
             }
         }
         #endregion ToLog
+
+        public static void AddFeatureUsage(FeatureId featureId, TelemetryMetadata metadata = null)
+        {
+            if (metadata == null)
+            {
+                TelemetryMonitor.AddFeatureUsage(featureId);
+            }
+            else
+            {
+                TelemetryMonitor.AddFeatureUsage(featureId, metadata);
+            }
+        }
 
         public static IFeatureTracker StartFeatureTracking(FeatureId featureId)
         {

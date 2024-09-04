@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
-namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
+namespace Amdocs.Ginger.CoreNET.Telemetry
 {
     internal sealed class TelemetryCollector : ITelemetryCollector<TelemetryLogRecord>
     {
@@ -25,8 +25,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             try
             {
                 LogCollector.LogCollectorClient client = new(CollectorGRPCChannel);
-                AddLogsRequest request = CreateAddLogsRequest(logs);
-                AddLogsResponse response = await client.CollectAsync(request);
+                var request = CreateAddLogsRequest(logs);
+                var response = await client.CollectAsync(request);
                 return new ITelemetryCollector<TelemetryLogRecord>.AddResult()
                 {
                     Successful = true,
@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
         private AddLogsRequest CreateAddLogsRequest(IEnumerable<TelemetryLogRecord> logs)
         {
             AddLogsRequest request = new();
-            foreach (TelemetryLogRecord log in logs)
+            foreach (var log in logs)
             {
                 request.Logs.Add(new LogRecord()
                 {
@@ -67,8 +67,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             try
             {
                 FeatureCollector.FeatureCollectorClient client = new(CollectorGRPCChannel);
-                AddFeaturesRequest request = CreateAddFeaturesRequest(features);
-                AddFeaturesResponse response = await client.CollectAsync(request);
+                var request = CreateAddFeaturesRequest(features);
+                var response = await client.CollectAsync(request);
                 return new ITelemetryCollector<TelemetryFeatureRecord>.AddResult()
                 {
                     Successful = true,
@@ -87,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
         private AddFeaturesRequest CreateAddFeaturesRequest(IEnumerable<TelemetryFeatureRecord> features)
         {
             AddFeaturesRequest request = new();
-            foreach (TelemetryFeatureRecord feature in features)
+            foreach (var feature in features)
             {
                 request.Features.Add(new FeatureRecord()
                 {
