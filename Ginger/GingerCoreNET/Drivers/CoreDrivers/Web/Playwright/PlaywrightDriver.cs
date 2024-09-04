@@ -193,15 +193,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         break;
                     case ActUIElement actUIElement:
                         ActUIElementHandler actUIElementHandler = new(
-                            actUIElement, 
-                            new BrowserElementLocator(_browser.CurrentWindow.CurrentTab, 
-                            new()
-                            {
-                                BusinessFlow = BusinessFlow,
-                                Environment = Environment,
-                                POMExecutionUtils = new POMExecutionUtils(act, actUIElement.ElementLocateValue),
-                                Agent = BusinessFlow.CurrentActivity.CurrentAgent,
-                            }));
+                            actUIElement,
+                            _browser.CurrentWindow.CurrentTab,
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab,
+                                new()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new POMExecutionUtils(act, actUIElement.ElementLocateValue),
+                                    Agent = BusinessFlow.CurrentActivity.CurrentAgent,
+                                }));
                         actUIElementHandler.HandleAsync().Wait();
                         break;
                     case ActScreenShot actScreenShot:
@@ -231,16 +233,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         ActAccessibilityTestingHandler actAccessibilityTestingHandler;
                         if (actAccessibilityTesting.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
                         {
-                            BrowserElementLocator browserElementLocator = new(_browser.CurrentWindow.CurrentTab, new()
-                            {
-                                BusinessFlow = BusinessFlow,
-                                Environment = Environment,
-                                POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValueCalculated)
-                            });
                             actAccessibilityTestingHandler = new(
                             actAccessibilityTesting,
                             _browser.CurrentWindow.CurrentTab,
-                            browserElementLocator);
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab, 
+                                new BrowserElementLocator.Context()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValueCalculated)
+                                }));
                         }
                         else
                         {
@@ -1774,6 +1777,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActUIElement.eElementAction.SetValue,
             ActUIElement.eElementAction.ClickAndValidate,
             ActUIElement.eElementAction.JavaScriptClick,
+            ActUIElement.eElementAction.MouseClick,
+            ActUIElement.eElementAction.SetText,
+            ActUIElement.eElementAction.SendKeys,
+            ActUIElement.eElementAction.SendKeysXY,
+            ActUIElement.eElementAction.RunJavaScript,
+            ActUIElement.eElementAction.AsyncClick,
+            ActUIElement.eElementAction.GetCustomAttribute,
+            ActUIElement.eElementAction.GetFont,
+            ActUIElement.eElementAction.MousePressRelease,
             ActUIElement.eElementAction.MouseClick,
         };
 

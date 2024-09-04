@@ -127,6 +127,30 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return _playwrightPage.ContentAsync();
         }
 
+        public Task MouseClickAsync(Point point)
+        {
+            ThrowIfClosed();
+            return _playwrightPage.Mouse.ClickAsync(point.X, point.Y, new MouseClickOptions()
+            {
+                Button = MouseButton.Left,
+            });
+        }
+
+        public Task MouseRightClickAsync(Point point)
+        {
+            ThrowIfClosed();
+            return _playwrightPage.Mouse.ClickAsync(point.X, point.Y, new MouseClickOptions()
+            {
+                Button = MouseButton.Right,
+            });
+        }
+
+        public Task MoveMouseAsync(Point point)
+        {
+            ThrowIfClosed();
+            return _playwrightPage.Mouse.MoveAsync(point.X, point.Y);
+        }
+
         public Task<string> TitleAsync()
         {
             ThrowIfClosed();
@@ -292,7 +316,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
             for (int index = 0; index < matchedElementCount; index++)
             {
-                elements[index] = new PlaywrightBrowserElement(locator.Nth(index), _playwrightPage);
+                elements[index] = new PlaywrightBrowserElement(locator.Nth(index));
             }
 
             return elements;
@@ -307,7 +331,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 return null;
             }
-            return new PlaywrightBrowserElement(elementHandle, _playwrightPage);
+            return new PlaywrightBrowserElement(elementHandle);
         }
 
         public Task<byte[]> ScreenshotAsync()
@@ -406,7 +430,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 return null;
             }
 
-            return new PlaywrightBrowserElement(locator, _playwrightPage);
+            return new PlaywrightBrowserElement(locator);
         }
 
         private static async Task<bool> DoesLocatorExistsAsync(IPlaywrightLocator locator)

@@ -44,12 +44,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task ClickAsync();
 
-        public Task ClickAsync(int x, int y);
+        public Task ClickAsync(Point point);
 
         public Task DoubleClickAsync();
 
         public Task DoubleClickAsync(int x, int y);
-        public Task MouseLeftClick();
 
         public Task HoverAsync();
 
@@ -88,6 +87,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task SetCheckboxAsync(bool check);
 
         public Task SetTextAsync(string text);
+
+        public Task TypeTextAsync(string text);
+
+        public Task PressKeysAsync(IEnumerable<string> keys);
 
         public Task<byte[]> ScreenshotAsync();
 

@@ -37,20 +37,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
     {
         private readonly IPlaywrightLocator? _playwrightLocator;
         private readonly IPlaywrightElementHandle? _playwrightElementHandle;
-        private readonly IPlaywrightPage _playwrightPage;
 
-        internal PlaywrightBrowserElement(IPlaywrightLocator playwrightLocator, IPlaywrightPage playwrightPage)
+        internal PlaywrightBrowserElement(IPlaywrightLocator playwrightLocator)
         {
             ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
             _playwrightLocator = playwrightLocator;
-            _playwrightPage = playwrightPage;
         }
 
-        internal PlaywrightBrowserElement(IPlaywrightElementHandle playwrightElementHandle, IPlaywrightPage playwrightPage)
+        internal PlaywrightBrowserElement(IPlaywrightElementHandle playwrightElementHandle)
         {
             ArgumentNullException.ThrowIfNull(playwrightElementHandle);
             _playwrightElementHandle = playwrightElementHandle;
-            _playwrightPage = playwrightPage;
         }
 
         public Task ClickAsync()
@@ -84,15 +81,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             });
         }
 
-        public Task ClickAsync(int x, int y)
+        public Task ClickAsync(Point point)
         {
             if (_playwrightLocator != null)
             {
-                return ClickAsync(_playwrightLocator, x, y);
+                return ClickAsync(_playwrightLocator, point.X, point.Y);
             }
             else
             {
-                return ClickAsync(_playwrightElementHandle!, x, y);
+                return ClickAsync(_playwrightElementHandle!, point.X, point.Y);
             }
         }
 
@@ -191,16 +188,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     X = x,
                     Y = y
                 }
-            });
-        }
-        public async Task MouseLeftClick()
-        {
-            Point position = await PositionAsync();
-            Size size = await SizeAsync();
-            Point centerOfElement = new(x: position.X + size.Width / 2, y: position.Y + size.Height / 2);
-            await _playwrightPage.Mouse.ClickAsync(centerOfElement.X, centerOfElement.Y, new MouseClickOptions()
-            {
-                Button = MouseButton.Left,
             });
         }
 
@@ -831,6 +818,78 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
             return playwrightElementHandle.FillAsync(text);
+        }
+
+        public Task TypeTextAsync(string text)
+        {
+            if (_playwrightLocator != null)
+            {
+                return SendKeysAsync(_playwrightLocator, text);
+            }
+            else
+            {
+                return SendKeysAsync(_playwrightElementHandle!, text);
+            }
+        }
+
+        private Task SendKeysAsync(IPlaywrightLocator playwrightLocator, string text)
+        {
+
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+            return playwrightLocator.PressSequentiallyAsync(text);
+        }
+
+        private async Task SendKeysAsync(IPlaywrightElementHandle playwrightElementHandle, string text)
+        {
+
+            ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
+            foreach (char c in text)
+            {
+                bool isUppercase = 'A' <= c && c <= 'Z';
+                string modifierKey = isUppercase ? "Shift+" : "";
+                await playwrightElementHandle.PressAsync($"{modifierKey}{char.ToUpper(c)}");
+            }
+        }
+
+        public Task PressKeysAsync(IEnumerable<string> keys)
+        {
+            if (_playwrightLocator != null)
+            {
+                return PressKeysAsync(_playwrightLocator, keys);
+            }
+            else
+            {
+                return PressKeysAsync(_playwrightElementHandle!, keys);
+            }
+        }
+
+        private Task PressKeysAsync(IPlaywrightLocator playwrightLocator, IEnumerable<string> keys)
+        {
+            string combinedKeys = CombineKeys(keys);
+            return playwrightLocator.PressAsync(combinedKeys);
+        }
+
+        private Task PressKeysAsync(IPlaywrightElementHandle playwrightElementHandle, IEnumerable<string> keys)
+        {
+            string combinedKeys = CombineKeys(keys);
+            return playwrightElementHandle.PressAsync(combinedKeys);
+        }
+
+        private string CombineKeys(IEnumerable<string> keys)
+        {
+
+            string[] keyArr = keys.ToArray();
+            StringBuilder combinedKey = new();
+            for (int keyIndex = 0; keyIndex < keyArr.Length; keyIndex++)
+            {
+                string key = keyArr[keyIndex];
+                combinedKey.Append(key);
+                if (keyIndex < keyArr.Length - 1)
+                {
+                    combinedKey.Append('+');
+                }
+            }
+            return combinedKey.ToString();
         }
 
         private async Task AssertTagNameAsync(string expected)

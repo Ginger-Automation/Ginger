@@ -24,6 +24,9 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
+using OpenQA.Selenium;
+
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
@@ -47,11 +50,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         };
 
         private readonly ActUIElement _act;
+        private readonly IBrowserTab _browserTab;
         private readonly IBrowserElementLocator _elementLocator;
 
-        internal ActUIElementHandler(ActUIElement act, IBrowserElementLocator elementLocator)
+        internal ActUIElementHandler(ActUIElement act, IBrowserTab browserTab, IBrowserElementLocator elementLocator)
         {
             _act = act;
+            _browserTab = browserTab;
             _elementLocator = elementLocator;
         }
 
@@ -147,6 +152,30 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                         break;
                     case ActUIElement.eElementAction.JavaScriptClick:
                         await HandleJavaScriptClickAsync();
+                        break;
+                    case ActUIElement.eElementAction.SetText:
+                        await HandleSetTextAsync();
+                        break;
+                    case ActUIElement.eElementAction.SendKeys:
+                        await HandleSendKeysAsync();
+                        break;
+                    case ActUIElement.eElementAction.SendKeysXY:
+                        await HandleSendKeysXYAsync();
+                        break;
+                    case ActUIElement.eElementAction.RunJavaScript:
+                        await HandleRunJavaScriptAsync();
+                        break;
+                    case ActUIElement.eElementAction.AsyncClick:
+                        await HandleAsyncClickAsync();
+                        break;
+                    case ActUIElement.eElementAction.GetCustomAttribute:
+                        await HandleGetCustomAttributeAsync();
+                        break;
+                    case ActUIElement.eElementAction.GetFont:
+                        await HandleGetFontAsync();
+                        break;
+                    case ActUIElement.eElementAction.MousePressRelease:
+                        await HandleMousePressReleaseAsync();
                         break;
                     case ActUIElement.eElementAction.MouseClick:
                         await HandleMouseClickAsync();
@@ -399,7 +428,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
 
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            await element.ClickAsync(x, y);
+            await element.ClickAsync(new Point(x, y));
         }
 
         private async Task HandleDoubleClickXYOperationAsync()
@@ -506,6 +535,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             {
                 await HandleMouseClickAsync();
             }
+            else if (clickType == ActUIElement.eElementAction.MousePressRelease)
+            {
+                await HandleMousePressReleaseAsync();
+            }
+            else if (clickType == ActUIElement.eElementAction.AsyncClick)
+            {
+                await HandleAsyncClickAsync();
+            }
             else
             {
                 _act.Error = $"Operation '{clickType}' is not supported by Playwright driver";
@@ -540,12 +577,167 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             await elementToClick.ExecuteJavascriptAsync(script);
 
         }
+        private async Task HandleSetTextAsync()
+        {
+            IBrowserElement elementToClick = await GetFirstMatchingElementAsync();
+            string text = _act.GetInputParamCalculatedValue(ActUIElement.Fields.Value);
+            await elementToClick.ClearAsync();
+            await elementToClick.TypeTextAsync(text);
+        }
+
+        private async Task HandleRunJavaScriptAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string script = _act.GetInputParamCalculatedValue(ActUIElement.Fields.Value);
+            await element.ExecuteJavascriptAsync(script);
+
+        }
+
+        private async Task HandleAsyncClickAsync()
+        {
+            string script = "element => setTimeout(function() { element.click(); }, 100);";
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            await element.ExecuteJavascriptAsync(script);
+        }
+
+        private async Task HandleGetCustomAttributeAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string attributeName = _act.GetInputParamCalculatedValue(ActUIElement.Fields.Value);
+            string attributeValue = await element.AttributeValueAsync(attributeName);
+            _act.AddOrUpdateReturnParamActual("Actual", attributeValue);
+        }
+
+        private async Task HandleGetFontAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string fontAttributeValue = await element.AttributeValueAsync("font");
+            _act.AddOrUpdateReturnParamActual("Actual", fontAttributeValue);
+        }
+
+
+        private async Task HandleSendKeysAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            await element.ClearAsync();
+            string keys = _act.GetInputParamCalculatedValue("Value");
+            Func<Task> elementOperation = ConvertSeleniumKeyIdentifierToElementOperation(keys, element);
+            await elementOperation();
+        }
+
+        private Func<Task> ConvertSeleniumKeyIdentifierToElementOperation(string key, IBrowserElement element)
+        {
+            return key switch
+            {
+                "Keys.Alt" => () => element.PressKeysAsync(["Alt"]),
+                "Keys.ArrowDown" => () => element.PressKeysAsync(["ArrowDown"]),
+                "Keys.ArrowLeft" => () => element.PressKeysAsync(["ArrowLeft"]),
+                "Keys.ArrowRight" => () => element.PressKeysAsync(["ArrowRight"]),
+                "Keys.ArrowUp" => () => element.PressKeysAsync(["ArrowUp"]),
+                "Keys.Backspace" => () => element.PressKeysAsync(["Backspace"]),
+                "Keys.Cancel" => () => element.PressKeysAsync(["Cancel"]),
+                "Keys.Clear" => () => element.PressKeysAsync(["Clear"]),
+                "Keys.Command" => () => element.PressKeysAsync(["Command"]),
+                "Keys.Control" => () => element.PressKeysAsync(["Control"]),
+                "Keys.Decimal" => () => element.PressKeysAsync(["Decimal"]),
+                "Keys.Delete" => () => element.PressKeysAsync(["Delete"]),
+                "Keys.Divide" => () => element.PressKeysAsync(["Divide"]),
+                "Keys.Down" => () => element.PressKeysAsync(["Down"]),
+                "Keys.End" => () => element.PressKeysAsync(["End"]),
+                "Keys.Enter" => () => element.PressKeysAsync(["Enter"]),
+                "Keys.Equal" => () => element.PressKeysAsync(["Equal"]),
+                "Keys.Escape" => () => element.PressKeysAsync(["Escape"]),
+                "Keys.F1" => () => element.PressKeysAsync(["F1"]),
+                "Keys.F10" => () => element.PressKeysAsync(["F10"]),
+                "Keys.F11" => () => element.PressKeysAsync(["F11"]),
+                "Keys.F12" => () => element.PressKeysAsync(["F12"]),
+                "Keys.F2" => () => element.PressKeysAsync(["F2"]),
+                "Keys.F3" => () => element.PressKeysAsync(["F3"]),
+                "Keys.F4" => () => element.PressKeysAsync(["F4"]),
+                "Keys.F5" => () => element.PressKeysAsync(["F5"]),
+                "Keys.F6" => () => element.PressKeysAsync(["F6"]),
+                "Keys.F7" => () => element.PressKeysAsync(["F7"]),
+                "Keys.F8" => () => element.PressKeysAsync(["F8"]),
+                "Keys.F9" => () => element.PressKeysAsync(["F9"]),
+                "Keys.Help" => () => element.PressKeysAsync(["Help"]),
+                "Keys.Home" => () => element.PressKeysAsync(["Home"]),
+                "Keys.Insert" => () => element.PressKeysAsync(["Insert"]),
+                "Keys.Left" => () => element.PressKeysAsync(["Left"]),
+                "Keys.LeftAlt" => () => element.PressKeysAsync(["LeftAlt"]),
+                "Keys.LeftControl" => () => element.PressKeysAsync(["LeftControl"]),
+                "Keys.LeftShift" => () => element.PressKeysAsync(["LeftShift"]),
+                "Keys.Meta" => () => element.PressKeysAsync(["Meta"]),
+                "Keys.Multiply" => () => element.PressKeysAsync(["Multiply"]),
+                "Keys.Null" => () => element.PressKeysAsync(["Null"]),
+                "Keys.NumberPad0" => () => element.PressKeysAsync(["NumberPad0"]),
+                "Keys.NumberPad1" => () => element.PressKeysAsync(["NumberPad1"]),
+                "Keys.NumberPad2" => () => element.PressKeysAsync(["NumberPad2"]),
+                "Keys.NumberPad3" => () => element.PressKeysAsync(["NumberPad3"]),
+                "Keys.NumberPad4" => () => element.PressKeysAsync(["NumberPad4"]),
+                "Keys.NumberPad5" => () => element.PressKeysAsync(["NumberPad5"]),
+                "Keys.NumberPad6" => () => element.PressKeysAsync(["NumberPad6"]),
+                "Keys.NumberPad7" => () => element.PressKeysAsync(["NumberPad7"]),
+                "Keys.NumberPad8" => () => element.PressKeysAsync(["NumberPad8"]),
+                "Keys.NumberPad9" => () => element.PressKeysAsync(["NumberPad9"]),
+                "Keys.PageDown" => () => element.PressKeysAsync(["PageDown"]),
+                "Keys.PageUp" => () => element.PressKeysAsync(["PageUp"]),
+                "Keys.Pause" => () => element.PressKeysAsync(["Pause"]),
+                "Keys.Return" => () => element.PressKeysAsync(["Return"]),
+                "Keys.Right" => () => element.PressKeysAsync(["Right"]),
+                "Keys.Semicolon" => () => element.PressKeysAsync(["Semicolon"]),
+                "Keys.Separator" => () => element.PressKeysAsync(["Separator"]),
+                "Keys.Shift" => () => element.PressKeysAsync(["Shift"]),
+                "Keys.Space" => () => element.PressKeysAsync(["Space"]),
+                "Keys.Subtract" => () => element.PressKeysAsync(["Subtract"]),
+                "Keys.Tab" => () => element.PressKeysAsync(["Tab"]),
+                "Keys.Up" => () => element.PressKeysAsync(["Up"]),
+                _ => () => element.TypeTextAsync(key),
+            };
+        }
+
+
+        private async Task HandleSendKeysXYAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            Point elementPosition = await element.PositionAsync();
+
+            string offsetXAsString = _act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver;
+            if (!int.TryParse(offsetXAsString, out int offsetX) || offsetX < 0)
+            {
+                throw new InvalidActionConfigurationException($"Offset-X '{offsetXAsString}' is not a valid X coordinate position");
+            }
+            string offsetYAsString = _act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver;
+            if (!int.TryParse(offsetXAsString, out int offsetY) || offsetY < 0)
+            {
+                throw new InvalidActionConfigurationException($"Offset-X '{offsetYAsString}' is not a valid Y coordinate position");
+            }
+
+            Point mouseTargetPosition = new(elementPosition.X + offsetX, elementPosition.Y + offsetY);
+
+            await _browserTab.MoveMouseAsync(mouseTargetPosition);
+            await element.ClearAsync();
+            string keys = _act.GetInputParamCalculatedValue("Value");
+            Func<Task> elementOperation = ConvertSeleniumKeyIdentifierToElementOperation(keys, element);
+            await elementOperation();
+        }
+        private async Task HandleMousePressReleaseAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            Size size = await element.SizeAsync();
+            Point position = await element.PositionAsync();
+            Point centerOfElement = new Point(position.X + (int)Math.Round(size.Width / 2.0), position.Y + (int)Math.Round(size.Height / 2.0));
+            await _browserTab.MouseClickAsync(centerOfElement);
+        }
 
         private async Task HandleMouseClickAsync()
         {
-            IBrowserElement elementToClick = await GetFirstMatchingElementAsync();
-            await elementToClick.MouseLeftClick();
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            Size size = await element.SizeAsync();
+            Point position = await element.PositionAsync();
+            Point centerOfElement = new Point(position.X + (int)Math.Round(size.Width / 2.0), position.Y + (int)Math.Round(size.Height / 2.0));
+            await _browserTab.MouseClickAsync(centerOfElement);
         }
-
     }
 }
+
+
