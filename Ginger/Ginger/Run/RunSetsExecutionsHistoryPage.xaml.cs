@@ -187,7 +187,6 @@ namespace Ginger.Run
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
-               // Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
                 return false;
 
             }
@@ -234,7 +233,6 @@ namespace Ginger.Run
             else
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.");
-                Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
                 xButtonPnl.Visibility = Visibility.Collapsed;
                 localRadioButton.IsChecked = true;
                 return;
@@ -564,7 +562,6 @@ namespace Ginger.Run
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
-                Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
                 LocalRadioButton_Selected(null, null);
 
 
