@@ -1,4 +1,5 @@
-﻿using LiteDB;
+﻿using Bogus;
+using LiteDB;
 using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,10 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             bsonMapper.RegisterType(
                 serialize: guid => new BsonValue(guid.ToString()),
                 deserialize: bsonValue => Guid.Parse(bsonValue.AsString));
+
+            bsonMapper.RegisterType(
+                serialize: timeSpan => new BsonValue(((int)timeSpan.TotalMilliseconds).ToString()),
+                deserialize: bsonValue => TimeSpan.FromMilliseconds(int.Parse(bsonValue.AsString)));
 
             return bsonMapper;
         }

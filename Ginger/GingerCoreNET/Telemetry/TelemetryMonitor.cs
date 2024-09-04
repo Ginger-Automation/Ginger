@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                     };
                 }),
                 TelemetryDB = NewTelemetryLiteDB(),
-                AddToLocalDBTelemetryStepBufferSize = 4,
+                AddToLocalDBTelemetryStepBufferSize = 1,
                 SendToCollectorTelemetryStepBufferSize = 4,
                 DeleteFromLocalDBTelemetryStepBufferSize = 4,
                 MarkUnsuccessfulInLocalDBTelemetryStepBufferSize = 4,
@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                     };
                 }),
                 TelemetryDB = NewTelemetryLiteDB(),
-                AddToLocalDBTelemetryStepBufferSize = 4,
+                AddToLocalDBTelemetryStepBufferSize = 1,
                 SendToCollectorTelemetryStepBufferSize = 4,
                 DeleteFromLocalDBTelemetryStepBufferSize = 4,
                 MarkUnsuccessfulInLocalDBTelemetryStepBufferSize = 4,

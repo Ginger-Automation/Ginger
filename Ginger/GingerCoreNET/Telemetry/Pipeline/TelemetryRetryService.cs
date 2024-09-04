@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             IEnumerable<TRecord> records;
             try
             {
-                records = await _telemetryDB.GetFailedToUploadRecords(pollingSize);
+                records = (await _telemetryDB.GetFailedToUploadRecords(pollingSize)).ToList();
             }
             catch (Exception ex)
             {

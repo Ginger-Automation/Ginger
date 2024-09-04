@@ -8,5 +8,6 @@ namespace Amdocs.Ginger.Common.Telemetry
 {
     public enum FeatureId
     {
+        POMLearning,
     }
 }

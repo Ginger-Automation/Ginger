@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -216,6 +217,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public async Task Learn()
         {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.POMLearning);
+            featureTracker.Metadata.Add("platform", "web");
             ClearStopLearning();
             PrepareLearningConfigurations();
             LearnScreenShot();

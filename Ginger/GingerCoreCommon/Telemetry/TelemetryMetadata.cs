@@ -20,10 +20,7 @@ namespace Amdocs.Ginger.Common.Telemetry
         public static TelemetryMetadata WithTags(params string[] tags)
         {
             TelemetryMetadata metadata = new();
-            foreach (string tag in tags)
-            {
-                metadata.Append(TagsKey, tag);
-            }
+            metadata.SetTags(tags);
             return metadata;
         }
 
@@ -42,6 +39,14 @@ namespace Amdocs.Ginger.Common.Telemetry
             LinkedList<string> values = new();
             values.AddLast(value);
             _dict[key] = values;
+        }
+
+        public void SetTags(params string[] tags)
+        {
+            foreach (string tag in tags)
+            {
+                Append(TagsKey, tag);
+            }
         }
 
         public string ToJSON()

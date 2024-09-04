@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
