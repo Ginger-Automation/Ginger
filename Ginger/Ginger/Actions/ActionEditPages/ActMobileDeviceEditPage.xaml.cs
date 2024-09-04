@@ -66,6 +66,13 @@ namespace Ginger.Actions
 
             xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*", ValueTextBox_ClickBrowse);
 
+            xAppPackageVE.Init(Context.GetAsContext(mAct.Context), mAct.ActionAppPackage, nameof(ActInputValue.Value));
+
+            xPressDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.PressDuration, nameof(ActInputValue.Value));
+            xDragDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.DragDuration, nameof(ActInputValue.Value));
+            xSwipeScaleTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeScale, nameof(ActInputValue.Value));
+            xSwipeDurationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.SwipeDuration, nameof(ActInputValue.Value));
+
             UpdateBaseLineImage(true);
 
             
@@ -196,6 +203,10 @@ namespace Ginger.Actions
             xXY2Pnl.Visibility = Visibility.Collapsed;
             xPhotoSimulationPnl.Visibility = Visibility.Collapsed;
             xAuthSimulationPnl.Visibility = Visibility.Collapsed;
+            xAppPnl.Visibility = Visibility.Collapsed;
+            xPressPnl.Visibility = Visibility.Collapsed;
+            xDragPnl.Visibility = Visibility.Collapsed;
+            xSwipePnl.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
             {
@@ -204,23 +215,51 @@ namespace Ginger.Actions
                     xKeyPressPnl.Visibility = Visibility.Visible;
                     break;
 
-                case ActMobileDevice.eMobileDeviceAction.PressXY:
-                case ActMobileDevice.eMobileDeviceAction.LongPressXY:
                 case ActMobileDevice.eMobileDeviceAction.TapXY:
+                case ActMobileDevice.eMobileDeviceAction.DoubleTapXY:
+                case ActMobileDevice.eMobileDeviceAction.LongPressXY:
                     xXY1Pnl.Visibility = Visibility.Visible;
                     break;
 
+                case ActMobileDevice.eMobileDeviceAction.PressXY:
+                    xXY1Pnl.Visibility = Visibility.Visible;
+                    xPressPnl.Visibility = Visibility.Visible;
+                    break;
+
                 case ActMobileDevice.eMobileDeviceAction.DragXYXY:
+                    xXY1Pnl.Visibility = Visibility.Visible;
+                    xXY2Pnl.Visibility = Visibility.Visible;
+                    xPressPnl.Visibility = Visibility.Visible;
+                    xDragPnl.Visibility = Visibility.Visible;
+                    break;
+
                 case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
                     xXY1Pnl.Visibility = Visibility.Visible;
                     xXY2Pnl.Visibility = Visibility.Visible;
+                    xSwipePnl.Visibility = Visibility.Visible;
+                    xSwipeScalePnl.Visibility = Visibility.Collapsed;
                     break;
+
+                case ActMobileDevice.eMobileDeviceAction.SwipeDown:
+                case ActMobileDevice.eMobileDeviceAction.SwipeUp:
+                case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
+                case ActMobileDevice.eMobileDeviceAction.SwipeRight:
+                    xSwipePnl.Visibility = Visibility.Visible;
+                    xSwipeScalePnl.Visibility = Visibility.Visible;
+                    break;
+
                 case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
                 case ActMobileDevice.eMobileDeviceAction.SimulateBarcode:
                     xPhotoSimulationPnl.Visibility = Visibility.Visible;
                     break;
+
                 case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
                     xAuthSimulationPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.CloseApp:
+                case ActMobileDevice.eMobileDeviceAction.OpenApp:
+                    xAppPnl.Visibility = Visibility.Visible;
                     break;
             }
         }
