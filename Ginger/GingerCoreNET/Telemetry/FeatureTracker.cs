@@ -13,7 +13,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
     {
         private readonly long _startTime;
         private readonly Action<TelemetryFeatureRecord> _onStop;
-        private bool _disposed = false;
+        private bool _stopped = false;
 
         public FeatureId FeatureId { get; }
         
@@ -29,6 +29,12 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         public void StopTracking()
         {
+            if (_stopped)
+            {
+                return;
+            }
+            _stopped = true;
+
             _onStop(new TelemetryFeatureRecord()
             {
                 AppVersion = ApplicationInfo.ApplicationBackendVersion,
@@ -43,11 +49,6 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         public void Dispose()
         {
-            if (_disposed)
-            {
-                return;
-            }
-            _disposed = true;
             StopTracking();
         }
     }

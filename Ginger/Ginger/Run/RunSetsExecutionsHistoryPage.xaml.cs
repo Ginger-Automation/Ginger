@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -545,6 +546,7 @@ namespace Ginger.Run
 
                 RunSetExecutionHistoryToBPMNExporter exporter = new();
 
+
                 IEnumerable<ExecutedBusinessFlow> executedBusinessFlows;
                 executedBusinessFlows = await exporter.GetExecutedBusinessFlowsAsync(runSetReport.GUID, runSetReport.DataRepMethod);
 
@@ -553,6 +555,38 @@ namespace Ginger.Run
                 {
                     return;
                 }
+
+                using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportRunSetExecutionHistoryBPMN);
+                featureTracker.Metadata.Add("BusinessFlowCount", executedBusinessFlows.Count().ToString());
+
+                int activityGroupCount = executedBusinessFlows
+                    .Where(ex => ex != null)
+                    .Select(ex => ex.BusinessFlow)
+                    .Where(bf => bf != null && bf.Active && bf.ActivitiesGroups != null)
+                    .SelectMany(bf => bf.ActivitiesGroups)
+                    .Where(ag => ag != null)
+                    .Count();
+                featureTracker.Metadata.Add("ActivityGroupCount", activityGroupCount.ToString());
+
+                int activityCount = executedBusinessFlows
+                    .Where(ex => ex != null)
+                    .Select(ex => ex.BusinessFlow)
+                    .Where(bf => bf != null && bf.Active && bf.Activities != null)
+                    .SelectMany(bf => bf.Activities)
+                    .Where(activity => activity != null && activity.Active)
+                    .Count();
+                featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
+
+                int actionCount = executedBusinessFlows
+                    .Where(ex => ex != null)
+                    .Select(ex => ex.BusinessFlow)
+                    .Where(bf => bf != null && bf.Active && bf.Activities != null)
+                    .SelectMany(bf => bf.Activities)
+                    .Where(activity => activity != null && activity.Active && activity.Acts != null)
+                    .SelectMany(activity => activity.Acts)
+                    .Where(act => act != null && act.Active)
+                    .Count();
+                featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
 
                 int exportedSuccessfullyCount = 0;
                 foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)
@@ -567,6 +601,8 @@ namespace Ginger.Run
                         Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while exporting BPMN for business flow {executedBusinessFlow.Name}.", ex);
                     }
                 }
+                featureTracker.StopTracking();
+
                 if (exportedSuccessfullyCount > 0)
                 {
                     Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.MultipleExportToBPMNSuccessful, exportedSuccessfullyCount));

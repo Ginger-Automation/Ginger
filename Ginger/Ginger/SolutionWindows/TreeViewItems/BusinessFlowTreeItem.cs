@@ -49,6 +49,8 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
 using Ginger.Repository;
+using Amdocs.Ginger.Common.Telemetry;
+using Microsoft.VisualStudio.Services.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -335,7 +337,41 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 { 
                     ExportPath = fullBPMNExportPath
                 });
+                int? activitiesGroupCount = null;
+                int? activityCount = null;
+                int? actionCount = null;
+                if (mBusinessFlow.Activities != null)
+                {
+                    activitiesGroupCount = mBusinessFlow.ActivitiesGroups.Count;
+
+                    activityCount = mBusinessFlow.Activities.Where(a => a.Active).Count();
+
+                    actionCount = mBusinessFlow
+                        .Activities
+                        .Select(activity =>
+                        {
+                            if (activity == null || !activity.Active || activity.Acts == null)
+                                return 0;
+                            return activity.Acts.Where(act => act != null && act.Active).Count();
+                        })
+                        .Aggregate((count, total) => total + count);
+                }
+
+                using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportBusinessFlowBPMN);
+                if (activitiesGroupCount != null)
+                {
+                    featureTracker.Metadata.Add("ActivitiesGroupCount", activitiesGroupCount.ToString());
+                }
+                if (activityCount != null)
+                {
+                    featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
+                }
+                if (actionCount != null)
+                {
+                    featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
+                }
                 string exportPath = businessFlowToBPMNExporter.Export();
+                featureTracker.StopTracking();
                 string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
 
                 Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeExportPath);

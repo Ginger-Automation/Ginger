@@ -11,5 +11,8 @@ namespace Amdocs.Ginger.Common.Telemetry
         POMLearning,
         RunsetAction,
         Analyzer,
+        ExportActivitiesGroupBPMN,
+        ExportBusinessFlowBPMN,
+        ExportRunSetExecutionHistoryBPMN,
     }
 }
