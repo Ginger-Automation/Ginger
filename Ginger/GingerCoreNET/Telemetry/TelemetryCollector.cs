@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Telemetry
 {
-    internal sealed class TelemetryCollector : ITelemetryCollector<TelemetryLogRecord>
+    internal sealed class TelemetryCollector : ITelemetryCollector<TelemetryLogRecord>, ITelemetryCollector<TelemetryFeatureRecord>
     {
         private static readonly GrpcChannel CollectorGRPCChannel = GrpcChannel.ForAddress("");
         private readonly ILogger? _logger;

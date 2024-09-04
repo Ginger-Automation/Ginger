@@ -38,9 +38,9 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             _onStop(new TelemetryFeatureRecord()
             {
                 AppVersion = ApplicationInfo.ApplicationBackendVersion,
+                UserId = WorkSpace.Instance.UserProfile.UserName,
                 CreationTimestamp = DateTime.UtcNow,
                 LastUpdateTimestamp = DateTime.UtcNow,
-                UserId = WorkSpace.Instance.UserProfile.UserName,
                 FeatureId = FeatureId.ToString(),
                 Duration = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - _startTime),
                 Metadata = Metadata.ToJSON(),

@@ -101,18 +101,36 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             AddLog(new TelemetryLogRecord()
             {
                 AppVersion = ApplicationInfo.ApplicationBackendVersion,
+                UserId = WorkSpace.Instance.UserProfile.UserName,
                 CreationTimestamp = DateTime.UtcNow,
                 LastUpdateTimestamp = DateTime.UtcNow,
                 Level = level.ToString(),
-                UserId = WorkSpace.Instance.UserProfile.UserName,
                 Message = msg,
+                Metadata = metadata.ToJSON(),
+            });
+        }
+
+        public void AddFeatureUsage(FeatureId featureId)
+        {
+            AddFeatureUsage(featureId, metadata: new());
+        }
+
+        public void AddFeatureUsage(FeatureId featureId, TelemetryMetadata metadata)
+        {
+            AddFeatureUsage(new TelemetryFeatureRecord()
+            {
+                AppVersion = ApplicationInfo.ApplicationBackendVersion,
+                UserId = WorkSpace.Instance.UserProfile.UserName,
+                CreationTimestamp = DateTime.UtcNow,
+                LastUpdateTimestamp = DateTime.UtcNow,
+                FeatureId = featureId.ToString(),
                 Metadata = metadata.ToJSON(),
             });
         }
 
         public IFeatureTracker StartFeatureTracking(FeatureId featureId)
         {
-            return new FeatureTracker(featureId, AddFeatureUsage);
+            return new FeatureTracker(featureId, onStop: AddFeatureUsage);
         }
 
         private void AddLog(TelemetryLogRecord logRecord)
