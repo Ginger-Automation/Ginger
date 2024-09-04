@@ -54,15 +54,27 @@ namespace Amdocs.Ginger.Common.Telemetry
             StringBuilder json = new();
 
             json.Append('{');
-            foreach (string key in _dict.Keys)
+            string[] keys = _dict.Keys.ToArray();
+            for (int keyIndex = 0; keyIndex < keys.Length; keyIndex++)
             {
-                json.Append($"'{key}':");
+                string key = keys[keyIndex];
+                json.Append($"\"{key}\":");
                 json.Append('[');
-                foreach (string value in _dict[key])
+                string[] values = _dict[key].ToArray();
+                for (int valueIndex = 0; valueIndex < values.Length; valueIndex++)
                 {
-                    json.Append($"'{value}'");
+                    string value = values[valueIndex];
+                    json.Append($"\"{value}\"");
+                    if (valueIndex < values.Length - 1)
+                    {
+                        json.Append(',');
+                    }
                 }
                 json.Append(']');
+                if (keyIndex < keys.Length - 1)
+                {
+                    json.Append(',');
+                }
             }
             json.Append('}');
 
