@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "GingerTelemetry.GRPC";
+
+message LogRecord {
+	string Id = 1;
+	string CreationTimestamp = 2;
+	string AppVersion = 3;
+	string UserId = 4;
+	string Level = 5;
+	string Message = 6;
+	string Metadata = 7;
+}
+
+message AddLogsRequest {
+	repeated LogRecord Logs = 1;
+	int32 LogCount = 2;
+}
+
+message AddLogsResponse {
+	int32 LogCount = 1;
+}
+
+service LogCollector {
+	rpc Collect(AddLogsRequest) returns (AddLogsResponse);
+}

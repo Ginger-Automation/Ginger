@@ -260,8 +260,17 @@
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.6" />
   
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.3.1" />
+  
+    <PackageReference Include="Google.Protobuf" Version="3.28.0" />
    
     <PackageReference Include="Gravity.Core" Version="2021.9.12.3" />
+   
+    <PackageReference Include="Grpc.Net.Client" Version="2.65.0" />
+   
+    <PackageReference Include="Grpc.Tools" Version="2.66.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
@@ -1421,6 +1430,12 @@
     <Folder Include="ActionsLib\UI\UI Element\" />
     <Folder Include="Reports\Ginger-Web-Client\assets\artifacts\" />
     <Folder Include="SolutionRepositoryLib\RepositoryObjectsLib\PlatformsLib\" />
+  </ItemGroup>
+	
+	
+  <ItemGroup>
+	<Protobuf Include="Telemetry\Pipeline\Protos\feature.proto" GrpcServices="Client" />
+	<Protobuf Include="Telemetry\Pipeline\Protos\log.proto" GrpcServices="Client" />
   </ItemGroup>
 
   <ItemGroup>
