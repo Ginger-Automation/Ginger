@@ -123,7 +123,6 @@ namespace Ginger.Run
             {
                 PropertyChangedEventManager.AddHandler(execLoggerConfig, OnExecutionLoggerConfigPublishLogToCentralDB_Changed, nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB));
             }
-            ReloadExecutionHistoryData();
             waitForPageCreation = false;
         }
 
@@ -149,14 +148,10 @@ namespace Ginger.Run
         {
             if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
             {
-                remoteRadioButton.IsEnabled = true;
-                remoteRadioButton.IsChecked = false;
                 return true;
             }
             else
             {
-                remoteRadioButton.IsEnabled = false;
-                localRadioButton.IsChecked = true;
                 return false;
             }
         }
@@ -172,8 +167,7 @@ namespace Ginger.Run
                 string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
                 if (!string.IsNullOrEmpty(endPoint))
                 {
-                    endPoint = endPoint + "api/graphql";
-                    graphQlClient = new GraphQlClient(endPoint);
+                    graphQlClient = new GraphQlClient($"{endPoint}api/graphql");
                     executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
                     isGraphQlClinetConfigure = true;
                     return true;
@@ -181,14 +175,13 @@ namespace Ginger.Run
                 else
                 {
                     isGraphQlClinetConfigure = false;
-                    return false;
+                    return false; 
                 }
 
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
-                Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
                 return false;
 
             }
@@ -228,14 +221,13 @@ namespace Ginger.Run
         {
             xButtonPnl.Visibility = Visibility.Visible;
             GraphQlLoadingVisible();
-            if (AssignGraphQLObjectEndPoint())
+            if (SetExectionHistoryVisibility(execLoggerConfig)&&AssignGraphQLObjectEndPoint())
             {
                 await LoadExecutionsHistoryDataGraphQl();
             }
             else
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.");
-                Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
                 xButtonPnl.Visibility = Visibility.Collapsed;
                 localRadioButton.IsChecked = true;
                 return;
@@ -283,16 +275,17 @@ namespace Ginger.Run
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-
+            execLoggerConfig = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(c => c.IsSelected);
             ReloadExecutionHistoryData();
+            
         }
         /// <summary>
         /// Reloads the data for the RunSetsExecutionsHistoryPage.
         /// </summary>
         public void ReloadExecutionHistoryData()
         {
-            AssignGraphQLObjectEndPoint();
-            if (SetExectionHistoryVisibility(execLoggerConfig))
+            
+            if (AssignGraphQLObjectEndPoint()&&SetExectionHistoryVisibility(execLoggerConfig) )
             {
                 remoteRadioButton.IsChecked = true;
                 remoteRadioButton.IsEnabled = true;
@@ -565,7 +558,6 @@ namespace Ginger.Run
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
-                Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
                 LocalRadioButton_Selected(null, null);
 
 
