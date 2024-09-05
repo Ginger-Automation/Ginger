@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using System;
 using IdentityModel.Client;
 using Ginger.ValidationRules;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Ginger.ExternalConfigurations
 {
@@ -35,8 +36,9 @@ namespace Ginger.ExternalConfigurations
     /// </summary>
     public partial class GingerAnalyticsConfigurationPage : GingerUIPage
     {
+        public DateTime validTo;
+
         private GingerAnalyticsConfiguration gingerAnalyticsUserConfig;
-        ValueExpression valueExpression;
         public GingerAnalyticsConfigurationPage()
         {
             InitializeComponent();
@@ -45,7 +47,6 @@ namespace Ginger.ExternalConfigurations
         private void Init()
         {
             gingerAnalyticsUserConfig = WorkSpace.Instance.Solution.GingerAnalyticsConfiguration;
-            valueExpression = new ValueExpression();
             gingerAnalyticsUserConfig.StartDirtyTracking();
             SetControls();
 
@@ -66,14 +67,20 @@ namespace Ginger.ExternalConfigurations
         private void ApplyValidationRules()
         {
             // check if fields have been populated (font-end validation)
-            xGAAURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
-            xISURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
+            xGAAURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Report URL cannot be empty"));
+            xISURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Identitiy Service URL cannot be empty"));
             xClientIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("ClientID cannot be empty"));
             xClientSecretTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("ClientSecret cannot be empty"));
         }
 
         private async void xTestConBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (IsTokenValid())
+            {
+                Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionSuccess);
+                return;
+            }
+
             if (string.IsNullOrEmpty(gingerAnalyticsUserConfig.AccountUrl) || string.IsNullOrEmpty(gingerAnalyticsUserConfig.IdentityServiceURL)
                 || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientId) || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientSecret))
             {
@@ -82,15 +89,11 @@ namespace Ginger.ExternalConfigurations
             }
 
 
-            if (gingerAnalyticsUserConfig != null && gingerAnalyticsUserConfig.Token.Equals("token"))
+            if (gingerAnalyticsUserConfig != null && string.IsNullOrEmpty(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.Token))
             {
-                string clientId = CredentialsCalculation(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.ClientId);
 
-                string clientSecret = CredentialsCalculation(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.ClientSecret);
-
-                string address = CredentialsCalculation(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.IdentityServiceURL);
-
-                bool isAuthorized = await RequestToken(clientId, clientSecret, address);
+                bool isAuthorized = await RequestToken(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.ClientId, WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.ClientSecret,
+                        WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.IdentityServiceURL);
 
                 if (isAuthorized)
                 {
@@ -101,7 +104,7 @@ namespace Ginger.ExternalConfigurations
                     Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionFail);
                 }
             }
-            else if (gingerAnalyticsUserConfig != null && !gingerAnalyticsUserConfig.Token.Equals("token"))
+            else if (gingerAnalyticsUserConfig != null && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.Token))
             {
                 Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionSuccess);
             }
@@ -138,6 +141,13 @@ namespace Ginger.ExternalConfigurations
 
                 var client = new HttpClient(handler);
 
+
+                clientId = ValueExpression.CredentialsCalculation(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.ClientId);
+
+                clientSecret = ValueExpression.CredentialsCalculation(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.ClientSecret);
+
+                address = ValueExpression.CredentialsCalculation(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.IdentityServiceURL);
+
                 var disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
                 {
                     Address = address,
@@ -158,7 +168,9 @@ namespace Ginger.ExternalConfigurations
 
                 if (tokenResponse.HttpStatusCode == System.Net.HttpStatusCode.OK)
                 {
+                    validTo = DateTime.UtcNow.AddMinutes(60);
                     gingerAnalyticsUserConfig.Token = tokenResponse.AccessToken;
+                    //validTo = tokenResponse.ExpiresIn;
                     return true;
                 }
                 else
@@ -172,31 +184,33 @@ namespace Ginger.ExternalConfigurations
                 return false;
             }
         }
-        /// <summary>
-        /// Calculates the actual value from the input string based on its type.
-        /// If the input is a value expression, it computes the expression to get the value.
-        /// If the input is an encrypted string, it decrypts the string to retrieve the original value.
-        /// Returns the input as is if it doesn't match the above conditions.
-        /// </summary>
-        /// <param name="value">The input string which might be a value expression or an encrypted string.</param>
-        /// <returns>The calculated or decrypted value, or the input string if no processing is needed.</returns>
-        private string CredentialsCalculation(string value)
+
+        public bool IsTokenValid()
         {
-
-            if (ValueExpression.IsThisAValueExpression(value))
+            try
             {
-                valueExpression.DecryptFlag = true;
-                value = valueExpression.Calculate(value);
-                valueExpression.DecryptFlag = false;
-                return value;
-            }
-            else if (EncryptionHandler.IsStringEncrypted(value))
-            {
-                value = EncryptionHandler.DecryptwithKey(value);
-                return value;
-            }
+                if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.Token) || WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.Token.Split('.').Length != 3)
+                {
+                    return false;
+                }
 
-            return value;
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(WorkSpace.Instance.Solution.GingerAnalyticsConfiguration.Token);
+                validTo = jwtToken.ValidTo;
+                if (DateTime.UtcNow < validTo)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured in validate token", ex);
+                return false;
+            }
         }
     }
 }

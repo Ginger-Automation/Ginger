@@ -29,6 +29,23 @@ namespace Ginger.Configurations
     {
         public delegate void GingerAnalyticsConfigurationChangedEvent();
 
+
+        private string mName;
+
+        [IsSerializedForLocalRepository]
+        public string Name
+        {
+            get { return mName; }
+            set
+                {
+                if (mName != value)
+                    {
+                    mName = value;
+                    OnPropertyChanged(nameof(Name));
+                    }
+                }
+        }
+
         private string mAccountUrl;
         [IsSerializedForLocalRepository]
         public string AccountUrl
@@ -101,7 +118,19 @@ namespace Ginger.Configurations
             }
         }
 
-        public string Token = "token";
+        private string mToken = string.Empty;
+
+        public string Token
+        {
+            get { return mToken; }
+            set
+            {
+                if(mToken != value)
+                {
+                    mToken=value;
+                }
+            }
+        }
       
 
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }

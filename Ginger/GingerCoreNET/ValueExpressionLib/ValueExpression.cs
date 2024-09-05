@@ -1856,6 +1856,33 @@ namespace GingerCore
             VE.Value = Value;
             return VE.ValueCalculated;
         }
+
+        /// <summary>
+        /// Calculates the actual value from the input string based on its type.
+        /// If the input is a value expression, it computes the expression to get the value.
+        /// If the input is an encrypted string, it decrypts the string to retrieve the original value.
+        /// Returns the input as is if it doesn't match the above conditions.
+        /// </summary>
+        /// <param name="value">The input string which might be a value expression or an encrypted string.</param>
+        /// <returns>The calculated or decrypted value, or the input string if no processing is needed.</returns>
+        public static string CredentialsCalculation(string value)
+        {
+            if (IsThisAValueExpression(value))
+            {
+                ValueExpression valueExpression = new();
+                valueExpression.DecryptFlag = true;
+                value = valueExpression.Calculate(value);
+                valueExpression.DecryptFlag = false;
+                return value;
+            }
+            else if (EncryptionHandler.IsStringEncrypted(value))
+            {
+                value = EncryptionHandler.DecryptwithKey(value);
+                return value;
+            }
+
+            return value;
+        }
     }
 
     public class Mockdata
