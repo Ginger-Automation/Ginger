@@ -599,6 +599,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\Environment.ico" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Environment.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\GingerAnalytics.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
@@ -707,6 +708,7 @@
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1" />
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.3.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
+    <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
     <PackageReference Include="log4net" Version="2.0.15" />
@@ -2459,6 +2461,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Ginger.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerAnalytics.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png">
