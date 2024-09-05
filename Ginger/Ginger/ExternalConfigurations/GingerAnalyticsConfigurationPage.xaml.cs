@@ -29,6 +29,8 @@ using IdentityModel.Client;
 using Ginger.ValidationRules;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Ginger.ExternalConfigurations
 {
@@ -37,9 +39,8 @@ namespace Ginger.ExternalConfigurations
     /// </summary>
     public partial class GingerAnalyticsConfigurationPage : GingerUIPage
     {
-        public DateTime validTo;
-
-        private GingerAnalyticsConfiguration gingerAnalyticsUserConfig;
+        public DateTime validTo = DateTime.MinValue;
+        private GingerAnalyticsConfiguration gingerAnalyticsUserConfig = null;
         public GingerAnalyticsConfigurationPage()
         {
             InitializeComponent();
@@ -47,7 +48,7 @@ namespace Ginger.ExternalConfigurations
         }
         private void Init()
         {
-            gingerAnalyticsUserConfig  = !WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerAnalyticsConfiguration>().Any() ? new GingerAnalyticsConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerAnalyticsConfiguration>();
+            gingerAnalyticsUserConfig  = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerAnalyticsConfiguration>().Count == 0 ? new GingerAnalyticsConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerAnalyticsConfiguration>();
             gingerAnalyticsUserConfig.StartDirtyTracking();
             SetControls();
 
@@ -76,37 +77,45 @@ namespace Ginger.ExternalConfigurations
 
         private async void xTestConBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (AreRequiredFieldsEmpty())
+            {
+                Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
+                return;
+            }
+
             GingerCoreNET.GeneralLib.General.CreateGingerAnalyticsConfiguration(gingerAnalyticsUserConfig);
+
             if (IsTokenValid())
             {
                 Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionSuccess);
                 return;
             }
 
-            if (string.IsNullOrEmpty(gingerAnalyticsUserConfig.AccountUrl) || string.IsNullOrEmpty(gingerAnalyticsUserConfig.IdentityServiceURL)
-                || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientId) || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientSecret))
+            bool isAuthorized = await HandleTokenAuthorization();
+            ShowConnectionResult(isAuthorized);
+        }
+
+        private bool AreRequiredFieldsEmpty()
+        {
+            return string.IsNullOrEmpty(gingerAnalyticsUserConfig.AccountUrl)
+                || string.IsNullOrEmpty(gingerAnalyticsUserConfig.IdentityServiceURL)
+                || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientId)
+                || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientSecret);
+        }
+
+        private async Task<bool> HandleTokenAuthorization()
+        {
+            if (string.IsNullOrEmpty(gingerAnalyticsUserConfig.Token))
             {
-                Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
-                return;
+                return await RequestToken(gingerAnalyticsUserConfig.ClientId, gingerAnalyticsUserConfig.ClientSecret, gingerAnalyticsUserConfig.IdentityServiceURL);
             }
 
+            return true;
+        }
 
-            if (gingerAnalyticsUserConfig != null && string.IsNullOrEmpty(gingerAnalyticsUserConfig.Token))
-            {
-
-                bool isAuthorized = await RequestToken(gingerAnalyticsUserConfig.ClientId,gingerAnalyticsUserConfig.ClientSecret,
-                        gingerAnalyticsUserConfig.IdentityServiceURL);
-
-                if (isAuthorized)
-                {
-                    Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionSuccess);
-                }
-                else
-                {
-                    Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionFail);
-                }
-            }
-            else if (gingerAnalyticsUserConfig != null && !string.IsNullOrEmpty(gingerAnalyticsUserConfig.Token))
+        private static void ShowConnectionResult(bool isAuthorized)
+        {
+            if (isAuthorized)
             {
                 Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionSuccess);
             }
@@ -114,8 +123,8 @@ namespace Ginger.ExternalConfigurations
             {
                 Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionFail);
             }
-
         }
+
 
         private void xClientSecretTextBox_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
@@ -135,53 +144,61 @@ namespace Ginger.ExternalConfigurations
             }
         }
 
+
         public async Task<bool> RequestToken(string clientId, string clientSecret, string address)
         {
             try
             {
-                HttpClientHandler handler = new HttpClientHandler() { UseProxy = false };
+                HttpClientHandler handler = new HttpClientHandler() { UseProxy = false};
 
-                var client = new HttpClient(handler);
-
-
-                clientId = ValueExpression.CredentialsCalculation(gingerAnalyticsUserConfig.ClientId);
-
-                clientSecret = ValueExpression.CredentialsCalculation(gingerAnalyticsUserConfig.ClientSecret);
-
-                address = ValueExpression.CredentialsCalculation(gingerAnalyticsUserConfig.IdentityServiceURL);
-
-                var disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
+                using (var client = new HttpClient(handler))
                 {
-                    Address = address,
-                    Policy =
-                       {
-                       RequireHttps = true,
-                       ValidateIssuerName = true
-                       }
-                });
+                    clientId = ValueExpression.CredentialsCalculation(gingerAnalyticsUserConfig.ClientId);
+                    clientSecret = ValueExpression.CredentialsCalculation(gingerAnalyticsUserConfig.ClientSecret);
+                    address = ValueExpression.CredentialsCalculation(gingerAnalyticsUserConfig.IdentityServiceURL);
 
-                var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-                {
-                    Address = disco.TokenEndpoint,
+                    var disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
+                    {
+                        Address = address,
+                        Policy =
+                    {
+                RequireHttps = true,
+                ValidateIssuerName = true
+                    }
+                    });
 
-                    ClientId = clientId,
-                    ClientSecret = clientSecret,
-                });
+                    if (disco.IsError)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Discovery document error: {disco.Error}");
+                        return false;
+                    }
 
-                if (tokenResponse.HttpStatusCode == System.Net.HttpStatusCode.OK)
-                {
+                    var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+                    {
+                        Address = disco.TokenEndpoint,
+                        ClientId = clientId,
+                        ClientSecret = clientSecret
+                    });
+
+                    if (tokenResponse.IsError)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Token request error: {tokenResponse.Error}");
+                        return false;
+                    }
+
                     validTo = DateTime.UtcNow.AddMinutes(60);
                     gingerAnalyticsUserConfig.Token = tokenResponse.AccessToken;
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "HTTP request failed", httpEx);
+                return false;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to the server", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error during token request", ex);
                 return false;
             }
         }
