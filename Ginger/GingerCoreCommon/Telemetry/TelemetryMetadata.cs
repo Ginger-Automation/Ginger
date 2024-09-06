@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Common.Telemetry
 {
-    public sealed class TelemetryMetadata
+    public sealed class TelemetryMetadata : IEnumerable<KeyValuePair<string, IEnumerable<string>>>
     {
         public const string TagsKey = "Tags";
 
@@ -24,7 +25,7 @@ namespace Amdocs.Ginger.Common.Telemetry
             return metadata;
         }
 
-        public void Append(string key, string value)
+        public void Add(string key, string value)
         {
             if (!_dict.TryGetValue(key, out LinkedList<string> values) || values == null)
             {
@@ -34,18 +35,11 @@ namespace Amdocs.Ginger.Common.Telemetry
             values.AddLast(value);
         }
 
-        public void Add(string key, string value)
-        {
-            LinkedList<string> values = new();
-            values.AddLast(value);
-            _dict[key] = values;
-        }
-
         public void SetTags(params string[] tags)
         {
             foreach (string tag in tags)
             {
-                Append(TagsKey, tag);
+                Add(TagsKey, tag);
             }
         }
 
@@ -79,6 +73,18 @@ namespace Amdocs.Ginger.Common.Telemetry
             json.Append('}');
 
             return json.ToString();
+        }
+
+        public IEnumerator<KeyValuePair<string, IEnumerable<string>>> GetEnumerator()
+        {
+            return _dict
+                .Select(kv => new KeyValuePair<string, IEnumerable<string>>(kv.Key, kv.Value))
+                .GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

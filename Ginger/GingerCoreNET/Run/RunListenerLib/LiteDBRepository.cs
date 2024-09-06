@@ -20,6 +20,7 @@ using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
@@ -68,6 +69,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public override object SetReportAction(GingerCore.Actions.Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool offlineMode = false)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "LiteDB" },
+                { "ItemLogged", "Action" },
+            });
             //save screenshots
             string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
             string completeSSPath = string.Empty;
@@ -199,6 +205,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportActivity(Activity activity, Context context, eExecutedFrom executedFrom = eExecutedFrom.Run, bool offlineMode = false, bool isConfEnable = false)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "LiteDB" },
+                { "ItemLogged", "Activity" },
+            });
             MapActivityToLiteDb(activity, context, executedFrom);
             return GetActivityReportData(activity, context, offlineMode);//Returning ActivityReport so we will get execution info on the console
         }
@@ -245,6 +256,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportActivityGroup(IContext context, ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "LiteDB" },
+                { "ItemLogged", "ActivityGroup" },
+            });
             MapAcgToLiteDb((Context)context, activityGroup, businessFlow);
             return GetAGReportData(activityGroup, context);//Returning ActivityGroupReport so we will get execution info on the console
         }
@@ -274,6 +290,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportBusinessFlow(Context context, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "LiteDB" },
+                { "ItemLogged", "BusinessFlow" },
+            });
             LiteDbBusinessFlow BFR = new LiteDbBusinessFlow();
             if (executedFrom == eExecutedFrom.Automation)
             {
@@ -401,6 +422,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "LiteDB" },
+                { "ItemLogged", "Runner" },
+            });
             base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
             LiteDbRunner runner = new LiteDbRunner();
             runner.AllBusinessFlowsColl.AddRange(liteDbBFList);
@@ -480,6 +506,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public override void SetReportRunSet(RunSetReport runSetReport, string logFolder, eExecutedFrom executedFrom = eExecutedFrom.Run)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "LiteDB" },
+                { "ItemLogged", "Runset" },
+            });
             LiteDbRunSet runSet = new LiteDbRunSet();
             base.SetReportRunSet(runSetReport, logFolder);
             runSet.RunnersColl.AddRange(ExecutionLoggerManager.RunSetReport.liteDbRunnerList);
