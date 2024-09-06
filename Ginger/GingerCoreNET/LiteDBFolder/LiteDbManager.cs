@@ -33,31 +33,69 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             dbConnector = new LiteDbConnector(Path.Combine(dbFolderName, "GingerExecutionResults.db")); // Set data to ExecutionResults folder name
             InitMappers();
         }
+        /// <summary>
+        /// Initializes the mappers for LiteDB collections.
+        /// </summary>
         public void InitMappers()
         {
+            InitRunSetMapper();
+            InitRunnerMapper();
+            InitBusinessFlowMapper();
+            InitActivityGroupMapper();
+            InitActivityMapper();
+        }
+
+        /// <summary>
+        /// Initializes the mapper for LiteDbRunSet collection.
+        /// </summary>
+        private void InitRunSetMapper()
+        {
             var runSetMapper = dbConnector.GetMapper<LiteDbRunSet>();
-            var runnerMapper = dbConnector.GetMapper<LiteDbRunner>();
-            var bfMapper = dbConnector.GetMapper<LiteDbBusinessFlow>();
-            var agMapper = dbConnector.GetMapper<LiteDbActivityGroup>();
-            var activityMapper = dbConnector.GetMapper<LiteDbActivity>();
-            var action = dbConnector.GetMapper<LiteDbAction>();
-
-            activityMapper.DbRef(rf => rf.ActionsColl, NameInDb<LiteDbAction>());
-            activityMapper.DbRef(rf => rf.AllActionsColl, NameInDb<LiteDbAction>());
-
-            agMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
-            agMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
-
-            bfMapper.DbRef(rf => rf.ActivitiesGroupsColl, NameInDb<LiteDbActivityGroup>());
-
-            bfMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
-            bfMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
-
-            runnerMapper.DbRef(rf => rf.BusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
-            runnerMapper.DbRef(rf => rf.AllBusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
-
             runSetMapper.DbRef(rf => rf.RunnersColl, NameInDb<LiteDbRunner>());
         }
+
+        /// <summary>
+        /// Initializes the mapper for LiteDbRunner collection.
+        /// </summary>
+        private void InitRunnerMapper()
+        {
+            var runnerMapper = dbConnector.GetMapper<LiteDbRunner>();
+            runnerMapper.DbRef(rf => rf.BusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
+            runnerMapper.DbRef(rf => rf.AllBusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
+        }
+
+        /// <summary>
+        /// Initializes the mapper for LiteDbBusinessFlow collection.
+        /// </summary>
+        private void InitBusinessFlowMapper()
+        {
+            var bfMapper = dbConnector.GetMapper<LiteDbBusinessFlow>();
+            bfMapper.DbRef(rf => rf.ActivitiesGroupsColl, NameInDb<LiteDbActivityGroup>());
+            bfMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
+            bfMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
+        }
+
+        /// <summary>
+        /// Initializes the mapper for LiteDbActivityGroup collection.
+        /// </summary>
+        private void InitActivityGroupMapper()
+        {
+            var agMapper = dbConnector.GetMapper<LiteDbActivityGroup>();
+            agMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
+            agMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
+        }
+
+        /// <summary>
+        /// Initializes the mapper for LiteDbActivity collection.
+        /// </summary>
+        private void InitActivityMapper()
+        {
+            var activityMapper = dbConnector.GetMapper<LiteDbActivity>();
+            activityMapper.DbRef(rf => rf.ActionsColl, NameInDb<LiteDbAction>());
+            activityMapper.DbRef(rf => rf.AllActionsColl, NameInDb<LiteDbAction>());
+        }
+
+
         public string NameInDb<T>()
         {
             var name = typeof(T).Name + "s";
