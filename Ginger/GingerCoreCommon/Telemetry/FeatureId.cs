@@ -16,5 +16,6 @@ namespace Amdocs.Ginger.Common.Telemetry
         ExportRunSetExecutionHistoryBPMN,
         AAMLearning,
         ExecutionLogger,
+        ActionExecution,
     }
 }

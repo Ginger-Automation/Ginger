@@ -149,7 +149,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             string UserTempFile = Path.Combine(UserTempPath, "APIParserLogFile" + timeStamp + ".log");
             File.WriteAllText(UserTempFile, LogFile);
 
-            featureTracker.StopTracking();
+            featureTracker.Dispose();
 
             return mAAMList;
         }

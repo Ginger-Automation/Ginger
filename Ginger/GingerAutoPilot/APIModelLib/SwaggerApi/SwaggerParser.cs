@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 }
                 finally
                 {
-                    featureTracker.StopTracking();
+                    featureTracker.Dispose();
                 }
                 
             }
@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 }
                 finally
                 {
-                    featureTracker.StopTracking();
+                    featureTracker.Dispose();
                 }
             }
 

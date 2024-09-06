@@ -371,7 +371,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
                 }
                 string exportPath = businessFlowToBPMNExporter.Export();
-                featureTracker.StopTracking();
+                featureTracker.Dispose();
                 string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
 
                 Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeExportPath);

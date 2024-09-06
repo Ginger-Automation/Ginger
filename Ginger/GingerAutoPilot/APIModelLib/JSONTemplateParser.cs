@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
             }
             finally
             {
-                featureTracker.StopTracking();
+                featureTracker.Dispose();
             }
         }
 

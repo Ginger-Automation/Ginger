@@ -167,7 +167,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
                 }
                 string exportPath = activitiesGroupToBPMNExporter.Export();
-                featureTracker.StopTracking();
+                featureTracker.Dispose();
                 
                 string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
 

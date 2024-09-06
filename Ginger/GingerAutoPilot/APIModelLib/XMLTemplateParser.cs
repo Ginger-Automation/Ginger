@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.Repository
             }
             finally
             {
-                featureTracker.StopTracking();
+                featureTracker.Dispose();
             }
         }
 

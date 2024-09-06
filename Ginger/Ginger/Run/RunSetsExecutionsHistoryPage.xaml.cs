@@ -601,7 +601,7 @@ namespace Ginger.Run
                         Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while exporting BPMN for business flow {executedBusinessFlow.Name}.", ex);
                     }
                 }
-                featureTracker.StopTracking();
+                featureTracker.Dispose();
 
                 if (exportedSuccessfullyCount > 0)
                 {
