@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using Newtonsoft.Json.Linq;
@@ -32,8 +33,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
             if (IsValidYaml(FileName))
             {
+                IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
                 try
                 {
+                    featureTracker.Metadata.Add("APIType", "Swagger");
+                    featureTracker.Metadata.Add("FileType", "YAML");
                     string fileContent = FileContentProvider(FileName);
                     string fileConverted = ConvertYamlToJson(fileContent);
                     JToken.Parse(fileConverted); // doing the Jtoken to validate the json file
@@ -44,12 +48,19 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided yaml document " , ex);
                     Reporter.ToUser(eUserMsgKey.InvalidYAML);
                 }
+                finally
+                {
+                    featureTracker.StopTracking();
+                }
                 
             }
             else
             {
+                IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
                 try
                 {
+                    featureTracker.Metadata.Add("APIType", "Swagger");
+                    featureTracker.Metadata.Add("FileType", "JSON");
                     string fileContent = FileContentProvider(FileName);
                     JToken.Parse(fileContent);  // doing the Jtoken to validate the json file
                     Swaggerdoc = SwaggerDocument.FromJsonAsync(FileContentProvider(FileName)).Result;
@@ -58,6 +69,10 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided json document ", ex);
                     Reporter.ToUser(eUserMsgKey.InvalidJSON);
+                }
+                finally
+                {
+                    featureTracker.StopTracking();
                 }
             }
 

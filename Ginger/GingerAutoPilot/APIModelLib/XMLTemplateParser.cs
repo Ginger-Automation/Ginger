@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Telemetry;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -29,9 +30,19 @@ namespace Amdocs.Ginger.Repository
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(FileName);
-            return GetParameters(doc, AAMSList, avoidDuplicatesNodes);
+            IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "XMLTemplate");
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(FileName);
+                ObservableList<ApplicationAPIModel> parameters = GetParameters(doc, AAMSList, avoidDuplicatesNodes);
+                return parameters;
+            }
+            finally
+            {
+                featureTracker.StopTracking();
+            }
         }
 
         public ObservableList<ApplicationAPIModel> ParseDocumentWithXMLContent(string fileContent, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
