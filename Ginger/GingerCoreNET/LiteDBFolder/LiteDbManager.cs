@@ -42,14 +42,18 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             var activityMapper = dbConnector.GetMapper<LiteDbActivity>();
             var action = dbConnector.GetMapper<LiteDbAction>();
 
+            activityMapper.DbRef(rf => rf.ActionsColl, NameInDb<LiteDbAction>());
             activityMapper.DbRef(rf => rf.AllActionsColl, NameInDb<LiteDbAction>());
 
+            agMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
             agMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
 
             bfMapper.DbRef(rf => rf.ActivitiesGroupsColl, NameInDb<LiteDbActivityGroup>());
 
+            bfMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
             bfMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
 
+            runnerMapper.DbRef(rf => rf.BusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
             runnerMapper.DbRef(rf => rf.AllBusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
 
             runSetMapper.DbRef(rf => rf.RunnersColl, NameInDb<LiteDbRunner>());
