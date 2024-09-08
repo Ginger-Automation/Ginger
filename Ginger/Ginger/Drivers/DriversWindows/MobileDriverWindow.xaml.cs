@@ -62,8 +62,7 @@ namespace Ginger.Drivers.DriversWindows
         eAutoScreenshotRefreshMode mDeviceAutoScreenshotRefreshMode;
         bool mWindowIsOpen = true;
         bool IsRecording = false;
-        bool mIsMetricsClickedOnce = false;
-
+ 
 
 
         ObservableList<DeviceInfo> mDeviceDetails = new ObservableList<DeviceInfo>();
@@ -79,6 +78,10 @@ namespace Ginger.Drivers.DriversWindows
 
             ((DriverBase)mDriver).DriverMessageEvent += MobileDriverWindow_DriverMessageEvent;
             ((DriverBase)mDriver).SpyingElementEvent += CurrentMousePosToSpy;
+
+            //Setting up the detail and metic grids
+            SetDeviceDetailsGridView();
+            SetDeviceMetricsGridView();
         }
 
         private async void RefreshDetailsTable(object sender, RoutedEventArgs e)
@@ -778,26 +781,22 @@ namespace Ginger.Drivers.DriversWindows
         bool mMeticsIsOn = false;
         private async void xMetricsBtn_Click(object sender, RoutedEventArgs e)
         {
-
             if (mDriver.IsDeviceConnected)
             {
-                if (!mIsMetricsClickedOnce)
+                //Setting the tabs
+                if (!mMeticsIsOn)
                 {
-                    //Setting up the detail and metic grids
-                    SetDeviceDetailsGridView();
-                    SetDeviceMetricsGridView();
-
-                    mIsMetricsClickedOnce = true;
+                    SetTabsColumnView(eTabsViewMode.DetailsAndMetrics);
                 }
-                //Setting the with of the metrics panel
-                SetMeticsPanelView(!mMeticsIsOn);
-
+                else
+                {
+                    SetTabsColumnView(eTabsViewMode.None);
+                }
+               
                 if (mMeticsIsOn)
                 {
-
                     await this.Dispatcher.InvokeAsync(async () =>
                     {
-                        xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
                         //Loading the device details and metrics
                         xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
                         xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
@@ -813,13 +812,7 @@ namespace Ginger.Drivers.DriversWindows
                         xDeviceMetricsGrid.Visibility = Visibility.Visible;
                         xMetricsLoadingPnl.Visibility = Visibility.Collapsed;
                     });
-
                 }
-                else
-                {
-                    xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                }
-
             }
             else
             {
@@ -1210,14 +1203,14 @@ namespace Ginger.Drivers.DriversWindows
                     this.Icon = ImageMakerControl.GetImageSource(eImageType.Ios);
                 }
 
-                this.Width = 320;
+                this.Width = 350;
                 this.Height = 650;                
                 xMessageLbl.Content = "Connecting to Device...";
 
                 //Configurations
                 SetConfigurationsPanelView(false);
                 //Metrics
-                SetMeticsPanelView(false);
+                SetTabsColumnView(eTabsViewMode.None);
 
                 //set refresh mode by what configured on driver      
                 mDeviceAutoScreenshotRefreshMode = mDriver.DeviceAutoScreenshotRefreshMode;
@@ -1234,21 +1227,10 @@ namespace Ginger.Drivers.DriversWindows
                         break;
                 }
 
-                xConfigurationsFrame.Visibility = System.Windows.Visibility.Collapsed;
-                xConfigurationsCol.Width = new GridLength(0);
-
-                xMeticsCol.Width = new GridLength(0);
+                xTabsCol.Width = new GridLength(0);
 
                 //Main tool bar
-                xRefreshButton.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xSwipeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xCordBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xPortraiteBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xLandscapeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xExternalViewBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+
                 xPinBtn_Click(null, null);
 
                 //Loading Pnl
@@ -1593,40 +1575,63 @@ namespace Ginger.Drivers.DriversWindows
             if (show == true)
             {
                 xConfigurationsFrame.Visibility = System.Windows.Visibility.Visible;
-                xConfigurationsSplitter.Visibility = System.Windows.Visibility.Visible;
-                xConfigurationsCol.Width = new GridLength(220);
-                this.Width = this.Width + Convert.ToDouble(xConfigurationsCol.Width.ToString());
+                SetTabsColumnView(eTabsViewMode.Configurations);
                 xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
                 xConfigurationsBtn.ToolTip = "Hide Configurations";
             }
             else
             {
                 xConfigurationsFrame.Visibility = System.Windows.Visibility.Collapsed;
-                xConfigurationsSplitter.Visibility = System.Windows.Visibility.Collapsed;
-                this.Width = this.Width - xConfigurationsCol.ActualWidth;
-                xConfigurationsCol.Width = new GridLength(0);
+
+                SetTabsColumnView(eTabsViewMode.None);
                 xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xConfigurationsBtn.ToolTip = "Show Configurations";
             }
             mConfigIsOn = show;
         }
 
-        private void SetMeticsPanelView(bool show)
+        enum eTabsViewMode { None,DetailsAndMetrics,Configurations}
+        private void SetTabsColumnView(eTabsViewMode mode)
         {
-            if (show)
+            switch(mode)
             {
-                xMeticsCol.Width = new GridLength(350);
-                this.Width = this.Width + Convert.ToDouble(xMeticsCol.Width.ToString());
+                case eTabsViewMode.DetailsAndMetrics:
+                    xDetailsTab.Visibility = Visibility.Visible;
+                    xDeviceMetricsTab.Visibility = Visibility.Visible;
+                    xConfigurationsTab.Visibility = Visibility.Collapsed;
+                    xTabsCol.Width = new GridLength(350);
+                    this.Width = this.Width + Convert.ToDouble(xTabsCol.Width.ToString());
+                    xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                    xConfigurationsBtn.ToolTip = "Show Configurations";
+                    xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
+                    mMeticsIsOn = true;
+                    mConfigIsOn = false;
+                    break;
+
+                case eTabsViewMode.Configurations:
+                    xDetailsTab.Visibility = Visibility.Collapsed;
+                    xDeviceMetricsTab.Visibility = Visibility.Collapsed;
+                    xConfigurationsTab.Visibility = Visibility.Visible;
+                    xTabsCol.Width = new GridLength(270);
+                    this.Width = this.Width + Convert.ToDouble(xTabsCol.Width.ToString());
+                    xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
+                    xConfigurationsBtn.ToolTip = "Hide Configurations";
+                    xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                    mMeticsIsOn = false;
+                    mConfigIsOn = true;
+                    break;
+
+                case eTabsViewMode.None:
+                default:
+                    xTabsCol.Width = new GridLength(0);
+                    if (this.Width - xTabsCol.ActualWidth > 0)
+                    {
+                        this.Width = this.Width - xTabsCol.ActualWidth;
+                    }
+                    mMeticsIsOn = false;
+                    mConfigIsOn = false;
+                    break;
             }
-            else
-            {
-                xMeticsCol.Width = new GridLength(0);
-                if (this.Width - xMeticsCol.ActualWidth > 0)
-                {
-                    this.Width = this.Width - xMeticsCol.ActualWidth;
-                }
-            }
-            mMeticsIsOn = show;
         }
 
         private void DoSelfClose()
