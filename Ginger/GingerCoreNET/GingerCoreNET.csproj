@@ -6,9 +6,10 @@
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
   </PropertyGroup>
-
+	
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+	<EnableWindowsTargeting>true</EnableWindowsTargeting>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
     <RootNamespace>Amdocs.Ginger.CoreNET</RootNamespace>

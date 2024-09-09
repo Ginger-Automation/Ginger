@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Xpf.Sdk/1.4.0-cibuild001814">
   <PropertyGroup>
     <TargetFramework>net8.0-windows7.0</TargetFramework>
     <OutputType>WinExe</OutputType>
@@ -12,6 +12,9 @@
     <CodeAnalysisRuleSet>GingerWPFDriverWindow.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="AvaloniaUI.Xpf.LicenseKey" Value="AQAAAF4AAAAfiwgAAAAAAAADY2RgYPgPBTyPGmYk5qbkJxcDGfuEvUUYoIAZiFlzMvNKK1hzE5Pzi9nLM/NS8suLQeLMFQVpPECsm1iQqVuckZkL5gAVpOUX5RYDAJQKrRdfAAAAAAEAAGiM7PN7r9ITis2+oxLyFUodLORFZAGvRpIuymUoWbunKvukAuhDVGXenCfkZiX4nFE8MTiERKkeecimbl5IaFzgY9wg2Zo0zBklYSqXSQF6sa7EoqMRzuJWS7LO9P8ya6CpuQNnuNJf2zKeM5YDIPZU25kMYU6LNGfS31napMPPS76oJKOJ7yubzc/WK598hUjvNQ68yjQUYUyAxD96oOSAPzx5r6ttyC89KzSjdQ/rbEKO0qBPS2Udbbgi/he37nDvJnrrK1V0lXlYJy0U+1GhCGNphD+T7I+kQ1/HAtFkVAjfLMqRd+j4QvY8MVhCIJDSiDYBA4BnLaqicrjveCI=" />
+  </ItemGroup> 
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
