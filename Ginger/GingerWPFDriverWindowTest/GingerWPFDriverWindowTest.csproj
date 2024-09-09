@@ -7,6 +7,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>net8.0-windows7.0</TargetFramework>
+	<EnableWindowsTargeting>true</EnableWindowsTargeting>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
