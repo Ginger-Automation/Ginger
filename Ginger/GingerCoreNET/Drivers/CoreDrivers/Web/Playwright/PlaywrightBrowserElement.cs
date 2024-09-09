@@ -834,23 +834,25 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         private Task SendKeysAsync(IPlaywrightLocator playwrightLocator, string text)
         {
-
             ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
             return playwrightLocator.PressSequentiallyAsync(text);
         }
 
         private async Task SendKeysAsync(IPlaywrightElementHandle playwrightElementHandle, string text)
         {
-
             ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
             foreach (char c in text)
             {
-                bool isUppercase = 'A' <= c && c <= 'Z';
-                string modifierKey = isUppercase ? "Shift+" : "";
-                await playwrightElementHandle.PressAsync($"{modifierKey}{char.ToUpper(c)}");
+                await playwrightElementHandle.PressAsync(c.ToString());
             }
         }
 
+        /// <summary>
+        /// Presses a sequence of keys asynchronously on the specified Playwright locator or element handle.
+        /// If the locator is not null, it uses the locator to press the keys; otherwise, it uses the element handle.
+        /// </summary>
+        /// <param name="keys">An enumerable collection of keys to be pressed.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task PressKeysAsync(IEnumerable<string> keys)
         {
             if (_playwrightLocator != null)
@@ -863,21 +865,39 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
+        /// <summary>
+        /// Presses a sequence of keys asynchronously on the specified Playwright locator.
+        /// Combines the keys into a single string separated by '+' and presses them.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator on which to press the keys.</param>
+        /// <param name="keys">An enumerable collection of keys to be pressed.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         private Task PressKeysAsync(IPlaywrightLocator playwrightLocator, IEnumerable<string> keys)
         {
             string combinedKeys = CombineKeys(keys);
             return playwrightLocator.PressAsync(combinedKeys);
         }
 
+        /// <summary>
+        /// Presses a sequence of keys asynchronously on the specified Playwright element handle.
+        /// Combines the keys into a single string separated by '+' and presses them.
+        /// </summary>
+        /// <param name="playwrightElementHandle">The Playwright element handle on which to press the keys.</param>
+        /// <param name="keys">An enumerable collection of keys to be pressed.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         private Task PressKeysAsync(IPlaywrightElementHandle playwrightElementHandle, IEnumerable<string> keys)
         {
             string combinedKeys = CombineKeys(keys);
             return playwrightElementHandle.PressAsync(combinedKeys);
         }
 
+        /// <summary>
+        /// Combines a sequence of keys into a single string separated by '+'.
+        /// </summary>
+        /// <param name="keys">An enumerable collection of keys to be combined.</param>
+        /// <returns>A string representing the combined keys.</returns>
         private string CombineKeys(IEnumerable<string> keys)
         {
-
             string[] keyArr = keys.ToArray();
             StringBuilder combinedKey = new();
             for (int keyIndex = 0; keyIndex < keyArr.Length; keyIndex++)

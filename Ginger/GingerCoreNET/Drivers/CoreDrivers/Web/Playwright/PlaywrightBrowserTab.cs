@@ -89,29 +89,54 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _ = CloseAsync();
         }
 
+        /// <summary>
+        /// Handles the console message event and adds the message to the console messages list.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The console message event arguments.</param>
         private void OnConsoleMessage(object? sender, IConsoleMessage e)
         {
             //TODO: Playwright - Selenium console logs contain timestamp and level. Try adding those in these as well so that we can have similar log structure
             _consoleMessages.AddLast(e.Text);
         }
 
+        /// <summary>
+        /// Brings the browser tab to the front.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task BringToFrontAsync()
         {
             return _playwrightPage.BringToFrontAsync();
         }
 
+        /// <summary>
+        /// Executes the specified JavaScript code on the current page and returns the result as a string.
+        /// </summary>
+        /// <param name="script">The JavaScript code to execute.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the result of the JavaScript code execution as a string.</returns>
         public Task<string> ExecuteJavascriptAsync(string script)
         {
             ThrowIfClosed();
             return _playwrightPage.EvaluateAsync<string>(script);
         }
 
+        /// <summary>
+        /// Executes the specified JavaScript code on the current page with the provided argument and returns the result as a string.
+        /// </summary>
+        /// <param name="script">The JavaScript code to execute.</param>
+        /// <param name="arg">The argument to pass to the JavaScript code.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the result of the JavaScript code execution as a string.</returns>
         public Task<string> ExecuteJavascriptAsync(string script, object arg)
         {
             ThrowIfClosed();
             return _playwrightPage.EvaluateAsync<string>(script, arg);
         }
 
+        /// <summary>
+        /// Injects the specified JavaScript code into the current page.
+        /// </summary>
+        /// <param name="script">The JavaScript code to inject.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task InjectJavascriptAsync(string script)
         {
             ThrowIfClosed();
@@ -121,12 +146,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             });
         }
 
+        /// <summary>
+        /// Retrieves the source code of the current page.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation. The task result contains the source code of the page as a string.</returns>
         public Task<string> PageSourceAsync()
         {
             ThrowIfClosed();
             return _playwrightPage.ContentAsync();
         }
 
+        /// <summary>
+        /// Performs a left mouse click at the specified point on the page.
+        /// </summary>
+        /// <param name="point">The coordinates of the point to click.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task MouseClickAsync(Point point)
         {
             ThrowIfClosed();
@@ -136,6 +170,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             });
         }
 
+        /// <summary>
+        /// Performs a right mouse click at the specified point on the page.
+        /// </summary>
+        /// <param name="point">The coordinates of the point to click.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task MouseRightClickAsync(Point point)
         {
             ThrowIfClosed();
@@ -145,24 +184,42 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             });
         }
 
+        /// <summary>
+        /// Moves the mouse to the specified point on the page.
+        /// </summary>
+        /// <param name="point">The coordinates of the point to move the mouse to.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task MoveMouseAsync(Point point)
         {
             ThrowIfClosed();
             return _playwrightPage.Mouse.MoveAsync(point.X, point.Y);
         }
 
+        /// <summary>
+        /// Retrieves the title of the current page.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the title of the page.</returns>
         public Task<string> TitleAsync()
         {
             ThrowIfClosed();
             return _playwrightPage.TitleAsync();
         }
 
+        /// <summary>
+        /// Retrieves the URL of the current page.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the URL of the page.</returns>
         public Task<string> URLAsync()
         {
             ThrowIfClosed();
             return Task.FromResult(_playwrightPage.Url);
         }
 
+        /// <summary>
+        /// Navigates the browser tab to the specified URL.
+        /// </summary>
+        /// <param name="url">The URL to navigate to.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task GoToURLAsync(string url)
         {
             ThrowIfClosed();
@@ -170,36 +227,60 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _currentFrame = _playwrightPage.MainFrame;
         }
 
+        /// <summary>
+        /// Navigates the browser tab back to the previous page.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task NavigateBackAsync()
         {
             ThrowIfClosed();
             return _playwrightPage.GoBackAsync();
         }
 
+        /// <summary>
+        /// Navigates the browser tab forward to the next page.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task NavigateForwardAsync()
         {
             ThrowIfClosed();
             return _playwrightPage.GoForwardAsync();
         }
 
+        /// <summary>
+        /// Refreshes the current page.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task RefreshAsync()
         {
             ThrowIfClosed();
             return _playwrightPage.ReloadAsync();
         }
 
+        /// <summary>
+        /// Waits until the page is fully loaded.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task WaitTillLoadedAsync()
         {
             ThrowIfClosed();
             return _playwrightPage.WaitForLoadStateAsync(LoadState.Load);
         }
 
+        /// <summary>
+        /// Retrieves the console logs from the current page.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the console logs as a string.</returns>
         public Task<string> ConsoleLogsAsync()
         {
             ThrowIfClosed();
             return Task.FromResult(string.Join('\n', _consoleMessages));
         }
 
+        /// <summary>
+        /// Retrieves the browser logs from the current page.
+        /// </summary>
+        /// <returns>The browser logs as a string.</returns>
         public async Task<string> BrowserLogsAsync()
         {
             ThrowIfClosed();
@@ -220,7 +301,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         {
                             continue;
                         }
-                    ((JsonObject)item).Remove("$id");
+                        ((JsonObject)item).Remove("$id");
                     }
                 }
 
@@ -232,6 +313,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return rawLogs;
         }
 
+        /// <summary>
+        /// Switches the current frame to the frame specified by the given locator.
+        /// </summary>
+        /// <param name="locateBy">The method of locating the frame.</param>
+        /// <param name="value">The value used for locating the frame.</param>
+        /// <returns>True if the frame was successfully switched, false otherwise.</returns>
         public async Task<bool> SwitchFrameAsync(eLocateBy locateBy, string value)
         {
             ThrowIfClosed();
@@ -239,7 +326,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 throw new LocatorNotSupportedException($"Frame locator '{locateBy}' is not supported.");
             }
-            
+
             IFrameLocator frameLocator;
             switch (locateBy)
             {
@@ -266,7 +353,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             if (!wasLocated)
             {
                 return false;
-
             }
 
             IJSHandle jsHandle = await frameLocator.Owner.EvaluateHandleAsync("element => element");
@@ -287,6 +373,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return true;
         }
 
+        /// <summary>
+        /// Switches the current frame to the main frame.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task SwitchToMainFrameAsync()
         {
             ThrowIfClosed();
@@ -294,6 +384,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Switches the current frame to the parent frame.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task SwitchToParentFrameAsync()
         {
             ThrowIfClosed();
@@ -306,6 +400,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Retrieves a collection of browser elements based on the specified locator.
+        /// </summary>
+        /// <param name="locateBy">The method of locating the elements.</param>
+        /// <param name="value">The value used for locating the elements.</param>
+        /// <returns>A collection of browser elements.</returns>
         public async Task<IEnumerable<IBrowserElement>> GetElementsAsync(eLocateBy locateBy, string value)
         {
             ThrowIfClosed();
@@ -322,6 +422,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return elements;
         }
 
+        /// <summary>
+        /// Retrieves a browser element using the specified JavaScript code.
+        /// </summary>
+        /// <param name="javascript">The JavaScript code used to locate the element.</param>
+        /// <returns>The browser element.</returns>
         public async Task<IBrowserElement?> GetElementAsync(string javascript)
         {
             ThrowIfClosed();
@@ -334,11 +439,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return new PlaywrightBrowserElement(elementHandle);
         }
 
+        /// <summary>
+        /// Takes a screenshot of the current page.
+        /// </summary>
+        /// <returns>The screenshot image as a byte array.</returns>
         public Task<byte[]> ScreenshotAsync()
         {
             return ScreenshotInternalAsync(fullPage: false);
         }
 
+        /// <summary>
+        /// Takes a full-page screenshot of the current page.
+        /// </summary>
+        /// <returns>The full-page screenshot image as a byte array.</returns>
         public Task<byte[]> ScreenshotFullPageAsync()
         {
             return ScreenshotInternalAsync(fullPage: true);
@@ -353,6 +466,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             });
         }
 
+        /// <summary>
+        /// Retrieves the size of the viewport.
+        /// </summary>
+        /// <returns>The size of the viewport as a <see cref="Size"/> object.</returns>
         public async Task<Size> ViewportSizeAsync()
         {
             PageViewportSizeResult? sizeResult = _playwrightPage.ViewportSize;
@@ -373,6 +490,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
+        /// <summary>
+        /// Sets the size of the viewport.
+        /// </summary>
+        /// <param name="size">The desired size of the viewport.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task SetViewportSizeAsync(Size size)
         {
             return _playwrightPage.SetViewportSizeAsync(size.Width, size.Height);
@@ -420,6 +542,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.FromResult(locator);
         }
 
+        /// <summary>
+        /// Retrieves the currently focused browser element.
+        /// </summary>
+        /// <returns>The focused browser element, or null if no element is focused.</returns>
         public async Task<IBrowserElement?> GetFocusedElement()
         {
             ThrowIfClosed();
@@ -433,11 +559,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return new PlaywrightBrowserElement(locator);
         }
 
+        /// <summary>
+        /// Checks if the specified locator exists in the current frame.
+        /// </summary>
+        /// <param name="locator">The locator to check.</param>
+        /// <returns>True if the locator exists, false otherwise.</returns>
         private static async Task<bool> DoesLocatorExistsAsync(IPlaywrightLocator locator)
         {
             return await locator.CountAsync() > 0;
         }
 
+        /// <summary>
+        /// Closes the browser tab.
+        /// </summary>
         public async Task CloseAsync()
         {
             if (_isClosed)
@@ -451,6 +585,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             await _onTabClose(closedTab: this);
         }
 
+        /// <summary>
+        /// Throws an exception if the browser tab is closed.
+        /// </summary>
         private void ThrowIfClosed()
         {
             if (_isClosed)
@@ -459,21 +596,41 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
         }
 
+        /// <summary>
+        /// Runs an accessibility test on the current page using Axe.
+        /// </summary>
+        /// <param name="options">Optional Axe run options.</param>
+        /// <returns>The Axe result of the accessibility test.</returns>
         public async Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null)
         {
             return await _playwrightPage.RunAxe(options);
         }
 
+        /// <summary>
+        /// Checks if the provided Playwright page object is equal to the current Playwright page object.
+        /// </summary>
+        /// <param name="playwrightPage">The Playwright page object to compare.</param>
+        /// <returns>True if the page objects are equal, false otherwise.</returns>
         internal bool PlaywrightPageEquals(IPlaywrightPage playwrightPage)
         {
             return _playwrightPage == playwrightPage;
         }
 
+        /// <summary>
+        /// Checks if the specified element locator is supported.
+        /// </summary>
+        /// <param name="locateBy">The element locator to check.</param>
+        /// <returns>True if the locator is supported, false otherwise.</returns>
         public static bool IsElementLocatorSupported(eLocateBy locateBy)
         {
             return SupportedElementLocators.Contains(locateBy);
         }
 
+        /// <summary>
+        /// Checks if the specified frame locator is supported.
+        /// </summary>
+        /// <param name="locateBy">The frame locator to check.</param>
+        /// <returns>True if the locator is supported, false otherwise.</returns>
         public static bool IsFrameLocatorSupported(eLocateBy locateBy)
         {
             return SupportedFrameLocators.Contains(locateBy);
