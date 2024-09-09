@@ -615,6 +615,10 @@ namespace GingerCore.Actions
             Enabled = 52,
             [EnumValueDescription("Tap Element")]
             TapElement = 53,
+            [EnumValueDescription("Double Tap Element")]
+            DoubleTapElement=68,
+            [EnumValueDescription("Press Element")]
+            PressElement = 69,
             [EnumValueDescription("Select From Drop Down (By Index)")]
             SelectFromDropDownByIndex = 54,
             XYClick = 55,

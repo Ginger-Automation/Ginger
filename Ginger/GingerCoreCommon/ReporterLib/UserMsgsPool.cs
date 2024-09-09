@@ -194,7 +194,8 @@ namespace Amdocs.Ginger.Common
         ShareApplicationToEnvironment,
         SaveSolution,
         LocatorTestInProgress,
-        DeleteSelectedDB
+        DeleteSelectedDB,
+        RemoteExecutionReportFolder,
     }
 
     public static class UserMsgsPool
@@ -878,6 +879,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteRecoverFolderWarn, new UserMsg(eUserMsgType.WARN, "Delete Unrecovered files?",
    "Unrecovered items will be deleted. Do you want to continue?",
    eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionReportFolder, new UserMsg(eUserMsgType.INFO, "Remote Execution History", "Open execution folder not supported for Remote Execution History source.", eUserMsgOption.OK, eUserMsgSelection.OK));
+           
 
         }
     }

@@ -47,19 +47,19 @@ namespace Ginger.SolutionWindows
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
             WeakEventManager<UIElement, RoutedEventArgs>.AddHandler(source: UCEncryptionKey.UpdateKey, eventName: nameof(UIElement.PreviewMouseDown), handler: ReplaceKeyBtn_Click);
 
-            Init();
+            BindElement();
         }
 
         private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(WorkSpace.Solution))
             {
-                Init();
+                BindElement();
             }
         }
 
 
-        private void Init(Solution solution = null)
+        private void BindElement(Solution solution = null)
         {
             if (WorkSpace.Instance.Solution != null)
             {
@@ -79,6 +79,7 @@ namespace Ginger.SolutionWindows
                 xLoadSolutionlbl.Visibility = Visibility.Collapsed;
                 xSolutionDetailsStack.Visibility = Visibility.Visible;
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Name));
+                xShowIDUC.Init(mSolution);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
                 UCEncryptionKey.EncryptionKeyPasswordBox.Password = mSolution.EncryptionKey;
@@ -149,7 +150,7 @@ namespace Ginger.SolutionWindows
         public bool ShowAsWindow(Solution solution, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
 
-            Init(solution);
+            BindElement(solution);
             UCEncryptionKey.mSolution = solution;
             IsEncrytedStrAvailableOnSol = !string.IsNullOrEmpty(mSolution.EncryptedValidationString);
 

@@ -181,6 +181,7 @@ namespace Ginger.Actions
                             System.IO.Directory.CreateDirectory(filePath);
                         }
                     }
+
                     if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
                     {
                         Filter = upperFileType + " Files (*." + fileType + ")|*." + fileType + "|All Files (*.*)|*.*",

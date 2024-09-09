@@ -109,8 +109,8 @@ namespace GingerCore
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
 
-        private static Regex rNestedfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\(([^()])*\\)}", RegexOptions.Compiled);
-        private static Regex MockDataExpPattern = new Regex("^\\{MockDataExp Fun=.*\\}$", RegexOptions.Compiled, new TimeSpan(0, 0, 5));
+        private static Regex rNestedfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\(([^()])*\\)}", RegexOptions.Compiled);       
+        private static Regex MockDataExpPattern = new Regex("{MockDataExp({.*}|[^{}]*)*}", RegexOptions.Compiled, new TimeSpan(0, 0, 5));
         private static Regex CsExppattern = new Regex("{CS Exp({.*}|[^{}]*)*}", RegexOptions.Compiled);
 
         // Enable setting value simply by assigned string, 
@@ -311,7 +311,7 @@ namespace GingerCore
             //Select fields from selected template configuration
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             HTMLReportConfiguration defaultTemplate = null;
-            if (mContext.RunsetAction != null)
+            if (mContext?.RunsetAction != null)
             {
                 RunSetActionSendDataToExternalSource runSetAction = (RunSetActionSendDataToExternalSource)mContext.RunsetAction;
                 defaultTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.ID == runSetAction.selectedHTMLReportTemplateID));

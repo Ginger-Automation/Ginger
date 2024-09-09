@@ -23,6 +23,8 @@ using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Drivers;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -78,7 +80,10 @@ namespace GingerCoreNET.Application_Models
                 mIWindowExplorerDriver.UnHighLightElements();
                 ((DriverBase)((AgentOperations)Agent.AgentOperations).Driver).StopProcess = false;
                 POMElementsCopy.Clear();
-                DeltaViewElements.Clear();
+                DeltaViewElements.Clear(); 
+                var elementList = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web).GetUIElementFilterList();
+                PomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
+                PomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
                 PomLearnUtils.PrepareLearningConfigurations();
                 PomLearnUtils.LearnScreenShot();//this will set screen size to be same as in learning time
                 PrepareCurrentPOMElementsData();

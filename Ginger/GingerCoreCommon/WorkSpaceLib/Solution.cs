@@ -78,6 +78,7 @@ namespace Ginger.SolutionGeneral
         [IsSerializedForLocalRepository]
         public ObservableList<RepositoryItemTag> Tags;
 
+
         private string mAccount;
 
         /// <summary>

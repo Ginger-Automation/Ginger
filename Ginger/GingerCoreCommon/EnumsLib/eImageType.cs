@@ -354,6 +354,9 @@ namespace Amdocs.Ginger.Common.Enums
         PlusSquare,
         DataTable,
         Robot,
+        Accessibility,
+        AnglesArrowLeft,
+        AnglesArrowRight,
 
         #region Comparison Status Images
         Unchanged,
