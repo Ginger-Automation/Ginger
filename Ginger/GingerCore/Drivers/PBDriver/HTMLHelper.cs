@@ -24,7 +24,7 @@ using GingerCore.Actions;
 using GingerCore.Drivers.Common;
 using HtmlAgilityPack;
 using mshtml;
-using SHDocVw;
+//using SHDocVw;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,7 +41,7 @@ namespace GingerCore.Drivers.PBDriver
     public class HTMLHelper : IXPath
     {
         public delegate void DomEvent(IHTMLEventObj obj);
-        public InternetExplorer browserObject;
+        //public InternetExplorer browserObject;
         HTMLElementInfo CurrentWindowRootElement;
         DispHTMLDocument dispHtmlDocument;
         IHTMLElement CurrentHighlightedElement;
@@ -66,21 +66,21 @@ namespace GingerCore.Drivers.PBDriver
             return await GetElementList();
         }
 
-        public HTMLHelper(InternetExplorer IE, UIAuto.AutomationElement AE)
-        {
-            browserObject = IE;
-            AEBrowser = AE;
-            dispHtmlDocument = (DispHTMLDocument)browserObject.Document;
-            mHtmlDocument = browserObject.Document;
-            sourceDoc = (mshtml.IHTMLDocument3)browserObject.Document;
-            documentContents = sourceDoc.documentElement.outerHTML;
-            HAPDocument = new HtmlAgilityPack.HtmlDocument();
-            HAPDocument.LoadHtml(documentContents);
-            CurrentWindowRootElement = GetHtmlElementInfo(dispHtmlDocument.documentElement);
-            currentFrame = null;
-            currentFrameDocument = null;
-            InitXpathHelper();
-        }
+        //public HTMLHelper(InternetExplorer IE, UIAuto.AutomationElement AE)
+        //{
+        //    browserObject = IE;
+        //    AEBrowser = AE;
+        //    dispHtmlDocument = (DispHTMLDocument)browserObject.Document;
+        //    mHtmlDocument = browserObject.Document;
+        //    sourceDoc = (mshtml.IHTMLDocument3)browserObject.Document;
+        //    documentContents = sourceDoc.documentElement.outerHTML;
+        //    HAPDocument = new HtmlAgilityPack.HtmlDocument();
+        //    HAPDocument.LoadHtml(documentContents);
+        //    CurrentWindowRootElement = GetHtmlElementInfo(dispHtmlDocument.documentElement);
+        //    currentFrame = null;
+        //    currentFrameDocument = null;
+        //    InitXpathHelper();
+        //}
 
         public void injectScriptCode(mshtml.HTMLDocument doc, string JSCode)
         {
@@ -183,8 +183,8 @@ namespace GingerCore.Drivers.PBDriver
         private HtmlNode FindNodeByLocator(eLocateBy locateBy, string LocValueCalculated)
         {
             HtmlNode HEle = null;
-            sourceDoc = (mshtml.IHTMLDocument3)browserObject.Document;
-            documentContents = sourceDoc.documentElement.outerHTML;
+            //sourceDoc =  (mshtml.IHTMLDocument3)browserObject.Document;
+            documentContents = string.Empty; //sourceDoc.documentElement.outerHTML;
             HAPDocument = new HtmlAgilityPack.HtmlDocument();
             HAPDocument.LoadHtml(documentContents);
 
@@ -408,7 +408,7 @@ namespace GingerCore.Drivers.PBDriver
         private IHTMLElement GetIHTMLElementFromHtmlNode(HtmlNode hAE)
         {
             IHTMLElement HAE = null;
-            HTMLDocument mHtmlDocument = browserObject.Document;
+            HTMLDocument mHtmlDocument = new();//browserObject.Document;
             IHTMLElementCollection HAEColl = mHtmlDocument.all;
             string ihtmlInnerHTML = string.Empty;
 
@@ -1176,7 +1176,7 @@ namespace GingerCore.Drivers.PBDriver
                 }
                 else
                 {
-                    injectScriptCode(browserObject.Document, specialEventScript);
+                    //injectScriptCode(browserObject.Document, specialEventScript);
                 }
                 return value;
             }
@@ -1249,7 +1249,7 @@ namespace GingerCore.Drivers.PBDriver
                 if (HElem.GetType().ToString().Contains("mshtml") || HElem.GetType().ToString().Contains("_ComObject"))
                 {
                     elem = ((IHTMLElement)HElem);
-                    ((HTMLDocument)browserObject.Document).focus();
+                    //((HTMLDocument)browserObject.Document).focus();
                 }
                 else
                 {
@@ -1307,9 +1307,9 @@ namespace GingerCore.Drivers.PBDriver
             try
             {
                 HTMLFrameElement frmElement = (HTMLFrameElement)node;
-                DispHTMLDocument dispHtmlDoc = (DispHTMLDocument)((SHDocVw.IWebBrowser2)frmElement).Document;
+                //DispHTMLDocument dispHtmlDoc = (DispHTMLDocument)((SHDocVw.IWebBrowser2)frmElement).Document;
 
-                currentFrameDocument = (HTMLDocument)dispHtmlDoc;
+                //currentFrameDocument = (HTMLDocument)dispHtmlDoc;
                 currentFrame = node;
 
                 return "true";
@@ -2232,7 +2232,7 @@ namespace GingerCore.Drivers.PBDriver
 
         public string GetElementXPath(HTMLElementInfo HTMLEI)
         {
-            mHtmlDocument = browserObject.Document;
+            //mHtmlDocument = browserObject.Document;
             HtmlNode HNode;
             string xpath = "";
             string id = HTMLEI.ID;
@@ -2286,8 +2286,8 @@ namespace GingerCore.Drivers.PBDriver
             }
             else
             {
-                sourceDoc = (mshtml.IHTMLDocument3)browserObject.Document;
-                documentContents = sourceDoc.documentElement.outerHTML;
+                //sourceDoc = (mshtml.IHTMLDocument3)browserObject.Document;
+                documentContents = string.Empty;//sourceDoc.documentElement.outerHTML;
                 HAPDocument = new HtmlAgilityPack.HtmlDocument();
                 HAPDocument.LoadHtml(documentContents);
                 IEnumerable<HtmlNode> tocChildren = HAPDocument.DocumentNode.Descendants();
@@ -2332,14 +2332,14 @@ namespace GingerCore.Drivers.PBDriver
             }
             else
             {
-                sourceDoc = (mshtml.IHTMLDocument3)browserObject.Document;
+                //sourceDoc = (mshtml.IHTMLDocument3)browserObject.Document;
             }
 
             documentContents = sourceDoc.documentElement.outerHTML;
             // Reporter.ToLog(eAppReporterLogLevel.INFO, "documentContents::" + documentContents);
             HAPDocument = new HtmlAgilityPack.HtmlDocument();
             HAPDocument.LoadHtml(documentContents);
-            mHtmlDocument = browserObject.Document;
+            //mHtmlDocument = browserObject.Document;
             IHTMLElement h1 = null;
             HtmlNode node = null;
             try

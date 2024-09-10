@@ -5095,9 +5095,9 @@ namespace GingerCore.Drivers
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             string result = "";
-            SHDocVw.InternetExplorer internetExplorer = winAPI.GetIEFromAutomationelement(AE);
-            HTMLhelperObj = new HTMLHelper(internetExplorer, AE);
-            result = internetExplorer == null ? "false" : "true";
+            //SHDocVw.InternetExplorer internetExplorer = winAPI.GetIEFromAutomationelement(AE);
+            //HTMLhelperObj = new HTMLHelper(internetExplorer, AE);
+            //result = internetExplorer == null ? "false" : "true";
             return result;
         }
 

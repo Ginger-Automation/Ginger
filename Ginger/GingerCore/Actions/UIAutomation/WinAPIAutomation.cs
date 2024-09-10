@@ -770,8 +770,8 @@ Guid("0002DF05-0000-0000-C000-000000000046");
         private static Guid IID_IHTMLDocument = new
 Guid("626FC520-A41E-11CF-A731-00A0C9082637");
 
-        private static Guid IID_IWebBrowser =
-typeof(SHDocVw.WebBrowser).GUID;
+//        private static Guid IID_IWebBrowser =
+//typeof(SHDocVw.WebBrowser).GUID;
 
         [Flags]
 
@@ -788,48 +788,48 @@ typeof(SHDocVw.WebBrowser).GUID;
 
         }
 
-        public SHDocVw.InternetExplorer GetIEFromAutomationelement(UIAuto.AutomationElement element) //***************
-        {
+//        public SHDocVw.InternetExplorer GetIEFromAutomationelement(UIAuto.AutomationElement element) //***************
+//        {
 
-            IntPtr HWND = (IntPtr)element.Current.NativeWindowHandle;
+//            IntPtr HWND = (IntPtr)element.Current.NativeWindowHandle;
 
-            int hInst = 0;
-            IntPtr lres = IntPtr.Zero;
-            SHDocVw.InternetExplorer browser = null;
-            //System.Windows.Forms.WebBrowser br;
-            IHTMLDocument2 htmlDoc = null;
-            hInst = LoadLibrary("Oleacc.dll");
-            int? addr = GetProcAddress(HWND, "ObjectFromLresult");
-            if (addr != null)
-            {
-                try
-                {
-                    uint msg = RegisterWindowMessage("WM_HTML_GETOBJECT");
-                    SendMessageTimeout(HWND, msg, IntPtr.Zero, IntPtr.Zero, (uint)SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, 1000, out lres);
-                    ObjectFromLresult((int)lres, ref IID_IHTMLDocument, 0, ref htmlDoc);
-                    Object o;
+//            int hInst = 0;
+//            IntPtr lres = IntPtr.Zero;
+//            SHDocVw.InternetExplorer browser = null;
+//            //System.Windows.Forms.WebBrowser br;
+//            IHTMLDocument2 htmlDoc = null;
+//            hInst = LoadLibrary("Oleacc.dll");
+//            int? addr = GetProcAddress(HWND, "ObjectFromLresult");
+//            if (addr != null)
+//            {
+//                try
+//                {
+//                    uint msg = RegisterWindowMessage("WM_HTML_GETOBJECT");
+//                    SendMessageTimeout(HWND, msg, IntPtr.Zero, IntPtr.Zero, (uint)SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, 1000, out lres);
+//                    ObjectFromLresult((int)lres, ref IID_IHTMLDocument, 0, ref htmlDoc);
+//                    Object o;
 
-                    ((IServiceProvider)htmlDoc).QueryService(ref
-SID_SWebBrowserApp, ref IID_IWebBrowser, out o);
+//                    ((IServiceProvider)htmlDoc).QueryService(ref
+//SID_SWebBrowserApp, ref IID_IWebBrowser, out o);
 
-                    browser = (SHDocVw.InternetExplorer)o;
-                    // br = (System.Windows.Forms.WebBrowser)o;
-                }
-                catch (Exception e)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
-                }
+//                    browser = (SHDocVw.InternetExplorer)o;
+//                    // br = (System.Windows.Forms.WebBrowser)o;
+//                }
+//                catch (Exception e)
+//                {
+//                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}");
+//                }
 
-                finally
-                {
-                    FreeLibrary(hInst);
-                }
-                return browser;
-            }
-            else
-            {
-                return null;
-            }
-        }
+//                finally
+//                {
+//                    FreeLibrary(hInst);
+//                }
+//                return browser;
+//            }
+//            else
+//            {
+//                return null;
+//            }
+//        }
     }
 }

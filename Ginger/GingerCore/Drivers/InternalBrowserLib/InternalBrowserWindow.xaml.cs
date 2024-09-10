@@ -2169,13 +2169,13 @@ namespace GingerCore.Drivers
             }
             else
             {
-                CDO.Message msg = new CDO.MessageClass();
-                CDO.Configuration cfg = new CDO.ConfigurationClass();
-                msg.Configuration = cfg;
+                //CDO.Message msg = new CDO.MessageClass();
+                //CDO.Configuration cfg = new CDO.ConfigurationClass();
+                //msg.Configuration = cfg;
                 // msg.CreateMHTMLBody("http://www.cnn.com", CDO.CdoMHTMLFlags.cdoSuppressAll, "", "");
 
                 mshtml.HTMLDocument doc = (mshtml.HTMLDocument)browser.Document;
-                msg.HTMLBody = doc.body.innerHTML;
+                //msg.HTMLBody = doc.body.innerHTML;
 
                 string FN = "";
                 InputBoxWindow.OpenDialog("File Name", "Enter the file name", ref FN);
@@ -2189,7 +2189,7 @@ namespace GingerCore.Drivers
 
                 if (!String.IsNullOrEmpty(FN))
                 {
-                    msg.GetStream().SaveToFile(SavedMHTFilePath + "\\" + FN + ".mhtml", ADODB.SaveOptionsEnum.adSaveCreateOverWrite);
+                    //msg.GetStream().SaveToFile(SavedMHTFilePath + "\\" + FN + ".mhtml", ADODB.SaveOptionsEnum.adSaveCreateOverWrite);
                 }
             }
         }
