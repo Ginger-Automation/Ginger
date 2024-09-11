@@ -74,7 +74,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
                     IEnumerable<TRecord> records = Dequeue(corrId);
 
-                    if (!_cancellationTokenSource.IsCancellationRequested)
+                    if (_cancellationTokenSource.IsCancellationRequested)
                     {
                         break;
                     }
@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
                     await Task.Delay(_retryPollingInterval);
 
-                    if (!_cancellationTokenSource.IsCancellationRequested)
+                    if (_cancellationTokenSource.IsCancellationRequested)
                     {
                         break;
                     }
