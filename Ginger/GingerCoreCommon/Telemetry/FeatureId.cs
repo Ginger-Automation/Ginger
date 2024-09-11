@@ -16,6 +16,10 @@ namespace Amdocs.Ginger.Common.Telemetry
         ExportRunSetExecutionHistoryBPMN,
         AAMLearning,
         ExecutionLogger,
-        ActionExecution,
+        ActionExecution, 
+        ActivityExecution,
+        AddItemToSharedRepository,
+        SourceControl,
+        Environment,
     }
 }
