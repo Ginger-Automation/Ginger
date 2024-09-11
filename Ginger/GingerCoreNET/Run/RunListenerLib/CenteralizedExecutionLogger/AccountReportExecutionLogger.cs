@@ -70,7 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetStartData(runsetConfig, mContext);
             await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
-            AccountReportEntitiesDataMapping.accountReportStatistics = new List<AccountReportStatistics>();
+            AccountReportEntitiesDataMapping.accountReportStatistics = [];
         }
 
         public async Task<bool> RunSetEnd(RunSetConfig runsetConfig, IExecutionLoggerManager executionManager)
@@ -85,7 +85,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig);
             bool Response = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
-            AccountReportEntitiesDataMapping.accountReportStatistics = new List<AccountReportStatistics>();
+            AccountReportEntitiesDataMapping.accountReportStatistics = [];
             return Response;
         }
         #endregion RunSet   

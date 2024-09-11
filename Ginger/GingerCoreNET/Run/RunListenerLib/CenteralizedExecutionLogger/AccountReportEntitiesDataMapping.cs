@@ -330,8 +330,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             foreach (Activity activity in businessFlow.Activities)
             {
                 if(activity.Active)
-                {
-                    var stat = accountReportStatistics.Where(x => x.EntityId == activity.Guid).FirstOrDefault();
+                {                    
+                    var stat = accountReportStatistics.FirstOrDefault(x=> x.EntityId == activity.Guid);
                     if (stat!=null && stat.ChildsExecutionStatistics!=null)
                     {
                         StatisticsBase historyActionStatisticsBase = new StatisticsBase();
@@ -673,8 +673,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             foreach (BusinessFlow businessFlow in ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows)
             {
                 if (businessFlow.Active)
-                {                   
-                    var bfStat = accountReportStatistics.Where(x => x.EntityId == businessFlow.Guid).FirstOrDefault();
+                {                    
+                    var bfStat = accountReportStatistics.FirstOrDefault(x => x.EntityId == businessFlow.Guid);
                     if (bfStat!=null && bfStat.ChildsExecutionStatistics!=null)
                     {
                         StatisticsBase historyActivityStatisticsBase = new StatisticsBase();
@@ -706,7 +706,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         if(activity.Active)
                         {
-                            var stat = accountReportStatistics.Where(x => x.EntityId == activity.Guid).FirstOrDefault();
+                            var stat = accountReportStatistics.FirstOrDefault(x => x.EntityId == activity.Guid);
                            
                             if (stat != null && stat.ChildsExecutionStatistics!=null)
                             {
@@ -783,7 +783,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 if (runner.Active)
                 {
-                    var rStat = accountReportStatistics.Where(x => x.EntityId == runner.Guid).FirstOrDefault();
+                    var rStat = accountReportStatistics.FirstOrDefault(x => x.EntityId == runner.Guid);
                     if (rStat != null && rStat.ChildsExecutionStatistics != null)
                     {
                         StatisticsBase historyBusinessflowStatisticsBase = new StatisticsBase();
@@ -815,7 +815,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         if (businessFlow.Active)
                         {
-                            var bfStat = accountReportStatistics.Where(x => x.EntityId == businessFlow.Guid).FirstOrDefault();
+                            var bfStat = accountReportStatistics.FirstOrDefault(x => x.EntityId == businessFlow.Guid);
                             if (bfStat != null && bfStat.ChildsExecutionStatistics!=null)
                             {
                                 StatisticsBase historyActivityStatisticsBase = new StatisticsBase();
@@ -846,7 +846,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                             {
                                 if (activity.Active)
                                 {
-                                    var stat = accountReportStatistics.Where(x => x.EntityId == activity.Guid).FirstOrDefault();
+                                    var stat = accountReportStatistics.FirstOrDefault(x => x.EntityId == activity.Guid);
                                     if (stat != null && stat.ChildsExecutionStatistics!=null)
                                     {
                                         StatisticsBase historyActionStatisticsBase = new StatisticsBase();
