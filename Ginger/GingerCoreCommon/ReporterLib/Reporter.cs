@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.Common
 
         public static bool ReportAllAlsoToConsole { get; set; }
 
-        public static ITelemetryMonitor TelemetryMonitor { get; set; }
+        public static ITelemetryQueueManager TelemetryQueueManager { get; set; }
 
 
         #region ToLog
@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.Common
 
             WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
 
-            if (TelemetryMonitor != null)
+            if (TelemetryQueueManager != null)
             {
                 string msg;
                 if (exceptionToLog != null)
@@ -70,11 +70,11 @@ namespace Amdocs.Ginger.Common
                 }
                 if (metadata == null)
                 {
-                    TelemetryMonitor.AddLog(logLevel, msg);
+                    TelemetryQueueManager.AddLog(logLevel, msg);
                 }
                 else
                 {
-                    TelemetryMonitor.AddLog(logLevel, msg, metadata);
+                    TelemetryQueueManager.AddLog(logLevel, msg, metadata);
                 }
             }
         }
@@ -84,22 +84,22 @@ namespace Amdocs.Ginger.Common
         {
             if (metadata == null)
             {
-                TelemetryMonitor.AddFeatureUsage(featureId);
+                TelemetryQueueManager.AddFeatureUsage(featureId);
             }
             else
             {
-                TelemetryMonitor.AddFeatureUsage(featureId, metadata);
+                TelemetryQueueManager.AddFeatureUsage(featureId, metadata);
             }
         }
 
         public static IFeatureTracker StartFeatureTracking(FeatureId featureId)
         {
-            if (TelemetryMonitor == null)
+            if (TelemetryQueueManager == null)
             {
                 return new MockFeatureTracker(featureId);
             }
 
-            return TelemetryMonitor.StartFeatureTracking(featureId);
+            return TelemetryQueueManager.StartFeatureTracking(featureId);
         }
 
         private sealed class MockFeatureTracker : IFeatureTracker

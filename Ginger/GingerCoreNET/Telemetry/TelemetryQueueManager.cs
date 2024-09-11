@@ -2,7 +2,6 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Telemetry;
-using Amdocs.Ginger.CoreNET.Telemetry.Pipeline;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,21 +13,23 @@ using System.Threading.Tasks;
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Telemetry
 {
-    internal sealed class TelemetryMonitor : ITelemetryMonitor
+    internal sealed class TelemetryQueueManager : ITelemetryQueueManager
     {
-        private readonly TelemetryPipeline<TelemetryLogRecord> _logPipeline;
-        private readonly TelemetryPipeline<TelemetryFeatureRecord> _featurePipeline;
+        private readonly TelemetryQueue<TelemetryLogRecord> _logQueue;
+        private readonly TelemetryQueue<TelemetryFeatureRecord> _featureQueue;
 
-        internal TelemetryMonitor()
+        internal TelemetryQueueManager()
         {
-            _logPipeline = CreateLogPipeline();
-            _featurePipeline = CreateFeaturePipeline();
+            _logQueue = CreateLogQueue();
+            _featureQueue = CreateFeatureQueue();
         }
 
-        private static TelemetryPipeline<TelemetryLogRecord> CreateLogPipeline()
+        private static TelemetryQueue<TelemetryLogRecord> CreateLogQueue()
         {
-            TelemetryPipeline<TelemetryLogRecord>.Config<TelemetryLogRecord> options = new()
+            TelemetryQueue<TelemetryLogRecord>.Config config = new()
             {
+                BufferSize = 4,
+                DB = NewTelemetryLiteDB(),
                 Collector = new MockTelemetryCollector<TelemetryLogRecord>(async _ =>
                 {
                     await Task.Delay(200);
@@ -37,22 +38,19 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                         Successful = false,
                     };
                 }),
-                TelemetryDB = NewTelemetryLiteDB(),
-                AddToLocalDBTelemetryStepBufferSize = 1,
-                SendToCollectorTelemetryStepBufferSize = 4,
-                DeleteFromLocalDBTelemetryStepBufferSize = 4,
-                MarkUnsuccessfulInLocalDBTelemetryStepBufferSize = 4,
-                RetryServicePollingInterval = TimeSpan.FromSeconds(30),
-                RetryServicePollingSize = 10,
-                Logger = null,
+                RetryPollingInterval = TimeSpan.FromSeconds(30),
+                RetryPollingSize = 10,
+                Logger = new DebugLogger(),
             };
-            return new TelemetryPipeline<TelemetryLogRecord>(options);
+            return new TelemetryQueue<TelemetryLogRecord>(config);
         }
 
-        private static TelemetryPipeline<TelemetryFeatureRecord> CreateFeaturePipeline()
+        private static TelemetryQueue<TelemetryFeatureRecord> CreateFeatureQueue()
         {
-            TelemetryPipeline<TelemetryFeatureRecord>.Config<TelemetryFeatureRecord> options = new()
+            TelemetryQueue<TelemetryFeatureRecord>.Config config = new()
             {
+                BufferSize = 4,
+                DB = NewTelemetryLiteDB(),
                 Collector = new MockTelemetryCollector<TelemetryFeatureRecord>(async _ =>
                 {
                     await Task.Delay(200);
@@ -61,16 +59,11 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                         Successful = false,
                     };
                 }),
-                TelemetryDB = NewTelemetryLiteDB(),
-                AddToLocalDBTelemetryStepBufferSize = 1,
-                SendToCollectorTelemetryStepBufferSize = 4,
-                DeleteFromLocalDBTelemetryStepBufferSize = 4,
-                MarkUnsuccessfulInLocalDBTelemetryStepBufferSize = 4,
-                RetryServicePollingInterval = TimeSpan.FromSeconds(30),
-                RetryServicePollingSize = 10,
-                Logger = null,
+                RetryPollingInterval = TimeSpan.FromSeconds(30),
+                RetryPollingSize = 10,
+                Logger = new DebugLogger(),
             };
-            return new TelemetryPipeline<TelemetryFeatureRecord>(options);
+            return new TelemetryQueue<TelemetryFeatureRecord>(config);
         }
 
         private static TelemetryLiteDB NewTelemetryLiteDB()
@@ -82,8 +75,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         public void Dispose()
         {
-            _logPipeline.Dispose();
-            _featurePipeline.Dispose();
+            _logQueue.Dispose();
+            _featureQueue.Dispose();
         }
 
         public void AddLog(eLogLevel level, string msg)
@@ -135,12 +128,30 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         private void AddLog(TelemetryLogRecord logRecord)
         {
-            _logPipeline.Process(logRecord);
+            _logQueue.Enqueue(logRecord);
         }
 
         private void AddFeatureUsage(TelemetryFeatureRecord featureRecord)
         {
-            _featurePipeline.Process(featureRecord);
+            _featureQueue.Enqueue(featureRecord);
+        }
+
+        private sealed class DebugLogger : ILogger
+        {
+            public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsEnabled(LogLevel logLevel)
+            {
+                return true;
+            }
+
+            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+            {
+                System.Diagnostics.Debug.WriteLine($"[{logLevel}]: {formatter(state, exception)}");
+            }
         }
     }
 }

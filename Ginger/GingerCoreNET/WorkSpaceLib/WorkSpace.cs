@@ -213,9 +213,9 @@ namespace amdocs.ginger.GingerCoreNET
                     WorkSpace.Instance.LocalGingerGrid.Stop();
                 }
                 
-                if (Reporter.TelemetryMonitor != null)
+                if (Reporter.TelemetryQueueManager != null)
                 {
-                    Reporter.TelemetryMonitor.Dispose();
+                    Reporter.TelemetryQueueManager.Dispose();
                 }
 
                 //WorkSpace.Instance.Telemetry.SessionEnd();
@@ -302,19 +302,19 @@ namespace amdocs.ginger.GingerCoreNET
             //NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
         }
 
-        public static ITelemetryMonitor NewTelemetryMonitor()
+        public static ITelemetryQueueManager NewTelemetryQueueManager()
         {
-            return new TelemetryMonitor();
+            return new TelemetryQueueManager();
         }
 
-        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper, ITelemetryMonitor telemetryMonitor = null)
+        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper, ITelemetryQueueManager telemetryQueueManager = null)
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
             Reporter.WorkSpaceReporter = workSpaceReporterBase;
-            Reporter.TelemetryMonitor = telemetryMonitor;
+            Reporter.TelemetryQueueManager = telemetryQueueManager;
 
             string phase = string.Empty;
 

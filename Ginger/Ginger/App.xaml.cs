@@ -257,7 +257,7 @@ namespace Ginger
             // add additional classes from Ginger and GingerCore
             InitClassTypesDictionary();
 
-            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper(), WorkSpace.NewTelemetryMonitor());
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper(), WorkSpace.NewTelemetryQueueManager());
 
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
 

@@ -8,7 +8,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
+#nullable enable
+namespace Amdocs.Ginger.CoreNET.Telemetry
 {
     public sealed class BlockingBufferQueue<T>
     {
@@ -17,6 +18,9 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
         private readonly SemaphoreSlim _syncBufferSizeSemaphore;
         private readonly AutoResetEvent _syncEnqueueEvent;
         private readonly AutoResetEvent _syncDequeueEvent;
+
+        private CancellationTokenSource? _syncBufferSizeSemaphoreCTS;
+        private bool _isDisposed;
 
         public int Count => _collection.Count;
 
@@ -27,13 +31,19 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             _syncBufferSizeSemaphore = new(initialCount: 0);
             _syncEnqueueEvent = new(initialState: true);
             _syncDequeueEvent = new(initialState: true);
+
+            _isDisposed = false;
         }
 
         public void Enqueue(T item)
         {
             try
             {
+                ThrowIfDisposed();
+
                 _syncEnqueueEvent.WaitOne();
+
+                ThrowIfDisposed();
 
                 _collection.AddLast(item);
                 _syncBufferSizeSemaphore.Release();
@@ -48,12 +58,25 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
         {
             try
             {
+                ThrowIfDisposed();
+
                 _syncDequeueEvent.WaitOne();
+
+                ThrowIfDisposed();
 
                 List<T> items = new(_bufferSize);
                 for (var availableItemCount = 0; availableItemCount < _bufferSize; availableItemCount++)
                 {
-                    _syncBufferSizeSemaphore.Wait();
+                    _syncBufferSizeSemaphoreCTS = new();
+
+                    try
+                    {
+                        _syncBufferSizeSemaphore.Wait(_syncBufferSizeSemaphoreCTS.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
 
                     if (_collection.Count > 0)
                     {
@@ -69,6 +92,34 @@ namespace Amdocs.Ginger.CoreNET.Telemetry.Pipeline
             {
                 _syncDequeueEvent.Set();
             }
+        }
+
+        public void Flush()
+        {
+            ThrowIfDisposed();
+
+            _syncBufferSizeSemaphoreCTS?.Cancel();
+        }
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+                return;
+
+            _isDisposed = true;
+
+            Flush();
+            
+            _syncBufferSizeSemaphore.Dispose();
+            _syncEnqueueEvent.Dispose();
+            _syncDequeueEvent.Dispose();
+            _syncBufferSizeSemaphoreCTS?.Dispose();
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (_isDisposed)
+                throw new ObjectDisposedException(message: "Cannot perform operation on disposedException", innerException: null);
         }
     }
 }

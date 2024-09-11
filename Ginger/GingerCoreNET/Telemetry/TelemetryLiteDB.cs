@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -57,133 +58,198 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }, NewBsonMapper());
         }
 
-        public Task AddAsync(TelemetryLogRecord log)
+        public Task AddAsync(IEnumerable<TelemetryLogRecord> logs)
         {
-            if (log == null)
+            if (logs == null)
             {
-                throw new ArgumentNullException(paramName: nameof(log));
+                throw new ArgumentNullException(paramName: nameof(logs));
+            }
+            if (!logs.Any())
+            {
+                return Task.CompletedTask;
             }
 
-            using LiteDatabase db = NewLiteDb();
-            ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
-            collection.Insert(log);
-
-            return Task.CompletedTask;
+            return Task.Run(() =>
+            {
+                using LiteDatabase db = NewLiteDb();
+                ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
+    
+                collection.InsertBulk(logs, batchSize: 5000);
+            });
         }
 
-        public Task<bool> DeleteAsync(TelemetryLogRecord log)
+        public Task DeleteAsync(IEnumerable<TelemetryLogRecord> logs)
         {
-            if (log == null)
+            if (logs == null)
             {
-                throw new ArgumentNullException(paramName: nameof(log));
+                throw new ArgumentNullException(paramName: nameof(logs));
+            }
+            if (!logs.Any())
+            {
+                return Task.CompletedTask;
             }
 
-            using LiteDatabase db = NewLiteDb();
-            ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
-            return Task.FromResult(collection.Delete(new BsonValue(log.Id)));
+            return Task.Run(() =>
+            {
+                IEnumerable<string> ids = logs.Select(log => log.Id);
+
+                using LiteDatabase db = NewLiteDb();
+                ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
+
+                collection.DeleteMany(log => ids.Contains(log.Id));
+            });
         }
 
-        public Task<bool> MarkFailedToUpload(TelemetryLogRecord log)
+        public Task IncrementUploadAttemptCount(IEnumerable<TelemetryLogRecord> logs)
         {
-            if (log == null)
+            if (logs == null)
             {
-                throw new ArgumentNullException(paramName: nameof(log));
+                throw new ArgumentNullException(paramName: nameof(logs));
+            }
+            if (!logs.Any())
+            {
+                return Task.CompletedTask;
             }
 
-            using LiteDatabase db = NewLiteDb();
-            ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
-            TelemetryLogRecord logInDB = collection.FindById(new BsonValue(log.Id));
-            if (logInDB == null)
+            return Task.Run(() =>
             {
-                return Task.FromResult(false);
-            }
-            if (logInDB.FailedToUpload)
-            {
-                logInDB.RetryAttempt++;
-            }
-            else
-            {
-                logInDB.FailedToUpload = true;
-            }
-            logInDB.LastUpdateTimestamp = DateTime.UtcNow;
-            collection.Update(logInDB);
+                IEnumerable<string> ids = logs.Select(l => l.Id);
 
-            return Task.FromResult(true);
+                using LiteDatabase db = NewLiteDb();
+                ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
+                
+                IEnumerable<TelemetryLogRecord> logsInDB = collection.Find(log => ids.Contains(log.Id));
+
+                foreach (TelemetryLogRecord logInDB in logsInDB)
+                {
+                    logInDB.UploadAttempt++;
+                    logInDB.LastUpdateTimestamp = DateTime.UtcNow;
+                    collection.Update(logInDB);
+                }
+            });
         }
 
-        public Task<IEnumerable<TelemetryLogRecord>> GetFailedToUploadRecords(int size)
+        public Task<IEnumerable<TelemetryLogRecord>> GetRecordsForRetry(IEnumerable<TelemetryLogRecord> exclude, int limit)
         {
-            if (size <= 0)
+            if (exclude == null)
             {
-                throw new ArgumentOutOfRangeException($"'{nameof(size)}' cannot be less than or equal to 0");
+                throw new ArgumentNullException($"{nameof(exclude)} cannot be null");
+            }
+            if (limit <= 0)
+            {
+                throw new ArgumentOutOfRangeException($"'{nameof(limit)}' cannot be less than or equal to 0");
             }
 
-            using LiteDatabase db = NewLiteDb();
-            ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
-            return Task.FromResult<IEnumerable<TelemetryLogRecord>>(collection
-                .Find(log => log.FailedToUpload, limit: size)
-                .OrderBy(log => log.LastUpdateTimestamp));
+            return Task.Run(() =>
+            {
+                IEnumerable<string> ids = exclude.Select(l => l.Id);
+                
+                using LiteDatabase db = NewLiteDb();
+                ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
+
+                return collection
+                    .Find(log => !ids.Contains(log.Id), limit: limit)
+                    .OrderBy(log => log.LastUpdateTimestamp)
+                    .ToList()
+                    .AsEnumerable();
+            });
         }
 
-        public Task AddAsync(TelemetryFeatureRecord feature)
+        public Task AddAsync(IEnumerable<TelemetryFeatureRecord> features)
         {
-            if (feature == null)
+            if (features == null)
             {
-                throw new ArgumentNullException(paramName: nameof(feature));
+                throw new ArgumentNullException(paramName: nameof(features));
+            }
+            if (!features.Any())
+            {
+                return Task.CompletedTask;
             }
 
-            using LiteDatabase db = NewLiteDb();
-            ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
-            collection.Insert(feature);
+            return Task.Run(() =>
+            {
+                using LiteDatabase db = NewLiteDb();
+                ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
 
-            return Task.CompletedTask;
+                collection.InsertBulk(features, batchSize: 5000);
+            });
         }
 
-        public Task<bool> DeleteAsync(TelemetryFeatureRecord feature)
+        public Task DeleteAsync(IEnumerable<TelemetryFeatureRecord> features)
         {
-            if (feature == null)
+            if (features == null)
             {
-                throw new ArgumentNullException(paramName: nameof(feature));
+                throw new ArgumentNullException(paramName: nameof(features));
+            }
+            if (!features.Any())
+            {
+                return Task.CompletedTask;
             }
 
-            using LiteDatabase db = NewLiteDb();
-            ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
-            return Task.FromResult(collection.Delete(new BsonValue(feature.Id)));
+            return Task.Run(() =>
+            {
+                IEnumerable<string> ids = features.Select(feature => feature.Id);
+
+                using LiteDatabase db = NewLiteDb();
+                ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
+
+                collection.DeleteMany(feature => ids.Contains(feature.Id));
+            });
         }
 
-        public Task<bool> MarkFailedToUpload(TelemetryFeatureRecord feature)
+        public Task IncrementUploadAttemptCount(IEnumerable<TelemetryFeatureRecord> features)
         {
-            if (feature == null)
+            if (features == null)
             {
-                throw new ArgumentNullException(paramName: nameof(feature));
+                throw new ArgumentNullException(paramName: nameof(features));
+            }
+            if (!features.Any())
+            {
+                return Task.CompletedTask;
             }
 
-            using LiteDatabase db = NewLiteDb();
-            ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
-            TelemetryFeatureRecord featureInDB = collection.FindById(new BsonValue(feature.Id));
-            if (featureInDB == null)
+            return Task.Run(() =>
             {
-                return Task.FromResult(false);
-            }
-            featureInDB.FailedToUpload = true;
-            featureInDB.LastUpdateTimestamp = DateTime.UtcNow;
-            collection.Update(featureInDB);
+                IEnumerable<string> ids = features.Select(l => l.Id);
 
-            return Task.FromResult(true);
+                using LiteDatabase db = NewLiteDb();
+                ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
+
+                IEnumerable<TelemetryFeatureRecord> featuresInDB = collection.Find(feature => ids.Contains(feature.Id));
+
+                foreach (TelemetryFeatureRecord featureInDB in featuresInDB)
+                {
+                    featureInDB.UploadAttempt++;
+                    featureInDB.LastUpdateTimestamp = DateTime.UtcNow;
+                    collection.Update(featureInDB);
+                }
+            });
         }
 
-        Task<IEnumerable<TelemetryFeatureRecord>> ITelemetryDB<TelemetryFeatureRecord>.GetFailedToUploadRecords(int size)
+        public Task<IEnumerable<TelemetryFeatureRecord>> GetRecordsForRetry(IEnumerable<TelemetryFeatureRecord> exclude, int limit)
         {
-            if (size <= 0)
+            if (exclude == null)
             {
-                throw new ArgumentOutOfRangeException($"'{nameof(size)}' cannot be less than or equal to 0");
+                throw new ArgumentNullException($"{nameof(exclude)} cannot be null");
+            }
+            if (limit <= 0)
+            {
+                throw new ArgumentOutOfRangeException($"'{nameof(limit)}' cannot be less than or equal to 0");
             }
 
-            using LiteDatabase db = NewLiteDb();
-            ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
-            return Task.FromResult<IEnumerable<TelemetryFeatureRecord>>(collection
-                .Find(log => log.FailedToUpload, limit: size)
-                .OrderBy(log => log.LastUpdateTimestamp));
+            return Task.Run(() =>
+            {
+                IEnumerable<string> ids = exclude.Select(l => l.Id);
+
+                using LiteDatabase db = NewLiteDb();
+                ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
+
+                return collection
+                    .Find(log => !ids.Contains(log.Id), limit: limit)
+                    .OrderBy(feature => feature.LastUpdateTimestamp)
+                    .ToList()
+                    .AsEnumerable();
+            });
         }
     }
 }

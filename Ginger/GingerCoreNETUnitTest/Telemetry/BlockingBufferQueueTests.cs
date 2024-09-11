@@ -1,4 +1,4 @@
-﻿using Amdocs.Ginger.CoreNET.Telemetry.Pipeline;
+﻿using Amdocs.Ginger.CoreNET.Telemetry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
