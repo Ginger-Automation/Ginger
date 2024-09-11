@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "GingerTelemetry.GRPC";
+package GingerTelemetryProto.v1;
 
 message LogRecord {
 	string Id = 1;

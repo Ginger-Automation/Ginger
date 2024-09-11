@@ -1449,8 +1449,8 @@
 	
 	
   <ItemGroup>
-	<Protobuf Include="Telemetry\Protos\feature.proto" GrpcServices="Client" />
-	<Protobuf Include="Telemetry\Protos\log.proto" GrpcServices="Client" />
+	<Protobuf Include="Telemetry\Protos\V1\feature.proto" GrpcServices="Client" />
+	<Protobuf Include="Telemetry\Protos\V1\log.proto" GrpcServices="Client" />
   </ItemGroup>
 
   <ItemGroup>
