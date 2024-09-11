@@ -25,7 +25,7 @@ using Ginger.Run;
 using Ginger.WizardLib;
 using GingerCore;
 using GingerWPF.WizardLib;
-using IWshRuntimeLibrary;
+//using IWshRuntimeLibrary;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -200,36 +200,36 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         public string SaveShortcut()
         {
             var msg = string.Empty;
-            try
-            {
-                WshShell shell = new WshShell();
-                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(AutoRunShortcut.ShortcutFileFullPath);
-                shortcut.Description = AutoRunShortcut.ShortcutFileName;
-                shortcut.WorkingDirectory = AutoRunShortcut.ExecuterFolderPath;
-                if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("GINGER_HOME")))
-                {
-                    shortcut.TargetPath = "ginger";
-                    shortcut.Arguments = AutoRunConfiguration.ConfigArgs;
-                }
-                else
-                {
-                    shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
-                    shortcut.Arguments = AutoRunConfiguration.ConfigArgs;
-                }
+            //try
+            //{
+            //    WshShell shell = new WshShell();
+            //    IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(AutoRunShortcut.ShortcutFileFullPath);
+            //    shortcut.Description = AutoRunShortcut.ShortcutFileName;
+            //    shortcut.WorkingDirectory = AutoRunShortcut.ExecuterFolderPath;
+            //    if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("GINGER_HOME")))
+            //    {
+            //        shortcut.TargetPath = "ginger";
+            //        shortcut.Arguments = AutoRunConfiguration.ConfigArgs;
+            //    }
+            //    else
+            //    {
+            //        shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
+            //        shortcut.Arguments = AutoRunConfiguration.ConfigArgs;
+            //    }
 
-                string iconPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "GingerIconNew.ico");
-                if (System.IO.File.Exists(iconPath))
-                {
-                    shortcut.IconLocation = iconPath;
-                }
+            //    string iconPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "GingerIconNew.ico");
+            //    if (System.IO.File.Exists(iconPath))
+            //    {
+            //        shortcut.IconLocation = iconPath;
+            //    }
 
-                shortcut.Save();
-                msg = "Execution shortcut file created successfully." + Environment.NewLine;
-            }
-            catch (Exception ex)
-            {
-                msg = "Execution shortcut file creation failed, error:" + ex + Environment.NewLine;
-            }
+            //    shortcut.Save();
+            //    msg = "Execution shortcut file created successfully." + Environment.NewLine;
+            //}
+            //catch (Exception ex)
+            //{
+            //    msg = "Execution shortcut file creation failed, error:" + ex + Environment.NewLine;
+            //}
             return msg;
         }
 
