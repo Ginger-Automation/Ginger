@@ -58,7 +58,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
             Reporter.AddFeatureUsage(FeatureId.Environment, new TelemetryMetadata()
             {
-                { "Operation", "Add" },
+                { "Operation", "Create" },
             });
 
             //Save the Environment 
