@@ -1865,22 +1865,28 @@ namespace GingerCore
         /// </summary>
         /// <param name="value">The input string which might be a value expression or an encrypted string.</param>
         /// <returns>The calculated or decrypted value, or the input string if no processing is needed.</returns>
-        public static string CredentialsCalculation(string value)
+        public static string PasswordCalculation(string value)
         {
+            try
+            {
             if (IsThisAValueExpression(value))
             {
-                ValueExpression valueExpression = new();
-                valueExpression.DecryptFlag = true;
-                value = valueExpression.Calculate(value);
-                valueExpression.DecryptFlag = false;
-                return value;
+            ValueExpression valueExpression = new();
+            valueExpression.DecryptFlag = true;
+            value = valueExpression.Calculate(value);
+            valueExpression.DecryptFlag = false;
+            return value;
             }
             else if (EncryptionHandler.IsStringEncrypted(value))
             {
-                value = EncryptionHandler.DecryptwithKey(value);
-                return value;
+            value = EncryptionHandler.DecryptwithKey(value);
+            return value;
             }
-
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Unable to decrypt the value expression", ex);
+            }
             return value;
         }
     }

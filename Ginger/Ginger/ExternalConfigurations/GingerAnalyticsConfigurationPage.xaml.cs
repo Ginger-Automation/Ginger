@@ -39,8 +39,8 @@ namespace Ginger.ExternalConfigurations
     /// </summary>
     public partial class GingerAnalyticsConfigurationPage : GingerUIPage
     {
-        public DateTime validTo = DateTime.MinValue;
-        private GingerAnalyticsConfiguration gingerAnalyticsUserConfig = null;
+        public GingerAnalyticsConfiguration gingerAnalyticsUserConfig;
+        public GingerAnalyticsAPI analyticsAPI;
         public GingerAnalyticsConfigurationPage()
         {
             InitializeComponent();
@@ -48,6 +48,7 @@ namespace Ginger.ExternalConfigurations
         }
         private void Init()
         {
+            analyticsAPI = new GingerAnalyticsAPI();
             gingerAnalyticsUserConfig  = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerAnalyticsConfiguration>().Count == 0 ? new GingerAnalyticsConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerAnalyticsConfiguration>();
             gingerAnalyticsUserConfig.StartDirtyTracking();
             SetControls();
@@ -77,25 +78,33 @@ namespace Ginger.ExternalConfigurations
 
         private async void xTestConBtn_Click(object sender, RoutedEventArgs e)
         {
+            ShowLoader();
+            xTestConBtn.IsEnabled = false;
             if (AreRequiredFieldsEmpty())
             {
                 Reporter.ToUser(eUserMsgKey.RequiredFieldsEmpty);
+                HideLoader();
+                xTestConBtn.IsEnabled = true;
                 return;
             }
 
             GingerCoreNET.GeneralLib.General.CreateGingerAnalyticsConfiguration(gingerAnalyticsUserConfig);
 
-            if (IsTokenValid())
+            if (GingerAnalyticsAPI.IsTokenValid())
             {
                 Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionSuccess);
+                HideLoader();
+                xTestConBtn.IsEnabled = true;
                 return;
             }
 
             bool isAuthorized = await HandleTokenAuthorization();
             ShowConnectionResult(isAuthorized);
+            HideLoader();
+            xTestConBtn.IsEnabled = true;
         }
 
-        private bool AreRequiredFieldsEmpty()
+        public bool AreRequiredFieldsEmpty()
         {
             return string.IsNullOrEmpty(gingerAnalyticsUserConfig.AccountUrl)
                 || string.IsNullOrEmpty(gingerAnalyticsUserConfig.IdentityServiceURL)
@@ -103,17 +112,19 @@ namespace Ginger.ExternalConfigurations
                 || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientSecret);
         }
 
-        private async Task<bool> HandleTokenAuthorization()
+        public async Task<bool> HandleTokenAuthorization()
         {
             if (string.IsNullOrEmpty(gingerAnalyticsUserConfig.Token))
             {
-                return await RequestToken(gingerAnalyticsUserConfig.ClientId, gingerAnalyticsUserConfig.ClientSecret, gingerAnalyticsUserConfig.IdentityServiceURL);
+                return await GingerAnalyticsAPI.RequestToken(ValueExpression.PasswordCalculation(gingerAnalyticsUserConfig.ClientId),
+                                          ValueExpression.PasswordCalculation(gingerAnalyticsUserConfig.ClientSecret),
+                                          ValueExpression.PasswordCalculation(gingerAnalyticsUserConfig.IdentityServiceURL));
             }
 
             return true;
         }
 
-        private static void ShowConnectionResult(bool isAuthorized)
+        public static void ShowConnectionResult(bool isAuthorized)
         {
             if (isAuthorized)
             {
@@ -145,90 +156,22 @@ namespace Ginger.ExternalConfigurations
         }
 
 
-        public async Task<bool> RequestToken(string clientId, string clientSecret, string address)
+        
+
+        public void HideLoader()
         {
-            try
-            {
-                HttpClientHandler handler = new HttpClientHandler() { UseProxy = false};
-
-                using (var client = new HttpClient(handler))
-                {
-                    clientId = ValueExpression.CredentialsCalculation(gingerAnalyticsUserConfig.ClientId);
-                    clientSecret = ValueExpression.CredentialsCalculation(gingerAnalyticsUserConfig.ClientSecret);
-                    address = ValueExpression.CredentialsCalculation(gingerAnalyticsUserConfig.IdentityServiceURL);
-
-                    var disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
-                    {
-                        Address = address,
-                        Policy =
-                    {
-                RequireHttps = true,
-                ValidateIssuerName = true
-                    }
-                    });
-
-                    if (disco.IsError)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Discovery document error: {disco.Error}");
-                        return false;
-                    }
-
-                    var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-                    {
-                        Address = disco.TokenEndpoint,
-                        ClientId = clientId,
-                        ClientSecret = clientSecret
-                    });
-
-                    if (tokenResponse.IsError)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Token request error: {tokenResponse.Error}");
-                        return false;
-                    }
-
-                    validTo = DateTime.UtcNow.AddMinutes(60);
-                    gingerAnalyticsUserConfig.Token = tokenResponse.AccessToken;
-                    return true;
-                }
-            }
-            catch (HttpRequestException httpEx)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "HTTP request failed", httpEx);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error during token request", ex);
-                return false;
-            }
+        this.Dispatcher.Invoke(() =>
+        {
+            xProcessingImage.Visibility = Visibility.Hidden;
+        });
         }
 
-        public bool IsTokenValid()
+        public void ShowLoader()
         {
-            try
-            {
-                if (string.IsNullOrEmpty(gingerAnalyticsUserConfig.Token) || gingerAnalyticsUserConfig.Token.Split('.').Length != 3)
-                {
-                    return false;
-                }
-
-                var handler = new JwtSecurityTokenHandler();
-                var jwtToken = handler.ReadJwtToken(gingerAnalyticsUserConfig.Token);
-                validTo = jwtToken.ValidTo;
-                if (DateTime.UtcNow < validTo)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured in validate token", ex);
-                return false;
-            }
+        this.Dispatcher.Invoke(() =>
+        {
+            xProcessingImage.Visibility = Visibility.Visible;
+        });
         }
     }
 }

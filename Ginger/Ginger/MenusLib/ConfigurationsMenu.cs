@@ -94,6 +94,10 @@ namespace Ginger.ConfigurationsLib
             externalConfigMenu.Add(eImageType.GingerAnalytics, "Ginger Analytics Configuration", GetGingerAnalyticsPage, ConsoleKey.X, "Ginger Analytics Configuration", "Ginger Analytics Configuration AID");
             twoLevelMenu.Add(externalConfigMenu);
 
+            TopMenuItem accessiblityRulesMenu = new TopMenuItem(eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", ConsoleKey.T, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", "Name & rules of the Accessibility which been present current json");
+            accessiblityRulesMenu.Add(eImageType.Application, "", GetAccessibilityRulePage, ConsoleKey.T, "", "AID");
+            twoLevelMenu.Add(accessiblityRulesMenu);
+
             return twoLevelMenu;
         }
 
@@ -161,6 +165,11 @@ namespace Ginger.ConfigurationsLib
         private static Page OthersPage()
         {
             return new Page();
+        }
+
+        private static Page GetAccessibilityRulePage()
+        {
+            return (new AccessibilityRulePage());
         }
     }
 }
