@@ -21,5 +21,6 @@ namespace Amdocs.Ginger.Common.Telemetry
         AddItemToSharedRepository,
         SourceControl,
         Environment,
+        GlobalParameter,
     }
 }
