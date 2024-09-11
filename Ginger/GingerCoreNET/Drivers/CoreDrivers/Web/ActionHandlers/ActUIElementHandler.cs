@@ -23,6 +23,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
+using OpenQA.Selenium;
+
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
@@ -46,11 +50,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         };
 
         private readonly ActUIElement _act;
+        private readonly IBrowserTab _browserTab;
         private readonly IBrowserElementLocator _elementLocator;
 
-        internal ActUIElementHandler(ActUIElement act, IBrowserElementLocator elementLocator)
+        internal ActUIElementHandler(ActUIElement act, IBrowserTab browserTab, IBrowserElementLocator elementLocator)
         {
             _act = act;
+            _browserTab = browserTab;
             _elementLocator = elementLocator;
         }
 
@@ -141,6 +147,39 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     case ActUIElement.eElementAction.SetValue:
                         await HandleSetValueOperationAsync();
                         break;
+                    case ActUIElement.eElementAction.ClickAndValidate:
+                        await HandleClickAndValidateAsync();
+                        break;
+                    case ActUIElement.eElementAction.JavaScriptClick:
+                        await HandleJavaScriptClickAsync();
+                        break;
+                    case ActUIElement.eElementAction.SetText:
+                        await HandleSetTextAsync();
+                        break;
+                    case ActUIElement.eElementAction.SendKeys:
+                        await HandleSendKeysAsync();
+                        break;
+                    case ActUIElement.eElementAction.SendKeysXY:
+                        await HandleSendKeysXYAsync();
+                        break;
+                    case ActUIElement.eElementAction.RunJavaScript:
+                        await HandleRunJavaScriptAsync();
+                        break;
+                    case ActUIElement.eElementAction.AsyncClick:
+                        await HandleAsyncClickAsync();
+                        break;
+                    case ActUIElement.eElementAction.GetCustomAttribute:
+                        await HandleGetCustomAttributeAsync();
+                        break;
+                    case ActUIElement.eElementAction.GetFont:
+                        await HandleGetFontAsync();
+                        break;
+                    case ActUIElement.eElementAction.MousePressRelease:
+                        await HandleMousePressReleaseAsync();
+                        break;
+                    case ActUIElement.eElementAction.MouseClick:
+                        await HandleMouseClickAsync();
+                        break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActUIElement.eElementAction), _act.ElementAction);
                         _act.Error = $"Operation '{operationName}' is not supported";
@@ -153,6 +192,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
         }
 
+        /// <summary>
+        /// Retrieves the first matching browser element asynchronously.
+        /// </summary>
+        /// <returns>The first matching browser element.</returns>
         private async Task<IBrowserElement> GetFirstMatchingElementAsync()
         {
             IEnumerable<IBrowserElement> elements = await _elementLocator.FindMatchingElements(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
@@ -166,29 +209,46 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             return firstElement;
         }
 
+        /// <summary>
+        /// Retrieves all the matching browser elements asynchronously.
+        /// </summary>
+        /// <returns>All the matching browser elements.</returns>
         private async Task<IEnumerable<IBrowserElement>> GetAllMatchingElementsAsync()
         {
             return await _elementLocator.FindMatchingElements(_act.ElementLocateBy, _act.ElementLocateValueForDriver);
         }
 
+        /// <summary>
+        /// Handles the click operation asynchronously.
+        /// </summary>
         private async Task HandleClickOperationAsync()
         {
+
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ClickAsync();
         }
 
+        /// <summary>
+        /// Handles the double click operation asynchronously.
+        /// </summary>
         private async Task HandleDoubleClickOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.DoubleClickAsync();
         }
 
+        /// <summary>
+        /// Handles the hover operation asynchronously.
+        /// </summary>
         private async Task HandleHoverOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.HoverAsync();
         }
 
+        /// <summary>
+        /// Handles the is visible operation asynchronously.
+        /// </summary>
         private async Task HandleIsVisibleOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -196,6 +256,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", isVisible.ToString());
         }
 
+        /// <summary>
+        /// Handles the IsEnabled operation for the UI element.
+        /// </summary>
         private async Task HandleIsEnabledOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -203,6 +266,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", isEnabled.ToString());
         }
 
+        /// <summary>
+        /// Handles the GetAttribute operation for the UI element.
+        /// </summary>
         private async Task HandleGetAttributeOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -210,6 +276,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", attributeValue);
         }
 
+        /// <summary>
+        /// Handles the GetText operation for the UI element.
+        /// </summary>
         private async Task HandleGetTextOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -229,12 +298,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", text);
         }
 
+        /// <summary>
+        /// Handles the RightClick operation for the UI element.
+        /// </summary>
         private async Task HandleRightClickOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.RightClickAsync();
         }
 
+        /// <summary>
+        /// Handles the IsValuePopulated operation for the UI element.
+        /// </summary>
         private async Task HandleIsValuePopulatedOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -270,6 +345,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", containsValue.ToString());
         }
 
+        /// <summary>
+        /// Handles the asynchronous operation for getting the height of the UI element.
+        /// </summary>
         private async Task HandleGetHeightOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -277,6 +355,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", size.Height.ToString());
         }
 
+        /// <summary>
+        /// Handles the asynchronous operation for getting the width of the UI element.
+        /// </summary>
         private async Task HandleGetWidthOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -284,6 +365,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", size.Width.ToString());
         }
 
+        /// <summary>
+        /// Handles the asynchronous operation for getting the size (width and height) of the UI element.
+        /// </summary>
         private async Task HandleGetSizeOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -291,6 +375,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", $"{size.Width}x{size.Height}");
         }
 
+        /// <summary>
+        /// Handles the asynchronous operation for getting the value of the UI element.
+        /// </summary>
         private async Task HandleGetValueOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -311,6 +398,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", value);
         }
 
+        /// <summary>
+        /// Handles the asynchronous operation for getting the style attribute of the UI element.
+        /// </summary>
         private async Task HandleGetStyleOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -318,24 +408,36 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", style);
         }
 
+        /// <summary>
+        /// Handles the operation to get the item count of the matching elements.
+        /// </summary>
         private async Task HandleGetItemCountOperationAsync()
         {
             IEnumerable<IBrowserElement> elements = await GetAllMatchingElementsAsync();
             _act.AddOrUpdateReturnParamActual("Elements Count", elements.Count().ToString());
         }
 
+        /// <summary>
+        /// Handles the operation to scroll to the first matching element.
+        /// </summary>
         private async Task HandleScrollToElementOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ScrollToViewAsync();
         }
 
+        /// <summary>
+        /// Handles the operation to set focus on the first matching element.
+        /// </summary>
         private async Task HandleSetFocusOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.FocusAsync();
         }
 
+        /// <summary>
+        /// Handles the operation to check if the first matching element is disabled.
+        /// </summary>
         private async Task HandleIsDisabledOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -343,6 +445,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             _act.AddOrUpdateReturnParamActual("Actual", (!isEnabled).ToString());
         }
 
+        /// <summary>
+        /// Handles the operation to submit the first matching element.
+        /// </summary>
         private async Task HandleSubmitOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -361,6 +466,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
         }
 
+        /// <summary>
+        /// Handles the operation to perform multiple clicks on all matching elements.
+        /// </summary>
         private async Task HandleMultiClicksOperationAsync()
         {
             IEnumerable<IBrowserElement> elements = new List<IBrowserElement>(await GetAllMatchingElementsAsync());
@@ -374,6 +482,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
         }
 
+        /// <summary>
+        /// Handles the ClickXY operation asynchronously.
+        /// </summary>
         private async Task HandleClickXYOperationAsync()
         {
             string xString = _act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver;
@@ -388,9 +499,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
 
             IBrowserElement element = await GetFirstMatchingElementAsync();
-            await element.ClickAsync(x, y);
+            await element.ClickAsync(new Point(x, y));
         }
 
+        /// <summary>
+        /// Handles the DoubleClickXY operation asynchronously.
+        /// </summary>
         private async Task HandleDoubleClickXYOperationAsync()
         {
             string xString = _act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver;
@@ -408,12 +522,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             await element.DoubleClickAsync(x, y);
         }
 
+        /// <summary>
+        /// Handles the ClearValue operation asynchronously.
+        /// </summary>
         private async Task HandleClearValueOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
             await element.ClearAsync();
         }
 
+        /// <summary>
+        /// Handles the Select operation asynchronously.
+        /// </summary>
         private async Task HandleSelectOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -421,14 +541,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             await element.SelectByValueAsync(value);
         }
 
+        /// <summary>
+        /// Handles the SelectByText operation asynchronously.
+        /// </summary>
         private async Task HandleSelectByTextOperationAsync()
         {
-
             IBrowserElement element = await GetFirstMatchingElementAsync();
             string text = _act.GetInputParamCalculatedValue(ActUIElement.Fields.Value);
             await element.SelectByTextAsync(text);
         }
 
+        /// <summary>
+        /// Handles the SelectByIndex operation asynchronously.
+        /// </summary>
         private async Task HandleSelectByIndexOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -439,6 +564,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             await element.SelectByIndexAsync(index);
         }
 
+        /// <summary>
+        /// Handles the SetValue operation asynchronously.
+        /// </summary>
         private async Task HandleSetValueOperationAsync()
         {
             IBrowserElement element = await GetFirstMatchingElementAsync();
@@ -478,5 +606,267 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             string value = _act.GetInputParamCalculatedValue("Value");
             await element.SetAttributeValueAsync(name: "value", value);
         }
+
+        /// <summary>
+        /// Handles the ClickAndValidateAsync operation.
+        /// </summary>
+        private async Task HandleClickAndValidateAsync()
+        {
+            //Click Type
+            ActUIElement.eElementAction clickType = Enum.Parse<ActUIElement.eElementAction>(_act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString() ?? "");
+            switch (clickType)
+            {
+                case ActUIElement.eElementAction.Click:
+                    await HandleClickOperationAsync();
+                    break;
+                case ActUIElement.eElementAction.JavaScriptClick:
+                    await HandleJavaScriptClickAsync();
+                    break;
+                case ActUIElement.eElementAction.MouseClick:
+                    await HandleMouseClickAsync();
+                    break;
+                case ActUIElement.eElementAction.MousePressRelease:
+                    await HandleMousePressReleaseAsync();
+                    break;
+                case ActUIElement.eElementAction.AsyncClick:
+                    await HandleAsyncClickAsync();
+                    break;
+                default:
+                    _act.Error = $"Operation '{clickType}' is not supported by Playwright driver";
+                    break;
+            }
+
+            // Validate the element
+            eLocateBy validateElementLocateBy = Enum.Parse<eLocateBy>(_act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString() ?? "");
+            string validationElementLocatorValue = _act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue).ToString() ?? "";
+            IEnumerable<IBrowserElement> validationElementSearchResult = await _elementLocator.FindMatchingElements(validateElementLocateBy, validationElementLocatorValue);
+            IBrowserElement? elementToValidate;
+            if (validationElementSearchResult.Any())
+            {
+                elementToValidate = validationElementSearchResult.FirstOrDefault();
+            }
+            else
+            {
+                throw new EntityNotFoundException($"No element found for validation by locator '{validateElementLocateBy}' and value '{validationElementLocatorValue}'");
+            }
+            //Validation type
+            string validationType = _act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString() ?? "";
+            bool validationResult = validationType switch
+            {
+                nameof(ActUIElement.eElementAction.IsEnabled) => await elementToValidate.IsEnabledAsync(),
+                nameof(ActUIElement.eElementAction.IsVisible) => await elementToValidate.IsVisibleAsync(),
+                _ => throw new NotImplementedException($"Unsupported validation type '{validationType}'")
+            };
+
+        }
+
+        /// <summary>
+        /// Handles the asynchronous execution of a JavaScript click operation on a web element.
+        /// </summary>
+        private async Task HandleJavaScriptClickAsync()
+        {
+            IBrowserElement elementToClick = await GetFirstMatchingElementAsync();
+            const string script = "element => element.click()";
+            await elementToClick.ExecuteJavascriptAsync(script);
+        }
+        /// <summary>
+        /// Handles the asynchronous execution of setting text on a web element.
+        /// </summary>
+        private async Task HandleSetTextAsync()
+        {
+            IBrowserElement elementToClick = await GetFirstMatchingElementAsync();
+            string text = _act.GetInputParamCalculatedValue(ActUIElement.Fields.Value);
+            await elementToClick.ClearAsync();
+            await elementToClick.TypeTextAsync(text);
+        }
+
+        /// <summary>
+        /// Handles the asynchronous execution of running JavaScript code on a web element.
+        /// </summary>
+        private async Task HandleRunJavaScriptAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string script = _act.GetInputParamCalculatedValue(ActUIElement.Fields.Value);
+            await element.ExecuteJavascriptAsync(script);
+        }
+
+        /// <summary>
+        /// Handles the asynchronous execution of a delayed click operation on a web element.
+        /// </summary>
+        private async Task HandleAsyncClickAsync()
+        {
+            string script = "element => setTimeout(function() { element.click(); }, 100);";
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            await element.ExecuteJavascriptAsync(script);
+        }
+
+        /// <summary>
+        /// Handles the asynchronous execution of getting a custom attribute value from a web element.
+        /// </summary>
+        private async Task HandleGetCustomAttributeAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string attributeName = _act.GetInputParamCalculatedValue(ActUIElement.Fields.Value);
+            string attributeValue = await element.AttributeValueAsync(attributeName);
+            _act.AddOrUpdateReturnParamActual("Actual", attributeValue);
+        }
+
+        /// <summary>
+        /// Handles the asynchronous execution of getting the font attribute value from a web element.
+        /// </summary>
+        private async Task HandleGetFontAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            string fontAttributeValue = await element.AttributeValueAsync("font");
+            _act.AddOrUpdateReturnParamActual("Actual", fontAttributeValue);
+        }
+
+
+        /// <summary>
+        /// Handles sending keys to a browser element.
+        /// Retrieves the element, clears its current value, and sends the specified keys.
+        /// </summary>
+        private async Task HandleSendKeysAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            await element.ClearAsync();
+            string keys = _act.GetInputParamCalculatedValue("Value");
+            Func<Task> elementOperation = ConvertSeleniumKeyIdentifierToElementOperation(keys, element);
+            await elementOperation();
+        }
+
+        /// <summary>
+        /// Converts a Selenium key identifier to the corresponding element operation.
+        /// Maps the key identifier to the appropriate key press action on the element.
+        /// </summary>
+        /// <param name="key">The Selenium key identifier.</param>
+        /// <param name="element">The browser element to perform the action on.</param>
+        /// <returns>A function representing the element operation.</returns>
+        private Func<Task> ConvertSeleniumKeyIdentifierToElementOperation(string key, IBrowserElement element)
+        {
+            return key switch
+            {
+                "Keys.Alt" => () => element.PressKeysAsync(["Alt","Enter","F1","F2"]),
+                "Keys.ArrowDown" => () => element.PressKeysAsync(["ArrowDown"]),
+                "Keys.ArrowLeft" => () => element.PressKeysAsync(["ArrowLeft"]),
+                "Keys.ArrowRight" => () => element.PressKeysAsync(["ArrowRight"]),
+                "Keys.ArrowUp" => () => element.PressKeysAsync(["ArrowUp"]),
+                "Keys.Backspace" => () => element.PressKeysAsync(["Backspace"]),
+                "Keys.Cancel" => () => element.PressKeysAsync(["Cancel"]),
+                "Keys.Clear" => () => element.PressKeysAsync(["Clear"]),
+                "Keys.Command" => () => element.PressKeysAsync(["Command"]),
+                "Keys.Control" => () => element.PressKeysAsync(["Control"]),
+                "Keys.Decimal" => () => element.PressKeysAsync(["Decimal"]),
+                "Keys.Delete" => () => element.PressKeysAsync(["Delete"]),
+                "Keys.Divide" => () => element.PressKeysAsync(["Divide"]),
+                "Keys.Down" => () => element.PressKeysAsync(["Down"]),
+                "Keys.End" => () => element.PressKeysAsync(["End"]),
+                "Keys.Enter" => () => element.PressKeysAsync(["Enter"]),
+                "Keys.Equal" => () => element.PressKeysAsync(["Equal"]),
+                "Keys.Escape" => () => element.PressKeysAsync(["Escape"]),
+                "Keys.F1" => () => element.PressKeysAsync(["F1"]),
+                "Keys.F10" => () => element.PressKeysAsync(["F10"]),
+                "Keys.F11" => () => element.PressKeysAsync(["F11"]),
+                "Keys.F12" => () => element.PressKeysAsync(["F12"]),
+                "Keys.F2" => () => element.PressKeysAsync(["F2"]),
+                "Keys.F3" => () => element.PressKeysAsync(["F3"]),
+                "Keys.F4" => () => element.PressKeysAsync(["F4"]),
+                "Keys.F5" => () => element.PressKeysAsync(["F5"]),
+                "Keys.F6" => () => element.PressKeysAsync(["F6"]),
+                "Keys.F7" => () => element.PressKeysAsync(["F7"]),
+                "Keys.F8" => () => element.PressKeysAsync(["F8"]),
+                "Keys.F9" => () => element.PressKeysAsync(["F9"]),
+                "Keys.Help" => () => element.PressKeysAsync(["Help"]),
+                "Keys.Home" => () => element.PressKeysAsync(["Home"]),
+                "Keys.Insert" => () => element.PressKeysAsync(["Insert"]),
+                "Keys.Left" => () => element.PressKeysAsync(["Left"]),
+                "Keys.LeftAlt" => () => element.PressKeysAsync(["LeftAlt"]),
+                "Keys.LeftControl" => () => element.PressKeysAsync(["LeftControl"]),
+                "Keys.LeftShift" => () => element.PressKeysAsync(["LeftShift"]),
+                "Keys.Meta" => () => element.PressKeysAsync(["Meta"]),
+                "Keys.Multiply" => () => element.PressKeysAsync(["Multiply"]),
+                "Keys.Null" => () => element.PressKeysAsync(["Null"]),
+                "Keys.NumberPad0" => () => element.PressKeysAsync(["NumberPad0"]),
+                "Keys.NumberPad1" => () => element.PressKeysAsync(["NumberPad1"]),
+                "Keys.NumberPad2" => () => element.PressKeysAsync(["NumberPad2"]),
+                "Keys.NumberPad3" => () => element.PressKeysAsync(["NumberPad3"]),
+                "Keys.NumberPad4" => () => element.PressKeysAsync(["NumberPad4"]),
+                "Keys.NumberPad5" => () => element.PressKeysAsync(["NumberPad5"]),
+                "Keys.NumberPad6" => () => element.PressKeysAsync(["NumberPad6"]),
+                "Keys.NumberPad7" => () => element.PressKeysAsync(["NumberPad7"]),
+                "Keys.NumberPad8" => () => element.PressKeysAsync(["NumberPad8"]),
+                "Keys.NumberPad9" => () => element.PressKeysAsync(["NumberPad9"]),
+                "Keys.PageDown" => () => element.PressKeysAsync(["PageDown"]),
+                "Keys.PageUp" => () => element.PressKeysAsync(["PageUp"]),
+                "Keys.Pause" => () => element.PressKeysAsync(["Pause"]),
+                "Keys.Return" => () => element.PressKeysAsync(["Return"]),
+                "Keys.Right" => () => element.PressKeysAsync(["Right"]),
+                "Keys.Semicolon" => () => element.PressKeysAsync(["Semicolon"]),
+                "Keys.Separator" => () => element.PressKeysAsync(["Separator"]),
+                "Keys.Shift" => () => element.PressKeysAsync(["Shift"]),
+                "Keys.Space" => () => element.PressKeysAsync(["Space"]),
+                "Keys.Subtract" => () => element.PressKeysAsync(["Subtract"]),
+                "Keys.Tab" => () => element.PressKeysAsync(["Tab"]),
+                "Keys.Up" => () => element.PressKeysAsync(["Up"]),
+                _ => () => element.TypeTextAsync(key),
+            };
+        }
+
+
+        /// <summary>
+        /// Handles sending keys to a browser element at a specified offset position.
+        /// Retrieves the element, calculates the target position using the offsets,
+        /// moves the mouse to the target position, clears the element, and sends the specified keys.
+        /// </summary>
+        private async Task HandleSendKeysXYAsync()
+        {
+            string offsetXAsString = _act.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate).ValueForDriver;
+            if (!int.TryParse(offsetXAsString, out int offsetX) || offsetX < 0)
+            {
+                throw new InvalidActionConfigurationException($"Offset-X '{offsetXAsString}' is not a valid X coordinate position");
+            }
+            string offsetYAsString = _act.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate).ValueForDriver;
+            if (!int.TryParse(offsetXAsString, out int offsetY) || offsetY < 0)
+            {
+                throw new InvalidActionConfigurationException($"Offset-X '{offsetYAsString}' is not a valid Y coordinate position");
+            }
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            Point elementPosition = await element.PositionAsync();
+            Point mouseTargetPosition = new(elementPosition.X + offsetX, elementPosition.Y + offsetY);
+
+            await _browserTab.MoveMouseAsync(mouseTargetPosition);
+            await element.ClearAsync();
+            string keys = _act.GetInputParamCalculatedValue("Value");
+            Func<Task> elementOperation = ConvertSeleniumKeyIdentifierToElementOperation(keys, element);
+            await elementOperation();
+        }
+
+        /// <summary>
+        /// Handles a mouse press and release action on a browser element.
+        /// Retrieves the element, calculates its center position, and simulates a mouse click at the center.
+        /// </summary>
+        private async Task HandleMousePressReleaseAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            Size size = await element.SizeAsync();
+            Point position = await element.PositionAsync();
+            Point centerOfElement = new Point(position.X + (int)Math.Round(size.Width / 2.0), position.Y + (int)Math.Round(size.Height / 2.0));
+            await _browserTab.MouseClickAsync(centerOfElement);
+        }
+
+        /// <summary>
+        /// Handles a mouse click action on a browser element.
+        /// Retrieves the element, calculates its center position, and simulates a mouse click at the center.
+        /// </summary>
+        private async Task HandleMouseClickAsync()
+        {
+            IBrowserElement element = await GetFirstMatchingElementAsync();
+            Size size = await element.SizeAsync();
+            Point position = await element.PositionAsync();
+            Point centerOfElement = new Point(position.X + (int)Math.Round(size.Width / 2.0), position.Y + (int)Math.Round(size.Height / 2.0));
+            await _browserTab.MouseClickAsync(centerOfElement);
+        }
     }
 }
+
+
