@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using AccountReport.Contracts;
+using AccountReport.Contracts.Enum;
 using AccountReport.Contracts.RequestModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
@@ -40,8 +41,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
     public static class AccountReportEntitiesDataMapping
     {
         //select template 
-        static HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().FirstOrDefault(x => x.IsDefault);
-        static string _InProgressStatus = "In Progress";
+        static HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().FirstOrDefault(x => x.IsDefault);      
         public static List<AccountReportStatistics>  accountReportStatistics= new List<AccountReportStatistics>();
         public static AccountReportAction MapActionStartData(GingerCore.Actions.Act action, Context context)
         {
@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.CurrentRetryIteration = action.RetryMechanismCount;
             accountReportAction.Wait = Convert.ToInt32(action.Wait);
             accountReportAction.TimeOut = action.Timeout;
-            accountReportAction.RunStatus = _InProgressStatus;
+            accountReportAction.RunStatus = eExecutionStatus.InProgress;
 
             return accountReportAction;
         }
@@ -88,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.Name = action.Description;
             accountReportAction.EndTimeStamp = action.EndTimeStamp;
             accountReportAction.ElapsedEndTimeStamp = action.Elapsed;
-            accountReportAction.RunStatus = action.Status.ToString();
+            accountReportAction.RunStatus = (eExecutionStatus)action.Status;
             accountReportAction.OutputValues = action.ReturnValues.Select(a => a.Param + "_:_" + a.Actual + "_:_" + a.ExpectedCalculated + "_:_" + a.Status + "_:_" + a.Description).ToList();
             accountReportAction.FlowControls = action.FlowControls.Select(a => a.Condition + "_:_" + a.ConditionCalculated + "_:_" + a.FlowControlAction + "_:_" + a.Status).ToList();
             accountReportAction.Error = action.Error;
@@ -140,10 +140,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.StartTimeStamp = activity.StartTimeStamp;
             accountReportActivity.VariablesBeforeExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
             accountReportActivity.ActivityGroupName = activity.ActivitiesGroupID;
-            accountReportActivity.ChildsExecutionStatistics = new AccountReport.Contracts.RequestModels.ExecutionStatistics();
-            accountReportActivity.ChildsExecutionStatistics.Action = new ActionsStatistics();
-            accountReportActivity.ChildsExecutionStatistics.Action.TotalExecutable = activity.Acts.Count(x => x.Active);            
-            accountReportActivity.RunStatus = _InProgressStatus;
+            accountReportActivity.ChildsExecutionStatistics = new Dictionary<AccountReport.Contracts.Enum.eEntityType, StatisticsBase>();
+            StatisticsBase actionStatisticsBase = new StatisticsBase();
+            actionStatisticsBase.TotalExecutable = activity.Acts.Count(x => x.Active);
+            accountReportActivity.ChildsExecutionStatistics.Add(AccountReport.Contracts.Enum.eEntityType.Action, actionStatisticsBase);                  
+            accountReportActivity.RunStatus = eExecutionStatus.InProgress;
             accountReportActivity.IsPublished = activity.Publish;
             accountReportActivity.ExternalID = activity.ExternalID;
             accountReportActivity.ExternalID2 = activity.ExternalID2;            
@@ -159,26 +160,28 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.Name = activity.ActivityName;
             accountReportActivity.EndTimeStamp = activity.EndTimeStamp;
             accountReportActivity.ElapsedEndTimeStamp = activity.Elapsed;
-            accountReportActivity.RunStatus = activity.Status.ToString();
+            accountReportActivity.RunStatus = (eExecutionStatus)activity.Status;
             accountReportActivity.ExternalID = GetCalculatedValue(context, activity.ExternalID);
             accountReportActivity.ExternalID2 = activity.ExternalID2;
             accountReportActivity.VariablesAfterExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
-          
-            accountReportActivity.ChildsExecutionStatistics = new AccountReport.Contracts.RequestModels.ExecutionStatistics();
-            accountReportActivity.ChildsExecutionStatistics.Action = new ActionsStatistics();
-            accountReportActivity.ChildsExecutionStatistics.Action.StatusCount = new Dictionary<string, int>();
 
-            accountReportActivity.ChildsExecutionStatistics.Action.TotalExecuted = activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Stopped || x.Status == eRunStatus.Completed);
-            accountReportActivity.ChildsExecutionStatistics.Action.TotalPassed = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
-            accountReportActivity.ChildsExecutionStatistics.Action.TotalExecutable = activity.Acts.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
+            accountReportActivity.ChildsExecutionStatistics = new Dictionary<AccountReport.Contracts.Enum.eEntityType, StatisticsBase>();
+            StatisticsBase actionStatisticsBase = new StatisticsBase();
+            actionStatisticsBase.StatusCount = new Dictionary<eExecutionStatus, int>();
+
+            actionStatisticsBase.TotalExecuted = activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Stopped || x.Status == eRunStatus.Completed);
+            actionStatisticsBase.TotalPassed = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
+            actionStatisticsBase.TotalExecutable = activity.Acts.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
 
             var actionsStat = (from a in activity.Acts.GroupBy(x => x.Status)
-                              select new KeyValuePair<string, int>(a.First().Status.ToString(), a.Count())).ToList();
+                              select new KeyValuePair<eRunStatus, int>((eRunStatus)a.First().Status, a.Count())).ToList();
             foreach (var astat in actionsStat)
             {
-                accountReportActivity.ChildsExecutionStatistics.Action.StatusCount[astat.Key] = astat.Value;
+                actionStatisticsBase.StatusCount[(eExecutionStatus)astat.Key] = astat.Value;
             }
-                
+
+            accountReportActivity.ChildsExecutionStatistics.Add(eEntityType.Action, actionStatisticsBase);
+
             accountReportStatistics.Add(new AccountReportStatistics()
             {
                 ChildsExecutionStatistics = accountReportActivity.ChildsExecutionStatistics,
@@ -191,8 +194,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 accountReportActivity.ParentID = activity.ParentGuid;
             }
-            accountReportActivity.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate((int)accountReportActivity.ChildsExecutionStatistics.Action.TotalExecuted, (int)accountReportActivity.ChildsExecutionStatistics.Action.TotalExecutable));
-            accountReportActivity.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate((int)accountReportActivity.ChildsExecutionStatistics.Action.TotalPassed, (int)accountReportActivity.ChildsExecutionStatistics.Action.TotalExecutable));
+            accountReportActivity.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate((int)actionStatisticsBase.TotalExecuted, (int)actionStatisticsBase.TotalExecutable));
+            accountReportActivity.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate((int)actionStatisticsBase.TotalPassed, (int)actionStatisticsBase.TotalExecutable));
             return accountReportActivity;
         }
 
@@ -214,7 +217,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivityGroup.AutomationPrecentage = activitiesGroup.AutomationPrecentage;
             accountReportActivityGroup.StartTimeStamp = activitiesGroup.StartTimeStamp;
             accountReportActivityGroup.ExecutedActivitiesGUID = activitiesGroup.ExecutedActivities.Select(x => x.Key).ToList();
-            accountReportActivityGroup.RunStatus = _InProgressStatus;
+            accountReportActivityGroup.RunStatus = eExecutionStatus.InProgress;
             accountReportActivityGroup.IsPublished = activitiesGroup.Publish;
             accountReportActivityGroup.ExternalID = GetCalculatedValue(context, activitiesGroup.ExternalID);
             accountReportActivityGroup.ExternalID2 = activitiesGroup.ExternalID2;
@@ -231,7 +234,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivityGroup.Name = activitiesGroup.Name;
             accountReportActivityGroup.EndTimeStamp = activitiesGroup.EndTimeStamp;
             accountReportActivityGroup.ElapsedEndTimeStamp = activitiesGroup.Elapsed;
-            accountReportActivityGroup.RunStatus = activitiesGroup.RunStatus.ToString();
+            accountReportActivityGroup.RunStatus = (eExecutionStatus)activitiesGroup.RunStatus;
             accountReportActivityGroup.ExternalID = GetCalculatedValue(context, activitiesGroup.ExternalID);
             accountReportActivityGroup.ExternalID2 = activitiesGroup.ExternalID2;
             if(activitiesGroup.ParentGuid != Guid.Empty)
@@ -261,7 +264,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportBusinessFlow.StartTimeStamp = businessFlow.StartTimeStamp;
             accountReportBusinessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
             accountReportBusinessFlow.SolutionVariablesBeforeExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
-            accountReportBusinessFlow.RunStatus = _InProgressStatus;
+            accountReportBusinessFlow.RunStatus = eExecutionStatus.InProgress;
             accountReportBusinessFlow.IsPublished = businessFlow.Publish;
             accountReportBusinessFlow.ExternalID = GetCalculatedValue(context, businessFlow.ExternalID);
             accountReportBusinessFlow.ExternalID2 = businessFlow.ExternalID2;
@@ -271,11 +274,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active);
             }
-            accountReportBusinessFlow.ChildsExecutionStatistics = new AccountReport.Contracts.RequestModels.ExecutionStatistics();
-            accountReportBusinessFlow.ChildsExecutionStatistics.Action = new ActionsStatistics();
-            accountReportBusinessFlow.ChildsExecutionStatistics.Activity = new ActivitiesStatistics();
-            accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalExecutable = ChildExecutableItemsCountAction;
-            accountReportBusinessFlow.ChildsExecutionStatistics.Activity.TotalExecutable = businessFlow.Activities.Count(x => x.Active);
+            accountReportBusinessFlow.ChildsExecutionStatistics = new Dictionary<eEntityType, StatisticsBase>();
+            StatisticsBase actionStatisticsBase = new StatisticsBase();
+            StatisticsBase activityStatisticsBase = new StatisticsBase();
+
+            actionStatisticsBase.TotalExecutable = ChildExecutableItemsCountAction;
+            activityStatisticsBase.TotalExecutable = businessFlow.Activities.Count(x => x.Active);
+
+            accountReportBusinessFlow.ChildsExecutionStatistics.Add(eEntityType.Action, actionStatisticsBase);
+            accountReportBusinessFlow.ChildsExecutionStatistics.Add(eEntityType.Activity, activityStatisticsBase);
 
             return accountReportBusinessFlow;
         }
@@ -290,7 +297,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportBusinessFlow.Name = businessFlow.Name;
             accountReportBusinessFlow.EndTimeStamp = businessFlow.EndTimeStamp;
             accountReportBusinessFlow.ElapsedEndTimeStamp = businessFlow.Elapsed;
-            accountReportBusinessFlow.RunStatus = businessFlow.RunStatus.ToString();
+            accountReportBusinessFlow.RunStatus = (eExecutionStatus)businessFlow.RunStatus;
             accountReportBusinessFlow.VariablesAfterExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
             accountReportBusinessFlow.SolutionVariablesAfterExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList(); ;
             accountReportBusinessFlow.BFFlowControlDT = businessFlow.BFFlowControls.Select(a => a.Condition + "_:_" + a.ConditionCalculated + "_:_" + a.BusinessFlowControlAction + "_:_" + a.Status).ToList(); ;
@@ -300,56 +307,61 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             if(businessFlow.ParentGuid != Guid.Empty)
             {
                 accountReportBusinessFlow.ParentID = businessFlow.ParentGuid;
-            }            
-            accountReportBusinessFlow.ChildsExecutionStatistics = new AccountReport.Contracts.RequestModels.ExecutionStatistics();
-            accountReportBusinessFlow.ChildsExecutionStatistics.Action = new ActionsStatistics();
-            accountReportBusinessFlow.ChildsExecutionStatistics.Activity = new ActivitiesStatistics();
-            accountReportBusinessFlow.ChildsExecutionStatistics.Action.StatusCount = new Dictionary<string, int>();
-            accountReportBusinessFlow.ChildsExecutionStatistics.Activity.StatusCount = new Dictionary<string, int>();
+            }
+            accountReportBusinessFlow.ChildsExecutionStatistics = new Dictionary<eEntityType, StatisticsBase>();
+            StatisticsBase actionStatisticsBase = new StatisticsBase();
+            StatisticsBase activityStatisticsBase = new StatisticsBase();
+            actionStatisticsBase.StatusCount = new Dictionary<eExecutionStatus, int>();
+            activityStatisticsBase.StatusCount = new Dictionary<eExecutionStatus, int>();
             
 
             var activitiesStat = (from a in businessFlow.Activities.GroupBy(x => x.Status)
-                                select new KeyValuePair<string, int>(a.First().Status.ToString(), a.Count())).ToList();
+                                select new KeyValuePair<eRunStatus, int>((eRunStatus)a.First().Status, a.Count())).ToList();
            
             foreach (var astat in activitiesStat)
             {
-                accountReportBusinessFlow.ChildsExecutionStatistics.Activity.StatusCount[astat.Key] = astat.Value;
+                activityStatisticsBase.StatusCount[(eExecutionStatus)astat.Key] = astat.Value;
             }
 
-            accountReportBusinessFlow.ChildsExecutionStatistics.Activity.TotalExecuted = businessFlow.Activities.Count(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored || ac.Status == eRunStatus.Stopped || ac.Status == eRunStatus.Completed);
-            accountReportBusinessFlow.ChildsExecutionStatistics.Activity.TotalPassed = businessFlow.Activities.Count(ac => ac.Status == eRunStatus.Passed);
-            accountReportBusinessFlow.ChildsExecutionStatistics.Activity.TotalExecutable = businessFlow.Activities.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
+            activityStatisticsBase.TotalExecuted = businessFlow.Activities.Count(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored || ac.Status == eRunStatus.Stopped || ac.Status == eRunStatus.Completed);
+            activityStatisticsBase.TotalPassed = businessFlow.Activities.Count(ac => ac.Status == eRunStatus.Passed);
+            activityStatisticsBase.TotalExecutable = businessFlow.Activities.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
 
             foreach (Activity activity in businessFlow.Activities)
             {
                 if(activity.Active)
                 {
                     var stat = accountReportStatistics.Where(x => x.EntityId == activity.Guid).FirstOrDefault();
-                    if (stat!=null)
+                    if (stat!=null && stat.ChildsExecutionStatistics!=null)
                     {
-                        accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalExecutable =
-                          accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalExecutable + stat.ChildsExecutionStatistics.Action.TotalExecutable;
+                        StatisticsBase historyActionStatisticsBase = new StatisticsBase();
+                        stat.ChildsExecutionStatistics.TryGetValue(eEntityType.Action, out historyActionStatisticsBase);
+                        actionStatisticsBase.TotalExecutable =
+                          actionStatisticsBase.TotalExecutable + historyActionStatisticsBase.TotalExecutable;
 
-                        accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalExecuted =
-                            accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalExecuted + stat.ChildsExecutionStatistics.Action.TotalExecuted;
-                        
-                        accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalPassed =
-                           accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalPassed + stat.ChildsExecutionStatistics.Action.TotalPassed;
+                        actionStatisticsBase.TotalExecuted =
+                            actionStatisticsBase.TotalExecuted + historyActionStatisticsBase.TotalExecuted;
 
-                        foreach (var dicObj in stat.ChildsExecutionStatistics.Action.StatusCount)
+                        actionStatisticsBase.TotalPassed =
+                           actionStatisticsBase.TotalPassed + historyActionStatisticsBase.TotalPassed;
+
+                        foreach (var dicObj in historyActionStatisticsBase.StatusCount)
                         {
-                            if (accountReportBusinessFlow.ChildsExecutionStatistics.Action.StatusCount.ContainsKey(dicObj.Key))
+                            if (actionStatisticsBase.StatusCount.ContainsKey(dicObj.Key))
                             {
-                                accountReportBusinessFlow.ChildsExecutionStatistics.Action.StatusCount[dicObj.Key] = accountReportBusinessFlow.ChildsExecutionStatistics.Action.StatusCount[dicObj.Key] + dicObj.Value;
+                                actionStatisticsBase.StatusCount[dicObj.Key] = actionStatisticsBase.StatusCount[dicObj.Key] + dicObj.Value;
                             }
                             else
                             {
-                                accountReportBusinessFlow.ChildsExecutionStatistics.Action.StatusCount[dicObj.Key] = dicObj.Value;
+                                actionStatisticsBase.StatusCount[dicObj.Key] = dicObj.Value;
                             }
                         }  
                     }
                 }
             }
+
+            accountReportBusinessFlow.ChildsExecutionStatistics.Add(eEntityType.Action, actionStatisticsBase);
+            accountReportBusinessFlow.ChildsExecutionStatistics.Add(eEntityType.Activity, activityStatisticsBase);
 
             accountReportStatistics.Add(new AccountReportStatistics()
             {
@@ -360,15 +372,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             if((int)_HTMLReportConfig.ExecutionStatisticsCountBy == 1)
             {
-                accountReportBusinessFlow.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportBusinessFlow.ChildsExecutionStatistics.Activity.TotalExecuted, accountReportBusinessFlow.ChildsExecutionStatistics.Activity.TotalExecutable));
+                accountReportBusinessFlow.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(activityStatisticsBase.TotalExecuted, activityStatisticsBase.TotalExecutable));
 
-                accountReportBusinessFlow.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportBusinessFlow.ChildsExecutionStatistics.Activity.TotalPassed, accountReportBusinessFlow.ChildsExecutionStatistics.Activity.TotalExecutable));
+                accountReportBusinessFlow.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(activityStatisticsBase.TotalPassed, activityStatisticsBase.TotalExecutable));
             }
             else if ((int)_HTMLReportConfig.ExecutionStatisticsCountBy == 0)
             {
-                accountReportBusinessFlow.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalExecuted, accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalExecutable));
+                accountReportBusinessFlow.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(actionStatisticsBase.TotalExecuted, actionStatisticsBase.TotalExecutable));
 
-                accountReportBusinessFlow.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalPassed, accountReportBusinessFlow.ChildsExecutionStatistics.Action.TotalExecutable));
+                accountReportBusinessFlow.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(actionStatisticsBase.TotalPassed, actionStatisticsBase.TotalExecutable));
             }
             return accountReportBusinessFlow;
         }
@@ -393,7 +405,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunner.StartTimeStamp = gingerRunner.Executor.StartTimeStamp;
             accountReportRunner.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
             SetRunnerChildCountsAtStart(gingerRunner, accountReportRunner);
-            accountReportRunner.RunStatus = _InProgressStatus;
+            accountReportRunner.RunStatus = eExecutionStatus.InProgress;
             accountReportRunner.IsPublished = gingerRunner.Publish;
             return accountReportRunner;
         }
@@ -416,20 +428,26 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 accountReportRunner.ParentID = gingerRunner.ParentGuid;
             }
             //accountReportRunner.RunStatus = gingerRunner.Status.ToString();//SetStatus(BusinessFlowsColl); // check if need to calculate based on businessflows status data
-            accountReportRunner.RunStatus = GetRunnerStatus((GingerExecutionEngine)gingerRunner.Executor).ToString();
+            accountReportRunner.RunStatus = (eExecutionStatus)GetRunnerStatus((GingerExecutionEngine)gingerRunner.Executor);
             SetRunnerChildCountsAtEnd(gingerRunner, accountReportRunner);
+
+            StatisticsBase activityStatisticsBase = new StatisticsBase();
+            accountReportRunner.ChildsExecutionStatistics.TryGetValue(eEntityType.Activity, out activityStatisticsBase);
+
+            StatisticsBase actionStatisticsBase = new StatisticsBase();
+            accountReportRunner.ChildsExecutionStatistics.TryGetValue(eEntityType.Action, out actionStatisticsBase);
 
             if ((int)_HTMLReportConfig.ExecutionStatisticsCountBy == 1)
             {
-                accountReportRunner.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportRunner.ChildsExecutionStatistics.Activity.TotalExecuted, accountReportRunner.ChildsExecutionStatistics.Activity.TotalExecutable));
+                accountReportRunner.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(activityStatisticsBase.TotalExecuted, activityStatisticsBase.TotalExecutable));
 
-                accountReportRunner.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportRunner.ChildsExecutionStatistics.Activity.TotalPassed, accountReportRunner.ChildsExecutionStatistics.Activity.TotalExecutable));
+                accountReportRunner.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(activityStatisticsBase.TotalPassed, activityStatisticsBase.TotalExecutable));
             }
             else if ((int)_HTMLReportConfig.ExecutionStatisticsCountBy == 0)
             {
-                accountReportRunner.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportRunner.ChildsExecutionStatistics.Action.TotalExecuted, accountReportRunner.ChildsExecutionStatistics.Action.TotalExecutable));
+                accountReportRunner.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(actionStatisticsBase.TotalExecuted, actionStatisticsBase.TotalExecutable));
 
-                accountReportRunner.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportRunner.ChildsExecutionStatistics.Action.TotalPassed, accountReportRunner.ChildsExecutionStatistics.Action.TotalExecutable));
+                accountReportRunner.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(actionStatisticsBase.TotalPassed, actionStatisticsBase.TotalExecutable));
             }           
             return accountReportRunner;
         }
@@ -467,7 +485,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunSet.UserCategory3 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory3));
             accountReportRunSet.BusinessProcessTag = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.BusinessProcessTag));
             accountReportRunSet.SubBusinessProcessTag = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.SubBusinessProcessTag));
-            accountReportRunSet.RunStatus = _InProgressStatus;           
+            accountReportRunSet.RunStatus = eExecutionStatus.InProgress;           
             valueExpression.Value = runSetConfig.RunDescription;
             accountReportRunSet.RunDescription = valueExpression.ValueCalculated;
             accountReportRunSet.IsPublished = runSetConfig.Publish;
@@ -494,20 +512,26 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             }
             //Calculate at runset end
             accountReportRunSet.RunStatus = (runSetConfig.RunSetExecutionStatus == eRunStatus.Automated)
-                ? eRunStatus.Automated.ToString() : runSetConfig.RunSetExecutionStatus.ToString();
-            SetRunSetChildCountsAtEnd(runSetConfig, accountReportRunSet);         
+                ? eExecutionStatus.Automated : (eExecutionStatus)runSetConfig.RunSetExecutionStatus;
+            SetRunSetChildCountsAtEnd(runSetConfig, accountReportRunSet);
+
+            StatisticsBase activityStatisticsBase = new StatisticsBase();
+            accountReportRunSet.ChildsExecutionStatistics.TryGetValue(eEntityType.Activity, out activityStatisticsBase);
+
+            StatisticsBase actionStatisticsBase = new StatisticsBase();
+            accountReportRunSet.ChildsExecutionStatistics.TryGetValue(eEntityType.Action, out actionStatisticsBase);
 
             if ((int)_HTMLReportConfig.ExecutionStatisticsCountBy == 1)
             {
-                accountReportRunSet.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportRunSet.ChildsExecutionStatistics.Activity.TotalExecuted, accountReportRunSet.ChildsExecutionStatistics.Activity.TotalExecutable));
+                accountReportRunSet.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(activityStatisticsBase.TotalExecuted, activityStatisticsBase.TotalExecutable));
 
-                accountReportRunSet.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportRunSet.ChildsExecutionStatistics.Activity.TotalPassed, accountReportRunSet.ChildsExecutionStatistics.Activity.TotalExecutable));
+                accountReportRunSet.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(activityStatisticsBase.TotalPassed, activityStatisticsBase.TotalExecutable));
             }
             else if ((int)_HTMLReportConfig.ExecutionStatisticsCountBy == 0)
             {
-                accountReportRunSet.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportRunSet.ChildsExecutionStatistics.Action.TotalExecuted, accountReportRunSet.ChildsExecutionStatistics.Action.TotalExecutable));
+                accountReportRunSet.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(actionStatisticsBase.TotalExecuted, actionStatisticsBase.TotalExecutable));
 
-                accountReportRunSet.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportRunSet.ChildsExecutionStatistics.Action.TotalPassed, accountReportRunSet.ChildsExecutionStatistics.Action.TotalExecutable));
+                accountReportRunSet.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(actionStatisticsBase.TotalPassed, actionStatisticsBase.TotalExecutable));
             }
             return accountReportRunSet;
         }
@@ -551,89 +575,99 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         private static void SetRunnerChildCountsAtStart(GingerRunner gingerRunner, AccountReportRunner accountReportRunner)
         {
-            accountReportRunner.ChildsExecutionStatistics = new AccountReport.Contracts.RequestModels.ExecutionStatistics();
-            accountReportRunner.ChildsExecutionStatistics.Action = new ActionsStatistics();
-            accountReportRunner.ChildsExecutionStatistics.Activity = new ActivitiesStatistics();
-            accountReportRunner.ChildsExecutionStatistics.BusinessFlow = new BusinessFlowStatistics();
+            accountReportRunner.ChildsExecutionStatistics = new Dictionary<eEntityType, StatisticsBase>();
 
-            accountReportRunner.ChildsExecutionStatistics.BusinessFlow.TotalExecutable = ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows.Count(bf => bf.Active);
+            StatisticsBase actionStatisticsBase = new StatisticsBase();
+            StatisticsBase activityStatisticsBase = new StatisticsBase();
+            StatisticsBase businessFlowStatisticsBase = new StatisticsBase();
+
+            businessFlowStatisticsBase.TotalExecutable = ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows.Count(bf => bf.Active);
 
             foreach (BusinessFlow businessFlow in ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows)
             {
                 if (businessFlow.Active)
-                {                   
-                        accountReportRunner.ChildsExecutionStatistics.Activity.TotalExecutable =
-                               accountReportRunner.ChildsExecutionStatistics.Activity.TotalExecutable + businessFlow.Activities.Count(ac=>ac.Active);
+                {
+                    activityStatisticsBase.TotalExecutable =
+                               activityStatisticsBase.TotalExecutable + businessFlow.Activities.Count(ac=>ac.Active);
                                                         
                     foreach (Activity activity in businessFlow.Activities)
                     {
                         if (activity.Active)
-                        {                          
-                                accountReportRunner.ChildsExecutionStatistics.Action.TotalExecutable =
-                                 accountReportRunner.ChildsExecutionStatistics.Action.TotalExecutable + activity.Acts.Count(a=>a.Active);                                                             
+                        {
+                            actionStatisticsBase.TotalExecutable =
+                                 actionStatisticsBase.TotalExecutable + activity.Acts.Count(a=>a.Active);                                                             
                         }
                     }
                 }
             }
+
+            accountReportRunner.ChildsExecutionStatistics.Add(eEntityType.Action, actionStatisticsBase);
+            accountReportRunner.ChildsExecutionStatistics.Add(eEntityType.Activity, activityStatisticsBase);
+            accountReportRunner.ChildsExecutionStatistics.Add(eEntityType.BusinessFlow, businessFlowStatisticsBase);            
         }
         private static void SetRunSetChildCountsAtStart(RunSetConfig runSet, AccountReportRunSet accountReportRunSet)
         {
-            accountReportRunSet.ChildsExecutionStatistics = new AccountReport.Contracts.RequestModels.ExecutionStatistics();
-            accountReportRunSet.ChildsExecutionStatistics.Action = new ActionsStatistics();
-            accountReportRunSet.ChildsExecutionStatistics.Activity = new ActivitiesStatistics();
-            accountReportRunSet.ChildsExecutionStatistics.BusinessFlow = new BusinessFlowStatistics();
-            accountReportRunSet.ChildsExecutionStatistics.Runner = new RunnersStatistics();
+            accountReportRunSet.ChildsExecutionStatistics = new Dictionary<eEntityType, StatisticsBase>();
+            StatisticsBase actionStatisticsBase = new StatisticsBase();
+            StatisticsBase activityStatisticsBase = new StatisticsBase();
+            StatisticsBase businessFlowStatisticsBase = new StatisticsBase();
+            StatisticsBase runnerStatisticsBase = new StatisticsBase();
 
-            accountReportRunSet.ChildsExecutionStatistics.Runner.TotalExecutable = runSet.GingerRunners.Count(r => r.Active);
+            runnerStatisticsBase.TotalExecutable = runSet.GingerRunners.Count(r => r.Active);
 
             foreach (GingerRunner runner in runSet.GingerRunners)
             {
                 if (runner.Active)
                 {
-                    accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.TotalExecutable =
-                    accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.TotalExecutable + ((GingerExecutionEngine)runner.Executor).BusinessFlows.Count(bf => bf.Active);
+                    businessFlowStatisticsBase.TotalExecutable =
+                    businessFlowStatisticsBase.TotalExecutable + ((GingerExecutionEngine)runner.Executor).BusinessFlows.Count(bf => bf.Active);
                     foreach (BusinessFlow businessFlow in runner.Executor.BusinessFlows)
                     {
                         if (businessFlow.Active)
                         {
-                            accountReportRunSet.ChildsExecutionStatistics.Activity.TotalExecutable =
-                                   accountReportRunSet.ChildsExecutionStatistics.Activity.TotalExecutable + businessFlow.Activities.Count(ac => ac.Active);
+                            activityStatisticsBase.TotalExecutable =
+                                   activityStatisticsBase.TotalExecutable + businessFlow.Activities.Count(ac => ac.Active);
 
                             foreach (Activity activity in businessFlow.Activities)
                             {
                                 if (activity.Active)
                                 {
-                                    accountReportRunSet.ChildsExecutionStatistics.Action.TotalExecutable =
-                                     accountReportRunSet.ChildsExecutionStatistics.Action.TotalExecutable + activity.Acts.Count(a => a.Active);
+                                    actionStatisticsBase.TotalExecutable =
+                                     actionStatisticsBase.TotalExecutable + activity.Acts.Count(a => a.Active);
                                 }
                             }
                         }
                     }
                 }
             }
+
+            accountReportRunSet.ChildsExecutionStatistics.Add(eEntityType.Action, actionStatisticsBase);
+            accountReportRunSet.ChildsExecutionStatistics.Add(eEntityType.Activity, activityStatisticsBase);
+            accountReportRunSet.ChildsExecutionStatistics.Add(eEntityType.BusinessFlow, businessFlowStatisticsBase);
+            accountReportRunSet.ChildsExecutionStatistics.Add(eEntityType.Runner, runnerStatisticsBase);
         }
 
         private static void SetRunnerChildCountsAtEnd(GingerRunner gingerRunner, AccountReportRunner accountReportRunner)
         {
-            accountReportRunner.ChildsExecutionStatistics = new AccountReport.Contracts.RequestModels.ExecutionStatistics();
-            accountReportRunner.ChildsExecutionStatistics.Action = new ActionsStatistics();
-            accountReportRunner.ChildsExecutionStatistics.Activity = new ActivitiesStatistics();
-            accountReportRunner.ChildsExecutionStatistics.BusinessFlow = new BusinessFlowStatistics();
-            
-                accountReportRunner.ChildsExecutionStatistics.Action.StatusCount = new Dictionary<string, int>();
-                accountReportRunner.ChildsExecutionStatistics.Activity.StatusCount = new Dictionary<string, int>();
-                accountReportRunner.ChildsExecutionStatistics.BusinessFlow.StatusCount = new Dictionary<string, int>();
+            accountReportRunner.ChildsExecutionStatistics = new Dictionary<eEntityType, StatisticsBase>();
+            StatisticsBase actionStatisticsBase = new StatisticsBase();
+            StatisticsBase activityStatisticsBase = new StatisticsBase();
+            StatisticsBase businessFlowStatisticsBase = new StatisticsBase();
 
-                var businessFlowStat = (from a in ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows.GroupBy(x => x.RunStatus)
-                                        select new KeyValuePair<string, int>(a.First().RunStatus.ToString(), a.Count())).ToList();
+            actionStatisticsBase.StatusCount = new Dictionary<eExecutionStatus, int>();
+            activityStatisticsBase.StatusCount = new Dictionary<eExecutionStatus, int>();
+            businessFlowStatisticsBase.StatusCount = new Dictionary<eExecutionStatus, int>();
 
-                foreach (var bstat in businessFlowStat)
-                {
-                    accountReportRunner.ChildsExecutionStatistics.BusinessFlow.StatusCount[bstat.Key] = bstat.Value;
-                }
-                accountReportRunner.ChildsExecutionStatistics.BusinessFlow.TotalExecuted = ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows.Count(bf => bf.RunStatus == eRunStatus.Failed || bf.RunStatus == eRunStatus.Passed || bf.RunStatus == eRunStatus.FailIgnored || bf.RunStatus == eRunStatus.Stopped || bf.RunStatus == eRunStatus.Completed);
-                accountReportRunner.ChildsExecutionStatistics.BusinessFlow.TotalPassed = ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows.Count(bf => bf.RunStatus == eRunStatus.Passed);
-                accountReportRunner.ChildsExecutionStatistics.BusinessFlow.TotalExecutable = ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows.Count(bf => bf.Active && (bf.RunStatus == eRunStatus.Passed || bf.RunStatus == eRunStatus.Failed || bf.RunStatus == eRunStatus.FailIgnored || bf.RunStatus == eRunStatus.Blocked));
+            var businessFlowStat = (from a in ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows.GroupBy(x => x.RunStatus)
+                                    select new KeyValuePair<eRunStatus, int>((eRunStatus)a.First().RunStatus, a.Count())).ToList();
+
+            foreach (var bstat in businessFlowStat)
+            {
+                businessFlowStatisticsBase.StatusCount[(eExecutionStatus)bstat.Key] = bstat.Value;
+            }
+            businessFlowStatisticsBase.TotalExecuted = ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows.Count(bf => bf.RunStatus == eRunStatus.Failed || bf.RunStatus == eRunStatus.Passed || bf.RunStatus == eRunStatus.FailIgnored || bf.RunStatus == eRunStatus.Stopped || bf.RunStatus == eRunStatus.Completed);
+            businessFlowStatisticsBase.TotalPassed = ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows.Count(bf => bf.RunStatus == eRunStatus.Passed);
+            businessFlowStatisticsBase.TotalExecutable = ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows.Count(bf => bf.Active && (bf.RunStatus == eRunStatus.Passed || bf.RunStatus == eRunStatus.Failed || bf.RunStatus == eRunStatus.FailIgnored || bf.RunStatus == eRunStatus.Blocked));
                         
 
             foreach (BusinessFlow businessFlow in ((GingerExecutionEngine)gingerRunner.Executor).BusinessFlows)
@@ -641,26 +675,29 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 if (businessFlow.Active)
                 {                   
                     var bfStat = accountReportStatistics.Where(x => x.EntityId == businessFlow.Guid).FirstOrDefault();
-                    if (bfStat!=null)
-                    {                             
-                            accountReportRunner.ChildsExecutionStatistics.Activity.TotalExecutable =
-                                   accountReportRunner.ChildsExecutionStatistics.Activity.TotalExecutable + bfStat.ChildsExecutionStatistics.Activity.TotalExecutable;
+                    if (bfStat!=null && bfStat.ChildsExecutionStatistics!=null)
+                    {
+                        StatisticsBase historyActivityStatisticsBase = new StatisticsBase();
+                        bfStat.ChildsExecutionStatistics.TryGetValue(eEntityType.Activity, out historyActivityStatisticsBase);
 
-                            accountReportRunner.ChildsExecutionStatistics.Activity.TotalExecuted =
-                                   accountReportRunner.ChildsExecutionStatistics.Activity.TotalExecuted + bfStat.ChildsExecutionStatistics.Activity.TotalExecuted;
+                        activityStatisticsBase.TotalExecutable =
+                                   activityStatisticsBase.TotalExecutable + historyActivityStatisticsBase.TotalExecutable;
 
-                            accountReportRunner.ChildsExecutionStatistics.Activity.TotalPassed =
-                               accountReportRunner.ChildsExecutionStatistics.Activity.TotalPassed + bfStat.ChildsExecutionStatistics.Activity.TotalPassed;
+                        activityStatisticsBase.TotalExecuted =
+                                   activityStatisticsBase.TotalExecuted + historyActivityStatisticsBase.TotalExecuted;
 
-                            foreach (var dicObj in bfStat.ChildsExecutionStatistics.Activity.StatusCount)
+                        activityStatisticsBase.TotalPassed =
+                               activityStatisticsBase.TotalPassed + historyActivityStatisticsBase.TotalPassed;
+
+                            foreach (var dicObj in historyActivityStatisticsBase.StatusCount)
                             {
-                                if (accountReportRunner.ChildsExecutionStatistics.Activity.StatusCount.ContainsKey(dicObj.Key))
+                                if (activityStatisticsBase.StatusCount.ContainsKey(dicObj.Key))
                                 {
-                                    accountReportRunner.ChildsExecutionStatistics.Activity.StatusCount[dicObj.Key] = accountReportRunner.ChildsExecutionStatistics.Activity.StatusCount[dicObj.Key] + dicObj.Value;
+                                    activityStatisticsBase.StatusCount[dicObj.Key] = activityStatisticsBase.StatusCount[dicObj.Key] + dicObj.Value;
                                 }
                                 else
                                 {
-                                    accountReportRunner.ChildsExecutionStatistics.Activity.StatusCount[dicObj.Key] = dicObj.Value;
+                                    activityStatisticsBase.StatusCount[dicObj.Key] = dicObj.Value;
                                 }
                             }                        
                     }
@@ -671,26 +708,29 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                         {
                             var stat = accountReportStatistics.Where(x => x.EntityId == activity.Guid).FirstOrDefault();
                            
-                            if (stat != null)
+                            if (stat != null && stat.ChildsExecutionStatistics!=null)
                             {
-                                accountReportRunner.ChildsExecutionStatistics.Action.TotalExecutable =
-                                 accountReportRunner.ChildsExecutionStatistics.Action.TotalExecutable + stat.ChildsExecutionStatistics.Action.TotalExecutable;
-                                                            
-                                accountReportRunner.ChildsExecutionStatistics.Action.TotalExecuted =
-                                accountReportRunner.ChildsExecutionStatistics.Action.TotalExecuted + stat.ChildsExecutionStatistics.Action.TotalExecuted;
+                                StatisticsBase historyActionStatisticsBase = new StatisticsBase();
+                                stat.ChildsExecutionStatistics.TryGetValue(eEntityType.Action, out historyActionStatisticsBase);
 
-                                accountReportRunner.ChildsExecutionStatistics.Action.TotalPassed =
-                                    accountReportRunner.ChildsExecutionStatistics.Action.TotalPassed + stat.ChildsExecutionStatistics.Action.TotalPassed;
+                                actionStatisticsBase.TotalExecutable =
+                                 actionStatisticsBase.TotalExecutable + historyActionStatisticsBase.TotalExecutable;
 
-                                foreach (var dicObj in stat.ChildsExecutionStatistics.Action.StatusCount)
+                                actionStatisticsBase.TotalExecuted =
+                                actionStatisticsBase.TotalExecuted + historyActionStatisticsBase.TotalExecuted;
+
+                                actionStatisticsBase.TotalPassed =
+                                    actionStatisticsBase.TotalPassed + historyActionStatisticsBase.TotalPassed;
+
+                                foreach (var dicObj in historyActionStatisticsBase.StatusCount)
                                 {
-                                    if (accountReportRunner.ChildsExecutionStatistics.Action.StatusCount.ContainsKey(dicObj.Key))
+                                    if (actionStatisticsBase.StatusCount.ContainsKey(dicObj.Key))
                                     {
-                                        accountReportRunner.ChildsExecutionStatistics.Action.StatusCount[dicObj.Key] = accountReportRunner.ChildsExecutionStatistics.Action.StatusCount[dicObj.Key] + dicObj.Value;
+                                        actionStatisticsBase.StatusCount[dicObj.Key] = actionStatisticsBase.StatusCount[dicObj.Key] + dicObj.Value;
                                     }
                                     else
                                     {
-                                        accountReportRunner.ChildsExecutionStatistics.Action.StatusCount[dicObj.Key] = dicObj.Value;
+                                        actionStatisticsBase.StatusCount[dicObj.Key] = dicObj.Value;
                                     }
                                 }
                                 
@@ -699,7 +739,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     } 
                 }
             }
-            
+
+            accountReportRunner.ChildsExecutionStatistics.Add(eEntityType.Action, actionStatisticsBase);
+            accountReportRunner.ChildsExecutionStatistics.Add(eEntityType.Activity, activityStatisticsBase);
+            accountReportRunner.ChildsExecutionStatistics.Add(eEntityType.BusinessFlow, businessFlowStatisticsBase);
+
             accountReportStatistics.Add(new AccountReportStatistics()
             {
                 ChildsExecutionStatistics = accountReportRunner.ChildsExecutionStatistics,
@@ -711,27 +755,28 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         private static void SetRunSetChildCountsAtEnd(RunSetConfig runSet, AccountReportRunSet accountReportRunSet)
         {
-            accountReportRunSet.ChildsExecutionStatistics = new AccountReport.Contracts.RequestModels.ExecutionStatistics();
-            accountReportRunSet.ChildsExecutionStatistics.Action = new ActionsStatistics();
-            accountReportRunSet.ChildsExecutionStatistics.Activity = new ActivitiesStatistics();
-            accountReportRunSet.ChildsExecutionStatistics.BusinessFlow = new BusinessFlowStatistics();
-            accountReportRunSet.ChildsExecutionStatistics.Runner = new RunnersStatistics();
-           
-            accountReportRunSet.ChildsExecutionStatistics.Action.StatusCount = new Dictionary<string, int>();
-            accountReportRunSet.ChildsExecutionStatistics.Activity.StatusCount = new Dictionary<string, int>();
-            accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.StatusCount = new Dictionary<string, int>();
-            accountReportRunSet.ChildsExecutionStatistics.Runner.StatusCount = new Dictionary<string, int>();
-            accountReportRunSet.ChildsExecutionStatistics.Runner.TotalExecuted = runSet.GingerRunners.Count(rs => rs.Status == eRunStatus.Failed || rs.Status == eRunStatus.Passed || rs.Status == eRunStatus.FailIgnored || rs.Status == eRunStatus.Stopped || rs.Status == eRunStatus.Completed);
-            accountReportRunSet.ChildsExecutionStatistics.Runner.TotalPassed = runSet.GingerRunners.Count(rs => rs.Status == eRunStatus.Passed);
-           
-            accountReportRunSet.ChildsExecutionStatistics.Runner.TotalExecutable = runSet.GingerRunners.Count(rs => rs.Active && (rs.Status == eRunStatus.Passed || rs.Status == eRunStatus.Failed || rs.Status == eRunStatus.FailIgnored || rs.Status == eRunStatus.Blocked));
+            accountReportRunSet.ChildsExecutionStatistics = new Dictionary<eEntityType, StatisticsBase>();
+            StatisticsBase actionStatisticsBase = new StatisticsBase();
+            StatisticsBase activityStatisticsBase = new StatisticsBase();
+            StatisticsBase businessFlowStatisticsBase = new StatisticsBase();
+            StatisticsBase runnerStatisticsBase = new StatisticsBase();
+
+            actionStatisticsBase.StatusCount = new Dictionary<eExecutionStatus, int>();
+            activityStatisticsBase.StatusCount = new Dictionary<eExecutionStatus, int>();
+            businessFlowStatisticsBase.StatusCount = new Dictionary<eExecutionStatus, int>();
+            runnerStatisticsBase.StatusCount = new Dictionary<eExecutionStatus, int>();
+
+            runnerStatisticsBase.TotalExecuted = runSet.GingerRunners.Count(rs => rs.Status == eRunStatus.Failed || rs.Status == eRunStatus.Passed || rs.Status == eRunStatus.FailIgnored || rs.Status == eRunStatus.Stopped || rs.Status == eRunStatus.Completed);
+            runnerStatisticsBase.TotalPassed = runSet.GingerRunners.Count(rs => rs.Status == eRunStatus.Passed);
+
+            runnerStatisticsBase.TotalExecutable = runSet.GingerRunners.Count(rs => rs.Active && (rs.Status == eRunStatus.Passed || rs.Status == eRunStatus.Failed || rs.Status == eRunStatus.FailIgnored || rs.Status == eRunStatus.Blocked));
             
             var runnerStat = (from a in runSet.GingerRunners.GroupBy(x => x.Status)
-                                select new KeyValuePair<string, int>(a.First().Status.ToString(), a.Count())).ToList();
+                                select new KeyValuePair<eRunStatus, int>((eRunStatus)a.First().Status, a.Count())).ToList();
 
             foreach (var rstat in runnerStat)
             {
-                accountReportRunSet.ChildsExecutionStatistics.Runner.StatusCount[rstat.Key] = rstat.Value;
+                runnerStatisticsBase.StatusCount[(eExecutionStatus)rstat.Key] = rstat.Value;
             }
                                    
             foreach (GingerRunner runner in runSet.GingerRunners)
@@ -739,27 +784,29 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 if (runner.Active)
                 {
                     var rStat = accountReportStatistics.Where(x => x.EntityId == runner.Guid).FirstOrDefault();
-                    if (rStat != null)
+                    if (rStat != null && rStat.ChildsExecutionStatistics != null)
                     {
-                       
-                        accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.TotalExecutable =
-                           accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.TotalExecutable + rStat.ChildsExecutionStatistics.BusinessFlow.TotalExecutable; 
-                                            
-                        accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.TotalExecuted =
-                            accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.TotalExecuted + rStat.ChildsExecutionStatistics.BusinessFlow.TotalExecuted;
+                        StatisticsBase historyBusinessflowStatisticsBase = new StatisticsBase();
+                        rStat.ChildsExecutionStatistics.TryGetValue(eEntityType.BusinessFlow, out historyBusinessflowStatisticsBase);
 
-                        accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.TotalPassed =
-                            accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.TotalPassed + rStat.ChildsExecutionStatistics.BusinessFlow.TotalPassed;
+                        businessFlowStatisticsBase.TotalExecutable =
+                           businessFlowStatisticsBase.TotalExecutable + historyBusinessflowStatisticsBase.TotalExecutable;
 
-                        foreach (var dicObj in rStat.ChildsExecutionStatistics.BusinessFlow.StatusCount)
+                        businessFlowStatisticsBase.TotalExecuted =
+                            businessFlowStatisticsBase.TotalExecuted + historyBusinessflowStatisticsBase.TotalExecuted;
+
+                        businessFlowStatisticsBase.TotalPassed =
+                            businessFlowStatisticsBase.TotalPassed + historyBusinessflowStatisticsBase.TotalPassed;
+
+                        foreach (var dicObj in historyBusinessflowStatisticsBase.StatusCount)
                         {
-                            if (accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.StatusCount.ContainsKey(dicObj.Key))
+                            if (businessFlowStatisticsBase.StatusCount.ContainsKey(dicObj.Key))
                             {
-                                accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.StatusCount[dicObj.Key] = accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.StatusCount[dicObj.Key] + dicObj.Value;
+                                businessFlowStatisticsBase.StatusCount[dicObj.Key] = businessFlowStatisticsBase.StatusCount[dicObj.Key] + dicObj.Value;
                             }
                             else
                             {
-                                accountReportRunSet.ChildsExecutionStatistics.BusinessFlow.StatusCount[dicObj.Key] = dicObj.Value;
+                                businessFlowStatisticsBase.StatusCount[dicObj.Key] = dicObj.Value;
                             }
                         }                         
                     }
@@ -769,25 +816,28 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                         if (businessFlow.Active)
                         {
                             var bfStat = accountReportStatistics.Where(x => x.EntityId == businessFlow.Guid).FirstOrDefault();
-                            if (bfStat != null)
+                            if (bfStat != null && bfStat.ChildsExecutionStatistics!=null)
                             {
-                                accountReportRunSet.ChildsExecutionStatistics.Activity.TotalExecutable =
-                                 accountReportRunSet.ChildsExecutionStatistics.Activity.TotalExecutable + bfStat.ChildsExecutionStatistics.Activity.TotalExecutable;
+                                StatisticsBase historyActivityStatisticsBase = new StatisticsBase();
+                                bfStat.ChildsExecutionStatistics.TryGetValue(eEntityType.Activity, out historyActivityStatisticsBase);
 
-                                accountReportRunSet.ChildsExecutionStatistics.Activity.TotalExecuted =
-                                                    accountReportRunSet.ChildsExecutionStatistics.Activity.TotalExecuted + bfStat.ChildsExecutionStatistics.Activity.TotalExecuted;
+                                activityStatisticsBase.TotalExecutable =
+                                 activityStatisticsBase.TotalExecutable + historyActivityStatisticsBase.TotalExecutable;
 
-                                accountReportRunSet.ChildsExecutionStatistics.Activity.TotalPassed =
-                                    accountReportRunSet.ChildsExecutionStatistics.Activity.TotalPassed + bfStat.ChildsExecutionStatistics.Activity.TotalPassed;
-                                foreach (var dicObj in bfStat.ChildsExecutionStatistics.Activity.StatusCount)
+                                activityStatisticsBase.TotalExecuted =
+                                                    activityStatisticsBase.TotalExecuted + historyActivityStatisticsBase.TotalExecuted;
+
+                                activityStatisticsBase.TotalPassed =
+                                    activityStatisticsBase.TotalPassed + historyActivityStatisticsBase.TotalPassed;
+                                foreach (var dicObj in historyActivityStatisticsBase.StatusCount)
                                 {
-                                    if (accountReportRunSet.ChildsExecutionStatistics.Activity.StatusCount.ContainsKey(dicObj.Key))
+                                    if (activityStatisticsBase.StatusCount.ContainsKey(dicObj.Key))
                                     {
-                                        accountReportRunSet.ChildsExecutionStatistics.Activity.StatusCount[dicObj.Key] = accountReportRunSet.ChildsExecutionStatistics.Activity.StatusCount[dicObj.Key] + dicObj.Value;
+                                        activityStatisticsBase.StatusCount[dicObj.Key] = activityStatisticsBase.StatusCount[dicObj.Key] + dicObj.Value;
                                     }
                                     else
                                     {
-                                        accountReportRunSet.ChildsExecutionStatistics.Activity.StatusCount[dicObj.Key] = dicObj.Value;
+                                        activityStatisticsBase.StatusCount[dicObj.Key] = dicObj.Value;
                                     }
                                 }                                 
                             }
@@ -797,27 +847,30 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                                 if (activity.Active)
                                 {
                                     var stat = accountReportStatistics.Where(x => x.EntityId == activity.Guid).FirstOrDefault();
-                                    if (stat != null)
+                                    if (stat != null && stat.ChildsExecutionStatistics!=null)
                                     {
-                                        accountReportRunSet.ChildsExecutionStatistics.Action.TotalExecutable =
-                                          accountReportRunSet.ChildsExecutionStatistics.Action.TotalExecutable + stat.ChildsExecutionStatistics.Action.TotalExecutable;
+                                        StatisticsBase historyActionStatisticsBase = new StatisticsBase();
+                                        stat.ChildsExecutionStatistics.TryGetValue(eEntityType.Action, out historyActionStatisticsBase);
 
-                                        
-                                        accountReportRunSet.ChildsExecutionStatistics.Action.TotalExecuted =
-                                                                        accountReportRunSet.ChildsExecutionStatistics.Action.TotalExecuted + stat.ChildsExecutionStatistics.Action.TotalExecuted;
+                                        actionStatisticsBase.TotalExecutable =
+                                          actionStatisticsBase.TotalExecutable + historyActionStatisticsBase.TotalExecutable;
 
-                                        accountReportRunSet.ChildsExecutionStatistics.Action.TotalPassed =
-                                            accountReportRunSet.ChildsExecutionStatistics.Action.TotalPassed + stat.ChildsExecutionStatistics.Action.TotalPassed;
 
-                                        foreach (var dicObj in stat.ChildsExecutionStatistics.Action.StatusCount)
+                                        actionStatisticsBase.TotalExecuted =
+                                                                        actionStatisticsBase.TotalExecuted + historyActionStatisticsBase.TotalExecuted;
+
+                                        actionStatisticsBase.TotalPassed =
+                                            actionStatisticsBase.TotalPassed + historyActionStatisticsBase.TotalPassed;
+
+                                        foreach (var dicObj in historyActionStatisticsBase.StatusCount)
                                         {
-                                            if (accountReportRunSet.ChildsExecutionStatistics.Action.StatusCount.ContainsKey(dicObj.Key))
+                                            if (actionStatisticsBase.StatusCount.ContainsKey(dicObj.Key))
                                             {
-                                                accountReportRunSet.ChildsExecutionStatistics.Action.StatusCount[dicObj.Key] = accountReportRunSet.ChildsExecutionStatistics.Action.StatusCount[dicObj.Key] + dicObj.Value;
+                                                actionStatisticsBase.StatusCount[dicObj.Key] = actionStatisticsBase.StatusCount[dicObj.Key] + dicObj.Value;
                                             }
                                             else
                                             {
-                                                accountReportRunSet.ChildsExecutionStatistics.Action.StatusCount[dicObj.Key] = dicObj.Value;
+                                                actionStatisticsBase.StatusCount[dicObj.Key] = dicObj.Value;
                                             }
                                         }                                         
                                     }
@@ -827,7 +880,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     }
                 }
             }
-            
+
+            accountReportRunSet.ChildsExecutionStatistics.Add(eEntityType.Action, actionStatisticsBase);
+            accountReportRunSet.ChildsExecutionStatistics.Add(eEntityType.Activity, activityStatisticsBase);
+            accountReportRunSet.ChildsExecutionStatistics.Add(eEntityType.BusinessFlow, businessFlowStatisticsBase);
+            accountReportRunSet.ChildsExecutionStatistics.Add(eEntityType.Runner, runnerStatisticsBase);
+
             accountReportStatistics.Add(new AccountReportStatistics()
             {
                 ChildsExecutionStatistics = accountReportRunSet.ChildsExecutionStatistics,

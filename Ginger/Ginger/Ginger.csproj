@@ -704,7 +704,7 @@
     <PackageReference Include="FontAwesome6.Fonts" Version="2.5.1" />
     <PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.5" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.3.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
@@ -745,7 +745,7 @@
     <ProjectReference Include="..\GingerWin64OsSupport\GingerWin64OsSupport.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup>    
     <Reference Include="ACL_Data_Contract">
       <HintPath>..\GingerCoreNET\DLLS\ACL_Data_Contract.dll</HintPath>
     </Reference>
