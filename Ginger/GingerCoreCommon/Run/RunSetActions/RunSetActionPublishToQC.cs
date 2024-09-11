@@ -19,6 +19,7 @@ limitations under the License.
 using System.Collections.Generic;
 using System.ComponentModel;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.ALM;
@@ -187,6 +188,14 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(IReportInfo RI)
         {
+            if (!string.IsNullOrEmpty(PublishALMType))
+            {
+                Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
+                {
+                    { "Type", PublishALMType },
+                    { "Operation", "Publish" },
+                });
+            }
             RunSetActionPublishToQCOperations.Execute(RI);
         }
 

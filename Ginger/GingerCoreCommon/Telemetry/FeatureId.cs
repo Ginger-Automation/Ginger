@@ -22,5 +22,6 @@ namespace Amdocs.Ginger.Common.Telemetry
         SourceControl,
         Environment,
         GlobalParameter,
+        ALM,
     }
 }
