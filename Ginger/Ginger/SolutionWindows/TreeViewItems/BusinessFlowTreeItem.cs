@@ -249,11 +249,27 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ExportToALM(object sender, System.Windows.RoutedEventArgs e)
         {
-            ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow, true);
+            bool wasSuccessful = ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow, true);
+            if (wasSuccessful)
+            {
+                Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
+                {
+                    { "Type", ALMIntegration.Instance.GetALMType().ToString() },
+                    { "Operation", "ExportBusinessFlow" },
+                });
+            }
         }
         private void MapToALM(object sender, System.Windows.RoutedEventArgs e)
         {
-            ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow, true);
+            bool wasSuccessful = ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow, true);
+            if (wasSuccessful)
+            {
+                Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
+                {
+                    { "Type", ALMIntegration.Instance.GetALMType().ToString() },
+                    { "Operation", "MapBusinessFlow" },
+                });
+            }
         }
 
         private void ExportToCSV(object sender, System.Windows.RoutedEventArgs e)

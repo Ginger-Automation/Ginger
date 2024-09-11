@@ -281,7 +281,7 @@ namespace Ginger.ALM
             return domainList;
         }
 
-        internal async Task<bool> MapBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
+        internal bool MapBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
         {
             Reporter.ToLog(eLogLevel.INFO, "Mapping " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM");
             //Passing Solution Folder path to GingerCore
