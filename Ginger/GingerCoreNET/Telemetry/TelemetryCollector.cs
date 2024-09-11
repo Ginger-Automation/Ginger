@@ -1,4 +1,4 @@
-﻿using GingerTelemetry.GRPC;
+﻿using GingerTelemetryProto.V1;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 using System;
