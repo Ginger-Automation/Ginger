@@ -72,8 +72,8 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 {
                     try
                     {
-                        // DoNotVerify so on Linux it will not return empty
-                        string appDataFolder = OperatingSystem.IsMacOS() ? "/Users/pravishe/" : Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
+                        // DoNotVerify so on Linux it will not return empty 
+                        string appDataFolder = OperatingSystem.IsMacOS() ? $"{Path.PathSeparator}Users{Path.PathSeparator}pravishe" : Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
 
                         if (!Directory.Exists(appDataFolder))  // on Linux it sometimes not exist like on Azure build
                         {
