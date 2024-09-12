@@ -11,7 +11,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
     {
         public Task AddAsync(IEnumerable<TRecord> records);
         public Task DeleteAsync(IEnumerable<TRecord> records);
-        public Task IncrementUploadAttemptCount(IEnumerable<TRecord> records);
-        public Task<IEnumerable<TRecord>> GetRecordsForRetry(IEnumerable<TRecord> exclude, int limit);
+        public Task IncrementUploadAttemptCountAsync(IEnumerable<TRecord> records);
+        public Task<IEnumerable<TRecord>> GetRecordsForRetryAsync(IEnumerable<TRecord> exclude, int limit);
     }
 }

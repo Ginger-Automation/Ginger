@@ -100,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task IncrementUploadAttemptCount(IEnumerable<TelemetryLogRecord> logs)
+        public Task IncrementUploadAttemptCountAsync(IEnumerable<TelemetryLogRecord> logs)
         {
             if (logs == null)
             {
@@ -129,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task<IEnumerable<TelemetryLogRecord>> GetRecordsForRetry(IEnumerable<TelemetryLogRecord> exclude, int limit)
+        public Task<IEnumerable<TelemetryLogRecord>> GetRecordsForRetryAsync(IEnumerable<TelemetryLogRecord> exclude, int limit)
         {
             if (exclude == null)
             {
@@ -197,7 +197,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task IncrementUploadAttemptCount(IEnumerable<TelemetryFeatureRecord> features)
+        public Task IncrementUploadAttemptCountAsync(IEnumerable<TelemetryFeatureRecord> features)
         {
             if (features == null)
             {
@@ -226,7 +226,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task<IEnumerable<TelemetryFeatureRecord>> GetRecordsForRetry(IEnumerable<TelemetryFeatureRecord> exclude, int limit)
+        public Task<IEnumerable<TelemetryFeatureRecord>> GetRecordsForRetryAsync(IEnumerable<TelemetryFeatureRecord> exclude, int limit)
         {
             if (exclude == null)
             {

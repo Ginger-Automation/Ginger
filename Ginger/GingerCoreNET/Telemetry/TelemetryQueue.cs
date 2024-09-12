@@ -263,7 +263,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             _logger?.LogTrace("{corrId} incrementing 'UploadAttemptCount' for records in db in {queueName}", corrId, QueueName);
             try
             {
-                await _db.IncrementUploadAttemptCount(records);
+                await _db.IncrementUploadAttemptCountAsync(records);
                 return true;
             }
             catch (Exception ex)
@@ -278,7 +278,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             _logger?.LogTrace("{corrId} getting records for retry from db in {queueName}", corrId, QueueName);
             try
             {
-                return await _db.GetRecordsForRetry(exclude: _recordsBeingProcessed, limit: _retryPollingSize);
+                return await _db.GetRecordsForRetryAsync(exclude: _recordsBeingProcessed, limit: _retryPollingSize);
             }
             catch (Exception ex)
             {
