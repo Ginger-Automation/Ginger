@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                     try
                     {
                         // DoNotVerify so on Linux it will not return empty
-                        string folderPath = OperatingSystem.IsMacOS() ? $"{Path.PathSeparator}Users{Path.PathSeparator}pravishe" : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData, Environment.SpecialFolderOption.Create);
+                        string folderPath = OperatingSystem.IsMacOS() ? $"AppData" : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData, Environment.SpecialFolderOption.Create);
 
                         folderPath = Path.Combine(folderPath, "amdocs", "Ginger");
 
@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                     try
                     {
                         // DoNotVerify so on Linux it will not return empty 
-                        string appDataFolder = OperatingSystem.IsMacOS() ? $"{Path.PathSeparator}Users{Path.PathSeparator}pravishe" : Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
+                        string appDataFolder = OperatingSystem.IsMacOS() ? $"AppData" : Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
 
                         if (!Directory.Exists(appDataFolder))  // on Linux it sometimes not exist like on Azure build
                         {
