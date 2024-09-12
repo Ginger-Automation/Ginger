@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }, NewBsonMapper());
         }
 
-        public Task AddAsync(IEnumerable<TelemetryLogRecord> logs)
+        public async Task AddAsync(IEnumerable<TelemetryLogRecord> logs)
         {
             if (logs == null)
             {
@@ -66,10 +66,10 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }
             if (!logs.Any())
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            return Task.Run(() =>
+            await Task.Run(() =>
             {
                 using LiteDatabase db = NewLiteDb();
                 ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task DeleteAsync(IEnumerable<TelemetryLogRecord> logs)
+        public async Task DeleteAsync(IEnumerable<TelemetryLogRecord> logs)
         {
             if (logs == null)
             {
@@ -86,10 +86,10 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }
             if (!logs.Any())
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            return Task.Run(() =>
+            await Task.Run(() =>
             {
                 IEnumerable<string> ids = logs.Select(log => log.Id);
 
@@ -100,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task IncrementUploadAttemptCountAsync(IEnumerable<TelemetryLogRecord> logs)
+        public async Task IncrementUploadAttemptCountAsync(IEnumerable<TelemetryLogRecord> logs)
         {
             if (logs == null)
             {
@@ -108,17 +108,17 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }
             if (!logs.Any())
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            return Task.Run(() =>
+            await Task.Run(() =>
             {
                 IEnumerable<string> ids = logs.Select(l => l.Id);
 
                 using LiteDatabase db = NewLiteDb();
                 ILiteCollection<TelemetryLogRecord> collection = db.GetCollection<TelemetryLogRecord>();
                 
-                IEnumerable<TelemetryLogRecord> logsInDB = collection.Find(log => ids.Contains(log.Id));
+                IEnumerable<TelemetryLogRecord> logsInDB = collection.Find(log => ids.Contains(log.Id)).ToList();
 
                 foreach (TelemetryLogRecord logInDB in logsInDB)
                 {
@@ -129,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task<IEnumerable<TelemetryLogRecord>> GetRecordsForRetryAsync(IEnumerable<TelemetryLogRecord> exclude, int limit)
+        public async Task<IEnumerable<TelemetryLogRecord>> GetRecordsForRetryAsync(IEnumerable<TelemetryLogRecord> exclude, int limit)
         {
             if (exclude == null)
             {
@@ -140,7 +140,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 throw new ArgumentOutOfRangeException($"'{nameof(limit)}' cannot be less than or equal to 0");
             }
 
-            return Task.Run(() =>
+            return await Task.Run(() =>
             {
                 IEnumerable<string> ids = exclude.Select(l => l.Id);
                 
@@ -155,7 +155,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task AddAsync(IEnumerable<TelemetryFeatureRecord> features)
+        public async Task AddAsync(IEnumerable<TelemetryFeatureRecord> features)
         {
             if (features == null)
             {
@@ -163,10 +163,10 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }
             if (!features.Any())
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            return Task.Run(() =>
+            await Task.Run(() =>
             {
                 using LiteDatabase db = NewLiteDb();
                 ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task DeleteAsync(IEnumerable<TelemetryFeatureRecord> features)
+        public async Task DeleteAsync(IEnumerable<TelemetryFeatureRecord> features)
         {
             if (features == null)
             {
@@ -183,10 +183,10 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }
             if (!features.Any())
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            return Task.Run(() =>
+            await Task.Run(() =>
             {
                 IEnumerable<string> ids = features.Select(feature => feature.Id);
 
@@ -197,7 +197,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task IncrementUploadAttemptCountAsync(IEnumerable<TelemetryFeatureRecord> features)
+        public async Task IncrementUploadAttemptCountAsync(IEnumerable<TelemetryFeatureRecord> features)
         {
             if (features == null)
             {
@@ -205,17 +205,17 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }
             if (!features.Any())
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            return Task.Run(() =>
+            await Task.Run(() =>
             {
                 IEnumerable<string> ids = features.Select(l => l.Id);
 
                 using LiteDatabase db = NewLiteDb();
                 ILiteCollection<TelemetryFeatureRecord> collection = db.GetCollection<TelemetryFeatureRecord>();
 
-                IEnumerable<TelemetryFeatureRecord> featuresInDB = collection.Find(feature => ids.Contains(feature.Id));
+                IEnumerable<TelemetryFeatureRecord> featuresInDB = collection.Find(feature => ids.Contains(feature.Id)).ToList();
 
                 foreach (TelemetryFeatureRecord featureInDB in featuresInDB)
                 {
@@ -226,7 +226,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        public Task<IEnumerable<TelemetryFeatureRecord>> GetRecordsForRetryAsync(IEnumerable<TelemetryFeatureRecord> exclude, int limit)
+        public async Task<IEnumerable<TelemetryFeatureRecord>> GetRecordsForRetryAsync(IEnumerable<TelemetryFeatureRecord> exclude, int limit)
         {
             if (exclude == null)
             {
@@ -237,7 +237,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 throw new ArgumentOutOfRangeException($"'{nameof(limit)}' cannot be less than or equal to 0");
             }
 
-            return Task.Run(() =>
+            return await Task.Run(() =>
             {
                 IEnumerable<string> ids = exclude.Select(l => l.Id);
 
