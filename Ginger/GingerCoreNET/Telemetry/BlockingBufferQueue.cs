@@ -50,7 +50,10 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }
             finally
             {
-                _syncEnqueueEvent.Set();
+                if (!_isDisposed)
+                {
+                    _syncEnqueueEvent.Set();
+                }
             }
         }
 
@@ -90,14 +93,15 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }
             finally
             {
-                _syncDequeueEvent.Set();
+                if (!_isDisposed)
+                {
+                    _syncDequeueEvent.Set();
+                }
             }
         }
 
         public void Flush()
         {
-            ThrowIfDisposed();
-
             _syncBufferSizeSemaphoreCTS?.Cancel();
         }
 

@@ -1,11 +1,13 @@
 ﻿using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Services.Common;
+using Microsoft.VisualStudio.Services.WebApi;
 using NPOI.HSSF.Record.Aggregates;
 using NPOI.OpenXmlFormats.Dml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -16,6 +18,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 {
     internal sealed class TelemetryQueue<TRecord> : IDisposable
     {
+        private static readonly TimeSpan QueueFlushWaitTime = TimeSpan.FromSeconds(1);
+
         internal sealed class Config
         {
             internal required int BufferSize { get; init; }
@@ -39,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         private bool _isDisposed;
 
-        private string QueueName { get; } = $"{typeof(TRecord).FullName}-Telemetry-Queue";
+        private string QueueName { get; } = $"{typeof(TRecord).Name}-Telemetry-Queue";
 
         internal TelemetryQueue(Config config)
         {
@@ -49,41 +53,31 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             _retryPollingSize = config.RetryPollingSize;
             _retryPollingInterval = config.RetryPollingInterval;
             _cancellationTokenSource = new();
-            _consumerTask = CreateConsumerTask();
-            _retryTask = CreateRetryTask();
+            _consumerTask = StartConsumerTask();
+            _retryTask = StartRetryService();
             _recordsBeingProcessed = [];
             _logger = config.Logger;
 
             _isDisposed = false;
-
-            _consumerTask.Start();
-            _retryTask.Start();
         }
 
-        private Task CreateConsumerTask()
+        private Task StartConsumerTask()
         {
-            _logger?.LogTrace("creating new consumer task in {queueName}", QueueName);
-
-            return new Task(async () =>
+            return Task.Run(async () =>
             {
                 _logger?.LogDebug("started consumer task in {queueName}", QueueName);
-                
-                while (!_cancellationTokenSource.IsCancellationRequested)
+
+                while (!_isDisposed)
                 {
                     string corrId = NewCorrelationId();
 
                     IEnumerable<TRecord> records = Dequeue(corrId);
 
-                    if (_cancellationTokenSource.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
                     try
                     {
                         await ProcessAsync(records, corrId);
                     }
-                    catch (Exception ex) 
+                    catch (Exception ex)
                     {
                         _logger?.LogError("error while processing records in {queueName}\n{ex}", QueueName, ex);
                     }
@@ -93,19 +87,17 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             });
         }
 
-        private Task CreateRetryTask()
+        private Task StartRetryService()
         {
-            _logger?.LogTrace("creating new retry task in {queueName}", QueueName);
-
-            return new Task(async () =>
+            return Task.Run(async () =>
             {
                 _logger?.LogDebug("started retry task in in {queueName}", QueueName);
 
-                while (!_cancellationTokenSource.IsCancellationRequested)
+                while (!_cancellationTokenSource.Token.IsCancellationRequested)
                 {
                     string corrId = NewCorrelationId();
 
-                    await Task.Delay(_retryPollingInterval);
+                    await Task.Delay(_retryPollingInterval, _cancellationTokenSource.Token);
 
                     if (_cancellationTokenSource.IsCancellationRequested)
                     {
@@ -118,13 +110,13 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                     {
                         await ReprocessAsync(records, corrId);
                     }
-                    catch (Exception ex) 
+                    catch (Exception ex)
                     {
                         _logger?.LogError("{corrId} error while reprocessing records in {queueName}\n{ex}", corrId, QueueName, ex);
                     }
                 }
 
-                _logger?.LogDebug("stopped consumer task in {queueName}", QueueName);
+                _logger?.LogDebug("stopped retry task in {queueName}", QueueName);
             });
         }
 
@@ -298,6 +290,9 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
             _isDisposed = true;
             _cancellationTokenSource.Cancel();
+            _queue.Dispose();
+           
+            _consumerTask.Wait(QueueFlushWaitTime);
         }
     }
 }
