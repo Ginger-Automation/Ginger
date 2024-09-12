@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                     try
                     {
                         // DoNotVerify so on Linux it will not return empty
-                        string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData, Environment.SpecialFolderOption.Create);
+                        string folderPath = OperatingSystem.IsMacOS() ? $"{Path.PathSeparator}Users{Path.PathSeparator}pravishe" : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData, Environment.SpecialFolderOption.Create);
 
                         folderPath = Path.Combine(folderPath, "amdocs", "Ginger");
 
