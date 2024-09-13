@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Telemetry;
+using Ginger.SolutionGeneral;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -91,8 +92,12 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 return;
             }
 
+            Solution? solution = WorkSpace.Instance.Solution;
+
             AddLog(new TelemetryLogRecord()
             {
+                SolutionId = solution != null ? solution.Guid.ToString() : "",
+                Account = solution != null ? solution.Account : "",
                 AppVersion = ApplicationInfo.ApplicationBackendVersion,
                 UserId = WorkSpace.Instance.UserProfile.UserName,
                 CreationTimestamp = DateTime.UtcNow,
@@ -110,8 +115,13 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         public void AddFeatureUsage(FeatureId featureId, TelemetryMetadata metadata)
         {
+
+            Solution? solution = WorkSpace.Instance.Solution;
+
             AddFeatureUsage(new TelemetryFeatureRecord()
             {
+                SolutionId = solution != null ? solution.Guid.ToString() : "",
+                Account = solution != null ? solution.Account : "",
                 AppVersion = ApplicationInfo.ApplicationBackendVersion,
                 UserId = WorkSpace.Instance.UserProfile.UserName,
                 CreationTimestamp = DateTime.UtcNow,

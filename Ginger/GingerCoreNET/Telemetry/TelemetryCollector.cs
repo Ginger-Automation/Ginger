@@ -50,6 +50,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 request.Logs.Add(new LogRecord()
                 {
                     Id = log.Id,
+                    SolutionId = log.SolutionId,
+                    Account = log.Account,
                     AppVersion = log.AppVersion,
                     UserId = log.UserId,
                     CreationTimestamp = log.CreationTimestamp.ToString("O"),
@@ -92,6 +94,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 request.Features.Add(new FeatureRecord()
                 {
                     Id = feature.Id,
+                    SolutionId = feature.SolutionId,
+                    Account = feature.Account,
                     AppVersion = feature.AppVersion,
                     UserId = feature.UserId,
                     CreationTimestamp = feature.CreationTimestamp.ToString("O"),

@@ -10,6 +10,10 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
     {
         public string Id { get; init; } = Guid.NewGuid().ToString();
 
+        public string SolutionId { get; init; }
+
+        public string Account { get; init; }
+
         public required DateTime CreationTimestamp { get; init; }
         
         public required DateTime LastUpdateTimestamp { get; set; }

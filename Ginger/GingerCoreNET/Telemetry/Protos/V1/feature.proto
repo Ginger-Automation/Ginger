@@ -4,12 +4,14 @@ package GingerTelemetryProto.v1;
 
 message FeatureRecord {
 	string Id = 1;
-	string CreationTimestamp = 2;
-	string AppVersion = 3;
-	string UserId = 4;
-	string FeatureId = 5;
-	string Duration = 6;
-	string Metadata = 7;
+	string SolutionId = 2;
+	string Account = 3;
+	string CreationTimestamp = 4;
+	string AppVersion = 5;
+	string UserId = 6;
+	string FeatureId = 7;
+	string Duration = 8;
+	string Metadata = 9;
 }
 
 message AddFeaturesRequest {
