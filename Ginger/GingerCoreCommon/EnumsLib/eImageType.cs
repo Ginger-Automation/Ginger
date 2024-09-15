@@ -211,6 +211,7 @@ namespace Amdocs.Ginger.Common.Enums
         Folder,
         ItemModified,
         Email,
+        Home,
         Parameter,
         ListGroup,
         FlowDiagram,

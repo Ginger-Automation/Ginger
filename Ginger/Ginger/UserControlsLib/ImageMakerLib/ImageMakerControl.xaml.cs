@@ -432,6 +432,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Finish:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FlagCheckered);
                     break;
+                case eImageType.Home:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_House);
+                    break;
                 case eImageType.Cancel:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Xmark);
                     break;
@@ -1088,7 +1091,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Square);
                     break;
                 case eImageType.Triangle:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Play);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Backward);
                     break;
                 case eImageType.Circle:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Circle);

@@ -1517,7 +1517,7 @@ namespace Amdocs.Ginger.CoreNET
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
-                    ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Menu);
+                    ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Keycode_APP_SWITCH);
                     break;
             }
 
