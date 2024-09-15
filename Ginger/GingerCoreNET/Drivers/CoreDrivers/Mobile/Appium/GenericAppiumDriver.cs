@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eDeviceSource))]
         [UserConfiguredDefault("LocalAppium")]
-        [UserConfiguredDescription("Device Source is Local Appium or UFTM Mobile Lab")]
+        [UserConfiguredDescription("Device Source is Local Appium or Devices Lab")]
         public eDeviceSource DeviceSource { get; set; }
 
         [UserConfigured]
