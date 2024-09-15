@@ -196,7 +196,6 @@ namespace Amdocs.Ginger.Common
         LocatorTestInProgress,
         DeleteSelectedDB,
         RemoteExecutionReportFolder,
-        RemoteExecutionHistoryEndPoint,
     }
 
     public static class UserMsgsPool
@@ -881,7 +880,7 @@ namespace Amdocs.Ginger.Common
    "Unrecovered items will be deleted. Do you want to continue?",
    eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionReportFolder, new UserMsg(eUserMsgType.INFO, "Remote Execution History", "Open execution folder not supported for Remote Execution History source.", eUserMsgOption.OK, eUserMsgSelection.OK));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionHistoryEndPoint, new UserMsg(eUserMsgType.INFO, "Remote Execution History", "Unable to reach server, Please check your Endpoint URL or Internet Connection.\nLoading Local Execution History.", eUserMsgOption.OK, eUserMsgSelection.OK));
+           
 
         }
     }

@@ -315,6 +315,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ginger-html-report-common
 
+ngx-cookie-service
+MIT
+
 primeflex
 MIT
 The MIT License (MIT)

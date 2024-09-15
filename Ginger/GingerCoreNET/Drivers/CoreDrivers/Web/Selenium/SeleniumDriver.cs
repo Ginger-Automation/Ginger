@@ -8936,7 +8936,7 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.GetSize:
-                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("size").ToString());
+                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("size")?.ToString());                        
                         break;
 
                     //case ActUIElement.eElementAction.SelectByIndex:
