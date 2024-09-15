@@ -199,7 +199,7 @@ namespace GingerCore.Environments
             {
                 return Platform switch
                 {
-                    ePlatformType.NA => eImageType.Empty,
+                    ePlatformType.NA => eImageType.Question,
                     ePlatformType.Web => eImageType.Globe,
                     ePlatformType.WebServices => eImageType.Exchange,
                     ePlatformType.Java => eImageType.Java,
