@@ -1091,7 +1091,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Square);
                     break;
                 case eImageType.Triangle:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Backward);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Play);
                     break;
                 case eImageType.Circle:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Circle);
