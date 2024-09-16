@@ -218,27 +218,6 @@ namespace Ginger.Environments
             }
         }
 
-        //private void UpdateExistingApplication(EnvApplication existingApp, GingerAnalyticsApplication item)
-        //{
-        //    if (!existingApp.Equals(item))
-        //    {
-        //        existingApp.Name = item.Name;
-        //        existingApp.Platform = MapToPlatformType(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application Type")?.Value);
-        //        existingApp.Url = item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application URL")?.Value;
-        //        existingApp.Variables.ClearAll();
-
-        //        // Add all other parameters to GeneralParams
-        //        foreach (var param in item.GAApplicationParameters)
-        //        {
-        //            if (param.Name != "Application Type" && param.Name != "Application URL")
-        //            {
-        //                existingApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
-        //            }
-        //        }
-
-        //        UpdateApplicationPlatform(existingApp, item);
-        //    }
-        //}
         private void UpdateExistingApplication(EnvApplication existingApp, GingerAnalyticsApplication item)
         {
             bool parametersChanged = false;
