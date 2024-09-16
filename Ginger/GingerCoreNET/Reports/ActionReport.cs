@@ -253,7 +253,7 @@ namespace Ginger.Reports
             {
                 if (outputValues == null)
                 {
-                    outputValues = mAction.ReturnValues.Select(a => $"{a.Param}_:_{a.Actual}_:_{a.ExpectedCalculated}_:_{a.Status}").ToList();
+                    outputValues = mAction.ReturnValues.Select(a => $"{a.Param}_:_{a.Actual}_:_{a.ExpectedCalculated}_:_{a.Status}_:_{a.Description}").ToList();
                 }
                 return outputValues;
             }
@@ -279,6 +279,8 @@ namespace Ginger.Reports
                 dt.Columns["ExpectedValue"].Caption = "Expected Value";
                 dt.Columns.Add("Status");
                 dt.Columns["Status"].Caption = "Status";
+                dt.Columns.Add("Description");
+                dt.Columns["Description"].Caption = "Description";
 
                 foreach (string outputValues in OutputValues)
                 {
@@ -288,6 +290,7 @@ namespace Ginger.Reports
                     dr["ActualValue"] = elementsAfter[1];
                     dr["ExpectedValue"] = elementsAfter[2];
                     dr["Status"] = elementsAfter[3];
+                    dr["Description"] = elementsAfter[4];
                     dt.Rows.Add(dr);
                 }
                 return dt;
