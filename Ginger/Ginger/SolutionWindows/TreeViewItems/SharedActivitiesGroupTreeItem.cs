@@ -161,7 +161,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"error while capturing '{FeatureId.ExportActivitiesGroupBPMN}' feature metadata", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"error while capturing '{FeatureId.ExportActivitiesGroupBPMN}' feature metadata", ex);
                 }
 
                 using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportActivitiesGroupBPMN);

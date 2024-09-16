@@ -995,7 +995,7 @@ namespace Ginger.Run
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"error while capturing '{FeatureId.ExportRunSetExecutionHistoryBPMN}' feature metadata", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"error while capturing '{FeatureId.ExportRunSetExecutionHistoryBPMN}' feature metadata", ex);
                 }
 
                 int exportedSuccessfullyCount = 0;

@@ -55,10 +55,11 @@ namespace Ginger.Run.RunSetActions
                 Stopwatch st = new Stopwatch();
                 st.Reset();
                 st.Start();
-                using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.RunsetAction);
-                featureTracker.Metadata.Add("type", runsetActionBase.Type);
-                runsetActionBase.Execute(RI);
-                featureTracker.Dispose();
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.RunsetAction))
+                {
+                    featureTracker.Metadata.Add("type", runsetActionBase.Type);
+                    runsetActionBase.Execute(RI);
+                }
                 st.Stop();
                 runsetActionBase.Elapsed = st.ElapsedMilliseconds;
 

@@ -56,23 +56,21 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             }
             else
             {
-                IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
-                try
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning))
                 {
-                    featureTracker.Metadata.Add("APIType", "Swagger");
-                    featureTracker.Metadata.Add("FileType", "JSON");
-                    string fileContent = FileContentProvider(FileName);
-                    JToken.Parse(fileContent);  // doing the Jtoken to validate the json file
-                    Swaggerdoc = SwaggerDocument.FromJsonAsync(FileContentProvider(FileName)).Result;
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided json document ", ex);
-                    Reporter.ToUser(eUserMsgKey.InvalidJSON);
-                }
-                finally
-                {
-                    featureTracker.Dispose();
+                    try
+                    {
+                        featureTracker.Metadata.Add("APIType", "Swagger");
+                        featureTracker.Metadata.Add("FileType", "JSON");
+                        string fileContent = FileContentProvider(FileName);
+                        JToken.Parse(fileContent);  // doing the Jtoken to validate the json file
+                        Swaggerdoc = SwaggerDocument.FromJsonAsync(FileContentProvider(FileName)).Result;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided json document ", ex);
+                        Reporter.ToUser(eUserMsgKey.InvalidJSON);
+                    }
                 }
             }
 

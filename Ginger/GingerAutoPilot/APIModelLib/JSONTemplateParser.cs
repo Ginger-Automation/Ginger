@@ -35,19 +35,12 @@ namespace Amdocs.Ginger.Common.APIModelLib
     {
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
-            IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
-            try
-            {
-                featureTracker.Metadata.Add("APIType", "JSON_Template");
-                string jsOnText = System.IO.File.ReadAllText(FileName);
-                string fileName = Path.GetFileNameWithoutExtension(FileName);
-                ObservableList<ApplicationAPIModel> parameters = GetParameters(jsOnText, AAMSList, avoidDuplicatesNodes, fileName);
-                return parameters;
-            }
-            finally
-            {
-                featureTracker.Dispose();
-            }
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "JSON_Template");
+            string jsOnText = System.IO.File.ReadAllText(FileName);
+            string fileName = Path.GetFileNameWithoutExtension(FileName);
+            ObservableList<ApplicationAPIModel> parameters = GetParameters(jsOnText, AAMSList, avoidDuplicatesNodes, fileName);
+            return parameters;
         }
 
         public ObservableList<ApplicationAPIModel> ParseDocumentWithJsonContent(string fileContent, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)

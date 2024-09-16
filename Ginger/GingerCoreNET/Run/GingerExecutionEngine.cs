@@ -2491,16 +2491,11 @@ namespace Ginger.Run
                                         }
                                         else
                                         {
-                                            IFeatureTracker rodFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution);
-                                            rodFeatureTracker.Metadata.Add("Type", act.GetType().Name);
-                                            rodFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunOnDriver.ToString());
-                                            try
+                                            using (IFeatureTracker rodFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
                                             {
+                                                rodFeatureTracker.Metadata.Add("Type", act.GetType().Name);
+                                                rodFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunOnDriver.ToString());
                                                 ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).RunAction(act);
-                                            }
-                                            finally
-                                            {
-                                                rodFeatureTracker.Dispose();
                                             }
                                         }
                                     }
@@ -2528,39 +2523,31 @@ namespace Ginger.Run
                             break;
 
                         case GingerRunner.eActionExecutorType.RunWithoutDriver:
-                            IFeatureTracker rwdFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution);
-                            rwdFeatureTracker.Metadata.Add("Type", act.GetType().Name);
-                            rwdFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunWithoutDriver.ToString());
-                            try 
+                            using (IFeatureTracker rwdFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
                             {
+                                rwdFeatureTracker.Metadata.Add("Type", act.GetType().Name);
+                                rwdFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunWithoutDriver.ToString());
                                 RunWithoutAgent(act);
-                            }
-                            finally
-                            {
-                                rwdFeatureTracker.Dispose();
                             }
                             break;
 
                         case GingerRunner.eActionExecutorType.RunOnPlugIn:
-                            IFeatureTracker ropFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution);
-                            ropFeatureTracker.Metadata.Add("Type", act.GetType().Name);
-                            ropFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunOnPlugIn.ToString());
-                            try
+                            using (IFeatureTracker ropFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
                             {
+                                ropFeatureTracker.Metadata.Add("Type", act.GetType().Name);
+                                ropFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunOnPlugIn.ToString());
                                 ExecuteOnPlugin.FindNodeAndRunAction((ActPlugIn)act);
-                            }
-                            finally
-                            {
-                                ropFeatureTracker.Dispose();
                             }
 
                             break;
 
                         case GingerRunner.eActionExecutorType.RunInSimulationMode:
-                            IFeatureTracker risFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution);
-                            risFeatureTracker.Metadata.Add("Type", act.GetType().Name);
-                            risFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunInSimulationMode.ToString());
-                            RunActionInSimulationMode(act);
+                            using (IFeatureTracker risFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
+                            {
+                                risFeatureTracker.Metadata.Add("Type", act.GetType().Name);
+                                risFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunInSimulationMode.ToString());
+                                RunActionInSimulationMode(act);
+                            }
                             break;
                     }
                 }

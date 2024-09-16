@@ -125,7 +125,9 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         private void ThrowIfDisposed()
         {
             if (_isDisposed)
+            {
                 throw new ObjectDisposedException(message: "Cannot perform operation on disposedException", innerException: null);
+            }
         }
     }
 }

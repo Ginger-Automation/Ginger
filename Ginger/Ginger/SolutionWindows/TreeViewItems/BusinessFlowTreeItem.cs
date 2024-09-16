@@ -363,7 +363,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"error while capturing '{FeatureId.ExportBusinessFlowBPMN}' feature metadata", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"error while capturing '{FeatureId.ExportBusinessFlowBPMN}' feature metadata", ex);
                 }
                 
 
