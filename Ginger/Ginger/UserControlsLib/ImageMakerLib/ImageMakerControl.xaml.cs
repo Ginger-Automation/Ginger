@@ -432,6 +432,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Finish:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FlagCheckered);
                     break;
+                case eImageType.Home:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_House);
+                    break;
                 case eImageType.Cancel:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Xmark);
                     break;
