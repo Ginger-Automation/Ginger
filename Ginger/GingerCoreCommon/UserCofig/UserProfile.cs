@@ -23,6 +23,7 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
 using Ginger.UserConfig;
@@ -297,6 +298,40 @@ namespace Ginger
                     mUserType = value;
                     OnPropertyChanged(nameof(UserType));
                 }
+            }
+        }
+
+        private bool mEnableTelemetry;
+        [IsSerializedForLocalRepository(DefaultValue: false)]
+        public bool EnableTelemetry
+        {
+            get
+            {
+                return mEnableTelemetry;
+            }
+            set
+            {
+                mEnableTelemetry = value;
+                OnPropertyChanged(nameof(EnableTelemetry));
+            }
+        }
+
+        private ITelemetryQueueManager.Config mTelemetryConfig;
+        [IsSerializedForLocalRepository]
+        public ITelemetryQueueManager.Config TelemetryConfig 
+        {
+            get
+            {
+                if (mTelemetryConfig == null)
+                {
+                    mTelemetryConfig = new();
+                }
+                return mTelemetryConfig;
+            }
+            set
+            {
+                mTelemetryConfig = value;
+                OnPropertyChanged(nameof(TelemetryConfig));
             }
         }
 

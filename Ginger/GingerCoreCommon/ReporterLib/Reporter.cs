@@ -116,7 +116,7 @@ namespace Amdocs.Ginger.Common
             internal MockFeatureTracker(FeatureId featureId)
             {
                 FeatureId = featureId;
-                Metadata = new();
+                Metadata = [];
             }
 
             public void Dispose()

@@ -34,7 +34,7 @@ namespace Ginger.GeneralWindows
         {
             InitializeComponent();
 
-            xMessage.Content = Telemetry.VersionAndNewsInfo;
+            xMessage.Content = Amdocs.Ginger.CoreNET.TelemetryLib.Telemetry.VersionAndNewsInfo;
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
