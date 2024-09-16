@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Telemetry
 {
-    public sealed class BlockingBufferQueue<T>
+    public sealed class BlockingBufferQueue<T> : IDisposable
     {
         private readonly LinkedList<T> _collection;
         private readonly int _bufferSize;
@@ -108,7 +108,9 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         public void Dispose()
         {
             if (_isDisposed)
+            {
                 return;
+            }
 
             _isDisposed = true;
 
