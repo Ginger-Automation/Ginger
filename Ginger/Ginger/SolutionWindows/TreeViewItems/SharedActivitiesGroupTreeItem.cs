@@ -164,17 +164,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     Reporter.ToLog(eLogLevel.DEBUG, $"error while capturing '{FeatureId.ExportActivitiesGroupBPMN}' feature metadata", ex);
                 }
 
-                using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportActivitiesGroupBPMN);
-                if (activityCount != null)
+                string exportPath = string.Empty;
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportActivitiesGroupBPMN))
                 {
-                    featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
+                    if (activityCount != null)
+                    {
+                        featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
+                    }
+                    if (actionCount != null)
+                    {
+                        featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
+                    }
+                    exportPath = activitiesGroupToBPMNExporter.Export();
                 }
-                if (actionCount != null)
-                {
-                    featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
-                }
-                string exportPath = activitiesGroupToBPMNExporter.Export();
-                featureTracker.Dispose();
                 
                 string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
 

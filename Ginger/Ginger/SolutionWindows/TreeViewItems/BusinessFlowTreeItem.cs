@@ -365,23 +365,24 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, $"error while capturing '{FeatureId.ExportBusinessFlowBPMN}' feature metadata", ex);
                 }
-                
 
-                using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportBusinessFlowBPMN);
-                if (activitiesGroupCount != null)
+                string exportPath = string.Empty;
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportBusinessFlowBPMN))
                 {
-                    featureTracker.Metadata.Add("ActivitiesGroupCount", activitiesGroupCount.ToString());
+                    if (activitiesGroupCount != null)
+                    {
+                        featureTracker.Metadata.Add("ActivitiesGroupCount", activitiesGroupCount.ToString());
+                    }
+                    if (activityCount != null)
+                    {
+                        featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
+                    }
+                    if (actionCount != null)
+                    {
+                        featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
+                    }
+                    exportPath = businessFlowToBPMNExporter.Export();
                 }
-                if (activityCount != null)
-                {
-                    featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
-                }
-                if (actionCount != null)
-                {
-                    featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
-                }
-                string exportPath = businessFlowToBPMNExporter.Export();
-                featureTracker.Dispose();
                 string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
 
                 Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeExportPath);

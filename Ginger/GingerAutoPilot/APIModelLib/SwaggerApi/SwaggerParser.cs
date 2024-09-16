@@ -33,26 +33,23 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
             if (IsValidYaml(FileName))
             {
-                IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
-                try
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning))
                 {
-                    featureTracker.Metadata.Add("APIType", "Swagger");
-                    featureTracker.Metadata.Add("FileType", "YAML");
-                    string fileContent = FileContentProvider(FileName);
-                    string fileConverted = ConvertYamlToJson(fileContent);
-                    JToken.Parse(fileConverted); // doing the Jtoken to validate the json file
-                    Swaggerdoc = SwaggerDocument.FromJsonAsync(fileConverted).Result;
-                }
-                catch(Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided yaml document " , ex);
-                    Reporter.ToUser(eUserMsgKey.InvalidYAML);
-                }
-                finally
-                {
-                    featureTracker.Dispose();
-                }
-                
+                    try
+                    {
+                        featureTracker.Metadata.Add("APIType", "Swagger");
+                        featureTracker.Metadata.Add("FileType", "YAML");
+                        string fileContent = FileContentProvider(FileName);
+                        string fileConverted = ConvertYamlToJson(fileContent);
+                        JToken.Parse(fileConverted); // doing the Jtoken to validate the json file
+                        Swaggerdoc = SwaggerDocument.FromJsonAsync(fileConverted).Result;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided yaml document ", ex);
+                        Reporter.ToUser(eUserMsgKey.InvalidYAML);
+                    }
+                }                
             }
             else
             {
