@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts.GraphQL.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
-using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -47,6 +47,8 @@ using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
+using GraphQL;
+using GraphQLClient.Clients;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -91,6 +93,10 @@ namespace Ginger.Run
         private bool mSolutionWasChanged = false;
         Context mContext = new Context();
         private readonly bool _ignoreValidationRules;
+        private Task<GraphQLResponse<GraphQLRunsetResponse>> response;
+        private GraphQLResponse<GraphQLRunsetResponse> data;
+        private GraphQlClient graphQlClient = null;
+        private ExecutionReportGraphQLClient executionReportGraphQLClient;
 
         public enum eObjectType
         {
@@ -760,7 +766,7 @@ namespace Ginger.Run
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xCustomTestStageRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XCustomTestStageRadioBtn_Checked);
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xCustomLabIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XCustomLabIdRadioBtn_Checked);
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xCustomSessionIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XCustomSessionIdRadioBtn_Checked);
-           
+
 
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null) // init values
             {
@@ -1646,9 +1652,9 @@ namespace Ginger.Run
                 //show current Run set UI
                 xRunsetPageGrid.Visibility = Visibility.Visible;
 
-                bool isSolutionSame = 
+                bool isSolutionSame =
                     mRunSetConfig != null && WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<RunSetConfig>(mRunSetConfig.Guid) != null;
-                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
+                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {
                     WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Clear();
@@ -1942,7 +1948,7 @@ namespace Ginger.Run
                     return;
                 }
                 UpdateRunButtonIcon(true);
-               
+
                 ResetALMDefectsSuggestions();
 
 
@@ -1961,7 +1967,7 @@ namespace Ginger.Run
                 //
 
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
-                
+
 
                 // handling ALM Defects Opening
 
@@ -1985,7 +1991,7 @@ namespace Ginger.Run
             finally
             {
                 UpdateRunButtonIcon();
-                UpdateReRunFailedButtonIcon();                
+                UpdateReRunFailedButtonIcon();
             }
         }
 
@@ -2036,7 +2042,7 @@ namespace Ginger.Run
                     var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
                     // handling ALM Defects Opening
-                    
+
                     if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0)
                     {
                         ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
@@ -2274,11 +2280,71 @@ namespace Ginger.Run
                 {
                     ExecutionBorder.BorderBrush = FindResource("$amdocsLogoLinarGradientBrush") as Brush;
 
-                   
+
                 }
             }
         }
+        
+        private bool AssignGraphQLObjectEndPoint()
+        {
+            try
+            {
+                string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
+                if (!string.IsNullOrEmpty(endPoint))
+                {
+                    graphQlClient = new GraphQlClient($"{endPoint}api/graphql");
+                    executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
 
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
+                return false;
+
+            }
+
+        }
+
+        private bool ValidateRemoteConfiguration()
+        {
+            ExecutionLoggerConfiguration execLoggerConfig = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(c => c.IsSelected);
+            if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && AssignGraphQLObjectEndPoint())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        async Task GenerateHTMLReportFromRemote()
+        {
+
+            try
+            {
+                response = executionReportGraphQLClient.ExecuteReportQuery(1, WorkSpace.Instance.Solution.Guid, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid);
+                data = await response;
+                var executionId = data.Data.Runsets.Nodes[0].ExecutionId.ToString();
+                if (!string.IsNullOrEmpty(executionId))
+                {
+                    new GingerRemoteExecutionUtils().GenerateHTMLReport(executionId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Execution data not found to remote\n Loading local data.", ex);
+                GenerateHTMLReportFromLocal();
+            }
+
+        }
         private void xRunsetReportBtn_Click(object sender, RoutedEventArgs e)
         {
             if (CheckIfExecutionIsInProgress())
@@ -2286,6 +2352,19 @@ namespace Ginger.Run
                 return;
             }
 
+            if (ValidateRemoteConfiguration())
+            {
+                GenerateHTMLReportFromRemote();
+            }
+            else
+            {
+                GenerateHTMLReportFromLocal();
+            }
+
+        }
+
+        private void GenerateHTMLReportFromLocal()
+        {
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
@@ -2340,9 +2419,7 @@ namespace Ginger.Run
 
             }
 
-
         }
-
         private void RunClientApp(string json, string clientAppFolderPath)
         {
             try
@@ -2705,7 +2782,7 @@ namespace Ginger.Run
         public void viewBusinessflowConfiguration(BusinessFlow businessFlow)
         {
             General.eRIPageViewMode viewMode;
-            if(mEditMode == eEditMode.View)
+            if (mEditMode == eEditMode.View)
             {
                 viewMode = General.eRIPageViewMode.View;
             }
