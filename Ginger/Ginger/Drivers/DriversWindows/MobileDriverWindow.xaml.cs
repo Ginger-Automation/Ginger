@@ -62,13 +62,8 @@ namespace Ginger.Drivers.DriversWindows
         eAutoScreenshotRefreshMode mDeviceAutoScreenshotRefreshMode;
         bool mWindowIsOpen = true;
         bool IsRecording = false;
-        bool mIsMetricsClickedOnce = false;
-
-
-
+ 
         ObservableList<DeviceInfo> mDeviceDetails = new ObservableList<DeviceInfo>();
-
-
 
         public MobileDriverWindow(DriverBase driver, Agent agent)
         {
@@ -79,6 +74,10 @@ namespace Ginger.Drivers.DriversWindows
 
             ((DriverBase)mDriver).DriverMessageEvent += MobileDriverWindow_DriverMessageEvent;
             ((DriverBase)mDriver).SpyingElementEvent += CurrentMousePosToSpy;
+
+            //Setting up the detail and metic grids
+            SetDeviceDetailsGridView();
+            SetDeviceMetricsGridView();
         }
 
         private async void RefreshDetailsTable(object sender, RoutedEventArgs e)
@@ -232,12 +231,22 @@ namespace Ginger.Drivers.DriversWindows
                             SetOrientationButton();
                             xSwipeBtn.Visibility = Visibility.Visible;
                             xCordBtn.Visibility = Visibility.Visible;
+                            if (mDriver.IsUftLabDevice)
+                            {
+                                xExternalViewBtn.Visibility = Visibility.Visible;
+                            }
                             DoContinualDeviceScreenshotRefresh();
 
                             Dictionary<string, object> mDeviceGeneralInfo;
                             mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
 
                             SetTitle(mDeviceGeneralInfo);
+                            AlloworDisableControls(true);
+                            xPinBtn_Click(null, null);
+                            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
+                            {
+                                AdjustWindowSize(imageSourceWidthPrecentage);
+                            }
                         });
 
                     }
@@ -639,8 +648,6 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SetDeviceButtonsLocation();
-
             if (mSwipeIsOn)
             {
                 SetSwipeButtonsPosition();
@@ -649,8 +656,6 @@ namespace Ginger.Drivers.DriversWindows
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SetDeviceButtonsLocation();
-
             if (mSwipeIsOn)
             {
                 SetSwipeButtonsPosition();
@@ -658,6 +663,7 @@ namespace Ginger.Drivers.DriversWindows
         }
 
         DateTime mClickStartTime;
+        DateTime mMoveStartTime;
         private void xDeviceScreenshotImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             mClickStartTime = DateTime.Now;
@@ -677,6 +683,7 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_MouseMove(object sender, MouseEventArgs e)
         {
+            mMoveStartTime = DateTime.Now;
             if (mIsMousePressed == true)
             {
                 //it's a drag
@@ -720,19 +727,23 @@ namespace Ginger.Drivers.DriversWindows
             }
             mIsMousePressed = false;
 
+            TimeSpan pressDuration;
+
             if (mIsItDragAction == true)
             {
                 //do drag
                 mIsItDragAction = false;
-                DeviceScreenshotImageMouseDragAsync(mMouseStartPoint, mMouseEndPoint);
+                pressDuration = mMoveStartTime - mClickStartTime;
+                TimeSpan dragDuration = clickEndTime - mMoveStartTime;
+                DeviceScreenshotImageMouseDragAsync(mMouseStartPoint, mMouseEndPoint, pressDuration, dragDuration);
             }
             else
             {
-                TimeSpan clickDuration = clickEndTime - mClickStartTime;
-                if (clickDuration.TotalSeconds > 1)
+                pressDuration = clickEndTime - mClickStartTime;
+                if (pressDuration.TotalSeconds > 1)
                 {
                     //do long press
-                    DeviceScreenshotImageMouseClickAsync(mMouseEndPoint, true);
+                    DeviceScreenshotImageMouseClickAsync(mMouseEndPoint, true, pressDuration);
                 }
                 else
                 {
@@ -744,15 +755,13 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            //System.Windows.Point mMousePoint = e.GetPosition((System.Windows.Controls.Image)sender);
-            //DeviceScreenshotImageMouseDragAsync(mMousePoint, new System.Windows.Point(mMousePoint.X, mMousePoint.Y + e.Delta));
             if (e.Delta > 0)
             {
-                PerformScreenSwipe(eSwipeSide.Up, 0.25);
+                PerformScreenSwipe(eSwipeSide.Up, 0.25, TimeSpan.FromMilliseconds(200));
             }
             else
             {
-                PerformScreenSwipe(eSwipeSide.Down, 0.25);
+                PerformScreenSwipe(eSwipeSide.Down, 0.25, TimeSpan.FromMilliseconds(200));
             }
         }
 
@@ -770,26 +779,22 @@ namespace Ginger.Drivers.DriversWindows
         bool mMeticsIsOn = false;
         private async void xMetricsBtn_Click(object sender, RoutedEventArgs e)
         {
-
             if (mDriver.IsDeviceConnected)
             {
-                if (!mIsMetricsClickedOnce)
+                //Setting the tabs
+                if (!mMeticsIsOn)
                 {
-                    //Setting up the detail and metic grids
-                    SetDeviceDetailsGridView();
-                    SetDeviceMetricsGridView();
-
-                    mIsMetricsClickedOnce = true;
+                    SetTabsColumnView(eTabsViewMode.DetailsAndMetrics);
                 }
-                //Setting the with of the metrics panel
-                SetMeticsPanelView(!mMeticsIsOn);
-
+                else
+                {
+                    SetTabsColumnView(eTabsViewMode.None);
+                }
+               
                 if (mMeticsIsOn)
                 {
-
                     await this.Dispatcher.InvokeAsync(async () =>
                     {
-                        xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
                         //Loading the device details and metrics
                         xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
                         xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
@@ -805,13 +810,7 @@ namespace Ginger.Drivers.DriversWindows
                         xDeviceMetricsGrid.Visibility = Visibility.Visible;
                         xMetricsLoadingPnl.Visibility = Visibility.Collapsed;
                     });
-
                 }
-                else
-                {
-                    xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                }
-
             }
             else
             {
@@ -822,25 +821,26 @@ namespace Ginger.Drivers.DriversWindows
 
         bool mPinIsOn = false;
         private void xPinBtn_Click(object sender, RoutedEventArgs e)
-        {
+        {           
+            mPinIsOn = !mPinIsOn;
+
             if (mPinIsOn)
-            {
-                //undock
-                this.Topmost = false;
-                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
-                xPinBtn.ToolTip = "Dock Window";
-            }
-            else
             {
                 //dock
                 this.Topmost = true;
-                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
                 xPinBtn.ToolTip = "Undock Window";
             }
-
-            mPinIsOn = !mPinIsOn;
+            else
+            {
+                //undock
+                this.Topmost = false;
+                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle") as Style;
+                xPinBtn.ToolTip = "Dock Window";
+            }
         }
 
+        private bool needToAutoZoom = false;
         private void xOrientationBtn_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -852,12 +852,15 @@ namespace Ginger.Drivers.DriversWindows
                 else
                 {
                     mDriver.SwitchToLandscape();
-                }
+                }                
                 if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
                 {
                     RefreshDeviceScreenshotAsync();
                 }
                 SetOrientationButton();
+                RefreshDeviceScreenshotAsync();
+                AdjustWindowSize(imageSourceWidthPrecentage);
+                needToAutoZoom = true;
             }
             catch (Exception ex)
             {
@@ -876,7 +879,7 @@ namespace Ginger.Drivers.DriversWindows
                 xSwipeUp.Visibility = Visibility.Collapsed;
                 xSwipeRight.Visibility = Visibility.Collapsed;
                 xSwipeLeft.Visibility = Visibility.Collapsed;
-                xSwipeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                xSwipeBtn.ButtonStyle = FindResource("$ImageButtonStyle") as Style;
                 xSwipeBtn.ToolTip = "Perform Swipe";
             }
             else
@@ -908,7 +911,7 @@ namespace Ginger.Drivers.DriversWindows
             if (mCordIsOn)
             {
                 xCordsStack.Visibility = Visibility.Collapsed;
-                xCordBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                xCordBtn.ButtonStyle = FindResource("$ImageButtonStyle") as Style;
                 xCordBtn.ToolTip = "Show Mouse Coordinates";
             }
             else
@@ -1040,25 +1043,20 @@ namespace Ginger.Drivers.DriversWindows
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //if (((Window)sender).IsKeyboardFocused)
-            //{            
-                mUserClosing = true;
+            mUserClosing = true;
 
-                if (!mSelfClosing)
+            if (!mSelfClosing)
+            {
+                try
                 {
-                    if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, "Close Mobile Agent?") == eUserMsgSelection.Yes)
-                    {
-                        try
-                        {
-                            mAgent.AgentOperations.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to close Agent, Error: " + ex.Message);
-                        }
-                    }
+                    mAgent.AgentOperations.Close();
                 }
-            //}
+                catch (Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to close Agent, Error: " + ex.Message);
+                }
+            }
+
             mWindowIsOpen = false;
         }
 
@@ -1144,32 +1142,32 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xSwipeLeft_Click(object sender, RoutedEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Left);
+            PerformScreenSwipe(eSwipeSide.Left, 1, TimeSpan.FromMilliseconds(200));
         }
 
         private void xSwipeRight_Click(object sender, RoutedEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Right);
+            PerformScreenSwipe(eSwipeSide.Right, 1, TimeSpan.FromMilliseconds(200));
         }
 
         private void xSwipeUp_Click(object sender, RoutedEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Up, 0.25);
+            PerformScreenSwipe(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
         }
 
         private void xSwipeUp_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Up, 0.5);
+            PerformScreenSwipe(eSwipeSide.Up, 1.5, TimeSpan.FromMilliseconds(200));
         }
 
         private void xSwipeDown_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Down, 0.5);
+            PerformScreenSwipe(eSwipeSide.Down, 1.5, TimeSpan.FromMilliseconds(200));
         }
 
         private void xSwipeDown_Click(object sender, RoutedEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Down, 0.25);
+            PerformScreenSwipe(eSwipeSide.Down, 1, TimeSpan.FromMilliseconds(200));
         }
 
         private void xDeviceSettingsBtn_Click(object sender, RoutedEventArgs e)
@@ -1207,14 +1205,12 @@ namespace Ginger.Drivers.DriversWindows
                     this.Icon = ImageMakerControl.GetImageSource(eImageType.Ios);
                 }
 
-                this.Width = 320;
-                this.Height = 650;
+                this.Width = 350;
+                this.Height = 625;                
                 xMessageLbl.Content = "Connecting to Device...";
 
-                //Configurations
-                SetConfigurationsPanelView(false);
-                //Metrics
-                SetMeticsPanelView(false);
+                //Configurations & Metrics
+                SetTabsColumnView(eTabsViewMode.None);
 
                 //set refresh mode by what configured on driver      
                 mDeviceAutoScreenshotRefreshMode = mDriver.DeviceAutoScreenshotRefreshMode;
@@ -1231,21 +1227,7 @@ namespace Ginger.Drivers.DriversWindows
                         break;
                 }
 
-                xConfigurationsFrame.Visibility = System.Windows.Visibility.Collapsed;
-                xConfigurationsCol.Width = new GridLength(0);
-
-                xMeticsCol.Width = new GridLength(0);
-
-                //Main tool bar
-                xRefreshButton.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xSwipeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xCordBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xPortraiteBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xLandscapeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xPinBtn_Click(null, null);
+                xTabsCol.Width = new GridLength(0);
 
                 //Loading Pnl
                 xDeviceScreenshotCanvas.Visibility = Visibility.Collapsed;
@@ -1259,10 +1241,8 @@ namespace Ginger.Drivers.DriversWindows
                     xMessageImage.ImageType = eImageType.IosWhite;
                 }
 
-                //Device buttons panel
-                xHomeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xMenuBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xBackButton.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                //Control bar
+                AlloworDisableControls(false);                
                 switch (mDriver.GetDevicePlatformType())
                 {
                     case eDevicePlatformType.Android:
@@ -1273,11 +1253,6 @@ namespace Ginger.Drivers.DriversWindows
                         xMenuBtn.Visibility = Visibility.Collapsed;
                         break;
                 }
-                //fliping the back icon to fit look on mobile
-                xBackButton.xButtonImage.RenderTransformOrigin = new Point(0.5, 0.5);
-                ScaleTransform flipTrans = new ScaleTransform();
-                flipTrans.ScaleX = -1;
-                xBackButton.xButtonImage.RenderTransform = flipTrans;
             }
             catch (Exception ex)
             {
@@ -1285,23 +1260,44 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private void SetDeviceButtonsLocation()
+        private void AlloworDisableControls(bool toAllow)
         {
-            if (xDeviceScreenshotCanvas != null)
+            xExternalViewBtn.IsEnabled = toAllow;
+            xPinBtn.IsEnabled = toAllow;
+            xRefreshButton.IsEnabled = toAllow;
+            xCordBtn.IsEnabled = toAllow;
+            xSwipeBtn.IsEnabled = toAllow;
+
+            xClearHighlightBtn.IsEnabled = toAllow;
+            xPortraiteBtn.IsEnabled = toAllow;
+            xLandscapeBtn.IsEnabled = toAllow;
+            xZoomInBtn.IsEnabled = toAllow;
+            xZoomOutBtn.IsEnabled = toAllow;
+            xMetricsBtn.IsEnabled = toAllow;
+            xConfigurationsBtn.IsEnabled = toAllow;
+
+            xDeviceSettingsBtn.IsEnabled = toAllow;
+            xBackButton.IsEnabled = toAllow;
+            xHomeBtn.IsEnabled = toAllow;
+            xMenuBtn.IsEnabled = toAllow;
+
+            xVolumUpPnl.IsEnabled = toAllow;
+            xVolumDownPnl.IsEnabled = toAllow;
+            xLockPnl.IsEnabled = toAllow;
+
+            if (!toAllow)
             {
-                //correct the device buttons location
-                if (xDeviceScreenshotImage != null && xDeviceScreenshotImage.ActualWidth > 0)
-                {
-                    double emptySpace = ((xDeviceScreenshotCanvas.ActualWidth - xDeviceScreenshotImage.ActualWidth) / 2);
-                    Thickness margin = xBackButton.Margin;
-                    margin.Right = 10 + emptySpace;
-                    xBackButton.Margin = margin;
-                    margin = xMenuBtn.Margin;
-                    margin.Left = 10 + emptySpace;
-                    xMenuBtn.Margin = margin;
-                }
+                //set LightGray brush from hex 
+                xDeviceWindowControlsBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dddddd"));
+                xDeviceControlsBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dddddd"));
             }
-        }
+            else
+            {
+                //set white
+                xDeviceWindowControlsBorder.Background = new SolidColorBrush(Colors.White);
+                xDeviceControlsBorder.Background = new SolidColorBrush(Colors.White);
+            }
+        }       
 
         private void SetOrientationButton()
         {
@@ -1365,7 +1361,6 @@ namespace Ginger.Drivers.DriversWindows
                     this.Dispatcher.Invoke(() =>
                     {
                         xRefreshButton.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
-                        xRefreshButton.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                         xRefreshButton.ToolTip = "Refreshing...";
                     });
                 }
@@ -1469,7 +1464,6 @@ namespace Ginger.Drivers.DriversWindows
                     this.Dispatcher.Invoke(() =>
                     {
                         xRefreshButton.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Refresh;
-                        xRefreshButton.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                         xRefreshButton.ToolTip = "Refresh Device Screenshot";
                     });
                 }
@@ -1500,7 +1494,7 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private async void DeviceScreenshotImageMouseClickAsync(System.Windows.Point clickedPoint, bool performLongPress = false)
+        private async void DeviceScreenshotImageMouseClickAsync(System.Windows.Point clickedPoint, bool performLongPress = false, TimeSpan? clickDuration=null)
         {
             try
             {
@@ -1516,7 +1510,7 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         try
                         {
-                            mDriver.PerformLongPress(pointOnMobile_X, pointOnMobile_Y);
+                            mDriver.PerformLongPress(pointOnMobile_X, pointOnMobile_Y, clickDuration);
                         }
                         catch (Exception ex)
                         {
@@ -1552,7 +1546,7 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private async void DeviceScreenshotImageMouseDragAsync(System.Windows.Point startPoint, System.Windows.Point endPoint)
+        private async void DeviceScreenshotImageMouseDragAsync(System.Windows.Point startPoint, System.Windows.Point endPoint, TimeSpan pressDuration, TimeSpan dragDuration)
         {
             try
             {
@@ -1564,7 +1558,7 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     try
                     {
-                        mDriver.PerformDrag(new System.Drawing.Point((int)startPoint.X, (int)startPoint.Y), new System.Drawing.Point((int)endPoint.X, (int)endPoint.Y));
+                        mDriver.PerformDrag(new System.Drawing.Point((int)startPoint.X, (int)startPoint.Y), new System.Drawing.Point((int)endPoint.X, (int)endPoint.Y), pressDuration, dragDuration);
                     }
                     catch (Exception ex)
                     {
@@ -1588,41 +1582,71 @@ namespace Ginger.Drivers.DriversWindows
         {
             if (show == true)
             {
-                xConfigurationsFrame.Visibility = System.Windows.Visibility.Visible;
-                xConfigurationsSplitter.Visibility = System.Windows.Visibility.Visible;
-                xConfigurationsCol.Width = new GridLength(220);
-                this.Width = this.Width + Convert.ToDouble(xConfigurationsCol.Width.ToString());
-                xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
-                xConfigurationsBtn.ToolTip = "Hide Configurations";
+                SetTabsColumnView(eTabsViewMode.Configurations);
             }
             else
             {
-                xConfigurationsFrame.Visibility = System.Windows.Visibility.Collapsed;
-                xConfigurationsSplitter.Visibility = System.Windows.Visibility.Collapsed;
-                this.Width = this.Width - xConfigurationsCol.ActualWidth;
-                xConfigurationsCol.Width = new GridLength(0);
-                xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xConfigurationsBtn.ToolTip = "Show Configurations";
+                SetTabsColumnView(eTabsViewMode.None);
             }
             mConfigIsOn = show;
         }
 
-        private void SetMeticsPanelView(bool show)
+        enum eTabsViewMode { None,DetailsAndMetrics,Configurations}
+        private void SetTabsColumnView(eTabsViewMode mode)
         {
-            if (show)
+            switch(mode)
             {
-                xMeticsCol.Width = new GridLength(350);
-                this.Width = this.Width + Convert.ToDouble(xMeticsCol.Width.ToString());
+                case eTabsViewMode.DetailsAndMetrics:
+                    this.Width = this.Width - xTabsCol.ActualWidth;
+                    xTabsCol.Width = new GridLength(350);
+                    this.Width = this.Width + Convert.ToDouble(xTabsCol.Width.ToString());
+
+                    xDeviceDetailsAndMetricsTabs.Visibility = Visibility.Visible;
+                    xWindowConfigurationsTabs.Visibility = Visibility.Collapsed;
+
+                    xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
+                    xMetricsBtn.ToolTip = "Hide Device Details & Metrics";
+                    mMeticsIsOn = true;
+                    xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle") as Style;
+                    xConfigurationsBtn.ToolTip = "Show Window Configurations";
+                    mConfigIsOn = false;                 
+                    break;
+
+                case eTabsViewMode.Configurations:
+                    this.Width = this.Width - xTabsCol.ActualWidth;
+                    xTabsCol.Width = new GridLength(270);
+                    this.Width = this.Width + Convert.ToDouble(xTabsCol.Width.ToString());
+
+                    xDeviceDetailsAndMetricsTabs.Visibility = Visibility.Collapsed;
+                    xWindowConfigurationsTabs.Visibility = Visibility.Visible;
+
+                    xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle") as Style;
+                    xMetricsBtn.ToolTip = "Show Device Details & Metrics";
+                    mMeticsIsOn = false;
+                    xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
+                    xConfigurationsBtn.ToolTip = "Hide Window Configurations";
+                    mConfigIsOn = true;
+                    break;
+
+                case eTabsViewMode.None:
+                default:                    
+                    if (this.Width - xTabsCol.ActualWidth > 0)
+                    {
+                        this.Width = this.Width - xTabsCol.ActualWidth;
+                    }
+                    xTabsCol.Width = new GridLength(0);
+
+                    xDeviceDetailsAndMetricsTabs.Visibility = Visibility.Collapsed;
+                    xWindowConfigurationsTabs.Visibility = Visibility.Collapsed;
+
+                    xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle") as Style;
+                    xMetricsBtn.ToolTip = "Show Device Details & Metrics";
+                    mMeticsIsOn = false;
+                    xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle") as Style;
+                    xConfigurationsBtn.ToolTip = "Show Window Configurations";
+                    mConfigIsOn = false;
+                    break;
             }
-            else
-            {
-                xMeticsCol.Width = new GridLength(0);
-                if (this.Width - xMeticsCol.ActualWidth > 0)
-                {
-                    this.Width = this.Width - xMeticsCol.ActualWidth;
-                }
-            }
-            mMeticsIsOn = show;
         }
 
         private void DoSelfClose()
@@ -1637,11 +1661,11 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1)
+        private void PerformScreenSwipe(eSwipeSide swipeSide, double swipeScale, TimeSpan swipeDuration)
         {
             try
             {
-                mDriver.PerformScreenSwipe(swipeSide, impact);
+                mDriver.PerformScreenSwipe(swipeSide, swipeScale, swipeDuration);
 
                 if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
                 {
@@ -1726,6 +1750,43 @@ namespace Ginger.Drivers.DriversWindows
                 mCordsStackZIndex = 1;
             }
             Canvas.SetLeft(xCordsStack, mCordsStackZIndex);
+        }
+
+        private void xExternalViewBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mDriver.OpenDeviceExternalView();
+        }
+
+        double imageSourceWidthPrecentage = 0.25;
+        private void xZoomInBtn_Click(object sender, RoutedEventArgs e)
+        {
+            imageSourceWidthPrecentage += 0.05;
+            AdjustWindowSize(imageSourceWidthPrecentage);
+        }
+
+        private void xZoomOutBtn_Click(object sender, RoutedEventArgs e)
+        {
+            imageSourceWidthPrecentage -= 0.05;
+            AdjustWindowSize(imageSourceWidthPrecentage);
+        }
+
+        private void AdjustWindowSize(double widthPrecentage)
+        {
+
+            if (xDeviceScreenshotImage.Source != null && widthPrecentage > 0.2 && widthPrecentage < 0.5)
+            {
+                double imageSourceHightWidthRatio = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.Source.Width;
+                double previousCanasWidth = xDeviceScreenshotCanvas.ActualWidth;
+                double previousCanasHeight = xDeviceScreenshotCanvas.ActualHeight;
+
+                //Update canvas size
+                xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width * widthPrecentage);
+                xDeviceScreenshotCanvas.Height = xDeviceScreenshotCanvas.Width * imageSourceHightWidthRatio;
+
+                //Update window size
+                this.Width = this.Width + (xDeviceScreenshotCanvas.Width - previousCanasWidth);
+                this.Height = this.Height + (xDeviceScreenshotCanvas.Height - previousCanasHeight);
+            }
         }
     }
 }

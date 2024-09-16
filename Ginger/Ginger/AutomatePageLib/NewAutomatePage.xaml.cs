@@ -173,24 +173,32 @@ namespace GingerWPF.BusinessFlowsLib
 
         private bool SetOrClearPreviousAutoRunSetDocumentLiteDB(bool isClear = true)
         {
-            LiteDbManager dbManager = new LiteDbManager(mExecutionEngine.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
-            var result = dbManager.GetRunSetLiteData();
-            var filterData = result.FindOne(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString());
-            if (filterData != null)
+            try
             {
-                if (isClear)
+                LiteDbManager dbManager = new LiteDbManager(mExecutionEngine.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
+                var result = dbManager.GetRunSetLiteData();
+                var filterData = result.FindOne(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString());
+                if (filterData != null)
                 {
-                    LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mExecutionEngine.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder, "GingerExecutionResults.db"));
-                    dbConnector.DeleteDocumentByLiteDbRunSet(filterData, eExecutedFrom.Automation);
+                    if (isClear)
+                    {
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mExecutionEngine.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder, "GingerExecutionResults.db"));
+                        dbConnector.DeleteDocumentByLiteDbRunSet(filterData, eExecutedFrom.Automation);
+                    }
+                    else
+                    {
+                        mRunSetLiteDbId = filterData._id;
+                        mRunnerLiteDbId = filterData.RunnersColl[0]._id;
+                    }
+                    return true;
                 }
-                else
-                {
-                    mRunSetLiteDbId = filterData._id;
-                    mRunnerLiteDbId = filterData.RunnersColl[0]._id;
-                }
-                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception during accessing litedb file", ex);
             }
             return false;
+
         }
         #endregion LiteDB
 
@@ -221,7 +229,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (e.PropertyName == nameof(Activity.TargetApplication))
             {
-                OnTargetApplicationChanged(sender , null);
+                OnTargetApplicationChanged(sender, null);
                 UpdateContextWithActivityDependencies();
             }
         }
@@ -417,7 +425,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
-                
+
                 CurrentItemToSave = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
@@ -614,9 +622,9 @@ namespace GingerWPF.BusinessFlowsLib
                         ToggleActivityPageUIButtons(!mExecutionIsInProgress);
                     }
                     mActivityDetailsPage = new ActivityDetailsPage(mContext.Activity, mContext, mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute);
-/*                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged -= OnTargetApplicationChanged;
-                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged += OnTargetApplicationChanged;
-*/
+                    /*                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged -= OnTargetApplicationChanged;
+                                        mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged += OnTargetApplicationChanged;
+                    */
                 }
                 else
                 {
@@ -630,12 +638,12 @@ namespace GingerWPF.BusinessFlowsLib
                 xCurrentActivityFrame.SetContent(mActivityPage);
             }
         }
-         
+
         private void OnTargetApplicationChanged(object arg1, SelectionChangedEventArgs args)
         {
-            var selectedTargetApplication = (mActivity!=null) ? WorkSpace.Instance.Solution.GetSolutionTargetApplications().FirstOrDefault((targetApp)=>targetApp.Name.Equals(mActivity.TargetApplication)) as TargetApplication : null;
+            var selectedTargetApplication = (mActivity != null) ? WorkSpace.Instance.Solution.GetSolutionTargetApplications().FirstOrDefault((targetApp) => targetApp.Name.Equals(mActivity.TargetApplication)) as TargetApplication : null;
 
-            if (selectedTargetApplication !=null && !mBusinessFlow.TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(selectedTargetApplication.AppName)))
+            if (selectedTargetApplication != null && !mBusinessFlow.TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(selectedTargetApplication.AppName)))
             {
                 //    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)actTargetApp).AppName };
                 //    applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
@@ -1249,7 +1257,7 @@ namespace GingerWPF.BusinessFlowsLib
                     ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).IsFailedToStart = false;
                 }
 
-                ResumeBusinessFlowAndActivitiesDevelopmentTimeTracking(itemsWithDevTimeTracking);                
+                ResumeBusinessFlowAndActivitiesDevelopmentTimeTracking(itemsWithDevTimeTracking);
             }
         }
 
@@ -1269,7 +1277,7 @@ namespace GingerWPF.BusinessFlowsLib
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "error while pausing development time tracker for business flow and activities", ex);
-            }            
+            }
 
             return itemsWithTimerRunning;
         }
@@ -2093,7 +2101,7 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
-            if (ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow).Result)
+            if (ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow))
             {
                 if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, mBusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {

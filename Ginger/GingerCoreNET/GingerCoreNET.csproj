@@ -31,10 +31,13 @@
   <ItemGroup>
     <Compile Remove="DataBaseAbstarct\**" />
     <Compile Remove="GeneralLib\JSON\**" />
+    <Compile Remove="NewFolder1\**" />
+    <Compile Remove="NewFolder\**" />
     <EmbeddedResource Remove="DataBaseAbstarct\**" />
     <EmbeddedResource Remove="GeneralLib\JSON\**" />
-    <None Remove="DataBaseAbstarct\**" />
-    <None Remove="GeneralLib\JSON\**" />
+    <EmbeddedResource Remove="NewFolder1\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,6 +58,7 @@
     <None Remove="DLLS\SikuliStandardNet.dll" />
     <None Remove="DLLS\ZephyrEntStdSDK.dll" />
     <None Remove="DLLS\Zepyhr_Ent_Repository_Std.dll" />
+    <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\AccessiblityRules.json" />
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporter.css" />
     <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporterElements.js" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
@@ -201,6 +205,9 @@
     <EmbeddedResource Include="DLLS\GingerHbaseFilter.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\AccessiblityRules.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporterElements.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -229,9 +236,9 @@
 
   <ItemGroup>
   
-    <PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.6" />
+    <PackageReference Include="Appium.WebDriver" Version="5.1.0" />
   
-    <PackageReference Include="Azure.Identity" Version="1.11.0" />
+    <PackageReference Include="Azure.Identity" Version="1.12.0" />
   
     <PackageReference Include="Bogus" Version="35.5.1" />
   
@@ -245,9 +252,11 @@
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
-    <PackageReference Include="Deque.AxeCore.Commons" Version="4.8.0" />
+    <PackageReference Include="Deque.AxeCore.Commons" Version="4.9.1" />
   
-    <PackageReference Include="Deque.AxeCore.Selenium" Version="4.8.0" />
+    <PackageReference Include="Deque.AxeCore.Playwright" Version="4.9.1" />
+  
+    <PackageReference Include="Deque.AxeCore.Selenium" Version="4.9.1" />
   
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />
   
@@ -257,11 +266,26 @@
   
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.6" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
   
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.3.1" />
+  
+    <PackageReference Include="Google.Protobuf" Version="3.28.0" />
+    
+    <PackageReference Include="GraphQL" Version="7.8.0" />
+  
+    <PackageReference Include="GraphQL.Client" Version="6.1.0" />
+  
+    <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft" Version="6.1.0" />
    
     <PackageReference Include="Gravity.Core" Version="2021.9.12.3" />
+   
+    <PackageReference Include="Grpc.Net.Client" Version="2.65.0" />
+   
+    <PackageReference Include="Grpc.Tools" Version="2.66.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
@@ -269,7 +293,7 @@
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
-	<PackageReference Include="LiteDB" Version="5.0.17" />
+	<PackageReference Include="LiteDB" Version="5.0.21" />
   
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
   
@@ -309,16 +333,16 @@
     <PackageReference Include="protobuf-net" Version="3.2.26" />
     <PackageReference Include="protobuf-net.Core" Version="3.2.26" />
     <PackageReference Include="Protractor" Version="1.0.0" />
-    <PackageReference Include="RestSharp" Version="110.2.0" />
-    <PackageReference Include="Selenium.Support" Version="4.21.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.21.0" />
+    <PackageReference Include="RestSharp" Version="112.0.0" />
+    <PackageReference Include="Selenium.Support" Version="4.23.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.23.0" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
     <PackageReference Include="SSH.NET" Version="2023.0.1" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.1" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
@@ -336,7 +360,7 @@
     <ProjectReference Include="..\VisualRegressionTracker\VisualRegressionTracker.csproj" />
   </ItemGroup>
 
-  <ItemGroup>   
+  <ItemGroup>            
     <Reference Include="ACL_Data_Contract">
       <HintPath>DLLS\ACL_Data_Contract.dll</HintPath>
     </Reference>
@@ -1157,10 +1181,22 @@
     <None Update="Reports\Ginger-Web-Client\main.015f76cbde0590f1.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.0271dbc8168ef484.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.0ee51aa14e6f51e3992e.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.139c267c5febab4e.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.159642e2f8ca5229.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.2503092842e110f5.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.271e67578fb12021.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main.38bb56b87fd01368.js">
@@ -1169,13 +1205,22 @@
     <None Update="Reports\Ginger-Web-Client\main.4273d22ab483b161.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.438b2e8802ab272e.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.4a6e5def8906895a.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main.53bcca0065aceb0defb0.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.5badfb6abcbc6624.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.5c9395fe36c9ac94e13c.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.618eecd26592a6e1.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main.6a73809b9e1090f3.js">
@@ -1211,16 +1256,34 @@
     <None Update="Reports\Ginger-Web-Client\main.aea3c5e58155eec5.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.b42b139d50cbe944.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.bd5c247671b567e1.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.c61ea14b4b7835ba.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.d56e5665895d802f.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main.da916f1c43a294a6c5ed.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.e0f1daaae814e3b9.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.e76244f45a5a7b7b107d.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </None>    
     <None Update="Reports\Ginger-Web-Client\main.f7cb1b55c32902c7.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>    
+    <None Update="Reports\Ginger-Web-Client\main.fa57425f00e55f41.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>    
+    <None Update="Reports\Ginger-Web-Client\main.fac0119b7c90c3dc.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main.fffc10dee05b7289f76b.js">
@@ -1379,6 +1442,9 @@
     <None Update="Reports\Ginger-Web-Client\styles.0220388bb37cc84c.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\styles.0decbea244bacf15.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>   
     <None Update="Reports\Ginger-Web-Client\styles.2f15af51caafc14d831e.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1421,6 +1487,12 @@
     <Folder Include="ActionsLib\UI\UI Element\" />
     <Folder Include="Reports\Ginger-Web-Client\assets\artifacts\" />
     <Folder Include="SolutionRepositoryLib\RepositoryObjectsLib\PlatformsLib\" />
+  </ItemGroup>
+	
+	
+  <ItemGroup>
+	<Protobuf Include="Telemetry\Protos\V1\feature.proto" GrpcServices="Client" />
+	<Protobuf Include="Telemetry\Protos\V1\log.proto" GrpcServices="Client" />
   </ItemGroup>
 
   <ItemGroup>

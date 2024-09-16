@@ -16,7 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -91,11 +94,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             /// Get or initialize a value indicating whether the POM should be auto-updated during the locate operation.
             /// </summary>
             internal required bool AutoUpdatePOM { get; init; }
+
+            internal required POMExecutionUtils POMExecutionUtils { get; init; }
+
+            internal IAgent? Agent { get; init; }
         }
 
         private readonly bool _autoUpdatePOM;
         private readonly ElementInfo _elementInfo;
         private readonly ElementsProvider _elementsProvider;
+        private readonly POMExecutionUtils _pomExecutionUtils;
+        private readonly IAgent? _agent;
 
         //we only need BusinessFlow and ProjEnvironment to evaluate custom POM locators. can't we just take ValueExpression as input?
         private readonly BusinessFlow _businessFlow;
@@ -110,8 +119,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             _autoUpdatePOM = args.AutoUpdatePOM;
             _elementInfo = args.ElementInfo;
             _elementsProvider = args.ElementsProvider;
+            _pomExecutionUtils = args.POMExecutionUtils;
+            _agent = args.Agent;
             _businessFlow = args.BusinessFlow;
             _environment = args.Environment;
+
         }
 
         /// <summary>
@@ -137,6 +149,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             if (elements == null)
             {
                 elements = [];
+            }
+
+            if (elements.Any())
+            {
+                ReprioritizeLocators();
             }
 
             return new LocateResult()
@@ -202,7 +219,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         private void UpdatePOM()
         {
-            throw new NotImplementedException();
+            if (_agent == null)
+            {
+                throw new InvalidOperationException($"Parameter {nameof(Args.Agent)} must be provided to be able to auto update POM");
+            }
+
+            _pomExecutionUtils.AutoUpdateCurrentPOM(_agent);
+        }
+
+        private void ReprioritizeLocators()
+        {
+            _pomExecutionUtils.PriotizeLocatorPosition();
         }
     }
 }

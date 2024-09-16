@@ -16,10 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
     <PackageReference Include="GingerTestHelper" Version="2.0.2" />
     <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.69" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
     <PackageReference Include="coverlet.collector" Version="3.1.0" />
@@ -33,7 +35,7 @@
     <ProjectReference Include="..\Ginger\Ginger.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup>   
     <Resource Include="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb" />
     <Resource Include="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.mdb" />
   </ItemGroup>

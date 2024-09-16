@@ -4,16 +4,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         mc:Ignorable="d" 
-        Title="Loading Device..." Height="685" Width="323"
-        MinHeight="600" MinWidth="300" WindowStyle="SingleBorderWindow"
+        Title="Loading Device..." Height="650" Width="350"
+        MinHeight="650" MinWidth="350" WindowStyle="ToolWindow" ResizeMode="CanResizeWithGrip" 
         WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded"
         Topmost="False" KeyDown="Window_KeyDown">
-    <Grid x:Name="xWindowGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="xWindowGrid" Background="Transparent">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="xMeticsCol" Width="350"/>
-            <ColumnDefinition Width="35*"/>
-            <ColumnDefinition Width="9*"/>
-            <ColumnDefinition x:Name="xConfigurationsCol" Width="220"/>
+            <ColumnDefinition x:Name="xTabsCol" Width="0"/>
+            <ColumnDefinition Width="250*" MinWidth="250"/>
+            <ColumnDefinition Width="65"/>
         </Grid.ColumnDefinitions>
 
         <Grid.Resources>
@@ -22,22 +21,19 @@
             </DataTemplate>
         </Grid.Resources>
 
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
-            <TabControl x:Name="xItemsTabs" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}">
-                    <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="1" >
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}">
-                                <DockPanel >
-                                    <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                    <TextBlock  Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-                        
+        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
+            <TabControl x:Name="xDeviceDetailsAndMetricsTabs" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}">
+                <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="1" >
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}">
+                            <DockPanel >
+                                <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Info" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock  Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" >
-
                         <Ginger:ucGrid x:Name="xDeviceDetailsGrid" Width="346" HorizontalAlignment="Left" IsReadOnly="False" Title="Device Details" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
-
                         <StackPanel x:Name="xDetailsLoadingPnl" Margin="0,150,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <UserControls:ImageMakerControl x:Name="xDetailsProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
                             <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Black}">
@@ -46,24 +42,19 @@
                                 </Label.Content>
                             </Label>
                         </StackPanel>
-
                     </StackPanel>
-
                 </TabItem>
-
-                    <TabItem x:Name="xDeviceMetricsTab" Style="{StaticResource $CoolTab}" TabIndex="2" >
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}">
-                                <DockPanel >
-                                    <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                    <TextBlock  Text="Metrics" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-
+                <TabItem x:Name="xDeviceMetricsTab" Style="{StaticResource $CoolTab}" TabIndex="2" >
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}">
+                            <DockPanel >
+                                <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Graph" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock  Text="Metrics" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
                         <Ginger:ucGrid x:Name="xDeviceMetricsGrid" Width="346" HorizontalAlignment="Left" Title="Metrics Details"  IsReadOnly="false"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
-
                         <StackPanel x:Name="xMetricsLoadingPnl" Margin="0,150,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <UserControls:ImageMakerControl x:Name="xMetricsProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
                             <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Black}">
@@ -74,12 +65,52 @@
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
-                </TabControl>
-            </StackPanel>
+            </TabControl>
+            
+            <TabControl x:Name="xWindowConfigurationsTabs" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}">
+                <TabItem x:Name="xConfigurationsTab" Style="{StaticResource $CoolTab}" TabIndex="1" >
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}">
+                            <DockPanel >
+                                <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock  Text="Configurations" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
+                    <!--Configurations area-->
+                    <ScrollViewer x:Name="xConfigurationsFrame" Grid.Column="3" VerticalScrollBarVisibility="Auto" Background="{StaticResource $BackgroundColor_White}" >
+                        <StackPanel Margin="0,2,0,0" >
+                            <Label Content="Auto refresh mode:" Style="{StaticResource $LabelStyle}" FontWeight="Bold" Margin="0,0,0,0"/>
+                            <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Vertical" Margin="5,0,0,0">
+                                <RadioButton x:Name="xLiveRdBtn" Content="Live" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" Checked="xContinualRdBtn_Checked" />
+                                <RadioButton x:Name="xPostOperationRdBtn" Content="Post Operation" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="0,0,0,0" Checked="xPostOperationRdBtn_Checked" />
+                                <RadioButton x:Name="xDisabledRdBtn" Content="Disabled" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="0,0,0,0" Checked="xDisabledRdBtn_Checked" />
+                            </StackPanel>
+                            <StackPanel x:Name="xRefreshWaitingRatePnl" Orientation="Horizontal" Margin="5,0,0,0">
+                                <Label Content="Refresh waiting rate:" Style="{StaticResource $LabelStyle}"/>
+                                <ComboBox x:Name="xRefreshWaitingRateCombo" Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="45">
+                                    <ComboBoxItem>0</ComboBoxItem>
+                                    <ComboBoxItem IsSelected="True">1</ComboBoxItem>
+                                    <ComboBoxItem>2</ComboBoxItem>
+                                    <ComboBoxItem>3</ComboBoxItem>
+                                    <ComboBoxItem>4</ComboBoxItem>
+                                    <ComboBoxItem>5</ComboBoxItem>
+                                    <ComboBoxItem>6</ComboBoxItem>
+                                    <ComboBoxItem>7</ComboBoxItem>
+                                    <ComboBoxItem>8</ComboBoxItem>
+                                    <ComboBoxItem>9</ComboBoxItem>
+                                    <ComboBoxItem>10</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
+        </StackPanel>
 
-        <Grid x:Name="xDeviceViewGrid" Margin="5" Grid.Column="1" Grid.ColumnSpan="2">
+        <Grid x:Name="xDeviceViewGrid" Margin="5" Grid.Column="1">
             <Grid.ColumnDefinitions>
-
                 <ColumnDefinition Width="12"/>
                 <ColumnDefinition Width="100*"/>
                 <ColumnDefinition Width="12"/>
@@ -92,25 +123,8 @@
             </Grid.RowDefinitions>
 
             <!--Top buttons-->
-            <Frame x:Name="xMainTopFrame" Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" Background="Black"/>
-            <UserControls:ucButton x:Name="xRefreshButton"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Bottom" ButtonFontImageSize="18" ButtonImageType="Refresh" Click="xRefreshButton_Click" ToolTip="Refresh Device Screenshot" Margin="0,0,0,0" Visibility="Collapsed"/>
-            <UserControls:ImageMakerControl x:Name="xRecordingImage" Grid.Row="0" Grid.Column="1" Height="16" Width="16" ImageType="Recording" Foreground="Red" ImageForeground="Red" HorizontalAlignment="Right" VerticalAlignment="Center" SetBorder="False" ToolTip="Recording..." Margin="0,0,80,0" Visibility="Collapsed" />
-            <UserControls:ucButton x:Name="xConfigurationsBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="15" ButtonImageType="Config" Click="xConfigurationsBtn_Click" ToolTip="Show Configurations" Margin="0,0,25,0" />
-            <UserControls:ucButton x:Name="xPinBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="14" ButtonImageType="Pin" Click="xPinBtn_Click" ToolTip="Dock Window" Margin="0,1,5,0" />
-            <UserControls:ucButton x:Name="xCordBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="13" ButtonImageType="Target" Click="xCordBtn_Click" ToolTip="Show Mouse Coordinates" Margin="45,0,0,0" Visibility="Collapsed" />
-            <UserControls:ucButton x:Name="xSwipeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="13" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="25,0,0,0" Visibility="Collapsed" />
-            <UserControls:ucButton x:Name="xPortraiteBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="16" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Portrait" Margin="5,0,0,0" Visibility="Collapsed"/>
-            <UserControls:ucButton x:Name="xLandscapeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="16" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Landscape" Margin="5,0,0,0" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
-                <UserControls:ucButton.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="90"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </UserControls:ucButton.RenderTransform>
-            </UserControls:ucButton>
-            <UserControls:ucButton x:Name="xMetricsBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="15" ButtonImageType="Parameter" Click="xMetricsBtn_Click" ToolTip="Show Device Metrics" Margin="0,0,50,0" />
+            <Frame Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" Background="Black"/>
+            <UserControls:ImageMakerControl x:Name="xRecordingImage" Grid.Row="0" Grid.Column="1" Height="16" Width="16" ImageType="Recording" Foreground="Red" ImageForeground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" ToolTip="Recording..." Margin="0,0,0,0" Visibility="Collapsed" />
 
             <!--Sides-->
             <DockPanel Grid.Column="0" Grid.Row="0" Background="Transparent" >
@@ -173,46 +187,63 @@
             </DockPanel>
 
             <!--bottom buttons-->
-            <DockPanel x:Name="xMainBottomFrame" Grid.Row="2" Grid.Column="1" Margin="0,0,0,0" Background="Black">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <UserControls:ucButton x:Name="xMenuBtn"   ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Square" Click="xMenuBtn_Click" ToolTip="Menu" Margin="0,0,55,0"/>
-                    <UserControls:ucButton x:Name="xHomeBtn"   ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="15" ButtonImageType="Circle" Click="xHomeBtn_Click" ToolTip="Home" Margin="0,0,0,0"/>
-                    <UserControls:ucButton x:Name="xBackButton" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Triangle" Click="xBackBtn_Click" ToolTip="Back" Margin="55,0,0,0"/>
-                </StackPanel>
-            </DockPanel>
+            <Frame  Grid.Row="2" Grid.Column="1" Margin="0,0,0,0" Background="Black"/>
         </Grid>
 
-        <GridSplitter x:Name="xConfigurationsSplitter" Grid.Column="2" Grid.Row="0" ResizeDirection="Columns"  HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="{StaticResource $BackgroundColor_DarkGray}"/>
+        <!--<GridSplitter x:Name="xConfigurationsSplitter" Grid.Column="2" Grid.Row="0" ResizeDirection="Columns"  HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="{StaticResource $BackgroundColor_DarkGray}"/>-->
 
-        <!--Configurations area-->
-        <ScrollViewer x:Name="xConfigurationsFrame" Grid.Column="3" Background="{StaticResource $BackgroundColor_White}" >
-            <StackPanel Margin="0,2,0,0" >
-                <Label Content="Auto refresh mode:" Style="{StaticResource $LabelStyle}" FontWeight="Bold" Margin="0,0,0,0"/>
-                <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Vertical" Margin="5,0,0,0">
-                    <RadioButton x:Name="xLiveRdBtn" Content="Live" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" Checked="xContinualRdBtn_Checked" />
-                    <RadioButton x:Name="xPostOperationRdBtn" Content="Post Operation" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="0,0,0,0" Checked="xPostOperationRdBtn_Checked" />
-                    <RadioButton x:Name="xDisabledRdBtn" Content="Disabled" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="0,0,0,0" Checked="xDisabledRdBtn_Checked" />
+        <!--Control buttons-->
+        <DockPanel Grid.Column="2" Background="Transparent">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="{StaticResource $BackgroundColor_White}" >
+                <StackPanel Orientation="Vertical" Width="50">
+                    <Border x:Name="xDeviceWindowControlsBorder" BorderThickness="1" CornerRadius="20,20,20,20" BorderBrush="LightGray" Background="White" Margin="5,10,5,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="5" Opacity="0.5"/>
+                        </Border.Effect>
+                        <StackPanel Orientation="Vertical">
+                            <UserControls:ucButton x:Name="xExternalViewBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="ShareExternal" Click="xExternalViewBtn_Click" ToolTip="Open Device External View" Margin="0,0,0,0" Visibility="Collapsed" />
+                            <UserControls:ucButton x:Name="xPinBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Pin" Click="xPinBtn_Click" ToolTip="Dock Window" Margin="0,0,0,0" IsEnabled="False"/>
+                            <UserControls:ucButton x:Name="xRefreshButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Refresh" Click="xRefreshButton_Click" ToolTip="Refresh Device Screenshot" Margin="0,0,0,0" Visibility="Collapsed"/>
+                            <UserControls:ucButton x:Name="xCordBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Target" Click="xCordBtn_Click" ToolTip="Show Mouse Coordinates" Margin="0,0,0,0"/>
+                            <UserControls:ucButton x:Name="xSwipeBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="0,0,0,0"/>
+
+
+                            <UserControls:ucButton x:Name="xClearHighlightBtn" ButtonType="ImageButton"  HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Invisible" Click="xClearHighlightsBtn_Click" ToolTip="Clear Highlights" Margin="0,0,0,0"/>
+                            <StackPanel Orientation="Vertical" Margin="0,0,0,0">
+                                <UserControls:ucButton x:Name="xZoomInBtn" ButtonType="ImageButton"  HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Add" Click="xZoomInBtn_Click" ToolTip="Zoom In" Margin="0,0,0,0"/>
+                                <UserControls:ucButton x:Name="xZoomOutBtn" ButtonType="ImageButton"  HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="DeleteSingle" Click="xZoomOutBtn_Click" ToolTip="Zoom Out" Margin="0,0,0,0"/>
+                            </StackPanel>
+                            <UserControls:ucButton x:Name="xMetricsBtn"  ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Graph" Click="xMetricsBtn_Click" ToolTip="Show Device Details &amp; Metrics" Margin="0,0,0,0" />
+                            <UserControls:ucButton x:Name="xConfigurationsBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Config" Click="xConfigurationsBtn_Click" ToolTip="Mobile View Configurations" Margin="0,0,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="xDeviceControlsBorder"  BorderThickness="1" CornerRadius="20,20,20,20" BorderBrush="LightGray" Background="White" Margin="5,10,5,10">
+                        <Border.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="5" Opacity="0.5"/>
+                        </Border.Effect>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                            <UserControls:ucButton x:Name="xPortraiteBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Portrait" Margin="0,0,0,0" Visibility="Collapsed"/>
+                            <UserControls:ucButton x:Name="xLandscapeBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Landscape" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
+                                <UserControls:ucButton.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="90"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </UserControls:ucButton.RenderTransform>
+                            </UserControls:ucButton>
+                            <UserControls:ucButton x:Name="xDeviceSettingsBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Parameter" Click="xDeviceSettingsBtn_Click" ToolTip="Open Device Settings" Margin="0,0,0,0"/>
+                            <UserControls:ucButton x:Name="xBackButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="GoBack" Click="xBackBtn_Click" ToolTip="Back" Margin="0,0,0,0"/>
+                            <UserControls:ucButton x:Name="xHomeBtn"   ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Home" Click="xHomeBtn_Click" ToolTip="Home" Margin="0,0,0,0"/>
+                            <UserControls:ucButton x:Name="xMenuBtn"   ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Copy" Click="xMenuBtn_Click" ToolTip="Switch App" Margin="0,0,0,0"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-                <StackPanel x:Name="xRefreshWaitingRatePnl" Orientation="Horizontal" Margin="5,0,0,0">
-                    
-                    <Label Content="Refresh waiting rate:" Style="{StaticResource $LabelStyle}"/>
-                    <ComboBox x:Name="xRefreshWaitingRateCombo" Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="45">
-                        <ComboBoxItem>0</ComboBoxItem>
-                        <ComboBoxItem IsSelected="True">1</ComboBoxItem>
-                        <ComboBoxItem>2</ComboBoxItem>
-                        <ComboBoxItem>3</ComboBoxItem>
-                        <ComboBoxItem>4</ComboBoxItem>
-                        <ComboBoxItem>5</ComboBoxItem>
-                        <ComboBoxItem>6</ComboBoxItem>
-                        <ComboBoxItem>7</ComboBoxItem>
-                        <ComboBoxItem>8</ComboBoxItem>
-                        <ComboBoxItem>9</ComboBoxItem>
-                        <ComboBoxItem>10</ComboBoxItem>
-                    </ComboBox>
-                </StackPanel>
-                <UserControls:ucButton x:Name="xClearHighlightBtn" ButtonType="ImageButton"  HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Invisible" Click="xClearHighlightsBtn_Click" ToolTip="Clear Highlights" Margin="0,5,0,0"/>
-                <UserControls:ucButton x:Name="xDeviceSettingsBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Config" Click="xDeviceSettingsBtn_Click" ButtonText="Device Settings" Margin="0,10,0,0"/>
-            </StackPanel>
-        </ScrollViewer>
+            </ScrollViewer>
+        </DockPanel>
+        
+       
     </Grid>
 </Window>

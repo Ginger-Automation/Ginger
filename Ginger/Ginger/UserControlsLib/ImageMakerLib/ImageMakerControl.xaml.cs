@@ -205,6 +205,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Chatbot:
                     SetAsStaticImage("bot.png");
                     break;
+                case eImageType.GingerAnalytics:
+                    SetAsStaticImage("GingerAnalytics.png");
+                    break;
                 case eImageType.SendArrow:
                     SetAsStaticImage("sendArrow.png");
                     break;
@@ -285,6 +288,10 @@ namespace Amdocs.Ginger.UserControls
 
                 case eImageType.Building:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Building);
+                    break;
+
+                case eImageType.Accessibility:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UniversalAccess);
                     break;
                 #endregion
 
@@ -427,6 +434,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Finish:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FlagCheckered);
+                    break;
+                case eImageType.Home:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_House);
                     break;
                 case eImageType.Cancel:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Xmark);
@@ -618,6 +628,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.NormalUser:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserGear);
+                    break;
+                case eImageType.AnglesArrowLeft:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AnglesLeft);
+                    break;
+                case eImageType.AnglesArrowRight:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AnglesRight);
                     break;
                 #endregion
 
@@ -1121,6 +1137,10 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 #endregion
 
+                case eImageType.VerticalBars:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bars, rotation: 90);
+                    break;
+
                 default:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Question, Brushes.Red);
                     this.Background = Brushes.Yellow;
@@ -1142,7 +1162,7 @@ namespace Amdocs.Ginger.UserControls
             this.Background = null;
         }
 
-        private void SetAsFontAwesomeIcon(EFontAwesomeIcon fontAwesomeIcon, Brush foreground = null, double spinDuration = 0, string toolTip = null, bool blinkingIcon = false)
+        private void SetAsFontAwesomeIcon(EFontAwesomeIcon fontAwesomeIcon, Brush foreground = null, double spinDuration = 0, string toolTip = null, bool blinkingIcon = false, double rotation = 0)
         {
             //set the icon
             xFAFont.Icon = fontAwesomeIcon;
@@ -1193,6 +1213,8 @@ namespace Amdocs.Ginger.UserControls
 
                 xFAImage.BeginAnimation(OpacityProperty, blinkAnimation);
             }
+
+            xFAImage.Rotation = rotation;
 
             if (!string.IsNullOrEmpty(toolTip) && string.IsNullOrEmpty(ImageToolTip))
             {

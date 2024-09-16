@@ -1754,7 +1754,7 @@ namespace Ginger.Run
             else
             {
                 mRunSetsExecutionsPage.RunsetConfig = mRunSetConfig;
-                mRunSetsExecutionsPage.ReloadData();
+                mRunSetsExecutionsPage.ReloadExecutionHistoryData();
             }
 
             UpdateRunsetExecutionHistoryTabHeader();
@@ -2274,10 +2274,7 @@ namespace Ginger.Run
                 {
                     ExecutionBorder.BorderBrush = FindResource("$amdocsLogoLinarGradientBrush") as Brush;
 
-                    if (mRunSetsExecutionsPage.AutoLoadExecutionData)
-                    {
-                        InitExecutionHistorySection();
-                    }
+                   
                 }
             }
         }

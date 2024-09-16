@@ -22,6 +22,9 @@
             <DataTemplate x:Key="ParamValueExpressionButton">
                 <Button x:Name="GridParamVEButton" Content="..." Click="GridParamVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
+            <DataTemplate x:Key="DescriptionValueExpressionButton">
+                <Button x:Name="GridDescriptionVEButton" Content="..." Click="GridDescriptionVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
             <DataTemplate x:Key="InputValueExpressionButton">
                 <Button x:Name="InputGridVEButton" Content="..." Click="InputGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
@@ -304,12 +307,15 @@
                                                 <CheckBox x:Name="xFailIgnoreCheckBox" Content="Ignore on Fail" Visibility="Collapsed" ToolTip="If the action fails change status to Ignore Fail" Margin="10,0,0,0" Style="{StaticResource $CeckBoxStyle}"/>
                                             </StackPanel>
 
-                                            <StackPanel x:Name="xScreenshotsConfigsPnl" DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,10,0,0">
-                                                <CheckBox x:Name="xTakeScreenShotCheckBox" DockPanel.Dock="Top" Content="Take Screenshot(s)" FontWeight="Bold" ToolTip="Add tested application screenshot to the report after the action executed" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Checked="XTakeScreenShotCheckBox_CheckChanged" Unchecked="XTakeScreenShotCheckBox_CheckChanged" />
-                                                <StackPanel x:Name="xScreenshotsCaptureTypeConfigsPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="20,0,0,0"  Visibility="Visible">
-                                                    <Label Content="Capture Type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
-                                                    <ComboBox x:Name="xWindowsToCaptureCombo" Margin="0,0,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                            <StackPanel x:Name="xScreenshotsConfigsPnl" Orientation="Vertical" DockPanel.Dock="Top" Margin="0,10,0,0">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <CheckBox x:Name="xTakeScreenShotCheckBox" DockPanel.Dock="Top" Content="Take Screenshots" FontWeight="Bold" ToolTip="Add tested application screenshot to the report after the action executed" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Checked="XTakeScreenShotCheckBox_CheckChanged" Unchecked="XTakeScreenShotCheckBox_CheckChanged" />
+                                                    <StackPanel x:Name="xScreenshotsCaptureTypeConfigsPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="20,0,0,0"  Visibility="Visible">
+                                                        <Label Content="Capture Type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                                                        <ComboBox x:Name="xWindowsToCaptureCombo" Margin="0,0,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                                    </StackPanel>
                                                 </StackPanel>
+                                                <CheckBox x:Name="xAutoScreenShotOnFailureCheckBox"  Margin="0,10,0,0" DockPanel.Dock="Top" Content="Auto Capture Screenshots on Failure" FontWeight="Bold" ToolTip="Enable this option to automatically capture screenshots when a failure occurs during the execution" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center"/>
                                             </StackPanel>
 
                                             <DockPanel x:Name="xActionLogPnl" Margin="0,10,0,0" >

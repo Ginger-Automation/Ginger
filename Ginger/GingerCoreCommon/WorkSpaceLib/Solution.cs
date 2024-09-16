@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
@@ -77,6 +78,7 @@ namespace Ginger.SolutionGeneral
 
         [IsSerializedForLocalRepository]
         public ObservableList<RepositoryItemTag> Tags;
+
 
         private string mAccount;
 
@@ -308,6 +310,11 @@ namespace Ginger.SolutionGeneral
         {
             if (v != null)
             {
+                Reporter.AddFeatureUsage(FeatureId.GlobalParameter, new TelemetryMetadata()
+                {
+                    { "Operation", "Create" },
+                });
+
                 if (string.IsNullOrEmpty(v.Name)) v.Name = "NewVar";
                 SetUniqueVariableName(v);
                 if (insertIndex < 0 || insertIndex > Variables.Count - 1)

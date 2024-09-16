@@ -24,14 +24,17 @@ using System.Text;
 using System.Threading.Tasks;
 using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
+using IPlaywrightPage = Microsoft.Playwright.IPage;
 using System.Drawing;
+using Deque.AxeCore.Commons;
+using GingerCore.Actions;
+using Deque.AxeCore.Playwright;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     internal sealed class PlaywrightBrowserElement : IBrowserElement
     {
-        //TODO: rename it to _playwrightLocator to maintain the naming format
         private readonly IPlaywrightLocator? _playwrightLocator;
         private readonly IPlaywrightElementHandle? _playwrightElementHandle;
 
@@ -78,15 +81,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             });
         }
 
-        public Task ClickAsync(int x, int y)
+        public Task ClickAsync(Point point)
         {
             if (_playwrightLocator != null)
             {
-                return ClickAsync(_playwrightLocator, x, y);
+                return ClickAsync(_playwrightLocator, point.X, point.Y);
             }
             else
             {
-                return ClickAsync(_playwrightElementHandle!, x, y);
+                return ClickAsync(_playwrightElementHandle!, point.X, point.Y);
             }
         }
 
@@ -817,6 +820,98 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return playwrightElementHandle.FillAsync(text);
         }
 
+        public Task TypeTextAsync(string text)
+        {
+            if (_playwrightLocator != null)
+            {
+                return SendKeysAsync(_playwrightLocator, text);
+            }
+            else
+            {
+                return SendKeysAsync(_playwrightElementHandle!, text);
+            }
+        }
+
+        private Task SendKeysAsync(IPlaywrightLocator playwrightLocator, string text)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightLocator, nameof(playwrightLocator));
+            return playwrightLocator.PressSequentiallyAsync(text);
+        }
+
+        private async Task SendKeysAsync(IPlaywrightElementHandle playwrightElementHandle, string text)
+        {
+            ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
+            foreach (char c in text)
+            {
+                await playwrightElementHandle.PressAsync(c.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Presses a sequence of keys asynchronously on the specified Playwright locator or element handle.
+        /// If the locator is not null, it uses the locator to press the keys; otherwise, it uses the element handle.
+        /// </summary>
+        /// <param name="keys">An enumerable collection of keys to be pressed.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task PressKeysAsync(IEnumerable<string> keys)
+        {
+            if (_playwrightLocator != null)
+            {
+                return PressKeysAsync(_playwrightLocator, keys);
+            }
+            else
+            {
+                return PressKeysAsync(_playwrightElementHandle!, keys);
+            }
+        }
+
+        /// <summary>
+        /// Presses a sequence of keys asynchronously on the specified Playwright locator.
+        /// Combines the keys into a single string separated by '+' and presses them.
+        /// </summary>
+        /// <param name="playwrightLocator">The Playwright locator on which to press the keys.</param>
+        /// <param name="keys">An enumerable collection of keys to be pressed.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private Task PressKeysAsync(IPlaywrightLocator playwrightLocator, IEnumerable<string> keys)
+        {
+            string combinedKeys = CombineKeys(keys);
+            return playwrightLocator.PressAsync(combinedKeys);
+        }
+
+        /// <summary>
+        /// Presses a sequence of keys asynchronously on the specified Playwright element handle.
+        /// Combines the keys into a single string separated by '+' and presses them.
+        /// </summary>
+        /// <param name="playwrightElementHandle">The Playwright element handle on which to press the keys.</param>
+        /// <param name="keys">An enumerable collection of keys to be pressed.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private Task PressKeysAsync(IPlaywrightElementHandle playwrightElementHandle, IEnumerable<string> keys)
+        {
+            string combinedKeys = CombineKeys(keys);
+            return playwrightElementHandle.PressAsync(combinedKeys);
+        }
+
+        /// <summary>
+        /// Combines a sequence of keys into a single string separated by '+'.
+        /// </summary>
+        /// <param name="keys">An enumerable collection of keys to be combined.</param>
+        /// <returns>A string representing the combined keys.</returns>
+        private string CombineKeys(IEnumerable<string> keys)
+        {
+            string[] keyArr = keys.ToArray();
+            StringBuilder combinedKey = new();
+            for (int keyIndex = 0; keyIndex < keyArr.Length; keyIndex++)
+            {
+                string key = keyArr[keyIndex];
+                combinedKey.Append(key);
+                if (keyIndex < keyArr.Length - 1)
+                {
+                    combinedKey.Append('+');
+                }
+            }
+            return combinedKey.ToString();
+        }
+
         private async Task AssertTagNameAsync(string expected)
         {
             string tagName = await TagNameAsync();
@@ -898,6 +993,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ArgumentNullException.ThrowIfNull(playwrightElementHandle, nameof(playwrightElementHandle));
             return playwrightElementHandle.EvaluateAsync<bool>("element => element.shadowRoot != null");
+        }
+
+        public async Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null)
+        {
+            if (_playwrightLocator == null)
+            {
+                throw new Exception("Unable to analyze this page");
+            }
+
+            return await _playwrightLocator.RunAxe(options);
         }
     }
 }

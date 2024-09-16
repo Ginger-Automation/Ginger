@@ -21,10 +21,12 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.SelfHealingLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using Amdocs.Ginger.CoreNET.Telemetry;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -210,6 +212,13 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     WorkSpace.Instance.LocalGingerGrid.Stop();
                 }
+                
+                if (Reporter.TelemetryQueueManager != null)
+                {
+                    Reporter.TelemetryQueueManager.Dispose();
+                }
+
+                Reporter.TelemetryQueueManager.Dispose();
                 //WorkSpace.Instance.Telemetry.SessionEnd();
                 mWorkSpace = null;
             }
@@ -294,7 +303,6 @@ namespace amdocs.ginger.GingerCoreNET
             //NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
         }
 
-
         public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper)
         {
             // Add event handler for handling non-UI thread exceptions.
@@ -343,6 +351,14 @@ namespace amdocs.ginger.GingerCoreNET
             if (WorkSpace.Instance.LocalGingerGrid != null)
             {
                 Reporter.ToLog(eLogLevel.INFO, "Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);
+            }
+        }
+
+        public void InitTelemetry()
+        {
+            if (UserProfile.EnableTelemetry)
+            {
+                Reporter.TelemetryQueueManager = new TelemetryQueueManager(UserProfile.TelemetryConfig);
             }
         }
 
@@ -414,6 +430,7 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
             }
+
         }
 
         public bool OpenSolution(string solutionFolder, string encryptionKey = null)

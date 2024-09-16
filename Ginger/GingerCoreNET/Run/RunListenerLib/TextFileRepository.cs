@@ -20,6 +20,7 @@ using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Ginger.Reports;
 using Ginger.Run;
@@ -67,6 +68,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportAction(Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool offlineMode = false)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "TextFile" },
+                { "ItemLogged", "Action" },
+            });
             string executionLogFolder = string.Empty;
             if (!offlineMode)
             {
@@ -119,6 +125,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportActivity(Activity activity, Context context, eExecutedFrom executedFrom, bool offlineMode, bool isConfEnable)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "TextFile" },
+                { "ItemLogged", "Activity" },
+            });
             ActivityReport AR = GetActivityReportData(activity, context, offlineMode);
             if (isConfEnable)
             {
@@ -136,6 +147,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportActivityGroup(IContext context, ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "TextFile" },
+                { "ItemLogged", "ActivityGroup" },
+            });
             ActivityGroupReport AGR = GetAGReportData(activityGroup, context);
             //AGR.ReportMapper(activityGroup, businessFlow, ExecutionLogfolder);
             if (offlineMode && activityGroup.ExecutionLogFolder != null)
@@ -153,6 +169,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportBusinessFlow(Context context, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "TextFile" },
+                { "ItemLogged", "BusinessFlow" },
+            });
             BusinessFlowReport BFR = null;
 
             try
@@ -201,6 +222,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "TextFile" },
+                { "ItemLogged", "Runner" },
+            });
             if (gingerRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
@@ -210,6 +236,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void SetReportRunSet(RunSetReport runSetReport, string logFolder, eExecutedFrom eExecutedFrom = eExecutedFrom.Run)
         {
+            Reporter.AddFeatureUsage(FeatureId.ExecutionLogger, new TelemetryMetadata()
+            {
+                { "LoggerType", "TextFile" },
+                { "ItemLogged", "Runset" },
+            });
             ExecutionLoggerManager.RunSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
             base.SetReportRunSet(runSetReport, logFolder);
 

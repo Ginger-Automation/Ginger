@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -72,5 +72,11 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         bool EnableActionLogConfig { get; set; }
         ActionLogConfig ActionLogConfig { get; set; }
         Single? ElapsedSecs { get; }
+
+        ///<summary>
+        /// Gets a value indicating whether automatic screenshot capture is enabled on failure.
+        /// </summary>
+        bool AutoScreenShotOnFailure { get; }
+
     }
 }

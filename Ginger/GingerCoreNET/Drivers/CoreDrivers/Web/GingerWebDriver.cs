@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Amdocs.Ginger.CoreNET.GeneralLib;
@@ -27,15 +27,12 @@ using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
-using Microsoft.Graph;
-using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static GingerCore.Platforms.PlatformsInfo.PlatformInfoBase;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
@@ -75,6 +72,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         [UserConfiguredDefault("Chrome")]
         [UserConfiguredDescription("Browser Type")]
         public virtual WebBrowserType BrowserType { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Use Browser In Private/Incognito Mode (Please use 64bit Browse with Internet Explorer ")]
+        public bool BrowserPrivateMode { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -193,9 +195,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         private protected async Task UnhighlightElementAsync(IBrowserElement element)
         {
-            await element.ExecuteJavascriptAsync("element => element.style.outline=''");
-            await element.ExecuteJavascriptAsync("element => element.style.backgroundColor=''");
-            await element.ExecuteJavascriptAsync("element => element.style.border=''");
+            try
+            {
+                await element.ExecuteJavascriptAsync("element => element.style.outline=''");
+                await element.ExecuteJavascriptAsync("element => element.style.backgroundColor=''");
+                await element.ExecuteJavascriptAsync("element => element.style.border=''");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "error while unhighlighting element", ex);
+            }
         }
 
         private protected Task SwitchToFrame(eLocateBy locateBy, string locateValue)
@@ -515,6 +524,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 elementType = tag;
             }
 
+            Size size = await browserElement.SizeAsync();
+            Point position = await browserElement.PositionAsync();
+
             HTMLElementInfo newHtmlElement = new()
             {
                 ElementObject = browserElement,
@@ -525,6 +537,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 XPath = await GenerateXPathFromBrowserElementAsync(browserElement),
                 ElementType = elementType ?? string.Empty,
                 ElementTypeEnum = POMLearner.GetElementType(tag, typeAttributeValue),
+                Width = size.Width,
+                Height = size.Height,
+                X = position.X,
+                Y = position.Y,
             };
             
             return newHtmlElement;

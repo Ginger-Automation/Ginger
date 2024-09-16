@@ -134,6 +134,7 @@ namespace Ginger.SolutionWindows
                 GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
                 mSolution.SolutionOperations.SetReportsConfigurations();
+                GingerCoreNET.GeneralLib.General.CreateDefaultAccessiblityconfiguration();
 
                 //Save again to keep all defualt configurations setup
                 mSolution.SolutionOperations.SaveSolution(false);

@@ -169,6 +169,9 @@ namespace Amdocs.Ginger.Common
         SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
         DeleteRecoverFolderWarn,
         EnvParamNameExists,
+        GingerAnalyticsConnectionFail,
+        GingerAnalyticsConnectionSuccess,
+        RequiredFieldsEmpty,
         EnvParamNameEmpty,
         NoPublishRepositoryInfo,
         NotAllowedForMappedRuntimeValue,
@@ -194,7 +197,8 @@ namespace Amdocs.Ginger.Common
         ShareApplicationToEnvironment,
         SaveSolution,
         LocatorTestInProgress,
-        DeleteSelectedDB
+        DeleteSelectedDB,
+        RemoteExecutionReportFolder,
     }
 
     public static class UserMsgsPool
@@ -824,6 +828,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.WizardCantMoveWhileInProcess, new UserMsg(eUserMsgType.WARN, "Process is Still Running", "Move '{0}' until the process will be finished or stopped." + Environment.NewLine + "Please wait for the process to be finished or stop it and then retry.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToCloseAgent, new UserMsg(eUserMsgType.QUESTION, "Close Agent?", "Close Agent '{0}'?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderNameTextBoxIsEmpty, new UserMsg(eUserMsgType.WARN, "Folders Names is Empty", "Please provide a proper folder name.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RequiredFieldsEmpty, new UserMsg(eUserMsgType.WARN, "Required Fields Values Missing", "Please provide the values for required Fields.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UserHaveNoWritePermission, new UserMsg(eUserMsgType.WARN, "User Have No Write Permission On Folder", "User that currently in use have no write permission on selected folder. Pay attention that attachment at shared folder may be not created.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderNotExistOrNotAvailible, new UserMsg(eUserMsgType.WARN, "Folder Not Exist Or Not Available", "Folder Not Exist Or Not Available. Please select another one.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.WizardSureWantToCancel, new UserMsg(eUserMsgType.QUESTION, "Cancel Wizard?", "Are you sure you want to cancel wizard and close?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -864,6 +869,9 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FindAndReplaceNoItemsToRepalce, new UserMsg(eUserMsgType.WARN, "No Suitable Items", "No suitable items selected to replace.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FindAndReplaceViewRunSetNotSupported, new UserMsg(eUserMsgType.INFO, "View " + GingerDicser.GetTermResValue(eTermResKey.RunSet), "View " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " is not supported.", eUserMsgOption.OK, eUserMsgSelection.None));
 
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerAnalyticsConnectionSuccess, new UserMsg(eUserMsgType.INFO, "Ginger Analytics Connection Info" , " Ginger Analytics Connection is Successfull.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerAnalyticsConnectionFail, new UserMsg(eUserMsgType.INFO, "Ginger Analytics Connection Info", " Ginger Analytics Connection is Failed, Please check credentials.", eUserMsgOption.OK, eUserMsgSelection.None));
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.FileAlreadyExistWarn, new UserMsg(eUserMsgType.WARN, "File Already Exists", "File already exists, do you want to override?", eUserMsgOption.OKCancel, eUserMsgSelection.Cancel));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.SuccessfulConversionDone, new UserMsg(eUserMsgType.INFO, "Obsolete actions converted successfully", "The obsolete actions have been converted successfully" + Environment.NewLine + "Do you want to convert more actions?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -878,6 +886,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteRecoverFolderWarn, new UserMsg(eUserMsgType.WARN, "Delete Unrecovered files?",
    "Unrecovered items will be deleted. Do you want to continue?",
    eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionReportFolder, new UserMsg(eUserMsgType.INFO, "Remote Execution History", "Open execution folder not supported for Remote Execution History source.", eUserMsgOption.OK, eUserMsgSelection.OK));
+           
 
         }
     }

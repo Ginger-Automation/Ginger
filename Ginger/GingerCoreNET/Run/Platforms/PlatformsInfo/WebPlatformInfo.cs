@@ -329,7 +329,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.Button,
                     IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>(){   ActUIElement.eElementAction.Click,
+                    ElementOperationsList = new List<Enum>(){  
                                                                 ActUIElement.eElementAction.DoubleClick,
                                                                 ActUIElement.eElementAction.JavaScriptClick,
                                                                 ActUIElement.eElementAction.MouseClick,
@@ -347,7 +347,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.CheckBox,
                     IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
+                    ElementOperationsList = new List<Enum>() { 
                                                                 ActUIElement.eElementAction.DoubleClick,
                                                                 ActUIElement.eElementAction.JavaScriptClick,
                                                                 ActUIElement.eElementAction.MouseClick,
@@ -410,7 +410,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.HyperLink,
                     IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
+                    ElementOperationsList = new List<Enum>() {  
                                                                 ActUIElement.eElementAction.DoubleClick,
                                                                 ActUIElement.eElementAction.JavaScriptClick,
                                                                 ActUIElement.eElementAction.MouseClick,
@@ -462,7 +462,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementOperationsList = new List<Enum>() {
                                                                 ActUIElement.eElementAction.GetValue,
                                                                 ActUIElement.eElementAction.SetValue,
-                                                                ActUIElement.eElementAction.Click,
+                                                                
                                                               }
                 });
 
@@ -489,7 +489,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue,
                                                                ActUIElement.eElementAction.SetValue,
-                                                               ActUIElement.eElementAction.Click,
+                                                               
                                                                }
                 });
 
@@ -498,7 +498,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.RadioButton,
                     IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Click,
+                    ElementOperationsList = new List<Enum>() {
                                                                 ActUIElement.eElementAction.DoubleClick,
                                                                 ActUIElement.eElementAction.JavaScriptClick,
                                                                 ActUIElement.eElementAction.MouseClick,
@@ -553,6 +553,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                                                                             ActUIElement.eElementAction.DragDrop,
                                                                             ActUIElement.eElementAction.MouseRightClick,
                                                                             ActUIElement.eElementAction.ScrollToElement,
+                                                                            ActUIElement.eElementAction.Click,
                 };
 
                 mPlatformElementTypeOperations.Where(y => y.ActionType == typeof(ActUIElement)).ToList()

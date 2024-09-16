@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
+using Ginger.Configurations;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.ALM;
@@ -614,6 +615,49 @@ namespace GingerCoreNET.GeneralLib
                 return $"{HtmlReportUrl}#/BusinessFlow/{ExecutionId}/{BusinessFlowInstanceGuid}";
             }
             return "";
+        }
+
+        public static bool CreateDefaultAccessiblityconfiguration()
+        {
+            try
+            {
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<AccessibilityConfiguration>().Any())
+                {
+                    AccessibilityConfiguration newAccessibilityConfiguration = new AccessibilityConfiguration() { Name = "Accessibility" };
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newAccessibilityConfiguration);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating default accessibility configuration", ex);
+                return false;
+            }
+        }
+        public static bool CreateGingerAnalyticsConfiguration(GingerAnalyticsConfiguration gingerAnalytics)
+        {
+            try
+            {
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerAnalyticsConfiguration>().Any())
+                {
+                    GingerAnalyticsConfiguration newGAConfiguration = new GingerAnalyticsConfiguration() { Name = "GingerAnalytics", IdentityServiceURL = gingerAnalytics.IdentityServiceURL, AccountUrl = gingerAnalytics.AccountUrl, ClientId = gingerAnalytics.ClientId, ClientSecret = gingerAnalytics.ClientSecret };
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newGAConfiguration);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error creating Ginger Analytics Configuration configuration", ex);
+                return false;
+            }
         }
     }
 

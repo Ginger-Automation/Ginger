@@ -76,6 +76,8 @@ namespace Ginger
         public enum eSolutionTabType { None, BusinessFlows, Run, Configurations, Resources };
         public eSolutionTabType SelectedSolutionTab;
 
+        private readonly DevTimeTrackerIdle devTimeTrackerIdle; //for Pause/resume the development time
+
         private bool mAskUserIfToClose = true;
 
         ObservableList<HelpLayoutArgs> mHelpLayoutList = new ObservableList<HelpLayoutArgs>();
@@ -84,8 +86,13 @@ namespace Ginger
         public MainWindow()
         {
             InitializeComponent();
+
+            devTimeTrackerIdle = new();
+            devTimeTrackerIdle.AttachActivityHandlers(this);
+
             StateChanged -= MainWindow_StateChanged;
             StateChanged += MainWindow_StateChanged;
+
             mRestartApplication = false;
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
@@ -95,116 +102,40 @@ namespace Ginger
             DriverWindowHandler.Init();
 
             GingerCore.General.DoEvents();
+
         }
 
         private void MainWindow_StateChanged(object? sender, EventArgs e)
         {
             if (WindowState == WindowState.Minimized)
             {
-                PauseDevelopmentTimeTracker();
+                devTimeTrackerIdle.PauseDevelopmentTimeTracker();
             }
             else
             {
-                ResumeDevelopmentTimeTracker();
+                devTimeTrackerIdle.ResumeDevelopmentTimeTracker();
             }
         }
 
-        private List<RepositoryItemBase> _itemsWithPausedDevelopmentTimeTracker = [];
-
-        /// <summary>
-        /// Pauses the development time tracker for modified files in the solution.
-        /// </summary>
-        private void PauseDevelopmentTimeTracker()
+        private void DetachEventHandlers()
         {
-            if (WorkSpace.Instance == null ||
-                WorkSpace.Instance.SolutionRepository == null ||
-                WorkSpace.Instance.SolutionRepository.ModifiedFiles == null)
+            if (devTimeTrackerIdle != null)
             {
-                return;
-            }
-
-            try
-            {
-                _itemsWithPausedDevelopmentTimeTracker.Clear();
-                List<RepositoryItemBase> modifiedFiles = new(WorkSpace.Instance.SolutionRepository.ModifiedFiles);
-
-                foreach (RepositoryItemBase modifiedFile in modifiedFiles)
-                {
-                    if (modifiedFile is BusinessFlow bf && bf.IsTimerRunning())
-                    {
-                        bf.StopTimer();
-                        _itemsWithPausedDevelopmentTimeTracker.Add(bf);
-
-                        foreach (GingerCore.Activity bfActivity in bf.Activities)
-                        {
-                            if (bfActivity.IsTimerRunning())
-                            {
-                                bfActivity.StopTimer();
-                                _itemsWithPausedDevelopmentTimeTracker.Add(bfActivity);
-                            }
-                        }
-                    }
-                    else if (modifiedFile is GingerCore.Activity activity && activity.IsTimerRunning())
-                    {
-                        activity.StopTimer();
-                        _itemsWithPausedDevelopmentTimeTracker.Add(activity);
-                    }
-                    else if (modifiedFile is ApplicationPOMModel applicationPOMModel && applicationPOMModel.IsTimerRunning())
-                    {
-                        applicationPOMModel.StopTimer();
-                        _itemsWithPausedDevelopmentTimeTracker.Add(applicationPOMModel);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "error while pausing development tracker", ex);
+                devTimeTrackerIdle.DetachActivityHandlers(this);
             }
         }
 
-        /// <summary>
-        /// Resumes the development time tracker for paused items.
-        /// </summary>
-        private void ResumeDevelopmentTimeTracker()
-        {
-            try
-            {
-                List<RepositoryItemBase> items = new(_itemsWithPausedDevelopmentTimeTracker);
-                _itemsWithPausedDevelopmentTimeTracker.Clear();
-
-                foreach (RepositoryItemBase item in items)
-                {
-                    if (item is BusinessFlow bf)
-                    {
-                        bf.StartTimer();
-                    }
-                    else if (item is GingerCore.Activity activity)
-                    {
-                        activity.StartTimer();
-                    }
-                    else if (item is ApplicationPOMModel applicationPOMModel)
-                    {
-                        applicationPOMModel.StartTimer();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "error while resuming development tracker", ex);
-            }
-        }
-
-        private void TelemetryEventHandler(object sender, Telemetry.TelemetryEventArgs e)
+        private void TelemetryEventHandler(object sender, Amdocs.Ginger.CoreNET.TelemetryLib.Telemetry.TelemetryEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
-                xVersionAndNewsIcon.ToolTip = Telemetry.VersionAndNewsInfo + ", click for details";
+                xVersionAndNewsIcon.ToolTip = Amdocs.Ginger.CoreNET.TelemetryLib.Telemetry.VersionAndNewsInfo + ", click for details";
                 xVersionAndNewsIcon.Visibility = Visibility.Visible;
             });
 
 
         }
-
+        
         private void XVersionAndNewsIcon_MouseDown(object sender, MouseButtonEventArgs e)
         {
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
@@ -632,6 +563,8 @@ namespace Ginger
 
             if (userSelection == eUserMsgSelection.Yes)
             {
+                DetachEventHandlers();
+
                 AppCleanUp();
             }
             else
@@ -842,6 +775,11 @@ namespace Ginger
             {
                 BetaFeaturesPage p = new BetaFeaturesPage();
                 p.ShowAsWindow();
+            }
+            else if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftAlt) && Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.T)
+            {
+                Ginger.Telemetry.TelemetryConfigPage telemetryConfigPage = new();
+                telemetryConfigPage.ShowAsWindow();
             }
             else if (e.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {

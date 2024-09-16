@@ -932,13 +932,11 @@ namespace GingerCore
             foreach (Act action in copy.Acts.Cast<Act>())
             {
                 action.ParentGuid = action.Guid;
-                action.Guid = Guid.NewGuid();
                 oldNewActionGuidList.Add(new(action.ParentGuid, action.Guid));
             }
             foreach (VariableBase variable in copy.Variables)
             {
                 variable.ParentGuid = variable.Guid;
-                variable.Guid = Guid.NewGuid();
             }
             foreach (FlowControl fc in copy.Acts.SelectMany(a => a.FlowControls))
             {
@@ -1266,7 +1264,7 @@ namespace GingerCore
         public override void PostSaveHandler()
         {
             // saving from Shared repository tab
-            GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations.UpdateSharedRepositoryLinkedInstances(this);
+            GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations?.UpdateSharedRepositoryLinkedInstances(this);
         }
 
         public bool IsAutoLearned { get; set; }

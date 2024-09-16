@@ -178,6 +178,7 @@ namespace Amdocs.Ginger.Common.Enums
         ActiveAll,
         ExpandToFullScreen,
         Exchange,
+        GingerAnalytics,
         Export,
         Filter,
         ImportFile,
@@ -200,6 +201,7 @@ namespace Amdocs.Ginger.Common.Enums
         Paste,
         WindowRestore,
         Rules,
+        VerticalBars,
         #endregion
 
         #region Items Images
@@ -211,6 +213,7 @@ namespace Amdocs.Ginger.Common.Enums
         Folder,
         ItemModified,
         Email,
+        Home,
         Parameter,
         ListGroup,
         FlowDiagram,
@@ -354,6 +357,9 @@ namespace Amdocs.Ginger.Common.Enums
         PlusSquare,
         DataTable,
         Robot,
+        Accessibility,
+        AnglesArrowLeft,
+        AnglesArrowRight,
 
         #region Comparison Status Images
         Unchanged,

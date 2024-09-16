@@ -167,6 +167,71 @@ namespace GingerCore.Actions
             }
         }
 
+        public ActInputValue ActionAppPackage
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ActionAppPackage), "default");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ActionAppPackage), value.ToString());
+                OnPropertyChanged(nameof(ActionAppPackage));
+            }
+        }
+
+        public ActInputValue PressDuration
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(PressDuration), "200");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PressDuration), value.ToString());
+                OnPropertyChanged(nameof(PressDuration));
+            }
+        }
+
+        public ActInputValue DragDuration
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(DragDuration), "200");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(DragDuration), value.ToString());
+                OnPropertyChanged(nameof(DragDuration));
+            }
+        }
+
+        public ActInputValue SwipeScale
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(SwipeScale), "1");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SwipeScale), value.ToString());
+                OnPropertyChanged(nameof(SwipeScale));
+            }
+        }
+
+        public ActInputValue SwipeDuration
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(SwipeDuration), "200");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SwipeDuration), value.ToString());
+                OnPropertyChanged(nameof(SwipeDuration));
+            }
+        }
+
         public string mSimulatedPhotoPath;
         public ActInputValue SimulatedPhotoPath
         {
@@ -237,7 +302,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Long Press XY")]
             LongPressXY,
             [EnumValueDescription("Tap XY")]
-            TapXY,
+            TapXY,          
+            [EnumValueDescription("Double Tap XY")]
+            DoubleTapXY,
             [EnumValueDescription("Drag XY to XY")]
             DragXYXY,
             [EnumValueDescription("Get Current Application Identifiers")]

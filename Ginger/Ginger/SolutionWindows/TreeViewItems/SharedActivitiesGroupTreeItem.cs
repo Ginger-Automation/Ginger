@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
@@ -34,6 +35,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -140,7 +142,42 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 string fullBPMNExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
                 ActivitiesGroupToBPMNExporter activitiesGroupToBPMNExporter = new(mActivitiesGroup, fullBPMNExportPath);
-                string exportPath = activitiesGroupToBPMNExporter.Export();
+
+                int? activityCount = null;
+                int? actionCount = null;
+                try
+                {
+                    if (mActivitiesGroup.ActivitiesIdentifiers != null)
+                    {
+                        activityCount = mActivitiesGroup.ActivitiesIdentifiers.Where(a => a.IdentifiedActivity != null && a.IdentifiedActivity.Active).Count();
+
+                        actionCount = mActivitiesGroup
+                            .ActivitiesIdentifiers
+                            .Select(ai => ai.IdentifiedActivity)
+                            .Where(activity => activity != null && activity.Active && activity.Acts != null)
+                            .SelectMany(activity => activity.Acts.Where(act => act != null && act.Active))
+                            .Count();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"error while capturing '{FeatureId.ExportActivitiesGroupBPMN}' feature metadata", ex);
+                }
+
+                string exportPath = string.Empty;
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportActivitiesGroupBPMN))
+                {
+                    if (activityCount != null)
+                    {
+                        featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
+                    }
+                    if (actionCount != null)
+                    {
+                        featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
+                    }
+                    exportPath = activitiesGroupToBPMNExporter.Export();
+                }
+                
                 string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
 
                 Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeExportPath);

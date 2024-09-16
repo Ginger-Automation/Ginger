@@ -43,6 +43,11 @@ using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
 using System.Threading;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
+using Deque.AxeCore.Commons;
+using Deque.AxeCore.Playwright;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -53,13 +58,47 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         private PlaywrightBrowser? _browser;
         private IBrowserElement? _lastHighlightedElement;
 
+        /// <summary>
+        /// Gets the name of the driver configuration edit page based on the driver subtype and driver configuration parameters.
+        /// </summary>
+        /// <param name="driverSubType">The driver subtype.</param>
+        /// <param name="driverConfigParams">The driver configuration parameters.</param>
+        /// <returns>The name of the driver configuration edit page if the browser type is Chrome, Edge, or FireFox; otherwise, null.</returns>
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA, IEnumerable<DriverConfigParam> driverConfigParams = null)
+        {
+            if (driverConfigParams == null)
+            {
+                return null;
+            }
+            DriverConfigParam browserTypeParam = driverConfigParams.FirstOrDefault(param => string.Equals(param.Parameter, nameof(BrowserType)));
+
+            if (browserTypeParam == null || !Enum.TryParse(browserTypeParam.Value, out WebBrowserType browserType))
+            {
+                return null;
+            }
+            else if (browserType == WebBrowserType.Chrome || browserType == WebBrowserType.Edge || browserType == WebBrowserType.FireFox)
+            {
+                return "WebAgentConfigEditPage";
+            }
+            else
+            {
+                return null;
+            }
+        }
         public override void StartDriver()
         {
             ValidateBrowserTypeSupport(BrowserType);
 
             IPlaywright playwright = Microsoft.Playwright.Playwright.CreateAsync().Result;
             PlaywrightBrowser.Options browserOptions = BuildPlaywrightBrowserOptions();
-            _browser = new(playwright, BrowserType, browserOptions, OnBrowserClose);
+            if (BrowserPrivateMode)
+            {
+                _browser = new PlaywrightNonPersistentBrowser(playwright, BrowserType, browserOptions, OnBrowserClose);
+            }
+            else
+            {
+                _browser = new PlaywrightPersistentBrowser(playwright, BrowserType, browserOptions, OnBrowserClose);
+            }
         }
 
         private void ValidateBrowserTypeSupport(WebBrowserType browserType)
@@ -142,15 +181,29 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 switch (act)
                 {
                     case ActBrowserElement actBrowserElement:
-                        ActBrowserElementHandler actBrowserElementHandler = new(actBrowserElement, _browser, new ActBrowserElementHandler.Context
-                        {
-                            BusinessFlow = BusinessFlow,
-                            Environment = Environment,
-                        });
+                        ActBrowserElementHandler actBrowserElementHandler = new(
+                            actBrowserElement, 
+                            _browser, 
+                            new ActBrowserElementHandler.Context
+                            {
+                                BusinessFlow = BusinessFlow,
+                                Environment = Environment,
+                            });
                         actBrowserElementHandler.HandleAsync().Wait();
                         break;
                     case ActUIElement actUIElement:
-                        ActUIElementHandler actUIElementHandler = new(actUIElement, _browser, BusinessFlow, Environment);
+                        ActUIElementHandler actUIElementHandler = new(
+                            actUIElement,
+                            _browser.CurrentWindow.CurrentTab,
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab,
+                                new()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new POMExecutionUtils(act, actUIElement.ElementLocateValue),
+                                    Agent = BusinessFlow.CurrentActivity.CurrentAgent,
+                                }));
                         actUIElementHandler.HandleAsync().Wait();
                         break;
                     case ActScreenShot actScreenShot:
@@ -160,6 +213,46 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     case ActGotoURL actGotoURL:
                         ActGotoURLHandler actGotoURLHandler = new(actGotoURL, _browser);
                         actGotoURLHandler.HandleAsync().Wait();
+                        break;
+                    case ActVisualTesting actVisualTesting:
+                        if (actVisualTesting.VisualTestingAnalyzer != ActVisualTesting.eVisualTestingAnalyzer.Applitools)
+                        {
+                            actVisualTesting.Execute(this);
+                        }
+                        else
+                        {
+                            act.Error = $"{actVisualTesting.VisualTestingAnalyzer} is not supported by Playwright driver, use Selenium driver instead.";
+                        }
+                        break;
+                    case ActAccessibilityTesting actAccessibilityTesting:
+                        if (!BrowserPrivateMode)
+                        {
+                            act.Error = $"Playwright Driver must be in Private mode for using Accessibility actions";
+                            break;
+                        }
+                        ActAccessibilityTestingHandler actAccessibilityTestingHandler;
+                        if (actAccessibilityTesting.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
+                        {
+                            actAccessibilityTestingHandler = new(
+                            actAccessibilityTesting,
+                            _browser.CurrentWindow.CurrentTab,
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab, 
+                                new BrowserElementLocator.Context()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValueCalculated)
+                                }));
+                        }
+                        else
+                        {
+                            actAccessibilityTestingHandler = new(
+                            actAccessibilityTesting,
+                            _browser.CurrentWindow.CurrentTab, 
+                            browserElementLocator: null);
+                        }
+                        actAccessibilityTestingHandler.HandleAsync().Wait();
                         break;
                     default:
                         act.Error = $"This Action is not supported for Playwright driver";
@@ -172,7 +265,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             message = string.Empty;
 
-            if (act is ActWithoutDriver)
+            if (act is ActWithoutDriver or ActScreenShot or ActGotoURL or ActAccessibilityTesting)
             {
                 return true;
             }
@@ -219,8 +312,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
                 return isLocatorSupported && isOperationSupported;
             }
-            else if (act is ActScreenShot)
+            else if (act is ActVisualTesting actVisualTesting)
             {
+                if (actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.Applitools)
+                {
+                    message = $"{actVisualTesting.VisualTestingAnalyzer} is not supported by Playwright driver, use Selenium driver instead.";
+                    return false;
+                }
                 return true;
             }
             else
@@ -413,7 +511,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
 
                 byte[] screenshot;
-                if (fullPage)
+                 if (fullPage)
                 {
                     screenshot = await tab.ScreenshotAsync();
                 }
@@ -731,13 +829,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 await SwitchToFrameOfElementAsync(elementInfo);
                 string xpath = GenerateXPathFromHTMLElementInfo(htmlElementInfo);
-                IEnumerable<IBrowserElement> browserElements = await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByXPath, xpath);
+                string childrenXPath = GenerateChildrenXPath(xpath);
+                IEnumerable<IBrowserElement> browserElements = await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByXPath, childrenXPath);
                 List<HTMLElementInfo> htmlElements = [];
                 foreach (IBrowserElement browserElement in browserElements)
                 {
                     HTMLElementInfo newHtmlElement = await CreateHtmlElementAsync(browserElement);
 
-                    if (string.IsNullOrEmpty(newHtmlElement.ID))
+                    if (string.IsNullOrEmpty(newHtmlElement.ID) && htmlElementInfo.HTMLElementObject != null)
                     {
                         newHtmlElement.ID = htmlElementInfo.HTMLElementObject.Id;
                     }
@@ -765,6 +864,27 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
                 return htmlElements.Cast<ElementInfo>().ToList();
             }).Result;
+        }
+
+        private string GenerateChildrenXPath(string parentXPath)
+        {
+            string[] parentXPathSegments = parentXPath.Split("/", StringSplitOptions.RemoveEmptyEntries);
+            string elementType = parentXPathSegments[^1];
+
+            int index = elementType.IndexOf('[');
+            if (index != -1)
+            {
+                elementType = elementType.AsSpan(0, index).ToString();
+            }
+
+            if (string.Equals(elementType, "iframe") || string.Equals(elementType, "frame"))
+            {
+                return "/html/*";
+            }
+            else
+            {
+                return parentXPath + "/*";
+            }
         }
 
         public ObservableList<ControlProperty> GetElementProperties(ElementInfo elementInfo)
@@ -1478,6 +1598,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public void ChangeAppWindowSize(int width, int height)
         {
             ThrowIfClosed();
+            if (width <= 0 || height <= 0)
+            {
+                //for VRT action, it passes widht and height as 0 to maximize which causes issues with Playwright, so ignoring those
+                return;
+            }
             Size size = new(width, height);
             Task.Run(() => _browser.CurrentWindow.CurrentTab.SetViewportSizeAsync(size).Wait()).Wait();
         }
@@ -1494,7 +1619,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 while (true)
                 {
-                    string s_Script = $"return document.elementFromPoint({ptX}, {ptY});";
+                    string s_Script = $"document.elementFromPoint({ptX}, {ptY});";
 
                     IBrowserElement? ele = await _browser.CurrentWindow.CurrentTab.GetElementAsync(s_Script);
 
@@ -1650,6 +1775,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActUIElement.eElementAction.SelectByText,
             ActUIElement.eElementAction.SelectByIndex,
             ActUIElement.eElementAction.SetValue,
+            ActUIElement.eElementAction.ClickAndValidate,
+            ActUIElement.eElementAction.JavaScriptClick,
+            ActUIElement.eElementAction.MouseClick,
+            ActUIElement.eElementAction.SetText,
+            ActUIElement.eElementAction.SendKeys,
+            ActUIElement.eElementAction.SendKeysXY,
+            ActUIElement.eElementAction.RunJavaScript,
+            ActUIElement.eElementAction.AsyncClick,
+            ActUIElement.eElementAction.GetCustomAttribute,
+            ActUIElement.eElementAction.GetFont,
+            ActUIElement.eElementAction.MousePressRelease,
+            ActUIElement.eElementAction.MouseClick,
         };
 
 

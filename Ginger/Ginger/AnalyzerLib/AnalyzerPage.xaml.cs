@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Ginger.Actions;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
@@ -209,6 +210,8 @@ namespace Ginger.AnalyzerLib
 
         private async Task Analyze()
         {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.Analyzer);
+            
             // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
             mIssues.Clear();
             TotalIssues = 0;
@@ -267,7 +270,7 @@ namespace Ginger.AnalyzerLib
                 mAnalyzerCompleted = true;
                 SetAnalyzeProcessAsCompleted();
             }
-
+            featureTracker.Metadata.Add("TotalIssues", TotalIssues.ToString());
         }
 
         private void SetAnalyzeProcessAsCompleted()

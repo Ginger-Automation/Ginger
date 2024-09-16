@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.UIElement;
+using Deque.AxeCore.Commons;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -43,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task ClickAsync();
 
-        public Task ClickAsync(int x, int y);
+        public Task ClickAsync(Point point);
 
         public Task DoubleClickAsync();
 
@@ -87,8 +88,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task SetTextAsync(string text);
 
+        public Task TypeTextAsync(string text);
+
+        public Task PressKeysAsync(IEnumerable<string> keys);
+
         public Task<byte[]> ScreenshotAsync();
 
         public Task<IBrowserShadowRoot?> ShadowRootAsync();
+
+        public Task<AxeResult?> TestAccessibilityAsync(AxeRunOptions? options = null);
     }
 }

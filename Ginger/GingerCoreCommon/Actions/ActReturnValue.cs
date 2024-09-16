@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -44,6 +44,7 @@ namespace Amdocs.Ginger.Repository
         {
             public static string Active = "Active";
             public static string Param = "Param";
+            public static string Description = "Description";
             public static string Path = "Path";
             public static string Actual = "Actual";
             public static string SimulatedActual = "SimulatedActual";
@@ -75,7 +76,29 @@ namespace Amdocs.Ginger.Repository
         public string ParamCalculated { get; set; }
 
         [IsSerializedForLocalRepository]
-        public string Param { get { return mParam; } set { if (mParam != value) { mParam = value; OnPropertyChanged(Fields.Param); } } }
+        public string Param 
+        {
+            get { return mParam; } 
+            set { if (mParam != value) { mParam = value; OnPropertyChanged(Fields.Param); } } 
+        }
+
+        private string mDescription;
+
+        [IsSerializedForLocalRepository]
+        public string Description { 
+            get 
+            { 
+                return mDescription; 
+            } 
+            set 
+            { 
+                if (mDescription != value) 
+                { 
+                    mDescription = value; 
+                    OnPropertyChanged(Fields.Description); 
+                } 
+            } 
+        }
 
         public string PathCalculated { get; set; }
 
