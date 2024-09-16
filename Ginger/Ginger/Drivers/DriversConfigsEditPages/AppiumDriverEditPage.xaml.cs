@@ -105,16 +105,17 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDevicePlatformType.Android.ToString());
             BindingHandler.ObjFieldBinding(xIOSRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDevicePlatformType.iOS.ToString());
 
-            if (!IsUFTCapabilityExist())
-            {
-                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource), eDeviceSource.LocalAppium.ToString());
-            }
-            else
+            if (IsUFTCapabilityExist())
             {
                 mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource), eDeviceSource.MicroFoucsUFTMLab.ToString());
             }
+            else
+            {
+                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource));
+            }
             BindingHandler.ObjFieldBinding(xLocalAppiumRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.LocalAppium.ToString());
             BindingHandler.ObjFieldBinding(xUFTRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.MicroFoucsUFTMLab.ToString());
+            BindingHandler.ObjFieldBinding(xKobitonRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.Kobiton.ToString());
 
             mAppType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppType));
             BindingHandler.ObjFieldBinding(xNativeHybRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAppType.NativeHybride.ToString());
@@ -166,6 +167,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             {
                 DeleteUFTMServerCapabilities();
                 DeleteUFTMSupportSimulationsCapabilities();
+                DeleteKobitonServerCapabilities();
+
             }
             else if (mDeviceSource.Value == eDeviceSource.MicroFoucsUFTMLab.ToString() && !IsUFTCapabilityExist())
             {
@@ -173,6 +176,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description= "UFT Execution key Client Id" };
                 DriverConfigParam uftClientSecret = new DriverConfigParam() { Parameter = "uftm:oauthClientSecret", Description = "UFT Execution key Client Password" };
                 DriverConfigParam uftTenantId = new DriverConfigParam() { Parameter = "uftm:tenantId", Value = "\"999999999\"", Description = "Default value (Need to change only when using UFT shared spaces))" };
+
+                DeleteKobitonServerCapabilities();
 
                 AddOrUpdateCapability(uftAppiumVersion);
                 AddOrUpdateCapability(uftClientId);
@@ -183,6 +188,21 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 {
                     SetUFTMSupportSimulationsCapabilities();
                 }
+            }
+            else if (mDeviceSource.Value == eDeviceSource.Kobiton.ToString())
+            {               
+                DriverConfigParam kobitonUserName = new DriverConfigParam() { Parameter = "username", Description = "Kobiton account User Name" };
+                DriverConfigParam kobitonAccessKey = new DriverConfigParam() { Parameter = "accessKey", Description = "Kobitn account Access Key" };
+                DriverConfigParam KobitonSessionName = new DriverConfigParam() { Parameter = "sessionName", Value = "Mobile testing via Ginger by Amdocs", Description = "Testing session name" };
+                DriverConfigParam kobitonDeviceGroup = new DriverConfigParam() { Parameter = "deviceGroup", Value = "KOBITON", Description = "The device group within the Kobiton test session metadata" };
+
+                DeleteUFTMServerCapabilities();
+                DeleteUFTMSupportSimulationsCapabilities();
+
+                AddOrUpdateCapability(kobitonUserName);
+                AddOrUpdateCapability(kobitonAccessKey);
+                AddOrUpdateCapability(KobitonSessionName);
+                AddOrUpdateCapability(kobitonDeviceGroup);
             }
         }
         private void SetUFTMSupportSimulationsCapabilities()
@@ -466,6 +486,13 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             DeleteCapabilityIfExist("uftm:tenantId");            
         }
 
+        private void DeleteKobitonServerCapabilities()
+        {
+            DeleteCapabilityIfExist("username");
+            DeleteCapabilityIfExist("accessKey");
+            DeleteCapabilityIfExist("sessionName");
+            DeleteCapabilityIfExist("deviceGroup");
+        }
 
         private void xSupportSimulations_Click(object sender, RoutedEventArgs e)
         {
