@@ -43,7 +43,7 @@ namespace GingerCoreNETUnitTest.Telemetry
             BlockingBufferQueue<int> queue = new(bufferSize: 2);
 
             Task dequeueTask = Task.Run(queue.Dequeue);
-            await Task.Delay(TimeSpan.FromMilliseconds(50));
+            await TaskTryWaitAsync(dequeueTask, TimeSpan.FromSeconds(1));
 
             Assert.IsFalse(dequeueTask.IsCompleted);
         }
@@ -55,7 +55,8 @@ namespace GingerCoreNETUnitTest.Telemetry
 
             Task dequeueTask1 = Task.Run(queue.Dequeue);
             Task dequeueTask2 = Task.Run(queue.Dequeue);
-            await Task.Delay(TimeSpan.FromMilliseconds(50));
+            await TaskTryWaitAsync(dequeueTask1, TimeSpan.FromSeconds(1));
+            await TaskTryWaitAsync(dequeueTask2, TimeSpan.FromSeconds(1));
 
             Assert.IsFalse(dequeueTask1.IsCompleted);
             Assert.IsFalse(dequeueTask2.IsCompleted);
@@ -69,9 +70,18 @@ namespace GingerCoreNETUnitTest.Telemetry
             Task dequeueTask = Task.Run(queue.Dequeue);
             queue.Enqueue(new Random().Next());
             queue.Enqueue(new Random().Next());
-            await Task.Delay(TimeSpan.FromMilliseconds(50));
+            await TaskTryWaitAsync(dequeueTask, TimeSpan.FromSeconds(1));
 
             Assert.IsTrue(dequeueTask.IsCompleted);
+        }
+
+        private static async Task TaskTryWaitAsync(Task taskToWait, TimeSpan timeout)
+        {
+            try
+            {
+                await taskToWait.WaitAsync(timeout);
+            }
+            catch {}
         }
 
         #region Flaky Tests Group 1
