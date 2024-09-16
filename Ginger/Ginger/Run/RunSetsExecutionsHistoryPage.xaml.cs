@@ -27,7 +27,6 @@ using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Reports;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Utility;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Ginger.Reports;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -36,24 +35,20 @@ using GingerCore;
 using GingerWPF.WizardLib;
 using GraphQL;
 using GraphQLClient.Clients;
-using MathNet.Numerics.LinearAlgebra.Factorization;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Markup;
-using System.Windows.Media;
 using static Amdocs.Ginger.CoreNET.BPMN.Exportation.RunSetExecutionHistoryToBPMNExporter;
+using static Ginger.Actions.ActionEditPage;
 
 namespace Ginger.Run
 {
@@ -128,7 +123,6 @@ namespace Ginger.Run
             {
                 PropertyChangedEventManager.AddHandler(execLoggerConfig, OnExecutionLoggerConfigPublishLogToCentralDB_Changed, nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB));
             }
-            ReloadExecutionHistoryData();
             waitForPageCreation = false;
         }
 
@@ -154,14 +148,10 @@ namespace Ginger.Run
         {
             if (execLoggerConfig.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
             {
-                remoteRadioButton.IsEnabled = true;
-                remoteRadioButton.IsChecked = false;
                 return true;
             }
             else
             {
-                remoteRadioButton.IsEnabled = false;
-                localRadioButton.IsChecked = true;
                 return false;
             }
         }
@@ -177,8 +167,7 @@ namespace Ginger.Run
                 string endPoint = GingerRemoteExecutionUtils.GetReportDataServiceUrl();
                 if (!string.IsNullOrEmpty(endPoint))
                 {
-                    endPoint = endPoint + "api/graphql";
-                    graphQlClient = new GraphQlClient(endPoint);
+                    graphQlClient = new GraphQlClient($"{endPoint}api/graphql");
                     executionReportGraphQLClient = new ExecutionReportGraphQLClient(graphQlClient);
                     isGraphQlClinetConfigure = true;
                     return true;
@@ -186,14 +175,13 @@ namespace Ginger.Run
                 else
                 {
                     isGraphQlClinetConfigure = false;
-                    return false;
+                    return false; 
                 }
 
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
-                Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
                 return false;
 
             }
@@ -233,14 +221,13 @@ namespace Ginger.Run
         {
             xButtonPnl.Visibility = Visibility.Visible;
             GraphQlLoadingVisible();
-            if (AssignGraphQLObjectEndPoint())
+            if (SetExectionHistoryVisibility(execLoggerConfig)&&AssignGraphQLObjectEndPoint())
             {
                 await LoadExecutionsHistoryDataGraphQl();
             }
             else
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.");
-                Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
                 xButtonPnl.Visibility = Visibility.Collapsed;
                 localRadioButton.IsChecked = true;
                 return;
@@ -288,16 +275,17 @@ namespace Ginger.Run
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-
+            execLoggerConfig = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(c => c.IsSelected);
             ReloadExecutionHistoryData();
+            
         }
         /// <summary>
         /// Reloads the data for the RunSetsExecutionsHistoryPage.
         /// </summary>
         public void ReloadExecutionHistoryData()
         {
-            AssignGraphQLObjectEndPoint();
-            if (SetExectionHistoryVisibility(execLoggerConfig))
+            
+            if (AssignGraphQLObjectEndPoint()&&SetExectionHistoryVisibility(execLoggerConfig) )
             {
                 remoteRadioButton.IsChecked = true;
                 remoteRadioButton.IsEnabled = true;
@@ -342,7 +330,8 @@ namespace Ginger.Run
                     Header = "Status",
                     WidthWeight = 8,
                     ReadOnly = true,
-                    BindingMode = BindingMode.OneWay
+                    BindingMode = BindingMode.OneWay,
+                    PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty))
                 },
                 new()
                 {
@@ -569,7 +558,6 @@ namespace Ginger.Run
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while connecting remote.", ex);
-                Reporter.ToUser(eUserMsgKey.RemoteExecutionHistoryEndPoint);
                 LocalRadioButton_Selected(null, null);
 
 
@@ -739,8 +727,8 @@ namespace Ginger.Run
                     Description = node.Description,
                     SourceApplication = node.SourceApplication,
                     SourceApplicationUser = node.SourceApplicationUser,
-                    StartTimeStamp = DateTime.Parse(node.StartTime.ToString(), CultureInfo.InvariantCulture).ToUniversalTime(),
-                    EndTimeStamp = DateTime.Parse(node.EndTime.ToString(), CultureInfo.InvariantCulture).ToUniversalTime(),
+                    StartTimeStamp = node.StartTime.Value.ToUniversalTime(),
+                    EndTimeStamp = node.EndTime.Value.ToUniversalTime(),
                     Elapsed = node.ElapsedEndTimeStamp,
                     DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.Remote
                 };
