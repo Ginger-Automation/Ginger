@@ -49,6 +49,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task<string> PageSourceAsync();
 
+        public Task MouseClickAsync(Point point);
+
+        public Task MouseRightClickAsync(Point point);
+
+        public Task MoveMouseAsync(Point point);
+
         public Task<string> ExecuteJavascriptAsync(string script);
 
         public Task<string> ExecuteJavascriptAsync(string script, object arg);

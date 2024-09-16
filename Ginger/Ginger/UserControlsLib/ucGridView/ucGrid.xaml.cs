@@ -1151,6 +1151,12 @@ namespace Ginger
             return cmb;
         }
 
+        public MultiSelectComboBox AddMultiSelectComboBox()
+        {
+            MultiSelectComboBox cmb = new MultiSelectComboBox();
+            toolbar.Items.Add(cmb);
+            return cmb;
+        }
         public CheckBox AddCheckBox(string txt, RoutedEventHandler? handler)
         {
             DockPanel pnl = new DockPanel();
