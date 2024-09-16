@@ -19,6 +19,7 @@ limitations under the License.
 using AccountReport.Contracts.GraphQL.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -959,18 +960,60 @@ namespace Ginger.Run
                 }
 
                 int exportedSuccessfullyCount = 0;
-                foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportRunSetExecutionHistoryBPMN))
                 {
                     try
                     {
-                        exporter.Export(executedBusinessFlow, BPMNExportPath);
-                        exportedSuccessfullyCount++;
+                        featureTracker.Metadata.Add("BusinessFlowCount", executedBusinessFlows.Count().ToString());
+
+                        int activityGroupCount = executedBusinessFlows
+                            .Where(ex => ex != null)
+                            .Select(ex => ex.BusinessFlow)
+                            .Where(bf => bf != null && bf.Active && bf.ActivitiesGroups != null)
+                            .SelectMany(bf => bf.ActivitiesGroups)
+                            .Where(ag => ag != null)
+                            .Count();
+                        featureTracker.Metadata.Add("ActivityGroupCount", activityGroupCount.ToString());
+
+                        int activityCount = executedBusinessFlows
+                            .Where(ex => ex != null)
+                            .Select(ex => ex.BusinessFlow)
+                            .Where(bf => bf != null && bf.Active && bf.Activities != null)
+                            .SelectMany(bf => bf.Activities)
+                            .Where(activity => activity != null && activity.Active)
+                            .Count();
+                        featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
+
+                        int actionCount = executedBusinessFlows
+                            .Where(ex => ex != null)
+                            .Select(ex => ex.BusinessFlow)
+                            .Where(bf => bf != null && bf.Active && bf.Activities != null)
+                            .SelectMany(bf => bf.Activities)
+                            .Where(activity => activity != null && activity.Active && activity.Acts != null)
+                            .SelectMany(activity => activity.Acts)
+                            .Where(act => act != null && act.Active)
+                            .Count();
+                        featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while exporting BPMN for business flow {executedBusinessFlow.Name}.", ex);
+                        Reporter.ToLog(eLogLevel.DEBUG, $"error while capturing '{FeatureId.ExportRunSetExecutionHistoryBPMN}' feature metadata", ex);
+                    }
+                    
+                    foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)
+                    {
+                        try
+                        {
+                            exporter.Export(executedBusinessFlow, BPMNExportPath);
+                            exportedSuccessfullyCount++;
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while exporting BPMN for business flow {executedBusinessFlow.Name}.", ex);
+                        }
                     }
                 }
+
                 if (exportedSuccessfullyCount > 0)
                 {
                     Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.MultipleExportToBPMNSuccessful, exportedSuccessfullyCount));

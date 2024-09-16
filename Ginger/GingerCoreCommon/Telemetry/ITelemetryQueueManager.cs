@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Amdocs.Ginger.Common.Telemetry
+{
+    public interface ITelemetryQueueManager : IDisposable
+    {
+        public void AddLog(eLogLevel level, string msg);
+
+        public void AddLog(eLogLevel level, string msg, TelemetryMetadata metadata);
+
+        public void AddFeatureUsage(FeatureId featureId);
+
+        public void AddFeatureUsage(FeatureId featureId, TelemetryMetadata metadata);
+
+        public IFeatureTracker StartFeatureTracking(FeatureId featureId);
+    }
+}

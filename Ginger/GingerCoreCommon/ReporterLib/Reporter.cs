@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
+using Amdocs.Ginger.Common.Telemetry;
 
 namespace Amdocs.Ginger.Common
 {
@@ -32,10 +33,12 @@ namespace Amdocs.Ginger.Common
 
         public static bool ReportAllAlsoToConsole { get; set; }
 
+        public static ITelemetryQueueManager TelemetryQueueManager { get; set; }
+
 
         #region ToLog
         public static eAppReporterLoggingLevel AppLoggingLevel { get; set; }
-        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
+        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, TelemetryMetadata metadata = null)
         {
             if (WorkSpaceReporter == null || (logLevel == eLogLevel.DEBUG && AppLoggingLevel != eAppReporterLoggingLevel.Debug))
             {
@@ -53,9 +56,79 @@ namespace Amdocs.Ginger.Common
             }
 
             WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
+
+            if (TelemetryQueueManager != null)
+            {
+                string msg;
+                if (exceptionToLog != null)
+                {
+                    msg = $"{messageToLog}\n{exceptionToLog}";
+                }
+                else
+                {
+                    msg = messageToLog;
+                }
+                if (metadata == null)
+                {
+                    TelemetryQueueManager.AddLog(logLevel, msg);
+                }
+                else
+                {
+                    TelemetryQueueManager.AddLog(logLevel, msg, metadata);
+                }
+            }
         }
         #endregion ToLog
 
+        public static void AddFeatureUsage(FeatureId featureId, TelemetryMetadata metadata = null)
+        {
+            if (TelemetryQueueManager == null)
+            {
+                return;
+            }
+
+            if (metadata == null)
+            {
+                TelemetryQueueManager.AddFeatureUsage(featureId);
+            }
+            else
+            {
+                TelemetryQueueManager.AddFeatureUsage(featureId, metadata);
+            }
+        }
+
+        public static IFeatureTracker StartFeatureTracking(FeatureId featureId)
+        {
+            if (TelemetryQueueManager == null)
+            {
+                return new MockFeatureTracker(featureId);
+            }
+
+            return TelemetryQueueManager.StartFeatureTracking(featureId);
+        }
+
+        private sealed class MockFeatureTracker : IFeatureTracker
+        {
+            public FeatureId FeatureId { get; }
+
+            public TelemetryMetadata Metadata { get; }
+
+            internal MockFeatureTracker(FeatureId featureId)
+            {
+                FeatureId = featureId;
+                Metadata = new();
+            }
+
+            public void Dispose()
+            {
+                return;
+            }
+
+            public void StopTracking()
+            {
+                return;
+            }
+        }
 
 
         #region ToUser        
