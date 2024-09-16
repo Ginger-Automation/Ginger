@@ -66,7 +66,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string URL, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
-            IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
             featureTracker.Metadata.Add("APIType", "WSDL");
 
             mURL = URL;
@@ -148,8 +148,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
             string UserTempFile = Path.Combine(UserTempPath, "APIParserLogFile" + timeStamp + ".log");
             File.WriteAllText(UserTempFile, LogFile);
-
-            featureTracker.Dispose();
 
             return mAAMList;
         }

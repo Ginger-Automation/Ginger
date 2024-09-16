@@ -950,7 +950,6 @@ namespace Ginger.Run
 
                 RunSetExecutionHistoryToBPMNExporter exporter = new();
 
-
                 IEnumerable<ExecutedBusinessFlow> executedBusinessFlows;
                 executedBusinessFlows = await exporter.GetExecutedBusinessFlowsAsync(runSetReport.GUID, runSetReport.DataRepMethod);
 
@@ -961,36 +960,43 @@ namespace Ginger.Run
                 }
 
                 using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportRunSetExecutionHistoryBPMN);
-                featureTracker.Metadata.Add("BusinessFlowCount", executedBusinessFlows.Count().ToString());
+                try
+                {
+                    featureTracker.Metadata.Add("BusinessFlowCount", executedBusinessFlows.Count().ToString());
 
-                int activityGroupCount = executedBusinessFlows
-                    .Where(ex => ex != null)
-                    .Select(ex => ex.BusinessFlow)
-                    .Where(bf => bf != null && bf.Active && bf.ActivitiesGroups != null)
-                    .SelectMany(bf => bf.ActivitiesGroups)
-                    .Where(ag => ag != null)
-                    .Count();
-                featureTracker.Metadata.Add("ActivityGroupCount", activityGroupCount.ToString());
+                    int activityGroupCount = executedBusinessFlows
+                        .Where(ex => ex != null)
+                        .Select(ex => ex.BusinessFlow)
+                        .Where(bf => bf != null && bf.Active && bf.ActivitiesGroups != null)
+                        .SelectMany(bf => bf.ActivitiesGroups)
+                        .Where(ag => ag != null)
+                        .Count();
+                    featureTracker.Metadata.Add("ActivityGroupCount", activityGroupCount.ToString());
 
-                int activityCount = executedBusinessFlows
-                    .Where(ex => ex != null)
-                    .Select(ex => ex.BusinessFlow)
-                    .Where(bf => bf != null && bf.Active && bf.Activities != null)
-                    .SelectMany(bf => bf.Activities)
-                    .Where(activity => activity != null && activity.Active)
-                    .Count();
-                featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
+                    int activityCount = executedBusinessFlows
+                        .Where(ex => ex != null)
+                        .Select(ex => ex.BusinessFlow)
+                        .Where(bf => bf != null && bf.Active && bf.Activities != null)
+                        .SelectMany(bf => bf.Activities)
+                        .Where(activity => activity != null && activity.Active)
+                        .Count();
+                    featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
 
-                int actionCount = executedBusinessFlows
-                    .Where(ex => ex != null)
-                    .Select(ex => ex.BusinessFlow)
-                    .Where(bf => bf != null && bf.Active && bf.Activities != null)
-                    .SelectMany(bf => bf.Activities)
-                    .Where(activity => activity != null && activity.Active && activity.Acts != null)
-                    .SelectMany(activity => activity.Acts)
-                    .Where(act => act != null && act.Active)
-                    .Count();
-                featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
+                    int actionCount = executedBusinessFlows
+                        .Where(ex => ex != null)
+                        .Select(ex => ex.BusinessFlow)
+                        .Where(bf => bf != null && bf.Active && bf.Activities != null)
+                        .SelectMany(bf => bf.Activities)
+                        .Where(activity => activity != null && activity.Active && activity.Acts != null)
+                        .SelectMany(activity => activity.Acts)
+                        .Where(act => act != null && act.Active)
+                        .Count();
+                    featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"error while capturing '{FeatureId.ExportRunSetExecutionHistoryBPMN}' feature metadata", ex);
+                }
 
                 int exportedSuccessfullyCount = 0;
                 foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)

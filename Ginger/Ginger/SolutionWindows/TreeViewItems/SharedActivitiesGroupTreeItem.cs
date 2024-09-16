@@ -145,16 +145,23 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 int? activityCount = null;
                 int? actionCount = null;
-                if (mActivitiesGroup.ActivitiesIdentifiers != null)
+                try
                 {
-                    activityCount = mActivitiesGroup.ActivitiesIdentifiers.Where(a => a.IdentifiedActivity != null && a.IdentifiedActivity.Active).Count();
+                    if (mActivitiesGroup.ActivitiesIdentifiers != null)
+                    {
+                        activityCount = mActivitiesGroup.ActivitiesIdentifiers.Where(a => a.IdentifiedActivity != null && a.IdentifiedActivity.Active).Count();
 
-                    actionCount = mActivitiesGroup
-                        .ActivitiesIdentifiers
-                        .Select(ai => ai.IdentifiedActivity)
-                        .Where(activity => activity != null && activity.Active && activity.Acts != null)
-                        .SelectMany(activity => activity.Acts.Where(act => act != null && act.Active))
-                        .Count();
+                        actionCount = mActivitiesGroup
+                            .ActivitiesIdentifiers
+                            .Select(ai => ai.IdentifiedActivity)
+                            .Where(activity => activity != null && activity.Active && activity.Acts != null)
+                            .SelectMany(activity => activity.Acts.Where(act => act != null && act.Active))
+                            .Count();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"error while capturing '{FeatureId.ExportActivitiesGroupBPMN}' feature metadata", ex);
                 }
 
                 using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportActivitiesGroupBPMN);

@@ -50,7 +50,7 @@ using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
 using Ginger.Repository;
 using Amdocs.Ginger.Common.Telemetry;
-using Microsoft.VisualStudio.Services.Common;
+using static Amdocs.Ginger.CoreNET.BPMN.Exportation.RunSetExecutionHistoryToBPMNExporter;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -340,22 +340,30 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 int? activitiesGroupCount = null;
                 int? activityCount = null;
                 int? actionCount = null;
-                if (mBusinessFlow.Activities != null)
+                try
                 {
-                    activitiesGroupCount = mBusinessFlow.ActivitiesGroups.Count;
+                    if (mBusinessFlow.Activities != null)
+                    {
+                        activitiesGroupCount = mBusinessFlow.ActivitiesGroups.Count;
 
-                    activityCount = mBusinessFlow.Activities.Where(a => a.Active).Count();
+                        activityCount = mBusinessFlow.Activities.Where(a => a.Active).Count();
 
-                    actionCount = mBusinessFlow
-                        .Activities
-                        .Select(activity =>
-                        {
-                            if (activity == null || !activity.Active || activity.Acts == null)
-                                return 0;
-                            return activity.Acts.Where(act => act != null && act.Active).Count();
-                        })
-                        .Aggregate((count, total) => total + count);
+                        actionCount = mBusinessFlow
+                            .Activities
+                            .Select(activity =>
+                            {
+                                if (activity == null || !activity.Active || activity.Acts == null)
+                                    return 0;
+                                return activity.Acts.Where(act => act != null && act.Active).Count();
+                            })
+                            .Aggregate((count, total) => total + count);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"error while capturing '{FeatureId.ExportBusinessFlowBPMN}' feature metadata", ex);
+                }
+                
 
                 using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportBusinessFlowBPMN);
                 if (activitiesGroupCount != null)
