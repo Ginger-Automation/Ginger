@@ -14,6 +14,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
         public ProjEnvironment NewEnvironment = new ProjEnvironment();
         public ObservableList<EnvApplication> apps = new ObservableList<EnvApplication>();
         public ObservableList<ProjEnvironment> ImportedEnvs = new ObservableList<ProjEnvironment>();
+        public ObservableList<ApplicationPlatform> tempAppPlat = new ObservableList<ApplicationPlatform>();
 
         public override string Title { get { return "Import Ginger Analytics Environment Wizard"; } }
 
@@ -33,6 +34,10 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
 
         public override void Finish()
         {
+            foreach(var appPlatform in tempAppPlat)
+            {
+                WorkSpace.Instance.Solution.ApplicationPlatforms.Add(appPlatform);
+            }
 
             foreach (ProjEnvironment item in ImportedEnvs)
             {
