@@ -82,6 +82,11 @@ namespace Amdocs.Ginger.Common
 
         public static void AddFeatureUsage(FeatureId featureId, TelemetryMetadata metadata = null)
         {
+            if (TelemetryQueueManager == null)
+            {
+                return;
+            }
+
             if (metadata == null)
             {
                 TelemetryQueueManager.AddFeatureUsage(featureId);
