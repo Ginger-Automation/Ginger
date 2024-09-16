@@ -27,6 +27,7 @@ using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
+using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTest.WizardLib;
 using Microsoft.Graph;
@@ -219,23 +220,49 @@ namespace Ginger.Environments
 
         private void UpdateExistingApplication(EnvApplication existingApp, GingerAnalyticsApplication item)
         {
-            if (!existingApp.Equals(item))
+            bool parametersChanged = false;
+
+            // Check if the name, platform, or URL has changed
+            if (!existingApp.Name.Equals(item.Name) ||
+                existingApp.Platform != MapToPlatformType(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application Type")?.Value) ||
+                !existingApp.Url.Equals(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application URL")?.Value))
             {
                 existingApp.Name = item.Name;
                 existingApp.Platform = MapToPlatformType(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application Type")?.Value);
                 existingApp.Url = item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application URL")?.Value;
+                parametersChanged = true;
+            }
 
-                // Add all other parameters to GeneralParams
+            // Create a hash set of existing parameters in GeneralParams
+            var existingParamNames = new HashSet<string>(existingApp.Variables.Select(v => v.Name));
+
+            // Check if any other parameters have changed or new parameters added
+            foreach (var param in item.GAApplicationParameters)
+            {
+                if (param.Name != "Application Type" && param.Name != "Application URL")
+                {
+                    if (!existingParamNames.Contains(param.Name) || existingApp.Variables.FirstOrDefault(v => v.Name == param.Name)?.Value != param.Value)
+                    {
+                        parametersChanged = true;
+                        break;
+                    }
+                }
+            }
+
+            // Only update variables if parameters have actually changed
+            if (parametersChanged)
+            {
+                existingApp.Variables.ClearAll();
                 foreach (var param in item.GAApplicationParameters)
                 {
                     if (param.Name != "Application Type" && param.Name != "Application URL")
                     {
-                        existingApp.GeneralParams.Add(new GeneralParam { Name = param.Name, Value = param.Value });
+                        existingApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
                     }
                 }
-                
-                UpdateApplicationPlatform(existingApp, item);
             }
+
+            UpdateApplicationPlatform(existingApp, item);
         }
 
         private void AddNewApplication(GingerAnalyticsApplication item)
@@ -245,14 +272,14 @@ namespace Ginger.Environments
                 var platformType = MapToPlatformType(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application Type")?.Value);
                 var appUrl = item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application URL")?.Value;
 
-                EnvApplication newEnvApp = new() { Name = item.Name, Platform = platformType, GingerAnalyticsAppId = item.Id, Active = true, Url = appUrl, GeneralParams = new ObservableList<GeneralParam>() };
+                EnvApplication newEnvApp = new() { Name = item.Name, Platform = platformType, GingerAnalyticsAppId = item.Id, Active = true, Url = appUrl, GingerAnalyticsStatus=item.Status };
 
                 // Add all other parameters to GeneralParams
                 foreach (var param in item.GAApplicationParameters)
                 {
                     if (param.Name != "Application Type" && param.Name != "Application URL")
                     {
-                        newEnvApp.GeneralParams.Add(new GeneralParam { Name = param.Name, Value = param.Value });
+                        newEnvApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
                     }
                 }
 
@@ -271,7 +298,7 @@ namespace Ginger.Environments
             }
             else
             {
-                existingPlatform.AppName = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.AppName == item.Name) == null
+                existingPlatform.AppName = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.AppName == item.Name && k.GingerAnalyticsAppId != item.Id) == null
                     ? item.Name : item.Name + "_GingerAnalytics";
                 existingPlatform.Platform = app.Platform;
             }
