@@ -12,11 +12,12 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 {
     internal sealed class TelemetryCollector : ITelemetryCollector<TelemetryLogRecord>, ITelemetryCollector<TelemetryFeatureRecord>
     {
-        private static readonly GrpcChannel CollectorGRPCChannel = GrpcChannel.ForAddress("");
+        private readonly GrpcChannel _channel ;
         private readonly ILogger? _logger;
 
-        internal TelemetryCollector(ILogger? logger = null)
+        internal TelemetryCollector(string address, ILogger? logger = null)
         {
+            _channel = GrpcChannel.ForAddress(address);
             _logger = logger;
         }
 
@@ -24,7 +25,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         {
             try
             {
-                LogCollector.LogCollectorClient client = new(CollectorGRPCChannel);
+                LogCollector.LogCollectorClient client = new(_channel);
                 var request = CreateAddLogsRequest(logs);
                 var response = await client.CollectAsync(request);
                 return new ITelemetryCollector<TelemetryLogRecord>.AddResult()
@@ -68,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         {
             try
             {
-                FeatureCollector.FeatureCollectorClient client = new(CollectorGRPCChannel);
+                FeatureCollector.FeatureCollectorClient client = new(_channel);
                 var request = CreateAddFeaturesRequest(features);
                 var response = await client.CollectAsync(request);
                 return new ITelemetryCollector<TelemetryFeatureRecord>.AddResult()
