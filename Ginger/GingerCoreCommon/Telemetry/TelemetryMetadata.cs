@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Common.Telemetry
 {
@@ -45,34 +46,7 @@ namespace Amdocs.Ginger.Common.Telemetry
 
         public string ToJSON()
         {
-            StringBuilder json = new();
-
-            json.Append('{');
-            string[] keys = _dict.Keys.ToArray();
-            for (int keyIndex = 0; keyIndex < keys.Length; keyIndex++)
-            {
-                string key = keys[keyIndex];
-                json.Append($"\"{key}\":");
-                json.Append('[');
-                string[] values = _dict[key].ToArray();
-                for (int valueIndex = 0; valueIndex < values.Length; valueIndex++)
-                {
-                    string value = values[valueIndex];
-                    json.Append($"\"{value}\"");
-                    if (valueIndex < values.Length - 1)
-                    {
-                        json.Append(',');
-                    }
-                }
-                json.Append(']');
-                if (keyIndex < keys.Length - 1)
-                {
-                    json.Append(',');
-                }
-            }
-            json.Append('}');
-
-            return json.ToString();
+            return JsonConvert.SerializeObject(_dict, Formatting.None);
         }
 
         public IEnumerator<KeyValuePair<string, IEnumerable<string>>> GetEnumerator()
