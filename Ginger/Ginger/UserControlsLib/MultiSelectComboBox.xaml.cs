@@ -34,6 +34,7 @@ using System.ComponentModel;
 using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
+using Microsoft.VisualStudio.Services.Common;
 
 namespace Ginger.UserControlsLib
 {
@@ -42,14 +43,14 @@ namespace Ginger.UserControlsLib
     /// </summary>
     public partial class MultiSelectComboBox : UserControl
     {
-        private ObservableCollection<Node> _nodeList;
+        public  ObservableCollection<Node> _nodeList;
         private object obj;
         private string AttrName;
         private bool ShowEnumDesc = false;
         public MultiSelectComboBox()
         {
             InitializeComponent();
-            _nodeList = new ObservableCollection<Node>();            
+            _nodeList = new ObservableCollection<Node>();
         }
 
         #region Dependency Properties
@@ -157,10 +158,12 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        public event EventHandler ItemCheckBoxClick;
+
+        public void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             CheckBox clickedBox = (CheckBox)sender;
-
+           
             if (clickedBox.Content.ToString() == "All")
             {
                 foreach (Node node in _nodeList)
@@ -214,7 +217,7 @@ namespace Ginger.UserControlsLib
             }
             SetSelectedItems();
             SetText();
-
+            ItemCheckBoxClick?.Invoke(sender: clickedBox, new EventArgs());
         }
         #endregion
 

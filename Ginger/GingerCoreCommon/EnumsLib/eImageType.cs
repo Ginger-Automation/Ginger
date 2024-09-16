@@ -200,6 +200,7 @@ namespace Amdocs.Ginger.Common.Enums
         Paste,
         WindowRestore,
         Rules,
+        VerticalBars,
         #endregion
 
         #region Items Images
