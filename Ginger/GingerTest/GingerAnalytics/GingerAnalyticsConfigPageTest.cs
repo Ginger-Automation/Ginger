@@ -33,7 +33,7 @@ namespace GingerTest.GingerAnalytics
             };
 
             // Inject mock objects
-            _page.analyticsAPI = _mockAnalyticsAPI.Object;
+            _page = new GingerAnalyticsConfigurationPage();
         }
 
         [TestMethod]

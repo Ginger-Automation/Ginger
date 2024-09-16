@@ -34,25 +34,6 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
         public override void Finish()
         {
 
-            //ApplicationPlatform selectedApp = new();
-            ////add selected apps
-            //foreach (var envapps in ImportedEnvs)
-            //{
-
-            //    foreach (EnvApplication app in envapps.Applications)
-            //    {
-            //        if (app.Active && !WorkSpace.Instance.Solution.ApplicationPlatforms.Contains(new ApplicationPlatform { Platform = app.Platform, AppName = app.Name}))
-            //        {
-            //            //NewEnvironment.Applications.Add(app);
-            //            // for adding the apps in target application
-            //            ApplicationPlatform selectedApp = new();
-            //            selectedApp.AppName = app.Name;
-            //            selectedApp.Platform = app.Platform;
-            //            WorkSpace.Instance.Solution.ApplicationPlatforms.Add(selectedApp);
-            //        }   
-            //    }
-            //}
-
             foreach (ProjEnvironment item in ImportedEnvs)
             {
                 //Save the Environment 

@@ -54,18 +54,6 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            //if (WizardEventArgs.EventType == EventType.Init)
-            //{
-            //    mWizard = (AddEnvironmentWizard)WizardEventArgs.Wizard;                
-            //    mWizard.FinishEnabled = false;
-            //    mWizard.NextEnabled = true;
-            //    mWizard.PrevEnabled = false;
-            //}
-            //if (WizardEventArgs.EventType == EventType.Active)
-            //{
-            //    mWizard.NextEnabled = true;
-            //    mWizard.PrevEnabled = false;
-            //}
         }
     }
 }

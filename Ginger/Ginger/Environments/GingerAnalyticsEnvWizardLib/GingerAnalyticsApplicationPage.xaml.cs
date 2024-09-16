@@ -45,8 +45,8 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), Header = "Environment", WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.GAStatus), Header = "Status", WidthWeight = 40 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.GARemark), Header = "Remark", WidthWeight = 40 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.GingerAnalyticsStatus), Header = "Status", WidthWeight = 40 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.GingerAnalyticsRemark), Header = "Remark", WidthWeight = 40 });
             SelectApplicationGrid.SetAllColumnsDefaultView(view);
             SelectApplicationGrid.InitViewItems();
         }
@@ -73,6 +73,8 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
                     mWizard = (AddGingerAnalyticsEnvWizard)WizardEventArgs.Wizard;
                     SelectApplicationGrid.DataSourceList = mWizard.ImportedEnvs;
                 break;
+                default:
+                    break;
             }
 
         }

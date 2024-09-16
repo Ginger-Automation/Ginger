@@ -62,17 +62,15 @@ namespace GingerCore.Environments
         [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
-        private string mGAId; //Ginger Analytics Application ID
+        private string mGingerAnalyticsAppId; //Ginger Analytics Application ID
         [IsSerializedForLocalRepository]
-        public string GAId { get { return mGAId; } set { if (mGAId != value) { mGAId = value; OnPropertyChanged(nameof(GAId)); } } }
+        public string GingerAnalyticsAppId { get { return mGingerAnalyticsAppId; } set { if (mGingerAnalyticsAppId != value) { mGingerAnalyticsAppId = value; OnPropertyChanged(nameof(GingerAnalyticsAppId)); } } }
 
-        private string mGAStatus = "Imported"; //Ginger Analytics Application ID
-        [IsSerializedForLocalRepository]
-        public string GAStatus { get { return mGAStatus; } set { if (mGAStatus != value) { mGAStatus = value; OnPropertyChanged(nameof(GAStatus)); } } }
+        private string mGingerAnalyticsStatus; //Ginger Analytics import status
+        public string GingerAnalyticsStatus { get { return mGingerAnalyticsStatus; } set { if (mGingerAnalyticsStatus != value) { mGingerAnalyticsStatus = value; OnPropertyChanged(nameof(GingerAnalyticsStatus)); } } }
 
-        private string mGARemark; //Ginger Analytics Application ID
-        [IsSerializedForLocalRepository]
-        public string GARemark { get { return mGARemark; } set { if (mGARemark != value) { mGARemark = value; OnPropertyChanged(nameof(GARemark)); } } }
+        private string mGingerAnalyticsRemark; //Ginger Analytics Remakrs if any during import
+        public string GingerAnalyticsRemark { get { return mGingerAnalyticsRemark; } set { if (mGingerAnalyticsRemark != value) { mGingerAnalyticsRemark = value; OnPropertyChanged(nameof(GingerAnalyticsRemark)); } } }
 
         [IsSerializedForLocalRepository]
         public ObservableList<IDatabase> Dbs { get; set; } = new ObservableList<IDatabase>();

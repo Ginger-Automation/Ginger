@@ -55,6 +55,11 @@ namespace Ginger.Configurations
             }
             set
             {
+                if (value != null && value.EndsWith("/"))
+                {
+                    value = value.TrimEnd('/');
+                }
+
                 if (mAccountUrl != value)
                 {
                     mAccountUrl = value;
@@ -73,6 +78,11 @@ namespace Ginger.Configurations
             }
             set
             {
+                if (value != null && value.EndsWith("/"))
+                {
+                    value = value.TrimEnd('/');
+                }
+
                 if (mIdentityServiceURL != value)
                 {
                     mIdentityServiceURL = value;

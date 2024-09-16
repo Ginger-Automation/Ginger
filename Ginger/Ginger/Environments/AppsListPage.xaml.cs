@@ -194,7 +194,7 @@ namespace Ginger.Environments
                     var appListEnv = appEnv.Value.GingerAnalyticsApplications;
                     foreach (var item in appListEnv)
                     {
-                        var existingApp = AppEnvironment.Applications.FirstOrDefault(k => k.GAId == item.Id);
+                        var existingApp = AppEnvironment.Applications.FirstOrDefault(k => k.GingerAnalyticsAppId == item.Id);
                         if (existingApp != null)
                         {
                             UpdateExistingApplication(existingApp, item);
@@ -245,7 +245,7 @@ namespace Ginger.Environments
                 var platformType = MapToPlatformType(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application Type")?.Value);
                 var appUrl = item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application URL")?.Value;
 
-                EnvApplication newEnvApp = new() { Name = item.Name, Platform = platformType, GAId = item.Id, Active = true, Url = appUrl, GeneralParams = new ObservableList<GeneralParam>() };
+                EnvApplication newEnvApp = new() { Name = item.Name, Platform = platformType, GingerAnalyticsAppId = item.Id, Active = true, Url = appUrl, GeneralParams = new ObservableList<GeneralParam>() };
 
                 // Add all other parameters to GeneralParams
                 foreach (var param in item.GAApplicationParameters)
@@ -264,7 +264,7 @@ namespace Ginger.Environments
 
         private void UpdateApplicationPlatform(EnvApplication app, GingerAnalyticsApplication item)
         {
-            var existingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.GAId == item.Id);
+            var existingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.GingerAnalyticsAppId == item.Id);
             if (existingPlatform == null)
             {
                 AddApplicationPlatform(app, item);
@@ -284,7 +284,7 @@ namespace Ginger.Environments
                 AppName = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.AppName == item.Name) != null
                     ? item.Name + "_GingerAnalytics" : item.Name,
                 Platform = app.Platform,
-                GAId = item.Id
+                GingerAnalyticsAppId = item.Id
             };
 
             WorkSpace.Instance.Solution.ApplicationPlatforms.Add(selectedApp);

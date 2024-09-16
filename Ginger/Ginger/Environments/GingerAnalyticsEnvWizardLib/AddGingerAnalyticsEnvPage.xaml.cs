@@ -64,13 +64,15 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
 
                     foreach (var appPlat in environmentListGA)
                     {
-                        EnvApplication envApp = new EnvApplication() { Name = appPlat.Value.Name, ParentGuid = new Guid(appPlat.Key), GAId=appPlat.Value.Id };
+                        EnvApplication envApp = new EnvApplication() { Name = appPlat.Value.Name, ParentGuid = new Guid(appPlat.Key), GingerAnalyticsAppId=appPlat.Value.Id };
                         envApp.Active = true;
                         mWizard.apps.Add(envApp);
                     }
                 break;
                 case EventType.LeavingForNextPage:
                     xEnvironmentComboBox_SelectionChanged();
+                break;
+                default:
                     break;
 
             }
@@ -177,7 +179,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
                 {
                     Name = item.Name,
                     Platform = platformType,
-                    GAId = item.Id,
+                    GingerAnalyticsAppId = item.Id,
                     Active = true,
                     Url = appUrl,
                     GeneralParams = new ObservableList<GeneralParam>()
@@ -221,7 +223,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
 
         private async Task AddOrUpdateApplicationPlatform(EnvApplication envApp, dynamic item)
         {
-            var existingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.GAId == item.Id);
+            var existingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.GingerAnalyticsAppId == item.Id);
 
             if (existingPlatform == null)
             {
@@ -244,7 +246,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             {
                 AppName = appNameWithSuffix,
                 Platform = envApp.Platform,
-                GAId = envApp.GAId
+                GingerAnalyticsAppId = envApp.GingerAnalyticsAppId
             };
         }
 

@@ -185,8 +185,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
             }
         }
 
-        private string mGAId; //Ginger Analytics Application ID
+        private string mGingerAnalyticsAppId; //Ginger Analytics Application ID
         [IsSerializedForLocalRepository]
-        public string GAId { get { return mGAId; } set { if (mGAId != value) { mGAId = value; OnPropertyChanged(nameof(GAId)); } } }
+        public string GingerAnalyticsAppId { get { return mGingerAnalyticsAppId; } set { if (mGingerAnalyticsAppId != value) { mGingerAnalyticsAppId = value; OnPropertyChanged(nameof(GingerAnalyticsAppId)); } } }
     }
 }
