@@ -62,6 +62,16 @@ namespace GingerCore.Environments
         [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
+        private string mGingerAnalyticsAppId; //Ginger Analytics Application ID
+        [IsSerializedForLocalRepository]
+        public string GingerAnalyticsAppId { get { return mGingerAnalyticsAppId; } set { if (mGingerAnalyticsAppId != value) { mGingerAnalyticsAppId = value; OnPropertyChanged(nameof(GingerAnalyticsAppId)); } } }
+
+        private string mGingerAnalyticsStatus; //Ginger Analytics import status
+        public string GingerAnalyticsStatus { get { return mGingerAnalyticsStatus; } set { if (mGingerAnalyticsStatus != value) { mGingerAnalyticsStatus = value; OnPropertyChanged(nameof(GingerAnalyticsStatus)); } } }
+
+        private string mGingerAnalyticsRemark; //Ginger Analytics Remakrs if any during import
+        public string GingerAnalyticsRemark { get { return mGingerAnalyticsRemark; } set { if (mGingerAnalyticsRemark != value) { mGingerAnalyticsRemark = value; OnPropertyChanged(nameof(GingerAnalyticsRemark)); } } }
+
         [IsSerializedForLocalRepository]
         public ObservableList<IDatabase> Dbs { get; set; } = new ObservableList<IDatabase>();
 

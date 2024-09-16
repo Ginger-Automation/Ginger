@@ -113,7 +113,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public Visibility TreeTitleVisibility
         {
             get { return xTreeTitle.Visibility; }
-            set 
+            set
             {
                 xTreeItemHeaderPnl.Visibility = value;
                 if (value == Visibility.Collapsed)
@@ -380,7 +380,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         }
                         else
                         {
-                             xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token);
+                            xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token);
                         }
                     }
                     catch (Exception ex)
