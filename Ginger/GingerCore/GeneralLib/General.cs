@@ -204,7 +204,7 @@ namespace GingerCore
             //}
         }
 
-        public static void FillComboFromEnumType(ComboBox comboBox, Type Etype, List<object> values = null)
+        public static void FillComboFromEnumType(ComboBox comboBox, Type Etype, List<object> values = null, bool textWiseSorting = true)
         {
             comboBox.Items.Clear();
             comboBox.SelectedValuePath = "Value";
@@ -231,8 +231,11 @@ namespace GingerCore
                 }
             }
 
-            // Get the combo to be sorted
-            comboBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("text", System.ComponentModel.ListSortDirection.Ascending));
+            if (textWiseSorting)
+            {
+                // Get the combo to be sorted
+                comboBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("text", System.ComponentModel.ListSortDirection.Ascending));
+            }
         }
 
         public static void FillComboItemsFromEnumType(ComboBox comboBox, Type Etype)

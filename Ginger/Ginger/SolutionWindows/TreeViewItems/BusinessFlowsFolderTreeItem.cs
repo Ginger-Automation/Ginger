@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.ActionConversion;
@@ -275,6 +276,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(importedBF);
                     mBusFlowsFolder.AddRepositoryItem(importedBF);
+
+                    Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
+                    {
+                        { "Type", ALMIntegration.Instance.GetALMType().ToString() },
+                        { "Operation", "ImportBusinessFlow" },
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -338,12 +345,28 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if (bfToExport.Count == 1)
                 {
                     _ = bfToExport[0].Activities;//Loading Activity for Export to ALM
-                    ALMIntegration.Instance.ExportBusinessFlowToALM(bfToExport[0], true);
+                    bool wasSuccessful = ALMIntegration.Instance.ExportBusinessFlowToALM(bfToExport[0], true);
+                    if (wasSuccessful)
+                    {
+                        Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
+                        {
+                            { "Type", ALMIntegration.Instance.GetALMType().ToString() },
+                            { "Operation", "ExportBusinessFlow" },
+                        });
+                    }
                 }
                 else
                 {
                     if (ALMIntegration.Instance.ExportAllBusinessFlowsToALM(bfToExport, true, eALMConnectType.Auto))
                     {
+                        foreach (var _ in bfToExport)
+                        {
+                            Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
+                            {
+                                { "Type", ALMIntegration.Instance.GetALMType().ToString() },
+                                { "Operation", "ExportBusinessFlow" },
+                            });
+                        }
                         Reporter.ToUser(eUserMsgKey.ExportAllItemsToALMSucceed);
                     }
                     else

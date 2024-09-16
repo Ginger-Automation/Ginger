@@ -303,19 +303,13 @@ namespace amdocs.ginger.GingerCoreNET
             //NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
         }
 
-        public static ITelemetryQueueManager NewTelemetryQueueManager()
-        {
-            return new TelemetryQueueManager();
-        }
-
-        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper, ITelemetryQueueManager telemetryQueueManager = null)
+        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper)
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
             Reporter.WorkSpaceReporter = workSpaceReporterBase;
-            Reporter.TelemetryQueueManager = telemetryQueueManager;
 
             string phase = string.Empty;
 
@@ -357,6 +351,14 @@ namespace amdocs.ginger.GingerCoreNET
             if (WorkSpace.Instance.LocalGingerGrid != null)
             {
                 Reporter.ToLog(eLogLevel.INFO, "Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);
+            }
+        }
+
+        public void InitTelemetry()
+        {
+            if (UserProfile.EnableTelemetry)
+            {
+                Reporter.TelemetryQueueManager = new TelemetryQueueManager(UserProfile.TelemetryConfig);
             }
         }
 

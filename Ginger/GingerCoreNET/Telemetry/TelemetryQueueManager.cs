@@ -16,55 +16,69 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 {
     internal sealed class TelemetryQueueManager : ITelemetryQueueManager
     {
+        private readonly eLogLevel _minLogTrackingLevel;
         private readonly TelemetryQueue<TelemetryLogRecord> _logQueue;
         private readonly TelemetryQueue<TelemetryFeatureRecord> _featureQueue;
 
-        internal TelemetryQueueManager()
+        internal TelemetryQueueManager(ITelemetryQueueManager.Config config)
         {
-            _logQueue = CreateLogQueue();
-            _featureQueue = CreateFeatureQueue();
+            _minLogTrackingLevel = config.MinLogLevel;
+            _logQueue = CreateLogQueue(config);
+            _featureQueue = CreateFeatureQueue(config);
         }
 
-        private static TelemetryQueue<TelemetryLogRecord> CreateLogQueue()
+        private static TelemetryQueue<TelemetryLogRecord> CreateLogQueue(ITelemetryQueueManager.Config config)
         {
-            TelemetryQueue<TelemetryLogRecord>.Config config = new()
+            TelemetryCollector? collector = null;
+            try
             {
-                BufferSize = 4,
+                collector = new(config.CollectorURL, new DebugLogger());
+            }
+            catch { }
+
+            TelemetryQueue<TelemetryLogRecord>.Config queueConfig = new()
+            {
+                BufferSize = config.BufferSize,
                 DB = NewTelemetryLiteDB(),
-                Collector = new MockTelemetryCollector<TelemetryLogRecord>(async _ =>
-                {
-                    await Task.Delay(200);
-                    return new ITelemetryCollector<TelemetryLogRecord>.AddResult()
-                    {
-                        Successful = false,
-                    };
-                }),
-                RetryPollingInterval = TimeSpan.FromSeconds(30),
-                RetryPollingSize = 10,
+                Collector = collector != null ? collector : NewMockCollector<TelemetryLogRecord>(),
+                RetryPollingInterval = TimeSpan.FromSeconds(config.RetryIntervalInSeconds),
+                RetryPollingSize = config.RetryPollingSize,
                 Logger = new DebugLogger(),
             };
-            return new TelemetryQueue<TelemetryLogRecord>(config);
+            return new TelemetryQueue<TelemetryLogRecord>(queueConfig);
         }
 
-        private static TelemetryQueue<TelemetryFeatureRecord> CreateFeatureQueue()
+        private static TelemetryQueue<TelemetryFeatureRecord> CreateFeatureQueue(ITelemetryQueueManager.Config config)
         {
-            TelemetryQueue<TelemetryFeatureRecord>.Config config = new()
+            TelemetryCollector? collector = null;
+            try
             {
-                BufferSize = 4,
+                collector = new(config.CollectorURL, new DebugLogger());
+            }
+            catch { }
+
+            TelemetryQueue<TelemetryFeatureRecord>.Config queueConfig = new()
+            {
+                BufferSize = config.BufferSize,
                 DB = NewTelemetryLiteDB(),
-                Collector = new MockTelemetryCollector<TelemetryFeatureRecord>(async _ =>
-                {
-                    await Task.Delay(200);
-                    return new ITelemetryCollector<TelemetryFeatureRecord>.AddResult()
-                    {
-                        Successful = false,
-                    };
-                }),
-                RetryPollingInterval = TimeSpan.FromSeconds(30),
-                RetryPollingSize = 10,
+                Collector = collector != null ? collector : NewMockCollector<TelemetryFeatureRecord>(),
+                RetryPollingInterval = TimeSpan.FromSeconds(config.RetryIntervalInSeconds),
+                RetryPollingSize = config.RetryPollingSize,
                 Logger = new DebugLogger(),
             };
-            return new TelemetryQueue<TelemetryFeatureRecord>(config);
+            return new TelemetryQueue<TelemetryFeatureRecord>(queueConfig);
+        }
+
+        private static MockTelemetryCollector<TRecord> NewMockCollector<TRecord>()
+        {
+            return new MockTelemetryCollector<TRecord>(async _ =>
+            {
+                await Task.Delay(200);
+                return new ITelemetryCollector<TRecord>.AddResult()
+                {
+                    Successful = false,
+                };
+            });
         }
 
         private static TelemetryLiteDB NewTelemetryLiteDB()
@@ -87,7 +101,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         public void AddLog(eLogLevel level, string msg, TelemetryMetadata metadata)
         {
-            if (level != eLogLevel.ERROR)
+            if (level < _minLogTrackingLevel)
             {
                 return;
             }

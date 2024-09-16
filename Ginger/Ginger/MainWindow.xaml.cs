@@ -125,11 +125,11 @@ namespace Ginger
             }
         }
 
-        private void TelemetryEventHandler(object sender, Telemetry.TelemetryEventArgs e)
+        private void TelemetryEventHandler(object sender, Amdocs.Ginger.CoreNET.TelemetryLib.Telemetry.TelemetryEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
-                xVersionAndNewsIcon.ToolTip = Telemetry.VersionAndNewsInfo + ", click for details";
+                xVersionAndNewsIcon.ToolTip = Amdocs.Ginger.CoreNET.TelemetryLib.Telemetry.VersionAndNewsInfo + ", click for details";
                 xVersionAndNewsIcon.Visibility = Visibility.Visible;
             });
 
@@ -775,6 +775,11 @@ namespace Ginger
             {
                 BetaFeaturesPage p = new BetaFeaturesPage();
                 p.ShowAsWindow();
+            }
+            else if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftAlt) && Keyboard.IsKeyDown(Key.LeftShift) && e.Key == Key.T)
+            {
+                Ginger.Telemetry.TelemetryConfigPage telemetryConfigPage = new();
+                telemetryConfigPage.ShowAsWindow();
             }
             else if (e.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {

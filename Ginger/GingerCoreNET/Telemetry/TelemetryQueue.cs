@@ -290,6 +290,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
             _isDisposed = true;
             _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
             _queue.Dispose();
            
             _consumerTask.Wait(QueueFlushWaitTime);
