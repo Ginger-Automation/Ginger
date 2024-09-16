@@ -267,7 +267,7 @@ namespace Ginger.Actions.UserControls
                         {
                             if (mActParentActivity != null)
                             {
-                                foreach (Act a in mActParentActivity.Acts)
+                                foreach (Act a in mActParentActivity.Acts.Cast<Act>())
                                 {
                                     //avoid current Action
                                     if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mAction == a)//TODO: do better condition 
@@ -275,9 +275,11 @@ namespace Ginger.Actions.UserControls
                                         continue;
                                     }
 
-                                    ComboEnumItem CEI = new ComboEnumItem();
-                                    CEI.Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.Description;//adding also name as second option search to be used when pulling the actions from Shared Repository
-                                    CEI.text = a.Description;
+                                    ComboEnumItem CEI = new ComboEnumItem
+                                    {
+                                        Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.Description,//adding also name as second option search to be used when pulling the actions from Shared Repository
+                                        text = a.Description
+                                    };
                                     ActionValueComboBox.Items.Add(CEI);
 
                                     if (ActionValueComboBox.SelectedItem == null ||
