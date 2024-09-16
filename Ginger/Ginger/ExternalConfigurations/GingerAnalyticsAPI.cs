@@ -62,10 +62,9 @@ namespace Ginger.ExternalConfigurations
     public class GingerAnalyticsAPI
     {
         public static DateTime validTo = DateTime.MinValue;
-        public static GingerAnalyticsConfiguration gingerAnalyticsUserConfig =
-            WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerAnalyticsConfiguration>().Count == 0 ? new GingerAnalyticsConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerAnalyticsConfiguration>();
-        private string bearerToken = string.Empty;
+        public static GingerAnalyticsConfiguration gingerAnalyticsUserConfig = SetConfigutation();
 
+        private string bearerToken = string.Empty;
 
         public static async Task<bool> RequestToken(string clientId, string clientSecret, string address)
         {
@@ -272,6 +271,18 @@ namespace Ginger.ExternalConfigurations
                 Reporter.ToLog(eLogLevel.ERROR, "Error fetching data from Ginger Analytics API", ex);
                 return new Dictionary<string, GingerAnalyticsEnvironmentB>();
             }
+        }
+
+        private static GingerAnalyticsConfiguration SetConfigutation()
+        {
+            var workSpace = WorkSpace.Instance;
+            if (workSpace == null || workSpace.SolutionRepository == null)
+            {
+                return new GingerAnalyticsConfiguration();
+            }
+
+            var item = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerAnalyticsConfiguration>(); ;
+            return item == null ? new GingerAnalyticsConfiguration() : item;
         }
     }
 }

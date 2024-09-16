@@ -143,7 +143,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
             switch (platformType)
             {
                 case ePlatformType.NA:
-                    return eImageType.Empty;
+                    return eImageType.Question;
                 case ePlatformType.Web:
                     return eImageType.Globe;
                 case ePlatformType.WebServices:

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.ValueExpression;
@@ -643,6 +644,12 @@ namespace GingerCore
                 //        mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
                 //}
                 //else
+
+                Reporter.AddFeatureUsage(FeatureId.GlobalParameter, new TelemetryMetadata()
+                {
+                    { "Operation", "Use" },
+                });
+
                 mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
             }
             else

@@ -19,6 +19,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
@@ -171,7 +172,7 @@ namespace Ginger
             }
 
             //log it
-            Reporter.ToLog(eLogLevel.ERROR, ex.ToString(), ex);
+            Reporter.ToLog(eLogLevel.ERROR, ex.ToString(), ex, TelemetryMetadata.WithTags("ApplicationUnhandledException"));
 
             //add to dictionary to make sure same exception won't show more than 3 times
             if (mExceptionsDic.ContainsKey(ex.Message))
@@ -257,6 +258,7 @@ namespace Ginger
             InitClassTypesDictionary();
 
             WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());
+            WorkSpace.Instance.InitTelemetry();
 
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
 

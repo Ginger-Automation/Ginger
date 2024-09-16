@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package GingerTelemetryProto.v1;
+
+message FeatureRecord {
+	string Id = 1;
+	string SolutionId = 2;
+	string Account = 3;
+	string CreationTimestamp = 4;
+	string AppVersion = 5;
+	string UserId = 6;
+	string FeatureId = 7;
+	string Duration = 8;
+	string Metadata = 9;
+}
+
+message AddFeaturesRequest {
+	repeated FeatureRecord Features = 1;
+	int32 FeatureCount = 2;
+}
+
+message AddFeaturesResponse {
+	int32 FeatureCount = 1;
+}
+
+service FeatureCollector {
+	rpc Collect(AddFeaturesRequest) returns (AddFeaturesResponse);
+}

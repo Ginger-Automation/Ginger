@@ -15,6 +15,7 @@ using Ginger.UserControlsLib;
 using GingerCore.GeneralLib;
 using System.Windows;
 using Amdocs.Ginger.Repository;
+using GingerCore.Variables;
 
 namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
 {
@@ -182,7 +183,8 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
                     GingerAnalyticsAppId = item.Id,
                     Active = true,
                     Url = appUrl,
-                    GeneralParams = new ObservableList<GeneralParam>()
+                    GingerAnalyticsStatus = item.Status,
+                    GingerAnalyticsRemark = "SuccessFully Imported"
                 };
 
                 // Adding all other parameters to GeneralParams
@@ -190,7 +192,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
                 {
                     if (param.Name != "Application Type" && param.Name != "Application URL")
                     {
-                        envApp.GeneralParams.Add(new GeneralParam { Name = param.Name, Value = param.Value });
+                        envApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
                     }
                 }
                 newEnvironment.Applications.Add(envApp);
@@ -228,7 +230,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             if (existingPlatform == null)
             {
                 var newPlatform = CreateNewApplicationPlatform(envApp, item.Name);
-                WorkSpace.Instance.Solution.ApplicationPlatforms.Add(newPlatform);
+                mWizard.tempAppPlat.Add(newPlatform);
             }
             else
             {
