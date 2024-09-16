@@ -353,7 +353,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                             .Select(activity =>
                             {
                                 if (activity == null || !activity.Active || activity.Acts == null)
+                                {
                                     return 0;
+                                }
                                 return activity.Acts.Where(act => act != null && act.Active).Count();
                             })
                             .Aggregate((count, total) => total + count);
