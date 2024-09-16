@@ -1131,6 +1131,10 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 #endregion
 
+                case eImageType.VerticalBars:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bars, rotation: 90);
+                    break;
+
                 default:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Question, Brushes.Red);
                     this.Background = Brushes.Yellow;
@@ -1152,7 +1156,7 @@ namespace Amdocs.Ginger.UserControls
             this.Background = null;
         }
 
-        private void SetAsFontAwesomeIcon(EFontAwesomeIcon fontAwesomeIcon, Brush foreground = null, double spinDuration = 0, string toolTip = null, bool blinkingIcon = false)
+        private void SetAsFontAwesomeIcon(EFontAwesomeIcon fontAwesomeIcon, Brush foreground = null, double spinDuration = 0, string toolTip = null, bool blinkingIcon = false, double rotation = 0)
         {
             //set the icon
             xFAFont.Icon = fontAwesomeIcon;
@@ -1203,6 +1207,8 @@ namespace Amdocs.Ginger.UserControls
 
                 xFAImage.BeginAnimation(OpacityProperty, blinkAnimation);
             }
+
+            xFAImage.Rotation = rotation;
 
             if (!string.IsNullOrEmpty(toolTip) && string.IsNullOrEmpty(ImageToolTip))
             {
