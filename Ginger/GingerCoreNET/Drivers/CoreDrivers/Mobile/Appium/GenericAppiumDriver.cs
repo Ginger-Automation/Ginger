@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eDeviceSource))]
         [UserConfiguredDefault("LocalAppium")]
-        [UserConfiguredDescription("Device Source is Local Appium or UFTM Mobile Lab")]
+        [UserConfiguredDescription("Device Source is Local Appium or Devices Lab")]
         public eDeviceSource DeviceSource { get; set; }
 
         [UserConfigured]
@@ -1517,7 +1517,7 @@ namespace Amdocs.Ginger.CoreNET
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
-                    ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Menu);
+                    ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Keycode_APP_SWITCH);
                     break;
             }
 
