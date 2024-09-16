@@ -32,9 +32,17 @@
                         Name="ToggleButton" Content="{Binding Path=Text,Mode=TwoWay,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
                        Grid.Column="2" IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
                         Focusable="false"                    
-                        ClickMode="Press" HorizontalContentAlignment="Left" Background="White" BorderBrush="Black" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" BorderThickness="0,0,0,1" Margin="0 0 0 1">
+                        ClickMode="Press" HorizontalContentAlignment="Left" Background="White" BorderBrush="Black" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" BorderThickness="0,0,0,1.2" Margin="0 0 0 1">
                     </ToggleButton>
-                    <foa:FontAwesome x:Name="xFAFont" FontWeight="Regular" Icon="Solid_AngleDown" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="14" Margin="0 0 -10 0"/>
+                    <Path 
+      x:Name="Arrow"
+      Grid.Column="1"     
+      Fill="{StaticResource $HighlightColor_LightBlue}"
+      HorizontalAlignment="Right"
+      Margin="0,0,5,0"
+      VerticalAlignment="Center"
+      Data="M0,0 L0,2 L4,6 L8,2 L8,0 L4,4 z"
+    />
                     <Popup 
                         Name="Popup"
                         Placement="Bottom"                        

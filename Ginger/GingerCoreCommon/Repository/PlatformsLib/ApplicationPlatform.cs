@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -184,5 +184,9 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
                 return ItemName;
             }
         }
+
+        private string mGAId; //Ginger Analytics Application ID
+        [IsSerializedForLocalRepository]
+        public string GAId { get { return mGAId; } set { if (mGAId != value) { mGAId = value; OnPropertyChanged(nameof(GAId)); } } }
     }
 }

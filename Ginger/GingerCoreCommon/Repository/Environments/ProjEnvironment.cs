@@ -45,9 +45,26 @@ namespace GingerCore.Environments
         [IsSerializedForLocalRepository]
         public string ReleaseVersion { get { return mReleaseVersion; } set { if (mReleaseVersion != value) { mReleaseVersion = value; OnPropertyChanged(nameof(ReleaseVersion)); } } }
 
-        private string mNotes;
+        //Ginger Analytics Region starts here, No Tresspassing allowed by Ginger Objects
+        private bool mGAFlag;
         [IsSerializedForLocalRepository]
-        public string Notes { get { return mNotes; } set { if (mNotes != value) { mNotes = value; OnPropertyChanged(nameof(Notes)); } } }
+        public bool GAFlag { get { return mGAFlag; } set { if (mGAFlag != value) { mGAFlag = value; OnPropertyChanged(nameof(GAFlag)); } } }
+
+        private Guid mGingerAnalyticsEnvId;
+        [IsSerializedForLocalRepository]
+        public Guid GingerAnalyticsEnvId { get { return mGingerAnalyticsEnvId; } set { if (mGingerAnalyticsEnvId != value) { mGingerAnalyticsEnvId = value; OnPropertyChanged(nameof(GingerAnalyticsEnvId)); } } }
+
+        private Guid mGingerAnalyticsProjectId;
+        [IsSerializedForLocalRepository]
+        public Guid GingerAnalticsProjectId { get { return mGingerAnalyticsProjectId; } set { if (mGingerAnalyticsProjectId != value) { mGingerAnalyticsProjectId = value; OnPropertyChanged(nameof(GingerAnalticsProjectId)); } } }
+
+        private Guid mGingerAnalyticsArchitectureId;
+        [IsSerializedForLocalRepository]
+        public Guid GingerAnalticsArchitectureId { get { return mGingerAnalyticsArchitectureId; } set { if (mGingerAnalyticsArchitectureId != value) { mGingerAnalyticsArchitectureId = value; OnPropertyChanged(nameof(GingerAnalticsArchitectureId)); } } }
+
+        private string mGingerAnalyticsRelease;
+        [IsSerializedForLocalRepository]
+        public string GingerAnalyticsRelease { get { return mGingerAnalyticsRelease; } set { if (mGingerAnalyticsRelease != value) { mGingerAnalyticsRelease = value; OnPropertyChanged(nameof(GingerAnalyticsRelease)); } } }
 
         private bool mActive;
         [IsSerializedForLocalRepository]

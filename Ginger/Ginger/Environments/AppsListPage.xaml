@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.Environments.AppsListPage" 
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+    xmlns:usercontrols2="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
      xmlns:h="clr-namespace:Ginger.Help"
     xmlns:usercontrols="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Environment"
@@ -29,7 +30,9 @@
             <StackPanel>
                 <DockPanel>
                     <Label  Style="{StaticResource $LabelStyle}" Content="Release:"/>
-                    <ComboBox x:Name="xReleaseCombobox" Style="{StaticResource $FlatEditInputComboBoxStyle}"  MinWidth="300px"  HorizontalAlignment="Left"></ComboBox>
+                    <ComboBox x:Name="xReleaseCombobox" IsEnabled="True" Style="{StaticResource $FlatEditInputComboBoxStyle}"  MinWidth="300px"  HorizontalAlignment="Left"></ComboBox>
+                    <usercontrols2:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="640,0,0,0" HorizontalAlignment="Left" Height="30" Width="20" Visibility="Hidden"></usercontrols2:ImageMakerControl>
+                    <Button x:Name="xGASyncBtn" IsEnabled="True" Style="{StaticResource $InputButtonStyle}" Visibility="Collapsed" Margin="0,0,10,0" HorizontalAlignment="Right"  Click="xGASyncBtn_Click" FontWeight="Bold" Content="Sync with Ginger Analytics"/>
                 </DockPanel>
 
                 <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,5,0,0"  Style="{StaticResource $CeckBoxStyle}"/>

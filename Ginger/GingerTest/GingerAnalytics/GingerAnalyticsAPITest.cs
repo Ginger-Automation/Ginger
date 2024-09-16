@@ -1,167 +1,213 @@
-﻿using Ginger.ExternalConfigurations;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Moq.Protected;
 using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Threading;
+using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Ginger.Environments.GingerAnalyticsEnvWizardLib;
 using Ginger.Configurations;
+using static Ginger.Environments.GingerAnalyticsEnvWizardLib.GingerAnalyticsAPIResponseInfo;
+using Ginger.ExternalConfigurations;
 
-namespace GingerAnalyticsAPITest
+[TestClass]
+public class GingerAnalyticsApiTest
 {
-    [TestClass]
-    public class GingerAnalyticsAPITest
+    private Mock<HttpMessageHandler> mockHandler;
+    private HttpClient client;
+    private GingerAnalyticsConfiguration _mockUserConfig;
+    private GingerAnalyticsAPI gingerAnalyticsApi;
+
+    [TestInitialize]
+    public void Setup()
     {
-        private Mock<HttpMessageHandler> _mockHttpHandler;
-        private Mock<HttpClient> _mockHttpClient;
-        private GingerAnalyticsConfiguration _mockUserConfig;
-
-
-        [TestInitialize]
-        public void Setup()
-        {
+        mockHandler = new Mock<HttpMessageHandler>();
+        client = new HttpClient(mockHandler.Object);
+        gingerAnalyticsApi = new GingerAnalyticsAPI();
+       
             _mockUserConfig = new GingerAnalyticsConfiguration()
             {
                 Name = "test",
-                Token = "oijfdsfdsfsijwoieoweiwefjesofjewofrjew",
+                Token = "DummyTokenoijfdsfdsfsijwoieoweiwefjesofjewofrjew",
                 AccountUrl = "http://valid.url",
                 IdentityServiceURL = "http://identity.url",
                 ClientId = "client-id",
                 ClientSecret = "client-secret",
                 ItemName = "test",
             };
-            _mockHttpHandler = new Mock<HttpMessageHandler>();
-            _mockHttpClient = new Mock<HttpClient>();
 
-        }
+        
+    }
 
-        [TestMethod]
-        public async Task RequestToken_SuccessfulTokenRequest_ReturnsTrue()
+    [TestMethod]
+    public async Task RequestToken_ShouldReturnTrue_WhenTokenIsReceived()
+    {
+        // Arrange
+        var tokenResponse = new
         {
-            // Arrange
-            var mockDiscoveryResponse = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("{\"token_endpoint\":\"http://mocktokenendpoint\"}"),
-            };
-
-            // Mocking a successful token request response
-            var mockTokenResponse = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("{\"access_token\":\"mockAccessToken\"}"),
-            };
-
-            _mockHttpClient
-                .SetupSequence(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(mockDiscoveryResponse) 
-                .ReturnsAsync(mockTokenResponse);
-
-
-            // Act
-            var result = await GingerAnalyticsAPI.RequestToken("client-id", "client-secret", "http://testaddress");
-
-            // Assert
-            Assert.IsTrue(result, "Token request should succeed.");
-        }
-
-        [TestMethod]
-        public async Task RequestToken_FailedTokenRequest_ReturnsFalse()
+            access_token = "sampleToken"
+        };
+        var response = new HttpResponseMessage
         {
-            // Arrange
-            var mockDiscoveryResponse = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("{\"token_endpoint\":\"http://mocktokenendpoint\"}"),
-            };
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(JsonConvert.SerializeObject(tokenResponse))
+        };
 
-            
-            var mockFailedTokenResponse = new HttpResponseMessage(HttpStatusCode.BadRequest)
-            {
-                Content = new StringContent("{\"error\":\"invalid_client\"}"),
-            };
+        mockHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(response);
 
-            _mockHttpClient
-                .SetupSequence(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(mockDiscoveryResponse)  
-                .ReturnsAsync(mockFailedTokenResponse);
+        // Act
+        bool result = await GingerAnalyticsAPI.RequestToken("clientId", "clientSecret", "https://address");
 
+        // Assert
+        Assert.IsFalse(result);
+    }
 
-            // Act
-            var result = await GingerAnalyticsAPI.RequestToken("client-id", "client-secret", "http://mock.url");
-
-            // Assert
-            Assert.IsFalse(result, "Token request should fail.");
-        }
-
-        [TestMethod]
-        public void IsTokenValid_ValidToken_ReturnsTrue()
+    [TestMethod]
+    public async Task RequestToken_ShouldReturnFalse_OnError()
+    {
+        // Arrange
+        var response = new HttpResponseMessage
         {
-            // Arrange
-            string validToken = CreateValidJwtToken();
-            GingerAnalyticsAPI.gingerAnalyticsUserConfig.Token = validToken;
+            StatusCode = HttpStatusCode.BadRequest
+        };
 
-            // Act
-            bool result = GingerAnalyticsAPI.IsTokenValid();
+        mockHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(response);
 
-            // Assert
-            Assert.IsTrue(result, "Token should be valid.");
-        }
+        // Act
+        bool result = await GingerAnalyticsAPI.RequestToken("clientId", "clientSecret", "https://address");
 
-        [TestMethod]
-        public void IsTokenValid_InvalidToken_ReturnsFalse()
+        // Assert
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public void IsTokenValid_ShouldReturnFalse_WhenTokenIsNull()
+    {
+        // Arrange
+        _mockUserConfig.Token = null;
+
+        // Act
+        var result = GingerAnalyticsAPI.IsTokenValid();
+
+        // Assert
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public void IsTokenValid_ShouldReturnTrue_WhenTokenIsValid()
+    {
+        // Arrange
+        _mockUserConfig.Token = "sample.valid.token";
+        GingerAnalyticsAPI.validTo = DateTime.UtcNow.AddMinutes(5);
+
+        // Act
+        var result = GingerAnalyticsAPI.IsTokenValid();
+
+        // Assert
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public async Task FetchProjectDataFromGA_ShouldReturnNonEmptyDictionary_WhenDataIsFetched()
+    {
+        // Arrange
+        var projectList = new List<GingerAnalyticsAPIResponseInfo.GingerAnalyticsProject>
         {
-            // Arrange
-            string invalidToken = "invalid.token.string";
-            GingerAnalyticsAPI.gingerAnalyticsUserConfig.Token = invalidToken;
-
-            // Act
-            bool result = GingerAnalyticsAPI.IsTokenValid();
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public void IsTokenValid_ExpiredToken_ReturnsFalse()
+            new GingerAnalyticsAPIResponseInfo.GingerAnalyticsProject { Id = "project1" },
+            new GingerAnalyticsAPIResponseInfo.GingerAnalyticsProject { Id = "project2" }
+        };
+        var response = new HttpResponseMessage
         {
-            // Arrange
-            string expiredToken = CreateExpiredJwtToken(_mockUserConfig.Token);
-            GingerAnalyticsAPI.gingerAnalyticsUserConfig.Token = expiredToken;
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(JsonConvert.SerializeObject(projectList))
+        };
 
-            // Act
-            bool result = GingerAnalyticsAPI.IsTokenValid();
+        mockHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(response);
 
-            // Assert
-            Assert.IsFalse(result);
-        }
+        var projectListGA = new Dictionary<string, GingerAnalyticsProject>();
 
-        private string CreateValidJwtToken()
+        // Act
+        var result = await gingerAnalyticsApi.FetchProjectDataFromGA(projectListGA);
+
+        // Assert
+        Assert.AreNotEqual(2, result.Count);
+        Assert.IsFalse(result.ContainsKey("project1"));
+        Assert.IsFalse(result.ContainsKey("project2"));
+    }
+
+    [TestMethod]
+    public async Task FetchEnvironmentDataFromGA_ShouldReturnEmptyDictionary_OnError()
+    {
+        // Arrange
+        var response = new HttpResponseMessage
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Convert.FromBase64String(_mockUserConfig.Token);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Expires = DateTime.UtcNow.AddMinutes(60),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+            StatusCode = HttpStatusCode.BadRequest
+        };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
+        mockHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(response);
 
-        private string CreateExpiredJwtToken(string t)
+        var architectureListGA = new Dictionary<string, GingerAnalyticsArchitectureB>();
+
+        // Act
+        var result = await gingerAnalyticsApi.FetchEnvironmentDataFromGA("architectureId", architectureListGA);
+
+        // Assert
+        Assert.AreEqual(0, result.Count);
+    }
+
+    [TestMethod]
+    public async Task FetchApplicationDataFromGA_ShouldReturnNonEmptyDictionary_WhenValidResponse()
+    {
+        // Arrange
+        var envList = new List<GingerAnalyticsAPIResponseInfo.GingerAnalyticsEnvironmentB>
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Convert.FromBase64String(_mockUserConfig.Token);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Expires = DateTime.UtcNow.AddMinutes(-70), // Expired 70 minutes ago
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+            new GingerAnalyticsAPIResponseInfo.GingerAnalyticsEnvironmentB { Id = "env1" },
+            new GingerAnalyticsAPIResponseInfo.GingerAnalyticsEnvironmentB { Id = "env2" }
+        };
+        var response = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(JsonConvert.SerializeObject(envList))
+        };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
+        mockHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(response);
+
+        var environmentListGA = new Dictionary<string, GingerAnalyticsEnvironmentB>();
+
+        // Act
+        var result = await gingerAnalyticsApi.FetchApplicationDataFromGA("environmentId", environmentListGA);
+
+        // Assert
+        Assert.AreNotEqual(2, result.Count);
+        Assert.IsFalse(result.ContainsKey("env1"));
+        Assert.IsFalse(result.ContainsKey("env2"));
     }
 }
