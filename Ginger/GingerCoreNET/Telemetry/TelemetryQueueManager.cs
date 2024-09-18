@@ -143,8 +143,8 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             {
                 SolutionId = solution != null ? solution.Guid.ToString() : "",
                 Account = solution != null && solution.Account != null ? solution.Account : "",
-                AppVersion = ApplicationInfo.ApplicationBackendVersion ?? "",
-                UserId = WorkSpace.Instance.UserProfile.UserName ?? "",
+                AppVersion = ApplicationInfo.ApplicationBackendVersion,
+                UserId = WorkSpace.Instance.UserProfile.UserName,
                 CreationTimestamp = DateTime.UtcNow,
                 LastUpdateTimestamp = DateTime.UtcNow,
                 FeatureId = featureId.ToString(),
