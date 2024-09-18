@@ -1,10 +1,10 @@
 #Build and deploy one time with latest dependencies and another time use version specific dependencies
 
-FROM ghcr.io/ginger-automation/gingerruntime:2024.2.1
+FROM ghcr.io/ginger-automation/gingerruntime:2024.2.0
 
 USER root
 
-RUN apk add firefox
+#RUN apk add firefox
 
 # Install Chromium, Chromedriver, and clean up
 RUN apk add --no-cache chromium chromium-chromedriver \
