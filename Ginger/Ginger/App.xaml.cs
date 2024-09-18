@@ -261,41 +261,41 @@ namespace Ginger
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
 
 
-            if (!WorkSpace.Instance.RunningInExecutionMode)
-            {
+            //if (!WorkSpace.Instance.RunningInExecutionMode)
+            //{
                 if(WorkSpace.Instance.UserProfile !=null &&  WorkSpace.Instance.UserProfile.AppLogLevel ==  eAppReporterLoggingLevel.Debug) 
                 {
                     GingerLog.StartCustomTraceListeners();
                 }
                 HideConsoleWindow();
                 StartGingerUI();// start regular Ginger UI
-            }
-            else
-            {
-                RunNewCLI(e.Args);
-            }
+            //}
+            //else
+            //{
+            //    RunNewCLI(e.Args);
+            //}
         }
 
 
-        [DllImport("kernel32.dll")]
-        static extern IntPtr GetConsoleWindow();
+        //[DllImport("kernel32.dll")]
+        //static extern IntPtr GetConsoleWindow();
 
-        [DllImport("user32.dll")]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        //[DllImport("user32.dll")]
+        //static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
 
         public void HideConsoleWindow()
         {
-            var handle = GetConsoleWindow();
-            ShowWindow(handle, SW_HIDE);
+            //var handle = GetConsoleWindow();
+            //ShowWindow(handle, SW_HIDE);
         }
 
         public static void ShowConsoleWindow()
         {
-            var handle = GetConsoleWindow();
-            ShowWindow(handle, SW_SHOW);
+            //var handle = GetConsoleWindow();
+            //ShowWindow(handle, SW_SHOW);
         }
 
         private async void RunNewCLI(string[] args)
