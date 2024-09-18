@@ -16,7 +16,6 @@ message LogRecord {
 
 message AddLogsRequest {
 	repeated LogRecord Logs = 1;
-	int32 LogCount = 2;
 }
 
 message AddLogsResponse {
