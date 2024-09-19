@@ -38,6 +38,7 @@ namespace Ginger.Telemetry
             InitializeTelemetryTrackingRadioButtons();
             ITelemetryQueueManager.Config config = WorkSpace.Instance.UserProfile.TelemetryConfig;
 
+            BindingHandler.ObjFieldBinding(BufferSizeTextBox, TextBox.TextProperty, config, nameof(ITelemetryQueueManager.Config.BufferSize));
             BindingHandler.ObjFieldBinding(CollectorURLTextBox, TextBox.TextProperty, config, nameof(ITelemetryQueueManager.Config.CollectorURL));
             GingerCore.General.FillComboFromEnumType(LogLevelComboBox, typeof(eLogLevel), values: Enum.GetValues<eLogLevel>().Order().Cast<object>().ToList(), textWiseSorting: false);
             BindingHandler.ObjFieldBinding(LogLevelComboBox, ComboBox.SelectedValueProperty, config, nameof(ITelemetryQueueManager.Config.MinLogLevel));
@@ -73,6 +74,7 @@ namespace Ginger.Telemetry
 
         private void ShowConfig()
         {
+            BufferSizeWrapper.Visibility = Visibility.Visible;
             CollectorURLWrapper.Visibility = Visibility.Visible;
             MinimumLogLevelWrapper.Visibility = Visibility.Visible;
             RetryIntervalWrapper.Visibility = Visibility.Visible;
@@ -81,6 +83,7 @@ namespace Ginger.Telemetry
 
         private void HideConfig()
         {
+            BufferSizeWrapper.Visibility = Visibility.Collapsed;
             CollectorURLWrapper.Visibility = Visibility.Collapsed;
             MinimumLogLevelWrapper.Visibility = Visibility.Collapsed;
             RetryIntervalWrapper.Visibility = Visibility.Collapsed;

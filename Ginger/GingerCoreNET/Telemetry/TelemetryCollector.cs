@@ -48,19 +48,25 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             AddLogsRequest request = new();
             foreach (var log in logs)
             {
-                request.Logs.Add(new LogRecord()
+                try
                 {
-                    Id = log.Id,
-                    SolutionId = log.SolutionId,
-                    Account = log.Account,
-                    AppVersion = log.AppVersion,
-                    UserId = log.UserId,
-                    CreationTimestamp = log.CreationTimestamp.ToString("O"),
-                    Level = log.Level,
-                    Message = log.Message,
-                    Metadata = log.Metadata,
-                });
-                request.LogCount++;
+                    request.Logs.Add(new LogRecord()
+                    {
+                        Id = log.Id,
+                        SolutionId = log.SolutionId,
+                        Account = log.Account,
+                        AppVersion = log.AppVersion,
+                        UserId = log.UserId,
+                        CreationTimestamp = log.CreationTimestamp.ToString("O"),
+                        Level = log.Level,
+                        Message = log.Message,
+                        Metadata = log.Metadata,
+                    });
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError("Error while creating {logRecord}\n{ex}", nameof(LogRecord), ex);
+                }
             }
             return request;
         }
@@ -92,19 +98,25 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             AddFeaturesRequest request = new();
             foreach (var feature in features)
             {
-                request.Features.Add(new FeatureRecord()
+                try
                 {
-                    Id = feature.Id,
-                    SolutionId = feature.SolutionId,
-                    Account = feature.Account,
-                    AppVersion = feature.AppVersion,
-                    UserId = feature.UserId,
-                    CreationTimestamp = feature.CreationTimestamp.ToString("O"),
-                    FeatureId = feature.FeatureId,
-                    Duration = feature.Duration != null ? feature.Duration.Value.ToString() : "",
-                    Metadata = feature.Metadata,
-                });
-                request.FeatureCount++;
+                    request.Features.Add(new FeatureRecord()
+                    {
+                        Id = feature.Id,
+                        SolutionId = feature.SolutionId,
+                        Account = feature.Account,
+                        AppVersion = feature.AppVersion,
+                        UserId = feature.UserId,
+                        CreationTimestamp = feature.CreationTimestamp.ToString("O"),
+                        FeatureId = feature.FeatureId,
+                        Duration = feature.Duration != null ? feature.Duration.Value.ToString() : "",
+                        Metadata = feature.Metadata,
+                    });
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError("Error while creating {featureRecord}\n{ex}", nameof(FeatureRecord), ex);
+                }
             }
             return request;
         }
