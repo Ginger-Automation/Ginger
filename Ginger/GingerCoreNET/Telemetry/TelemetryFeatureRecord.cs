@@ -13,5 +13,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         public TimeSpan? Duration { get; init; }
 
         public string Metadata { get; init; }
+
+        internal TelemetryFeatureRecord() { }
     }
 }

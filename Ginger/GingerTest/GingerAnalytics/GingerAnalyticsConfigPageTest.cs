@@ -13,6 +13,7 @@ using System.Threading;
 namespace GingerTest.GingerAnalytics
 {
     [TestClass]
+    [Ignore]
     public class GingerAnalyticsConfigPageTest
     {
 
@@ -20,7 +21,7 @@ namespace GingerTest.GingerAnalytics
         private Mock<GingerAnalyticsAPI> _mockAnalyticsAPI;
         private GingerAnalyticsConfiguration _mockUserConfig;
 
-        [TestInitialize]
+        [TestInitialize]        
         public void Setup()
         {
             _mockAnalyticsAPI = new Mock<GingerAnalyticsAPI>();

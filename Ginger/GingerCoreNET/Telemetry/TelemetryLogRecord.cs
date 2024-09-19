@@ -13,5 +13,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         public required string Message { get; init; }
 
         public string Metadata { get; init; }
+
+        internal TelemetryLogRecord() { }
     }
 }
