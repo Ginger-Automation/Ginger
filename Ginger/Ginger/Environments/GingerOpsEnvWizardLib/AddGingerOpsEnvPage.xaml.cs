@@ -7,7 +7,7 @@ using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
 using Ginger.ExternalConfigurations;
 using System.Linq;
-using static Ginger.Environments.GingerAnalyticsEnvWizardLib.GingerAnalyticsAPIResponseInfo;
+using static Ginger.Environments.GingerOpsEnvWizardLib.GingerOpsAPIResponseInfo;
 using Microsoft.CodeAnalysis;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -16,39 +16,40 @@ using GingerCore.GeneralLib;
 using System.Windows;
 using Amdocs.Ginger.Repository;
 using GingerCore.Variables;
+using Ginger.SolutionWindows.TreeViewItems;
+using GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems;
 
-namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
+namespace Ginger.Environments.GingerOpsEnvWizardLib
 {
     /// <summary>
-    /// Interaction logic for AddGingerAnalyticsEnvPage.xaml
+    /// Interaction logic for AddGingerOpsEnvPage.xaml
     /// </summary>
-    public partial class AddGingerAnalyticsEnvPage : Page,IWizardPage
+    public partial class AddGingerOpsEnvPage : Page,IWizardPage
     {
-        public GingerAnalyticsConfigurationPage gingerAnalyticsConfiguration;
-        public GingerAnalyticsAPIResponseInfo responseInfo;
-        public Dictionary<string, GingerAnalyticsProject> projectListGA = new();
-        public Dictionary<string, GingerAnalyticsArchitectureB> architectureListGA = new();
-        public Dictionary<string, GingerAnalyticsEnvironmentB> environmentListGA = new();
-        public GingerAnalyticsAPI GingerAnalyticsAPI { get; private set; }
-        AddGingerAnalyticsEnvWizard mWizard;
-        private string bearerToken = string.Empty;
-
-        public AddGingerAnalyticsEnvPage()
+        public GingerOpsConfigurationPage GingerOpsConfiguration;
+        public GingerOpsAPIResponseInfo responseInfo;
+        public Dictionary<string, GingerOpsProject> projectListGOps = new();
+        public Dictionary<string, GingerOpsArchitectureB> architectureListGOps = new();
+        public Dictionary<string, GingerOpsEnvironmentB> environmentListGOps = new();
+        public GingerOpsAPI GingerOpsAPI;
+        AddGingerOpsEnvWizard mWizard;
+        
+        public AddGingerOpsEnvPage()
         {
-            responseInfo = new GingerAnalyticsAPIResponseInfo();
-            GingerAnalyticsAPI = new();
+            responseInfo = new GingerOpsAPIResponseInfo();
+            GingerOpsAPI = new();
             InitializeComponent();
             LoadComboBoxData();
-            BindingHandler.ObjFieldBinding(xEnvironmentComboBox, MultiSelectComboBox.SelectedItemsProperty,responseInfo, nameof(GingerAnalyticsAPIResponseInfo.GingerAnalyticsEnvironmentB));
-
+            BindingHandler.ObjFieldBinding(xEnvironmentComboBox, MultiSelectComboBox.SelectedItemsProperty,responseInfo, nameof(GingerOpsAPIResponseInfo.GingerOpsEnvironmentB));
+            xEnvironmentComboBox.Init(responseInfo, nameof(GingerOpsAPIResponseInfo.GingerOpsEnvironmentB));
         }
 
         private async void LoadComboBoxData()
         {
             // Fetching data from the API and populating ComboBoxes
-            projectListGA = await GingerAnalyticsAPI.FetchProjectDataFromGA(projectListGA);
+            projectListGOps = await GingerOpsAPI.FetchProjectDataFromGOps(projectListGOps);
 
-            xProjectComboBox.ItemsSource = projectListGA.Values.ToList();
+            xProjectComboBox.ItemsSource = projectListGOps.Values.ToList();
             xProjectComboBox.DisplayMemberPath = "Name";  
             xProjectComboBox.SelectedValuePath = "Id";    
 
@@ -61,11 +62,11 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (AddGingerAnalyticsEnvWizard)WizardEventArgs.Wizard;
+                    mWizard = (AddGingerOpsEnvWizard)WizardEventArgs.Wizard;
 
-                    foreach (var appPlat in environmentListGA)
+                    foreach (var appPlat in environmentListGOps)
                     {
-                        EnvApplication envApp = new EnvApplication() { Name = appPlat.Value.Name, ParentGuid = new Guid(appPlat.Key), GingerAnalyticsAppId=appPlat.Value.Id };
+                        EnvApplication envApp = new EnvApplication() { Name = appPlat.Value.Name, ParentGuid = new Guid(appPlat.Key), GingerOpsAppId=appPlat.Value.Id };
                         envApp.Active = true;
                         mWizard.apps.Add(envApp);
                     }
@@ -86,14 +87,14 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
                 xEnvironmentComboBox.ItemsSource.Clear();
             }
 
-            if (xProjectComboBox.SelectedItem is GingerAnalyticsProject selectedProject)
+            if (xProjectComboBox.SelectedItem is GingerOpsProject selectedProject)
             {
                 // Get the project Id
                 var projectId = selectedProject.Id;
 
-                if (projectListGA.TryGetValue(projectId, out var project))
+                if (projectListGOps.TryGetValue(projectId, out var project))
                 {
-                    xArchitectureComboBox.ItemsSource = project.GingerAnalyticsArchitecture;
+                    xArchitectureComboBox.ItemsSource = project.GingerOpsArchitecture;
                     xArchitectureComboBox.DisplayMemberPath = "Name";
                     xArchitectureComboBox.SelectedValuePath = "Id";
                 }
@@ -102,25 +103,28 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
 
         public async void xArchitectureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xArchitectureComboBox.SelectedItem is GingerAnalyticsArchitectureA selectedArchitecture)
+            xEnvironmentComboBox.ItemsSource?.Clear();
+            xEnvironmentComboBox.Text = string.Empty;
+
+            if (xArchitectureComboBox.SelectedItem is GingerOpsArchitectureA selectedArchitecture)
             {
                 string architectureId = selectedArchitecture.Id;
 
                 // Fetch environments for the selected architecture
-                architectureListGA = await GingerAnalyticsAPI.FetchEnvironmentDataFromGA(architectureId, architectureListGA);
+                architectureListGOps = await GingerOpsAPI.FetchEnvironmentDataFromGOps(architectureId, architectureListGOps);
 
                 // Update the Environment ComboBox
-                if (architectureListGA.TryGetValue(architectureId, out var architecture))
+                if (architectureListGOps.TryGetValue(architectureId, out var architecture))
                 {
                     Dictionary<string,object> keyValuePairs = new Dictionary<string,object>();
-                    foreach (var keyValue in architecture.GingerAnalyticsEnvironment)
+                    foreach (var keyValue in architecture.GingerOpsEnvironment)
                     {
                         keyValuePairs.Add(keyValue.Name,keyValue.Id);
                     }
                     xEnvironmentComboBox.ItemsSource = keyValuePairs;
                     xEnvironmentComboBox.Name = "Name";
                     
-                    xEnvironmentComboBox.Init(responseInfo, nameof(GingerAnalyticsAPIResponseInfo.GingerAnalyticsEnvironmentB));
+                    //xEnvironmentComboBox.Init(responseInfo, nameof(GingerOpsAPIResponseInfo.GingerOpsEnvironmentB));
                 }
             }
         }
@@ -129,6 +133,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
         {
             try
             {
+                mWizard.ImportedEnvs.Clear();
                 foreach (var env in xEnvironmentComboBox.SelectedItems)
                 {
                     await HandleEnvironmentSelection(env);
@@ -136,7 +141,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get details from Ginger Analytics", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get details from GingerOps", ex);
             }
         }
 
@@ -147,52 +152,79 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             mWizard.NewEnvironment = CreateNewEnvironment(env);
 
             // Fetch environments for the selected architecture
-            environmentListGA = await GingerAnalyticsAPI.FetchApplicationDataFromGA(environmentId, environmentListGA);
+            environmentListGOps = await GingerOpsAPI.FetchApplicationDataFromGOps(environmentId, environmentListGOps);
 
-            foreach (var ienv in environmentListGA)
+            foreach (var ienv in environmentListGOps)
             {
                 var appList = ienv.Value;
                 await AddApplicationsToEnvironment(appList, mWizard.NewEnvironment);
             }
-
-            mWizard.ImportedEnvs.Add(mWizard.NewEnvironment);
+            bool isAlreadyLoaded = mWizard.ImportedEnvs.Any(k => k.Name == mWizard.NewEnvironment.Name && k.GingerOpsEnvId == mWizard.NewEnvironment.GingerOpsEnvId);
+            if (!isAlreadyLoaded)
+            {
+                mWizard.ImportedEnvs.Add(mWizard.NewEnvironment);
+            }
         }
 
         private ProjEnvironment CreateNewEnvironment(dynamic env)
         {
-            return new ProjEnvironment
+            bool isEnvExist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(k => k.Name == env.Value);
+            ProjEnvironment projEnvironment;
+            if (isEnvExist)
             {
-                Name = env.Value,
-                GingerAnalyticsEnvId = env.Guid,
-                GAFlag = true
-            };
+               projEnvironment= new ProjEnvironment
+                {
+                    Name = env.Value,
+                    GingerOpsEnvId = env.Guid,
+                    GOpsFlag = false,
+                    Publish = true,
+                    GingerOpsStatus = "Import Failed",
+                    GingerOpsRemark = "Environment with Same Name already exist"
+                };
+
+            }
+            else
+            {
+                projEnvironment = new ProjEnvironment
+                {
+                    Name = env.Value,
+                    GingerOpsEnvId = env.Guid,
+                    GOpsFlag = true,
+                    Publish = true,
+                    GingerOpsStatus = "Import Successful",
+                    GingerOpsRemark = "Environment Imported Successfully"
+                };
+            }
+            
+            return projEnvironment;
         }
 
-        private async Task AddApplicationsToEnvironment(GingerAnalyticsAPIResponseInfo.GingerAnalyticsEnvironmentB appList, ProjEnvironment newEnvironment)
+        private async Task AddApplicationsToEnvironment(GingerOpsAPIResponseInfo.GingerOpsEnvironmentB appList, ProjEnvironment newEnvironment)
         {
-            foreach (var item in appList.GingerAnalyticsApplications)
+            foreach (var item in appList.GingerOpsApplications)
             {
-                var platformType = GetPlatformType(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application Type"));
-                var appUrl = item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application URL")?.Value;
+                var platformType = GetPlatformType(item.GOpsApplicationParameters.FirstOrDefault(k => k.Name == "Application Type"));
+                var appUrl = item.GOpsApplicationParameters.FirstOrDefault(k => k.Name == "Application URL")?.Value;
 
 
                 var envApp = new EnvApplication
                 {
                     Name = item.Name,
                     Platform = platformType,
-                    GingerAnalyticsAppId = item.Id,
+                    GingerOpsAppId = item.Id,
                     Active = true,
                     Url = appUrl,
-                    GingerAnalyticsStatus = item.Status,
-                    GingerAnalyticsRemark = "SuccessFully Imported"
+                    GOpsFlag = true,
+                    GingerOpsStatus = item.Status,
+                    GingerOpsRemark = "SuccessFully Imported",
                 };
 
                 // Adding all other parameters to GeneralParams
-                foreach (var param in item.GAApplicationParameters)
+                foreach (var param in item.GOpsApplicationParameters)
                 {
                     if (param.Name != "Application Type" && param.Name != "Application URL")
                     {
-                        envApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
+                        envApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value, GOpsFlag=true });
                     }
                 }
                 newEnvironment.Applications.Add(envApp);
@@ -225,7 +257,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
 
         private async Task AddOrUpdateApplicationPlatform(EnvApplication envApp, dynamic item)
         {
-            var existingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.GingerAnalyticsAppId == item.Id);
+            var existingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.GingerOpsAppId == item.Id);
 
             if (existingPlatform == null)
             {
@@ -241,25 +273,26 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
         private ApplicationPlatform CreateNewApplicationPlatform(EnvApplication envApp, string appName)
         {
             var appNameWithSuffix = WorkSpace.Instance.Solution.ApplicationPlatforms.Any(app => app.AppName.Equals(appName))
-                ? $"{appName}_GingerAnalytics"
+                ? $"{appName}_GingerOps"
                 : envApp.Name;
+
+            envApp.Name = appNameWithSuffix;
 
             return new ApplicationPlatform
             {
                 AppName = appNameWithSuffix,
                 Platform = envApp.Platform,
-                GingerAnalyticsAppId = envApp.GingerAnalyticsAppId
+                GingerOpsAppId = envApp.GingerOpsAppId,
+                GOpsFlag = true
             };
         }
 
         private void UpdateExistingApplicationPlatform(ApplicationPlatform existingPlatform, EnvApplication envApp, string appName)
         {
-            var appNameWithSuffix = WorkSpace.Instance.Solution.ApplicationPlatforms.Any(app => app.AppName.Equals(appName))
-                ? $"{appName}_GingerAnalytics"
-                : appName;
 
-            existingPlatform.AppName = appNameWithSuffix;
+            existingPlatform.AppName = appName;
             existingPlatform.Platform = envApp.Platform;
+            
         }
 
     }

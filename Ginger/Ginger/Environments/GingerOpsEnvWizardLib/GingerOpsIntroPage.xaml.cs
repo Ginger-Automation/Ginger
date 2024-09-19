@@ -15,22 +15,22 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
+namespace Ginger.Environments.GingerOpsEnvWizardLib
 {
     /// <summary>
-    /// Interaction logic for GingerAnalyticsIntroPage.xaml
+    /// Interaction logic for GingerOpsIntroPage.xaml
     /// </summary>
-    public partial class GingerAnalyticsIntroPage : Page, IWizardPage
+    public partial class GingerOpsIntroPage : Page, IWizardPage
     {
-        public GingerAnalyticsIntroPage()
+        public GingerOpsIntroPage()
         {
             InitializeComponent();
 
-            TextBlockHelper TBH = new TextBlockHelper(xGAIntroTxtBlock);
+            TextBlockHelper TBH = new TextBlockHelper(xGOpsIntroTxtBlock);
 
             SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
             //Application info
-            TBH.AddFormattedText("For What Environments are Needed?", foregroundColor, true);
+            TBH.AddFormattedText("For What GingerOps is Needed?", foregroundColor, true);
             TBH.AddLineBreak();
             TBH.AddFormattedText("Environments are needed for storing data like: login credentials, DB/Unix servers connection information and similar details which changed per testing environments.", foregroundColor);
             TBH.AddLineBreak();

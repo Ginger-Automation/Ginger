@@ -1,4 +1,4 @@
-﻿<UserControlsLib:GingerUIPage   x:Class="Ginger.ExternalConfigurations.GingerAnalyticsConfigurationPage"
+﻿<UserControlsLib:GingerUIPage   x:Class="Ginger.ExternalConfigurations.GingerOpsConfigurationPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -18,7 +18,7 @@
                 <RowDefinition  Height="1*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0">
-                <Label Content="Ginger Analytics Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                <Label Content="GingerOps Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Row="1">
@@ -35,10 +35,10 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                        <Label x:Name="xGAAURLLabel" Content="Ginger Analytics Account URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
+                        <Label x:Name="xGAAURLLabel" Content="GingerOps Account URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
                         <Label x:Name="xGAAURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
                     </StackPanel>
-                    <Activities:UCValueExpression x:Name="xGAAURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Ginger Analytics Account URL" Margin="10,0,0,0"  Width="400"/>
+                    <Activities:UCValueExpression x:Name="xGAAURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="GingerOps Account URL" Margin="10,0,0,0"  Width="400"/>
 
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
                         <Label x:Name="xISURLLabel" Content="Identity Service URL:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>

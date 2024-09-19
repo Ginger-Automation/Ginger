@@ -35,11 +35,11 @@
                     <Button x:Name="xGASyncBtn" IsEnabled="True" Style="{StaticResource $InputButtonStyle}" Visibility="Collapsed" Margin="0,0,10,0" HorizontalAlignment="Right"  Click="xGASyncBtn_Click" FontWeight="Bold" Content="Sync with Ginger Analytics"/>
                 </DockPanel>
 
-                <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,5,0,0"  Style="{StaticResource $CeckBoxStyle}"/>
+                <CheckBox x:Name="xPublishcheckbox" IsEnabled="True" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,5,0,0"  Style="{StaticResource $CeckBoxStyle}"/>
             </StackPanel>
 
         </StackPanel>
 
-        <Ginger:ucGrid x:Name="grdApps" Title="Environment Applications" Grid.Row="1" ShowEdit="Collapsed" ShowRefresh="Collapsed"/>
+        <Ginger:ucGrid x:Name="grdApps" IsEnabled="True" Title="Environment Applications" Grid.Row="1" ShowEdit="Collapsed" ShowRefresh="Collapsed"/>
     </Grid>
 </UserControlsLib:GingerUIPage>

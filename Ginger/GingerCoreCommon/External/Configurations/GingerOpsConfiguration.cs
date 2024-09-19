@@ -25,9 +25,9 @@ using GingerCore.Activities;
 namespace Ginger.Configurations
 {
 
-    public class GingerAnalyticsConfiguration : RepositoryItemBase
+    public class GingerOpsConfiguration : RepositoryItemBase
     {
-        public delegate void GingerAnalyticsConfigurationChangedEvent();
+        public delegate void GingerOpsConfigurationChangedEvent();
 
 
         private string mName;
@@ -63,7 +63,7 @@ namespace Ginger.Configurations
                 if (mAccountUrl != value)
                 {
                     mAccountUrl = value;
-                    OnPropertyChanged(nameof(AccountUrl));
+                   OnPropertyChanged(nameof(AccountUrl));
                 }
             }
         }

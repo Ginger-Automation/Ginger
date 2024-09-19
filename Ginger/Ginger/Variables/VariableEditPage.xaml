@@ -36,9 +36,9 @@
                                 <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                                 <UserControlsLib:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
                             </StackPanel>
-                            <TextBox x:Name="xVarNameTxtBox" AutomationProperties.AutomationId="Variable Name AID" Margin="0,0,0,10" Style="{StaticResource $MultiRowsTextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch"/>
+                            <TextBox x:Name="xVarNameTxtBox" IsEnabled="True" AutomationProperties.AutomationId="Variable Name AID" Margin="0,0,0,10" Style="{StaticResource $MultiRowsTextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch"/>
                             <Label Style="{StaticResource $LabelStyle}">Description:</Label>
-                            <TextBox x:Name="xVarDescritpiontxtBox" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50" Margin="0,0,0,0"/>
+                            <TextBox x:Name="xVarDescritpiontxtBox" IsEnabled="True" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50" Margin="0,0,0,0"/>
                             <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="0,0,0,0" HorizontalAlignment="Left" />
                             <StackPanel  Orientation="Vertical" >
                                 <DockPanel  Margin="0,5,0,0">
@@ -46,7 +46,7 @@
                                     <CheckBox x:Name="xMandatoryInputCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Mandatory Input" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="8,0,0,0" Visibility="Collapsed" ToolTip="Value must be provided before execution starts"/>
                                 </DockPanel>
                                 <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  VerticalAlignment="Center" Content="Set as Output" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked"/>
-                                <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Center" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Style="{StaticResource $CeckBoxStyle}" Visibility="Collapsed"/>
+                                <CheckBox x:Name="xPublishcheckbox" IsEnabled="True" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Center" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Style="{StaticResource $CeckBoxStyle}" Visibility="Collapsed"/>
                                 <StackPanel Orientation="Horizontal" Margin="5,10,0,0" VerticalAlignment="Center" Name="LinkedVariableStackPanel"> 
                                     <Label Style="{StaticResource $LabelStyle}" VerticalAlignment="Center">
                                         <Label.Content>

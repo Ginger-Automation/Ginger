@@ -32,7 +32,7 @@ namespace GingerCore
         Variable, Variables,
         RunSet, RunSets,
         TargetApplication,
-
+        GingerOps,
         [EnumValueDescription("Accessibility Rules")]
         AccessibilityRules,
 

@@ -84,7 +84,14 @@ namespace Ginger.Variables
             mVariable.NameBeforeEdit = mVariable.Name;
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
             xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
-            
+
+            if (parent.GOpsFlag)
+            {
+                xVarNameTxtBox.IsEnabled = false;
+                xVarDescritpiontxtBox.IsEnabled = false;
+                xPublishcheckbox.IsEnabled = false;
+            }
+
             if (parent is EnvApplication)
             {
 
