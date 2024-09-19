@@ -218,7 +218,6 @@ namespace amdocs.ginger.GingerCoreNET
                     Reporter.TelemetryQueueManager.Dispose();
                 }
 
-                Reporter.TelemetryQueueManager.Dispose();
                 //WorkSpace.Instance.Telemetry.SessionEnd();
                 mWorkSpace = null;
             }
