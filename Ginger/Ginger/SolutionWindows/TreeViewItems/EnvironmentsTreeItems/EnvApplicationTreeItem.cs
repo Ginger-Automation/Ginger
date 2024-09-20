@@ -87,13 +87,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            if (!ProjEnvironment.GOpsFlag)
-            {
-                TreeViewUtils.AddMenuItem(mContextMenu, "Save Parent Environment", Save, this, eImageType.Save);
-                TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete, null, eImageType.Delete);
-                TreeViewUtils.AddMenuItem(mContextMenu, "Share With Other Environments", Share, this, eImageType.Share);
-            }
-            
+
+            TreeViewUtils.AddMenuItem(mContextMenu, "Save Parent Environment", Save, this, eImageType.Save);
+            TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete, null, eImageType.Delete);
+            TreeViewUtils.AddMenuItem(mContextMenu, "Share With Other Environments", Share, this, eImageType.Share);
+
         }
 
         private void DeleteEnvTreeItems()
@@ -108,7 +106,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
         private void Delete(object sender, RoutedEventArgs e)
         {
-            DeleteEnvTreeItems();
+            if (!ProjEnvironment.GOpsFlag)
+            {
+                DeleteEnvTreeItems();
+            }
         }
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)

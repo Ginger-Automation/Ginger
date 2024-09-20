@@ -58,6 +58,7 @@ namespace Ginger.Environments
             DatabaseListView.SetDefaultListDataTemplate(dbListViewHelper);
             DatabaseListView.ListSelectionMode = SelectionMode.Extended;
 
+
             DatabaseListView.List.MouseDoubleClick += DBListView_MouseDoubleClick;
             DatabaseListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
             DatabaseListView.DataSourceList = AppOwner.Dbs;
