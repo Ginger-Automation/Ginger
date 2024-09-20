@@ -122,10 +122,14 @@ namespace GingerCore
 
         public static void DoEvents()
         {
-            DispatcherFrame frame = new DispatcherFrame();
-            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
-                new DispatcherOperationCallback(ExitFrame), frame);
-            Dispatcher.PushFrame(frame);
+            try
+            {
+                DispatcherFrame frame = new DispatcherFrame();
+                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
+                    new DispatcherOperationCallback(ExitFrame), frame);
+                Dispatcher.PushFrame(frame);
+            }
+            catch {}
         }
 
         private static object ExitFrame(object f)
