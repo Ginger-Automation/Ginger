@@ -45,7 +45,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             xEnvironmentComboBox.Init(responseInfo, nameof(GingerOpsAPIResponseInfo.GingerOpsEnvironmentB));
         }
 
-        private async void LoadComboBoxData()
+        private async Task LoadComboBoxData()
         {
             // Fetching data from the API and populating ComboBoxes
             projectListGOps = await GingerOpsAPI.FetchProjectDataFromGOps(projectListGOps);
@@ -75,7 +75,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
                     xEnvironmentComboBox_SelectionChanged();
                 break;
                 default:
-                    break;
+                break;
 
             }
         }
@@ -101,7 +101,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             }
         }
 
-        public async void xArchitectureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public async Task xArchitectureComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             xEnvironmentComboBox.ItemsSource?.Clear();
             xEnvironmentComboBox.Text = string.Empty;

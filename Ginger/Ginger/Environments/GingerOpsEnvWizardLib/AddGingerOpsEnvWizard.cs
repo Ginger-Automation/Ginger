@@ -41,7 +41,6 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
                 if (!isExist)
                 {
                     WorkSpace.Instance.Solution.ApplicationPlatforms.Add(item);
-                    //WorkSpace.Instance.Solution.AllowAutoSave = true;
                 }
                
             }

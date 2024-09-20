@@ -144,8 +144,8 @@ namespace Ginger.Environments
                 grdApps.btnCut.IsEnabled = false;
                 grdApps.btnUndo.IsEnabled = false;
                 grdApps.btnClearAll.IsEnabled = false;
-                grdApps.btnDuplicate.IsEnabled = false;
-                
+                grdApps.btnDuplicate.Visibility = Visibility.Collapsed;
+                grdApps.btnCopy.IsEnabled = false;
             }
         }
 
@@ -217,10 +217,12 @@ namespace Ginger.Environments
                         }
                     }
                 }
+                Reporter.ToUser(eUserMsgKey.GingerOpsSyncSuccess);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Sync with GingerOps", ex);
+                Reporter.ToUser(eUserMsgKey.GingerOpsSyncFailed, ex.Message);
             }
             finally
             {

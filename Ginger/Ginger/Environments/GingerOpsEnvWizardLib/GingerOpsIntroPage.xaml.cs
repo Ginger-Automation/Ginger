@@ -54,6 +54,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
+            //Not required to implement here
         }
     }
 }
