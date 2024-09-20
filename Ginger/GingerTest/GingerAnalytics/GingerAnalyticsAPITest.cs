@@ -13,6 +13,8 @@ using Ginger.Configurations;
 using static Ginger.Environments.GingerAnalyticsEnvWizardLib.GingerAnalyticsAPIResponseInfo;
 using Ginger.ExternalConfigurations;
 
+namespace GingerTest.GingerAnalytics;
+
 [TestClass]
 public class GingerAnalyticsApiTest
 {
