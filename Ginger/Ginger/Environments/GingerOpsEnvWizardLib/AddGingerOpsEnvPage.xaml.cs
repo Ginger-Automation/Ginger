@@ -18,6 +18,8 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Variables;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems;
+using Microsoft.IdentityModel.Tokens;
+using Ginger.ApplicationModelsLib.ModelOptionalValue;
 
 namespace Ginger.Environments.GingerOpsEnvWizardLib
 {
@@ -39,7 +41,6 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             responseInfo = new GingerOpsAPIResponseInfo();
             GingerOpsAPI = new();
             InitializeComponent();
-            LoadComboBoxData();
             BindingHandler.ObjFieldBinding(xEnvironmentComboBox, MultiSelectComboBox.SelectedItemsProperty,responseInfo, nameof(GingerOpsAPIResponseInfo.GingerOpsEnvironmentB));
             xEnvironmentComboBox.Init(responseInfo, nameof(GingerOpsAPIResponseInfo.GingerOpsEnvironmentB));
         }
@@ -51,11 +52,10 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
 
             xProjectComboBox.ItemsSource = projectListGOps.Values.ToList();
             xProjectComboBox.DisplayMemberPath = "Name";  
-            xProjectComboBox.SelectedValuePath = "Id";    
-
+            xProjectComboBox.SelectedValuePath = "Id";
         }
 
-        
+
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
@@ -63,14 +63,14 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddGingerOpsEnvWizard)WizardEventArgs.Wizard;
-
+                    LoadComboBoxData();
                     foreach (var appPlat in environmentListGOps)
                     {
                         EnvApplication envApp = new EnvApplication() { Name = appPlat.Value.Name, ParentGuid = new Guid(appPlat.Key), GingerOpsAppId=appPlat.Value.Id };
                         envApp.Active = true;
                         mWizard.apps.Add(envApp);
                     }
-                break;
+                    break;
                 case EventType.LeavingForNextPage:
                     xEnvironmentComboBox_SelectionChanged();
                 break;
@@ -124,7 +124,15 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
                     xEnvironmentComboBox.ItemsSource = keyValuePairs;
                     xEnvironmentComboBox.Name = "Name";
                     
-                    //xEnvironmentComboBox.Init(responseInfo, nameof(GingerOpsAPIResponseInfo.GingerOpsEnvironmentB));
+                }
+
+                if (xEnvironmentComboBox.ItemsSource.IsNullOrEmpty())
+                {
+                    mWizard.mWizardWindow.NextButton(false);
+                }
+                else
+                {
+                    mWizard.mWizardWindow.NextButton(true);
                 }
             }
         }
@@ -134,10 +142,13 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             try
             {
                 mWizard.ImportedEnvs.Clear();
-                foreach (var env in xEnvironmentComboBox.SelectedItems)
+                if (xEnvironmentComboBox.SelectedItems.Count>0)
                 {
-                    await HandleEnvironmentSelection(env);
-                }
+                    foreach (var env in xEnvironmentComboBox.SelectedItems)
+                    {
+                        await HandleEnvironmentSelection(env);
+                    }
+                }                    
             }
             catch (Exception ex)
             {
@@ -214,9 +225,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
                     GingerOpsAppId = item.Id,
                     Active = true,
                     Url = appUrl,
-                    GOpsFlag = true,
-                    GingerOpsStatus = item.Status,
-                    GingerOpsRemark = "SuccessFully Imported",
+                    GOpsFlag = true
                 };
 
                 // Adding all other parameters to GeneralParams
@@ -257,12 +266,12 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
 
         private async Task AddOrUpdateApplicationPlatform(EnvApplication envApp, dynamic item)
         {
-            var existingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.GingerOpsAppId == item.Id);
+            var existingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.GingerOpsAppId == item.Id && k.AppName == item.Name);
 
             if (existingPlatform == null)
             {
                 var newPlatform = CreateNewApplicationPlatform(envApp, item.Name);
-                mWizard.tempAppPlat.Add(newPlatform);
+               mWizard.tempAppPlat.Add(newPlatform);
             }
             else
             {
@@ -293,6 +302,9 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             existingPlatform.AppName = appName;
             existingPlatform.Platform = envApp.Platform;
             
+            // to support if any name change
+            envApp.Name = existingPlatform.AppName;
+            envApp.Platform = existingPlatform.Platform;
         }
 
     }

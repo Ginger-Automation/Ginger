@@ -9,7 +9,7 @@
       xmlns:Activities="clr-namespace:Ginger.BusinessFlowWindows"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="GingerAnalyticsConfigurationPage">
+      Title="GingerOpsConfigurationPage">
 
     <DockPanel Background="{StaticResource $BackgroundColor_White}">
         <Grid>
@@ -59,8 +59,8 @@
                     <Activities:UCValueExpression x:Name="xClientSecretTextBox" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Client Secret" Margin="10,0,0,0" Width="400" LostKeyboardFocus="xClientSecretTextBox_LostKeyboardFocus"/>
                 </Grid>
                 <Grid>
-                    <Button x:Name="xTestConBtn" IsEnabled="True" Click="xTestConBtn_Click" Content="Test Connection" Width="100" Background="White" Style="{StaticResource $InputButtonStyle}" Margin="10,15,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                    <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="120,10,0,0" HorizontalAlignment="Left" Height="30" Width="20" Visibility="Hidden"></usercontrols:ImageMakerControl>
+                    <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="True" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10,25,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test GingerOps Connection"/>
+                    <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="187,12,0,0" HorizontalAlignment="Left" Height="25" Width="20" Visibility="Hidden"></usercontrols:ImageMakerControl>
 
                 </Grid>
             </StackPanel>

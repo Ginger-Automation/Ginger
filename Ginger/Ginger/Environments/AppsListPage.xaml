@@ -30,12 +30,12 @@
             <StackPanel>
                 <DockPanel>
                     <Label  Style="{StaticResource $LabelStyle}" Content="Release:"/>
-                    <ComboBox x:Name="xReleaseCombobox" IsEnabled="True" Style="{StaticResource $FlatEditInputComboBoxStyle}"  MinWidth="300px"  HorizontalAlignment="Left"></ComboBox>
-                    <usercontrols2:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="640,0,0,0" HorizontalAlignment="Left" Height="30" Width="20" Visibility="Hidden"></usercontrols2:ImageMakerControl>
-                    <Button x:Name="xGASyncBtn" IsEnabled="True" Style="{StaticResource $InputButtonStyle}" Visibility="Collapsed" Margin="0,0,10,0" HorizontalAlignment="Right"  Click="xGASyncBtn_Click" FontWeight="Bold" Content="Sync with Ginger Analytics"/>
+                    <ComboBox x:Name="xReleaseCombobox" IsEnabled="True" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="0,0,0,20"  MinWidth="300px"  HorizontalAlignment="Left"></ComboBox>
+                    <usercontrols2:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="630,-30,0,0" HorizontalAlignment="Left" Height="30" Width="20" Visibility="Hidden"></usercontrols2:ImageMakerControl>
+                    <usercontrols2:ucButton x:Name="xGASyncBtn" IsEnabled="True" Width="200" Margin="0,-30,0,0"  DockPanel.Dock="Top" HorizontalAlignment="Right" Visibility="Collapsed" ButtonType="RoundTextAndImageButton" ButtonText="Sync with GingerOps" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xGASyncBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Sync with GingerOps"/>
                 </DockPanel>
 
-                <CheckBox x:Name="xPublishcheckbox" IsEnabled="True" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,5,0,0"  Style="{StaticResource $CeckBoxStyle}"/>
+                <CheckBox x:Name="xPublishcheckbox" IsEnabled="True" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,-5,0,0"  Style="{StaticResource $CeckBoxStyle}"/>
             </StackPanel>
 
         </StackPanel>

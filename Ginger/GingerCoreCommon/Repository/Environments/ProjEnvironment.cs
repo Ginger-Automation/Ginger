@@ -53,11 +53,11 @@ namespace GingerCore.Environments
 
         private Guid mGingerOpsProjectId;
         [IsSerializedForLocalRepository]
-        public Guid GingerAnalticsProjectId { get { return mGingerOpsProjectId; } set { if (mGingerOpsProjectId != value) { mGingerOpsProjectId = value; OnPropertyChanged(nameof(GingerAnalticsProjectId)); } } }
+        public Guid GingerOpsProjectId { get { return mGingerOpsProjectId; } set { if (mGingerOpsProjectId != value) { mGingerOpsProjectId = value; OnPropertyChanged(nameof(GingerOpsProjectId)); } } }
 
         private Guid mGingerOpsArchitectureId;
         [IsSerializedForLocalRepository]
-        public Guid GingerAnalticsArchitectureId { get { return mGingerOpsArchitectureId; } set { if (mGingerOpsArchitectureId != value) { mGingerOpsArchitectureId = value; OnPropertyChanged(nameof(GingerAnalticsArchitectureId)); } } }
+        public Guid GingerOpsArchitectureId { get { return mGingerOpsArchitectureId; } set { if (mGingerOpsArchitectureId != value) { mGingerOpsArchitectureId = value; OnPropertyChanged(nameof(GingerOpsArchitectureId)); } } }
 
         private string mGingerOpsRelease;
         [IsSerializedForLocalRepository]

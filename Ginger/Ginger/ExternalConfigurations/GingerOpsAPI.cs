@@ -28,31 +28,7 @@ using Ginger.Environments.GingerOpsEnvWizardLib;
 using GingerCore;
 using static Ginger.Environments.GingerOpsEnvWizardLib.GingerOpsAPIResponseInfo;
 using System.Collections.Generic;
-using Ginger.Configurations;
-using GingerWPF.WizardLib;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Text.Json;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
-using Ginger.ExternalConfigurations;
-using Newtonsoft.Json;
 using System.Linq;
-using static Ginger.Environments.GingerOpsEnvWizardLib.GingerOpsAPIResponseInfo;
-using Microsoft.CodeAnalysis;
-using Ginger.Environments.AddEnvironmentWizardLib;
-using GingerCore.Environments;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerTest.WizardLib;
-using System.Runtime.InteropServices;
-using Ginger.UserControlsLib;
-using GingerCore.GeneralLib;
-using GingerCore;
-using OpenQA.Selenium;
-using System.Windows;
 
 namespace Ginger.ExternalConfigurations
 {
@@ -62,7 +38,7 @@ namespace Ginger.ExternalConfigurations
     public class GingerOpsAPI
     {
         public static DateTime validTo = DateTime.MinValue;
-        public static GingerOpsConfiguration GingerOpsUserConfig = SetConfigutation();
+        public static readonly GingerOpsConfiguration GingerOpsUserConfig = SetConfiguration();
 
         private string bearerToken = string.Empty;
 
@@ -273,7 +249,7 @@ namespace Ginger.ExternalConfigurations
             }
         }
 
-        private static GingerOpsConfiguration SetConfigutation()
+        private static GingerOpsConfiguration SetConfiguration()
         {
             var workSpace = WorkSpace.Instance;
             if (workSpace == null || workSpace.SolutionRepository == null)
@@ -281,7 +257,7 @@ namespace Ginger.ExternalConfigurations
                 return new GingerOpsConfiguration();
             }
 
-            var item = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerOpsConfiguration>(); ;
+            var item = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerOpsConfiguration>();
             return item == null ? new GingerOpsConfiguration() : item;
         }
     }

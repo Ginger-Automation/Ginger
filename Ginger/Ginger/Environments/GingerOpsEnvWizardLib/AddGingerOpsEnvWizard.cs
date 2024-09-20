@@ -16,7 +16,6 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
         public ObservableList<EnvApplication> apps = new ObservableList<EnvApplication>();
         public ObservableList<ProjEnvironment> ImportedEnvs = new ObservableList<ProjEnvironment>();
         public ObservableList<ApplicationPlatform> tempAppPlat = new ObservableList<ApplicationPlatform>();
-
         public override string Title { get { return "Import GingerOps Environment Wizard"; } }
 
         public AddGingerOpsEnvWizard(RepositoryFolder<ProjEnvironment> EnvsFolder)
@@ -35,9 +34,16 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
 
         public override void Finish()
         {
+            
             foreach (var item in tempAppPlat)
             {
-                WorkSpace.Instance.Solution.ApplicationPlatforms.Add(item);
+                bool isExist = WorkSpace.Instance.Solution.ApplicationPlatforms.Any(app => app.AppName == item.AppName && app.GingerOpsAppId ==item.GingerOpsAppId);
+                if (!isExist)
+                {
+                    WorkSpace.Instance.Solution.ApplicationPlatforms.Add(item);
+                    //WorkSpace.Instance.Solution.AllowAutoSave = true;
+                }
+               
             }
 
             foreach (ProjEnvironment item in ImportedEnvs)

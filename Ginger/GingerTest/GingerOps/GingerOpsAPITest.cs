@@ -144,10 +144,10 @@ public class GingerOpsApiTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
 
-        var projectListGA = new Dictionary<string, GingerOpsProject>();
+        var ProjectListGOps = new Dictionary<string, GingerOpsProject>();
 
         // Act
-        var result = await GingerOpsApi.FetchProjectDataFromGOps(projectListGA);
+        var result = await GingerOpsApi.FetchProjectDataFromGOps(ProjectListGOps);
 
         // Assert
         Assert.AreNotEqual(2, result.Count);
@@ -171,10 +171,10 @@ public class GingerOpsApiTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
 
-        var architectureListGA = new Dictionary<string, GingerOpsArchitectureB>();
+        var architectureListGOps = new Dictionary<string, GingerOpsArchitectureB>();
 
         // Act
-        var result = await GingerOpsApi.FetchEnvironmentDataFromGOps("architectureId", architectureListGA);
+        var result = await GingerOpsApi.FetchEnvironmentDataFromGOps("architectureId", architectureListGOps);
 
         // Assert
         Assert.AreEqual(0, result.Count);
@@ -202,10 +202,10 @@ public class GingerOpsApiTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
 
-        var environmentListGA = new Dictionary<string, GingerOpsEnvironmentB>();
+        var environmentListGOps = new Dictionary<string, GingerOpsEnvironmentB>();
 
         // Act
-        var result = await GingerOpsApi.FetchApplicationDataFromGOps("environmentId", environmentListGA);
+        var result = await GingerOpsApi.FetchApplicationDataFromGOps("environmentId", environmentListGOps);
 
         // Assert
         Assert.AreNotEqual(2, result.Count);
