@@ -1031,15 +1031,7 @@ namespace Ginger.Actions
 
 
                 columnPreferencesArray = WorkSpace.Instance.UserProfile.ActionOutputValueUserPreferences.Split(',');
-                bool GetBooleanValue(string input)
-                {
-                    string[] parts = input.Split(':');
-                    if (parts.Length == 2)
-                    {
-                        return Convert.ToBoolean(parts[1]);
-                    }
-                    throw new FormatException("Invalid format");
-                }
+             
 
                 foreach (Node node in columnMultiSelectComboBox._nodeList)
                 {
@@ -1048,19 +1040,19 @@ namespace Ginger.Actions
                         switch (node.Title)
                         {
                             case "Description":
-                                node.IsSelected = GetBooleanValue(columnPreferencesArray[0]);
+                                node.IsSelected = string.IsNullOrEmpty( columnPreferencesArray[0])?false:true;
                                 break;
                             case "Path":
-                                node.IsSelected = GetBooleanValue(columnPreferencesArray[1]);
+                                node.IsSelected = string.IsNullOrEmpty(columnPreferencesArray[1]) ? false : true;
                                 break;
                             case "Actual Value":
-                                node.IsSelected = GetBooleanValue(columnPreferencesArray[2]);
+                                node.IsSelected = string.IsNullOrEmpty(columnPreferencesArray[2]) ? false : true;
                                 break;
                             case "Expected Value":
-                                node.IsSelected = GetBooleanValue(columnPreferencesArray[3]);
+                                node.IsSelected = string.IsNullOrEmpty(columnPreferencesArray[3]) ? false : true;
                                 break;
                             case "Store To":
-                                node.IsSelected = GetBooleanValue(columnPreferencesArray[4]);
+                                node.IsSelected = string.IsNullOrEmpty(columnPreferencesArray[4]) ? false : true;
                                 break;
                         }
                     }
@@ -1074,7 +1066,7 @@ namespace Ginger.Actions
                 CheckBox descriptionCheckBox = new CheckBox
                 {
                     Content = "Description",
-                    IsChecked = GetBooleanValue(columnPreferencesArray[0])
+                    IsChecked = string.IsNullOrEmpty(columnPreferencesArray[0]) ? false : true
                 };
 
 
@@ -1145,51 +1137,51 @@ namespace Ginger.Actions
             columnCount = 0;
             foreach (Node node in columnMultiSelectComboBox._nodeList)
             {
-                if (node.Title == "Description")
+                switch (node.Title)
                 {
-                    customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Description, Visible = node.IsSelected, WidthWeight = 180 });
-                    customDynamicView.GridColsView.Add(new GridColView() { Field = "...", Header = "  ...", Visible = node.IsSelected });
-                    columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                    columnPreferencesArray[0] = $"Description:{node.IsSelected}";
-                }
+                    case "Description":
+                        customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Description, Visible = node.IsSelected, WidthWeight = 180 });
+                        customDynamicView.GridColsView.Add(new GridColView() { Field = "...", Header = "  ...", Visible = node.IsSelected });
+                        columnCount = node.IsSelected ? columnCount + 1 : columnCount;
+                        columnPreferencesArray[0] = node.IsSelected ? "Description" : "";
+                        break;
 
-                if (node.Title == "Path")
-                {
-                    customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Path, Visible = node.IsSelected, WidthWeight = 180 });
-                    customDynamicView.GridColsView.Add(new GridColView() { Field = "....", Header = "  ...", Visible = node.IsSelected });
-                    columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                    columnPreferencesArray[1] = $"Path:{node.IsSelected}";
-                }
-                if (node.Title == "Actual Value")
-                {
-                    customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Visible = node.IsSelected, WidthWeight = 180 });
-                    customDynamicView.GridColsView.Add(new GridColView() { Field = ">>", Visible = node.IsSelected });
-                    columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                    columnPreferencesArray[2] = $"ActualValue:{node.IsSelected}";
-                }
-                if (node.Title == "Expected Value")
-                {
-                    customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Visible = node.IsSelected, WidthWeight = 180 });
-                    customDynamicView.GridColsView.Add(new GridColView() { Field = "......", Header = "  ...", Visible = node.IsSelected });
-                    customDynamicView.GridColsView.Add(new GridColView() { Field = "Clear Expected Value", Header = "X", Visible = node.IsSelected });
-                    columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                    columnPreferencesArray[3] = $"ExpectedValue:{node.IsSelected}";
-                }
-                if (node.Title == "Store To")
-                {
-                    customDynamicView.GridColsView.Add(new GridColView()
-                    {
-                        Field = ActReturnValue.Fields.StoreToValue,
-                        Visible = node.IsSelected,
-                        WidthWeight = 350,
-                        Header = "Store To"
-                    });
-                    columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                    columnPreferencesArray[4] = $"StoreTo:{node.IsSelected}";
+                    case "Path":
+                        customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Path, Visible = node.IsSelected, WidthWeight = 180 });
+                        customDynamicView.GridColsView.Add(new GridColView() { Field = "....", Header = "  ...", Visible = node.IsSelected });
+                        columnCount = node.IsSelected ? columnCount + 1 : columnCount;
+                        columnPreferencesArray[1] = node.IsSelected ? "Path" : "";
+                        break;
 
-                }
+                    case "Actual Value":
+                        customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Visible = node.IsSelected, WidthWeight = 180 });
+                        customDynamicView.GridColsView.Add(new GridColView() { Field = ">>", Visible = node.IsSelected });
+                        columnCount = node.IsSelected ? columnCount + 1 : columnCount;
+                        columnPreferencesArray[2] = node.IsSelected ? "ActualValue" : "";
+                        break;
 
+                    case "Expected Value":
+                        customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Visible = node.IsSelected, WidthWeight = 180 });
+                        customDynamicView.GridColsView.Add(new GridColView() { Field = "......", Header = "  ...", Visible = node.IsSelected });
+                        customDynamicView.GridColsView.Add(new GridColView() { Field = "Clear Expected Value", Header = "X", Visible = node.IsSelected });
+                        columnCount = node.IsSelected ? columnCount + 1 : columnCount;
+                        columnPreferencesArray[3] = node.IsSelected ? "ExpectedValue" : "";
+                        break;
+
+                    case "Store To":
+                        customDynamicView.GridColsView.Add(new GridColView()
+                        {
+                            Field = ActReturnValue.Fields.StoreToValue,
+                            Visible = node.IsSelected,
+                            WidthWeight = 350,
+                            Header = "Store To"
+                        });
+                        columnCount = node.IsSelected ? columnCount + 1 : columnCount;
+                        columnPreferencesArray[4] = node.IsSelected ? "StoreTo" : "";
+                        break;
+                }
             }
+
 
 
             WorkSpace.Instance.UserProfile.ActionOutputValueUserPreferences = string.Join(",", columnPreferencesArray);
