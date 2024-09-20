@@ -102,6 +102,7 @@ namespace Ginger.Actions
         Button mSimulateRunBtn = new Button();
         Button mRunActionBtn = new Button();
         Button mStopRunBtn = new Button();
+        string[] columnPreferencesArray = new string[5];
 
         private bool saveWasDone = false;
         ActionFlowControlPage mAFCP;
@@ -1056,7 +1057,7 @@ namespace Ginger.Actions
                                 break;
                         }
                     }
-                    catch (FormatException ex)
+                    catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Invalid format in column preferences", ex);
                     }
@@ -1083,7 +1084,7 @@ namespace Ginger.Actions
 
             xOutputValuesGrid.DataSourceList = mAction.ReturnValues;
         }
-        string[] columnPreferencesArray;
+        
         private void MultiSelectComboBox_Visbility(object sender, RoutedEventArgs e)
         {
             if (columnMultiSelectComboBox.Visibility == Visibility.Collapsed)
@@ -1186,18 +1187,11 @@ namespace Ginger.Actions
 
             WorkSpace.Instance.UserProfile.ActionOutputValueUserPreferences = string.Join(",", columnPreferencesArray);
 
-            if (mAction.SupportSimulation == true)
-            {
-                customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Visible = true, Header = "Simulated Value", WidthWeight = 200 });
-                customDynamicView.GridColsView.Add(new GridColView() { Field = ".....", Header = "  ...", Visible = true });
-                customDynamicView.GridColsView.Add(new GridColView() { Field = "<<", Visible = true });
-            }
-            else
-            {
-                customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", Visible = false, WidthWeight = 200 });
-                customDynamicView.GridColsView.Add(new GridColView() { Field = ".....", Header = "  ...", Visible = false });
-                customDynamicView.GridColsView.Add(new GridColView() { Field = "<<", Visible = false });
-            }
+            bool isVisible = mAction.SupportSimulation;
+           customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", Visible = isVisible, WidthWeight = 200 });
+            customDynamicView.GridColsView.Add(new GridColView() { Field = ".....", Header = "  ...", Visible = isVisible });
+            customDynamicView.GridColsView.Add(new GridColView() { Field = "<<", Visible = isVisible });
+
             xOutputValuesGrid.updateAndSelectCustomView(customDynamicView);
             columnMultiSelectComboBox.Text = "Columns (" + columnCount + ")";
 
