@@ -566,6 +566,23 @@ namespace Ginger
         }
 
 
+        string mActionOutputValueUserPreferences;
+        [IsSerializedForLocalRepository(DefaultValue: "Description:False,Path:True,ActualValue:True,ExpectedValue:True,StoreTo:True")]
+        public string ActionOutputValueUserPreferences
+        {
+            get
+            {
+                return  mActionOutputValueUserPreferences;
+            }
+            set
+            {
+                if (mActionOutputValueUserPreferences != value)
+                {
+                    mActionOutputValueUserPreferences = value;
+                    OnPropertyChanged(nameof(ActionOutputValueUserPreferences));
+                }
+            }
+        }
         public string UserName
         {
             get { return Environment.UserName; }
