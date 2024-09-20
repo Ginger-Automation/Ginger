@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.SolutionGeneral;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
@@ -34,15 +35,21 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
 
         public override void Finish()
         {
-            
+            bool isSolutionupdated = false;
             foreach (var item in tempAppPlat)
             {
                 bool isExist = WorkSpace.Instance.Solution.ApplicationPlatforms.Any(app => app.AppName == item.AppName && app.GingerOpsAppId ==item.GingerOpsAppId);
                 if (!isExist)
                 {
                     WorkSpace.Instance.Solution.ApplicationPlatforms.Add(item);
+                    isSolutionupdated = true;
                 }
                
+            }
+
+            if (isSolutionupdated)
+            {
+                    WorkSpace.Instance.Solution.SolutionOperations.SaveSolution();
             }
 
             foreach (ProjEnvironment item in ImportedEnvs)

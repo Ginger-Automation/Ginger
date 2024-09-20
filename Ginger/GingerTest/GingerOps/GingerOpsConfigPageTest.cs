@@ -10,22 +10,22 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Threading;
 
-namespace GingerTest.GingerAnalytics
+namespace GingerTest.GingerOps
 {
     [TestClass]
     [Ignore]
-    public class GingerAnalyticsConfigPageTest
+    public class GingerOpsConfigPageTest
     {
 
-        private GingerAnalyticsConfigurationPage _page;
-        private Mock<GingerAnalyticsAPI> _mockAnalyticsAPI;
-        private GingerAnalyticsConfiguration _mockUserConfig;
+        private GingerOpsConfigurationPage _page;
+        private Mock<GingerOpsAPI> _mockAnalyticsAPI;
+        private GingerOpsConfiguration _mockUserConfig;
 
         [TestInitialize]        
         public void Setup()
         {
-            _mockAnalyticsAPI = new Mock<GingerAnalyticsAPI>();
-            _mockUserConfig = new GingerAnalyticsConfiguration()
+            _mockAnalyticsAPI = new Mock<GingerOpsAPI>();
+            _mockUserConfig = new GingerOpsConfiguration()
             {
                 AccountUrl = "http://valid.url",
                 IdentityServiceURL = "http://identity.url",
@@ -34,14 +34,14 @@ namespace GingerTest.GingerAnalytics
             };
 
             // Inject mock objects
-            _page = new GingerAnalyticsConfigurationPage();
+            _page = new GingerOpsConfigurationPage();
         }
 
         [TestMethod]
         public void AreRequiredFieldsEmpty_WhenFieldsAreNotEmpty_ReturnsFalse()
         {
             // Arrange
-            _page.gingerAnalyticsUserConfig = _mockUserConfig;
+            //_page.GingerOpsUserConfig = _mockUserConfig;
 
             // Act
             bool result = _page.AreRequiredFieldsEmpty();
@@ -54,7 +54,7 @@ namespace GingerTest.GingerAnalytics
         public void AreRequiredFieldsEmpty_WhenFieldsAreEmpty_ReturnsTrue()
         {
             // Arrange
-            _page.gingerAnalyticsUserConfig = new GingerAnalyticsConfiguration();
+            //_page.GingerOpsUserConfig = new GingerOpsConfiguration();
 
             // Act
             bool result = _page.AreRequiredFieldsEmpty();
@@ -68,9 +68,9 @@ namespace GingerTest.GingerAnalytics
         {
             // Arrange
             _mockUserConfig.Token = string.Empty;
-            _page.gingerAnalyticsUserConfig = _mockUserConfig;
+            //_page.GingerOpsUserConfig = _mockUserConfig;
 
-            _mockAnalyticsAPI.Setup(GingerAnalyticsAPI => GingerAnalyticsAPI.RequestToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            _mockAnalyticsAPI.Setup(GingerOpsAPI => GingerOpsAPI.RequestToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                              .Returns(Task.FromResult(true));
 
             // Act
@@ -78,7 +78,7 @@ namespace GingerTest.GingerAnalytics
 
             // Assert
             Assert.IsFalse(result, "Token request should be successful.");
-            _mockAnalyticsAPI.Verify(GingerAnalyticsAPI => GingerAnalyticsAPI.RequestToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _mockAnalyticsAPI.Verify(GingerOpsAPI => GingerOpsAPI.RequestToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         [TestMethod]
@@ -88,7 +88,7 @@ namespace GingerTest.GingerAnalytics
             bool isAuthorized = true;
 
             // Act & Assert
-            Assert.ThrowsException<NullReferenceException>(() => Ginger.ExternalConfigurations.GingerAnalyticsConfigurationPage.ShowConnectionResult(isAuthorized));
+            Assert.ThrowsException<NullReferenceException>(() => Ginger.ExternalConfigurations.GingerOpsConfigurationPage.ShowConnectionResult(isAuthorized));
             // Note: Reporter usage should be mocked if necessary to avoid the exception.
         }
 

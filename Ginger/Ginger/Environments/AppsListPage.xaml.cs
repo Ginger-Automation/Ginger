@@ -69,6 +69,7 @@ namespace Ginger.Environments
                 xPublishcheckbox.IsEnabled = true;
                 xGASyncBtn.Visibility = Visibility.Collapsed;
                 InitReleaseComboBox();
+                grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));
             }
 
             BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
@@ -78,7 +79,6 @@ namespace Ginger.Environments
 
 
             grdApps.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddApp));
-            grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));
 
             TagsViewer.Init(AppEnvironment.Tags);
         }
