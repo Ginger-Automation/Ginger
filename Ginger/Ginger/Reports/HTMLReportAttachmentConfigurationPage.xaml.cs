@@ -40,7 +40,8 @@ namespace Ginger.Reports
         GenericWindow _pageGenericWin = null;
         EmailHtmlReportAttachment mEmailAttachment = new EmailHtmlReportAttachment();
         private bool IsLinkEnabled;
-        private bool AccountReportLinkEnabled;
+        private bool IsAccountReportLinkEnabled;
+        private bool IsZipFolderAttachementEnabled;
 
         public HTMLReportAttachmentConfigurationPage(EmailHtmlReportAttachment emailAttachment)
         {
@@ -55,7 +56,7 @@ namespace Ginger.Reports
             HTMLReportFolderTextBox.Init(null, mEmailAttachment, nameof(EmailAttachment.ExtraInformation), true, true, UCValueExpression.eBrowserType.Folder, "*.*", null);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, mEmailAttachment, nameof(EmailHtmlReportAttachment.IsAlternameFolderUsed));
-            RadioButtonInit(mEmailAttachment.IsLinkEnabled, mEmailAttachment.IsAccountReportLinkEnabled);
+            RadioButtonInit();
 
             DefaultTemplatePickerCbx.ItemsSource = null;
 
@@ -67,16 +68,6 @@ namespace Ginger.Reports
                 DefaultTemplatePickerCbx.SelectedValuePath = nameof(HTMLReportConfiguration.ID);
             }
 
-            if (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportHTMLServiceUrl()) && !string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportDataServiceUrl()))
-            {
-                xAccountReportLink.IsEnabled = true;
-                xAccountReportLink.IsChecked = true;
-            }
-            else
-            {
-                xAccountReportLink.IsEnabled = false;
-                RadioZippedReportOption.IsChecked = true;
-            }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -90,19 +81,34 @@ namespace Ginger.Reports
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, false);
         }
 
-        public void RadioButtonInit(bool IsLinkEnabled, bool IsAccountReportLinkEnabled)
+        public void RadioButtonInit()
         {
-            if (IsAccountReportLinkEnabled)
+
+            if ((!mEmailAttachment.IsLinkEnabled && !mEmailAttachment.IsZipFolderAttachementEnabled) && (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportHTMLServiceUrl()) && !string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportDataServiceUrl())))
+            {
+                xAccountReportLink.IsChecked = true;
+                return;
+            }
+            if (mEmailAttachment.IsAccountReportLinkEnabled)
             {
                 xAccountReportLink.IsChecked = true;
             }
-            else if (IsLinkEnabled)
+            else if (mEmailAttachment.IsLinkEnabled)
             {
                 RadioLinkOption.IsChecked = true;
             }
             else
             {
                 RadioZippedReportOption.IsChecked = true;
+            }
+
+            if (!string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportHTMLServiceUrl()) && !string.IsNullOrEmpty(GingerRemoteExecutionUtils.GetReportDataServiceUrl()))
+            {
+                xAccountReportLink.IsEnabled = true;
+            }
+            else
+            {
+                xAccountReportLink.IsEnabled = false;
             }
         }
 
@@ -130,7 +136,8 @@ namespace Ginger.Reports
             {
                 mEmailAttachment.Name = DefaultTemplatePickerCbx.Text;
                 mEmailAttachment.IsLinkEnabled = IsLinkEnabled;
-                mEmailAttachment.IsAccountReportLinkEnabled = AccountReportLinkEnabled;
+                mEmailAttachment.IsAccountReportLinkEnabled = IsAccountReportLinkEnabled;
+                mEmailAttachment.IsZipFolderAttachementEnabled = IsZipFolderAttachementEnabled;
             }
 
             _pageGenericWin.Close();
@@ -147,8 +154,9 @@ namespace Ginger.Reports
 
             try
             {
-                AccountReportLinkEnabled = true;
+                IsAccountReportLinkEnabled = true;
                 IsLinkEnabled = false;
+                IsZipFolderAttachementEnabled = false;
                 ZipReportlbl.Visibility = Visibility.Collapsed;
                 Linklbl.Visibility = Visibility.Collapsed;
                 AccountReportlbl.Visibility = Visibility.Visible;
@@ -165,7 +173,8 @@ namespace Ginger.Reports
             try
             {
                 IsLinkEnabled = true;
-                AccountReportLinkEnabled = false;
+                IsAccountReportLinkEnabled = false;
+                IsZipFolderAttachementEnabled = false;
                 ZipReportlbl.Visibility = Visibility.Collapsed;
                 Linklbl.Visibility = Visibility.Visible;
                 AccountReportlbl.Visibility = Visibility.Collapsed;
@@ -180,7 +189,8 @@ namespace Ginger.Reports
             try
             {
                 IsLinkEnabled = false;
-                AccountReportLinkEnabled = false;
+                IsAccountReportLinkEnabled = false;
+                IsZipFolderAttachementEnabled = true;
                 ZipReportlbl.Visibility = Visibility.Visible;
                 Linklbl.Visibility = Visibility.Collapsed;
                 AccountReportlbl.Visibility = Visibility.Collapsed;

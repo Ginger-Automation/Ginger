@@ -1709,7 +1709,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier")?.ToString());
                 }
                 else
                 {

@@ -5787,6 +5787,15 @@ namespace GingerCore.Drivers
             }
             EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);// improve code inside
 
+            if (EI.FriendlyLocators.Count == 0 && EI.Locators.Count >= 1)
+            {
+                ElementLocator byTagNameLocator = EI.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByTagName);
+                if (byTagNameLocator != null)
+                {
+                    byTagNameLocator.Active = false;
+                }
+            }
+
             return EI;
         }
 
