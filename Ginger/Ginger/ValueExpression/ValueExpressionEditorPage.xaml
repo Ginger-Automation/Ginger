@@ -48,6 +48,7 @@
             <StackPanel Grid.Column="1" Grid.Row="0"  Background="{StaticResource $BackgroundColor_White}" Margin="0,27,0,0">
                 <UserControls:ucButton x:Name="xClearButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Delete" Click="xClearButton_Click" ToolTip="Clear Expression" Margin="-1,-5,0,0"/>
                 <UserControls:ucButton x:Name="xTestButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Run" Click="xTestButton_Click" ToolTip="Calculate Expression" Margin="0,-5,0,0"/>
+                <UserControls:ucButton x:Name="xCopyButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Copy" Click="xCopyExpressionButton_Click" ToolTip="Copy Expression" Margin="0,-5,0,0"/>
             </StackPanel>
 
             <!--<GridSplitter ResizeDirection="Rows" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Height="1" Background="Transparent"  VerticalAlignment="Top" HorizontalAlignment="Stretch" IsEnabled="True" Margin="0,0,0,0"/>-->
@@ -59,9 +60,10 @@
                 </DockPanel>
             </Border>
 
-            <DockPanel Grid.Column="1" Grid.Row="1"  Margin="0,0,0,0">
-                <UserControls:ucButton x:Name="xClearCalculatedButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Top" ButtonFontImageSize="16" ButtonImageType="Delete" Click="xClearCalculatedButton_Click" ToolTip="Clear Calculation" DockPanel.Dock="Top"  Margin="0,20,0,0"/>
-            </DockPanel>
+            <StackPanel Grid.Column="1" Grid.Row="1"  Background="{StaticResource $BackgroundColor_White}" Margin="0,30,0,0">
+                <UserControls:ucButton x:Name="xClearCalculatedButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Delete" Click="xClearCalculatedButton_Click" ToolTip="Clear Calculation" Margin="0,0,0,0"/>
+                <UserControls:ucButton x:Name="xCopyCalculatedButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Copy" Click="xCopyCalculatedButton_Click" ToolTip="Copy Calculation" Margin="0,-5,0,0"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -504,6 +504,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return dictionary;
             }
         }
-        
+
+        public record VariableMinimalRecord(string Name, string InitialValue, string CurrentValue);
     }
 }
