@@ -363,7 +363,7 @@ namespace Ginger.Run
             mGingerRunner.ProjEnvironment = null;
             if (mGingerRunner.UseSpecificEnvironment == true && string.IsNullOrEmpty(mGingerRunner.SpecificEnvironmentName) == false)
             {
-                ProjEnvironment specificEnv = (ProjEnvironment)allEnvs
+                ProjEnvironment specificEnv = allEnvs
                     .FirstOrDefault(env => string.Equals(env.Name, mGingerRunner.SpecificEnvironmentName));
                 if (specificEnv != null)
                 {
@@ -557,7 +557,7 @@ namespace Ginger.Run
 
                     //need to add code here to check previous Execution Deatils and ReRunFailed check 
 
-                    BusinessFlow executedBusFlow = (BusinessFlow)BusinessFlows[bfIndx];
+                    BusinessFlow executedBusFlow = BusinessFlows[bfIndx];
                     ExecutionLogBusinessFlowsCounter = bfIndx;
                     //stop if needed before executing next BF
                     if (mStopRun)
@@ -3066,17 +3066,17 @@ namespace Ginger.Run
                     break;
 
                 case eFCOperator.ActionPassed:
-                    FCStatus = mAct.Status.Value == eRunStatus.Passed ? true : false;
+                    FCStatus = mAct.Status.Value == eRunStatus.Passed;
                     break;
 
                 case eFCOperator.ActionFailed:
-                    FCStatus = mAct.Status.Value == eRunStatus.Failed ? true : false;
+                    FCStatus = mAct.Status.Value == eRunStatus.Failed;
                     break;
 
                 case eFCOperator.LastActivityPassed:
                     if (mLastActivity != null)
                     {
-                        FCStatus = mLastActivity.Status == eRunStatus.Passed ? true : false;
+                        FCStatus = mLastActivity.Status == eRunStatus.Passed;
                     }
                     else
                     {
@@ -3087,7 +3087,7 @@ namespace Ginger.Run
                 case eFCOperator.LastActivityFailed:
                     if (mLastActivity != null)
                     {
-                        FCStatus = mLastActivity.Status == eRunStatus.Failed ? true : false;
+                        FCStatus = mLastActivity.Status == eRunStatus.Failed;
                     }
                     else
                     {
@@ -3096,11 +3096,11 @@ namespace Ginger.Run
                     break;
 
                 case eFCOperator.BusinessFlowPassed:
-                    FCStatus = CurrentBF.RunStatus == eRunStatus.Passed ? true : false;
+                    FCStatus = CurrentBF.RunStatus == eRunStatus.Passed;
                     break;
 
                 case eFCOperator.BusinessFlowFailed:
-                    FCStatus = CurrentBF.RunStatus == eRunStatus.Failed ? true : false;
+                    FCStatus = CurrentBF.RunStatus == eRunStatus.Failed;
                     break;
 
                 case eFCOperator.CSharp:
@@ -3117,7 +3117,7 @@ namespace Ginger.Run
 
         private bool GotoActivity(FlowControl fc, Act act)
         {
-            Activity a = (Activity)CurrentBusinessFlow.GetActivity(fc.GetGuidFromValue(), fc.GetNameFromValue());
+            Activity a = CurrentBusinessFlow.GetActivity(fc.GetGuidFromValue(), fc.GetNameFromValue());
 
             if (a != null)
             {
@@ -3136,7 +3136,7 @@ namespace Ginger.Run
         private bool GotoAction(FlowControl fc, Act act)
         {
             //Act a = (from a1 in CurrentBusinessFlow.CurrentActivity.Acts where a1.Guid == GUID select a1).FirstOrDefault();
-            Act a = (Act)((Activity)CurrentBusinessFlow.CurrentActivity).GetAct(fc.GetGuidFromValue(), fc.GetNameFromValue());
+            Act a = (Act)CurrentBusinessFlow.CurrentActivity.GetAct(fc.GetGuidFromValue(), fc.GetNameFromValue());
 
             if (a != null)
             {
@@ -3224,9 +3224,9 @@ namespace Ginger.Run
         private bool RunSharedRepositoryActivity(FlowControl fc)
         {
             //find activity            
-            string activityName = fc.GetNameFromValue().ToUpper();
+            string activityName = fc.GetNameFromValue();
             ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-            Activity sharedActivity = (Activity)activities.FirstOrDefault(x => x.ActivityName.ToUpper() == activityName);
+            Activity sharedActivity = activities.FirstOrDefault(x => x.ActivityName.Equals(activityName, StringComparison.CurrentCultureIgnoreCase));
 
             if (sharedActivity != null)
             {
@@ -5358,9 +5358,9 @@ namespace Ginger.Run
                     FC.Status = eStatus.Pending;
                 }
 
-                FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)mGingerRunner.ProjEnvironment, mGingerRunner.DSList);
+                FC.CalculateCondition(CurrentBusinessFlow, mGingerRunner.ProjEnvironment, mGingerRunner.DSList);
 
-                FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)mGingerRunner.ProjEnvironment, mGingerRunner.DSList);
+                FC.CalcualtedValue(CurrentBusinessFlow, mGingerRunner.ProjEnvironment, mGingerRunner.DSList);
 
                 bool IsConditionTrue = CalculateFlowControlStatus(null, mLastExecutedActivity, CurrentBusinessFlow, FC.Operator, FC.ConditionCalculated);
 
@@ -5393,7 +5393,7 @@ namespace Ginger.Run
                             try
                             {
                                 VE.Value = FC.Value;
-                                string[] vals = VE.ValueCalculated.Split(new char[] { '=' });
+                                string[] vals = VE.ValueCalculated.Split(['=']);
                                 if (vals.Length == 2)
                                 {
                                     ActSetVariableValue setValueAct = new ActSetVariableValue();
@@ -5471,18 +5471,18 @@ namespace Ginger.Run
             }
             else if (lstBusinessFlow.Count == 1)
             {
-                bf = (BusinessFlow)lstBusinessFlow[0];
+                bf = lstBusinessFlow[0];
             }
             else//we have more than 1
             {
-                BusinessFlow firstActive = (BusinessFlow)lstBusinessFlow.Find(x => x.Active == true);
+                BusinessFlow firstActive = lstBusinessFlow.Find(x => x.Active == true);
                 if (firstActive != null)
                 {
                     bf = firstActive;
                 }
                 else
                 {
-                    bf = (BusinessFlow)lstBusinessFlow[0]; //no one is Active so returning the first one
+                    bf = lstBusinessFlow[0]; //no one is Active so returning the first one
                 }
             }
 

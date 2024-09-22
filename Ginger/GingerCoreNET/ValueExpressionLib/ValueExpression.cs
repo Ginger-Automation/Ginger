@@ -587,17 +587,16 @@ namespace GingerCore
             {
                 if (value != null)
                 {
-                    // Check if the provided value is not a string and is an instance of IEnumerable  
-                    if (value is not string and System.Collections.IEnumerable)
+                    // Check if the provided value is an IEnumerable but not a string  
+                    if (value is not string && value is System.Collections.IEnumerable enumerableValue)
                     {
-                        // If the value is not a string but is an enumerable,  
-                        // serialize the value to JSON using the specified write options.  
-                        return JsonSerializer.Serialize(value, s_writeOptions);
+                        // Serialize the enumerable value to JSON using the specified write options  
+                        return JsonSerializer.Serialize(enumerableValue, s_writeOptions);
                     }
                     else
                     {
-                        // If the value is a string or not an enumerable,  
-                        // convert the value to its string representation using ToString().  
+                        // If the value is a string and not an enumerable,  
+                        // return its string representation  
                         return value.ToString();
                     }
                 }

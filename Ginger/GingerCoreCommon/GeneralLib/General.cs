@@ -505,6 +505,12 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
+        /// <summary>
+        /// Represents a minimal record of a variable, including its name, initial value, and current value.
+        /// </summary>
+        /// <param name="Name">The name of the variable.</param>
+        /// <param name="InitialValue">The initial value of the variable.</param>
+        /// <param name="CurrentValue">The current value of the variable.</param>
         public record VariableMinimalRecord(string Name, string InitialValue, string CurrentValue);
     }
 }
