@@ -22,7 +22,7 @@ using Amdocs.Ginger.CoreNET.DataSource;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using Ginger.SolutionGeneral;s
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
