@@ -32,10 +32,9 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.FlowControlLib;
-using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Microsoft.CodeAnalysis;
 
 //TODO: change add core
 namespace GingerCore
@@ -950,9 +949,9 @@ namespace GingerCore
             return copy;
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extradetails=null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extradetails = null)
         {
-            
+
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
             Activity newInstance = null;
@@ -966,7 +965,7 @@ namespace GingerCore
                 newInstance.Type = activityInstance.Type;
                 newInstance.Active = activityInstance.Active;
 
-                if(newInstance.Guid == this.Guid)
+                if (newInstance.Guid == this.Guid)
                 {
                     newInstance.DevelopmentTime = newInstance.DevelopmentTime.Add(this.DevelopmentTime);
                 }
@@ -986,12 +985,12 @@ namespace GingerCore
             else
             {
                 newInstance = CopySharedRepositoryActivity(this, originFromSharedRepository: false);
-                
+
                 if (this.Guid == activityInstance.Guid)
                 {
                     newInstance.DevelopmentTime = this.DevelopmentTime;
                 }
-                else 
+                else
                 {
                     newInstance.DevelopmentTime = activityInstance.DevelopmentTime;
                 }
@@ -1201,6 +1200,7 @@ namespace GingerCore
                     return false;
             }
         }
+        
 
         public override bool IsLinkedItem
         {
@@ -1217,7 +1217,7 @@ namespace GingerCore
         {
             get
             {
-                return eImageType.Activity;
+                return AIGenerated ? eImageType.AIActivity : eImageType.Activity;
             }
         }
 
@@ -1268,5 +1268,22 @@ namespace GingerCore
         }
 
         public bool IsAutoLearned { get; set; }
+
+        /// <summary>
+        /// Gets the summary of variables in the activity.
+        /// </summary>
+        public List<General.VariableMinimalRecord> VariablesSummary
+        {
+            get
+            {
+                List<General.VariableMinimalRecord> variableDetails = [];
+                foreach (VariableBase variable in Variables)
+                {
+                    variableDetails.Add(new General.VariableMinimalRecord(variable.Name, variable.GetInitialValue(), variable.Value));
+                }
+                return variableDetails;
+            }
+        }
+
     }
 }

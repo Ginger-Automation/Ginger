@@ -58,6 +58,7 @@ namespace Amdocs.Ginger.Common.Enums
         BusinessFlow,
         ActivitiesGroup,
         Activity,
+        AIActivity,
         Action,
         Agent,
         RunSet,

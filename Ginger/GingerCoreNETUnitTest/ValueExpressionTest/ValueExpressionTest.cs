@@ -27,13 +27,16 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
+using GingerCore.Variables;
 using GingerCoreNET.DataSource;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using static Amdocs.Ginger.Common.GeneralLib.General;
 
 namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
@@ -72,27 +75,45 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             runset = new RunSetConfig();
             runset.Name = "NewRunset1";
             WorkSpace.Instance.RunsetExecutor.RunSetConfig = runset;
+
             runner = new GingerExecutionEngine(new GingerRunner());
             runner.GingerRunner.Name = "Runner1";
             runner.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             WorkSpace.Instance.RunsetExecutor.Runners.Add(runner.GingerRunner);
+
             mEnv = new ProjEnvironment();
             mEnv.Name = "Environment1";
+
             EnvApplication app1 = new EnvApplication();
             app1.Name = "App1";
             app1.Url = "URL123";
             mEnv.Applications.Add(app1);
+
             GeneralParam GP1 = new GeneralParam();
             GP1.Name = "GP1";
             GP1.Value = "GP1Value";
             app1.GeneralParams.Add(GP1);
 
+            VariableString BFVariableString = new VariableString();
+            BFVariableString.Name = "BFVar";
+            BFVariableString.InitialStringValue = "initial";
+            BFVariableString.Value = "current";
+
             mBF = new BusinessFlow();
             mBF.Name = "Businessflow1";
+            mBF.Variables.Add(BFVariableString);
             runner.BusinessFlows.Add(mBF);
+
+            VariableString ActivityVariableString = new VariableString();
+            ActivityVariableString.Name = "ActivityVar";
+            ActivityVariableString.InitialStringValue = "initial";
+            ActivityVariableString.Value = "current";
+
             mActivity = new GingerCore.Activity();
             mActivity.Active = true;
             mActivity.ActivityName = "Activity1";
+            mActivity.Variables.Add(ActivityVariableString);
+
             mAct = new ActDummy();
             mAct.Active = true;
             mAct.Description = "Action1";
@@ -297,6 +318,29 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void BusinessFlowVariableSummary()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{FD Object=BusinessFlow Field=VariablesSummary}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "BFVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
+
+
+        [TestMethod]
+        [Timeout(60000)]
         public void ActivityName()
         {
             //Arrange  
@@ -308,6 +352,29 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
             //Assert
             Assert.AreEqual(v, "Activity1");
+        }
+
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActivityVariableSummary()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{FD Object=Activity Field=VariablesSummary}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
         }
 
         [TestMethod]
@@ -373,6 +440,33 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             Assert.AreEqual(v, "Businessflow1");
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void PreviousBusinessFlowVariableSummary()
+        {
+            //Arrange  
+            ActDummy dummy = new ActDummy();
+            dummy.Active = true;
+            dummy.Value = "{FD Object=PreviousBusinessFlow Field=VariablesSummary}";
+
+            //Act     
+            runner.BusinessFlows[1].Activities[0].Acts.Add(dummy);
+
+            //Act             
+            runner.RunRunner();
+            string v = dummy.ValueForDriver;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "BFVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
+
 
         [TestMethod]
         [Timeout(60000)]
@@ -416,6 +510,35 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void PreviousActivityVariableSummary()
+        {
+            //Arrange  
+            GingerCore.Activity activity = new GingerCore.Activity();
+            activity.ActivityName = "Activity2";
+            activity.Active = true;
+            ActDummy dummy = new ActDummy();
+            dummy.Active = true;
+            dummy.Value = "{FD Object=PreviousActivity Field=VariablesSummary}";
+            activity.Acts.Add(dummy);
+            mBF.AddActivity(activity);
+
+            //Act                            
+            runner.RunRunner();
+            string v = dummy.ValueForDriver;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void PreviousActionName()
         {
             //Arrange            
@@ -455,6 +578,32 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void LastBusinessflowFailedVariablesSummary()
+        {
+            //Arrange           
+            mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
+            ActDummy dummy = new ActDummy();
+            dummy.Active = true;
+            dummy.Value = "{FD Object=LastFailedBusinessFlow Field=VariablesSummary}";
+            runner.BusinessFlows[1].Activities[0].Acts.Add(dummy);
+
+            //Act              
+            runner.RunRunner();
+            string v = dummy.ValueForDriver;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "BFVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void LastActivityFailedName()
         {
             //Arrange  
@@ -476,6 +625,38 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
             //Assert
             Assert.AreEqual(v, "Activity1");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void LastActivityFailedVariablesSummary()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{FD Object=LastFailedActivity Field=VariablesSummary}";
+            GingerCore.Activity activity = new GingerCore.Activity();
+            activity.Active = true;
+            activity.ActivityName = "Activity2";
+            ActDummy dummy1 = new ActDummy();
+            dummy1.Active = true;
+            dummy1.Description = "Dummy action";
+            activity.Acts.Add(dummy1);
+            mBF.AddActivity(activity);
+            mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
+
+            //Act            
+            runner.RunRunner();
+            string v = VE.ValueCalculated;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new("ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
         }
 
         [TestMethod]
@@ -524,6 +705,38 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             Assert.AreEqual(v, "Activity1");
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void ErrorHandlerActivityVariablesSummary()
+        {
+            //Arrange  
+            mActivity.ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers;
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{FD Object=ErrorHandlerOriginActivity Field=VariablesSummary}";
+            mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
+            ErrorHandler errorHandler = new ErrorHandler();
+            errorHandler.ActivityName = "ErrorHandler";
+            errorHandler.Active = true;
+            ActDummy dummy = new ActDummy();
+            dummy.Active = true;
+            dummy.Description = "Error Handler Dummy action";
+            errorHandler.Acts.Add(dummy);
+            mBF.AddActivity(errorHandler);
+
+            //Act                        
+            runner.RunRunner();
+            string v = VE.ValueCalculated;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new("ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
 
         [TestMethod]
         [Timeout(60000)]
