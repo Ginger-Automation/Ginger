@@ -22,7 +22,7 @@ using Amdocs.Ginger.CoreNET.DataSource;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using Ginger.SolutionGeneral;
+using Ginger.SolutionGeneral;s
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
@@ -34,7 +34,9 @@ using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using static Amdocs.Ginger.Common.GeneralLib.General;
 
 namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
@@ -110,7 +112,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             mActivity = new GingerCore.Activity();
             mActivity.Active = true;
             mActivity.ActivityName = "Activity1";
-            mActivity.Variables.Add(ActivityVariableString);    
+            mActivity.Variables.Add(ActivityVariableString);
 
             mAct = new ActDummy();
             mAct.Active = true;
@@ -325,8 +327,15 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             //Act     
             string v = VE.ValueCalculated;
 
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "BFVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
             //Assert
-            Assert.AreEqual(v, "[\r\n  {\r\n    \"Name\": \"BFVar\",\r\n    \"InitialValue\": \"initial\",\r\n    \"CurrentValue\": \"current\"\r\n  }\r\n]");
+            Assert.AreEqual(actual[0], expected[0]);
         }
 
 
@@ -357,8 +366,15 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             //Act     
             string v = VE.ValueCalculated;
 
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
             //Assert
-            Assert.AreEqual(v, "[\r\n  {\r\n    \"Name\": \"ActivityVar\",\r\n    \"InitialValue\": \"initial\",\r\n    \"CurrentValue\": \"current\"\r\n  }\r\n]");
+            Assert.AreEqual(actual[0], expected[0]);
         }
 
         [TestMethod]
@@ -440,8 +456,15 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             runner.RunRunner();
             string v = dummy.ValueForDriver;
 
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "BFVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
             //Assert
-            Assert.AreEqual(v, "[\r\n  {\r\n    \"Name\": \"BFVar\",\r\n    \"InitialValue\": \"initial\",\r\n    \"CurrentValue\": \"current\"\r\n  }\r\n]");
+            Assert.AreEqual(actual[0], expected[0]);
         }
 
 
@@ -503,8 +526,15 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             runner.RunRunner();
             string v = dummy.ValueForDriver;
 
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
             //Assert
-            Assert.AreEqual(v, "[\r\n  {\r\n    \"Name\": \"ActivityVar\",\r\n    \"InitialValue\": \"initial\",\r\n    \"CurrentValue\": \"current\"\r\n  }\r\n]");
+            Assert.AreEqual(actual[0], expected[0]);
         }
 
         [TestMethod]
@@ -561,8 +591,15 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             runner.RunRunner();
             string v = dummy.ValueForDriver;
 
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "BFVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
             //Assert
-            Assert.AreEqual(v, "[\r\n  {\r\n    \"Name\": \"BFVar\",\r\n    \"InitialValue\": \"initial\",\r\n    \"CurrentValue\": \"current\"\r\n  }\r\n]");
+            Assert.AreEqual(actual[0], expected[0]);
         }
 
         [TestMethod]
@@ -611,8 +648,15 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             runner.RunRunner();
             string v = VE.ValueCalculated;
 
+            var expected = new List<VariableMinimalRecord>
+            {
+                new("ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
             //Assert
-            Assert.AreEqual(v, "[\r\n  {\r\n    \"Name\": \"ActivityVar\",\r\n    \"InitialValue\": \"initial\",\r\n    \"CurrentValue\": \"current\"\r\n  }\r\n]");
+            Assert.AreEqual(actual[0], expected[0]);
         }
 
         [TestMethod]
@@ -683,8 +727,15 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             runner.RunRunner();
             string v = VE.ValueCalculated;
 
+            var expected = new List<VariableMinimalRecord>
+            {
+                new("ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
             //Assert
-            Assert.AreEqual(v, "[\r\n  {\r\n    \"Name\": \"ActivityVar\",\r\n    \"InitialValue\": \"initial\",\r\n    \"CurrentValue\": \"current\"\r\n  }\r\n]");
+            Assert.AreEqual(actual[0], expected[0]);
         }
 
         [TestMethod]
