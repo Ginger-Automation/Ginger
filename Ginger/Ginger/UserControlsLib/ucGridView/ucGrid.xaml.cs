@@ -1227,7 +1227,14 @@ namespace Ginger
         #region ##### Internal Methods
         private void ObjListPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            GingerCore.General.DoEvents();
+            try
+            {
+                GingerCore.General.DoEvents();
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error on object list change", ex);
+            }
             if (e.PropertyName == "CurrentItem")
             {
                 this.Dispatcher.Invoke(() =>
