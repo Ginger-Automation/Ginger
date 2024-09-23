@@ -33,6 +33,17 @@
             </StackPanel>
         </StackPanel>
         <StackPanel
+            x:Name="BufferSizeWrapper"
+            Orientation="Horizontal"
+            Margin="0 4 0 0">
+            <Label
+                Content="Buffer Size" />
+            <TextBox
+                x:Name="BufferSizeTextBox"
+                MinWidth="50"
+                Style="{StaticResource $TextBoxStyle}" />
+        </StackPanel>
+        <StackPanel
             x:Name="CollectorURLWrapper"
             Orientation="Horizontal"
             Margin="0 4 0 0">

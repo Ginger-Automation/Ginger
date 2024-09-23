@@ -16,7 +16,6 @@ message FeatureRecord {
 
 message AddFeaturesRequest {
 	repeated FeatureRecord Features = 1;
-	int32 FeatureCount = 2;
 }
 
 message AddFeaturesResponse {

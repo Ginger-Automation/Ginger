@@ -122,20 +122,20 @@ namespace GingerCore.Actions
             string actualApplicationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(this.FilePath);
             if ((Path.GetExtension(actualApplicationPath)).Equals(".vbs", StringComparison.InvariantCultureIgnoreCase) || (Path.GetExtension(actualApplicationPath)).Equals(".js",StringComparison.InvariantCultureIgnoreCase))
             {
-                arguments.Append(actualApplicationPath).Append(" ");
+                arguments.Append(actualApplicationPath).Append(' ');
                 actualApplicationPath = GetSystemDirectory() + $"{Path.DirectorySeparatorChar}cscript.exe";
             }
             else if((Path.GetExtension(actualApplicationPath)).Equals(".sh", StringComparison.InvariantCultureIgnoreCase))
             {
-                arguments.Append(actualApplicationPath).Append(" ");
+                arguments.Append(actualApplicationPath).Append(' ');
                 actualApplicationPath = $"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}bash";
             }
             foreach (var p in this.InputValues)
             {
-                arguments.Append(p.Param).Append(" ");
+                arguments.Append(p.Param).Append(' ');
                 if (!string.IsNullOrEmpty(p.ValueForDriver))
                 {
-                    arguments.Append(p.ValueForDriver).Append(" ");
+                    arguments.Append(p.ValueForDriver).Append(' ');
                 }
             }
 
