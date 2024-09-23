@@ -53,7 +53,7 @@ namespace GingerTest.GingerOps
         public void AreRequiredFieldsEmpty_WhenFieldsAreEmpty_ReturnsTrue()
         {
             // Arrange
-            //_page.GingerOpsUserConfig = new GingerOpsConfiguration();
+           
 
             // Act
             bool result = _page.AreRequiredFieldsEmpty();
