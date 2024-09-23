@@ -10788,6 +10788,10 @@ namespace GingerCore.Drivers
 
         private void SetBrowserLogLevel(DriverOptions options)
         {
+            if (string.IsNullOrEmpty(BrowserLogLevel)) 
+            {
+                return;
+            }
             int numberLogLevel = (int)Enum.Parse<eBrowserLogLevel>(BrowserLogLevel);
             if (!numberLogLevel.Equals(3))
             {
