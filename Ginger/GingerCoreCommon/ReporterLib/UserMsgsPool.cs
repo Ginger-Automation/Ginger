@@ -169,8 +169,10 @@ namespace Amdocs.Ginger.Common
         SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
         DeleteRecoverFolderWarn,
         EnvParamNameExists,
-        GingerAnalyticsConnectionFail,
-        GingerAnalyticsConnectionSuccess,
+        GingerOpsConnectionFail,
+        GingerOpsConnectionSuccess,
+        GingerOpsSyncFailed,
+        GingerOpsSyncSuccess,
         RequiredFieldsEmpty,
         EnvParamNameEmpty,
         NoPublishRepositoryInfo,
@@ -869,8 +871,10 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FindAndReplaceNoItemsToRepalce, new UserMsg(eUserMsgType.WARN, "No Suitable Items", "No suitable items selected to replace.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FindAndReplaceViewRunSetNotSupported, new UserMsg(eUserMsgType.INFO, "View " + GingerDicser.GetTermResValue(eTermResKey.RunSet), "View " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " is not supported.", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerAnalyticsConnectionSuccess, new UserMsg(eUserMsgType.INFO, "Ginger Analytics Connection Info" , " Ginger Analytics Connection is Successfull.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerAnalyticsConnectionFail, new UserMsg(eUserMsgType.INFO, "Ginger Analytics Connection Info", " Ginger Analytics Connection is Failed, Please check credentials.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsConnectionSuccess, new UserMsg(eUserMsgType.INFO, "GingerOps Connection Info" , " GingerOps Connection is Successfull.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsConnectionFail, new UserMsg(eUserMsgType.INFO, "GingerOps Connection Info", " GingerOps Connection is Failed, Please check credentials.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsSyncFailed, new UserMsg(eUserMsgType.INFO, "GingerOps Sync Info", " GingerOps Sync Failed.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsSyncSuccess, new UserMsg(eUserMsgType.INFO, "GingerOps Sync Info", " GingerOps Sync Successful.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.FileAlreadyExistWarn, new UserMsg(eUserMsgType.WARN, "File Already Exists", "File already exists, do you want to override?", eUserMsgOption.OKCancel, eUserMsgSelection.Cancel));
 

@@ -30,6 +30,11 @@ namespace Ginger.Variables
         {
             InitializeComponent();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtStringValue, TextBox.TextProperty, var, nameof(VariableString.InitialStringValue));
+
+            if (var.GOpsFlag)
+            {
+                txtStringValue.IsEnabled = false;
+            }
         }
     }
 }

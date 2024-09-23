@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
+namespace Ginger.Environments.GingerOpsEnvWizardLib
 {
-    public class GingerAnalyticsAPIResponseInfo
+    public class GingerOpsAPIResponseInfo
     {
-        public class GingerAnalyticsEnvironmentA
+        public class GingerOpsEnvironmentA
         {
             [JsonProperty("id")]
             public string Id { get; set; }
@@ -21,11 +21,11 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             public string Status { get; set; }
 
             [JsonProperty("parameter")]
-            public List<GAEnvParameter> EnvParameters { get; set; }
+            public List<GOpsEnvParameter> EnvParameters { get; set; }
 
         }
 
-        public class GingerAnalyticsEnvironmentB
+        public class GingerOpsEnvironmentB
         {
             [JsonProperty("environmentId")]
             public string Id { get; set; }
@@ -34,12 +34,12 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             public string Name { get; set; }
 
             [JsonProperty("application")]
-            public List<GingerAnalyticsApplication> GingerAnalyticsApplications { get; set; }
+            public List<GingerOpsApplication> GingerOpsApplications { get; set; }
 
         }
 
 
-        public class GingerAnalyticsArchitectureA
+        public class GingerOpsArchitectureA
         {
             [JsonProperty("id")]
             public string Id { get; set; }
@@ -50,7 +50,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
 
         }
 
-        public class GingerAnalyticsArchitectureB
+        public class GingerOpsArchitectureB
         {
             [JsonProperty("architectureId")]
             public string Id { get; set; }
@@ -59,12 +59,12 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             public string Name { get; set; }
 
             [JsonProperty("environment")]
-            public List<GingerAnalyticsEnvironmentA> GingerAnalyticsEnvironment { get; set; }
+            public List<GingerOpsEnvironmentA> GingerOpsEnvironment { get; set; }
 
 
         }
 
-        public class GingerAnalyticsProject
+        public class GingerOpsProject
         {
             [JsonProperty("id")]
             public string Id { get; set; }
@@ -73,10 +73,10 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             public string Name { get; set; }
 
             [JsonProperty("architecture")]
-            public List<GingerAnalyticsArchitectureA> GingerAnalyticsArchitecture { get; set; }
+            public List<GingerOpsArchitectureA> GingerOpsArchitecture { get; set; }
         }
 
-        public class GingerAnalyticsApplication
+        public class GingerOpsApplication
         {
             [JsonProperty("id")]
             public string Id { get; set; }
@@ -88,9 +88,9 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             public string Status { get; set; }
 
             [JsonProperty("parameter")]
-            public List<GAApplicationParameter> GAApplicationParameters { get; set; }
+            public List<GOpsApplicationParameter> GOpsApplicationParameters { get; set; }
         }
-        public class GAApplicationParameter
+        public class GOpsApplicationParameter
         {
             [JsonProperty("value")]
             public string Value { get; set; }
@@ -99,7 +99,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             public string Name { get; set; }
         }
 
-        public class GAEnvParameter
+        public class GOpsEnvParameter
         {
             [JsonProperty("value")]
             public string Value { get; set; }
@@ -107,11 +107,5 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             [JsonProperty("name")]
             public string Name { get; set; }
         }
-
-        public class Root
-        {
-            public List<GingerAnalyticsProject> GingerAnalyticsProject { get; set; }
-        }
-
     }
 }

@@ -1,14 +1,14 @@
-﻿<Page x:Class="Ginger.Environments.GingerAnalyticsEnvWizardLib.GingerAnalyticsIntroPage"
+﻿<Page x:Class="Ginger.Environments.GingerOpsEnvWizardLib.GingerOpsIntroPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Ginger.Environments.GingerAnalyticsEnvWizardLib"
+      xmlns:local="clr-namespace:Ginger.Environments.GingerOpsEnvWizardLib"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="GingerAnalyticsIntroPage">
+      Title="GingerOpsIntroPage">
 
     <Grid Background="{StaticResource $BackgroundColor_White}">
-        <TextBlock x:Name="xGAIntroTxtBlock" Style="{StaticResource $TextBlockStyle}" TextWrapping="Wrap" Margin="10,10,10,0"></TextBlock>
+        <TextBlock x:Name="xGOpsIntroTxtBlock" Style="{StaticResource $TextBlockStyle}" TextWrapping="Wrap" Margin="10,10,10,0"></TextBlock>
     </Grid>
 </Page>

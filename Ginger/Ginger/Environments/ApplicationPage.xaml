@@ -17,7 +17,7 @@
 
         <StackPanel Grid.Row="0">
             <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Name:"/>
-            <TextBox x:Name="ApplicationNameTextBox" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold"></TextBox>
+            <TextBox x:Name="ApplicationNameTextBox" IsEnabled="True" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold"></TextBox>
 
             <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Description:" Margin="0,5,0,0"/>
             <TextBox x:Name="DescriptionTextBox" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold" ></TextBox>

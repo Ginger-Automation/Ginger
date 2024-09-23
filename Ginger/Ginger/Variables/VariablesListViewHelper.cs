@@ -199,6 +199,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
+            if (VariablesParent.GOpsFlag)
+            {
+                return operationsList;
+            }
+
             ListItemOperation addNew = new ListItemOperation();
             addNew.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             addNew.AutomationID = "addNew";
@@ -221,6 +226,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemOperation> GetListExtraOperations()
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+
+            if (VariablesParent.GOpsFlag)
+            {
+                return extraOperationsList;
+            }
 
             ListItemOperation resetAll = new ListItemOperation();
             resetAll.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation };
@@ -318,7 +328,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             inputvariablesRules.OperationHandler = InputVariablesRuleHandler;
             extraOperationsList.Add(inputvariablesRules);
             //}
-            
+
             return extraOperationsList;
         }
 

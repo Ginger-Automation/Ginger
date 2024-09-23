@@ -20,8 +20,9 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Environments;
 using Ginger.Environments.AddEnvironmentWizardLib;
-using Ginger.Environments.GingerAnalyticsEnvWizardLib;
+using Ginger.Environments.GingerOpsEnvWizardLib;
 using Ginger.SolutionWindows.TreeViewItems;
+using GingerCore;
 using GingerCore.Environments;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
@@ -115,7 +116,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
             mContextMenu = new ContextMenu();
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Add New Environment", AddItemHandler, null, eImageType.Add);
-            TreeViewUtils.AddMenuItem(mContextMenu, "Import From Ginger Analytics", AddItemHandlerGA, null, eImageType.ImportFile);
+            TreeViewUtils.AddMenuItem(mContextMenu, "Import From GingerOps", AddItemHandlerGA, null, eImageType.ImportFile);
             if (mProjEnvironmentFolder.IsRootFolder)
             {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Environment", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
@@ -139,7 +140,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
 
         internal void AddItemHandlerGA(object sender, RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new AddGingerAnalyticsEnvWizard(mProjEnvironmentFolder));
+            WizardWindow.ShowWizard(new AddGingerOpsEnvWizard(mProjEnvironmentFolder));
         }
     }
 }

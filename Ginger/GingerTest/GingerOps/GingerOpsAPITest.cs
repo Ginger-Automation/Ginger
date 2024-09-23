@@ -8,29 +8,29 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Ginger.Environments.GingerAnalyticsEnvWizardLib;
+using Ginger.Environments.GingerOpsEnvWizardLib;
 using Ginger.Configurations;
-using static Ginger.Environments.GingerAnalyticsEnvWizardLib.GingerAnalyticsAPIResponseInfo;
+using static Ginger.Environments.GingerOpsEnvWizardLib.GingerOpsAPIResponseInfo;
 using Ginger.ExternalConfigurations;
 
-namespace GingerTest.GingerAnalytics;
+namespace GingerTest.GingerOps;
 
 [TestClass]
-public class GingerAnalyticsApiTest
+public class GingerOpsApiTest
 {
     private Mock<HttpMessageHandler> mockHandler;
     private HttpClient client;
-    private GingerAnalyticsConfiguration _mockUserConfig;
-    private GingerAnalyticsAPI gingerAnalyticsApi;
+    private GingerOpsConfiguration _mockUserConfig;
+    private GingerOpsAPI GingerOpsApi;
 
     [TestInitialize]
     public void Setup()
     {
         mockHandler = new Mock<HttpMessageHandler>();
         client = new HttpClient(mockHandler.Object);
-        gingerAnalyticsApi = new GingerAnalyticsAPI();
+        GingerOpsApi = new GingerOpsAPI();
        
-            _mockUserConfig = new GingerAnalyticsConfiguration()
+            _mockUserConfig = new GingerOpsConfiguration()
             {
                 Name = "test",
                 Token = "DummyTokenoijfdsfdsfsijwoieoweiwefjesofjewofrjew",
@@ -66,7 +66,7 @@ public class GingerAnalyticsApiTest
             .ReturnsAsync(response);
 
         // Act
-        bool result = await GingerAnalyticsAPI.RequestToken("clientId", "clientSecret", "https://address");
+        bool result = await GingerOpsAPI.RequestToken("clientId", "clientSecret", "https://address");
 
         // Assert
         Assert.IsFalse(result);
@@ -89,7 +89,7 @@ public class GingerAnalyticsApiTest
             .ReturnsAsync(response);
 
         // Act
-        bool result = await GingerAnalyticsAPI.RequestToken("clientId", "clientSecret", "https://address");
+        bool result = await GingerOpsAPI.RequestToken("clientId", "clientSecret", "https://address");
 
         // Assert
         Assert.IsFalse(result);
@@ -102,7 +102,7 @@ public class GingerAnalyticsApiTest
         _mockUserConfig.Token = null;
 
         // Act
-        var result = GingerAnalyticsAPI.IsTokenValid();
+        var result = GingerOpsAPI.IsTokenValid();
 
         // Assert
         Assert.IsFalse(result);
@@ -113,10 +113,10 @@ public class GingerAnalyticsApiTest
     {
         // Arrange
         _mockUserConfig.Token = "sample.valid.token";
-        GingerAnalyticsAPI.validTo = DateTime.UtcNow.AddMinutes(5);
+        GingerOpsAPI.validTo = DateTime.UtcNow.AddMinutes(5);
 
         // Act
-        var result = GingerAnalyticsAPI.IsTokenValid();
+        var result = GingerOpsAPI.IsTokenValid();
 
         // Assert
         Assert.IsFalse(result);
@@ -126,10 +126,10 @@ public class GingerAnalyticsApiTest
     public async Task FetchProjectDataFromGA_ShouldReturnNonEmptyDictionary_WhenDataIsFetched()
     {
         // Arrange
-        var projectList = new List<GingerAnalyticsAPIResponseInfo.GingerAnalyticsProject>
+        var projectList = new List<GingerOpsAPIResponseInfo.GingerOpsProject>
         {
-            new GingerAnalyticsAPIResponseInfo.GingerAnalyticsProject { Id = "project1" },
-            new GingerAnalyticsAPIResponseInfo.GingerAnalyticsProject { Id = "project2" }
+            new GingerOpsAPIResponseInfo.GingerOpsProject { Id = "project1" },
+            new GingerOpsAPIResponseInfo.GingerOpsProject { Id = "project2" }
         };
         var response = new HttpResponseMessage
         {
@@ -144,10 +144,10 @@ public class GingerAnalyticsApiTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
 
-        var projectListGA = new Dictionary<string, GingerAnalyticsProject>();
+        var ProjectListGOps = new Dictionary<string, GingerOpsProject>();
 
         // Act
-        var result = await gingerAnalyticsApi.FetchProjectDataFromGA(projectListGA);
+        var result = await GingerOpsApi.FetchProjectDataFromGOps(ProjectListGOps);
 
         // Assert
         Assert.AreNotEqual(2, result.Count);
@@ -171,10 +171,10 @@ public class GingerAnalyticsApiTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
 
-        var architectureListGA = new Dictionary<string, GingerAnalyticsArchitectureB>();
+        var architectureListGOps = new Dictionary<string, GingerOpsArchitectureB>();
 
         // Act
-        var result = await gingerAnalyticsApi.FetchEnvironmentDataFromGA("architectureId", architectureListGA);
+        var result = await GingerOpsApi.FetchEnvironmentDataFromGOps("architectureId", architectureListGOps);
 
         // Assert
         Assert.AreEqual(0, result.Count);
@@ -184,10 +184,10 @@ public class GingerAnalyticsApiTest
     public async Task FetchApplicationDataFromGA_ShouldReturnNonEmptyDictionary_WhenValidResponse()
     {
         // Arrange
-        var envList = new List<GingerAnalyticsAPIResponseInfo.GingerAnalyticsEnvironmentB>
+        var envList = new List<GingerOpsAPIResponseInfo.GingerOpsEnvironmentB>
         {
-            new GingerAnalyticsAPIResponseInfo.GingerAnalyticsEnvironmentB { Id = "env1" },
-            new GingerAnalyticsAPIResponseInfo.GingerAnalyticsEnvironmentB { Id = "env2" }
+            new GingerOpsAPIResponseInfo.GingerOpsEnvironmentB { Id = "env1" },
+            new GingerOpsAPIResponseInfo.GingerOpsEnvironmentB { Id = "env2" }
         };
         var response = new HttpResponseMessage
         {
@@ -202,10 +202,10 @@ public class GingerAnalyticsApiTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
 
-        var environmentListGA = new Dictionary<string, GingerAnalyticsEnvironmentB>();
+        var environmentListGOps = new Dictionary<string, GingerOpsEnvironmentB>();
 
         // Act
-        var result = await gingerAnalyticsApi.FetchApplicationDataFromGA("environmentId", environmentListGA);
+        var result = await GingerOpsApi.FetchApplicationDataFromGOps("environmentId", environmentListGOps);
 
         // Assert
         Assert.AreNotEqual(2, result.Count);

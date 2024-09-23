@@ -74,6 +74,15 @@ namespace Ginger.BusinessFlowPages
                 xDeleteBtn.ToolTip = $"Delete {GingerDicser.GetTermResValue(eTermResKey.Parameter)}";
                 xResetValueBtn.ToolTip = $"Reset {GingerDicser.GetTermResValue(eTermResKey.Parameter)} Value";
             }
+
+
+            if (mVariabelsParent.GOpsFlag)
+            {
+                xDeleteBtn.IsEnabled = false;
+                xResetValueBtn.IsEnabled = false;
+                xUndoBtn.IsEnabled = false;
+            }
+
             mContext = context;
             mPageViewMode = pageViewMode;
             if (pageViewMode == General.eRIPageViewMode.Standalone)
