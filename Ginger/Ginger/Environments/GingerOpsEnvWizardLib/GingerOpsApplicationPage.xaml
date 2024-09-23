@@ -14,6 +14,6 @@
 
         <Ginger:ucGrid x:Name="SelectApplicationGrid" IsReadOnly="true" 
                       ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed"/>
-        <Label x:Name="xNote" Content="Note: Environment will only be imported on Clicking Finish" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10" />
+        <Label x:Name="xNote" Content="Note: Environment will only be imported on Clicking Finish, changes will be automatically saved." HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10" />
     </Grid>
 </Page>
