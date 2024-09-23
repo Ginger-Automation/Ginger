@@ -606,8 +606,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 apiModelTreeSelectionPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
                                                                                     new System.Tuple<string, string>(nameof(ApplicationAPIModel.APIType), deltaAPI.learnedAPI.APIType.ToString()));
 
-                apiModelTreeSelectionPage.xTreeView.Tree.RefreshTreeNodeChildrens(apiRoot);
-
                 List<object> selectedList = apiModelTreeSelectionPage.ShowAsWindow("Matching API Models", (Window)AddAPIModelWizard.mWizardWindow);
 
                 ApplicationAPIModel selectedAPIModel = null;
