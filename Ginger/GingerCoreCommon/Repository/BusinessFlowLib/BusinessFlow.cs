@@ -2020,5 +2020,21 @@ namespace GingerCore
         public string ALMTestSetLevel { get; set; }
 
         public bool IsEntitySearchByName { get; set; }
+
+        /// <summary>
+        /// Gets the summary of variables in the Business flow.
+        /// </summary>
+        public List<General.VariableMinimalRecord> VariablesSummary
+        {
+            get
+            {
+                List<General.VariableMinimalRecord> variableDetails = [];
+                foreach (VariableBase variable in Variables)
+                {
+                    variableDetails.Add(new General.VariableMinimalRecord(variable.Name, variable.GetInitialValue(), variable.Value));
+                }
+                return variableDetails;
+            }
+        }
     }
 }

@@ -55,6 +55,21 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
+        bool mIsZipFolderAttachementEnabled;
+        [IsSerializedForLocalRepository]
+        public bool IsZipFolderAttachementEnabled
+        {
+            get
+            {
+                return mIsZipFolderAttachementEnabled;
+            }
+            set
+            {
+                mIsZipFolderAttachementEnabled = value;
+                OnPropertyChanged(nameof(IsZipFolderAttachementEnabled));
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public bool IsAlternameFolderUsed { get; set; }
         public override string GetNameForFileName() { return Name; }

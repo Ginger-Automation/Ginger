@@ -235,6 +235,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Activity:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bars);
                     break;
+                case eImageType.AIActivity:
+                    SetAsStaticImage("AIBrain.png");                    
+                    break;
                 case eImageType.Action:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bolt);
                     break;

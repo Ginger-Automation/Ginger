@@ -243,10 +243,7 @@ namespace Ginger.Drivers.DriversWindows
                             SetTitle(mDeviceGeneralInfo);
                             AlloworDisableControls(true);
                             xPinBtn_Click(null, null);
-                            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
-                            {
-                                AdjustWindowSize(imageSourceWidthPrecentage);
-                            }
+                            AdjustWindowSize(eImageChangeType.DoNotChange, true);
                         });
 
                     }
@@ -859,7 +856,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
                 SetOrientationButton();
                 RefreshDeviceScreenshotAsync();
-                AdjustWindowSize(imageSourceWidthPrecentage);
+                AdjustWindowSize(eImageChangeType.DoNotChange, true);
                 needToAutoZoom = true;
             }
             catch (Exception ex)
@@ -1204,9 +1201,6 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     this.Icon = ImageMakerControl.GetImageSource(eImageType.Ios);
                 }
-
-                this.Width = 350;
-                this.Height = 625;                
                 xMessageLbl.Content = "Connecting to Device...";
 
                 //Configurations & Metrics
@@ -1280,10 +1274,6 @@ namespace Ginger.Drivers.DriversWindows
             xBackButton.IsEnabled = toAllow;
             xHomeBtn.IsEnabled = toAllow;
             xMenuBtn.IsEnabled = toAllow;
-
-            xVolumUpPnl.IsEnabled = toAllow;
-            xVolumDownPnl.IsEnabled = toAllow;
-            xLockPnl.IsEnabled = toAllow;
 
             if (!toAllow)
             {
@@ -1757,30 +1747,51 @@ namespace Ginger.Drivers.DriversWindows
             mDriver.OpenDeviceExternalView();
         }
 
-        double imageSourceWidthPrecentage = 0.25;
+        enum eImageChangeType { Increase, Decrease, DoNotChange }
         private void xZoomInBtn_Click(object sender, RoutedEventArgs e)
         {
-            imageSourceWidthPrecentage += 0.05;
-            AdjustWindowSize(imageSourceWidthPrecentage);
+            AdjustWindowSize(eImageChangeType.Increase, false);
         }
 
         private void xZoomOutBtn_Click(object sender, RoutedEventArgs e)
         {
-            imageSourceWidthPrecentage -= 0.05;
-            AdjustWindowSize(imageSourceWidthPrecentage);
+            AdjustWindowSize(eImageChangeType.Decrease, false);
         }
 
-        private void AdjustWindowSize(double widthPrecentage)
+        private void AdjustWindowSize(eImageChangeType operationType, bool resetCanvasSize)
         {
 
-            if (xDeviceScreenshotImage.Source != null && widthPrecentage > 0.2 && widthPrecentage < 0.5)
+            if (xDeviceScreenshotImage.Source != null )
             {
                 double imageSourceHightWidthRatio = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.Source.Width;
+                if (resetCanvasSize)
+                {
+                    if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+                    {
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * 0.5;
+                    }
+                    else
+                    {
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * 0.25;
+                    }
+                }
                 double previousCanasWidth = xDeviceScreenshotCanvas.ActualWidth;
                 double previousCanasHeight = xDeviceScreenshotCanvas.ActualHeight;
+                double targetWidthRatio = xDeviceScreenshotImage.Source.Width / xDeviceScreenshotCanvas.Width;
 
                 //Update canvas size
-                xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width * widthPrecentage);
+                switch (operationType)
+                {
+                    case eImageChangeType.Increase:
+                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (1.15);
+                        break;
+                    case eImageChangeType.Decrease:
+                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (0.85);
+                        break;
+                    case eImageChangeType.DoNotChange:
+                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (1);
+                        break;
+                }
                 xDeviceScreenshotCanvas.Height = xDeviceScreenshotCanvas.Width * imageSourceHightWidthRatio;
 
                 //Update window size
