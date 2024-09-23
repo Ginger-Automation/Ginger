@@ -1120,6 +1120,7 @@ namespace Ginger.WindowExplorer
 
             xLoadingScreenShotBanner.Visibility = Visibility.Visible;
             xScreenShotFrame.Visibility = Visibility.Collapsed;
+            xRetrySSBanner.Visibility = Visibility.Collapsed;
 
             /// UnComment later after complete Implementation of functionalities over all platforms.
             //if(IsWebMobJavaPlatform)
