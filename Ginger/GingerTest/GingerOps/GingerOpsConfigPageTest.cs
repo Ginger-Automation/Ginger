@@ -41,7 +41,6 @@ namespace GingerTest.GingerOps
         public void AreRequiredFieldsEmpty_WhenFieldsAreNotEmpty_ReturnsFalse()
         {
             // Arrange
-            //_page.GingerOpsUserConfig = _mockUserConfig;
 
             // Act
             bool result = _page.AreRequiredFieldsEmpty();
@@ -68,7 +67,6 @@ namespace GingerTest.GingerOps
         {
             // Arrange
             _mockUserConfig.Token = string.Empty;
-            //_page.GingerOpsUserConfig = _mockUserConfig;
 
             _mockAnalyticsAPI.Setup(GingerOpsAPI => GingerOpsAPI.RequestToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                              .Returns(Task.FromResult(true));
