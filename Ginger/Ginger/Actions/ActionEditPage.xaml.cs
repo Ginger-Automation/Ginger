@@ -1056,6 +1056,7 @@ namespace Ginger.Actions
                                 node.IsSelected = columnPreferences.Contains("StoreTo", StringComparison.OrdinalIgnoreCase);
                                 break;
                             default:
+                                Reporter.ToLog(eLogLevel.ERROR, "Invalid format in column preferences");
                                 break;
                         }
 
@@ -1182,6 +1183,9 @@ namespace Ginger.Actions
                         });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
                         columnPreferences += node.IsSelected ? "StoreTo" : "";                                                   
+                        break;
+                    default:
+                        Reporter.ToLog(eLogLevel.ERROR, "Invalid format in column preferences");
                         break;
                 }
             }
