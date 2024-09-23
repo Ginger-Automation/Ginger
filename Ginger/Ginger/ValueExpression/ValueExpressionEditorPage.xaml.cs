@@ -978,6 +978,7 @@ namespace Ginger
             mVE.Value = this.xExpressionUCTextEditor.textEditor.Text;
             xCalculatedTextBox.Text = mVE.ValueCalculated;
         }
+
         /// <summary>
         /// Finds the selected environment from the total list of environments
         /// </summary>
@@ -986,7 +987,6 @@ namespace Ginger
         {
             return mEnvs.FirstOrDefault((mEnv) => mEnv.Guid == WorkSpace.Instance.UserProfile.RecentEnvironment);
         }
-
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
@@ -1175,6 +1175,32 @@ namespace Ginger
             //    //xHelpPanel.Visibility = Visibility.Collapsed;
 
             //}
+        }
+
+        /// <summary>
+        /// Copies the text from the calculated text box to the clipboard.
+        /// </summary>
+        /// <param name="sender">The button that triggered the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void xCopyCalculatedButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(xCalculatedTextBox.Text))
+            {
+                GingerCore.General.SetClipboardText(xCalculatedTextBox.Text);
+            }
+        }
+
+        /// <summary>
+        /// Copies the text from the expression text editor to the clipboard.
+        /// </summary>
+        /// <param name="sender">The button that triggered the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void xCopyExpressionButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(xExpressionUCTextEditor.textEditor.Text))
+            {
+                GingerCore.General.SetClipboardText(xExpressionUCTextEditor.textEditor.Text);
+            }
         }
     }
 }

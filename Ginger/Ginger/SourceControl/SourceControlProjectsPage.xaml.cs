@@ -351,7 +351,7 @@ namespace Ginger.SourceControl
             }
             else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.None)
             {
-                mSourceControl = new SVNSourceControl();
+                mSourceControl = new GITSourceControl();
             }
 
             if (mSourceControl != null)
