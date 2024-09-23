@@ -972,7 +972,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             else
             {
-                return act.ActionAppPackage.Value;
+                return act.ActionAppPackage.ValueForDriver;
             }
         }
 
