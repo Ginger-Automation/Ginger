@@ -626,13 +626,13 @@ namespace Ginger.Run.RunSetActions
             fieldsValuesHTMLTableCells = new StringBuilder();
             List<int> listOfHandledGingerRunnersReport = new List<int>();
             bool firstIteration = true;
-            foreach (LiteDbRunner GR in liteDbRunSet.RunnersColl.Where(x => x.RunStatus == eRunStatus.Failed.ToString()).OrderBy(x => x.Seq))
+            foreach (LiteDbRunner GR in liteDbRunSet.RunnersColl.Where(x => x.RunStatus ==  nameof(eRunStatus.Failed)).OrderBy(x => x.Seq))
             {
-                foreach (LiteDbBusinessFlow br in GR.BusinessFlowsColl.Where(x => x.RunStatus == eRunStatus.Failed.ToString()))
+                foreach (LiteDbBusinessFlow br in GR.BusinessFlowsColl.Where(x => x.RunStatus == nameof(eRunStatus.Failed)))
                 {
-                    foreach (LiteDbActivity ac in br.ActivitiesColl.Where(x => x.RunStatus == eRunStatus.Failed.ToString()).OrderBy(x => x.Seq))
+                    foreach (LiteDbActivity ac in br.ActivitiesColl.Where(x => x.RunStatus == nameof(eRunStatus.Failed)).OrderBy(x => x.Seq))
                     {
-                        foreach (LiteDbAction act in ac.ActionsColl.Where(x => x.RunStatus == eRunStatus.Failed.ToString()).OrderBy(x => x.Seq))
+                        foreach (LiteDbAction act in ac.ActionsColl.Where(x => x.RunStatus == nameof(eRunStatus.Failed)).OrderBy(x => x.Seq))
                         {
                             isFailuresDetailsExists = true;
 
@@ -859,7 +859,7 @@ namespace Ginger.Run.RunSetActions
 
         private void ExecutedActivitiesDetailsGenrator(LiteDbRunSet liteDbRunSet, HTMLReportConfiguration currentTemplate, ref string reportHTML, StringBuilder fieldsNamesHTMLTableCells, StringBuilder fieldsValuesHTMLTableCells)
         {
-            List<int> listOfHandledGingerRunnersReport = new List<int>();
+            List<int> listOfHandledGingerRunnersReport = [];
             bool firstActivityIteration = true;
             string tableColor = "<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>";
             string tableStyle = @"<td style='padding: 10px; border: 1px solid #dddddd'>";

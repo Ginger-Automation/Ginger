@@ -376,6 +376,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
                 notificationsList.Add(sharedRepoInd);
             }
+            if (mActivity.AIGenerated)
+            {
+                ListItemNotification aIGeneratedInd = new ListItemNotification();
+                aIGeneratedInd.AutomationID = "aIGeneratedInd";
+                aIGeneratedInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.AIActivity;
+                aIGeneratedInd.ToolTip = string.Format("{0} is AI Generated", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                aIGeneratedInd.ImageSize = 16;
+                aIGeneratedInd.BindingObject = mActivity;
+                aIGeneratedInd.BindingFieldName = nameof(RepositoryItemBase.AIGenerated);
+                aIGeneratedInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(aIGeneratedInd);
+            }
             return notificationsList;
         }
 

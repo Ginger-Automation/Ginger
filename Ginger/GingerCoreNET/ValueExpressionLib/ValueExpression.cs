@@ -31,14 +31,13 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
-using SikuliStandard.sikuli_REST;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 
@@ -110,7 +109,7 @@ namespace GingerCore
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
 
-        private static Regex rNestedfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\(([^()])*\\)}", RegexOptions.Compiled);       
+        private static Regex rNestedfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\(([^()])*\\)}", RegexOptions.Compiled);
         private static Regex MockDataExpPattern = new Regex("{MockDataExp({.*}|[^{}]*)*}", RegexOptions.Compiled, new TimeSpan(0, 0, 5));
         private static Regex CsExppattern = new Regex("{CS Exp({.*}|[^{}]*)*}", RegexOptions.Compiled);
 
@@ -265,7 +264,6 @@ namespace GingerCore
             if (mValueCalculated.StartsWith(@"\~"))
             {
                 mValueCalculated = "~" + mValueCalculated.Substring(2);
-
             }
         }
 
@@ -381,7 +379,7 @@ namespace GingerCore
             {
                 string objStr, functions, Locale;
                 int DatasetStartIndex, DatasetEndIndex, LocaleStartIndex, LocaleEndIndex;
-                MockdataExpressionExtract(MockDataExpression, out objStr, out functions, out Locale,out DatasetStartIndex,out DatasetEndIndex,out LocaleStartIndex,out LocaleEndIndex);
+                MockdataExpressionExtract(MockDataExpression, out objStr, out functions, out Locale, out DatasetStartIndex, out DatasetEndIndex, out LocaleStartIndex, out LocaleEndIndex);
                 Mockdata mockdata = new();
                 mockdata.MockDataDatasets = objStr;
                 mockdata.Locale = Locale;
@@ -563,6 +561,11 @@ namespace GingerCore
             }
         }
 
+        private static readonly JsonSerializerOptions s_writeOptions = new()
+        {
+            WriteIndented = true
+        };
+
         private string GetValueFromReflection(object obj, string field)
         {
             object value = null;
@@ -584,7 +587,18 @@ namespace GingerCore
             {
                 if (value != null)
                 {
-                    return value.ToString();
+                    // Check if the provided value is an IEnumerable but not a string  
+                    if (value is not string && value is System.Collections.IEnumerable enumerableValue)
+                    {
+                        // Serialize the enumerable value to JSON using the specified write options  
+                        return JsonSerializer.Serialize(enumerableValue, s_writeOptions);
+                    }
+                    else
+                    {
+                        // If the value is a string and not an enumerable,  
+                        // return its string representation  
+                        return value.ToString();
+                    }
                 }
                 else
                 {
@@ -694,21 +708,21 @@ namespace GingerCore
                 return true;
             }
 
-            if(VE.Contains("{CS Exp="))
+            if (VE.Contains("{CS Exp="))
             {
                 return true;
             }
 
             MatchCollection functionMatches = rNestedfunc.Matches(VE);
 
-            if(functionMatches.Count > 0)
+            if (functionMatches.Count > 0)
             {
                 return true;
             }
 
             MatchCollection FDObjectMatches = rxFDPattern.Matches(VE);
 
-            if(FDObjectMatches.Count > 0)
+            if (FDObjectMatches.Count > 0)
             {
                 return true;
             }
@@ -777,7 +791,7 @@ namespace GingerCore
                 // whenever error is to be displayed, do not use Replace,
                 // use only the error string otherwise the output might look anamalous
                 // eg: //*[text()="{Error: The Data Source Variable was not found }"]
-      
+
                 mValueCalculated = string.Format("ERROR: The Data Source Variable '{0}' was not found", DSName);
                 return;
             }
@@ -1195,7 +1209,7 @@ namespace GingerCore
                         {
                             // Use Replace because incase, if it is used with something else for example xpath (//*[text() = "<DataSource Query>"]) the whole string should be the output instead of just the result
                             // data source query
-                            mValueCalculated = mValueCalculated.Replace(pOrg , liteDB.GetQueryOutput(litedbquery, Name[0], rowNumber, Markasdone, tableName[0]));
+                            mValueCalculated = mValueCalculated.Replace(pOrg, liteDB.GetQueryOutput(litedbquery, Name[0], rowNumber, Markasdone, tableName[0]));
                         }
 
                         // Set value Query
@@ -1274,7 +1288,7 @@ namespace GingerCore
 
         private static bool IsQueryFromOldVersion(string Query)
         {
-            if(Query.Contains(".find", StringComparison.CurrentCultureIgnoreCase) || Query.Contains(".select", StringComparison.CurrentCultureIgnoreCase))
+            if (Query.Contains(".find", StringComparison.CurrentCultureIgnoreCase) || Query.Contains(".select", StringComparison.CurrentCultureIgnoreCase))
             {
                 return true;
             }
@@ -1467,7 +1481,7 @@ namespace GingerCore
 
             return Expr;
         }
-        public static void GetEnvAppFromEnvURL(string EnvValExp , ref string AppName )
+        public static void GetEnvAppFromEnvURL(string EnvValExp, ref string AppName)
         {
 
             AppName = EnvValExp.Replace("\r\n", "vbCrLf");
@@ -1500,7 +1514,7 @@ namespace GingerCore
             }
         }
 
-        public static void GetEnvAppAndParam(string EnvValueExp , ref string AppName , ref string GlobalParamName )
+        public static void GetEnvAppAndParam(string EnvValueExp, ref string AppName, ref string GlobalParamName)
         {
             EnvValueExp = EnvValueExp.Replace("\r\n", "vbCrLf");
             string appStr = " App=";
@@ -1517,7 +1531,7 @@ namespace GingerCore
             string ParamValue = null;
             string AppName = string.Empty, GlobalParamName = string.Empty;
 
-            GetEnvAppAndParam(p , ref AppName , ref GlobalParamName);
+            GetEnvAppAndParam(p, ref AppName, ref GlobalParamName);
 
 
             EnvApplication app = null;
@@ -1530,10 +1544,10 @@ namespace GingerCore
                 VariableBase VB = app.GetVariable(GlobalParamName);
                 if (VB != null)
                 {
-                    if (VB is VariableDynamic variableDynamic) 
+                    if (VB is VariableDynamic variableDynamic)
                     {
                         ParamValue = variableDynamic.ValueExpression + "";
-                        
+
                     }
                     else
                     {
@@ -1544,7 +1558,7 @@ namespace GingerCore
                     {
                         string strValuetoPass = EncryptionHandler.DecryptwithKey(VB.Value);
                         if (!string.IsNullOrEmpty(strValuetoPass))
-                        { 
+                        {
                             mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
                             mEncryptedValue = VB.Value;
                         }
@@ -1769,7 +1783,7 @@ namespace GingerCore
                     }
                     else if (vb is VariableDynamic variableDynamic)
                     {
-                        variableDynamic.Init(Env , BF);
+                        variableDynamic.Init(Env, BF);
                         VarValue = variableDynamic.Value;
                     }
                     else
@@ -1834,7 +1848,7 @@ namespace GingerCore
                 {
                     return true;
                 }
-                else  if (MockDataExpPattern.IsMatch(mValueCalculated))
+                else if (MockDataExpPattern.IsMatch(mValueCalculated))
                 {
                     return true;
                 }
@@ -1844,7 +1858,7 @@ namespace GingerCore
                 Reporter.ToLog(eLogLevel.ERROR, "Timeout Exception", ex);
                 return false;
             }
-            
+
             return false;
         }
 
@@ -1876,23 +1890,23 @@ namespace GingerCore
         {
             try
             {
-            if (IsThisAValueExpression(value))
-            {
-            ValueExpression valueExpression = new();
-            valueExpression.DecryptFlag = true;
-            value = valueExpression.Calculate(value);
-            valueExpression.DecryptFlag = false;
-            return value;
-            }
-            else if (EncryptionHandler.IsStringEncrypted(value))
-            {
-            value = EncryptionHandler.DecryptwithKey(value);
-            return value;
-            }
+                if (IsThisAValueExpression(value))
+                {
+                    ValueExpression valueExpression = new();
+                    valueExpression.DecryptFlag = true;
+                    value = valueExpression.Calculate(value);
+                    valueExpression.DecryptFlag = false;
+                    return value;
+                }
+                else if (EncryptionHandler.IsStringEncrypted(value))
+                {
+                    value = EncryptionHandler.DecryptwithKey(value);
+                    return value;
+                }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Unable to decrypt the value expression", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to decrypt the value expression", ex);
             }
             return value;
         }
@@ -1901,7 +1915,7 @@ namespace GingerCore
     public class Mockdata
     {
         public string MockDataDatasets { get; set; }
-        
+
         public string Locale { get; set; }
 
         public string Function { get; set; }

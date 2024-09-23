@@ -148,5 +148,6 @@ namespace GingerCore.Variables
         {
             this.ValueList = InitialValue;
         }
+
     }
 }

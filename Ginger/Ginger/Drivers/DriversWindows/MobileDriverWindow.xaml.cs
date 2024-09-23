@@ -222,12 +222,14 @@ namespace Ginger.Drivers.DriversWindows
                     if (mDriver.IsDeviceConnected)
                     {
                         await this.Dispatcher.InvokeAsync(async () =>
-                        {
-                            xMessagePnl.Visibility = Visibility.Collapsed;
-                            xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
+                        {                                                       
                             xMessageLbl.Content = "Loading Device Screenshot...";
+                            xDeviceSectionMainPnl.Background = new SolidColorBrush(Colors.Transparent);
+                            xMessagePnl.Visibility = Visibility.Collapsed;
 
+                            xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
                             await RefreshDeviceScreenshotAsync();
+
                             SetOrientationButton();
                             xSwipeBtn.Visibility = Visibility.Visible;
                             xCordBtn.Visibility = Visibility.Visible;
@@ -236,17 +238,12 @@ namespace Ginger.Drivers.DriversWindows
                                 xExternalViewBtn.Visibility = Visibility.Visible;
                             }
                             DoContinualDeviceScreenshotRefresh();
-
                             Dictionary<string, object> mDeviceGeneralInfo;
                             mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
-
                             SetTitle(mDeviceGeneralInfo);
                             AlloworDisableControls(true);
                             xPinBtn_Click(null, null);
-                            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
-                            {
-                                AdjustWindowSize(imageSourceWidthPrecentage);
-                            }
+                            AdjustWindowSize(eImageChangeType.DoNotChange, true);
                         });
 
                     }
@@ -840,8 +837,7 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private bool needToAutoZoom = false;
-        private void xOrientationBtn_Click(object sender, RoutedEventArgs e)
+        private async void xOrientationBtn_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -853,14 +849,9 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     mDriver.SwitchToLandscape();
                 }                
-                if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
-                {
-                    RefreshDeviceScreenshotAsync();
-                }
                 SetOrientationButton();
-                RefreshDeviceScreenshotAsync();
-                AdjustWindowSize(imageSourceWidthPrecentage);
-                needToAutoZoom = true;
+                await RefreshDeviceScreenshotAsync();
+                AdjustWindowSize(eImageChangeType.DoNotChange, true);
             }
             catch (Exception ex)
             {
@@ -1204,9 +1195,6 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     this.Icon = ImageMakerControl.GetImageSource(eImageType.Ios);
                 }
-
-                this.Width = 350;
-                this.Height = 625;                
                 xMessageLbl.Content = "Connecting to Device...";
 
                 //Configurations & Metrics
@@ -1280,10 +1268,6 @@ namespace Ginger.Drivers.DriversWindows
             xBackButton.IsEnabled = toAllow;
             xHomeBtn.IsEnabled = toAllow;
             xMenuBtn.IsEnabled = toAllow;
-
-            xVolumUpPnl.IsEnabled = toAllow;
-            xVolumDownPnl.IsEnabled = toAllow;
-            xLockPnl.IsEnabled = toAllow;
 
             if (!toAllow)
             {
@@ -1392,7 +1376,9 @@ namespace Ginger.Drivers.DriversWindows
                         if (imageByteArray == null || imageByteArray.Length == 0)
                         {
                             Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to update the device screenshot, Error:{0}"));
+
                             xDeviceScreenshotCanvas.Visibility = Visibility.Collapsed;
+                            xDeviceSectionMainPnl.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#424242"));
                             xMessagePnl.Visibility = Visibility.Visible;
                             xMessageImage.ImageType = eImageType.Image;
                             xMessageLbl.Content = "Failed to retrieve device screenshot " + Environment.NewLine + "due to a lost or failed connection." + Environment.NewLine + "Check the log for details.";
@@ -1436,6 +1422,7 @@ namespace Ginger.Drivers.DriversWindows
                             {
                                 xDeviceScreenshotCanvas.Visibility = Visibility.Collapsed;
                                 xMessageProcessingImage.Visibility = Visibility.Collapsed;
+                                xDeviceSectionMainPnl.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#424242"));
                                 xMessagePnl.Visibility = Visibility.Visible;
                                 xMessageImage.ImageType = eImageType.Image;
                                 xMessageImage.ImageForeground = new SolidColorBrush(Colors.OrangeRed);
@@ -1757,35 +1744,78 @@ namespace Ginger.Drivers.DriversWindows
             mDriver.OpenDeviceExternalView();
         }
 
-        double imageSourceWidthPrecentage = 0.25;
+        enum eImageChangeType { Increase, Decrease, DoNotChange }
         private void xZoomInBtn_Click(object sender, RoutedEventArgs e)
         {
-            imageSourceWidthPrecentage += 0.05;
-            AdjustWindowSize(imageSourceWidthPrecentage);
+            AdjustWindowSize(eImageChangeType.Increase, false);
         }
 
         private void xZoomOutBtn_Click(object sender, RoutedEventArgs e)
         {
-            imageSourceWidthPrecentage -= 0.05;
-            AdjustWindowSize(imageSourceWidthPrecentage);
+            AdjustWindowSize(eImageChangeType.Decrease, false);
         }
 
-        private void AdjustWindowSize(double widthPrecentage)
+        private int mZoomSize = 25;
+        private void AdjustWindowSize(eImageChangeType operationType, bool resetCanvasSize)
         {
 
-            if (xDeviceScreenshotImage.Source != null && widthPrecentage > 0.2 && widthPrecentage < 0.5)
+            if (xDeviceScreenshotImage.Source != null )
             {
                 double imageSourceHightWidthRatio = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.Source.Width;
+                if (resetCanvasSize)
+                {
+                    if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+                    {
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * 0.5;
+                    }
+                    else
+                    {
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * 0.25;
+                    }
+                    mZoomSize = 25;
+                }
                 double previousCanasWidth = xDeviceScreenshotCanvas.ActualWidth;
                 double previousCanasHeight = xDeviceScreenshotCanvas.ActualHeight;
+                double targetWidthRatio = xDeviceScreenshotImage.Source.Width / xDeviceScreenshotCanvas.Width;
 
                 //Update canvas size
-                xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width * widthPrecentage);
+                switch (operationType)
+                {
+                    case eImageChangeType.Increase:
+                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (1.15);
+                        mZoomSize += 25;
+                        break;
+                    case eImageChangeType.Decrease:
+                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (0.85);
+                        mZoomSize -= 25;
+                        break;
+                    case eImageChangeType.DoNotChange:
+                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (1);
+                        break;
+                }
                 xDeviceScreenshotCanvas.Height = xDeviceScreenshotCanvas.Width * imageSourceHightWidthRatio;
 
                 //Update window size
                 this.Width = this.Width + (xDeviceScreenshotCanvas.Width - previousCanasWidth);
-                this.Height = this.Height + (xDeviceScreenshotCanvas.Height - previousCanasHeight);
+                this.Height = xDeviceScreenshotCanvas.Height + 100;
+
+                if (mZoomSize >= 100)
+                {
+                    xZoomInBtn.IsEnabled = false;
+                }
+                else
+                {
+                    xZoomInBtn.IsEnabled = true;
+                }
+                if (mZoomSize <= 0)
+                {
+                    xZoomOutBtn.IsEnabled = false;
+                }
+                else
+                {
+                    xZoomOutBtn.IsEnabled = true;
+                }
+                xZoomSizeLbl.Content = mZoomSize.ToString() + "%";
             }
         }
     }

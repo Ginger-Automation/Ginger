@@ -4,7 +4,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
-using OpenQA.Selenium;
 
 namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
 {
@@ -37,7 +36,7 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             foreach(var appPlatform in tempAppPlat)
             {
                 WorkSpace.Instance.Solution.ApplicationPlatforms.Add(appPlatform);
-            }
+            }            
 
             foreach (ProjEnvironment item in ImportedEnvs)
             {

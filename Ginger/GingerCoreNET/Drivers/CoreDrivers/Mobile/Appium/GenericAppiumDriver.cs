@@ -1709,7 +1709,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier")?.ToString());
                 }
                 else
                 {
@@ -3444,7 +3444,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + api + "Response: " + response.Content);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to send " + api + "Response: " + response.Content);
                     return response.Content;
                 }
             }
