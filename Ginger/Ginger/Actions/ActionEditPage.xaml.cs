@@ -102,7 +102,7 @@ namespace Ginger.Actions
         Button mSimulateRunBtn = new Button();
         Button mRunActionBtn = new Button();
         Button mStopRunBtn = new Button();
-        string[] columnPreferencesArray = new string[5];
+        string? columnPreferences;
 
         private bool saveWasDone = false;
         ActionFlowControlPage mAFCP;
@@ -1031,7 +1031,7 @@ namespace Ginger.Actions
                 columnMultiSelectComboBox.ItemCheckBoxClick += ColumnMultiSelectComboBox_ItemCheckBoxClick;
 
 
-                columnPreferencesArray = WorkSpace.Instance.UserProfile.ActionOutputValueUserPreferences.Split(',');
+                columnPreferences = WorkSpace.Instance.UserProfile.ActionOutputValueUserPreferences;
              
 
                 foreach (Node node in columnMultiSelectComboBox._nodeList)
@@ -1041,22 +1041,25 @@ namespace Ginger.Actions
                         switch (node.Title)
                         {
                             case "Description":
-                                node.IsSelected = string.IsNullOrEmpty( columnPreferencesArray[0])?false:true;
+                                node.IsSelected = columnPreferences.Contains("Description", StringComparison.OrdinalIgnoreCase);
                                 break;
                             case "Path":
-                                node.IsSelected = string.IsNullOrEmpty(columnPreferencesArray[1]) ? false : true;
+                                node.IsSelected = columnPreferences.Contains("Path", StringComparison.OrdinalIgnoreCase);
                                 break;
                             case "Actual Value":
-                                node.IsSelected = string.IsNullOrEmpty(columnPreferencesArray[2]) ? false : true;
+                                node.IsSelected = columnPreferences.Contains("ActualValue", StringComparison.OrdinalIgnoreCase);
                                 break;
                             case "Expected Value":
-                                node.IsSelected = string.IsNullOrEmpty(columnPreferencesArray[3]) ? false : true;
+                                node.IsSelected = columnPreferences.Contains("ExpectedValue", StringComparison.OrdinalIgnoreCase);
                                 break;
                             case "Store To":
-                                node.IsSelected = string.IsNullOrEmpty(columnPreferencesArray[4]) ? false : true;
+                                node.IsSelected = columnPreferences.Contains("StoreTo", StringComparison.OrdinalIgnoreCase);
+                                break;
+                            default:
                                 break;
                         }
-                    }
+
+                      }
                     catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Invalid format in column preferences", ex);
@@ -1067,7 +1070,7 @@ namespace Ginger.Actions
                 CheckBox descriptionCheckBox = new CheckBox
                 {
                     Content = "Description",
-                    IsChecked = string.IsNullOrEmpty(columnPreferencesArray[0]) ? false : true
+                    IsChecked = columnPreferences.Contains("Description", StringComparison.OrdinalIgnoreCase)
                 };
 
 
@@ -1134,7 +1137,7 @@ namespace Ginger.Actions
                     }
                 }
             }
-
+            columnPreferences = "";
             columnCount = 0;
             foreach (Node node in columnMultiSelectComboBox._nodeList)
             {
@@ -1144,21 +1147,21 @@ namespace Ginger.Actions
                         customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Description, Visible = node.IsSelected, WidthWeight = 180 });
                         customDynamicView.GridColsView.Add(new GridColView() { Field = "...", Header = "  ...", Visible = node.IsSelected });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                        columnPreferencesArray[0] = node.IsSelected ? "Description" : "";
+                        columnPreferences = node.IsSelected ? "Description," : "";
                         break;
 
                     case "Path":
                         customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Path, Visible = node.IsSelected, WidthWeight = 180 });
                         customDynamicView.GridColsView.Add(new GridColView() { Field = "....", Header = "  ...", Visible = node.IsSelected });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                        columnPreferencesArray[1] = node.IsSelected ? "Path" : "";
+                        columnPreferences += node.IsSelected ? "Path," : "";
                         break;
 
                     case "Actual Value":
                         customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Visible = node.IsSelected, WidthWeight = 180 });
                         customDynamicView.GridColsView.Add(new GridColView() { Field = ">>", Visible = node.IsSelected });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                        columnPreferencesArray[2] = node.IsSelected ? "ActualValue" : "";
+                        columnPreferences+= node.IsSelected ? "ActualValue," : "";
                         break;
 
                     case "Expected Value":
@@ -1166,7 +1169,7 @@ namespace Ginger.Actions
                         customDynamicView.GridColsView.Add(new GridColView() { Field = "......", Header = "  ...", Visible = node.IsSelected });
                         customDynamicView.GridColsView.Add(new GridColView() { Field = "Clear Expected Value", Header = "X", Visible = node.IsSelected });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                        columnPreferencesArray[3] = node.IsSelected ? "ExpectedValue" : "";
+                        columnPreferences += node.IsSelected ? "ExpectedValue," : "";
                         break;
 
                     case "Store To":
@@ -1178,14 +1181,14 @@ namespace Ginger.Actions
                             Header = "Store To"
                         });
                         columnCount = node.IsSelected ? columnCount + 1 : columnCount;
-                        columnPreferencesArray[4] = node.IsSelected ? "StoreTo" : "";
+                        columnPreferences += node.IsSelected ? "StoreTo" : "";                                                   
                         break;
                 }
             }
 
 
 
-            WorkSpace.Instance.UserProfile.ActionOutputValueUserPreferences = string.Join(",", columnPreferencesArray);
+            WorkSpace.Instance.UserProfile.ActionOutputValueUserPreferences = columnPreferences;
 
             bool isVisible = mAction.SupportSimulation;
            customDynamicView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", Visible = isVisible, WidthWeight = 200 });

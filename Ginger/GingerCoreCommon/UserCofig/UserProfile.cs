@@ -567,7 +567,7 @@ namespace Ginger
 
 
         string mActionOutputValueUserPreferences;
-        [IsSerializedForLocalRepository(DefaultValue: ",Path,ActualValue,ExpectedValue,StoreTo")]
+        [IsSerializedForLocalRepository(DefaultValue: "Path,ActualValue,ExpectedValue,StoreTo")]
         public string ActionOutputValueUserPreferences
         {
             get
