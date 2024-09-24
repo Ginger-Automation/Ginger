@@ -89,6 +89,15 @@ namespace GingerCoreNETUnitTest.RosLynTestLib
         }
 
         [TestMethod]
+        public void TestBogusData_AddressCountryCode_IsNotnullAndEmpty()
+        {
+            string Expression = "{MockDataExp Fun=Address(@\"en\").CountryCode();}";
+            string error = string.Empty;
+            string output = CodeProcessor.GetBogusDataGenerateresult(Expression);
+            Assert.IsTrue(output != null && !output.Equals(string.Empty));
+        }
+
+        [TestMethod]
         public void PastDate_FetchPastDateOnly_IsNotnullAndEmpty()
         {
             string Expression = "{MockDataExp Fun=Date(@\"en\").PastDateOnly(1);}";
