@@ -60,7 +60,7 @@
                 </Grid>
                 <Grid>
                     <usercontrols:ucButton x:Name="xTestConBtn" IsEnabled="True" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10,25,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Test Connection" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestConBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Test GingerOps Connection"/>
-                    <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="187,12,0,0" HorizontalAlignment="Left" Height="25" Width="20" Visibility="Hidden"></usercontrols:ImageMakerControl>
+                    <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="187,28,0,3" HorizontalAlignment="Left" Height="25" Width="20" Visibility="Collapsed"></usercontrols:ImageMakerControl>
 
                 </Grid>
             </StackPanel>

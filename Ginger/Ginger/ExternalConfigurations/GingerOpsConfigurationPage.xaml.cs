@@ -90,6 +90,7 @@ namespace Ginger.ExternalConfigurations
 
             GingerCoreNET.GeneralLib.General.CreateGingerOpsConfiguration();
 
+
             if (GingerOpsAPI.IsTokenValid())
             {
                 Reporter.ToUser(eUserMsgKey.GingerOpsConnectionSuccess);

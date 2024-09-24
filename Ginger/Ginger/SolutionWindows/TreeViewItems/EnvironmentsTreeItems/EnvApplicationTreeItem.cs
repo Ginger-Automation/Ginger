@@ -106,7 +106,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
         private void Delete(object sender, RoutedEventArgs e)
         {
-            if (!ProjEnvironment.GOpsFlag)
+            if (ProjEnvironment.GOpsFlag)
+            {
+                Reporter.ToUser(eUserMsgKey.GingerOpsDeleteDisable);
+            }
+            else
             {
                 DeleteEnvTreeItems();
             }

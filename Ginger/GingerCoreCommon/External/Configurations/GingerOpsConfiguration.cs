@@ -87,6 +87,7 @@ namespace Ginger.Configurations
                 {
                     mIdentityServiceURL = value;
                     OnPropertyChanged(nameof(IdentityServiceURL));
+                    OnConfigChanged();
                 }
             }
         }
@@ -105,6 +106,7 @@ namespace Ginger.Configurations
                 {
                     mClientId = value;
                     OnPropertyChanged(nameof(ClientId));
+                    OnConfigChanged();
                 }
             }
         }
@@ -123,6 +125,7 @@ namespace Ginger.Configurations
                 {
                     mClientSecret = value;
                     OnPropertyChanged(nameof(ClientSecret));
+                    OnConfigChanged();
                 }
             }
         }
@@ -150,6 +153,14 @@ namespace Ginger.Configurations
             set
             {
                 this.Name = value;
+            }
+        }
+
+        private void OnConfigChanged()
+        {
+            if (!string.IsNullOrEmpty(mToken))
+            {
+                mToken = string.Empty;
             }
         }
 
