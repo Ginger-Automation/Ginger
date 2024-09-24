@@ -337,6 +337,11 @@ namespace Amdocs.Ginger.Repository
 
                 return true;
             }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception while creating backup", ex);
+                return false;
+            }
             finally
             {
                 mBackupInProgress = false;
