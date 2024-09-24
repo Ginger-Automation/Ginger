@@ -81,7 +81,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddGingerOpsEnvWizard)WizardEventArgs.Wizard;
-                    mWizard.mWizardWindow.DisableFinishButton(false);
+                    mWizard.mWizardWindow.SetFinishButtonEnabled(false);
                     LoadComboBoxData();
                     foreach (var appPlat in environmentListGOps)
                     {
@@ -94,7 +94,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
                     xEnvironmentComboBox_SelectionChanged();
                     break;
                 case EventType.Prev:
-                    mWizard.mWizardWindow.DisableFinishButton(false);
+                    mWizard.mWizardWindow.SetFinishButtonEnabled(false);
                     break;
                 default:
                 break;
@@ -173,7 +173,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
 
                     if (mWizard.ImportedEnvs.Any(k => k.GingerOpsStatus == "Import Successful"))
                     {
-                        mWizard.mWizardWindow.DisableFinishButton(true);
+                        mWizard.mWizardWindow.SetFinishButtonEnabled(true);
                     }
                 }                    
             }

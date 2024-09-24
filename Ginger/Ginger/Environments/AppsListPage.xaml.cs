@@ -69,9 +69,9 @@ namespace Ginger.Environments
                 xPublishcheckbox.IsEnabled = true;
                 xGASyncBtn.Visibility = Visibility.Collapsed;
                 InitReleaseComboBox();
-                grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));
             }
 
+            grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));
             BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
             EnvNameTextBox.AddValidationRule(new EnvironemntNameValidationRule());
             xShowIDUC.Init(AppEnvironment);
@@ -139,13 +139,6 @@ namespace Ginger.Environments
             if (AppEnvironment.GOpsFlag)
             {
                 grdApps.DisableGridColoumns();
-                grdApps.btnDelete.IsEnabled = false;
-                grdApps.btnAdd.IsEnabled = false;
-                grdApps.btnCut.IsEnabled = false;
-                grdApps.btnUndo.IsEnabled = false;
-                grdApps.btnClearAll.IsEnabled = false;
-                grdApps.btnDuplicate.Visibility = Visibility.Collapsed;
-                grdApps.btnCopy.IsEnabled = false;
             }
         }
 

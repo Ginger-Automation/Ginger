@@ -28,6 +28,7 @@ using Ginger.Extensions;
 using Ginger.Help;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerWPF.DragDropLib;
 using System;
@@ -774,8 +775,20 @@ namespace Ginger
 
             if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
+                // Filtering out the items based on the GOpsFlag
+                var itemsToKeep = mObjList.OfType<EnvApplication>()
+                                            .Where(envApplication => envApplication.GOpsFlag)
+                                            .ToList();
+
+                // Save undo data before modifying the list
                 mObjList.SaveUndoData();
                 mObjList.ClearAll();
+
+                // Add back the items that should be retained
+                foreach (var item in itemsToKeep)
+                {
+                    mObjList.Add(item);
+                }
             }
         }
         private void btnDelete_Click(object sender, RoutedEventArgs e)
@@ -793,10 +806,23 @@ namespace Ginger
 
                 List<object> SelectedItemsList = grdMain.SelectedItems.Cast<object>().ToList();
 
+                bool IsItemsDeleted = false;
                 foreach (object o in SelectedItemsList)
                 {
-                    mObjList.Remove(o);
-                    RemoveFromLiteDB(o);
+                    if(!(o is EnvApplication application && application.GOpsFlag))
+                    {
+                        mObjList.Remove(o);
+                        RemoveFromLiteDB(o);
+                    }
+                    else
+                    {
+                       IsItemsDeleted = true;
+                    }
+                }
+
+                if (IsItemsDeleted)
+                {
+                    Reporter.ToUser(eUserMsgKey.GingerOpsDeleteDisable);
                 }
             }
             finally
