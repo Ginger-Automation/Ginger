@@ -784,9 +784,9 @@
     {
       "Category": "Flow Details",
       "SubCategory": "Activity",
-      "Name": "Last Activity Variables Summary",
+      "Name": "Last Failed Activity Variables Summary",
       "Expression": "{FD Object=LastFailedActivity Field=VariablesSummary}",
-      "UseCase": "Get Last Activity Variables Summary",
+      "UseCase": "Get Failed Last Activity Variables Summary",
       "Samples": [ "{FD Object=LastFailedActivity Field=VariablesSummary} will give you Last Activity Variables Summary with Name, Initial value and Current value" ],
       "ReturnType": null,
       "ExpressionResult": null,
