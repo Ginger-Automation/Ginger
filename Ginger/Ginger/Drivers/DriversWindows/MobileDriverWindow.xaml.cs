@@ -1176,6 +1176,7 @@ namespace Ginger.Drivers.DriversWindows
         private void xClearHighlightsBtn_Click(object sender, RoutedEventArgs e)
         {
             UnHighlightElementEvent();
+            ((GenericAppiumDriver)mDriver).CalculateMobileDeviceScreenSizes();
         }
         #endregion Events
 
@@ -1462,16 +1463,12 @@ namespace Ginger.Drivers.DriversWindows
             try
             {
                 System.Windows.Point pointOnMobile = new System.Windows.Point();
-                double scale_factor_x = 1;
-                double scale_factor_y = 1;
 
-                ((GenericAppiumDriver)mDriver).CalculateSourceMobileImageConvertFactors(eImagePointUsage.Click);
-                scale_factor_x = (xDeviceScreenshotImage.Source.Width / ((GenericAppiumDriver)mDriver).mScreenScaleFactorCorrectionX) / xDeviceScreenshotImage.ActualWidth;
-                scale_factor_y = (xDeviceScreenshotImage.Source.Height / ((GenericAppiumDriver)mDriver).mScreenScaleFactorCorrectionY) / xDeviceScreenshotImage.ActualHeight;
+                double xRatio = (double)((GenericAppiumDriver)mDriver).WindowWidth / xDeviceScreenshotImage.ActualWidth; 
+                double yRatio = (double)((GenericAppiumDriver)mDriver).WindowHeight / xDeviceScreenshotImage.ActualHeight;
 
-                pointOnMobile.X = (int)(pointOnImage.X * scale_factor_x);
-                pointOnMobile.Y = (int)(pointOnImage.Y * scale_factor_y);
-
+                pointOnMobile.X = (int)(pointOnImage.X * xRatio / (double)((GenericAppiumDriver)mDriver).WindowScaleFactor);
+                pointOnMobile.Y = (int)(pointOnImage.Y * yRatio / (double)((GenericAppiumDriver)mDriver).WindowScaleFactor);
                 return pointOnMobile;
             }
             catch (Exception ex)
@@ -1762,16 +1759,10 @@ namespace Ginger.Drivers.DriversWindows
             if (xDeviceScreenshotImage.Source != null )
             {
                 double imageSourceHightWidthRatio = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.Source.Width;
+
                 if (resetCanvasSize)
                 {
-                    if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
-                    {
-                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * 0.5;
-                    }
-                    else
-                    {
-                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * 0.25;
-                    }
+                    xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * 0.25;
                     mZoomSize = 25;
                 }
                 double previousCanasWidth = xDeviceScreenshotCanvas.ActualWidth;
@@ -1779,18 +1770,19 @@ namespace Ginger.Drivers.DriversWindows
                 double targetWidthRatio = xDeviceScreenshotImage.Source.Width / xDeviceScreenshotCanvas.Width;
 
                 //Update canvas size
+                xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio);
                 switch (operationType)
                 {
                     case eImageChangeType.Increase:
-                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (1.15);
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * (1.15);
                         mZoomSize += 25;
                         break;
                     case eImageChangeType.Decrease:
-                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (0.85);
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * (0.85);
                         mZoomSize -= 25;
                         break;
                     case eImageChangeType.DoNotChange:
-                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (1);
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * (1);
                         break;
                 }
                 xDeviceScreenshotCanvas.Height = xDeviceScreenshotCanvas.Width * imageSourceHightWidthRatio;
