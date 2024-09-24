@@ -108,8 +108,7 @@ namespace Ginger.Environments
         private void SetGridView()
         {
             //Set the grid name
-            string grdEnvName = General.EscapeAccessKey(AppEnvironment.Name);
-            grdApps.Title = $"{grdEnvName} Environment Applications";
+            grdApps.Title = GetGrdAppsTitle();
             grdApps.SetTitleLightStyle = true;
 
             //Set the Tool Bar look
@@ -189,8 +188,13 @@ namespace Ginger.Environments
 
         private void EnvNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            grdApps.Title = GetGrdAppsTitle();
+        }
+
+        private string GetGrdAppsTitle()
+        {
             string grdEnvName = General.EscapeAccessKey(EnvNameTextBox.Text);
-            grdApps.Title = $"'{grdEnvName}' Environment Applications";
+            return $"'{grdEnvName}' Environment Applications";
         }
 
         private async void xGASyncBtn_Click(object sender, RoutedEventArgs e)
