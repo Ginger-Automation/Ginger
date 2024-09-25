@@ -777,23 +777,7 @@ namespace Ginger
             {
                 // Save undo data before modifying the list
                 mObjList.SaveUndoData();
-
-                // Filtering out the items to remove based on the GOpsFlag
-                var itemsToRemove = mObjList.OfType<EnvApplication>()
-                                            .Where(envApplication => !envApplication.GOpsFlag)
-                                            .ToList();
-
-                // Removing the items
-                foreach (var item in itemsToRemove)
-                {
-                    mObjList.Remove(item);
-                }
-
-                //just to ensure user knows that Gops items can't be deleted
-                if (mObjList.OfType<EnvApplication>().Any(k=>k.GOpsFlag))
-                {
-                    Reporter.ToUser(eUserMsgKey.GingerOpsDeleteDisable);
-                }
+                mObjList.ClearAll();
             }
         }
         private void btnDelete_Click(object sender, RoutedEventArgs e)
@@ -814,20 +798,9 @@ namespace Ginger
                 bool IsItemsDeleted = false;
                 foreach (object o in SelectedItemsList)
                 {
-                    if(!(o is EnvApplication application && application.GOpsFlag))
-                    {
                         mObjList.Remove(o);
                         RemoveFromLiteDB(o);
-                    }
-                    else
-                    {
-                       IsItemsDeleted = true;
-                    }
-                }
-
-                if (IsItemsDeleted)
-                {
-                    Reporter.ToUser(eUserMsgKey.GingerOpsDeleteDisable);
+                   
                 }
             }
             finally

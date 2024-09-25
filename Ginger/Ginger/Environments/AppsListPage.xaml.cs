@@ -139,6 +139,8 @@ namespace Ginger.Environments
             if (AppEnvironment.GOpsFlag)
             {
                 grdApps.DisableGridColoumns();
+                grdApps.btnClearAll.IsEnabled = false;
+                grdApps.btnDelete.IsEnabled = false; 
             }
         }
 
