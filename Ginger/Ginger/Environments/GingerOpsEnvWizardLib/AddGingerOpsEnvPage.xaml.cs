@@ -260,7 +260,7 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
                 {
                     if (param.Name != "Application Type" && param.Name != "Application URL")
                     {
-                        envApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value, GOpsFlag=true });
+                        envApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value, GOpsFlag=true, SetAsInputValue = false, SetAsOutputValue = false });
                     }
                 }
                 newEnvironment.Applications.Add(envApp);

@@ -775,19 +775,24 @@ namespace Ginger
 
             if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                // Filtering out the items based on the GOpsFlag
-                var itemsToKeep = mObjList.OfType<EnvApplication>()
-                                            .Where(envApplication => envApplication.GOpsFlag)
-                                            .ToList();
-
                 // Save undo data before modifying the list
                 mObjList.SaveUndoData();
-                mObjList.ClearAll();
 
-                // Add back the items that should be retained
-                foreach (var item in itemsToKeep)
+                // Filtering out the items to remove based on the GOpsFlag
+                var itemsToRemove = mObjList.OfType<EnvApplication>()
+                                            .Where(envApplication => !envApplication.GOpsFlag)
+                                            .ToList();
+
+                // Removing the items
+                foreach (var item in itemsToRemove)
                 {
-                    mObjList.Add(item);
+                    mObjList.Remove(item);
+                }
+
+                //just to ensure user knows that Gops items can't be deleted
+                if (mObjList.OfType<EnvApplication>().Any(k=>k.GOpsFlag))
+                {
+                    Reporter.ToUser(eUserMsgKey.GingerOpsDeleteDisable);
                 }
             }
         }

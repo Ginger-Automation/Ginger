@@ -269,7 +269,7 @@ namespace Ginger.Environments
                 {
                     if (param.Name != "Application Type" && param.Name != "Application URL")
                     {
-                        existingApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
+                        existingApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value, GOpsFlag = true, SetAsInputValue = false, SetAsOutputValue = false });
                     }
                 }
             }
@@ -291,7 +291,7 @@ namespace Ginger.Environments
                 {
                     if (param.Name != "Application Type" && param.Name != "Application URL")
                     {
-                        newEnvApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
+                        newEnvApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value, GOpsFlag = true, SetAsInputValue = false, SetAsOutputValue = false });
                     }
                 }
 
