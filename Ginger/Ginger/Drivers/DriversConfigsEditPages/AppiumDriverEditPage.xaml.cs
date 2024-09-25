@@ -68,13 +68,13 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xProxyTextBox, TextBox.ToolTipProperty, proxy, nameof(DriverConfigParam.Description));
             xUseProxyChkBox.IsChecked = !string.IsNullOrEmpty(proxy.Value);
 
-            DriverConfigParam screenScaleFactorCorrectionX = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionX));
-            xScreenScaleFactorCorrectionXTextBox.Init(null, screenScaleFactorCorrectionX, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionXTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionX)), nameof(DriverConfigParam.Description));
+            //DriverConfigParam screenScaleFactorCorrectionX = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionX));
+            //xScreenScaleFactorCorrectionXTextBox.Init(null, screenScaleFactorCorrectionX, nameof(DriverConfigParam.Value));
+            //BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionXTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionX)), nameof(DriverConfigParam.Description));
             
-            DriverConfigParam screenScaleFactorCorrectionY = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY));
-            xScreenScaleFactorCorrectionYTextBox.Init(null, screenScaleFactorCorrectionY, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionYTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY)), nameof(DriverConfigParam.Description));
+            //DriverConfigParam screenScaleFactorCorrectionY = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY));
+            //xScreenScaleFactorCorrectionYTextBox.Init(null, screenScaleFactorCorrectionY, nameof(DriverConfigParam.Value));
+            //BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionYTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY)), nameof(DriverConfigParam.Description));
 
             xLoadTimeoutTxtbox.Init(null, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));

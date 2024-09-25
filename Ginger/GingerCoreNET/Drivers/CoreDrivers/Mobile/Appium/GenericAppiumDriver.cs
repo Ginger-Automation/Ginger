@@ -164,9 +164,6 @@ namespace Amdocs.Ginger.CoreNET
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
 
-        public double mScreenScaleFactorCorrectionX = 1;
-        public double mScreenScaleFactorCorrectionY = 1;
-
         public bool IsDeviceConnected
         {
             get => mIsDeviceConnected;
@@ -1340,7 +1337,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                act.AddScreenShot(Driver.GetScreenshot().AsByteArray, "Device Screenshot");
+                act.AddScreenShot(GetScreenshotImageFromDriver(), "Device Screenshot");
             }
             catch (Exception ex)
             {
@@ -2849,40 +2846,47 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (Driver.SessionDetails != null)
                 {
-                    return GetScreenshotImageForDriver();
+                    return GetScreenshotImageFromDriver();
                 }
             }
             else
             {
-                return GetScreenshotImageForDriver();
+                return GetScreenshotImageFromDriver();
             }
 
             return null;
         }
 
-        private Byte[] GetScreenshotImageForDriver()
+        private Byte[] GetScreenshotImageFromDriver()
         {
-            // Take the screenshot
-            var screenshot = Driver.GetScreenshot();
-
-            // Convert screenshot to Image for resizing
-            using (var stream = new MemoryStream(screenshot.AsByteArray))
-            using (var image = Image.FromStream(stream))
+            // Take the screenshot            
+            if (DevicePlatformType == eDevicePlatformType.Android)
             {
-                // Create a new bitmap with the native device size
-                using (var resizedImage = new Bitmap(mWindowWidth, mWindowHeight))
+                return Driver.GetScreenshot().AsByteArray;
+            }
+            else
+            {
+                //iOS
+                // Convert screenshot to Image for resizing
+                var screenshot = Driver.GetScreenshot();
+                CalculateMobileDeviceScreenSizes();
+                using (var stream = new MemoryStream(screenshot.AsByteArray))
+                using (var image = Image.FromStream(stream))
                 {
-                    // Draw the original image onto the new bitmap
-                    using (var graphics = Graphics.FromImage(resizedImage))
+                    // Create a new bitmap with the native device size
+                    using (var resizedImage = new Bitmap(mWindowWidth, mWindowHeight))
                     {
-                        graphics.DrawImage(image, 0, 0, mWindowWidth, mWindowHeight);
-                    }
-
-                    // Convert the resized image to byte array
-                    using (var ms = new MemoryStream())
-                    {
-                        resizedImage.Save(ms, ImageFormat.Png);
-                        return ms.ToArray();
+                        // Draw the original image onto the new bitmap
+                        using (var graphics = Graphics.FromImage(resizedImage))
+                        {
+                            graphics.DrawImage(image, 0, 0, mWindowWidth, mWindowHeight);
+                        }
+                        // Convert the resized image to byte array
+                        using (var ms = new MemoryStream())
+                        {
+                            resizedImage.Save(ms, ImageFormat.Png);
+                            return ms.ToArray();
+                        }
                     }
                 }
             }
@@ -2989,10 +2993,44 @@ namespace Amdocs.Ginger.CoreNET
 
         public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
-            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-            string filename = Path.GetTempFileName();
-            ss.SaveAsFile(filename);
-            return new System.Drawing.Bitmap(filename);
+            //Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+            //string filename = Path.GetTempFileName();
+            //ss.SaveAsFile(filename);
+            //return new System.Drawing.Bitmap(filename);
+
+            try
+            {
+                // Get the screenshot as a byte array
+                byte[] screenshotBytes = GetScreenshotImageFromDriver();
+
+                if (screenshotBytes == null || screenshotBytes.Length == 0)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to capture screenshot.");
+                    throw new Exception("Failed to capture screenshot.");
+                }
+
+                // Convert the byte array to a Bitmap
+                using (MemoryStream ms = new MemoryStream(screenshotBytes))
+                {
+                    Bitmap bitmap = new Bitmap(ms);
+
+                    // Optionally resize the bitmap if setScreenSize is provided
+                    if (setScreenSize != null)
+                    {
+                        Bitmap resizedBitmap = new Bitmap(bitmap, setScreenSize.Item1, setScreenSize.Item2);
+                        bitmap.Dispose();
+                        return resizedBitmap;
+                    }
+
+                    return bitmap;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions as needed
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to capture screenshot.", ex);
+                return null;
+            }
         }
 
         XmlDocument pageSourceXml = null;
@@ -3194,14 +3232,20 @@ namespace Amdocs.Ginger.CoreNET
         double mWindowScaleFactor = 0;
         public double WindowScaleFactor { get { return mWindowScaleFactor; } }
 
-        public void CalculateMobileDeviceScreenSizes()
+        private void CalculateMobileDeviceScreenSizes()
         {
             try
             {
                 var windowSize = Driver.Manage().Window.Size;
-                var nativeSize = (Dictionary<string, object>)Driver.ExecuteScript("mobile: viewportRect");
-
-                mWindowScaleFactor = (double)(Convert.ToInt32(nativeSize["width"]) / windowSize.Width);
+                if (DevicePlatformType == eDevicePlatformType.iOS)
+                {
+                    var nativeSize = (Dictionary<string, object>)Driver.ExecuteScript("mobile: viewportRect");
+                    mWindowScaleFactor = (double)(Convert.ToInt32(nativeSize["width"]) / windowSize.Width);
+                }
+                else
+                {
+                    mWindowScaleFactor = 1;
+                }
                 mWindowWidth = (int)(windowSize.Width * mWindowScaleFactor);
                 mWindowHeight = (int)(windowSize.Height * mWindowScaleFactor);
             }
@@ -3211,37 +3255,17 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void CalculateSourceMobileImageConvertFactors(eImagePointUsage factorUsage)
-        {
-            mScreenScaleFactorCorrectionX = 1;
-            mScreenScaleFactorCorrectionY = 1;
-
-
-            //override with user configuration
-            double userScreenScaleFactorCorrectionX;
-            if (double.TryParse(ScreenScaleFactorCorrectionX, out userScreenScaleFactorCorrectionX))
-            {
-                mScreenScaleFactorCorrectionX = userScreenScaleFactorCorrectionX;
-            }
-            double userScreenScaleFactorCorrectionY;
-            if (double.TryParse(ScreenScaleFactorCorrectionY, out userScreenScaleFactorCorrectionY))
-            {
-                mScreenScaleFactorCorrectionY = userScreenScaleFactorCorrectionY;
-            }
-        }
-
         public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
         {
-            double scale_factor_x = 1, scale_factor_y = 1;
-            CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
-            scale_factor_x = (SrcWidth / mScreenScaleFactorCorrectionX) / ActWidth;
-            scale_factor_y = (SrcHeight / mScreenScaleFactorCorrectionY) / ActHeight;
+            Point pointOnMobile = new Point();
 
-            Point pointOnAppScreen = new Point();
-            pointOnAppScreen.X = (int)(clickedPoint.X * scale_factor_x);
-            pointOnAppScreen.Y = (int)(clickedPoint.Y * scale_factor_y);
+            double xRatio = (double)(SrcWidth / ActWidth);
+            double yRatio = (double)(SrcHeight / ActHeight);
 
-            return pointOnAppScreen;
+            pointOnMobile.X = (int)(clickedPoint.X * xRatio / WindowScaleFactor);
+            pointOnMobile.Y = (int)(clickedPoint.Y * yRatio / WindowScaleFactor);
+
+            return pointOnMobile;
         }
 
         public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo)
@@ -3249,9 +3273,8 @@ namespace Amdocs.Ginger.CoreNET
             double scale_factor_x, scale_factor_y;
             XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
 
-            CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
-            scale_factor_x = (SrcWidth / mScreenScaleFactorCorrectionX) / ActWidth;
-            scale_factor_y = (SrcHeight / mScreenScaleFactorCorrectionY) / ActHeight;
+            scale_factor_x = (double)(SrcWidth / ActWidth);
+            scale_factor_y = (double)(SrcHeight / ActHeight);
 
             switch (DevicePlatformType)
             {

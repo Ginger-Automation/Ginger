@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.Common.UIElement
     {
         List<AppWindow> GetAppWindows();
         void SwitchWindow(string Title);
-        void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false,IList<ElementInfo> MappedUIElements = null);
+        void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null);
         void UnHighLightElements();
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();
@@ -85,5 +85,9 @@ namespace Amdocs.Ginger.Common.UIElement
         string GetCurrentPageSourceString();
 
         Task<object> GetPageSourceDocument(bool ReloadHtmlDoc);
+
+        int WindowWidth { get; }
+        int WindowHeight { get; }
+        double WindowScaleFactor { get; }
     }
 }

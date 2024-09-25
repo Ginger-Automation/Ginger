@@ -11114,5 +11114,9 @@ namespace GingerCore.Drivers
             //overridden method from GingerWebDriver, need to implement this when we refactor SeleniumDriver to be in the similar structure as PlaywrightDriver
             throw new NotImplementedException();
         }
+
+        public int WindowWidth { get { throw new NotImplementedException(); } }
+        public int WindowHeight { get { throw new NotImplementedException(); } }
+        public double WindowScaleFactor { get { throw new NotImplementedException(); } }
     }
 }

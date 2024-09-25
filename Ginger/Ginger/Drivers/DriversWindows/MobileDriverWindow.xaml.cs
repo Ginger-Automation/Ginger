@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
@@ -1176,7 +1177,6 @@ namespace Ginger.Drivers.DriversWindows
         private void xClearHighlightsBtn_Click(object sender, RoutedEventArgs e)
         {
             UnHighlightElementEvent();
-            ((GenericAppiumDriver)mDriver).CalculateMobileDeviceScreenSizes();
         }
         #endregion Events
 
@@ -1462,13 +1462,9 @@ namespace Ginger.Drivers.DriversWindows
         {
             try
             {
-                System.Windows.Point pointOnMobile = new System.Windows.Point();
-
-                double xRatio = (double)((GenericAppiumDriver)mDriver).WindowWidth / xDeviceScreenshotImage.ActualWidth; 
-                double yRatio = (double)((GenericAppiumDriver)mDriver).WindowHeight / xDeviceScreenshotImage.ActualHeight;
-
-                pointOnMobile.X = (int)(pointOnImage.X * xRatio / (double)((GenericAppiumDriver)mDriver).WindowScaleFactor);
-                pointOnMobile.Y = (int)(pointOnImage.Y * yRatio / (double)((GenericAppiumDriver)mDriver).WindowScaleFactor);
+                var point=  ((DriverBase)mDriver).GetPointOnAppWindow(new System.Drawing.Point((int)pointOnImage.X, (int)pointOnImage.Y),
+                  ((IWindowExplorer)mDriver).WindowWidth, ((IWindowExplorer)mDriver).WindowHeight, xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight);
+                System.Windows.Point pointOnMobile = new System.Windows.Point(point.X,point.Y);
                 return pointOnMobile;
             }
             catch (Exception ex)

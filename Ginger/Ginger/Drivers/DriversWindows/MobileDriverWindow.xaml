@@ -176,7 +176,7 @@
                             <UserControls:ucButton x:Name="xSwipeBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="0,0,0,0"/>
 
 
-                            <UserControls:ucButton x:Name="xClearHighlightBtn" ButtonType="ImageButton"  HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Invisible" Click="xClearHighlightsBtn_Click" ToolTip="Clear Highlights and Correct Screen Ratio" Margin="0,0,0,0"/>
+                            <UserControls:ucButton x:Name="xClearHighlightBtn" ButtonType="ImageButton"  HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Invisible" Click="xClearHighlightsBtn_Click" ToolTip="Clear Highlights" Margin="0,0,0,0"/>
                             <Separator Margin="10,0,10,0" Background="LightGray"  />
                             <StackPanel Orientation="Vertical" Margin="0,0,0,0">
                                 <UserControls:ucButton x:Name="xZoomInBtn" ButtonType="ImageButton"  HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Add" Click="xZoomInBtn_Click" ToolTip="Zoom In" Margin="0,0,0,-10"/>
