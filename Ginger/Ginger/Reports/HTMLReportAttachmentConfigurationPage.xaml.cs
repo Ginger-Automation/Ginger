@@ -66,6 +66,21 @@ namespace Ginger.Reports
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = nameof(HTMLReportConfiguration.Name);
                 DefaultTemplatePickerCbx.SelectedValuePath = nameof(HTMLReportConfiguration.ID);
+                int index = 0;
+                foreach (var config in HTMLReportConfigurations)
+                {
+                    if (string.Equals(config.ItemName, mEmailAttachment.ItemName, StringComparison.Ordinal))
+                    {
+                        DefaultTemplatePickerCbx.SelectedIndex = index;
+                        break;
+                    }
+                    index++;
+
+                }
+                if (index >= HTMLReportConfigurations.Count)
+                {
+                    DefaultTemplatePickerCbx.SelectedIndex = 0;
+                }
             }
 
         }
