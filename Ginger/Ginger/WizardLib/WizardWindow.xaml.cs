@@ -424,7 +424,7 @@ namespace GingerWPF.WizardLib
             xNextButton.IsEnabled = isEnabled;
         }
 
-        void IWizardWindow.DisableFinishButton(bool isEnabled)
+        void IWizardWindow.SetFinishButtonEnabled(bool isEnabled)
         {
             xFinishButton.IsEnabled = isEnabled;
         }
