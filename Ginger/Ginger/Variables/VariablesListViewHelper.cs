@@ -459,6 +459,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             itemUsage.OperationHandler = ViewRepositoryItemUsageHandler;
             operationsList.Add(itemUsage);
 
+            //removing for gingerops
+            if (item is VariableBase vb && vb.GOpsFlag)
+            {
+                operationsList.Remove(edit);
+                operationsList.Remove(delete);
+            }
+
             return operationsList;
         }
 
@@ -466,6 +473,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(item);
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+
+            if (item is VariableBase vb && vb.GOpsFlag)
+            {
+                return extraOperationsList;
+            }
 
             if (mVariable.SupportResetValue)
             {

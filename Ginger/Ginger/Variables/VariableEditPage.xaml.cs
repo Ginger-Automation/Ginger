@@ -89,7 +89,6 @@ namespace Ginger.Variables
             {
                 xVarNameTxtBox.IsEnabled = false;
                 xVarDescritpiontxtBox.IsEnabled = false;
-                xPublishcheckbox.IsEnabled = false;
             }
 
             if (parent is EnvApplication)
