@@ -3803,72 +3803,92 @@ namespace Ginger.Run
 
                     //Run the Activity
 
+                    using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ActivityExecution))
+                    {
+                        featureTracker.Metadata.Add("Platform", activity.TargetApplicationPlatformName);
+                        featureTracker.Metadata.Add("IsSharedRepositoryInstance", activity.IsSharedRepositoryInstance.ToString());
 
-                    activityStarted = true;
-                    CurrentBusinessFlow.CurrentActivity.Status = eRunStatus.Running;
-                    if (doContinueRun)
-                    {
-                        NotifyActivityStart(CurrentBusinessFlow.CurrentActivity, doContinueRun);
-                    }
-                    else
-                    {
-                        NotifyActivityStart(CurrentBusinessFlow.CurrentActivity);
-                    }
-
-                    if (SolutionApplications != null && !SolutionApplications.Any(x => (x.AppName == activity.TargetApplication && x.Platform == ePlatformType.NA)))
-                    {
-                        //load Agent only if Activity includes Actions which needs it
-                        var driverActs = activity.Acts.Where(x => (x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false && x.Active == true);
-                        if (driverActs.Any())
+                        activityStarted = true;
+                        CurrentBusinessFlow.CurrentActivity.Status = eRunStatus.Running;
+                        if (doContinueRun)
                         {
-                            //make sure not running in Simulation mode
-                            if (!mGingerRunner.RunInSimulationMode ||
-                                (mGingerRunner.RunInSimulationMode == true && driverActs.Any(x => x.SupportSimulation == false)))
+                            NotifyActivityStart(CurrentBusinessFlow.CurrentActivity, doContinueRun);
+                        }
+                        else
+                        {
+                            NotifyActivityStart(CurrentBusinessFlow.CurrentActivity);
+                        }
+
+                        if (SolutionApplications != null && !SolutionApplications.Any(x => (x.AppName == activity.TargetApplication && x.Platform == ePlatformType.NA)))
+                        {
+                            //load Agent only if Activity includes Actions which needs it
+                            var driverActs = activity.Acts.Where(x => (x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false && x.Active == true);
+                            if (driverActs.Any())
                             {
-                                //Set the Agent to run actions with  
-                                SetCurrentActivityAgent();
+                                //make sure not running in Simulation mode
+                                if (!mGingerRunner.RunInSimulationMode ||
+                                    (mGingerRunner.RunInSimulationMode == true && driverActs.Any(x => x.SupportSimulation == false)))
+                                {
+                                    //Set the Agent to run actions with  
+                                    SetCurrentActivityAgent();
+                                }
                             }
                         }
-                    }
 
-                    activity.ExecutionLogActionCounter = 0;
+                        activity.ExecutionLogActionCounter = 0;
 
-                    //Run the Activity Actions
-                    st.Start();
+                        //Run the Activity Actions
+                        st.Start();
 
-                    // if it is not continue mode then goto first Action
-                    if (!doContinueRun)
-                    {
-                        act = (Act)activity.Acts.FirstOrDefault();
-                    }
-                    else
-                    {
-                        act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-                    }
-
-                    bool bHasMoreActions = true;
-
-                    if (mRunSource == null)
-                    {
-                        mRunSource = eRunSource.Activity;
-                    }
-
-                    while (bHasMoreActions)
-                    {
-                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
-
-                        GiveUserFeedback();
-                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act) && CheckRunInNetworkLog(act))
+                        // if it is not continue mode then goto first Action
+                        if (!doContinueRun)
                         {
-                            RunAction(act, false);
+                            act = (Act)activity.Acts.FirstOrDefault();
+                        }
+                        else
+                        {
+                            act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                        }
+
+                        bool bHasMoreActions = true;
+
+                        if (mRunSource == null)
+                        {
+                            mRunSource = eRunSource.Activity;
+                        }
+
+                        while (bHasMoreActions)
+                        {
+                            CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
+
                             GiveUserFeedback();
-                            if (mCurrentActivityChanged)
+                            if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act) && CheckRunInNetworkLog(act))
                             {
+                                RunAction(act, false);
+                                GiveUserFeedback();
+                                if (mCurrentActivityChanged)
+                                {
+                                    CurrentBusinessFlow.CurrentActivity.Elapsed = st.ElapsedMilliseconds;
+                                    if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                                    {
+                                        activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+
+                                        if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                                        {
+                                            SetNextActionsBlockedStatus();
+                                            statusCalculationIsDone = true;
+                                            return;
+                                        }
+                                    }
+                                    break;
+                                }
                                 CurrentBusinessFlow.CurrentActivity.Elapsed = st.ElapsedMilliseconds;
+                                // This Sleep is needed!
+                                Thread.Sleep(1);
                                 if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                                 {
                                     activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-
+                                    CurrentBusinessFlow.LastFailedAction = act;
                                     if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
                                     {
                                         SetNextActionsBlockedStatus();
@@ -3876,71 +3896,56 @@ namespace Ginger.Run
                                         return;
                                     }
                                 }
-                                break;
-                            }
-                            CurrentBusinessFlow.CurrentActivity.Elapsed = st.ElapsedMilliseconds;
-                            // This Sleep is needed!
-                            Thread.Sleep(1);
-                            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
-                            {
-                                activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                CurrentBusinessFlow.LastFailedAction = act;
-                                if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                                GiveUserFeedback();
+                                // If the user selected slower speed then do wait
+                                if (mGingerRunner.AutoWait > 0)
                                 {
-                                    SetNextActionsBlockedStatus();
+                                    // TODO: sleep 100 and do events
+                                    Thread.Sleep(mGingerRunner.AutoWait * 1000);
+                                }
+
+                                if (mStopRun || mStopBusinessFlow)
+                                {
+                                    mExecutedActionWhenStopped = act;
+                                    CalculateActivityFinalStatus(activity);
                                     statusCalculationIsDone = true;
                                     return;
                                 }
+
+                                if (mErrorPostExecutionActionFlowBreaker)
+                                {
+                                    break;
+                                }
                             }
-                            GiveUserFeedback();
-                            // If the user selected slower speed then do wait
-                            if (mGingerRunner.AutoWait > 0)
+                            else
                             {
-                                // TODO: sleep 100 and do events
-                                Thread.Sleep(mGingerRunner.AutoWait * 1000);
+                                if (!act.Active)
+                                {
+                                    SkipActionAndNotifyEnd(act);
+                                    act.ExInfo = "Action is not active.";
+                                }
+                                if (!CheckRunInVisualTestingMode(act))
+                                {
+                                    SkipActionAndNotifyEnd(act);
+                                    act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
+                                }
+                                if (!CheckRunInNetworkLog(act))
+                                {
+                                    SkipActionAndNotifyEnd(act);
+                                }
+                                if (!activity.Acts.IsLastItem())
+                                {
+                                    GotoNextAction();
+                                    ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                                }
                             }
 
-                            if (mStopRun || mStopBusinessFlow)
+                            act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                            // As long as we have more action we keep the loop, until no more actions available
+                            if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending && activity.Acts.IsLastItem())
                             {
-                                mExecutedActionWhenStopped = act;
-                                CalculateActivityFinalStatus(activity);
-                                statusCalculationIsDone = true;
-                                return;
+                                bHasMoreActions = false;
                             }
-
-                            if (mErrorPostExecutionActionFlowBreaker)
-                            {
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            if (!act.Active)
-                            {
-                                SkipActionAndNotifyEnd(act);
-                                act.ExInfo = "Action is not active.";
-                            }
-                            if (!CheckRunInVisualTestingMode(act))
-                            {
-                                SkipActionAndNotifyEnd(act);
-                                act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
-                            }
-                            if (!CheckRunInNetworkLog(act))
-                            {
-                                SkipActionAndNotifyEnd(act);
-                            }
-                            if (!activity.Acts.IsLastItem())
-                            {
-                                GotoNextAction();
-                                ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-                            }
-                        }
-
-                        act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-                        // As long as we have more action we keep the loop, until no more actions available
-                        if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending && activity.Acts.IsLastItem())
-                        {
-                            bHasMoreActions = false;
                         }
                     }
                 }
