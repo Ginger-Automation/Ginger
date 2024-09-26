@@ -250,28 +250,13 @@ namespace Ginger.UserControlsLib
                     displayText.Append(consumer.Name);
                     displayText.Append(',');
                 }
-                Text = EscapeAccessKey(displayText.ToString().TrimEnd(','));
+                Text = General.EscapeAccessKey(displayText.ToString().TrimEnd(','));
             }
             // set DefaultText if nothing else selected
             if (string.IsNullOrEmpty(Text))
             {
-                Text = EscapeAccessKey(DefaultText);
+                Text = General.EscapeAccessKey(DefaultText);
             }
-        }
-
-        /// <summary>
-        /// Escape all underscores ('_') from the provided string <paramref name="s"/> with double underscores ('__'). This is helpful in case of displaying underscore in <see cref="Label"/> controls where the first underscore is considered as Access Key. For more details, https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/issues/1427.
-        /// </summary>
-        /// <param name="s">string to escape</param>
-        /// <returns>Escaped string where all the underscores ('_') is escaped using double underscores ('__').</returns>
-        private static string EscapeAccessKey(string s)
-        {
-            if (string.IsNullOrEmpty(s))
-            {
-                return s;
-            }
-
-            return s.Replace("_", "__");
         }
 
         private string? GetConsumerName(Guid consumerGuid)

@@ -71,8 +71,10 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddGingerOpsEnvWizard)WizardEventArgs.Wizard;
+                    break;
+                case EventType.Active:
                     SelectApplicationGrid.DataSourceList = mWizard.ImportedEnvs;
-                break;
+                    break;
                 default:
                     break;
             }

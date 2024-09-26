@@ -28,6 +28,7 @@ using Ginger.Extensions;
 using Ginger.Help;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerWPF.DragDropLib;
 using System;
@@ -774,6 +775,7 @@ namespace Ginger
 
             if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
+                // Save undo data before modifying the list
                 mObjList.SaveUndoData();
                 mObjList.ClearAll();
             }
@@ -793,10 +795,12 @@ namespace Ginger
 
                 List<object> SelectedItemsList = grdMain.SelectedItems.Cast<object>().ToList();
 
+                bool IsItemsDeleted = false;
                 foreach (object o in SelectedItemsList)
                 {
-                    mObjList.Remove(o);
-                    RemoveFromLiteDB(o);
+                        mObjList.Remove(o);
+                        RemoveFromLiteDB(o);
+                   
                 }
             }
             finally

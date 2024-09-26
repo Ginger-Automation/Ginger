@@ -69,9 +69,9 @@ namespace Ginger.Environments
                 xPublishcheckbox.IsEnabled = true;
                 xGASyncBtn.Visibility = Visibility.Collapsed;
                 InitReleaseComboBox();
-                grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));
             }
 
+            grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));
             BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
             EnvNameTextBox.AddValidationRule(new EnvironemntNameValidationRule());
             xShowIDUC.Init(AppEnvironment);
@@ -108,7 +108,7 @@ namespace Ginger.Environments
         private void SetGridView()
         {
             //Set the grid name
-            grdApps.Title = $"'{AppEnvironment.Name}' Environment Applications";
+            grdApps.Title = GetGrdAppsTitle();
             grdApps.SetTitleLightStyle = true;
 
             //Set the Tool Bar look
@@ -139,13 +139,8 @@ namespace Ginger.Environments
             if (AppEnvironment.GOpsFlag)
             {
                 grdApps.DisableGridColoumns();
-                grdApps.btnDelete.IsEnabled = false;
-                grdApps.btnAdd.IsEnabled = false;
-                grdApps.btnCut.IsEnabled = false;
-                grdApps.btnUndo.IsEnabled = false;
                 grdApps.btnClearAll.IsEnabled = false;
-                grdApps.btnDuplicate.Visibility = Visibility.Collapsed;
-                grdApps.btnCopy.IsEnabled = false;
+                grdApps.btnDelete.IsEnabled = false; 
             }
         }
 
@@ -188,7 +183,13 @@ namespace Ginger.Environments
 
         private void EnvNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            grdApps.Title = $"'{EnvNameTextBox.Text}' Environment Applications";
+            grdApps.Title = GetGrdAppsTitle();
+        }
+
+        private string GetGrdAppsTitle()
+        {
+            string grdEnvName = General.EscapeAccessKey(EnvNameTextBox.Text);
+            return $"'{grdEnvName}' Environment Applications";
         }
 
         private async void xGASyncBtn_Click(object sender, RoutedEventArgs e)
@@ -270,7 +271,7 @@ namespace Ginger.Environments
                 {
                     if (param.Name != "Application Type" && param.Name != "Application URL")
                     {
-                        existingApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
+                        existingApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value, GOpsFlag = true, SetAsInputValue = false, SetAsOutputValue = false });
                     }
                 }
             }
@@ -292,7 +293,7 @@ namespace Ginger.Environments
                 {
                     if (param.Name != "Application Type" && param.Name != "Application URL")
                     {
-                        newEnvApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
+                        newEnvApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value, GOpsFlag = true, SetAsInputValue = false, SetAsOutputValue = false });
                     }
                 }
 

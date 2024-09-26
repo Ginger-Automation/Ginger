@@ -49,7 +49,7 @@ namespace Ginger.Environments
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 
-            if (mContext.Environment.GOpsFlag)
+            if (mEnvApplication.GOpsFlag)
             {
                 ApplicationNameTextBox.IsEnabled = false;
                 DescriptionTextBox.IsEnabled = false;

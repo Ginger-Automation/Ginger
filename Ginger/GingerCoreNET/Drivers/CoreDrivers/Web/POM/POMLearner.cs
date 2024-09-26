@@ -80,12 +80,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
 
         internal Task LearnElementsAsync(IList<ElementInfo> learnedElements, CancellationToken cancellationToken = default)
         {
-            return LearnDocumentElementsAsync(_htmlDocument, learnedElements, cancellationToken);
+            return LearnDocumentElementsAsync(_htmlDocument, parentPath: string.Empty, learnedElements, cancellationToken);
         }
 
-        private async Task LearnDocumentElementsAsync(HtmlDocument htmlDocument, IList<ElementInfo> learnedElements, CancellationToken cancellationToken)
+        private async Task LearnDocumentElementsAsync(HtmlDocument htmlDocument, string parentPath, IList<ElementInfo> learnedElements, CancellationToken cancellationToken)
         {
-            await LearnHtmlNodeChildElements(htmlDocument.DocumentNode, shouldLearnNode: htmlNode =>
+            await LearnHtmlNodeChildElements(htmlDocument.DocumentNode, parentPath, shouldLearnNode: htmlNode =>
             {
                 eElementType type = GetElementType(htmlNode);
                 if (_pomSetting != null && !_pomSetting.filteredElementType.Contains(type))
@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }, learnedElements, cancellationToken);
         }
 
-        private async Task LearnHtmlNodeChildElements(HtmlNode htmlNode, Predicate<HtmlNode> shouldLearnNode, IList<ElementInfo> learnedElements, CancellationToken cancellationToken, IList<ElementInfo>? childElements = null)
+        private async Task LearnHtmlNodeChildElements(HtmlNode htmlNode, string parentPath, Predicate<HtmlNode> shouldLearnNode, IList<ElementInfo> learnedElements, CancellationToken cancellationToken, IList<ElementInfo>? childElements = null)
         {
             foreach (HtmlNode childNode in htmlNode.ChildNodes)
             {
@@ -115,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     browserElement = await _browserElementProvider.GetElementAsync(eLocateBy.ByXPath, childNode.XPath);
                     if (browserElement != null && await IsBrowserElementVisibleAsync(browserElement))
                     {
-                        childElement = await CreateHTMLElementInfoAsync(childNode, browserElement, captureScreenshot: shouldLearnThisNode);
+                        childElement = await CreateHTMLElementInfoAsync(childNode, parentPath, browserElement, captureScreenshot: shouldLearnThisNode);
                     }
 
                     if (childElement != null && shouldLearnThisNode)
@@ -131,11 +131,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 IList<ElementInfo> grandChildElements = new List<ElementInfo>();
                 if (childNodeElementType == eElementType.Form)
                 {
-                    await LearnHtmlNodeChildElements(childNode, ShouldLearnFormChildNode, learnedElements, cancellationToken, grandChildElements);
+                    await LearnHtmlNodeChildElements(childNode, parentPath, ShouldLearnFormChildNode, learnedElements, cancellationToken, grandChildElements);
                 }
                 else if (!string.Equals(childNode.Name, "head", StringComparison.OrdinalIgnoreCase))
                 {
-                    await LearnHtmlNodeChildElements(childNode, shouldLearnNode, learnedElements, cancellationToken, grandChildElements);
+                    await LearnHtmlNodeChildElements(childNode, parentPath, shouldLearnNode, learnedElements, cancellationToken, grandChildElements);
                 }
                 
                 if (childElement != null)
@@ -147,8 +147,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                     childElement.ChildElements.Clear();
                     childElement.ChildElements.AddRange(grandChildElements);
                     
-                    await LearnShadowDOMElementsAsync(childElement, learnedElements, cancellationToken);
-                    await LearnFrameElementsAsync(childElement, learnedElements, cancellationToken);
+                    await LearnShadowDOMElementsAsync(childElement, parentPath, learnedElements, cancellationToken);
+                    await LearnFrameElementsAsync(childElement, parentPath, learnedElements, cancellationToken);
                 }
             }
         }
@@ -230,7 +230,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             return false;
         }
 
-        private async Task<HTMLElementInfo> CreateHTMLElementInfoAsync(HtmlNode htmlNode, IBrowserElement browserElement, bool captureScreenshot = true)
+        private async Task<HTMLElementInfo> CreateHTMLElementInfoAsync(HtmlNode htmlNode, string parentPath, IBrowserElement browserElement, bool captureScreenshot = true)
         {
             Size size = await browserElement.SizeAsync();
             Point position = await browserElement.PositionAsync();
@@ -240,7 +240,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
                 ElementType = htmlNode.Name,
                 ElementTypeEnum = GetElementType(htmlNode),
                 ElementObject = browserElement,
-                Path = string.Empty,
+                Path = parentPath,
                 Width = size.Width,
                 Height = size.Height,
                 X = position.X,
@@ -318,6 +318,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             if (!string.IsNullOrEmpty(value) && !elementName.Contains(value))
             {
                 elementName += $" {value}";
+            }
+
+            string text = htmlNode.InnerText;
+            if (!string.IsNullOrEmpty(text) && text.Length <= 15 && !elementName.Contains(text))
+            {
+                elementName += $" {text}";
             }
 
             return elementName;
@@ -831,7 +837,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             }
         }
 
-        private async Task LearnShadowDOMElementsAsync(HTMLElementInfo shadowHostElement, IList<ElementInfo> learnedElements, CancellationToken cancellationToken)
+        private async Task LearnShadowDOMElementsAsync(HTMLElementInfo shadowHostElement, string parentPath, IList<ElementInfo> learnedElements, CancellationToken cancellationToken)
         {
             if (_pomSetting == null ||
                 !_pomSetting.LearnShadowDomElements ||
@@ -856,12 +862,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             HtmlDocument shadowRootHtmlDocument = new();
             shadowRootHtmlDocument.LoadHtml(shadowRootHTML);
 
-            await LearnDocumentElementsAsync(shadowRootHtmlDocument, learnedElements, cancellationToken);
+            await LearnDocumentElementsAsync(shadowRootHtmlDocument, parentPath, learnedElements, cancellationToken);
 
             await _browserElementProvider.OnShadowDOMExitAsync(shadowHostElement);
         }
 
-        private async Task LearnFrameElementsAsync(HTMLElementInfo frameElement, IList<ElementInfo> learnedElements, CancellationToken cancellationToken)
+        private async Task LearnFrameElementsAsync(HTMLElementInfo frameElement, string parentPath, IList<ElementInfo> learnedElements, CancellationToken cancellationToken)
         {
             if (frameElement.ElementTypeEnum != eElementType.Iframe)
             {
@@ -892,8 +898,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             frameHtmlDocument.LoadHtml(iframePageSource);
 
             await _browserElementProvider.OnFrameEnterAsync(frameElement);
-            
-            await LearnDocumentElementsAsync(frameHtmlDocument, learnedElements, cancellationToken);
+
+            string newParentPath = string.IsNullOrEmpty(parentPath) ? frameElement.XPath : $"{parentPath},{frameElement.XPath}";
+
+            await LearnDocumentElementsAsync(frameHtmlDocument, newParentPath, learnedElements, cancellationToken);
 
             await _browserElementProvider.OnFrameExitAsync(frameElement);
         }

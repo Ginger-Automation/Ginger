@@ -26,5 +26,6 @@ namespace GingerWPF.WizardLib
         void Close();
         // void ShowDialog(int width = 800);
         void NextButton(bool isEnabled);
+        void SetFinishButtonEnabled(bool isEnabled);
     }
 }

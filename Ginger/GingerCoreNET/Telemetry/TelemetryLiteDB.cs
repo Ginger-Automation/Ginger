@@ -21,6 +21,7 @@ using LiteDB;
 using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -44,16 +45,11 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             bsonMapper.RegisterType(
                 serialize: dateTime =>
                 {
-                    if (dateTime.Kind != DateTimeKind.Utc)
-                    {
-                        dateTime = TimeZoneInfo.ConvertTimeFromUtc(dateTime, TimeZoneInfo.Local);
-                    }
                     return new BsonValue(dateTime.ToString("O"));
                 },
                 deserialize: bsonValue =>
                 {
-                    DateTime dateTime = DateTime.Parse(bsonValue.AsString);
-                    return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+                    return DateTime.Parse(bsonValue.AsString, styles: DateTimeStyles.RoundtripKind);
                 });
 
             bsonMapper.RegisterType(

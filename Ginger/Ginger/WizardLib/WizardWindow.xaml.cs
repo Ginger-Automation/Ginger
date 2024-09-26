@@ -270,8 +270,8 @@ namespace GingerWPF.WizardLib
             if (mWizard.IsLastPage())
             {
                 xNextButton.IsEnabled = false;
-                xFinishButton.IsEnabled = true;
-                if (mWizard.DisableBackBtnOnLastPage == true)
+
+                if (mWizard.DisableBackBtnOnLastPage)
                 {
                     xPrevButton.IsEnabled = false;
                     return;
@@ -422,6 +422,11 @@ namespace GingerWPF.WizardLib
         void IWizardWindow.NextButton(bool isEnabled)
         {
             xNextButton.IsEnabled = isEnabled;
+        }
+
+        void IWizardWindow.SetFinishButtonEnabled(bool isEnabled)
+        {
+            xFinishButton.IsEnabled = isEnabled;
         }
 
         bool WindowCloseWasHandled = false;
