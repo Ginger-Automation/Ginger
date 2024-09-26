@@ -1978,9 +1978,5 @@ namespace GingerCore.Drivers.WindowsLib
         {
             throw new NotImplementedException();
         }
-
-        public int WindowWidth { get { throw new NotImplementedException(); } }
-        public int WindowHeight { get { throw new NotImplementedException(); } }
-        public double WindowScaleFactor { get { throw new NotImplementedException(); } }
     }
 }

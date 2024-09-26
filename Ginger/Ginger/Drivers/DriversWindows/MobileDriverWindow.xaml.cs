@@ -1463,7 +1463,7 @@ namespace Ginger.Drivers.DriversWindows
             try
             {
                 var point=  ((DriverBase)mDriver).GetPointOnAppWindow(new System.Drawing.Point((int)pointOnImage.X, (int)pointOnImage.Y),
-                  ((IWindowExplorer)mDriver).WindowWidth, ((IWindowExplorer)mDriver).WindowHeight, xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight);
+                  xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height, xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight);
                 System.Windows.Point pointOnMobile = new System.Windows.Point(point.X,point.Y);
                 return pointOnMobile;
             }
@@ -1748,18 +1748,21 @@ namespace Ginger.Drivers.DriversWindows
             AdjustWindowSize(eImageChangeType.Decrease, false);
         }
 
-        private int mZoomSize = 25;
+        private double mZoomSize = 0.25;
         private void AdjustWindowSize(eImageChangeType operationType, bool resetCanvasSize)
         {
-
             if (xDeviceScreenshotImage.Source != null )
             {
                 double imageSourceHightWidthRatio = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.Source.Width;
-
                 if (resetCanvasSize)
                 {
-                    xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * 0.25;
-                    mZoomSize = 25;
+                    mZoomSize = 0.25;
+                    xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
+                    while (xDeviceScreenshotCanvas.Width < 250)
+                    {
+                        mZoomSize *= 1.05;
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
+                    }
                 }
                 double previousCanasWidth = xDeviceScreenshotCanvas.ActualWidth;
                 double previousCanasHeight = xDeviceScreenshotCanvas.ActualHeight;
@@ -1770,24 +1773,21 @@ namespace Ginger.Drivers.DriversWindows
                 switch (operationType)
                 {
                     case eImageChangeType.Increase:
-                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * (1.15);
-                        mZoomSize += 25;
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * 1.15;                       
                         break;
+
                     case eImageChangeType.Decrease:
-                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * (0.85);
-                        mZoomSize -= 25;
-                        break;
-                    case eImageChangeType.DoNotChange:
-                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * (1);
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * 0.85;
                         break;
                 }
+                mZoomSize = xDeviceScreenshotCanvas.Width / xDeviceScreenshotImage.Source.Width;
                 xDeviceScreenshotCanvas.Height = xDeviceScreenshotCanvas.Width * imageSourceHightWidthRatio;
 
                 //Update window size
                 this.Width = this.Width + (xDeviceScreenshotCanvas.Width - previousCanasWidth);
                 this.Height = xDeviceScreenshotCanvas.Height + 100;
 
-                if (mZoomSize >= 100)
+                if (mZoomSize >= 1)
                 {
                     xZoomInBtn.IsEnabled = false;
                 }
@@ -1795,7 +1795,7 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     xZoomInBtn.IsEnabled = true;
                 }
-                if (mZoomSize <= 0)
+                if (mZoomSize <= 0.2)
                 {
                     xZoomOutBtn.IsEnabled = false;
                 }
@@ -1803,7 +1803,8 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     xZoomOutBtn.IsEnabled = true;
                 }
-                xZoomSizeLbl.Content = mZoomSize.ToString() + "%";
+                int roundedNumber = (int)Math.Round(mZoomSize*100);
+                xZoomSizeLbl.Content = roundedNumber.ToString() + "%";
             }
         }
     }

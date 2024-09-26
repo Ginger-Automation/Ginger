@@ -1813,9 +1813,5 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActBrowserElement.eControlAction.SwitchWindow,
             ActBrowserElement.eControlAction.SwitchToDefaultWindow,
         };
-
-        public int WindowWidth { get { throw new NotImplementedException(); } }
-        public int WindowHeight { get { throw new NotImplementedException(); } }
-        public double WindowScaleFactor { get { throw new NotImplementedException(); } }
     }
 }

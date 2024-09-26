@@ -85,9 +85,5 @@ namespace Amdocs.Ginger.Common.UIElement
         string GetCurrentPageSourceString();
 
         Task<object> GetPageSourceDocument(bool ReloadHtmlDoc);
-
-        int WindowWidth { get; }
-        int WindowHeight { get; }
-        double WindowScaleFactor { get; }
     }
 }

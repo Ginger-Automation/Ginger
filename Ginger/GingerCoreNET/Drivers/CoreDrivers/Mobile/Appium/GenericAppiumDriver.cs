@@ -1768,7 +1768,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier")?.ToString());
                 }
                 else
                 {
@@ -2859,37 +2859,35 @@ namespace Amdocs.Ginger.CoreNET
 
         private Byte[] GetScreenshotImageFromDriver()
         {
-            // Take the screenshot            
-            if (DevicePlatformType == eDevicePlatformType.Android)
+            
+            //Take screen shot
+            var screenshot = Driver.GetScreenshot();
+            //Update screen size for iOS as it changed per app
+            if (DevicePlatformType == eDevicePlatformType.iOS)
             {
-                return Driver.GetScreenshot().AsByteArray;
-            }
-            else
-            {
-                //iOS
-                // Convert screenshot to Image for resizing
-                var screenshot = Driver.GetScreenshot();
                 CalculateMobileDeviceScreenSizes();
-                using (var stream = new MemoryStream(screenshot.AsByteArray))
-                using (var image = Image.FromStream(stream))
+            }
+            // Convert screenshot to Image for resizing
+            using (var stream = new MemoryStream(screenshot.AsByteArray))
+            using (var image = Image.FromStream(stream))
+            {
+                // Create a new bitmap with the native device size
+                using (var resizedImage = new Bitmap(mWindowWidth, mWindowHeight))
                 {
-                    // Create a new bitmap with the native device size
-                    using (var resizedImage = new Bitmap(mWindowWidth, mWindowHeight))
+                    // Draw the original image onto the new bitmap
+                    using (var graphics = Graphics.FromImage(resizedImage))
                     {
-                        // Draw the original image onto the new bitmap
-                        using (var graphics = Graphics.FromImage(resizedImage))
-                        {
-                            graphics.DrawImage(image, 0, 0, mWindowWidth, mWindowHeight);
-                        }
-                        // Convert the resized image to byte array
-                        using (var ms = new MemoryStream())
-                        {
-                            resizedImage.Save(ms, ImageFormat.Png);
-                            return ms.ToArray();
-                        }
+                        graphics.DrawImage(image, 0, 0, mWindowWidth, mWindowHeight);
+                    }
+                    // Convert the resized image to byte array
+                    using (var ms = new MemoryStream())
+                    {
+                        resizedImage.Save(ms, ImageFormat.Png);
+                        return ms.ToArray();
                     }
                 }
             }
+
         }
 
         public void PerformTap(long x, long y)
@@ -2993,11 +2991,6 @@ namespace Amdocs.Ginger.CoreNET
 
         public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
-            //Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-            //string filename = Path.GetTempFileName();
-            //ss.SaveAsFile(filename);
-            //return new System.Drawing.Bitmap(filename);
-
             try
             {
                 // Get the screenshot as a byte array
@@ -3324,11 +3317,11 @@ namespace Amdocs.Ginger.CoreNET
                         string hgt = GetAttrValue(rectangleXmlNode, "height");
                         string wdth = GetAttrValue(rectangleXmlNode, "width");
 
-                        ElementStartPoints.X = (int)(Convert.ToInt32(x) / scale_factor_x);
-                        ElementStartPoints.Y = (int)(Convert.ToInt32(y) / scale_factor_y);
+                        ElementStartPoints.X = (int)((Convert.ToInt32(x) / scale_factor_x) * mWindowScaleFactor);
+                        ElementStartPoints.Y = (int)((Convert.ToInt32(y) / scale_factor_y) * mWindowScaleFactor);
 
-                        ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / scale_factor_x);
-                        ElementMaxPoints.Y = ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / scale_factor_y);
+                        ElementMaxPoints.X = (int)(ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / scale_factor_x) * mWindowScaleFactor);
+                        ElementMaxPoints.Y = (int)(ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / scale_factor_y) * mWindowScaleFactor);
                     }
 
                     break;
