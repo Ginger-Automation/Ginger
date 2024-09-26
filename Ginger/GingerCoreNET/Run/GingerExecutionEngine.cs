@@ -3805,7 +3805,8 @@ namespace Ginger.Run
 
                     using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ActivityExecution))
                     {
-                        featureTracker.Metadata.Add("Platform", activity.TargetApplicationPlatformName);
+                        try { featureTracker.Metadata.Add("Platform", activity.TargetApplicationPlatformName); }
+                        catch { }
                         featureTracker.Metadata.Add("IsSharedRepositoryInstance", activity.IsSharedRepositoryInstance.ToString());
 
                         activityStarted = true;
