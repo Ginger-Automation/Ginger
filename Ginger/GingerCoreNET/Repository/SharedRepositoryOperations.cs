@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
@@ -59,6 +60,31 @@ namespace Ginger.Repository
             try
             {
                 RepositoryItemBase item = itemToUpload.UsageItem;
+
+                string itemType = string.Empty;
+                if (item is Act)
+                {
+                    itemType = "Action";
+                }
+                else if (item is VariableBase)
+                {
+                    itemType = "Variable";
+                }
+                else if (item is Activity)
+                {
+                    itemType = "Activity";
+                }
+                else if (item is ActivitiesGroup)
+                {
+                    itemType = "ActivitiesGroup";
+                }
+                TelemetryMetadata metadata = new();
+                if (!string.IsNullOrEmpty(itemType))
+                {
+                    metadata.Add("Type", itemType);
+                }
+
+                Reporter.AddFeatureUsage(FeatureId.AddItemToSharedRepository, metadata);
                 string itemFileName = string.Empty;
                 RepositoryItemBase itemCopy = null;
                 bool isOverwrite = false;
