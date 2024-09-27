@@ -164,9 +164,6 @@ namespace Amdocs.Ginger.CoreNET
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
 
-        public double mScreenScaleFactorCorrectionX = 1;
-        public double mScreenScaleFactorCorrectionY = 1;
-
         public bool IsDeviceConnected
         {
             get => mIsDeviceConnected;
@@ -336,6 +333,9 @@ namespace Amdocs.Ginger.CoreNET
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
                     }
                 }
+
+                //Pull device screen sizes for calculations
+                CalculateMobileDeviceScreenSizes();
 
                 return true;
 
@@ -1030,7 +1030,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressBackButton:
-                        PerformBackButtonPress();
+                        PerformBackButtonPress();                        
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressHomeButton:
@@ -1337,7 +1337,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                act.AddScreenShot(Driver.GetScreenshot().AsByteArray, "Device Screenshot");
+                act.AddScreenShot(GetScreenshotImageFromDriver(), "Device Screenshot");
             }
             catch (Exception ex)
             {
@@ -1768,7 +1768,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier")?.ToString());
                 }
                 else
                 {
@@ -2846,15 +2846,48 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (Driver.SessionDetails != null)
                 {
-                    return Driver.GetScreenshot().AsByteArray;
+                    return GetScreenshotImageFromDriver();
                 }
             }
             else
             {
-                return Driver.GetScreenshot().AsByteArray;
+                return GetScreenshotImageFromDriver();
             }
 
             return null;
+        }
+
+        private Byte[] GetScreenshotImageFromDriver()
+        {
+            
+            //Take screen shot
+            var screenshot = Driver.GetScreenshot();
+            //Update screen size for iOS as it changed per app
+            if (DevicePlatformType == eDevicePlatformType.iOS)
+            {
+                CalculateMobileDeviceScreenSizes();
+            }
+            // Convert screenshot to Image for resizing
+            using (var stream = new MemoryStream(screenshot.AsByteArray))
+            using (var image = Image.FromStream(stream))
+            {
+                // Create a new bitmap with the native device size
+                using (var resizedImage = new Bitmap(mWindowWidth, mWindowHeight))
+                {
+                    // Draw the original image onto the new bitmap
+                    using (var graphics = Graphics.FromImage(resizedImage))
+                    {
+                        graphics.DrawImage(image, 0, 0, mWindowWidth, mWindowHeight);
+                    }
+                    // Convert the resized image to byte array
+                    using (var ms = new MemoryStream())
+                    {
+                        resizedImage.Save(ms, ImageFormat.Png);
+                        return ms.ToArray();
+                    }
+                }
+            }
+
         }
 
         public void PerformTap(long x, long y)
@@ -2929,12 +2962,26 @@ namespace Amdocs.Ginger.CoreNET
 
         public void SwitchToLandscape()
         {
-            Driver.Orientation = ScreenOrientation.Landscape;
+            try
+            {
+                Driver.Orientation = ScreenOrientation.Landscape;
+            }
+            finally
+            {
+                CalculateMobileDeviceScreenSizes();
+            }
         }
 
         public void SwitchToPortrait()
         {
-            Driver.Orientation = ScreenOrientation.Portrait;
+            try
+            {
+                Driver.Orientation = ScreenOrientation.Portrait;
+            }
+            finally
+            {
+                CalculateMobileDeviceScreenSizes();
+            }
         }
 
         public eDeviceOrientation GetOrientation()
@@ -2944,10 +2991,39 @@ namespace Amdocs.Ginger.CoreNET
 
         public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
-            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-            string filename = Path.GetTempFileName();
-            ss.SaveAsFile(filename);
-            return new System.Drawing.Bitmap(filename);
+            try
+            {
+                // Get the screenshot as a byte array
+                byte[] screenshotBytes = GetScreenshotImageFromDriver();
+
+                if (screenshotBytes == null || screenshotBytes.Length == 0)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to capture screenshot.");
+                    throw new Exception("Failed to capture screenshot.");
+                }
+
+                // Convert the byte array to a Bitmap
+                using (MemoryStream ms = new MemoryStream(screenshotBytes))
+                {
+                    Bitmap bitmap = new Bitmap(ms);
+
+                    // Optionally resize the bitmap if setScreenSize is provided
+                    if (setScreenSize != null)
+                    {
+                        Bitmap resizedBitmap = new Bitmap(bitmap, setScreenSize.Item1, setScreenSize.Item2);
+                        bitmap.Dispose();
+                        return resizedBitmap;
+                    }
+
+                    return bitmap;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions as needed
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to capture screenshot.", ex);
+                return null;
+            }
         }
 
         XmlDocument pageSourceXml = null;
@@ -3142,38 +3218,47 @@ namespace Amdocs.Ginger.CoreNET
             return foundNode != null ? await GetElementInfoforXmlNode(foundNode) : null;
         }
 
+        int mWindowWidth = 0;
+        public int WindowWidth { get { return mWindowWidth; } }
+        int mWindowHeight = 0;
+        public int WindowHeight { get { return mWindowHeight; } }
+        double mWindowScaleFactor = 0;
+        public double WindowScaleFactor { get { return mWindowScaleFactor; } }
 
-        public void CalculateSourceMobileImageConvertFactors(eImagePointUsage factorUsage)
+        private void CalculateMobileDeviceScreenSizes()
         {
-            mScreenScaleFactorCorrectionX = 1;
-            mScreenScaleFactorCorrectionY = 1;
-
-
-            //override with user configuration
-            double userScreenScaleFactorCorrectionX;
-            if (double.TryParse(ScreenScaleFactorCorrectionX, out userScreenScaleFactorCorrectionX))
+            try
             {
-                mScreenScaleFactorCorrectionX = userScreenScaleFactorCorrectionX;
+                var windowSize = Driver.Manage().Window.Size;
+                if (DevicePlatformType == eDevicePlatformType.iOS)
+                {
+                    var nativeSize = (Dictionary<string, object>)Driver.ExecuteScript("mobile: viewportRect");
+                    mWindowScaleFactor = (double)(Convert.ToInt32(nativeSize["width"]) / windowSize.Width);
+                }
+                else
+                {
+                    mWindowScaleFactor = 1;
+                }
+                mWindowWidth = (int)(windowSize.Width * mWindowScaleFactor);
+                mWindowHeight = (int)(windowSize.Height * mWindowScaleFactor);
             }
-            double userScreenScaleFactorCorrectionY;
-            if (double.TryParse(ScreenScaleFactorCorrectionY, out userScreenScaleFactorCorrectionY))
+            catch (Exception ex)
             {
-                mScreenScaleFactorCorrectionY = userScreenScaleFactorCorrectionY;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get Mobile Device Screen Sizes", ex);
             }
         }
 
         public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
         {
-            double scale_factor_x = 1, scale_factor_y = 1;
-            CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
-            scale_factor_x = (SrcWidth / mScreenScaleFactorCorrectionX) / ActWidth;
-            scale_factor_y = (SrcHeight / mScreenScaleFactorCorrectionY) / ActHeight;
+            Point pointOnMobile = new Point();
 
-            Point pointOnAppScreen = new Point();
-            pointOnAppScreen.X = (int)(clickedPoint.X * scale_factor_x);
-            pointOnAppScreen.Y = (int)(clickedPoint.Y * scale_factor_y);
+            double xRatio = (double)(SrcWidth / ActWidth);
+            double yRatio = (double)(SrcHeight / ActHeight);
 
-            return pointOnAppScreen;
+            pointOnMobile.X = (int)(clickedPoint.X * xRatio / WindowScaleFactor);
+            pointOnMobile.Y = (int)(clickedPoint.Y * yRatio / WindowScaleFactor);
+
+            return pointOnMobile;
         }
 
         public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo)
@@ -3181,9 +3266,8 @@ namespace Amdocs.Ginger.CoreNET
             double scale_factor_x, scale_factor_y;
             XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
 
-            CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
-            scale_factor_x = (SrcWidth / mScreenScaleFactorCorrectionX) / ActWidth;
-            scale_factor_y = (SrcHeight / mScreenScaleFactorCorrectionY) / ActHeight;
+            scale_factor_x = (double)(SrcWidth / ActWidth);
+            scale_factor_y = (double)(SrcHeight / ActHeight);
 
             switch (DevicePlatformType)
             {
@@ -3233,11 +3317,11 @@ namespace Amdocs.Ginger.CoreNET
                         string hgt = GetAttrValue(rectangleXmlNode, "height");
                         string wdth = GetAttrValue(rectangleXmlNode, "width");
 
-                        ElementStartPoints.X = (int)(Convert.ToInt32(x) / scale_factor_x);
-                        ElementStartPoints.Y = (int)(Convert.ToInt32(y) / scale_factor_y);
+                        ElementStartPoints.X = (int)((Convert.ToInt32(x) / scale_factor_x) * mWindowScaleFactor);
+                        ElementStartPoints.Y = (int)((Convert.ToInt32(y) / scale_factor_y) * mWindowScaleFactor);
 
-                        ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / scale_factor_x);
-                        ElementMaxPoints.Y = ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / scale_factor_y);
+                        ElementMaxPoints.X = (int)(ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / scale_factor_x) * mWindowScaleFactor);
+                        ElementMaxPoints.Y = (int)(ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / scale_factor_y) * mWindowScaleFactor);
                     }
 
                     break;
@@ -3297,7 +3381,7 @@ namespace Amdocs.Ginger.CoreNET
             SwipeScreen(swipeSide, swipeScale, swipeDuration);
 
             if (IsRecording)
-            {
+            {                
                 ActMobileDevice mobAct = new ActMobileDevice();
                 mobAct.SwipeScale.Value = swipeScale.ToString();
                 mobAct.SwipeDuration.Value = ((TimeSpan)swipeDuration).TotalMilliseconds.ToString();
@@ -3305,18 +3389,22 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     case eSwipeSide.Up:
                         mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeUp;
+                        mobAct.Description = "Perform Swipe Up";
                         break;
 
                     case eSwipeSide.Down:
                         mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeDown;
+                        mobAct.Description = "Perform Swipe Down";
                         break;
 
                     case eSwipeSide.Right:
                         mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeRight;
+                        mobAct.Description = "Perform Swipe Right";
                         break;
 
                     case eSwipeSide.Left:
                         mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeLeft;
+                        mobAct.Description = "Perform Swipe Left";
                         break;
                 }
 
