@@ -387,8 +387,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     mBackupDic.TryAdd(Name + "~List", list);
                 }
-                mLocalBackupDic.TryAdd(Name + "~List", list)
-            
+                mLocalBackupDic.TryAdd(Name + "~List", list);            
         }
 
         // Item which will not be saved to the XML - for example dynamic activities or temp output values - no expected or store to
