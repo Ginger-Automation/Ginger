@@ -20,17 +20,25 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
+using Ginger.Environments.GingerAnalyticsEnvWizardLib;
+using Ginger.ExternalConfigurations;
 using Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
+using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerTest.WizardLib;
+using Microsoft.Graph;
+using Microsoft.Identity.Client.Kerberos;
 using Microsoft.VisualStudio.Services.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using static Ginger.Environments.GingerAnalyticsEnvWizardLib.GingerAnalyticsAPIResponseInfo;
 
 namespace Ginger.Environments
 {
@@ -40,6 +48,8 @@ namespace Ginger.Environments
     public partial class AppsListPage : GingerUIPage
     {
         public ProjEnvironment AppEnvironment { get; set; }
+        public AddGingerAnalyticsEnvPage AddGingerAnalyticsEnvPage;
+        public GingerAnalyticsAPI GingerAnalyticsAPI;
         public AppsListPage(ProjEnvironment env)
         {
             InitializeComponent();
@@ -50,12 +60,23 @@ namespace Ginger.Environments
             SetGridView();
             SetGridData();
 
+            if (AppEnvironment.GAFlag)
+            {
+                EnvNameTextBox.IsEnabled = false;
+                xGASyncBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                EnvNameTextBox.IsEnabled = true;
+                xGASyncBtn.Visibility = Visibility.Collapsed;
+                InitReleaseComboBox();
+            }
+
             BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
             EnvNameTextBox.AddValidationRule(new EnvironemntNameValidationRule());
             xShowIDUC.Init(AppEnvironment);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, AppEnvironment, nameof(RepositoryItemBase.Publish));
 
-            InitReleaseComboBox();
 
             grdApps.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddApp));
             grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));
@@ -157,6 +178,180 @@ namespace Ginger.Environments
         private void EnvNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             grdApps.Title = $"'{EnvNameTextBox.Text}' Environment Applications";
+        }
+
+        private async void xGASyncBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                xGASyncBtn.IsEnabled = false;
+                ShowLoader();
+                AddGingerAnalyticsEnvPage = new();
+                GingerAnalyticsAPI = new();
+                AddGingerAnalyticsEnvPage.environmentListGA = await GingerAnalyticsAPI.FetchApplicationDataFromGA(AppEnvironment.GingerAnalyticsEnvId.ToString(), AddGingerAnalyticsEnvPage.environmentListGA);
+
+                foreach (var appEnv in AddGingerAnalyticsEnvPage.environmentListGA)
+                {
+                    var appListEnv = appEnv.Value.GingerAnalyticsApplications;
+                    foreach (var item in appListEnv)
+                    {
+                        var existingApp = AppEnvironment.Applications.FirstOrDefault(k => k.GingerAnalyticsAppId == item.Id);
+                        if (existingApp != null)
+                        {
+                            UpdateExistingApplication(existingApp, item);
+                        }
+                        else
+                        {
+                            AddNewApplication(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Sync with Ginger Analytics", ex);
+            }
+            finally
+            {
+                HideLoader();
+                xGASyncBtn.IsEnabled = true;
+            }
+        }
+
+        private void UpdateExistingApplication(EnvApplication existingApp, GingerAnalyticsApplication item)
+        {
+            bool parametersChanged = false;
+
+            // Check if the name, platform, or URL has changed
+            if (!existingApp.Name.Equals(item.Name) ||
+                existingApp.Platform != MapToPlatformType(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application Type")?.Value) ||
+                !existingApp.Url.Equals(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application URL")?.Value))
+            {
+                existingApp.Name = item.Name;
+                existingApp.Platform = MapToPlatformType(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application Type")?.Value);
+                existingApp.Url = item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application URL")?.Value;
+                parametersChanged = true;
+            }
+
+            // Create a hash set of existing parameters in GeneralParams
+            var existingParamNames = new HashSet<string>(existingApp.Variables.Select(v => v.Name));
+
+            // Check if any other parameters have changed or new parameters added
+            foreach (var param in item.GAApplicationParameters)
+            {
+                if (param.Name != "Application Type" && param.Name != "Application URL")
+                {
+                    if (!existingParamNames.Contains(param.Name) || existingApp.Variables.FirstOrDefault(v => v.Name == param.Name)?.Value != param.Value)
+                    {
+                        parametersChanged = true;
+                        break;
+                    }
+                }
+            }
+
+            // Only update variables if parameters have actually changed
+            if (parametersChanged)
+            {
+                existingApp.Variables.ClearAll();
+                foreach (var param in item.GAApplicationParameters)
+                {
+                    if (param.Name != "Application Type" && param.Name != "Application URL")
+                    {
+                        existingApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
+                    }
+                }
+            }
+
+            UpdateApplicationPlatform(existingApp, item);
+        }
+
+        private void AddNewApplication(GingerAnalyticsApplication item)
+        {
+            if (!string.IsNullOrEmpty(item.Name) && !string.IsNullOrEmpty(item.Id))
+            {
+                var platformType = MapToPlatformType(item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application Type")?.Value);
+                var appUrl = item.GAApplicationParameters.FirstOrDefault(k => k.Name == "Application URL")?.Value;
+
+                EnvApplication newEnvApp = new() { Name = item.Name, Platform = platformType, GingerAnalyticsAppId = item.Id, Active = true, Url = appUrl, GingerAnalyticsStatus=item.Status };
+
+                // Add all other parameters to GeneralParams
+                foreach (var param in item.GAApplicationParameters)
+                {
+                    if (param.Name != "Application Type" && param.Name != "Application URL")
+                    {
+                        newEnvApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value });
+                    }
+                }
+
+                AppEnvironment.Applications.Add(newEnvApp);
+
+                UpdateApplicationPlatform(newEnvApp, item);
+            }
+        }
+
+        private void UpdateApplicationPlatform(EnvApplication app, GingerAnalyticsApplication item)
+        {
+            var existingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.GingerAnalyticsAppId == item.Id);
+            if (existingPlatform == null)
+            {
+                AddApplicationPlatform(app, item);
+            }
+            else
+            {
+                existingPlatform.AppName = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.AppName == item.Name && k.GingerAnalyticsAppId != item.Id) == null
+                    ? item.Name : item.Name + "_GingerAnalytics";
+                existingPlatform.Platform = app.Platform;
+            }
+        }
+
+        private void AddApplicationPlatform(EnvApplication app, GingerAnalyticsApplication item)
+        {
+            var selectedApp = new ApplicationPlatform
+            {
+                AppName = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(k => k.AppName == item.Name) != null
+                    ? item.Name + "_GingerAnalytics" : item.Name,
+                Platform = app.Platform,
+                GingerAnalyticsAppId = item.Id
+            };
+
+            WorkSpace.Instance.Solution.ApplicationPlatforms.Add(selectedApp);
+        }
+
+        private ePlatformType MapToPlatformType(string applicationType)
+        {
+            return applicationType switch
+            {
+                "Web" => ePlatformType.Web,
+                "Mobile" => ePlatformType.Mobile,
+                "Unix" => ePlatformType.Unix,
+                "ASCF" => ePlatformType.ASCF,
+                "DOS" => ePlatformType.DOS,
+                "VBScript" => ePlatformType.VBScript,
+                "WebServices" => ePlatformType.WebServices,
+                "PowerBuilder" => ePlatformType.PowerBuilder,
+                "Java" => ePlatformType.Java,
+                "MainFrame" => ePlatformType.MainFrame,
+                "Service" => ePlatformType.Service,
+                "Windows" => ePlatformType.Windows,
+                "NA" => ePlatformType.NA,
+                _ => throw new ArgumentException($"Unknown platform type: {applicationType}")
+            };
+        }
+
+        private void HideLoader()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                xProcessingImage.Visibility = Visibility.Hidden;
+            });
+        }
+
+        private  void ShowLoader()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                xProcessingImage.Visibility = Visibility.Visible;
+            });
         }
     }
 }

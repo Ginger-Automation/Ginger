@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.ValueExpression;
@@ -643,6 +644,12 @@ namespace GingerCore
                 //        mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
                 //}
                 //else
+
+                Reporter.AddFeatureUsage(FeatureId.GlobalParameter, new TelemetryMetadata()
+                {
+                    { "Operation", "Use" },
+                });
+
                 mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
             }
             else
@@ -1855,6 +1862,39 @@ namespace GingerCore
             ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList, bUpdate, UpdateValue);
             VE.Value = Value;
             return VE.ValueCalculated;
+        }
+
+        /// <summary>
+        /// Calculates the actual value from the input string based on its type.
+        /// If the input is a value expression, it computes the expression to get the value.
+        /// If the input is an encrypted string, it decrypts the string to retrieve the original value.
+        /// Returns the input as is if it doesn't match the above conditions.
+        /// </summary>
+        /// <param name="value">The input string which might be a value expression or an encrypted string.</param>
+        /// <returns>The calculated or decrypted value, or the input string if no processing is needed.</returns>
+        public static string PasswordCalculation(string value)
+        {
+            try
+            {
+            if (IsThisAValueExpression(value))
+            {
+            ValueExpression valueExpression = new();
+            valueExpression.DecryptFlag = true;
+            value = valueExpression.Calculate(value);
+            valueExpression.DecryptFlag = false;
+            return value;
+            }
+            else if (EncryptionHandler.IsStringEncrypted(value))
+            {
+            value = EncryptionHandler.DecryptwithKey(value);
+            return value;
+            }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Unable to decrypt the value expression", ex);
+            }
+            return value;
         }
     }
 

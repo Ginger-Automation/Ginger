@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -143,7 +143,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
             switch (platformType)
             {
                 case ePlatformType.NA:
-                    return eImageType.Empty;
+                    return eImageType.Question;
                 case ePlatformType.Web:
                     return eImageType.Globe;
                 case ePlatformType.WebServices:
@@ -184,5 +184,9 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
                 return ItemName;
             }
         }
+
+        private string mGingerAnalyticsAppId; //Ginger Analytics Application ID
+        [IsSerializedForLocalRepository]
+        public string GingerAnalyticsAppId { get { return mGingerAnalyticsAppId; } set { if (mGingerAnalyticsAppId != value) { mGingerAnalyticsAppId = value; OnPropertyChanged(nameof(GingerAnalyticsAppId)); } } }
     }
 }

@@ -2101,7 +2101,7 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
-            if (ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow).Result)
+            if (ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow))
             {
                 if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, mBusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {

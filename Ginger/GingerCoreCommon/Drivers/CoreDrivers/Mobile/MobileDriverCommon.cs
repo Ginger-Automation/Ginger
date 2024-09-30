@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -27,7 +27,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
     public enum eDeviceSource
     {
         LocalAppium = 0,
-        MicroFoucsUFTMLab = 1
+        MicroFoucsUFTMLab = 1,
+        Kobiton = 2
     }
 
     public enum eAppType

@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -216,6 +217,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public async Task Learn()
         {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.POMLearning);
+            featureTracker.Metadata.Add("Platform", Agent.Platform.ToString());
+            featureTracker.Metadata.Add("DriverType", Agent.DriverType.ToString());
+
             ClearStopLearning();
             PrepareLearningConfigurations();
             LearnScreenShot();
@@ -248,6 +253,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
             }
 
+            featureTracker.Metadata.Add("MappedElementCount", POM.MappedUIElements != null ? POM.MappedUIElements.Count.ToString() : "");
+            featureTracker.Metadata.Add("UnmappedElementCount", POM.UnMappedUIElements != null ? POM.UnMappedUIElements.Count.ToString() : "");
         }
 
         private List<string> GetRelativeXpathTemplateList()

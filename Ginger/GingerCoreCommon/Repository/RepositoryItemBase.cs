@@ -1532,6 +1532,28 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        bool mAIGenerated = false;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the item is AI generated.
+        /// </summary>
+        [IsSerializedForLocalRepository(DefaultValue: false)]
+        public bool AIGenerated
+        {
+            get
+            {
+                return mAIGenerated;
+            }
+            set
+            {
+                if (mAIGenerated != value)
+                {
+                    mAIGenerated = value;
+                    OnPropertyChanged(nameof(AIGenerated));
+                }
+            }
+        }
+
         public Guid ExecutionParentGuid { get; set; } = Guid.Empty;
 
     }

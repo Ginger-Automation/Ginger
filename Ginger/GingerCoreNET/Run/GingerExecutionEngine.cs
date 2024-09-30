@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -2490,7 +2491,12 @@ namespace Ginger.Run
                                         }
                                         else
                                         {
-                                            ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).RunAction(act);
+                                            using (IFeatureTracker rodFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
+                                            {
+                                                rodFeatureTracker.Metadata.Add("Type", act.GetType().Name);
+                                                rodFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunOnDriver.ToString());
+                                                ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).RunAction(act);
+                                            }
                                         }
                                     }
                                     else
@@ -2517,16 +2523,31 @@ namespace Ginger.Run
                             break;
 
                         case GingerRunner.eActionExecutorType.RunWithoutDriver:
-                            RunWithoutAgent(act);
+                            using (IFeatureTracker rwdFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
+                            {
+                                rwdFeatureTracker.Metadata.Add("Type", act.GetType().Name);
+                                rwdFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunWithoutDriver.ToString());
+                                RunWithoutAgent(act);
+                            }
                             break;
 
                         case GingerRunner.eActionExecutorType.RunOnPlugIn:
-                            ExecuteOnPlugin.FindNodeAndRunAction((ActPlugIn)act);
+                            using (IFeatureTracker ropFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
+                            {
+                                ropFeatureTracker.Metadata.Add("Type", act.GetType().Name);
+                                ropFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunOnPlugIn.ToString());
+                                ExecuteOnPlugin.FindNodeAndRunAction((ActPlugIn)act);
+                            }
 
                             break;
 
                         case GingerRunner.eActionExecutorType.RunInSimulationMode:
-                            RunActionInSimulationMode(act);
+                            using (IFeatureTracker risFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
+                            {
+                                risFeatureTracker.Metadata.Add("Type", act.GetType().Name);
+                                risFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunInSimulationMode.ToString());
+                                RunActionInSimulationMode(act);
+                            }
                             break;
                     }
                 }

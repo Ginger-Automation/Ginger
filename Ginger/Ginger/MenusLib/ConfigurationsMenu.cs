@@ -29,6 +29,7 @@ using GingerWPF.UserControlsLib;
 using System;
 using System.Windows.Controls;
 using GingerCore;
+using Ginger.ExternalConfigurations;
 
 namespace Ginger.ConfigurationsLib
 {
@@ -90,6 +91,7 @@ namespace Ginger.ConfigurationsLib
             externalConfigMenu.Add(eImageType.Applitools, "Applitools Configuration", GetApplitoolsExteranalConfigsPage, ConsoleKey.X, "Applitools External Configurations", "Applitools Configuration AID");
             externalConfigMenu.Add(eImageType.Sealights, "Sealights Configuration", GetSealightsExteranalConfigsPage, ConsoleKey.X, "Sealights External Configurations", "Sealights Configuration AID");
             externalConfigMenu.Add(eImageType.Exchange, "Ask Lisa Configuration", GetAskLisaConfigsPage, ConsoleKey.X, "Ask Lisa Configurations", "Ask Lisa Configuration AID");
+            externalConfigMenu.Add(eImageType.GingerAnalytics, "Ginger Analytics Configuration", GetGingerAnalyticsPage, ConsoleKey.X, "Ginger Analytics Configuration", "Ginger Analytics Configuration AID");
             twoLevelMenu.Add(externalConfigMenu);
 
             TopMenuItem accessiblityRulesMenu = new TopMenuItem(eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", ConsoleKey.T, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", "Name & rules of the Accessibility which been present current json");
@@ -153,6 +155,11 @@ namespace Ginger.ConfigurationsLib
         private static Page GetAskLisaConfigsPage()
         {
             return new AskLisaConfigurationsPage();
+        }
+
+        private static Page GetGingerAnalyticsPage()
+        {
+            return new GingerAnalyticsConfigurationPage();
         }
         //Remove when we add other pages
         private static Page OthersPage()
