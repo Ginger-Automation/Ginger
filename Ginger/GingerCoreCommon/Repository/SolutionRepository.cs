@@ -136,10 +136,10 @@ namespace Amdocs.Ginger.Repository
         /// Save the Repository Item to the Root folder and add it to cache
         /// </summary>
         /// <param name="repositoryItem"></param>
-        public void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false)
+        public void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false,bool callPreSaveHandler = true,bool callPostSaveHandler = true)
         {
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
-            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem, doNotSave);
+            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem, doNotSave,callPreSaveHandler: callPreSaveHandler,callPostSaveHandler:callPostSaveHandler);
         }
 
         public async Task SaveRepositoryItemAsync(RepositoryItemBase repositoryItem)
@@ -151,7 +151,7 @@ namespace Amdocs.Ginger.Repository
         /// Save changes of exsiting Repository Item to file system
         /// </summary>
         /// <param name="repositoryItem"></param>
-        public void SaveRepositoryItem(RepositoryItemBase repositoryItem)
+        public void SaveRepositoryItem(RepositoryItemBase repositoryItem, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             try
             {
@@ -159,9 +159,12 @@ namespace Amdocs.Ginger.Repository
                 {
                     throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
                 }
-                if (repositoryItem.PreSaveHandler())
+                if (callPreSaveHandler)
                 {
-                    return;
+                    if (repositoryItem.PreSaveHandler())
+                    {
+                        return;
+                    }
                 }
 
                 repositoryItem.UpdateBeforeSave();
@@ -182,8 +185,16 @@ namespace Amdocs.Ginger.Repository
                 }
 
                 repositoryItem.CreateBackup();
-                ModifiedFiles.Remove(repositoryItem);
-                repositoryItem.PostSaveHandler();
+                if (ModifiedFiles.Contains(repositoryItem))
+                {
+                    ModifiedFiles.Remove(repositoryItem);
+                }
+
+                if(callPostSaveHandler)
+                {
+                    repositoryItem.PostSaveHandler();
+                }
+                
             }
             catch (Exception ex)
             {
@@ -564,7 +575,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        internal void SaveNewRepositoryItem(RepositoryItemBase repositoryItem)
+        internal void SaveNewRepositoryItem(RepositoryItemBase repositoryItem, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             //check if file already exist
             string filePath = CreateRepositoryItemFileName(repositoryItem);
@@ -572,7 +583,7 @@ namespace Amdocs.Ginger.Repository
             {
                 throw new Exception("Repository file already exist - " + filePath);
             }
-            SaveRepositoryItem(repositoryItem);
+            SaveRepositoryItem(repositoryItem,callPreSaveHandler,callPostSaveHandler);
         }
 
         //TODO: fix this method name or cretae or !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -734,7 +745,7 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public void MoveItem(RepositoryItemBase repositoryItem, string targetFolder)
+        public void MoveItem(RepositoryItemBase repositoryItem, string targetFolder, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             RepositoryFolderBase RF = GetItemRepositoryFolder(repositoryItem);
             RepositoryFolderBase targetRF = GetRepositoryFolderByPath(targetFolder);
@@ -742,7 +753,7 @@ namespace Amdocs.Ginger.Repository
             if (RF != null && targetRF != null)
             {
                 RF.DeleteRepositoryItem(repositoryItem);
-                targetRF.AddRepositoryItem(repositoryItem);
+                targetRF.AddRepositoryItem(repositoryItem,callPreSaveHandler:callPreSaveHandler, callPostSaveHandler: callPostSaveHandler);
             }
             else
             {

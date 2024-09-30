@@ -30,6 +30,7 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ginger.Repository
@@ -541,11 +542,13 @@ namespace Ginger.Repository
             try
             {
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating and Saving Linked Activity instanced in Businessflows...");
+                
                 await Task.Run(() =>
                 {
                     try
                     {
                         ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                        List<BusinessFlow> ChangedBFslist =[];
                         Parallel.ForEach(BizFlows, BF =>
                         {
                             try
@@ -556,14 +559,14 @@ namespace Ginger.Repository
                                     {
                                         if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
                                         {
-                                            mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
+                                            mActivity.UpdateInstance(BF.Activities[i], nameof(eItemParts.All), BF);
 
                                             BF.MapTAToBF(eUserMsgSelection.None, BF.Activities[i], WorkSpace.Instance.Solution.ApplicationPlatforms, silently: true);
+                                            if(!ChangedBFslist.Exists(x=>x.Guid.Equals(BF.Guid)))
+                                            {
+                                                ChangedBFslist.Add(BF);
+                                            }
                                         }
-                                    }
-                                    lock (saveLock)
-                                    {
-                                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
                                     }
                                 }
 
@@ -573,10 +576,15 @@ namespace Ginger.Repository
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow " + BF.Name, ex);
                             }
                         });
+
+                        foreach (BusinessFlow BF in ChangedBFslist)
+                        {
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
+                        }
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Linkes Instances", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Linked Instances", ex);
                     }
                     finally
                     {
@@ -639,8 +647,8 @@ namespace Ginger.Repository
                         fc.Value = fc.Value.Replace(targetGuid.ToString(), newTargetGuid.ToString());
                     }
                 }
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity);
-                WorkSpace.Instance.SolutionRepository.MoveItem(sharedActivity, sharedActFullPath);
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity,callPostSaveHandler:false);
+                WorkSpace.Instance.SolutionRepository.MoveItem(sharedActivity, sharedActFullPath,callPreSaveHandler:true,callPostSaveHandler:true);
                 LinkedActivity.EnableEdit = false;
                 await UpdateLinkedInstances(sharedActivity, ExcludeBusinessFlowGuid);
             }
