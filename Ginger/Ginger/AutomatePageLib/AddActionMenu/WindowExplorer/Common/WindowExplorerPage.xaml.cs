@@ -840,7 +840,7 @@ namespace Ginger.WindowExplorer
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);
-                Reporter.ToUser(eUserMsgKey.ObjectLoad);
+                Reporter.ToUser(eUserMsgKey.ObjectLoadTryRefresh);
             }
         }
 
