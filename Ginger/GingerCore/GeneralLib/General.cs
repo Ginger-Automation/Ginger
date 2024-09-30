@@ -353,7 +353,7 @@ namespace GingerCore
             {
                 if (specificValueField == null)
                 {
-                    if (value == comboBox.Items[i].ToString())
+                    if (comboBox.Items[i] != null && string.IsNullOrEmpty(comboBox.Items[i].ToString()) && value == comboBox.Items[i].ToString())
                     {
                         return true;
                     }
@@ -1345,7 +1345,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Failed to copy text to Clipboard",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to copy text to Clipboard", ex);
             }
         }
         public static bool IsAdmin()
