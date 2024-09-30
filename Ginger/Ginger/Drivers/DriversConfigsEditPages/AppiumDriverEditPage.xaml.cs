@@ -189,10 +189,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     SetUFTMSupportSimulationsCapabilities();
                 }
             }
-            else if (mDeviceSource.Value == nameof(eDeviceSource.Kobiton))
+            else if (mDeviceSource.Value == nameof(eDeviceSource.Kobiton) && !IsKobitonCapabilityExist())
             {               
                 DriverConfigParam kobitonUserName = new DriverConfigParam() { Parameter = "username", Description = "Kobiton account User Name" };
-                DriverConfigParam kobitonAccessKey = new DriverConfigParam() { Parameter = "accessKey", Description = "Kobitn account Access Key" };
+                DriverConfigParam kobitonAccessKey = new DriverConfigParam() { Parameter = "accessKey", Description = "Kobiton account Access Key" };
                 DriverConfigParam KobitonSessionName = new DriverConfigParam() { Parameter = "sessionName", Value = "Mobile testing via Ginger by Amdocs", Description = "Testing session name" };
                 DriverConfigParam kobitonDeviceGroup = new DriverConfigParam() { Parameter = "deviceGroup", Value = "KOBITON", Description = "The device group within the Kobiton test session metadata" };
 
@@ -318,6 +318,19 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private bool IsUFTCapabilityExist()
         {
             DriverConfigParam existingCap = mAppiumCapabilities.MultiValues?.FirstOrDefault(x => x.Parameter == "uftm:oauthClientSecret");
+            if (existingCap != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool IsKobitonCapabilityExist()
+        {
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues?.FirstOrDefault(x => x.Parameter == "username" && x.Description == "Kobiton account User Name");
             if (existingCap != null)
             {
                 return true;
