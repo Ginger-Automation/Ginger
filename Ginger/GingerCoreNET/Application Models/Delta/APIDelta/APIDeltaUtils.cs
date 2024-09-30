@@ -45,11 +45,17 @@ namespace GingerCoreNET.Application_Models
                 {
                     if (apiModelLearned.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
                     {
-                        matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
+                        matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && ExtractEndpointPath(m.EndpointURL).Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
                     }
                     else
                     {
-                        matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.RequestType == apiModelLearned.RequestType).ToList();
+                        matchingAPIModels = existingAPIModelsList
+                            .Where(m => (m.EndpointURL != null &&
+                                         ExtractEndpointPath(m.EndpointURL)
+                                         .Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase))
+                                        && m.APIType == apiModelLearned.APIType
+                                        && m.RequestType == apiModelLearned.RequestType)
+                            .ToList();
                     }
                 }
                 else
@@ -135,5 +141,21 @@ namespace GingerCoreNET.Application_Models
             RepositoryFolderBase repItemFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(existingAPI.ContainingFolderFullPath);
             repItemFolderBase.DeleteRepositoryItem(existingAPI);
         }
+
+        private static string ExtractEndpointPath(string fullUrl)
+        {
+            if (string.IsNullOrWhiteSpace(fullUrl))
+                return fullUrl;
+
+            // Removing the URL variable with curley brackets `}`
+            int index = fullUrl.IndexOf('}');
+            if (index != -1 && index + 1 < fullUrl.Length)
+            {
+                return fullUrl.Substring(index + 1).Trim();
+            }
+
+            return fullUrl;
+        }
+
     }
 }
