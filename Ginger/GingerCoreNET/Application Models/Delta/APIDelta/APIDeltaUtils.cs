@@ -45,13 +45,13 @@ namespace GingerCoreNET.Application_Models
                 {
                     if (apiModelLearned.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
                     {
-                        matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && ExtractEndpointPath(m.EndpointURL).Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
+                        matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && apiModelLearned.EndpointURL != null && RemoveUrlVariables(m.EndpointURL).Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
                     }
                     else
                     {
                         matchingAPIModels = existingAPIModelsList
-                            .Where(m => (m.EndpointURL != null &&
-                                         ExtractEndpointPath(m.EndpointURL)
+                            .Where(m => (m.EndpointURL != null && apiModelLearned.EndpointURL != null &&
+                                         RemoveUrlVariables(m.EndpointURL)
                                          .Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase))
                                         && m.APIType == apiModelLearned.APIType
                                         && m.RequestType == apiModelLearned.RequestType)
@@ -142,10 +142,12 @@ namespace GingerCoreNET.Application_Models
             repItemFolderBase.DeleteRepositoryItem(existingAPI);
         }
 
-        private static string ExtractEndpointPath(string fullUrl)
+        private static string RemoveUrlVariables(string fullUrl)
         {
             if (string.IsNullOrWhiteSpace(fullUrl))
+            {
                 return fullUrl;
+            }
 
             // Removing the URL variable with curley brackets `}`
             int index = fullUrl.IndexOf('}');
