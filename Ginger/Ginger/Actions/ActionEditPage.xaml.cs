@@ -960,7 +960,7 @@ namespace Ginger.Actions
 
                 //Simulation view
                 viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Active, WidthWeight = 50, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-                viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Param, Header = "Parameter", WidthWeight = 150 });               
+                viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Param, Header = "Parameter", WidthWeight = 150 });
                 viewCols.Add(new GridColView() { Field = "..", Header = "...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ParamValueExpressionButton"] });
                 viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Description, Header = "Description", WidthWeight = 150 });
                 viewCols.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["DescriptionValueExpressionButton"] });
@@ -970,6 +970,7 @@ namespace Ginger.Actions
                 viewCols.Add(new GridColView() { Field = ".....", Header = "...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["SimulatedlValueExpressionButton"] });
                 viewCols.Add(new GridColView() { Field = "<<", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["AddActualToSimulButton"] });
                 viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Header = "Actual Value", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+                viewCols.Add(new GridColView() { Field = ".......", Header = "...", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ShowActualValueButton"] });
                 viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["AddActualToExpectButton"] });
                 viewCols.Add(new GridColView() { Field = nameof(ActReturnValue.Operator), Header = "Operator", WidthWeight = 150, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
                 // viewCols.Add(new GridColView() { Field = ">>", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["AddActualToExpectButton"] });
@@ -1289,6 +1290,15 @@ namespace Ginger.Actions
             ActReturnValue ARV = (ActReturnValue)xOutputValuesGrid.CurrentItem;
             ARV.Expected = ARV.Actual;
         }
+        
+        private void GridShowActualValueButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActReturnValue ARV = (ActReturnValue)xOutputValuesGrid.CurrentItem;
+            string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(ARV.Actual);
+            RepositoryItemPage RIP = new RepositoryItemPage(tempFilePath, false);
+            RIP.Title = "Actual Value";
+            RIP.ShowAsWindow(eWindowShowStyle.Free);
+        }        
 
         private void GridAddActualToSimulButton_Click(object sender, RoutedEventArgs e)
         {
