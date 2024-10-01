@@ -402,7 +402,7 @@ namespace GingerCore.ALM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                 Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID, ex.Message);
                 return false;
             }
