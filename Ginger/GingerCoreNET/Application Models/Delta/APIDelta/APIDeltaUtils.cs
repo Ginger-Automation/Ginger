@@ -109,6 +109,9 @@ namespace GingerCoreNET.Application_Models
             // Filter matching APIs based on URL Domain
             existingAPIs = existingAPIs.Where(m => m.URLDomain == learnedModel.URLDomain).ToList();
 
+            //Filter matching APIs based on EndPoint URL
+            existingAPIs = existingAPIs.Where(m => m.EndpointURL == learnedModel.EndpointURL).ToList();
+
             // Filter matching APIs based on HTTP Headers
             //existingAPIs = existingAPIs.Where(m => m.HttpHeaders.Equals(learnedModel.HttpHeaders)).ToList();
 
