@@ -272,7 +272,7 @@ namespace GingerCore.ALM
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error adding attachment '{attachmentPath.Trim()}': {ex.Message}", ex);
                 }
             }
 
@@ -402,7 +402,7 @@ namespace GingerCore.ALM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                 Reporter.ToUser(eUserMsgKey.ALMIncorrectExternalID, ex.Message);
                 return false;
             }
@@ -422,7 +422,7 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
         {
-            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fields = [];
             LoginDTO _loginDto = GetLoginDTO();
 
             string[] witType = ["Test Case", "Test Suite", "Test Plan"];
@@ -455,11 +455,13 @@ namespace GingerCore.ALM
                 foreach (var field in listnodes)
                 {
 
-                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
-                    itemfield.ID = field.Name;
-                    itemfield.Name = field.Name;
-                    itemfield.ItemType = entityType;
-                    itemfield.Mandatory = field.AlwaysRequired;
+                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase
+                    {
+                        ID = field.Name,
+                        Name = field.Name,
+                        ItemType = entityType,
+                        Mandatory = field.AlwaysRequired
+                    };
 
                     if (field.AllowedValues != null && field.AllowedValues.Length > 0)
                     {
@@ -636,9 +638,9 @@ namespace GingerCore.ALM
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error related to Suite case entry");
+                Reporter.ToLog(eLogLevel.ERROR, "Error related to Suite case entry", ex);
             }
 
         }
@@ -865,8 +867,10 @@ namespace GingerCore.ALM
 
             ApplicationModule module = Task.Run(() =>
             {
-                ApplicationModule ap = new();
-                ap.Name = appModuleNameTobeCreated;
+                ApplicationModule ap = new()
+                {
+                    Name = appModuleNameTobeCreated
+                };
                 return ap;
             }).Result;
 
@@ -1093,15 +1097,17 @@ namespace GingerCore.ALM
                 }
 
                 //Create Business Flow
-                BusinessFlow busFlow = new BusinessFlow();
-                busFlow.Name = azureTestPlan.Name;
-                busFlow.ExternalID = azureTestPlan.AzureID;
-                busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Activities = new ObservableList<Activity>();
-                busFlow.Variables = new ObservableList<VariableBase>();
+                BusinessFlow busFlow = new BusinessFlow
+                {
+                    Name = azureTestPlan.Name,
+                    ExternalID = azureTestPlan.AzureID,
+                    Status = BusinessFlow.eBusinessFlowStatus.Development,
+                    Activities = [],
+                    Variables = [],
 
-                //Test suite ID
-                busFlow.ExternalID2 = (Int32.Parse(azureTestPlan.AzureID) + 1).ToString();
+                    //Test suite ID
+                    ExternalID2 = (Int32.Parse(azureTestPlan.AzureID) + 1).ToString()
+                };
 
                 //Create Activities Group + Activities for each TC
                 foreach (AzureTestCases tc in azureTestPlan.TestCases)
@@ -1258,9 +1264,11 @@ namespace GingerCore.ALM
             }
             else//Step not exist in Ginger repository so create new one
             {
-                stepActivity = new Activity();
-                stepActivity.ActivityName = step.StepName;
-                stepActivity.ExternalID = step.StepID;
+                stepActivity = new Activity
+                {
+                    ActivityName = step.StepName,
+                    ExternalID = step.StepID
+                };
 
                 toAddStepActivity = true;
             }
