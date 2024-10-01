@@ -125,14 +125,15 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 return;
             }
 
-            Solution? solution = WorkSpace.Instance.Solution;
+            Solution? solution = WorkSpace.Instance?.Solution;
+            string? userId = WorkSpace.Instance?.UserProfile.UserName;
 
             TelemetryLogRecord logRecord = new()
             {
                 SolutionId = solution != null ? solution.Guid.ToString() : "",
                 Account = solution != null && solution.Account != null ? solution.Account : "",
                 AppVersion = ApplicationInfo.ApplicationBackendVersion,
-                UserId = WorkSpace.Instance.UserProfile.UserName,
+                UserId = userId,
                 CreationTimestamp = DateTime.UtcNow,
                 LastUpdateTimestamp = DateTime.UtcNow,
                 Level = level.ToString(),

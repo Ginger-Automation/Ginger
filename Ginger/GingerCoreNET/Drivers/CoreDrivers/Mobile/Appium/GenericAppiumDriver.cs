@@ -1003,8 +1003,8 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.DragXYXY:
                         DragAndDropByXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
                                            Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver),
-                                            TimeSpan.FromMilliseconds(Convert.ToInt32(act.PressDuration.ValueForDriver)),
-                                            TimeSpan.FromMilliseconds(Convert.ToInt32(act.DragDuration.ValueForDriver)));
+                                            TimeSpan.FromMilliseconds(Convert.ToDouble(act.PressDuration.ValueForDriver)),
+                                            TimeSpan.FromMilliseconds(Convert.ToDouble(act.DragDuration.ValueForDriver)));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
