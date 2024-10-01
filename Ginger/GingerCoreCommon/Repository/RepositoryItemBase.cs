@@ -371,23 +371,23 @@ namespace Amdocs.Ginger.Repository
 
         public void BackupList(string Name, IObservableList v, bool isLocalBackup = false)
         {
-            //TODO: if v is Lazy bak the text without drill down
-            List<object> list = new List<object>();
-            foreach (object o in v)
-            {
-                // Run back on each item, so will drill down the hierarchy
-                if (o is RepositoryItemBase)
+                //TODO: if v is Lazy bak the text without drill down
+                List<object> list = new List<object>();
+                foreach (object o in v)
                 {
-                    ((RepositoryItemBase)o).CreateBackup(isLocalBackup);
+                    // Run back on each item, so will drill down the hierarchy
+                    if (o is RepositoryItemBase repositoryItemBase)
+                    {
+                        repositoryItemBase.CreateBackup(isLocalBackup);
+                    }
+                    list.Add(o);
                 }
-                list.Add(o);
-            }
-            // we keep the original list of items in special name like: Activities~List
-            if (!isLocalBackup)
-            {
-                mBackupDic.TryAdd(Name + "~List", list);
-            }
-            mLocalBackupDic.TryAdd(Name + "~List", list);
+                // we keep the original list of items in special name like: Activities~List
+                if (!isLocalBackup)
+                {
+                    mBackupDic.TryAdd(Name + "~List", list);
+                }
+                mLocalBackupDic.TryAdd(Name + "~List", list);            
         }
 
         // Item which will not be saved to the XML - for example dynamic activities or temp output values - no expected or store to

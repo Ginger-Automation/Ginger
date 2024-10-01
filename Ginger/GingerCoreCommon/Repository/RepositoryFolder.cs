@@ -716,7 +716,7 @@ namespace Amdocs.Ginger.Repository
         /// Save the Repository Item to folder and add it to cache
         /// </summary>
         /// <param name="repositoryItem"></param>
-        public override void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false)
+        public override void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             repositoryItem.ContainingFolder = FolderRelativePath;
             repositoryItem.ContainingFolderFullPath = FolderFullPath;
@@ -724,7 +724,7 @@ namespace Amdocs.Ginger.Repository
             if (!doNotSave)
             {
                 //save it
-                SolutionRepository.SaveNewRepositoryItem(repositoryItem);
+                SolutionRepository.SaveNewRepositoryItem(repositoryItem,callPreSaveHandler,callPostSaveHandler);
             }
 
             //add it to folder cache

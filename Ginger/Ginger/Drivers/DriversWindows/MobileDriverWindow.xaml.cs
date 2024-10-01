@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
@@ -1461,17 +1462,9 @@ namespace Ginger.Drivers.DriversWindows
         {
             try
             {
-                System.Windows.Point pointOnMobile = new System.Windows.Point();
-                double scale_factor_x = 1;
-                double scale_factor_y = 1;
-
-                ((GenericAppiumDriver)mDriver).CalculateSourceMobileImageConvertFactors(eImagePointUsage.Click);
-                scale_factor_x = (xDeviceScreenshotImage.Source.Width / ((GenericAppiumDriver)mDriver).mScreenScaleFactorCorrectionX) / xDeviceScreenshotImage.ActualWidth;
-                scale_factor_y = (xDeviceScreenshotImage.Source.Height / ((GenericAppiumDriver)mDriver).mScreenScaleFactorCorrectionY) / xDeviceScreenshotImage.ActualHeight;
-
-                pointOnMobile.X = (int)(pointOnImage.X * scale_factor_x);
-                pointOnMobile.Y = (int)(pointOnImage.Y * scale_factor_y);
-
+                var point=  ((DriverBase)mDriver).GetPointOnAppWindow(new System.Drawing.Point((int)pointOnImage.X, (int)pointOnImage.Y),
+                  xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height, xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight);
+                System.Windows.Point pointOnMobile = new System.Windows.Point(point.X,point.Y);
                 return pointOnMobile;
             }
             catch (Exception ex)
@@ -1755,51 +1748,46 @@ namespace Ginger.Drivers.DriversWindows
             AdjustWindowSize(eImageChangeType.Decrease, false);
         }
 
-        private int mZoomSize = 25;
+        private double mZoomSize = 0.25;
         private void AdjustWindowSize(eImageChangeType operationType, bool resetCanvasSize)
         {
-
             if (xDeviceScreenshotImage.Source != null )
             {
                 double imageSourceHightWidthRatio = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.Source.Width;
                 if (resetCanvasSize)
                 {
-                    if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+                    mZoomSize = 0.25;
+                    xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
+                    while (xDeviceScreenshotCanvas.Width < 250)
                     {
-                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * 0.5;
+                        mZoomSize *= 1.05;
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * mZoomSize;
                     }
-                    else
-                    {
-                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotImage.Source.Width * 0.25;
-                    }
-                    mZoomSize = 25;
                 }
                 double previousCanasWidth = xDeviceScreenshotCanvas.ActualWidth;
                 double previousCanasHeight = xDeviceScreenshotCanvas.ActualHeight;
                 double targetWidthRatio = xDeviceScreenshotImage.Source.Width / xDeviceScreenshotCanvas.Width;
 
                 //Update canvas size
+                xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio);
                 switch (operationType)
                 {
                     case eImageChangeType.Increase:
-                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (1.15);
-                        mZoomSize += 25;
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * 1.15;                       
                         break;
+
                     case eImageChangeType.Decrease:
-                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (0.85);
-                        mZoomSize -= 25;
-                        break;
-                    case eImageChangeType.DoNotChange:
-                        xDeviceScreenshotCanvas.Width = (xDeviceScreenshotImage.Source.Width / targetWidthRatio) * (1);
+                        xDeviceScreenshotCanvas.Width = xDeviceScreenshotCanvas.Width * 0.85;
                         break;
                 }
+                mZoomSize = xDeviceScreenshotCanvas.Width / xDeviceScreenshotImage.Source.Width;
                 xDeviceScreenshotCanvas.Height = xDeviceScreenshotCanvas.Width * imageSourceHightWidthRatio;
 
                 //Update window size
                 this.Width = this.Width + (xDeviceScreenshotCanvas.Width - previousCanasWidth);
                 this.Height = xDeviceScreenshotCanvas.Height + 100;
 
-                if (mZoomSize >= 100)
+                if (mZoomSize >= 1)
                 {
                     xZoomInBtn.IsEnabled = false;
                 }
@@ -1807,7 +1795,7 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     xZoomInBtn.IsEnabled = true;
                 }
-                if (mZoomSize <= 0)
+                if (mZoomSize <= 0.2)
                 {
                     xZoomOutBtn.IsEnabled = false;
                 }
@@ -1815,7 +1803,8 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     xZoomOutBtn.IsEnabled = true;
                 }
-                xZoomSizeLbl.Content = mZoomSize.ToString() + "%";
+                int roundedNumber = (int)Math.Round(mZoomSize*100);
+                xZoomSizeLbl.Content = roundedNumber.ToString() + "%";
             }
         }
     }

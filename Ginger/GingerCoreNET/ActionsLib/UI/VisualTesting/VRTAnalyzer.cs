@@ -39,7 +39,7 @@ namespace GingerCore.Actions.VisualTesting
         public static string ImageName = "ImageName";
         public static string BaselineImage = "BaselineImage";
         public static string VRTSavedBaseImageFilenameString = "VRTSavedBaseImageFilenameString";
-        
+
 
         ActVisualTesting mAct;
         IVisualTestingDriver mDriver;
@@ -56,7 +56,7 @@ namespace GingerCore.Actions.VisualTesting
                 BranchName = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.BranchName),
                 Project = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.Project),
                 ApiUrl = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl),
-                ApiKey = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey),
+                ApiKey = ValueExpression.PasswordCalculation(VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey)),
                 EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes ? false : true
             };
         }
@@ -134,7 +134,7 @@ namespace GingerCore.Actions.VisualTesting
         {
             throw new NotImplementedException();
         }
-     
+
         public void Execute()
         {
             switch (GetSelectedVRTActionEnum())
@@ -195,7 +195,7 @@ namespace GingerCore.Actions.VisualTesting
             {
             }
 
-        }        
+        }
         private void TrackVRT()
         {
 
@@ -211,9 +211,9 @@ namespace GingerCore.Actions.VisualTesting
                 Image image;
                 if (mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ActionBy).Value == eActionBy.Window.ToString())
                 {
-                    if(mAct.CreateBaselineImage)
+                    if (mAct.CreateBaselineImage)
                     {
-                        if(mAct.GetInputParamValue(VRTAnalyzer.BaselineImage) == eBaselineImageBy.ActiveWindow.ToString())
+                        if (mAct.GetInputParamValue(VRTAnalyzer.BaselineImage) == eBaselineImageBy.ActiveWindow.ToString())
                         {
                             image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
                         }
@@ -319,7 +319,7 @@ namespace GingerCore.Actions.VisualTesting
                     switch (result.Status)
                     {
                         case TestRunStatus.New:
-                            if(mAct.CreateBaselineImage)
+                            if (mAct.CreateBaselineImage)
                             {
                                 mAct.ExInfo += $"Baseline uploaded, Please approve it on VRT dashboard.{System.Environment.NewLine}{result.Url}";
                             }
@@ -327,7 +327,7 @@ namespace GingerCore.Actions.VisualTesting
                             {
                                 mAct.Error += $"No baseline found or exsiting baseline not approved, Please approve it on VRT dashboard.{System.Environment.NewLine}{result.Url}";
                             }
-                            
+
                             //Add baseline image to act screenshots
                             if (result.ImageUrl != null)
                             {
@@ -338,34 +338,34 @@ namespace GingerCore.Actions.VisualTesting
                             mAct.Error += $"Differences from baseline was found.{System.Environment.NewLine}{result.DiffUrl}";
 
                             //Add difference image to act screenshots
-                            if(result.DiffUrl != null)
+                            if (result.DiffUrl != null)
                             {
-                                string DiffrenceImage = General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{ Path.GetFileName(result.DiffUrl)}", mAct);
-                                if(!string.IsNullOrEmpty(DiffrenceImage) && File.Exists(DiffrenceImage))
+                                string DiffrenceImage = General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.DiffUrl)}", mAct);
+                                if (!string.IsNullOrEmpty(DiffrenceImage) && File.Exists(DiffrenceImage))
                                 {
                                     Act.AddArtifactToAction("Difference_Image", mAct, DiffrenceImage);
-                                }                                
+                                }
                             }
-                            
+
 
                             //Add baseline image to act screenshots
-                            if(result.BaselineUrl != null)
+                            if (result.BaselineUrl != null)
                             {
                                 mAct.previewBaselineImageName = Path.GetFileName(result.BaselineUrl);
                                 string BaseLineImage = General.DownloadImage($"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{Path.GetFileName(result.BaselineUrl)}", mAct);
-                                if(!string.IsNullOrEmpty(BaseLineImage) && File.Exists(BaseLineImage))
+                                if (!string.IsNullOrEmpty(BaseLineImage) && File.Exists(BaseLineImage))
                                 {
                                     Act.AddArtifactToAction("Baseline_Image", mAct, BaseLineImage);
-                                }                                
+                                }
                             }
-                            
+
 
                             //No need to Add current Screenshot to act screenshots, it will be added in the end if the action is failed
                             break;
                         default:
                             mAct.ExInfo = $"TestRun Results Status: {result.Status}";
                             break;
-                     
+
                     }
                     mAct.CreateBaselineImage = false;//unchecked create Base line image after creation
                 }

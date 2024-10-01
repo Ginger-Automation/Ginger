@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger;
@@ -260,7 +261,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
                 else if (AddAPIModelWizard.APIType == AddAPIModelWizard.eAPIType.Swagger)
                 {
-                    parseSuccess = await ShowSwaggerOperations();
+                    using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning))
+                    {
+                        featureTracker.Metadata.Add("APIType", "Swagger");
+                        if (SwaggerParser.IsValidYaml((AddAPIModelWizard.URL))) 
+                        {
+                            featureTracker.Metadata.Add("FileType", "YAML");
+                        }
+                        else
+                        {
+                            featureTracker.Metadata.Add("FileType", "JSON");
+                        }
+                        parseSuccess = await ShowSwaggerOperations();
+                    }
                 }
 
                 AddAPIModelWizard.IsParsingWasDone = parseSuccess;
@@ -270,6 +283,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private async Task<bool> ShowSwaggerOperations()
         {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "Swagger");
+            if (SwaggerParser.IsValidYaml((AddAPIModelWizard.URL)))
+            {
+                featureTracker.Metadata.Add("FileType", "YAML");
+            }
+            else
+            {
+                featureTracker.Metadata.Add("FileType", "JSON");
+            }
+
             AddAPIModelWizard.ProcessStarted();
             bool parseSuccess = true;
             SwaggerParser SwaggerPar = new SwaggerParser();
@@ -305,6 +329,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private async Task<bool> ShowXMLTemplatesOperations()
         {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "XMLTemplate");
+
             bool parseSuccess = true;
             AddAPIModelWizard.ProcessStarted();
 
@@ -360,6 +387,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         }
         private async Task<bool> ShowJsonTemplatesOperations()
         {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "JSON_Template");
+
             bool parseSuccess = true;
             JSONTemplateParser JsonTemplate = new JSONTemplateParser();
             ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
@@ -413,8 +443,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private async Task<bool> ShowWSDLOperations()
         {
-            bool parseSuccess = true;
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "WSDL");
 
+            bool parseSuccess = true;
+            
             AddAPIModelWizard.ProcessStarted();
             AddAPIModelWizard.LearnedAPIModelsList = new ObservableList<ApplicationAPIModel>();
             xApisSelectionGrid.DataSourceList = AddAPIModelWizard.LearnedAPIModelsList;
@@ -440,7 +473,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
 
             AddAPIModelWizard.ProcessEnded();
-
+            
             return parseSuccess;
         }
 

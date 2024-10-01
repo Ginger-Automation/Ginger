@@ -30,8 +30,6 @@ namespace Amdocs.Ginger.Repository
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
-            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
-            featureTracker.Metadata.Add("APIType", "XMLTemplate");
             XmlDocument doc = new XmlDocument();
             doc.Load(FileName);
             ObservableList<ApplicationAPIModel> parameters = GetParameters(doc, AAMSList, avoidDuplicatesNodes);
