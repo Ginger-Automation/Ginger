@@ -874,7 +874,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FindAndReplaceViewRunSetNotSupported, new UserMsg(eUserMsgType.INFO, "View " + GingerDicser.GetTermResValue(eTermResKey.RunSet), "View " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " is not supported.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsConnectionSuccess, new UserMsg(eUserMsgType.INFO, "GingerOps Connection Info" , " GingerOps Connection is Successful.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsConnectionFail, new UserMsg(eUserMsgType.INFO, "GingerOps Connection Info", " GingerOps Connection is Failed, Please check credentials.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsConnectionFail, new UserMsg(eUserMsgType.INFO, "GingerOps Connection Info", " GingerOps Connection is Failed, Please check credentials/check error logs", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsSyncFailed, new UserMsg(eUserMsgType.INFO, "GingerOps Sync Info", " GingerOps Sync Failed.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsSyncSuccess, new UserMsg(eUserMsgType.INFO, "GingerOps Sync Info", " GingerOps Sync Successful.", eUserMsgOption.OK, eUserMsgSelection.None));
              Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsDeleteDisable, new UserMsg(eUserMsgType.INFO, "GingerOps Application Info", " GingerOps imported Application can not be deleted.", eUserMsgOption.OK, eUserMsgSelection.None));

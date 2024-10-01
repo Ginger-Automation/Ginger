@@ -692,7 +692,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (WorkSpace.Instance.Solution != null && mBusinessFlow != null)
             {
                 //First we check if biz flow have target apps if not add one based on solution, fast convert for old or deleted
-                if (!mBusinessFlow.TargetApplications.Any())
+                if (mBusinessFlow.TargetApplications.Count == 0)
                 {
                     if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.MainApplication))
                     {

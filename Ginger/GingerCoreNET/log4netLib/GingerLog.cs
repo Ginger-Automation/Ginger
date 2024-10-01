@@ -131,6 +131,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             stringBuilder.Append("Log File Path: " + GingerLogFile).Append(Environment.NewLine);
             stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);
             stringBuilder.Append(Environment.NewLine);
+            stringBuilder.Append($"Current Time Zone: {TimeZoneInfo.Local?.DisplayName}{Environment.NewLine}");
 
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
