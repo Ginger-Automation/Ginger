@@ -129,17 +129,17 @@ namespace Amdocs.Ginger.Repository
 
         }
 
-
-
-
         /// <summary>
-        /// Save the Repository Item to the Root folder and add it to cache
+        /// Adds a repository item to the solution repository.
         /// </summary>
-        /// <param name="repositoryItem"></param>
-        public void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false,bool callPreSaveHandler = true,bool callPostSaveHandler = true)
+        /// <param name="repositoryItem">The repository item to add.</param>
+        /// <param name="doNotSave">Indicates whether to save the repository item.</param>
+        /// <param name="callPreSaveHandler">Indicates whether to call the pre-save handler.</param>
+        /// <param name="callPostSaveHandler">Indicates whether to call the post-save handler.</param>
+        public void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
-            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem, doNotSave,callPreSaveHandler: callPreSaveHandler,callPostSaveHandler:callPostSaveHandler);
+            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem, doNotSave, callPreSaveHandler: callPreSaveHandler, callPostSaveHandler: callPostSaveHandler);
         }
 
         public async Task SaveRepositoryItemAsync(RepositoryItemBase repositoryItem)
@@ -148,9 +148,11 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
-        /// Save changes of exsiting Repository Item to file system
+        /// Save changes of existing Repository Item to file system
         /// </summary>
-        /// <param name="repositoryItem"></param>
+        /// <param name="repositoryItem">The Repository Item to be saved</param>
+        /// <param name="callPreSaveHandler">Flag indicating whether to call the PreSaveHandler method</param>
+        /// <param name="callPostSaveHandler">Flag indicating whether to call the PostSaveHandler method</param>
         public void SaveRepositoryItem(RepositoryItemBase repositoryItem, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             try
@@ -159,12 +161,10 @@ namespace Amdocs.Ginger.Repository
                 {
                     throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
                 }
-                if (callPreSaveHandler)
+
+                if (callPreSaveHandler && repositoryItem.PreSaveHandler())
                 {
-                    if (repositoryItem.PreSaveHandler())
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 repositoryItem.UpdateBeforeSave();
@@ -184,17 +184,15 @@ namespace Amdocs.Ginger.Repository
                     repositoryItem.SetDirtyStatusToNoChange();
                 }
 
+                // Create a backup of the repository item
                 repositoryItem.CreateBackup();
-                if (ModifiedFiles.Contains(repositoryItem))
-                {
-                    ModifiedFiles.Remove(repositoryItem);
-                }
 
-                if(callPostSaveHandler)
+                ModifiedFiles.Remove(repositoryItem);
+
+                if (callPostSaveHandler)
                 {
                     repositoryItem.PostSaveHandler();
                 }
-                
             }
             catch (Exception ex)
             {
@@ -575,6 +573,12 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        /// <summary>
+        /// Saves a new repository item to the solution repository.
+        /// </summary>
+        /// <param name="repositoryItem">The repository item to be saved.</param>
+        /// <param name="callPreSaveHandler">Flag indicating whether to call the pre-save handler.</param>
+        /// <param name="callPostSaveHandler">Flag indicating whether to call the post-save handler.</param>
         internal void SaveNewRepositoryItem(RepositoryItemBase repositoryItem, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             //check if file already exist
@@ -583,7 +587,7 @@ namespace Amdocs.Ginger.Repository
             {
                 throw new Exception("Repository file already exist - " + filePath);
             }
-            SaveRepositoryItem(repositoryItem,callPreSaveHandler,callPostSaveHandler);
+            SaveRepositoryItem(repositoryItem, callPreSaveHandler, callPostSaveHandler);
         }
 
         //TODO: fix this method name or cretae or !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -745,6 +749,13 @@ namespace Amdocs.Ginger.Repository
         }
 
 
+        /// <summary>
+        /// Moves a repository item to the specified target folder.
+        /// </summary>
+        /// <param name="repositoryItem">The repository item to be moved.</param>
+        /// <param name="targetFolder">The target folder path.</param>
+        /// <param name="callPreSaveHandler">Flag indicating whether to call the pre-save handler.</param>
+        /// <param name="callPostSaveHandler">Flag indicating whether to call the post-save handler.</param>
         public void MoveItem(RepositoryItemBase repositoryItem, string targetFolder, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             RepositoryFolderBase RF = GetItemRepositoryFolder(repositoryItem);
@@ -753,7 +764,7 @@ namespace Amdocs.Ginger.Repository
             if (RF != null && targetRF != null)
             {
                 RF.DeleteRepositoryItem(repositoryItem);
-                targetRF.AddRepositoryItem(repositoryItem,callPreSaveHandler:callPreSaveHandler, callPostSaveHandler: callPostSaveHandler);
+                targetRF.AddRepositoryItem(repositoryItem, callPreSaveHandler: callPreSaveHandler, callPostSaveHandler: callPostSaveHandler);
             }
             else
             {
