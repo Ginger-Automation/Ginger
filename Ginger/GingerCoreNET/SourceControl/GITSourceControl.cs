@@ -1330,12 +1330,7 @@ namespace GingerCore.SourceControl
         private MergeResult Pull()
         {
             MergeResult mergeResult = null;
-
-            Reporter.AddFeatureUsage(FeatureId.SourceControl, new TelemetryMetadata()
-            {
-                { "VersionControlType", "GIT" },
-                { "Operation", "Pull" }
-            });
+            ReportFeatureUsage(operation: "Pull");
             //Pull = Fetch + Merge
             Task.Run(() =>
             {
@@ -1360,11 +1355,7 @@ namespace GingerCore.SourceControl
 
         private Commit Commit(string Comments)
         {
-            Reporter.AddFeatureUsage(FeatureId.SourceControl, new TelemetryMetadata()
-            {
-                { "VersionControlType", "GIT" },
-                { "Operation", "Commit" }
-            });
+            ReportFeatureUsage(operation: "Commit");
             CheckinComment = Comments;
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
@@ -1457,11 +1448,7 @@ namespace GingerCore.SourceControl
 
         private void Push()
         {
-            Reporter.AddFeatureUsage(FeatureId.SourceControl, new TelemetryMetadata()
-            {
-                { "VersionControlType", "GIT" },
-                { "Operation", "Push" }
-            });
+            ReportFeatureUsage(operation: "Push");
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
                 PushOptions options = new PushOptions();
@@ -1647,6 +1634,15 @@ namespace GingerCore.SourceControl
             CredentialsHandler credentialHandler = (_url, _user, _cred) => credentials;
 
             return credentialHandler;
+        }
+
+        private static void ReportFeatureUsage(string operation)
+        {
+            Reporter.AddFeatureUsage(FeatureId.SourceControl, new TelemetryMetadata()
+            {
+                { "VersionControlType", "GIT" },
+                { "Operation", operation }
+            });
         }
 
     }
