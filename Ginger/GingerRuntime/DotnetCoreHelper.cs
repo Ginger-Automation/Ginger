@@ -296,6 +296,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 case eALMType.Octane:
                     almCore = new OctaneCore();
                     break;
+                case eALMType.Azure:
+                    almCore = new AzureDevOpsCore();
+                    break;
                 default:
                     Reporter.ToLog(eLogLevel.ERROR, $"Invalid ALM Type - {almType}");
                     break;
