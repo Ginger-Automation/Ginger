@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using GingerCore;
 using GingerCore.Drivers;
 using System;
@@ -197,6 +198,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             string IEDriverFile = "IEDriverServer.exe";
             string EdgeDriverFile = "msedgedriver.exe";
             SeleniumDriver seleniumDriver = new SeleniumDriver();
+            seleniumDriver.BrowserType = WebBrowserType.Chrome;
             string chromeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Chrome);
             string chromeDestFile = System.IO.Path.Combine(targetPath, chromeDriverFile);
 
@@ -212,7 +214,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 }
                 
             }
-
+            seleniumDriver.BrowserType = WebBrowserType.FireFox;
             string fireFoxSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.FireFox);
             string fireFoxDestFile = System.IO.Path.Combine(targetPath, fireFoxDriverFile);
 
@@ -228,7 +230,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     Reporter.ToLog(eLogLevel.DEBUG, "firefox Driver not found");
                 }
             }
-
+            seleniumDriver.BrowserType = WebBrowserType.InternetExplorer;
             string IESourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.IE);
             string IEDestFile = System.IO.Path.Combine(targetPath, IEDriverFile);
 
@@ -243,7 +245,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     Reporter.ToLog(eLogLevel.DEBUG, "IE Driver not found");
                 }
             }
-
+            seleniumDriver.BrowserType = WebBrowserType.Edge;
             string edgeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Edge);
             string edgeDestFile = System.IO.Path.Combine(targetPath, EdgeDriverFile);
 
