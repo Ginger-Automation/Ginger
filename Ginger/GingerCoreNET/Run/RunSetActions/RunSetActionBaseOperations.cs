@@ -57,7 +57,7 @@ namespace Ginger.Run.RunSetActions
                 st.Start();
                 using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.RunsetAction))
                 {
-                    featureTracker.Metadata.Add("type", runsetActionBase.Type);
+                    featureTracker.Metadata.Add("Type", runsetActionBase.Type);
                     runsetActionBase.Execute(RI);
                 }
                 st.Stop();

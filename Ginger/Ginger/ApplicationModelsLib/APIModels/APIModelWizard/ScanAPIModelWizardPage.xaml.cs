@@ -261,19 +261,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
                 else if (AddAPIModelWizard.APIType == AddAPIModelWizard.eAPIType.Swagger)
                 {
-                    using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning))
-                    {
-                        featureTracker.Metadata.Add("APIType", "Swagger");
-                        if (SwaggerParser.IsValidYaml((AddAPIModelWizard.URL))) 
-                        {
-                            featureTracker.Metadata.Add("FileType", "YAML");
-                        }
-                        else
-                        {
-                            featureTracker.Metadata.Add("FileType", "JSON");
-                        }
-                        parseSuccess = await ShowSwaggerOperations();
-                    }
+                    parseSuccess = await ShowSwaggerOperations();
                 }
 
                 AddAPIModelWizard.IsParsingWasDone = parseSuccess;
