@@ -2495,6 +2495,7 @@ namespace Ginger.Run
                                             {
                                                 rodFeatureTracker.Metadata.Add("Type", act.GetType().Name);
                                                 rodFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunOnDriver.ToString());
+                                                rodFeatureTracker.Metadata.Add("IsSharedRepositoryInstance", act.IsSharedRepositoryInstance.ToString());
                                                 ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).RunAction(act);
                                             }
                                         }
@@ -2527,6 +2528,7 @@ namespace Ginger.Run
                             {
                                 rwdFeatureTracker.Metadata.Add("Type", act.GetType().Name);
                                 rwdFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunWithoutDriver.ToString());
+                                rwdFeatureTracker.Metadata.Add("IsSharedRepositoryInstance", act.IsSharedRepositoryInstance.ToString());
                                 RunWithoutAgent(act);
                             }
                             break;
@@ -2536,6 +2538,7 @@ namespace Ginger.Run
                             {
                                 ropFeatureTracker.Metadata.Add("Type", act.GetType().Name);
                                 ropFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunOnPlugIn.ToString());
+                                ropFeatureTracker.Metadata.Add("IsSharedRepositoryInstance", act.IsSharedRepositoryInstance.ToString());
                                 ExecuteOnPlugin.FindNodeAndRunAction((ActPlugIn)act);
                             }
 
@@ -2546,6 +2549,7 @@ namespace Ginger.Run
                             {
                                 risFeatureTracker.Metadata.Add("Type", act.GetType().Name);
                                 risFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunInSimulationMode.ToString());
+                                risFeatureTracker.Metadata.Add("IsSharedRepositoryInstance", act.IsSharedRepositoryInstance.ToString());
                                 RunActionInSimulationMode(act);
                             }
                             break;

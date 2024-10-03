@@ -659,11 +659,6 @@ namespace GingerCore
                 //}
                 //else
 
-                Reporter.AddFeatureUsage(FeatureId.GlobalParameter, new TelemetryMetadata()
-                {
-                    { "Operation", "Use" },
-                });
-
                 mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
             }
             else

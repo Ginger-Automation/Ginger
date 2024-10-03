@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.SourceControlLib;
+using Amdocs.Ginger.Common.Telemetry;
 using DocumentFormat.OpenXml.Math;
 using GingerCore.Drivers.Selenium.SeleniumBMP;
 using GingerCoreNET.SourceControl;
@@ -98,7 +99,7 @@ namespace GingerCore.SourceControl
                 bool result = true;
                 try
                 {
-                    if (AnyLocalChangesPendingtoCommit())
+                    if (Paths != null && Paths.Count > 0 && AnyLocalChangesPendingtoCommit())
                     {
                         Commit(Comments);
                     }
@@ -1329,6 +1330,12 @@ namespace GingerCore.SourceControl
         private MergeResult Pull()
         {
             MergeResult mergeResult = null;
+
+            Reporter.AddFeatureUsage(FeatureId.SourceControl, new TelemetryMetadata()
+            {
+                { "VersionControlType", "GIT" },
+                { "Operation", "Pull" }
+            });
             //Pull = Fetch + Merge
             Task.Run(() =>
             {
@@ -1353,6 +1360,11 @@ namespace GingerCore.SourceControl
 
         private Commit Commit(string Comments)
         {
+            Reporter.AddFeatureUsage(FeatureId.SourceControl, new TelemetryMetadata()
+            {
+                { "VersionControlType", "GIT" },
+                { "Operation", "Commit" }
+            });
             CheckinComment = Comments;
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
@@ -1445,6 +1457,11 @@ namespace GingerCore.SourceControl
 
         private void Push()
         {
+            Reporter.AddFeatureUsage(FeatureId.SourceControl, new TelemetryMetadata()
+            {
+                { "VersionControlType", "GIT" },
+                { "Operation", "Push" }
+            });
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
                 PushOptions options = new PushOptions();
