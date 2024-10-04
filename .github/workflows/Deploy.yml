@@ -14,7 +14,7 @@ jobs:
 # Createin version Tag & Number variables 
 # ------------------------------------------------------------------------------------------------------
           - name: Download Version Artifacts
-            uses: actions/download-artifact@v3
+            uses: actions/download-artifact@v4.1.7
             with:
               name: ginger-version     
 
@@ -35,7 +35,7 @@ jobs:
 # Download GingerRuntime Artifact
 # ------------------------------------------------------------------------------------------------------
           - name: Download GingerRuntime Artifact
-            uses: actions/download-artifact@v3
+            uses: actions/download-artifact@v4.1.7
             with:
                 name: GingerRuntime
 
@@ -43,7 +43,7 @@ jobs:
 #  Download Windows Installer Artifact
 # ------------------------------------------------------------------------------------------------------      
           - name: Download Windows Installer Artifact
-            uses: actions/download-artifact@v3
+            uses: actions/download-artifact@v4.1.7
             with:
                 name: WindowsInstaller
                 
