@@ -59,23 +59,27 @@ namespace Amdocs.Ginger.Common
 
             if (TelemetryQueueManager != null)
             {
-                string msg;
-                if (exceptionToLog != null)
+                try
                 {
-                    msg = $"{messageToLog}\n{exceptionToLog}";
+                    string msg;
+                    if (exceptionToLog != null)
+                    {
+                        msg = $"{messageToLog}\n{exceptionToLog}";
+                    }
+                    else
+                    {
+                        msg = messageToLog;
+                    }
+                    if (metadata == null)
+                    {
+                        TelemetryQueueManager.AddLog(logLevel, msg);
+                    }
+                    else
+                    {
+                        TelemetryQueueManager.AddLog(logLevel, msg, metadata);
+                    }
                 }
-                else
-                {
-                    msg = messageToLog;
-                }
-                if (metadata == null)
-                {
-                    TelemetryQueueManager.AddLog(logLevel, msg);
-                }
-                else
-                {
-                    TelemetryQueueManager.AddLog(logLevel, msg, metadata);
-                }
+                catch { }
             }
         }
         #endregion ToLog

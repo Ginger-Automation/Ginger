@@ -73,6 +73,11 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public string ExternalID2 { get { return mExternalID2; } set { if (mExternalID2 != value) { mExternalID2 = value; OnPropertyChanged(nameof(ExternalID2)); } } }
 
+        private bool mGOpsFlag;
+        [IsSerializedForLocalRepository]
+        public bool GOpsFlag { get { return mGOpsFlag; } set { if (mGOpsFlag != value) { mGOpsFlag = value; OnPropertyChanged(nameof(GOpsFlag)); } } }
+
+
         public LiteDB.ObjectId LiteDbId { get; set; }
 
         public string ObjFolderName { get { return FolderName(this.GetType()); } }
@@ -337,6 +342,11 @@ namespace Amdocs.Ginger.Repository
 
                 return true;
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception while creating backup", ex);
+                return false;
+            }
             finally
             {
                 mBackupInProgress = false;
@@ -361,23 +371,23 @@ namespace Amdocs.Ginger.Repository
 
         public void BackupList(string Name, IObservableList v, bool isLocalBackup = false)
         {
-            //TODO: if v is Lazy bak the text without drill down
-            List<object> list = new List<object>();
-            foreach (object o in v)
-            {
-                // Run back on each item, so will drill down the hierarchy
-                if (o is RepositoryItemBase)
+                //TODO: if v is Lazy bak the text without drill down
+                List<object> list = new List<object>();
+                foreach (object o in v)
                 {
-                    ((RepositoryItemBase)o).CreateBackup(isLocalBackup);
+                    // Run back on each item, so will drill down the hierarchy
+                    if (o is RepositoryItemBase repositoryItemBase)
+                    {
+                        repositoryItemBase.CreateBackup(isLocalBackup);
+                    }
+                    list.Add(o);
                 }
-                list.Add(o);
-            }
-            // we keep the original list of items in special name like: Activities~List
-            if (!isLocalBackup)
-            {
-                mBackupDic.TryAdd(Name + "~List", list);
-            }
-            mLocalBackupDic.TryAdd(Name + "~List", list);
+                // we keep the original list of items in special name like: Activities~List
+                if (!isLocalBackup)
+                {
+                    mBackupDic.TryAdd(Name + "~List", list);
+                }
+                mLocalBackupDic.TryAdd(Name + "~List", list);            
         }
 
         // Item which will not be saved to the XML - for example dynamic activities or temp output values - no expected or store to

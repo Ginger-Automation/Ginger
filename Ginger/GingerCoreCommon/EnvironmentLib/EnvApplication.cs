@@ -62,15 +62,15 @@ namespace GingerCore.Environments
         [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
-        private string mGingerAnalyticsAppId; //Ginger Analytics Application ID
+        private string mGingerOpsAppId; //Ginger Analytics Application ID
         [IsSerializedForLocalRepository]
-        public string GingerAnalyticsAppId { get { return mGingerAnalyticsAppId; } set { if (mGingerAnalyticsAppId != value) { mGingerAnalyticsAppId = value; OnPropertyChanged(nameof(GingerAnalyticsAppId)); } } }
+        public string GingerOpsAppId { get { return mGingerOpsAppId; } set { if (mGingerOpsAppId != value) { mGingerOpsAppId = value; OnPropertyChanged(nameof(GingerOpsAppId)); } } }
 
-        private string mGingerAnalyticsStatus; //Ginger Analytics import status
-        public string GingerAnalyticsStatus { get { return mGingerAnalyticsStatus; } set { if (mGingerAnalyticsStatus != value) { mGingerAnalyticsStatus = value; OnPropertyChanged(nameof(GingerAnalyticsStatus)); } } }
+        private string mGingerOpsStatus; //Ginger Analytics import status
+        public string GingerOpsStatus { get { return mGingerOpsStatus; } set { if (mGingerOpsStatus != value) { mGingerOpsStatus = value; OnPropertyChanged(nameof(GingerOpsStatus)); } } }
 
-        private string mGingerAnalyticsRemark; //Ginger Analytics Remakrs if any during import
-        public string GingerAnalyticsRemark { get { return mGingerAnalyticsRemark; } set { if (mGingerAnalyticsRemark != value) { mGingerAnalyticsRemark = value; OnPropertyChanged(nameof(GingerAnalyticsRemark)); } } }
+        private string mGingerOpsRemark; //Ginger Analytics Remakrs if any during import
+        public string GingerOpsRemark { get { return mGingerOpsRemark; } set { if (mGingerOpsRemark != value) { mGingerOpsRemark = value; OnPropertyChanged(nameof(GingerOpsRemark)); } } }
 
         [IsSerializedForLocalRepository]
         public ObservableList<IDatabase> Dbs { get; set; } = new ObservableList<IDatabase>();

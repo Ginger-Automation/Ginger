@@ -1,25 +1,47 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Telemetry;
+using Ginger.SolutionGeneral;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
 namespace Amdocs.Ginger.CoreNET.Telemetry
 {
     internal sealed class FeatureTracker : IFeatureTracker
     {
+        internal delegate void OnStopHandler(FeatureId featureId, TimeSpan duration, TelemetryMetadata metadata);
+
         private readonly long _startTime;
-        private readonly Action<TelemetryFeatureRecord> _onStop;
+        private readonly OnStopHandler _onStop;
         private bool _stopped = false;
 
         public FeatureId FeatureId { get; }
         
         public TelemetryMetadata Metadata { get; }
 
-        internal FeatureTracker(FeatureId featureId, Action<TelemetryFeatureRecord> onStop)
+        internal FeatureTracker(FeatureId featureId, OnStopHandler onStop)
         {
             _startTime = DateTime.UtcNow.Ticks;
             _onStop = onStop;
@@ -35,16 +57,9 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             }
             _stopped = true;
 
-            _onStop(new TelemetryFeatureRecord()
-            {
-                AppVersion = ApplicationInfo.ApplicationBackendVersion,
-                UserId = WorkSpace.Instance.UserProfile.UserName,
-                CreationTimestamp = DateTime.UtcNow,
-                LastUpdateTimestamp = DateTime.UtcNow,
-                FeatureId = FeatureId.ToString(),
-                Duration = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - _startTime),
-                Metadata = Metadata.ToJSON(),
-            });
+            Solution? solution = WorkSpace.Instance.Solution;
+
+            _onStop(FeatureId, duration: TimeSpan.FromTicks(DateTime.UtcNow.Ticks - _startTime), Metadata);
         }
 
         public void Dispose()

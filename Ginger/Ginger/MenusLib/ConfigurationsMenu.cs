@@ -91,7 +91,7 @@ namespace Ginger.ConfigurationsLib
             externalConfigMenu.Add(eImageType.Applitools, "Applitools Configuration", GetApplitoolsExteranalConfigsPage, ConsoleKey.X, "Applitools External Configurations", "Applitools Configuration AID");
             externalConfigMenu.Add(eImageType.Sealights, "Sealights Configuration", GetSealightsExteranalConfigsPage, ConsoleKey.X, "Sealights External Configurations", "Sealights Configuration AID");
             externalConfigMenu.Add(eImageType.Exchange, "Ask Lisa Configuration", GetAskLisaConfigsPage, ConsoleKey.X, "Ask Lisa Configurations", "Ask Lisa Configuration AID");
-            externalConfigMenu.Add(eImageType.GingerAnalytics, "Ginger Analytics Configuration", GetGingerAnalyticsPage, ConsoleKey.X, "Ginger Analytics Configuration", "Ginger Analytics Configuration AID");
+            externalConfigMenu.Add(eImageType.GingerAnalytics, "GingerOps Configuration", GetGingerOpsPage, ConsoleKey.X, "GingerOps Configuration", "GingerOps Configuration AID");
             twoLevelMenu.Add(externalConfigMenu);
 
             TopMenuItem accessiblityRulesMenu = new TopMenuItem(eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", ConsoleKey.T, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", "Name & rules of the Accessibility which been present current json");
@@ -157,9 +157,9 @@ namespace Ginger.ConfigurationsLib
             return new AskLisaConfigurationsPage();
         }
 
-        private static Page GetGingerAnalyticsPage()
+        private static Page GetGingerOpsPage()
         {
-            return new GingerAnalyticsConfigurationPage();
+            return new GingerOpsConfigurationPage();
         }
         //Remove when we add other pages
         private static Page OthersPage()

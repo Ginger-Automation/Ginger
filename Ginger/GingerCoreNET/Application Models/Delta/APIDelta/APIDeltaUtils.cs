@@ -45,11 +45,17 @@ namespace GingerCoreNET.Application_Models
                 {
                     if (apiModelLearned.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
                     {
-                        matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
+                        matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && apiModelLearned.EndpointURL != null && RemoveUrlVariables(m.EndpointURL).Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
                     }
                     else
                     {
-                        matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.RequestType == apiModelLearned.RequestType).ToList();
+                        matchingAPIModels = existingAPIModelsList
+                            .Where(m => (m.EndpointURL != null && apiModelLearned.EndpointURL != null &&
+                                         RemoveUrlVariables(m.EndpointURL)
+                                         .Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase))
+                                        && m.APIType == apiModelLearned.APIType
+                                        && m.RequestType == apiModelLearned.RequestType)
+                            .ToList();
                     }
                 }
                 else
@@ -103,6 +109,9 @@ namespace GingerCoreNET.Application_Models
             // Filter matching APIs based on URL Domain
             existingAPIs = existingAPIs.Where(m => m.URLDomain == learnedModel.URLDomain).ToList();
 
+            //Filter matching APIs based on EndPoint URL
+            existingAPIs = existingAPIs.Where(m => m.EndpointURL != null && learnedModel.EndpointURL != null && RemoveUrlVariables(m.EndpointURL).Equals(learnedModel.EndpointURL, StringComparison.OrdinalIgnoreCase)).ToList();
+
             // Filter matching APIs based on HTTP Headers
             //existingAPIs = existingAPIs.Where(m => m.HttpHeaders.Equals(learnedModel.HttpHeaders)).ToList();
 
@@ -135,5 +144,27 @@ namespace GingerCoreNET.Application_Models
             RepositoryFolderBase repItemFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(existingAPI.ContainingFolderFullPath);
             repItemFolderBase.DeleteRepositoryItem(existingAPI);
         }
+
+        private static string RemoveUrlVariables(string fullUrl)
+        {
+            if (string.IsNullOrWhiteSpace(fullUrl))
+            {
+                return fullUrl;
+            }
+
+            // URL is part of Model Global Param, we need to remove that only for comparison
+            int startIndex = fullUrl.IndexOf('{');
+            int endIndex = fullUrl.IndexOf('}');
+
+            // If the curly braces are found in start and before end
+            if (startIndex == 0 && endIndex != -1 && endIndex + 1 < fullUrl.Length)
+            {
+                // Removing the MGP of URL and replacing the actual endpoint
+                fullUrl = fullUrl.Substring(endIndex + 1).Trim();
+            }
+
+            return fullUrl;
+        }
+
     }
 }

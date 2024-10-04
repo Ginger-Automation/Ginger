@@ -309,6 +309,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
+
+            if (mContext.Environment.GOpsFlag)
+            {
+                return operationsList;
+            }
+
             ListItemOperation addNew = new ListItemOperation();
             addNew.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             addNew.AutomationID = "addNew";

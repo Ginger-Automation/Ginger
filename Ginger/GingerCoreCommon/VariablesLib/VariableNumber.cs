@@ -336,8 +336,12 @@ namespace GingerCore.Variables
 
         public override void SetInitialValue(string InitialValue)
         {
-
             this.InitialNumberValue = InitialValue;
+        }
+
+        public override string GetInitialValue()
+        {
+            return InitialNumberValue;
         }
     }
 }

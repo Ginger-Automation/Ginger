@@ -382,6 +382,10 @@ namespace GingerCoreNET.RosLynLib
                 {
                     evalresult = string.Join(",", (int[])result);
                 }
+                else if (result.GetType() == typeof(string[]))
+                {
+                    evalresult = string.Join(",", (string[])result);
+                }
                 else
                 {
                     evalresult = result.ToString();

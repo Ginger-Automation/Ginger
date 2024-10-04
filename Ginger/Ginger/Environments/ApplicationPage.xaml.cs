@@ -44,8 +44,16 @@ namespace Ginger.Environments
             mEnvApplication = app;
             mContext = context;
             CurrentItemToSave = mContext.Environment;
+
+            
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
+
+            if (mEnvApplication.GOpsFlag)
+            {
+                ApplicationNameTextBox.IsEnabled = false;
+                DescriptionTextBox.IsEnabled = false;
+            }
 
             UpdateParametersTabHeader();
             CollectionChangedEventManager.AddHandler(source: app.Variables, handler: GeneralParams_CollectionChanged);

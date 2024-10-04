@@ -98,7 +98,7 @@ namespace Amdocs.Ginger.Repository
         /// Save the Repository Item to folder and add it to cache
         /// </summary>
         /// <param name="repositoryItem"></param>
-        public abstract void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false);
+        public abstract void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false, bool callPreSaveHandler = true, bool callPostSaveHandler = true);
 
         /// <summary>
         /// Delete the Repository Item from folder and cache

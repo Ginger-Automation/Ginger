@@ -11,7 +11,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-See the License for the specific language governing permissions and 
+See the License for the specific language governing permissions and     
 limitations under the License. 
 */
 #endregion
@@ -129,17 +129,17 @@ namespace Amdocs.Ginger.Repository
 
         }
 
-
-
-
         /// <summary>
-        /// Save the Repository Item to the Root folder and add it to cache
+        /// Adds a repository item to the solution repository.
         /// </summary>
-        /// <param name="repositoryItem"></param>
-        public void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false)
+        /// <param name="repositoryItem">The repository item to add.</param>
+        /// <param name="doNotSave">Indicates whether to save the repository item.</param>
+        /// <param name="callPreSaveHandler">Indicates whether to call the pre-save handler.</param>
+        /// <param name="callPostSaveHandler">Indicates whether to call the post-save handler.</param>
+        public void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
-            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem, doNotSave);
+            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem, doNotSave, callPreSaveHandler: callPreSaveHandler, callPostSaveHandler: callPostSaveHandler);
         }
 
         public async Task SaveRepositoryItemAsync(RepositoryItemBase repositoryItem)
@@ -148,10 +148,12 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
-        /// Save changes of exsiting Repository Item to file system
+        /// Save changes of existing Repository Item to file system
         /// </summary>
-        /// <param name="repositoryItem"></param>
-        public void SaveRepositoryItem(RepositoryItemBase repositoryItem)
+        /// <param name="repositoryItem">The Repository Item to be saved</param>
+        /// <param name="callPreSaveHandler">Flag indicating whether to call the PreSaveHandler method</param>
+        /// <param name="callPostSaveHandler">Flag indicating whether to call the PostSaveHandler method</param>
+        public void SaveRepositoryItem(RepositoryItemBase repositoryItem, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             try
             {
@@ -159,7 +161,8 @@ namespace Amdocs.Ginger.Repository
                 {
                     throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
                 }
-                if (repositoryItem.PreSaveHandler())
+
+                if (callPreSaveHandler && repositoryItem.PreSaveHandler())
                 {
                     return;
                 }
@@ -181,12 +184,15 @@ namespace Amdocs.Ginger.Repository
                     repositoryItem.SetDirtyStatusToNoChange();
                 }
 
+                // Create a backup of the repository item
                 repositoryItem.CreateBackup();
-                if (ModifiedFiles.Contains(repositoryItem))
+
+                ModifiedFiles.Remove(repositoryItem);
+
+                if (callPostSaveHandler)
                 {
-                    ModifiedFiles.Remove(repositoryItem);
+                    repositoryItem.PostSaveHandler();
                 }
-                repositoryItem.PostSaveHandler();
             }
             catch (Exception ex)
             {
@@ -567,7 +573,13 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        internal void SaveNewRepositoryItem(RepositoryItemBase repositoryItem)
+        /// <summary>
+        /// Saves a new repository item to the solution repository.
+        /// </summary>
+        /// <param name="repositoryItem">The repository item to be saved.</param>
+        /// <param name="callPreSaveHandler">Flag indicating whether to call the pre-save handler.</param>
+        /// <param name="callPostSaveHandler">Flag indicating whether to call the post-save handler.</param>
+        internal void SaveNewRepositoryItem(RepositoryItemBase repositoryItem, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             //check if file already exist
             string filePath = CreateRepositoryItemFileName(repositoryItem);
@@ -575,7 +587,7 @@ namespace Amdocs.Ginger.Repository
             {
                 throw new Exception("Repository file already exist - " + filePath);
             }
-            SaveRepositoryItem(repositoryItem);
+            SaveRepositoryItem(repositoryItem, callPreSaveHandler, callPostSaveHandler);
         }
 
         //TODO: fix this method name or cretae or !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -737,7 +749,14 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public void MoveItem(RepositoryItemBase repositoryItem, string targetFolder)
+        /// <summary>
+        /// Moves a repository item to the specified target folder.
+        /// </summary>
+        /// <param name="repositoryItem">The repository item to be moved.</param>
+        /// <param name="targetFolder">The target folder path.</param>
+        /// <param name="callPreSaveHandler">Flag indicating whether to call the pre-save handler.</param>
+        /// <param name="callPostSaveHandler">Flag indicating whether to call the post-save handler.</param>
+        public void MoveItem(RepositoryItemBase repositoryItem, string targetFolder, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             RepositoryFolderBase RF = GetItemRepositoryFolder(repositoryItem);
             RepositoryFolderBase targetRF = GetRepositoryFolderByPath(targetFolder);
@@ -745,7 +764,7 @@ namespace Amdocs.Ginger.Repository
             if (RF != null && targetRF != null)
             {
                 RF.DeleteRepositoryItem(repositoryItem);
-                targetRF.AddRepositoryItem(repositoryItem);
+                targetRF.AddRepositoryItem(repositoryItem, callPreSaveHandler: callPreSaveHandler, callPostSaveHandler: callPostSaveHandler);
             }
             else
             {

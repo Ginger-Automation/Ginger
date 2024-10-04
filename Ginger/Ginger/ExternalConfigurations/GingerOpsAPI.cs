@@ -24,48 +24,23 @@ using System.Threading.Tasks;
 using System;
 using IdentityModel.Client;
 using System.IdentityModel.Tokens.Jwt;
-using Ginger.Environments.GingerAnalyticsEnvWizardLib;
+using Ginger.Environments.GingerOpsEnvWizardLib;
 using GingerCore;
-using static Ginger.Environments.GingerAnalyticsEnvWizardLib.GingerAnalyticsAPIResponseInfo;
+using static Ginger.Environments.GingerOpsEnvWizardLib.GingerOpsAPIResponseInfo;
 using System.Collections.Generic;
-using Ginger.Configurations;
-using GingerWPF.WizardLib;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Text.Json;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
-using Ginger.ExternalConfigurations;
-using Newtonsoft.Json;
 using System.Linq;
-using static Ginger.Environments.GingerAnalyticsEnvWizardLib.GingerAnalyticsAPIResponseInfo;
-using Microsoft.CodeAnalysis;
-using Ginger.Environments.AddEnvironmentWizardLib;
-using GingerCore.Environments;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerTest.WizardLib;
-using System.Runtime.InteropServices;
-using Ginger.UserControlsLib;
-using GingerCore.GeneralLib;
-using GingerCore;
-using OpenQA.Selenium;
-using System.Windows;
 
 namespace Ginger.ExternalConfigurations
 {
     /// <summary>
-    /// All the APIs for communicatig with Ginger Analytics
+    /// All the APIs for communicatig with GingerOps
     /// </summary>
-    public class GingerAnalyticsAPI
+    public class GingerOpsAPI
     {
         public static DateTime validTo = DateTime.MinValue;
-        public static GingerAnalyticsConfiguration gingerAnalyticsUserConfig =
-            WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerAnalyticsConfiguration>().Count == 0 ? new GingerAnalyticsConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerAnalyticsConfiguration>();
-        private string bearerToken = string.Empty;
+        public static readonly GingerOpsConfiguration GingerOpsUserConfig = SetConfiguration();
 
+        private string bearerToken = string.Empty;
 
         public static async Task<bool> RequestToken(string clientId, string clientSecret, string address)
         {
@@ -106,7 +81,7 @@ namespace Ginger.ExternalConfigurations
                     }
 
                     validTo = DateTime.UtcNow.AddMinutes(60);
-                    gingerAnalyticsUserConfig.Token = tokenResponse.AccessToken;
+                    GingerOpsUserConfig.Token = tokenResponse.AccessToken;
                     return true;
                 }
             }
@@ -126,13 +101,13 @@ namespace Ginger.ExternalConfigurations
         {
             try
             {
-                if (string.IsNullOrEmpty(gingerAnalyticsUserConfig.Token) || gingerAnalyticsUserConfig.Token.Split('.').Length != 3)
+                if (string.IsNullOrEmpty(GingerOpsUserConfig.Token) || GingerOpsUserConfig.Token.Split('.').Length != 3)
                 {
                     return false;
                 }
 
                 var handler = new JwtSecurityTokenHandler();
-                var jwtToken = handler.ReadJwtToken(gingerAnalyticsUserConfig.Token);
+                var jwtToken = handler.ReadJwtToken(GingerOpsUserConfig.Token);
                 validTo = jwtToken.ValidTo;
                 if (DateTime.UtcNow < validTo)
                 {
@@ -150,128 +125,140 @@ namespace Ginger.ExternalConfigurations
             }
         }
 
-        public async Task<Dictionary<string, GingerAnalyticsProject>> FetchProjectDataFromGA(Dictionary<string, GingerAnalyticsProject> projectListGA)
+        public async Task<Dictionary<string, GingerOpsProject>> FetchProjectDataFromGOps(Dictionary<string, GingerOpsProject> projectListGOps)
         {
             try
             {
                 HttpClientHandler handler = new();
                 var client = new HttpClient(handler);
-                if (GingerAnalyticsAPI.IsTokenValid())
+                if (GingerOpsAPI.IsTokenValid())
                 {
-                    bearerToken = gingerAnalyticsUserConfig.Token;
+                    bearerToken = GingerOpsUserConfig.Token;
                 }
                 else
                 {
-                    bool resFlag = await GingerAnalyticsAPI.RequestToken(ValueExpression.PasswordCalculation(gingerAnalyticsUserConfig.ClientId),
-                        ValueExpression.PasswordCalculation(gingerAnalyticsUserConfig.ClientSecret),
-                        ValueExpression.PasswordCalculation(gingerAnalyticsUserConfig.IdentityServiceURL));
+                    bool resFlag = await GingerOpsAPI.RequestToken(ValueExpression.PasswordCalculation(GingerOpsUserConfig.ClientId),
+                        ValueExpression.PasswordCalculation(GingerOpsUserConfig.ClientSecret),
+                        ValueExpression.PasswordCalculation(GingerOpsUserConfig.IdentityServiceURL));
                     if (resFlag)
                     {
-                        bearerToken = gingerAnalyticsUserConfig.Token;
+                        bearerToken = GingerOpsUserConfig.Token;
                     }
                 }
 
-                string apiUrl = $"{gingerAnalyticsUserConfig.AccountUrl}/Report/GetGingerAnalyticsProjects";
+                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Report/GetGingerAnalyticsProjects";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
                 var response = await client.GetStringAsync(apiUrl);
-                var projectList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<GingerAnalyticsAPIResponseInfo.GingerAnalyticsProject>>(response);
+                var projectList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<GingerOpsAPIResponseInfo.GingerOpsProject>>(response);
 
                 if (projectList != null && projectList.Count > 0)
                 {
-                    projectListGA.Clear();
-                    projectListGA = projectList.ToDictionary(k => k.Id);
+                    projectListGOps.Clear();
+                    projectListGOps = projectList.ToDictionary(k => k.Id);
                 }
-                return projectListGA;
+                return projectListGOps;
 
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error fetching data from Ginger Analytics API", ex);
-                return new Dictionary<string, GingerAnalyticsProject>();
+                Reporter.ToLog(eLogLevel.ERROR, "Error fetching data from GingerOps API", ex);
+                return new Dictionary<string, GingerOpsProject>();
             }
         }
-        public async Task<Dictionary<string, GingerAnalyticsArchitectureB>> FetchEnvironmentDataFromGA(string architectureId, Dictionary<string, GingerAnalyticsArchitectureB> architectureListGA, bool publishedEnvironment = true)
+        public async Task<Dictionary<string, GingerOpsArchitectureB>> FetchEnvironmentDataFromGOps(string architectureId, Dictionary<string, GingerOpsArchitectureB> architectureListGOps, bool publishedEnvironment = true)
         {
             try
             {
                 HttpClientHandler handler = new();
                 var client = new HttpClient(handler);
-                if (GingerAnalyticsAPI.IsTokenValid())
+                if (GingerOpsAPI.IsTokenValid())
                 {
-                    bearerToken = gingerAnalyticsUserConfig.Token;
+                    bearerToken = GingerOpsUserConfig.Token;
                 }
                 else
                 {
-                    bool resFlag = await GingerAnalyticsAPI.RequestToken(gingerAnalyticsUserConfig.ClientId, gingerAnalyticsUserConfig.ClientSecret,
-                        gingerAnalyticsUserConfig.IdentityServiceURL);
+                    bool resFlag = await GingerOpsAPI.RequestToken(GingerOpsUserConfig.ClientId, GingerOpsUserConfig.ClientSecret,
+                        GingerOpsUserConfig.IdentityServiceURL);
                     if (resFlag)
                     {
-                        bearerToken = gingerAnalyticsUserConfig.Token;
+                        bearerToken = GingerOpsUserConfig.Token;
                     }
                 }
 
-                string apiUrl = $"{gingerAnalyticsUserConfig.AccountUrl}/Report/GetGingerAnalyticsEnvironmentsByArchitecture/{publishedEnvironment}?architectureIds={architectureId}";
+                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Report/GetGingerAnalyticsEnvironmentsByArchitecture/{publishedEnvironment}?architectureIds={architectureId}";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
 
                 var response = await client.GetStringAsync(apiUrl);
-                var envList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<GingerAnalyticsAPIResponseInfo.GingerAnalyticsArchitectureB>>(response);
+                var envList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<GingerOpsAPIResponseInfo.GingerOpsArchitectureB>>(response);
 
                 if (envList != null && envList.Count > 0)
                 {
-                    architectureListGA.Clear();
-                    architectureListGA = envList.ToDictionary(k => k.Id);
+                    architectureListGOps.Clear();
+                    architectureListGOps = envList.ToDictionary(k => k.Id);
                 }
 
-                return architectureListGA;
+                return architectureListGOps;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error fetching data from Ginger Analytics API", ex);
-                return new Dictionary<string, GingerAnalyticsArchitectureB>();
+                Reporter.ToLog(eLogLevel.ERROR, "Error fetching data from GingerOps API", ex);
+                return new Dictionary<string, GingerOpsArchitectureB>();
             }
         }
-        public async Task<Dictionary<string, GingerAnalyticsEnvironmentB>> FetchApplicationDataFromGA(string environmentId, Dictionary<string, GingerAnalyticsEnvironmentB> environmentListGA)
+        public async Task<Dictionary<string, GingerOpsEnvironmentB>> FetchApplicationDataFromGOps(string environmentId, Dictionary<string, GingerOpsEnvironmentB> environmentListGOps)
         {
             try
             {
                 HttpClientHandler handler = new();
                 var client = new HttpClient(handler);
-                if (GingerAnalyticsAPI.IsTokenValid())
+                if (GingerOpsAPI.IsTokenValid())
                 {
-                    bearerToken = gingerAnalyticsUserConfig.Token;
+                    bearerToken = GingerOpsUserConfig.Token;
                 }
                 else
                 {
-                    bool resFlag = await GingerAnalyticsAPI.RequestToken(gingerAnalyticsUserConfig.ClientId, gingerAnalyticsUserConfig.ClientSecret,
-                        gingerAnalyticsUserConfig.IdentityServiceURL);
+                    bool resFlag = await GingerOpsAPI.RequestToken(GingerOpsUserConfig.ClientId, GingerOpsUserConfig.ClientSecret,
+                        GingerOpsUserConfig.IdentityServiceURL);
                     if (resFlag)
                     {
-                        bearerToken = gingerAnalyticsUserConfig.Token;
+                        bearerToken = GingerOpsUserConfig.Token;
                     }
                 }
 
-                string apiUrl = $"{gingerAnalyticsUserConfig.AccountUrl}/Report/GetGingerAnalyticsApplicationByEnvironment?environmentIds={environmentId}";
+                string apiUrl = $"{GingerOpsUserConfig.AccountUrl}/Report/GetGingerAnalyticsApplicationByEnvironment?environmentIds={environmentId}";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
 
                 var response = await client.GetStringAsync(apiUrl);
-                var envList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<GingerAnalyticsAPIResponseInfo.GingerAnalyticsEnvironmentB>>(response);
+                var envList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<GingerOpsAPIResponseInfo.GingerOpsEnvironmentB>>(response);
 
                 if (envList != null && envList.Count > 0)
                 {
-                    environmentListGA.Clear();
-                    environmentListGA = envList.ToDictionary(k => k.Id);
+                    environmentListGOps.Clear();
+                    environmentListGOps = envList.ToDictionary(k => k.Id);
                 }
 
-                return environmentListGA;
+                return environmentListGOps;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error fetching data from Ginger Analytics API", ex);
-                return new Dictionary<string, GingerAnalyticsEnvironmentB>();
+                Reporter.ToLog(eLogLevel.ERROR, "Error fetching data from GingerOps API", ex);
+                return new Dictionary<string, GingerOpsEnvironmentB>();
             }
+        }
+
+        private static GingerOpsConfiguration SetConfiguration()
+        {
+            var workSpace = WorkSpace.Instance;
+            if (workSpace == null || workSpace.SolutionRepository == null)
+            {
+                return new GingerOpsConfiguration();
+            }
+
+            var item = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerOpsConfiguration>();
+            return item == null ? new GingerOpsConfiguration() : item;
         }
     }
 }

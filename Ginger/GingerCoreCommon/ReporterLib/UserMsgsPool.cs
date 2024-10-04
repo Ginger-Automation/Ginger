@@ -147,7 +147,7 @@ namespace Amdocs.Ginger.Common
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, RunSetNotExecuted, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, SaveAllModifiedItems, CopiedErrorInfo, RepositoryNameCantEmpty,
-        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, InvalidYAML, InvalidJSON,  DuplicateRunsetName,
+        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, ObjectLoadTryRefresh, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, InvalidYAML, InvalidJSON,  DuplicateRunsetName,
         POMElementNotExist,ElementNotSelected, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
         AskIfToUndoChanges, AskIfToUndoItemChanges, AskIfToImportFile, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification, WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
@@ -169,8 +169,11 @@ namespace Amdocs.Ginger.Common
         SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
         DeleteRecoverFolderWarn,
         EnvParamNameExists,
-        GingerAnalyticsConnectionFail,
-        GingerAnalyticsConnectionSuccess,
+        GingerOpsConnectionFail,
+        GingerOpsConnectionSuccess,
+        GingerOpsSyncFailed,
+        GingerOpsSyncSuccess,
+        GingerOpsDeleteDisable,
         RequiredFieldsEmpty,
         EnvParamNameEmpty,
         NoPublishRepositoryInfo,
@@ -745,6 +748,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DifferentItemType, new UserMsg(eUserMsgType.WARN, "Not Same Item Type", "The source item type do not match to the destination folder type", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.CopyCutOperation, new UserMsg(eUserMsgType.INFO, "Copy/Cut Operation", "Please select Copy/Cut operation first.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ObjectLoad, new UserMsg(eUserMsgType.ERROR, "Object Load", "Not able to load the object details", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ObjectLoadTryRefresh, new UserMsg(eUserMsgType.ERROR, "Object Load", "Not able to load the object details. Try Refreshing the Page", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.InitializeBrowser, new UserMsg(eUserMsgType.INFO, "Initialize Browser", "Initialize Browser action automatically added." + Environment.NewLine + "Please continue to spy the required element.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GetModelItemUsagesFailed, new UserMsg(eUserMsgType.ERROR, "Model Item Usages", "Failed to get the '{0}' item usages." + Environment.NewLine + Environment.NewLine + "Error Details: {1}.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionSaveWarning, new UserMsg(eUserMsgType.WARN, "Save", "Note: save will include saving also changes which were done to: {0}." + System.Environment.NewLine + System.Environment.NewLine + "To continue with Save operation?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -869,8 +873,11 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FindAndReplaceNoItemsToRepalce, new UserMsg(eUserMsgType.WARN, "No Suitable Items", "No suitable items selected to replace.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FindAndReplaceViewRunSetNotSupported, new UserMsg(eUserMsgType.INFO, "View " + GingerDicser.GetTermResValue(eTermResKey.RunSet), "View " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " is not supported.", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerAnalyticsConnectionSuccess, new UserMsg(eUserMsgType.INFO, "Ginger Analytics Connection Info" , " Ginger Analytics Connection is Successfull.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerAnalyticsConnectionFail, new UserMsg(eUserMsgType.INFO, "Ginger Analytics Connection Info", " Ginger Analytics Connection is Failed, Please check credentials.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsConnectionSuccess, new UserMsg(eUserMsgType.INFO, "GingerOps Connection Info" , " GingerOps Connection is Successful.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsConnectionFail, new UserMsg(eUserMsgType.INFO, "GingerOps Connection Info", " GingerOps Connection is Failed, Please check credentials/check error logs", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsSyncFailed, new UserMsg(eUserMsgType.INFO, "GingerOps Sync Info", " GingerOps Sync Failed.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsSyncSuccess, new UserMsg(eUserMsgType.INFO, "GingerOps Sync Info", " GingerOps Sync Successful.", eUserMsgOption.OK, eUserMsgSelection.None));
+             Reporter.UserMsgsPool.Add(eUserMsgKey.GingerOpsDeleteDisable, new UserMsg(eUserMsgType.INFO, "GingerOps Application Info", " GingerOps imported Application can not be deleted.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.FileAlreadyExistWarn, new UserMsg(eUserMsgType.WARN, "File Already Exists", "File already exists, do you want to override?", eUserMsgOption.OKCancel, eUserMsgSelection.Cancel));
 

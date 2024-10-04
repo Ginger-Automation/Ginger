@@ -218,11 +218,21 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ALMTSImport(object sender, System.Windows.RoutedEventArgs e)
         {
+            Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
+            {
+                { "Type", ALMIntegration.Instance.GetALMType().ToString() },
+                { "Operation", "ImportBusinessFlow" },
+            });
             ALMIntegration.Instance.ImportALMTests(mBusFlowsFolder.FolderFullPath);
         }
 
         private void ALMTSImportById(object sender, System.Windows.RoutedEventArgs e)
         {
+            Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
+            {
+                { "Type", ALMIntegration.Instance.GetALMType().ToString() },
+                { "Operation", "ImportBusinessFlowById" },
+            });
             ALMIntegration.Instance.ImportALMTestsById(mBusFlowsFolder.FolderFullPath);
         }
 
@@ -276,12 +286,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(importedBF);
                     mBusFlowsFolder.AddRepositoryItem(importedBF);
-
-                    Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
-                    {
-                        { "Type", ALMIntegration.Instance.GetALMType().ToString() },
-                        { "Operation", "ImportBusinessFlow" },
-                    });
                 }
                 catch (Exception ex)
                 {

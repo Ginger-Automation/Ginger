@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Telemetry;
 using GingerCore.GeneralLib;
@@ -38,6 +56,7 @@ namespace Ginger.Telemetry
             InitializeTelemetryTrackingRadioButtons();
             ITelemetryQueueManager.Config config = WorkSpace.Instance.UserProfile.TelemetryConfig;
 
+            BindingHandler.ObjFieldBinding(BufferSizeTextBox, TextBox.TextProperty, config, nameof(ITelemetryQueueManager.Config.BufferSize));
             BindingHandler.ObjFieldBinding(CollectorURLTextBox, TextBox.TextProperty, config, nameof(ITelemetryQueueManager.Config.CollectorURL));
             GingerCore.General.FillComboFromEnumType(LogLevelComboBox, typeof(eLogLevel), values: Enum.GetValues<eLogLevel>().Order().Cast<object>().ToList(), textWiseSorting: false);
             BindingHandler.ObjFieldBinding(LogLevelComboBox, ComboBox.SelectedValueProperty, config, nameof(ITelemetryQueueManager.Config.MinLogLevel));
@@ -73,6 +92,7 @@ namespace Ginger.Telemetry
 
         private void ShowConfig()
         {
+            BufferSizeWrapper.Visibility = Visibility.Visible;
             CollectorURLWrapper.Visibility = Visibility.Visible;
             MinimumLogLevelWrapper.Visibility = Visibility.Visible;
             RetryIntervalWrapper.Visibility = Visibility.Visible;
@@ -81,6 +101,7 @@ namespace Ginger.Telemetry
 
         private void HideConfig()
         {
+            BufferSizeWrapper.Visibility = Visibility.Collapsed;
             CollectorURLWrapper.Visibility = Visibility.Collapsed;
             MinimumLogLevelWrapper.Visibility = Visibility.Collapsed;
             RetryIntervalWrapper.Visibility = Visibility.Collapsed;

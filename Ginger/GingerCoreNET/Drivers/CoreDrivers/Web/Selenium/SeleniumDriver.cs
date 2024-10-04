@@ -5787,6 +5787,15 @@ namespace GingerCore.Drivers
             }
             EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);// improve code inside
 
+            if (EI.FriendlyLocators.Count == 0 && EI.Locators.Count >= 1)
+            {
+                ElementLocator byTagNameLocator = EI.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByTagName);
+                if (byTagNameLocator != null)
+                {
+                    byTagNameLocator.Active = false;
+                }
+            }
+
             return EI;
         }
 
@@ -6470,20 +6479,21 @@ namespace GingerCore.Drivers
                 Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
 
                 ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
-
-                IWebElement el = ElementInfo.ElementObject as IWebElement;
-
-                if (el == null)
+                IWebElement el = null;
+                if (ElementInfo.ElementObject != null)
                 {
-                    if (string.IsNullOrEmpty(ElementInfo.XPath))
+                    el = ElementInfo.ElementObject as IWebElement;
+                    if (el == null)
                     {
-                        ElementInfo.XPath = GenerateXpathForIWebElement(el, "");
+                        if (string.IsNullOrEmpty(ElementInfo.XPath))
+                        {
+                            ElementInfo.XPath = GenerateXpathForIWebElement(el, "");
+                        }
+
+                        el = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                        ElementInfo.ElementObject = el;
                     }
-
-                    el = Driver.FindElement(By.XPath(ElementInfo.XPath));
-                    ElementInfo.ElementObject = el;
                 }
-
                 // Base properties 
                 if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
                 {
@@ -6508,8 +6518,8 @@ namespace GingerCore.Drivers
                 }
 
                 // Extract size and position properties
-                var size = el.Size;
-                var location = el.Location;
+                var size = el != null ? el.Size :new Size();
+                var location = el != null ? el.Location : new Point();
 
                 ElementInfo.Height = size.Height;
                 list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ElementInfo.Height.ToString() });
@@ -6762,8 +6772,9 @@ namespace GingerCore.Drivers
             else
             {
                 //e = LocateElementByLocators(ElementInfo.Locators);
-                e = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                e = Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).HTMLElementObject.XPath));
                 ElementInfo.ElementObject = e;
+
             }
 
             foreach (ElementLocator elemLocator in locatorsList)
@@ -6787,7 +6798,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            id = e.GetAttribute("id");
+                            id =  e != null ? e.GetAttribute("id") :string.Empty;
                         }
                         if (!string.IsNullOrWhiteSpace(id))
                         {
@@ -6814,7 +6825,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            name = e.GetAttribute("name");
+                            name = e != null ? e.GetAttribute("name") : string.Empty;
                         }
 
                         if (!string.IsNullOrWhiteSpace(name))
@@ -10779,6 +10790,10 @@ namespace GingerCore.Drivers
 
         private void SetBrowserLogLevel(DriverOptions options)
         {
+            if (string.IsNullOrEmpty(BrowserLogLevel)) 
+            {
+                return;
+            }
             int numberLogLevel = (int)Enum.Parse<eBrowserLogLevel>(BrowserLogLevel);
             if (!numberLogLevel.Equals(3))
             {

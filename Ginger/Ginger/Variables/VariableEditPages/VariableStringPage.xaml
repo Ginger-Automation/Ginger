@@ -11,7 +11,7 @@
         <StackPanel Background="{StaticResource $BackgroundColor_White}">
             
             <Label Style="{StaticResource @InputFieldLabelStyle}">Initial String Value:</Label>
-            <TextBox x:Name="txtStringValue" Style="{StaticResource @TextBoxStyle}" Margin="0,0,0,10"></TextBox>
+            <TextBox x:Name="txtStringValue" IsEnabled="True" Style="{StaticResource @TextBoxStyle}" Margin="0,0,0,10"></TextBox>
         </StackPanel>
 
     </Grid>

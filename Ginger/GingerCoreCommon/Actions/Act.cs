@@ -192,7 +192,7 @@ namespace GingerCore.Actions
         /// Gets a value indicating whether automatic screenshot capture is enabled on failure.
         /// </summary>
         private bool mAutoScreenShotOnFailure = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(DefaultValue:true)]
         public bool AutoScreenShotOnFailure
         {
             get { 
@@ -207,7 +207,6 @@ namespace GingerCore.Actions
                 }
             }
         }
-
         public virtual eLocateBy LocateBy
         {
             get

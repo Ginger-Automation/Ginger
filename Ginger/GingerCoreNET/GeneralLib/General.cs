@@ -638,13 +638,13 @@ namespace GingerCoreNET.GeneralLib
                 return false;
             }
         }
-        public static bool CreateGingerAnalyticsConfiguration(GingerAnalyticsConfiguration gingerAnalytics)
+        public static bool CreateGingerOpsConfiguration()
         {
             try
             {
-                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerAnalyticsConfiguration>().Any())
+                if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerOpsConfiguration>().Any())
                 {
-                    GingerAnalyticsConfiguration newGAConfiguration = new GingerAnalyticsConfiguration() { Name = "GingerAnalytics", IdentityServiceURL = gingerAnalytics.IdentityServiceURL, AccountUrl = gingerAnalytics.AccountUrl, ClientId = gingerAnalytics.ClientId, ClientSecret = gingerAnalytics.ClientSecret };
+                    GingerOpsConfiguration newGAConfiguration = new GingerOpsConfiguration() { Name = "GingerOps" };
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newGAConfiguration);
                     return true;
                 }

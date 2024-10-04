@@ -199,6 +199,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
+            if (VariablesParent.GOpsFlag)
+            {
+                return operationsList;
+            }
+
             ListItemOperation addNew = new ListItemOperation();
             addNew.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             addNew.AutomationID = "addNew";
@@ -221,6 +226,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemOperation> GetListExtraOperations()
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+
+            if (VariablesParent.GOpsFlag)
+            {
+                return extraOperationsList;
+            }
 
             ListItemOperation resetAll = new ListItemOperation();
             resetAll.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation };
@@ -318,7 +328,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             inputvariablesRules.OperationHandler = InputVariablesRuleHandler;
             extraOperationsList.Add(inputvariablesRules);
             //}
-            
+
             return extraOperationsList;
         }
 
@@ -449,6 +459,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             itemUsage.OperationHandler = ViewRepositoryItemUsageHandler;
             operationsList.Add(itemUsage);
 
+            //removing for gingerops
+            if (item is VariableBase vb && vb.GOpsFlag)
+            {
+                operationsList.Remove(edit);
+                operationsList.Remove(delete);
+            }
+
             return operationsList;
         }
 
@@ -456,6 +473,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(item);
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+
+            if (item is VariableBase vb && vb.GOpsFlag)
+            {
+                return extraOperationsList;
+            }
 
             if (mVariable.SupportResetValue)
             {

@@ -208,18 +208,10 @@ namespace amdocs.ginger.GingerCoreNET
                     AppSolutionRecover.CleanUpRecoverFolder();
                 }
 
-                if (WorkSpace.Instance.LocalGingerGrid != null)
-                {
-                    WorkSpace.Instance.LocalGingerGrid.Stop();
-                }
+                WorkSpace.Instance.LocalGingerGrid?.Stop();
                 
-                if (Reporter.TelemetryQueueManager != null)
-                {
-                    Reporter.TelemetryQueueManager.Dispose();
-                }
+                Reporter.TelemetryQueueManager?.Dispose();
 
-                Reporter.TelemetryQueueManager.Dispose();
-                //WorkSpace.Instance.Telemetry.SessionEnd();
                 mWorkSpace = null;
             }
             catch (Exception ex)

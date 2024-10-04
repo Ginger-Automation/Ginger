@@ -252,5 +252,10 @@ namespace GingerCore.Variables
         {
             this.InitialDateTime = InitialValue;
         }
+
+        public override string GetInitialValue()
+        {
+            return InitialDateTime;
+        }
     }
 }

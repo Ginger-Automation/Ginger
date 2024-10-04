@@ -701,5 +701,9 @@ namespace GingerCore.Variables
             }
             return variables;
         }
+
+        public virtual string GetInitialValue() { 
+            return string.Empty;
+        }
     }
 }

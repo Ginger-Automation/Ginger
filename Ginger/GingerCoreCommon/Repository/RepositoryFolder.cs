@@ -713,28 +713,31 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
-        /// Save the Repository Item to folder and add it to cache
+        /// Save the Repository Item to folder and add it to cache.
         /// </summary>
-        /// <param name="repositoryItem"></param>
-        public override void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false)
+        /// <param name="repositoryItem">The Repository Item to be saved and added to cache.</param>
+        /// <param name="doNotSave">Flag indicating whether to save the Repository Item to disk. Default is false.</param>
+        /// <param name="callPreSaveHandler">Flag indicating whether to call the pre-save handler. Default is true.</param>
+        /// <param name="callPostSaveHandler">Flag indicating whether to call the post-save handler. Default is true.</param>
+        public override void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             repositoryItem.ContainingFolder = FolderRelativePath;
             repositoryItem.ContainingFolderFullPath = FolderFullPath;
 
             if (!doNotSave)
             {
-                //save it
-                SolutionRepository.SaveNewRepositoryItem(repositoryItem);
+                // Save the Repository Item
+                SolutionRepository.SaveNewRepositoryItem(repositoryItem, callPreSaveHandler, callPostSaveHandler);
             }
 
-            //add it to folder cache
+            // Add it to folder cache
             mFolderItemsCache[repositoryItem.FilePath] = repositoryItem;
             if (mFolderItemsList != null)
             {
                 mFolderItemsList.Add((T)(object)repositoryItem);
             }
 
-            //add it to general item cache
+            // Add it to general item cache
             if (!mSolutionRepositoryItemInfo.AllItemsCacheIsNull() || doNotSave)
             {
                 mSolutionRepositoryItemInfo.AddItemToCache((T)(object)repositoryItem);

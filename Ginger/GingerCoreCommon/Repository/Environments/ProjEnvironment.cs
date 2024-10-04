@@ -46,25 +46,28 @@ namespace GingerCore.Environments
         public string ReleaseVersion { get { return mReleaseVersion; } set { if (mReleaseVersion != value) { mReleaseVersion = value; OnPropertyChanged(nameof(ReleaseVersion)); } } }
 
         //Ginger Analytics Region starts here, No Tresspassing allowed by Ginger Objects
-        private bool mGAFlag;
-        [IsSerializedForLocalRepository]
-        public bool GAFlag { get { return mGAFlag; } set { if (mGAFlag != value) { mGAFlag = value; OnPropertyChanged(nameof(GAFlag)); } } }
 
-        private Guid mGingerAnalyticsEnvId;
+        private Guid mGingerOpsEnvId;
         [IsSerializedForLocalRepository]
-        public Guid GingerAnalyticsEnvId { get { return mGingerAnalyticsEnvId; } set { if (mGingerAnalyticsEnvId != value) { mGingerAnalyticsEnvId = value; OnPropertyChanged(nameof(GingerAnalyticsEnvId)); } } }
+        public Guid GingerOpsEnvId { get { return mGingerOpsEnvId; } set { if (mGingerOpsEnvId != value) { mGingerOpsEnvId = value; OnPropertyChanged(nameof(GingerOpsEnvId)); } } }
 
-        private Guid mGingerAnalyticsProjectId;
+        private Guid mGingerOpsProjectId;
         [IsSerializedForLocalRepository]
-        public Guid GingerAnalticsProjectId { get { return mGingerAnalyticsProjectId; } set { if (mGingerAnalyticsProjectId != value) { mGingerAnalyticsProjectId = value; OnPropertyChanged(nameof(GingerAnalticsProjectId)); } } }
+        public Guid GingerOpsProjectId { get { return mGingerOpsProjectId; } set { if (mGingerOpsProjectId != value) { mGingerOpsProjectId = value; OnPropertyChanged(nameof(GingerOpsProjectId)); } } }
 
-        private Guid mGingerAnalyticsArchitectureId;
+        private Guid mGingerOpsArchitectureId;
         [IsSerializedForLocalRepository]
-        public Guid GingerAnalticsArchitectureId { get { return mGingerAnalyticsArchitectureId; } set { if (mGingerAnalyticsArchitectureId != value) { mGingerAnalyticsArchitectureId = value; OnPropertyChanged(nameof(GingerAnalticsArchitectureId)); } } }
+        public Guid GingerOpsArchitectureId { get { return mGingerOpsArchitectureId; } set { if (mGingerOpsArchitectureId != value) { mGingerOpsArchitectureId = value; OnPropertyChanged(nameof(GingerOpsArchitectureId)); } } }
 
-        private string mGingerAnalyticsRelease;
+        private string mGingerOpsRelease;
         [IsSerializedForLocalRepository]
-        public string GingerAnalyticsRelease { get { return mGingerAnalyticsRelease; } set { if (mGingerAnalyticsRelease != value) { mGingerAnalyticsRelease = value; OnPropertyChanged(nameof(GingerAnalyticsRelease)); } } }
+        public string GingerOpsRelease { get { return mGingerOpsRelease; } set { if (mGingerOpsRelease != value) { mGingerOpsRelease = value; OnPropertyChanged(nameof(GingerOpsRelease)); } } }
+        
+        private string mGingerOpsStatus; //Ginger Analytics import status
+        public string GingerOpsStatus { get { return mGingerOpsStatus; } set { if (mGingerOpsStatus != value) { mGingerOpsStatus = value; OnPropertyChanged(nameof(GingerOpsStatus)); } } }
+
+        private string mGingerOpsRemark; //Ginger Analytics Remakrs if any during import
+        public string GingerOpsRemark { get { return mGingerOpsRemark; } set { if (mGingerOpsRemark != value) { mGingerOpsRemark = value; OnPropertyChanged(nameof(GingerOpsRemark)); } } }
 
         private bool mActive;
         [IsSerializedForLocalRepository]

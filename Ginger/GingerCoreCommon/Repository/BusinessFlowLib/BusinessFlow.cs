@@ -39,6 +39,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.CodeAnalysis;
 using System.Diagnostics;
 using Ginger.Run;
+using Amdocs.Ginger.Common.Telemetry;
 namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
@@ -666,7 +667,16 @@ namespace GingerCore
         {
             VariableBase var = null;
             if (SolutionVariables != null)
-                var = SolutionVariables.FirstOrDefault(v1=> v1.Name == varName);
+            {
+                var = SolutionVariables.FirstOrDefault(v1 => v1.Name == varName);
+            }
+            if (var != null)
+            {
+                Reporter.AddFeatureUsage(FeatureId.GlobalParameter, new TelemetryMetadata()
+                {
+                    { "Operation", "Use" },
+                });
+            }
             if (var == null)
             {
                 var = Variables.FirstOrDefault(v1=>v1.Name == varName);
@@ -2020,5 +2030,21 @@ namespace GingerCore
         public string ALMTestSetLevel { get; set; }
 
         public bool IsEntitySearchByName { get; set; }
+
+        /// <summary>
+        /// Gets the summary of variables in the Business flow.
+        /// </summary>
+        public List<General.VariableMinimalRecord> VariablesSummary
+        {
+            get
+            {
+                List<General.VariableMinimalRecord> variableDetails = [];
+                foreach (VariableBase variable in Variables)
+                {
+                    variableDetails.Add(new General.VariableMinimalRecord(variable.Name, variable.GetInitialValue(), variable.Value));
+                }
+                return variableDetails;
+            }
+        }
     }
 }

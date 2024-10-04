@@ -230,8 +230,9 @@ namespace Ginger.Actions.UserControls
 
                     return bitmapimage;
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to convert Bitmap to ImageSource", ex);
                     return null;
                 }
 
