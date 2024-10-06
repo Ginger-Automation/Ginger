@@ -4,6 +4,12 @@ on:
     workflow_dispatch:
     workflow_call:
     
+    pull_request:
+        branches: 
+          - master
+          - Features/Linux-Migration
+          - Releases/*
+          - Releases/*/*
 
 jobs:
 #    Codacy:
@@ -15,10 +21,10 @@ jobs:
     Build:
         name: Build Stage
  #       needs: Codacy   
-        uses: ./.github/workflows/GingerBuild.yml
+        uses: ./.github/workflows/GingerBuild-2.yml
         
     Test:
         name: Test Stage
         needs: Build
-        uses: ./.github/workflows/GingerTests.yml
+        uses: ./.github/workflows/GingerTests-2.yml
         secrets: inherit

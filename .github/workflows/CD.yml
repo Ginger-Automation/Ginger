@@ -84,19 +84,19 @@ jobs:
     CI:
         name: CI
         needs: Create-version-Number
-        uses: ./.github/workflows/CI-2.yml
+        uses: ./.github/workflows/CI.yml
         secrets: inherit
      
     Release:
         name: Release
         needs: CI
-        uses: ./.github/workflows/Release-2.yml
+        uses: ./.github/workflows/Release.yml
         secrets: inherit
      
     Deploy:
         name: Deploy
         needs: Release
-        uses: ./.github/workflows/Deploy-2.yml
+        uses: ./.github/workflows/Deploy.yml
 
     Docker:
         name: Docker

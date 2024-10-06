@@ -14,11 +14,14 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Createin version Tag & Number variables - only for CD Job
 # ------------------------------------------------------------------------------------------------------
-      - name: Download Version Artifacts
-        if: ${{github.workflow == 'CD'}} 
-        uses: actions/download-artifact@v3
+      - name: Restore Version text file
+        if: ${{github.workflow == 'CD'}}  
+        uses: actions/cache@v3.2.6
         with:
-          name: ginger-version     
+          path: ./version.txt
+          key: cache-version-${{ github.run_number }}
+          enableCrossOsArchive:
+            true
         
       - name: Create variables from Artifacts file
         if: ${{github.workflow == 'CD'}} 
@@ -50,12 +53,12 @@ jobs:
           echo $save > .\Ginger\GingerInstallerScriptGithub.iss
       
 # ------------------------------------------------------------------------------------------------------
-# Install .Net core SDK 6.0.301
+# Install .Net core SDK 8.0.100
 # ------------------------------------------------------------------------------------------------------
-      - name: 'Install .NET Core'
+      - name: 'Install .NET 8'
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 7.x.x
+          dotnet-version: 8.0.100
           
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool v1.0.5
@@ -83,12 +86,19 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
       - name: 'Publish GingerRuntime'
         run: dotnet publish ./Ginger/GingerRuntime/GingerRuntime.csproj --runtime linux-x64 --self-contained  true -c Release
-  
+      
 # ------------------------------------------------------------------------------------------------------
 # Upload Artifacts 
-# ------------------------------------------------------------------------------------------------------    
-      - name: 'Upload static site content'
-        uses: actions/upload-artifact@v3
+# ------------------------------------------------------------------------------------------------------   
+      - name: Cache static site content
+        id: cache
+        uses: actions/cache@v3.2.6
         with:
-          name: ginger-artifact
-          path: ./
+          path: 
+            ./**
+          key: 
+            cache-site-${{ github.run_number }}
+          enableCrossOsArchive:
+            true
+
+

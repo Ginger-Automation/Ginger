@@ -28,11 +28,15 @@ jobs:
         uses: actions/checkout@v3
         
         
-      - name: Download Artifacts
+      - name: Restore static site content
         if: ${{github.workflow != 'Ginger Windows Test'}} 
-        uses: actions/download-artifact@v3
+        uses: actions/cache@v3.2.6
         with:
-          name: ginger-artifact
+          path: ./**
+          key: cache-site-${{ github.run_number }}
+          enableCrossOsArchive:
+            true
+
 
 # ------------------------------------------------------------------------------------------------------
 # Install .Net core SDK 8.0.100
@@ -58,52 +62,52 @@ jobs:
 # SeaLight - Downloading the .NET agent files && Scanning a build using MSBuild
 # ---------------------------------------------------------------------------------------------------
      
-      - name: Download Sealights .Net agent  
-        run: |
-          Write-Output "Build Reason =  ${{github.event_name}}"
-          echo $env:SLDOMAIN
-          echo $env:BUILD_CONFIGURATION
-          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-          Write-Output "Download the Sealights DotNet agent version set in settings..." 
-          $agentversion = ((iwr -Uri https://amdocs.sealights.co/api/v2/agents/dotnet/recommended -Headers @{'Accept' = 'application/json'; 'Authorization' = "Bearer ${{ secrets.SLT }}"}).Content | ConvertFrom-Json | Select-Object agent).agent.version
-          Write-Output "*** start download ***"
-          iwr -OutFile sealights-dotnet-agent.zip -Uri http://agents.sealights.co/SL.DotNet/SL.DotNet-$($agentversion).zip
-          Expand-Archive .\sealights-dotnet-agent.zip -DestinationPath SL.DotNet -Force
-          Write-Output "Sealights agent version used is:$(Get-Content .\SL.DotNet\version.txt)"
+#       - name: Download Sealights .Net agent  
+#         run: |
+#           Write-Output "Build Reason =  ${{github.event_name}}"
+#           echo $env:SLDOMAIN
+#           echo $env:BUILD_CONFIGURATION
+#           [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+#           Write-Output "Download the Sealights DotNet agent version set in settings..." 
+#           $agentversion = ((iwr -Uri https://amdocs.sealights.co/api/v2/agents/dotnet/recommended -Headers @{'Accept' = 'application/json'; 'Authorization' = "Bearer ${{ secrets.SLT }}"}).Content | ConvertFrom-Json | Select-Object agent).agent.version
+#           Write-Output "*** start download ***"
+#           iwr -OutFile sealights-dotnet-agent.zip -Uri http://agents.sealights.co/SL.DotNet/SL.DotNet-$($agentversion).zip
+#           Expand-Archive .\sealights-dotnet-agent.zip -DestinationPath SL.DotNet -Force
+#           Write-Output "Sealights agent version used is:$(Get-Content .\SL.DotNet\version.txt)"
           
-      - name: Sealights - Generating a Pull Request Session ID
-        id: SealightsPR
-        if: ${{github.event_name == 'pull_request'}}
-        run: |  
-          Write-Output "*** Create PR BSID ***"
-          .\SL.DotNet\x64\SL.DotNet prConfig --token ${{ secrets.SLT }} --appName ${{ env.APP_NAME }} --includeNamespace ${{ env.APP_NAMESPACE }} --pullRequestNumber 25 --latestCommit a51d0f337dc7547d20dbf5fbfea1c45831249325 --targetBranch Release/master --repositoryUrl ${{ env.REPO_URL }}
+#       - name: Sealights - Generating a Pull Request Session ID
+#         id: SealightsPR
+#         if: ${{github.event_name == 'pull_request'}}
+#         run: |  
+#           Write-Output "*** Create PR BSID ***"
+#           .\SL.DotNet\x64\SL.DotNet prConfig --token ${{ secrets.SLT }} --appName ${{ env.APP_NAME }} --includeNamespace ${{ env.APP_NAMESPACE }} --pullRequestNumber 25 --latestCommit a51d0f337dc7547d20dbf5fbfea1c45831249325 --targetBranch Release/master --repositoryUrl ${{ env.REPO_URL }}
             
-      - name: Sealights - Generating a Standard Session ID
-        id: SealightsStandard
-        if: ${{github.event_name != 'pull_request'}}
-        run: |  
-          Write-Output "*** Create Standard SID ***"
-          .\SL.DotNet\x64\SL.DotNet config --token ${{ secrets.SLT }} --includeNamespace ${{ env.APP_NAMESPACE }} --appName ${{ env.APP_NAME }} --branchName  Release/master --buildName "Github.Nadeem.${{ github.run_number }}"
+#       - name: Sealights - Generating a Standard Session ID
+#         id: SealightsStandard
+#         if: ${{github.event_name != 'pull_request'}}
+#         run: |  
+#           Write-Output "*** Create Standard SID ***"
+#           .\SL.DotNet\x64\SL.DotNet config --token ${{ secrets.SLT }} --includeNamespace ${{ env.APP_NAMESPACE }} --appName ${{ env.APP_NAME }} --branchName  Release/master --buildName "Github.Nadeem.${{ github.run_number }}"
       
-      - name: Sealights - Prepare for MSBuild
-        id: SealightsMSBuild
-        if: steps.SealightsStandard.outcome == 'success' || steps.SealightsPR.outcome == 'success'
-        run: |  
-            Write-Output "*** Prepare for MSBuild ***"
-            .\SL.DotNet\x64\SL.DotNet.exe prepareForMsBuild --buildSessionIdFile buildSessionId --workspacePath .\Ginger --baseDir . --ignoreGeneratedCode true --debugMode true --logEnabled true --logAppendConsole true --ignoreCertificateErrors true --token ${{ secrets.SLT }} --scm git --scmProvider vsts
+#       - name: Sealights - Prepare for MSBuild
+#         id: SealightsMSBuild
+#         if: steps.SealightsStandard.outcome == 'success' || steps.SealightsPR.outcome == 'success'
+#         run: |  
+#             Write-Output "*** Prepare for MSBuild ***"
+#             .\SL.DotNet\x64\SL.DotNet.exe prepareForMsBuild --buildSessionIdFile buildSessionId --workspacePath .\Ginger --baseDir . --ignoreGeneratedCode true --debugMode true --logEnabled true --logAppendConsole true --ignoreCertificateErrors true --token ${{ secrets.SLT }} --scm git --scmProvider vsts
       
-# ------------------------------------------------------------------------------------------------------
-# SeaLights- Starting test stage && Starting Background test listener
-# ------------------------------------------------------------------------------------------------------
-      - name: Sealights - Starting test stage
-        if: steps.SealightsMSBuild.outcome == 'success'     
-        run: |
-          .\SL.DotNet\x64\SL.DotNet.exe startExecution --token ${{ secrets.SLT }} --buildSessionIdFile buildSessionId --logEnabled true --logAppendConsole true --testStage "Unit Tests"
+# # ------------------------------------------------------------------------------------------------------
+# # SeaLights- Starting test stage && Starting Background test listener
+# # ------------------------------------------------------------------------------------------------------
+#       - name: Sealights - Starting test stage
+#         if: steps.SealightsMSBuild.outcome == 'success'     
+#         run: |
+#           .\SL.DotNet\x64\SL.DotNet.exe startExecution --token ${{ secrets.SLT }} --buildSessionIdFile buildSessionId --logEnabled true --logAppendConsole true --testStage "Unit Tests"
           
-      - name: Sealights - Starting Background test listener
-        if: steps.SealightsMSBuild.outcome == 'success'     
-        run: |
-          .\SL.DotNet\x64\SL.DotNet.exe startBackgroundTestListener --token ${{ secrets.SLT }} --buildSessionIdFile buildSessionId --logEnabled true --logAppendConsole true --testListenerSessionKey ${{ github.run_number }} --testStage "Unit Tests"
+#       - name: Sealights - Starting Background test listener
+#         if: steps.SealightsMSBuild.outcome == 'success'     
+#         run: |
+#           .\SL.DotNet\x64\SL.DotNet.exe startBackgroundTestListener --token ${{ secrets.SLT }} --buildSessionIdFile buildSessionId --logEnabled true --logAppendConsole true --testListenerSessionKey ${{ github.run_number }} --testStage "Unit Tests"
  
 # ------------------------------------------------------------------------------------------------------
 # Install msbild && Build Ginger Solution
@@ -165,17 +169,17 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Sealight - Stop Background test listener && Ending a test stage && Upload report files
 # ------------------------------------------------------------------------------------------------------          
-      - name: Sealights - Stop Background test listener
-        if: (success() || failure()) && steps.SealightsMSBuild.outcome == 'success'         # run this step even if previous step failed
-        run: |
-          .\SL.DotNet\x64\SL.DotNet.exe stopBackgroundTestListener --token ${{ secrets.SLT }} --buildSessionIdFile buildSessionId --logEnabled true --logAppendConsole true --testListenerSessionKey ${{ github.run_number }}
-      - name: Sealights - Ending test stage
-        if: (success() || failure()) && steps.SealightsMSBuild.outcome == 'success'        # run this step even if previous step failed
-        run: |
-          .\SL.DotNet\x64\SL.DotNet.exe endExecution --token ${{ secrets.SLT }} --buildSessionIdFile buildSessionId --logEnabled true --logAppendConsole true --testStage "Unit Tests"
+      # - name: Sealights - Stop Background test listener
+      #   if: (success() || failure()) && steps.SealightsMSBuild.outcome == 'success'         # run this step even if previous step failed
+      #   run: |
+      #     .\SL.DotNet\x64\SL.DotNet.exe stopBackgroundTestListener --token ${{ secrets.SLT }} --buildSessionIdFile buildSessionId --logEnabled true --logAppendConsole true --testListenerSessionKey ${{ github.run_number }}
+      # - name: Sealights - Ending test stage
+      #   if: (success() || failure()) && steps.SealightsMSBuild.outcome == 'success'        # run this step even if previous step failed
+      #   run: |
+      #     .\SL.DotNet\x64\SL.DotNet.exe endExecution --token ${{ secrets.SLT }} --buildSessionIdFile buildSessionId --logEnabled true --logAppendConsole true --testStage "Unit Tests"
               
-      - name: Sealights - Upload test report
-        if: (success() || failure()) && steps.SealightsMSBuild.outcome == 'success'         # run this step even if previous step failed
-        run: |
-          .\SL.DotNet\x64\SL.DotNet.exe uploadTestReport --token ${{ secrets.SLT }} --buildSessionIdFile buildSessionId --logEnabled true --logAppendConsole true --testStage "Unit Tests" --report "D:\\a\\TestResults"  
+      # - name: Sealights - Upload test report
+      #   if: (success() || failure()) && steps.SealightsMSBuild.outcome == 'success'         # run this step even if previous step failed
+      #   run: |
+      #     .\SL.DotNet\x64\SL.DotNet.exe uploadTestReport --token ${{ secrets.SLT }} --buildSessionIdFile buildSessionId --logEnabled true --logAppendConsole true --testStage "Unit Tests" --report "D:\\a\\TestResults"  
      
