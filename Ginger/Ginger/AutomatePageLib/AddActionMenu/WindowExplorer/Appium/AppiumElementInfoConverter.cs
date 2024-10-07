@@ -27,23 +27,15 @@ namespace Ginger.WindowExplorer.Appium
         {
             // TODO verify if pl.Name = ElementInfo
 
-            switch (EI.ElementType)
+            return EI.ElementType switch
             {
-                case "android.widget.Button":
-                    return new AppiumAndroidWidgetButtonTreeItem() { ElementInfo = EI };
-                case "android.widget.CheckBox":
-                    return new AppiumAndroidWidgetCheckBoxTreeItem() { ElementInfo = EI };
-                case "android.widget.TextView":
-                    return new AppiumAndroidWidgetTextViewTreeItem() { ElementInfo = EI };
-                case "android.widget.ImageView":
-                    return new AppiumAndroidWidgetImageTreeItem() { ElementInfo = EI };
-                case "android.widget.EditText":
-                    return new AppiumAndroidWidgetEditTextTreeItem() { ElementInfo = EI };
-
-                default:
-                    // return simple basic Appium TVI
-                    return new AppiumElementTreeItemBase() { ElementInfo = EI };
-            }
+                "android.widget.Button" => new AppiumAndroidWidgetButtonTreeItem() { ElementInfo = EI },
+                "android.widget.CheckBox" => new AppiumAndroidWidgetCheckBoxTreeItem() { ElementInfo = EI },
+                "android.widget.TextView" => new AppiumAndroidWidgetTextViewTreeItem() { ElementInfo = EI },
+                "android.widget.ImageView" => new AppiumAndroidWidgetImageTreeItem() { ElementInfo = EI },
+                "android.widget.EditText" => new AppiumAndroidWidgetEditTextTreeItem() { ElementInfo = EI },
+                _ => new AppiumElementTreeItemBase() { ElementInfo = EI },// return simple basic Appium TVI
+            };
         }
     }
 }

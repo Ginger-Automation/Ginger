@@ -39,7 +39,7 @@ namespace Ginger.Agents
         }
         private bool IsAgentNameExist(string value)
         {
-            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Any(x=> x.Name == value);
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Any(x => x.Name == value);
         }
     }
 

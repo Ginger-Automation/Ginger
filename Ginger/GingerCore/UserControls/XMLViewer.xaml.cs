@@ -71,11 +71,15 @@ namespace GingerCore.UserControls
                 return;
             }
 
-            XmlDataProvider provider = new XmlDataProvider();
-            provider.Document = _xmldocument;
-            Binding binding = new Binding();
-            binding.Source = provider;
-            binding.XPath = "child::node()";
+            XmlDataProvider provider = new XmlDataProvider
+            {
+                Document = _xmldocument
+            };
+            Binding binding = new Binding
+            {
+                Source = provider,
+                XPath = "child::node()"
+            };
             xmlTree.SetBinding(TreeView.ItemsSourceProperty, binding);
         }
 

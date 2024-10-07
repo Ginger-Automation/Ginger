@@ -35,13 +35,14 @@ namespace Ginger.Drivers.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Get Dialog Title " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.GetTitle,
-            });
+            ObservableList<Act> list =
+            [
+                new ActPBControl()
+                {
+                    Description = "Get Dialog Title " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.GetTitle,
+                },
+            ];
             return list;
         }
     }

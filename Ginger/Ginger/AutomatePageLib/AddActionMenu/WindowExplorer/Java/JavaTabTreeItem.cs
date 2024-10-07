@@ -33,19 +33,19 @@ namespace Ginger.WindowExplorer.Java
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Select Tab " + Name,
-                ControlAction = ActJavaElement.eControlAction.Select
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Get Selected Tab Value " + Name,
-                ControlAction = ActJavaElement.eControlAction.GetValue
-            });
+            ObservableList<Act> list =
+            [
+                new ActJavaElement()
+                {
+                    Description = "Select Tab " + Name,
+                    ControlAction = ActJavaElement.eControlAction.Select
+                },
+                new ActJavaElement()
+                {
+                    Description = "Get Selected Tab Value " + Name,
+                    ControlAction = ActJavaElement.eControlAction.GetValue
+                },
+            ];
             return list;
         }
     }

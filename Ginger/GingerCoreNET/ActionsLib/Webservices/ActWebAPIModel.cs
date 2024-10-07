@@ -103,7 +103,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<EnhancedActInputValue> APIModelParamsValue = new ObservableList<EnhancedActInputValue>();
+        public ObservableList<EnhancedActInputValue> APIModelParamsValue = [];
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
@@ -146,12 +146,12 @@ namespace GingerCore.Actions.WebServices.WebAPI
             ActWebAPIBase actWebAPI = null;
             if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
             {
-                actWebAPI = CreateActWebAPIREST((ApplicationAPIModel)AAMB, this);
+                actWebAPI = CreateActWebAPIREST(AAMB, this);
 
             }
             else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
             {
-                actWebAPI = CreateActWebAPISOAP((ApplicationAPIModel)AAMB, this);
+                actWebAPI = CreateActWebAPISOAP(AAMB, this);
             }
             WebApiAction = actWebAPI;
             return ((IActPluginExecution)actWebAPI).GetAsPlatformAction();
@@ -213,16 +213,18 @@ namespace GingerCore.Actions.WebServices.WebAPI
         }
         private ObservableList<ActInputValue> ConvertAPIModelKeyValueToActInputValues(ObservableList<APIModelKeyValue> GingerCoreNETHttpHeaders, ActWebAPIModel actWebAPIModel)
         {
-            ObservableList<ActInputValue> GingerCoreHttpHeaders = new ObservableList<ActInputValue>();
+            ObservableList<ActInputValue> GingerCoreHttpHeaders = [];
 
             if (GingerCoreNETHttpHeaders != null)
             {
                 foreach (APIModelKeyValue AMKV in GingerCoreNETHttpHeaders)
                 {
-                    ActInputValue AIV = new ActInputValue();
-                    AIV.Param = AMKV.Param;
-                    AIV.Value = AMKV.Value;
-                    AIV.ValueForDriver = ReplacePlaceHolderParameneterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue);
+                    ActInputValue AIV = new ActInputValue
+                    {
+                        Param = AMKV.Param,
+                        Value = AMKV.Value,
+                        ValueForDriver = ReplacePlaceHolderParameneterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue)
+                    };
                     GingerCoreHttpHeaders.Add(AIV);
                 }
             }

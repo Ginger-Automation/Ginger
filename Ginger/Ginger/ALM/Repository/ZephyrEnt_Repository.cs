@@ -46,7 +46,7 @@ namespace Ginger.ALM.Repository
         public ALMCore AlmCore { get; set; }
 
         List<BaseResponseItem> matchingTC = null;
-        List<TestCaseResource> tcsRepositoryList = new List<TestCaseResource>();
+        List<TestCaseResource> tcsRepositoryList = [];
         string bfEntityType = string.Empty;
         string moduleParentId = string.Empty;
         string folderCycleId = string.Empty;
@@ -121,7 +121,7 @@ namespace Ginger.ALM.Repository
                 // Check if BF already exist and Mapped new TC to Zephyr TS
                 if (!String.IsNullOrEmpty(businessFlow.ExternalID))
                 {
-                    ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).AssigningTestCasesToCyclePhase(new List<long>() { currentTC.id }, Convert.ToInt64(businessFlow.ExternalID2), Convert.ToInt64(businessFlow.ExternalID));
+                    ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).AssigningTestCasesToCyclePhase([currentTC.id], Convert.ToInt64(businessFlow.ExternalID2), Convert.ToInt64(businessFlow.ExternalID));
                 }
             }
             else
@@ -156,7 +156,7 @@ namespace Ginger.ALM.Repository
 
         public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
-            tcsRepositoryList = new List<TestCaseResource>();
+            tcsRepositoryList = [];
             if (businessFlow == null)
             {
                 return false;
@@ -308,8 +308,8 @@ namespace Ginger.ALM.Repository
         }
         private Dictionary<string, string> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, EntityName entityName)
         {
-            ObservableList<ExternalItemFieldBase> fieldsToReturn = new ObservableList<ExternalItemFieldBase>();
-            Dictionary<string, string> selectedFields = new Dictionary<string, string>();
+            ObservableList<ExternalItemFieldBase> fieldsToReturn = [];
+            Dictionary<string, string> selectedFields = [];
             string currentResource = entityName.ToString();
             fields.ToList().ForEach(item =>
             {
@@ -414,7 +414,7 @@ namespace Ginger.ALM.Repository
 
         public override List<string> GetTestPlanExplorer(string path)
         {
-            return new List<string>();
+            return [];
         }
 
         public override IEnumerable<object> GetTestSetExplorer(string path)
@@ -444,7 +444,7 @@ namespace Ginger.ALM.Repository
         {
             if (selectedTestSets != null && selectedTestSets.Any())
             {
-                ObservableList<ZephyrEntPhaseTreeItem> testSetsItemsToImport = new ObservableList<ZephyrEntPhaseTreeItem>();
+                ObservableList<ZephyrEntPhaseTreeItem> testSetsItemsToImport = [];
                 foreach (ZephyrEntPhaseTreeItem testSetItem in selectedTestSets)
                 {
                     //check if some of the Test Set was already imported                
@@ -478,10 +478,12 @@ namespace Ginger.ALM.Repository
                     {
                         //import test set data
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.Name);
-                        GingerCore.ALM.QC.ALMTestSet TS = new GingerCore.ALM.QC.ALMTestSet();
-                        TS.TestSetID = testSetItemtoImport.Id;
-                        TS.TestSetName = testSetItemtoImport.Name;
-                        TS.TestSetPath = testSetItemtoImport.Path;
+                        GingerCore.ALM.QC.ALMTestSet TS = new GingerCore.ALM.QC.ALMTestSet
+                        {
+                            TestSetID = testSetItemtoImport.Id,
+                            TestSetName = testSetItemtoImport.Name,
+                            TestSetPath = testSetItemtoImport.Path
+                        };
                         TS = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(TS);
 
                         //convert test set into BF

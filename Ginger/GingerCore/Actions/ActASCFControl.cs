@@ -77,40 +77,19 @@ namespace GingerCore.Actions
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
             newAct.ElementType = eElementType.Unknown;
 
-            switch (this.ControlAction)
+            newAct.ElementAction = this.ControlAction switch
             {
-                case eControlAction.Click:
-                    newAct.ElementAction = ActUIElement.eElementAction.Click;
-                    break;
-                case eControlAction.GetValue:
-                    newAct.ElementAction = ActUIElement.eElementAction.GetValue;
-                    break;
-                case eControlAction.SetValue:
-                    newAct.ElementAction = ActUIElement.eElementAction.SetValue;
-                    break;
-                case eControlAction.Hover:
-                    newAct.ElementAction = ActUIElement.eElementAction.Hover;
-                    break;
-                case eControlAction.IsVisible:
-                    newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
-                    break;
-                case eControlAction.IsEnabled:
-                    newAct.ElementAction = ActUIElement.eElementAction.IsEnabled;
-                    break;
-                case eControlAction.Collapse:
-                    newAct.ElementAction = ActUIElement.eElementAction.Collapse;
-                    break;
-                case eControlAction.Expand:
-                    newAct.ElementAction = ActUIElement.eElementAction.Expand;
-                    break;
-                case eControlAction.SetFocus:
-                    newAct.ElementAction = ActUIElement.eElementAction.SetFocus;
-                    break;
-                default:
-                    newAct.ElementAction = ActUIElement.eElementAction.Unknown;
-                    break;
-            }
-
+                eControlAction.Click => ActUIElement.eElementAction.Click,
+                eControlAction.GetValue => ActUIElement.eElementAction.GetValue,
+                eControlAction.SetValue => ActUIElement.eElementAction.SetValue,
+                eControlAction.Hover => ActUIElement.eElementAction.Hover,
+                eControlAction.IsVisible => ActUIElement.eElementAction.IsVisible,
+                eControlAction.IsEnabled => ActUIElement.eElementAction.IsEnabled,
+                eControlAction.Collapse => ActUIElement.eElementAction.Collapse,
+                eControlAction.Expand => ActUIElement.eElementAction.Expand,
+                eControlAction.SetFocus => ActUIElement.eElementAction.SetFocus,
+                _ => ActUIElement.eElementAction.Unknown,
+            };
             MapASCFActionItems(this.LocateValue, newAct);
 
             return newAct;
@@ -128,7 +107,7 @@ namespace GingerCore.Actions
                 {
                     if (path.IndexOf("/") != -1)
                     {
-                        locateValue = locateValue.Replace(path, string.Empty).Substring(locateValue.LastIndexOf(":") + 1);
+                        locateValue = locateValue.Replace(path, string.Empty)[(locateValue.LastIndexOf(":") + 1)..];
                         newAct.ElementLocateValue = locateValue;
                         newAct.Value = this.Value;
                         newAct.ElementType = eElementType.Unknown;
@@ -153,28 +132,15 @@ namespace GingerCore.Actions
         }
         public void MapASCFActionItems(String locateValue, ActUIElement newAct)
         {
-            switch (LocateBy)
+            newAct.ElementLocateBy = LocateBy switch
             {
-                case eLocateBy.ByXPath:
-                    newAct.ElementLocateBy = eLocateBy.ByXPath;
-                    break;
-                case eLocateBy.ByName:
-                    newAct.ElementLocateBy = eLocateBy.ByName;
-                    break;
-                case eLocateBy.ByValue:
-                    newAct.ElementLocateBy = eLocateBy.ByValue;
-                    break;
-                case eLocateBy.ByText:
-                    newAct.ElementLocateBy = eLocateBy.ByText;
-                    break;
-                case eLocateBy.ByTitle:
-                    newAct.ElementLocateBy = eLocateBy.ByTitle;
-                    break;
-                default:
-                    newAct.ElementLocateBy = eLocateBy.Unknown;
-                    break;
-            }
-
+                eLocateBy.ByXPath => eLocateBy.ByXPath,
+                eLocateBy.ByName => eLocateBy.ByName,
+                eLocateBy.ByValue => eLocateBy.ByValue,
+                eLocateBy.ByText => eLocateBy.ByText,
+                eLocateBy.ByTitle => eLocateBy.ByTitle,
+                _ => eLocateBy.Unknown,
+            };
             if (!String.IsNullOrEmpty(locateValue))
             {
                 // check if the current action is a garbage action or not
@@ -193,11 +159,11 @@ namespace GingerCore.Actions
                     newAct.Value = this.Value;
                     if (locateValue.Count(x => x == ':') > 1)
                     {
-                        locateValue = locateValue.Substring(locateValue.LastIndexOf(':') + 1);
+                        locateValue = locateValue[(locateValue.LastIndexOf(':') + 1)..];
                     }
                     else
                     {
-                        locateValue = locateValue.Substring(colon + 1);
+                        locateValue = locateValue[(colon + 1)..];
                     }
 
                     newAct.ElementLocateValue = locateValue;
@@ -230,7 +196,7 @@ namespace GingerCore.Actions
                     // Parse the Column Selector 
                     int col = locateValue.IndexOf(":", slash);
 
-                    string colSelector = (slash == locateValue.Length - 1) ? "" : locateValue.Substring(slash + 1, (locateValue.Length - 1) - (slash + 1)).Replace(@":", string.Empty);
+                    string colSelector = (slash == locateValue.Length - 1) ? "" : locateValue[(slash + 1)..^1].Replace(@":", string.Empty);
                     colSelector = colSelector.Trim();
                     int colNum = 0;
                     if (colSelector.All(char.IsDigit))
@@ -268,7 +234,7 @@ namespace GingerCore.Actions
                     }
 
                     // Parse the Row Selector
-                    string rowSelector = locateValue.Substring(col + 1);
+                    string rowSelector = locateValue[(col + 1)..];
                     if (!String.IsNullOrEmpty(rowSelector))
                     {
                         if (rowSelector.StartsWith("[number="))
@@ -315,7 +281,7 @@ namespace GingerCore.Actions
                                     string rowColSelectorValue = rowColSelector.Split('\"')[1];
                                     if (rowColSelector.Contains("\""))
                                     {
-                                        rowColSelector = rowColSelector.Substring(0, rowColSelector.IndexOf("="));
+                                        rowColSelector = rowColSelector[..rowColSelector.IndexOf("=")];
                                         if (rowColSelector.Equals("name"))
                                         {
                                             newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereColSelector, ActUIElement.eTableElementRunColSelectorValue.ColName.ToString());
@@ -336,7 +302,7 @@ namespace GingerCore.Actions
                                     newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereColumnTitle, rowColSelectorValue);
 
                                     // Determine the Property Selector
-                                    string rowColProperty = cond.Substring(colon + 1);
+                                    string rowColProperty = cond[(colon + 1)..];
                                     string[] properties = rowColProperty.Split(new string[] { "\\[" }, StringSplitOptions.None);
                                     for (int i = 0; i < properties.Length; i++)
                                     {
@@ -351,7 +317,7 @@ namespace GingerCore.Actions
                                             pv = "";
                                         }
 
-                                        string o = properties[i].Split('\"')[0].Substring(p.Length + 1);
+                                        string o = properties[i].Split('\"')[0][(p.Length + 1)..];
 
                                         newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereProperty, p);
                                         newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereOperator,
@@ -378,7 +344,7 @@ namespace GingerCore.Actions
                             newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlActionValue, this.Value);
                         }
                     }
-                    newAct.ElementLocateValue = locateValue.Split('/')[0].Substring(locateValue.Split('/')[0].LastIndexOf(":") + 1);
+                    newAct.ElementLocateValue = locateValue.Split('/')[0][(locateValue.Split('/')[0].LastIndexOf(":") + 1)..];
                 }
             }
         }
@@ -448,7 +414,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eControlAction)GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
+                return GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
             }
             set
             {
@@ -460,7 +426,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eControlProperty)GetOrCreateInputParam<eControlProperty>(nameof(ControlProperty), eControlProperty.NA);
+                return GetOrCreateInputParam<eControlProperty>(nameof(ControlProperty), eControlProperty.NA);
             }
             set
             {

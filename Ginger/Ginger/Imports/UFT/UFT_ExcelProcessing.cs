@@ -73,14 +73,16 @@ namespace Ginger.Imports.UFT
                             continue;
                         }
 
-                        if (sheetName == "MAIN$" || sheetName == "Main$")
+                        if (sheetName is "MAIN$" or "Main$")
                         {
                             // Get all rows from the Sheet
                             Cmd.CommandText = "SELECT * FROM [" + sheetName + "]";
                             Cmd.Connection = Conn;
 
-                            OleDbDataAdapter da = new OleDbDataAdapter(Cmd);
-                            da.SelectCommand = Cmd;
+                            OleDbDataAdapter da = new OleDbDataAdapter(Cmd)
+                            {
+                                SelectCommand = Cmd
+                            };
                             dt.TableName = sheetName;
                             da.Fill(dt);
                             ds.Tables.Add(dt);
@@ -100,7 +102,7 @@ namespace Ginger.Imports.UFT
         public Dictionary<string, string> FetchVariableValuesfromCalendar(string sExcelFileName, string sSelectedBusFunction, DataTable dt_BizFlow)
         {
             //Dictionary for storing variable name and its value
-            Dictionary<string, string> Variables = new Dictionary<string, string>();
+            Dictionary<string, string> Variables = [];
             int i = 1;
 
             //When a Bus function is selected from calendar, Read its variables
@@ -168,14 +170,16 @@ namespace Ginger.Imports.UFT
                             continue;
                         }
 
-                        if (sheetName == "KEEP_REFER$" || sheetName == "Keep_Refer$")
+                        if (sheetName is "KEEP_REFER$" or "Keep_Refer$")
                         {
                             // Get all rows from the Sheet
                             Cmd.CommandText = "SELECT * FROM [" + sheetName + "]";
                             Cmd.Connection = Conn;
 
-                            OleDbDataAdapter da = new OleDbDataAdapter(Cmd);
-                            da.SelectCommand = Cmd;
+                            OleDbDataAdapter da = new OleDbDataAdapter(Cmd)
+                            {
+                                SelectCommand = Cmd
+                            };
                             dt.TableName = sheetName;
                             da.Fill(dt);
                             ds.Tables.Add(dt);

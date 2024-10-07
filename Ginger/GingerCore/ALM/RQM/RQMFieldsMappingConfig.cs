@@ -25,7 +25,7 @@ namespace GingerCore.ALM.RQM
     [XmlRoot("RQMProjects")]
     public class RQMProjectListConfiguration
     {
-        public RQMProjectListConfiguration() { RQMProjects = new List<RQMProject>(); }
+        public RQMProjectListConfiguration() { RQMProjects = []; }
 
         [XmlElement("RQMProject")]
         public List<RQMProject> RQMProjects { get; set; }

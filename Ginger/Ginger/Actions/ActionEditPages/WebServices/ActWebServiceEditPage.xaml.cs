@@ -37,7 +37,7 @@ namespace Ginger.Actions.WebServices
             InitializeComponent();
             mAct = act;
             Bind();
-            if (mAct.URLUser.Value != "" && mAct.URLUser.Value != null)
+            if (mAct.URLUser.Value is not "" and not null)
             {
                 CustomNetworkCreds.IsChecked = true;
             }
@@ -70,13 +70,16 @@ namespace Ginger.Actions.WebServices
 
         private void SetDynamicGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Locator", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Replace With", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["InputValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = "Locator", WidthWeight = 150 },
+                new GridColView() { Field = nameof(ActInputValue.Value), Header = "Replace With", WidthWeight = 150 },
+                new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["InputValueExpressionButton"] },
+                new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
             DynamicXMLElementsGrid.SetAllColumnsDefaultView(view);
             DynamicXMLElementsGrid.InitViewItems();

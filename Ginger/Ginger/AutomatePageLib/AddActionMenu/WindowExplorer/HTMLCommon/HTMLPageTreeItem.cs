@@ -33,12 +33,13 @@ namespace Ginger.WindowExplorer.HTMLCommon
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActSwitchWindow()
-            {
-                Description = "Switch to Window " + this.ElementInfo.ElementTitle,
-            });
+            ObservableList<Act> list =
+            [
+                new ActSwitchWindow()
+                {
+                    Description = "Switch to Window " + this.ElementInfo.ElementTitle,
+                },
+            ];
             return list;
         }
     }

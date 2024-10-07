@@ -143,7 +143,7 @@ namespace Ginger.ALM.Repository
         {
             if (selectedTestSets != null && selectedTestSets.Any())
             {
-                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = new ObservableList<QCTestSetTreeItem>();
+                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = [];
                 foreach (QCTestSetTreeItem testSetItem in selectedTestSets)
                 {
                     //check if some of the Test Set was already imported                
@@ -176,10 +176,12 @@ namespace Ginger.ALM.Repository
                     {
                         //import test set data
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
-                        ALMTestSet TS = new ALMTestSet();
-                        TS.TestSetID = testSetItemtoImport.TestSetID;
-                        TS.TestSetName = testSetItemtoImport.TestSetName;
-                        TS.TestSetPath = testSetItemtoImport.Path;
+                        ALMTestSet TS = new ALMTestSet
+                        {
+                            TestSetID = testSetItemtoImport.TestSetID,
+                            TestSetName = testSetItemtoImport.TestSetName,
+                            TestSetPath = testSetItemtoImport.Path
+                        };
                         TS = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ImportTestSetData(TS);
 
                         //convert test set into BF
@@ -382,7 +384,7 @@ namespace Ginger.ALM.Repository
                                     testPlanFolder = QCRestAPIConnect.QcRestClient.GetTestPlanFolderDetails(testPlanFolder.ParentId);
                                     revrsePath = revrsePath + testPlanFolder.Name + "/";
                                 }
-                                revrsePath = revrsePath.Substring(0, revrsePath.Length - 1);
+                                revrsePath = revrsePath[..^1];
                                 string[] str = revrsePath.Split('/');
                                 Array.Reverse(str);
                                 testPlanUploadPath = string.Join("\\", str);
@@ -489,7 +491,7 @@ namespace Ginger.ALM.Repository
 
         private ObservableList<ExternalItemFieldBase> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
-            ObservableList<ExternalItemFieldBase> fieldsToReturn = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fieldsToReturn = [];
 
             string currentResource = QCRestAPIConnect.ConvertResourceType(resourceType);
             //Going through the fields to leave only Test Set fields

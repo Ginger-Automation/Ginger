@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.CoreNET.Run;
 #region License
 /*
@@ -57,7 +56,7 @@ namespace GingerCore.Platforms
         {
 
             ActionType = Action.GetName();
-            InputParams = new Dictionary<string, object>();
+            InputParams = [];
         }
         public PlatformAction(IActPluginExecution Action, Dictionary<string, object> InputParameters)
         {

@@ -16,33 +16,30 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using Deque.AxeCore.Commons;
+using Deque.AxeCore.Playwright;
 using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Nodes;
-using System.Text.Json;
-using System.Threading.Tasks;
-using IPlaywrightPage = Microsoft.Playwright.IPage;
-using IPlaywrightLocator = Microsoft.Playwright.ILocator;
-using IPlaywrightJSHandle = Microsoft.Playwright.IJSHandle;
-using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using System.Drawing;
-using NPOI.OpenXmlFormats.Dml;
-using Deque.AxeCore.Commons;
-using static Ginger.Run.GingerRunner;
-using Deque.AxeCore.Playwright;
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
+using IPlaywrightElementHandle = Microsoft.Playwright.IElementHandle;
+using IPlaywrightJSHandle = Microsoft.Playwright.IJSHandle;
+using IPlaywrightLocator = Microsoft.Playwright.ILocator;
+using IPlaywrightPage = Microsoft.Playwright.IPage;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 {
     internal sealed class PlaywrightBrowserTab : IBrowserTab
     {
-        private static readonly IEnumerable<eLocateBy> SupportedElementLocators = new List<eLocateBy>()
-        {
+        private static readonly IEnumerable<eLocateBy> SupportedElementLocators =
+        [
             eLocateBy.ByID,
             eLocateBy.ByCSS,
             eLocateBy.ByName,
@@ -50,16 +47,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             eLocateBy.ByTagName,
             eLocateBy.ByRelXPath,
             eLocateBy.POMElement,
-        };
+        ];
 
-        private static readonly IEnumerable<eLocateBy> SupportedFrameLocators = new List<eLocateBy>()
-        {
+        private static readonly IEnumerable<eLocateBy> SupportedFrameLocators =
+        [
             eLocateBy.ByID,
             eLocateBy.ByTitle,
             eLocateBy.ByUrl,
             eLocateBy.ByXPath,
             eLocateBy.ByRelXPath,
-        };
+        ];
 
         private readonly IPlaywrightPage _playwrightPage;
         private readonly IBrowserTab.OnTabClose _onTabClose;
@@ -327,28 +324,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new LocatorNotSupportedException($"Frame locator '{locateBy}' is not supported.");
             }
 
-            IFrameLocator frameLocator;
-            switch (locateBy)
+            var frameLocator = locateBy switch
             {
-                case eLocateBy.ByID:
-                    frameLocator = _currentFrame.FrameLocator($"css=#{value}");
-                    break;
-                case eLocateBy.ByTitle:
-                    frameLocator = _currentFrame.FrameLocator($"css=iframe[title='{value}']");
-                    break;
-                case eLocateBy.ByXPath:
-                    frameLocator = _currentFrame.FrameLocator($"xpath={value}");
-                    break;
-                case eLocateBy.ByRelXPath:
-                    frameLocator = _currentFrame.FrameLocator($"xpath={value}");
-                    break;
-                case eLocateBy.ByUrl:
-                    frameLocator = _currentFrame.FrameLocator($"css=iframe[src='{value}']");
-                    break;
-                default:
-                    throw new ArgumentException($"Frame locator '{locateBy}' is not supported.");
-            }
-
+                eLocateBy.ByID => _currentFrame.FrameLocator($"css=#{value}"),
+                eLocateBy.ByTitle => _currentFrame.FrameLocator($"css=iframe[title='{value}']"),
+                eLocateBy.ByXPath => _currentFrame.FrameLocator($"xpath={value}"),
+                eLocateBy.ByRelXPath => _currentFrame.FrameLocator($"xpath={value}"),
+                eLocateBy.ByUrl => _currentFrame.FrameLocator($"css=iframe[src='{value}']"),
+                _ => throw new ArgumentException($"Frame locator '{locateBy}' is not supported."),
+            };
             bool wasLocated = await frameLocator.Owner.CountAsync() > 0;
             if (!wasLocated)
             {
@@ -516,29 +500,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
             }
 
-            IPlaywrightLocator locator;
-            switch (locateBy)
+            var locator = locateBy switch
             {
-                case eLocateBy.ByID:
-                    locator = _currentFrame.Locator($"css=#{value}");
-                    break;
-                case eLocateBy.ByCSS:
-                    locator = _currentFrame.Locator($"css={value}");
-                    break;
-                case eLocateBy.ByXPath:
-                case eLocateBy.ByRelXPath:
-                    locator = _currentFrame.Locator($"xpath={value}");
-                    break;
-                case eLocateBy.ByName:
-                    locator = _currentFrame.Locator($"css=[name='{value}']");
-                    break;
-                case eLocateBy.ByTagName:
-                    locator = _currentFrame.Locator($"css={value}");
-                    break;
-                default:
-                    throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported.");
-            }
-
+                eLocateBy.ByID => _currentFrame.Locator($"css=#{value}"),
+                eLocateBy.ByCSS => _currentFrame.Locator($"css={value}"),
+                eLocateBy.ByXPath or eLocateBy.ByRelXPath => _currentFrame.Locator($"xpath={value}"),
+                eLocateBy.ByName => _currentFrame.Locator($"css=[name='{value}']"),
+                eLocateBy.ByTagName => _currentFrame.Locator($"css={value}"),
+                _ => throw new LocatorNotSupportedException($"Element locator '{locateBy}' is not supported."),
+            };
             return Task.FromResult(locator);
         }
 

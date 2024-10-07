@@ -108,7 +108,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                 }
             }
 
-            if (selectedColumn[selectedColumn.Length - 1].Equals(','))
+            if (selectedColumn[^1].Equals(','))
             {
                 selectedColumn = selectedColumn.Remove((selectedColumn.Length - 1), 1);
             }
@@ -217,7 +217,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         {
             var dsConditionList = new ObservableList<GingerCore.DataSource.ActDSConditon>();
 
-            ObservableList<string> possibleCondition = new ObservableList<string>();
+            ObservableList<string> possibleCondition = [];
             foreach (ActDSConditon.eCondition item in Enum.GetValues(typeof(ActDSConditon.eCondition)))
             {
                 if (item.ToString() != "EMPTY")
@@ -231,7 +231,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                 return dsConditionList;
             }
 
-            List<string> tableColsValue = new List<string>();
+            List<string> tableColsValue = [];
             var columns = mDataTable.Columns;
             foreach (var item in columns)
             {

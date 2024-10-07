@@ -40,7 +40,7 @@ namespace Ginger.BusinessFlowWindows
         }
         private bool IsBusinessFlowNameExists(string value)
         {
-            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x=>x.Name == value );
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.Name == value);
         }
     }
 }

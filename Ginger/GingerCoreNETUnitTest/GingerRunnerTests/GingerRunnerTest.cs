@@ -67,9 +67,11 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestInitialize]
         public void TestInitialize()
         {
-            mBF = new BusinessFlow();
-            mBF.Name = "BF Test Fire Fox";
-            mBF.Active = true;
+            mBF = new BusinessFlow
+            {
+                Name = "BF Test Fire Fox",
+                Active = true
+            };
 
             Activity activity = new Activity();
             mBF.AddActivity(activity);
@@ -80,8 +82,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.Activities[0].Acts.Add(action1);
             mBF.Activities[0].Acts.Add(action2);
 
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
@@ -96,24 +100,29 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.Executor.CurrentBusinessFlow = mBF;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
 
-            environment = new ProjEnvironment();
-            environment.Name = "Default";
+            environment = new ProjEnvironment
+            {
+                Name = "Default"
+            };
             mBF.Environment = environment.Name;
             mGR.ProjEnvironment = environment;
 
-            Agent a = new Agent();
-            //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
-            a.DriverType = Agent.eDriverType.Selenium;
+            Agent a = new Agent
+            {
+                //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
+                DriverType = Agent.eDriverType.Selenium
+            };
             DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
             browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
             // p2.Agent = a;
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
-            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+            mGR.Executor.SolutionApplications =
+            [
+                new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" },
+            ];
             mGR.Executor.BusinessFlows.Add(mBF);
             mGR.SpecificEnvironmentName = environment.Name;
             mGR.UseSpecificEnvironment = false;
@@ -333,14 +342,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //Arrange
             RunSetConfig runSetConfigurations = CreteRunsetWithOperations();
 
-            RunsetExecutor GMR = new RunsetExecutor();
-            GMR.RunsetExecutionEnvironment = environment;
-            GMR.RunSetConfig = runSetConfigurations;
+            RunsetExecutor GMR = new RunsetExecutor
+            {
+                RunsetExecutionEnvironment = environment,
+                RunSetConfig = runSetConfigurations
+            };
 
-            CLIHelper cLIHelper = new CLIHelper();
-            cLIHelper.RunAnalyzer = true;
-            cLIHelper.ShowAutoRunWindow = false;
-            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+            CLIHelper cLIHelper = new CLIHelper
+            {
+                RunAnalyzer = true,
+                ShowAutoRunWindow = false,
+                DownloadUpgradeSolutionFromSourceControl = false
+            };
 
             RunSetAutoRunConfiguration autoRunConfiguration = new RunSetAutoRunConfiguration(solution, GMR, cLIHelper);
             CLIDynamicFile mCLIDynamicXML = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
@@ -389,17 +402,20 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             mGRForRunset.Name = "Test Runner";
 
-            Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.Selenium;
+            Agent a = new Agent
+            {
+                DriverType = Agent.eDriverType.Selenium
+            };
             DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
             browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
-            ((GingerExecutionEngine)mGRForRunset.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGRForRunset.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGRForRunset.Executor).SolutionAgents = [a];
 
             mGRForRunset.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
-            mGRForRunset.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGRForRunset.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+            mGRForRunset.Executor.SolutionApplications =
+            [
+                new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" },
+            ];
 
             mGRForRunset.Executor.BusinessFlows.Add(BF1);
             WorkSpace.Instance.SolutionRepository = SR;
@@ -417,14 +433,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             RunSetActionHTMLReport produceHTML2 = CreateProduceHTMlOperation();
             runSetConfig1.RunSetActions.Add(produceHTML2);
 
-            RunsetExecutor GMR1 = new RunsetExecutor();
-            GMR1.RunsetExecutionEnvironment = environment;
-            GMR1.RunSetConfig = runSetConfig1;
+            RunsetExecutor GMR1 = new RunsetExecutor
+            {
+                RunsetExecutionEnvironment = environment,
+                RunSetConfig = runSetConfig1
+            };
             WorkSpace.Instance.RunsetExecutor = GMR1;
-            CLIHelper cLIHelper1 = new CLIHelper();
-            cLIHelper1.RunAnalyzer = false;
-            cLIHelper1.ShowAutoRunWindow = false;
-            cLIHelper1.DownloadUpgradeSolutionFromSourceControl = false;
+            CLIHelper cLIHelper1 = new CLIHelper
+            {
+                RunAnalyzer = false,
+                ShowAutoRunWindow = false,
+                DownloadUpgradeSolutionFromSourceControl = false
+            };
 
             RunSetAutoRunConfiguration autoRunConfiguration1 = new RunSetAutoRunConfiguration(solution, GMR1, cLIHelper1);
             CLIDynamicFile mCLIDynamicXML1 = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
@@ -446,13 +466,15 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         public RunSetActionHTMLReport CreateProduceHTMlOperation()
         {
-            RunSetActionHTMLReport produceHTML1 = new RunSetActionHTMLReport();
-            produceHTML1.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
-            produceHTML1.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
-            produceHTML1.isHTMLReportFolderNameUsed = true;
-            produceHTML1.HTMLReportFolderName = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports"));
-            produceHTML1.isHTMLReportPermanentFolderNameUsed = false;
-            produceHTML1.Active = true;
+            RunSetActionHTMLReport produceHTML1 = new RunSetActionHTMLReport
+            {
+                Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun,
+                RunAt = RunSetActionBase.eRunAt.ExecutionEnd,
+                isHTMLReportFolderNameUsed = true,
+                HTMLReportFolderName = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports")),
+                isHTMLReportPermanentFolderNameUsed = false,
+                Active = true
+            };
             return produceHTML1;
         }
 
@@ -463,11 +485,13 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             runSetConfig.mRunModeParallel = false;
 
             //added HTMl send mail action
-            RunSetActionHTMLReportSendEmail sendMail = new RunSetActionHTMLReportSendEmail();
-            sendMail.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
-            sendMail.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
-            sendMail.MailFrom = "Test@gmail.com";
-            sendMail.MailTo = "Test@gamil.com";
+            RunSetActionHTMLReportSendEmail sendMail = new RunSetActionHTMLReportSendEmail
+            {
+                Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun,
+                RunAt = RunSetActionBase.eRunAt.ExecutionEnd,
+                MailFrom = "Test@gmail.com",
+                MailTo = "Test@gamil.com"
+            };
             sendMail.Email.EmailMethod = GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK;
             sendMail.Active = true;
 
@@ -476,11 +500,13 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             RunSetActionHTMLReport produceHTML = CreateProduceHTMlOperation();
 
             //added JSON action
-            RunSetActionJSONSummary jsonReportOperation = new RunSetActionJSONSummary();
-            jsonReportOperation.Name = "Json Report";
-            jsonReportOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
-            jsonReportOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
-            jsonReportOperation.Active = true;
+            RunSetActionJSONSummary jsonReportOperation = new RunSetActionJSONSummary
+            {
+                Name = "Json Report",
+                RunAt = RunSetActionBase.eRunAt.ExecutionEnd,
+                Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun,
+                Active = true
+            };
 
             runSetConfig.RunSetActions.Add(sendMail);
             runSetConfig.RunSetActions.Add(produceHTML);
@@ -531,18 +557,22 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //Arrange
             Activity activity = mBF.Activities[0];
 
-            ActDummy act1 = new ActDummy();
-            act1.Active = true;
+            ActDummy act1 = new ActDummy
+            {
+                Active = true
+            };
             activity.Acts.Add(act1);
 
             ObservableList<IAct> actionList = activity.Acts;
             Act action = (Act)actionList[0];
             action.Active = true;
-            FlowControl flowControl = new FlowControl();
-            flowControl.Active = true;
+            FlowControl flowControl = new FlowControl
+            {
+                Active = true,
 
-            flowControl.Operator = eFCOperator.ActionPassed;
-            flowControl.FlowControlAction = eFlowControlAction.GoToAction;
+                Operator = eFCOperator.ActionPassed,
+                FlowControlAction = eFlowControlAction.GoToAction
+            };
             flowControl.Value = act1.Guid + flowControl.GUID_NAME_SEPERATOR;
 
             action.FlowControls.Add(flowControl);
@@ -562,8 +592,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //Arrange
 
             Activity activity = GetActivityFromRepository();
-            ActDummy act1 = new ActDummy();
-            act1.Active = true;
+            ActDummy act1 = new ActDummy
+            {
+                Active = true
+            };
             activity.Acts.Add(act1);
 
             ObservableList<IAct> actionList = activity.Acts;

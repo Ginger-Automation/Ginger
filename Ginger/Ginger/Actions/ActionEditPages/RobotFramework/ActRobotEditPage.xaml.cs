@@ -60,14 +60,15 @@ namespace Ginger.Actions.RobotFramework
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
+            {
+                // Set filter options and filter index.
+                Filter = "Robot Files (*.robot)|*.robot|All Files (*.*)|*.*",
+                FilterIndex = 1,
 
-            // Set filter options and filter index.
-            openFileDialog.Filter = "Robot Files (*.robot)|*.robot|All Files (*.*)|*.*";
-            openFileDialog.FilterIndex = 1;
-
-            // allow the user to select only one file
-            openFileDialog.Multiselect = false;
+                // allow the user to select only one file
+                Multiselect = false
+            };
 
             System.Windows.Forms.DialogResult result = openFileDialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)

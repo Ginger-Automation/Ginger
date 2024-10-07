@@ -93,7 +93,7 @@ namespace GingerCore.DataSource
                 handler(this, new PropertyChangedEventArgs(name));
             }
         }
-        ObservableList<string> mPossibleCondValues = new ObservableList<string>();
+        ObservableList<string> mPossibleCondValues = [];
         public ObservableList<string> PossibleCondValues
         {
             get
@@ -107,7 +107,7 @@ namespace GingerCore.DataSource
             }
         }
 
-        List<string> mPossibleColumnValues = new List<string>();
+        List<string> mPossibleColumnValues = [];
         public List<string> PossibleColumnValues
         {
             get

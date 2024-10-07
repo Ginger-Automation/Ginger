@@ -33,20 +33,20 @@ namespace Ginger.WindowExplorer.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            //Window element with name "Simple Page" existe so it is not working
-            list.Add(new ActPBControl()
-            {
-                Description = "ScrollUp the scrollbar - " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.ScrollUp
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "ScrollDown the scrollbar - " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.Scrolldown
-            });
+            ObservableList<Act> list =
+            [
+                //Window element with name "Simple Page" existe so it is not working
+                new ActPBControl()
+                {
+                    Description = "ScrollUp the scrollbar - " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.ScrollUp
+                },
+                new ActPBControl()
+                {
+                    Description = "ScrollDown the scrollbar - " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.Scrolldown
+                },
+            ];
 
             return list;
         }

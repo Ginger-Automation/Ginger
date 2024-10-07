@@ -19,14 +19,9 @@ limitations under the License.
 using Ginger.Configurations;
 using Ginger.ExternalConfigurations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Moq;
+using System;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Threading;
 
 namespace GingerTest.GingerOps
 {
@@ -39,7 +34,7 @@ namespace GingerTest.GingerOps
         private Mock<GingerOpsAPI> _mockAnalyticsAPI;
         private GingerOpsConfiguration _mockUserConfig;
 
-        [TestInitialize]        
+        [TestInitialize]
         public void Setup()
         {
             _mockAnalyticsAPI = new Mock<GingerOpsAPI>();
@@ -71,7 +66,7 @@ namespace GingerTest.GingerOps
         public void AreRequiredFieldsEmpty_WhenFieldsAreEmpty_ReturnsTrue()
         {
             // Arrange
-           
+
 
             // Act
             bool result = _page.AreRequiredFieldsEmpty();

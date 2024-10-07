@@ -30,7 +30,6 @@ using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.Graph;
 using OctaneRepositoryStd;
 using OctaneStdSDK.Connector;
 using OctaneStdSDK.Connector.Credentials;
@@ -71,7 +70,7 @@ namespace GingerCore.ALM
         protected SharedSpaceContext sharedSpaceContext;
         protected OctaneRepository octaneRepository;
         private LoginDTO loginDto;
-        private static Dictionary<string, string> ExploredApplicationModule = new Dictionary<string, string>();
+        private static Dictionary<string, string> ExploredApplicationModule = [];
 
         private bool isSSOConnection = false;
 
@@ -87,7 +86,7 @@ namespace GingerCore.ALM
         public List<string> GetTestLabExplorer(string path)
         {
 
-            List<string> testlabPathList = new List<string>();
+            List<string> testlabPathList = [];
             try
             {
                 string[] separatePath = path.Split('\\');
@@ -103,9 +102,9 @@ namespace GingerCore.ALM
                     separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
                 }
 
-                LogicalQueryPhrase parent = new LogicalQueryPhrase("id", separatePath[separatePath.Length - 1], ComparisonOperator.Equal);
+                LogicalQueryPhrase parent = new LogicalQueryPhrase("id", separatePath[^1], ComparisonOperator.Equal);
                 CrossQueryPhrase qdParent = new CrossQueryPhrase("parent", parent);
-                List<IQueryPhrase> filter = new List<IQueryPhrase>() { qdParent };
+                List<IQueryPhrase> filter = [qdParent];
 
                 return Task.Run(() =>
                 {
@@ -125,7 +124,7 @@ namespace GingerCore.ALM
             {
                 LogicalQueryPhrase f1 = new LogicalQueryPhrase("name", "Application Modules", ComparisonOperator.Equal);
                 LogicalQueryPhrase f2 = new LogicalQueryPhrase("path", "000000", ComparisonOperator.Equal);
-                return octaneRepository.GetEntities<ApplicationModule>(GetLoginDTO(), new List<IQueryPhrase>() { f1, f2 });
+                return octaneRepository.GetEntities<ApplicationModule>(GetLoginDTO(), [f1, f2]);
             }).Result.FirstOrDefault().Id.ToString();
         }
 
@@ -136,7 +135,7 @@ namespace GingerCore.ALM
                 LogicalQueryPhrase parent = new LogicalQueryPhrase("id", separateAtIMinusOne, ComparisonOperator.Equal);
                 CrossQueryPhrase qdParent = new CrossQueryPhrase("parent", parent);
                 LogicalQueryPhrase lp = new LogicalQueryPhrase("name", separateAti, ComparisonOperator.Equal);
-                List<IQueryPhrase> filter = new List<IQueryPhrase>() { qdParent, lp };
+                List<IQueryPhrase> filter = [qdParent, lp];
                 List<ApplicationModule> listnodes = Task.Run(() =>
                 {
                     return octaneRepository.GetEntities<ApplicationModule>(GetLoginDTO(), filter);
@@ -172,7 +171,7 @@ namespace GingerCore.ALM
 
         public List<ALMTestSetSummary> GetTestSetExplorer(string PathNode)
         {
-            List<ALMTestSetSummary> testlabPathList = new List<ALMTestSetSummary>();
+            List<ALMTestSetSummary> testlabPathList = [];
             string[] separatePath = PathNode.Split('\\');
             try
             {
@@ -190,16 +189,18 @@ namespace GingerCore.ALM
 
                 List<TestSuite> testSets = Task.Run(() =>
                 {
-                    LogicalQueryPhrase test_Suite = new LogicalQueryPhrase("id", separatePath[separatePath.Length - 1], ComparisonOperator.Equal);
+                    LogicalQueryPhrase test_Suite = new LogicalQueryPhrase("id", separatePath[^1], ComparisonOperator.Equal);
                     CrossQueryPhrase qd = new CrossQueryPhrase("product_areas", test_Suite);
-                    return octaneRepository.GetEntities<TestSuite>(GetLoginDTO(), new List<IQueryPhrase>() { qd });
+                    return octaneRepository.GetEntities<TestSuite>(GetLoginDTO(), [qd]);
                 }).Result;
 
                 foreach (TestSuite testset in testSets)
                 {
-                    ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary();
-                    QCTestSetTreeItem.TestSetID = testset.Id;
-                    QCTestSetTreeItem.TestSetName = testset.Name;
+                    ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary
+                    {
+                        TestSetID = testset.Id,
+                        TestSetName = testset.Name
+                    };
                     testlabPathList.Add(QCTestSetTreeItem);
                 }
             }
@@ -291,11 +292,13 @@ namespace GingerCore.ALM
             isSSOConnection = true;
             SsoTokenInfo tokenInfo = octaneRepository.GetSsoTokens(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName);
 
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            result.Add("authentication_url", tokenInfo.authentication_url);
-            result.Add("id", tokenInfo.id);
-            result.Add("userName", tokenInfo.userName);
-            result.Add("Error", tokenInfo.Error);
+            Dictionary<string, string> result = new Dictionary<string, string>
+            {
+                { "authentication_url", tokenInfo.authentication_url },
+                { "id", tokenInfo.id },
+                { "userName", tokenInfo.userName },
+                { "Error", tokenInfo.Error }
+            };
 
             return result;
         }
@@ -307,7 +310,7 @@ namespace GingerCore.ALM
 
         public override Dictionary<string, string> GetTokenInfo()
         {
-            Dictionary<string, string> result = new Dictionary<string, string>();
+            Dictionary<string, string> result = [];
 
             var tokenInfo = octaneRepository.GetTokenInfo();
             result.Add("authentication_url", tokenInfo.authentication_url);
@@ -317,8 +320,8 @@ namespace GingerCore.ALM
         }
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
         {
-            Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
-            Dictionary<string, List<string>> defectsBFs = new Dictionary<string, List<string>>();
+            Dictionary<Guid, string> defectsOpeningResults = [];
+            Dictionary<string, List<string>> defectsBFs = [];
             foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
             {
                 //TODO: ToUpdate field is not set to true correctly on fields grid. 
@@ -351,7 +354,7 @@ namespace GingerCore.ALM
                 try
                 {
                     LogicalQueryPhrase userFilter = new LogicalQueryPhrase("email", ALMCore.DefaultAlmConfig.ALMUserName, ComparisonOperator.Equal);
-                    List<WorkspaceUser> users = octaneRepository.GetEntities<WorkspaceUser>(GetLoginDTO(), new List<IQueryPhrase>() { userFilter });
+                    List<WorkspaceUser> users = octaneRepository.GetEntities<WorkspaceUser>(GetLoginDTO(), [userFilter]);
                     if (users.Any())
                     {
                         newDefect.SetValue("detected_by", new BaseEntity()
@@ -396,7 +399,7 @@ namespace GingerCore.ALM
                     }
                     else
                     {
-                        defectsBFs.Add(defectForOpening.Value["BFExternalID1"], new List<string>() { newDefect.Id });
+                        defectsBFs.Add(defectForOpening.Value["BFExternalID1"], [newDefect.Id]);
                     }
                 }
             }
@@ -417,7 +420,7 @@ namespace GingerCore.ALM
         {
             try
             {
-                List<BaseEntity> defectList = new List<BaseEntity>();
+                List<BaseEntity> defectList = [];
                 defectIds.ForEach(f =>
                 {
                     defectList.Add(new BaseEntity()
@@ -426,8 +429,10 @@ namespace GingerCore.ALM
                         Id = f,
                     });
                 });
-                TestSuite testSuite = new TestSuite();
-                testSuite.Id = new EntityId(testSuiteId);
+                TestSuite testSuite = new TestSuite
+                {
+                    Id = new EntityId(testSuiteId)
+                };
                 testSuite.SetValue("covered_content", new EntityList<BaseEntity>()
                 {
                     data = defectList
@@ -563,9 +568,9 @@ namespace GingerCore.ALM
                                         }
                                     }
 
-                                    if (publishToALMConfig.ToExportReportLink )
+                                    if (publishToALMConfig.ToExportReportLink)
                                     {
-                                      
+
                                         string reportLink = General.CreateReportLinkPerFlow(HtmlReportUrl: publishToALMConfig.HtmlReportUrl, ExecutionId: publishToALMConfig.ExecutionId, BusinessFlowInstanceGuid: bizFlow.InstanceGuid.ToString());
                                         reportLink = $"<a href='{reportLink}' target='_blank'>Ginger Report Link</a>";
                                         if (!this.AddCommentForTestRun(runTExport.Id, reportLink))
@@ -767,13 +772,13 @@ namespace GingerCore.ALM
                 EntityListResult<RunSuite> testFolders = new EntityListResult<RunSuite>();
                 LogicalQueryPhrase run_Suite = new LogicalQueryPhrase("id", runSuiteToExport.Id, ComparisonOperator.Equal);
                 CrossQueryPhrase qd = new CrossQueryPhrase("parent_suite", run_Suite);
-                IList<IQueryPhrase> filter = new List<IQueryPhrase> { qd };
+                IList<IQueryPhrase> filter = [qd];
                 List<RunManual> runsToDelete = octaneRepository.GetEntities<RunManual>(GetLoginDTO(), filter);
                 foreach (var run in runsToDelete)
                 {
                     Task.Run(() =>
                     {
-                        return this.octaneRepository.DeleteEntity<RunManual>(GetLoginDTO(), new List<IQueryPhrase> { new LogicalQueryPhrase("id", run.Id, ComparisonOperator.Equal) });
+                        return this.octaneRepository.DeleteEntity<RunManual>(GetLoginDTO(), [new LogicalQueryPhrase("id", run.Id, ComparisonOperator.Equal)]);
                     });
                 }
 
@@ -786,9 +791,10 @@ namespace GingerCore.ALM
 
         private Run CrateTestRun(PublishToALMConfig publishToALMConfig, ActivitiesGroup activGroup, ALMTestInstance tsTest, EntityId runSuiteId, ObservableList<ExternalItemFieldBase> runFields)
         {
-            Run runToExport = new Run();
-
-            runToExport.Name = publishToALMConfig.VariableForTCRunNameCalculated;
+            Run runToExport = new Run
+            {
+                Name = publishToALMConfig.VariableForTCRunNameCalculated
+            };
             runToExport.SetValue("subtype", "run_manual");
             runToExport.SetValue("parent_suite", new BaseEntity()
             {
@@ -852,8 +858,8 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType = AlmDataContractsStd.Enums.ResourceType.ALL)
         {
-            ResourceType resource = (ResourceType)resourceType;
-            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            ResourceType resource = resourceType;
+            ObservableList<ExternalItemFieldBase> fields = [];
             string resourse = string.Empty;
             LoginDTO _loginDto = GetLoginDTO();
             Dictionary<string, List<string>> listnodes = Task.Run(() =>
@@ -898,7 +904,7 @@ namespace GingerCore.ALM
 
         private ObservableList<ExternalItemFieldBase> AddFieldsValues(ListResult<FieldMetadata> entityFields, string entityType, Dictionary<string, List<string>> listnodes, Dictionary<string, List<string>> phases)
         {
-            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fields = [];
             List<Release> _releases = GetReleases();
 
             if ((entityFields != null) && (entityFields.total_count.Value > 0))
@@ -911,12 +917,14 @@ namespace GingerCore.ALM
                         continue;
                     }
 
-                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
-                    itemfield.ID = field.Label;
-                    itemfield.ExternalID = field.Name;
-                    itemfield.Name = field.Label;
-                    itemfield.Mandatory = field.IsRequired;
-                    itemfield.SystemFieled = !field.IsUserField;
+                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase
+                    {
+                        ID = field.Label,
+                        ExternalID = field.Name,
+                        Name = field.Label,
+                        Mandatory = field.IsRequired,
+                        SystemFieled = !field.IsUserField
+                    };
 
                     if (itemfield.Mandatory)
                     {
@@ -990,9 +998,9 @@ namespace GingerCore.ALM
             try
             {
                 List<TestSuite_Test_Link> TSLink;
-                QCTestInstanceColl testCollection = new QCTestInstanceColl();
+                QCTestInstanceColl testCollection = [];
                 CrossQueryPhrase qd = new CrossQueryPhrase("test_suite", new LogicalQueryPhrase("id", testSetID, ComparisonOperator.Equal));
-                IList<IQueryPhrase> filter = new List<IQueryPhrase> { qd, new LogicalQueryPhrase("subtype", "test_suite_link_to_manual", ComparisonOperator.Equal) };
+                IList<IQueryPhrase> filter = [qd, new LogicalQueryPhrase("subtype", "test_suite_link_to_manual", ComparisonOperator.Equal)];
 
                 TSLink = octaneRepository.GetEntities<TestSuite_Test_Link>(GetLoginDTO(), filter);
                 foreach (TestSuite_Test_Link item in TSLink)
@@ -1011,7 +1019,7 @@ namespace GingerCore.ALM
         public ALMTestCase GetTestCases(string testcaseID)
         {
             LogicalQueryPhrase qd = new LogicalQueryPhrase("id", testcaseID, ComparisonOperator.Equal);
-            IList<IQueryPhrase> filter = new List<IQueryPhrase> { qd };
+            IList<IQueryPhrase> filter = [qd];
             List<Test> test = octaneRepository.GetEntities<Test>(GetLoginDTO(), filter);
             if (test.Any())
             {
@@ -1024,7 +1032,7 @@ namespace GingerCore.ALM
         public QCTestCaseStepsColl GetListTSTestSteps(ALMTestCase testcase)
         {
             var lineBreaks = new[] { '\n' };
-            QCTestCaseStepsColl stepsColl = new QCTestCaseStepsColl();
+            QCTestCaseStepsColl stepsColl = [];
             string steps = Task.Run(() =>
             {
                 return octaneRepository.GetTestCaseStep(GetLoginDTO(), testcase.Id);
@@ -1042,14 +1050,14 @@ namespace GingerCore.ALM
         //@[0-9]*
         private List<string> GetTCParameterList(string steps)
         {
-            List<string> parameters = new List<string>();
+            List<string> parameters = [];
             string hasParams = @"(<[a-zA-Z0-9,+/-_()~!@#$%^&*=]+>)";
             MatchCollection mc = Regex.Matches(steps, hasParams);
             if (mc != null && mc.Count > 0)
             {
                 foreach (Match m in mc)
                 {
-                    parameters.Add(m.Value.Substring(1, m.Value.Length - 2));
+                    parameters.Add(m.Value[1..^1]);
                 }
             }
             return parameters;
@@ -1057,7 +1065,7 @@ namespace GingerCore.ALM
 
         private List<string> CheckForCallingTC(string steps)
         {
-            List<string> callingTCs = new List<string>();
+            List<string> callingTCs = [];
             string reg = @"@[0-9]*";
             MatchCollection mc = Regex.Matches(steps, reg);
             if (mc != null && mc.Count > 0)
@@ -1078,8 +1086,10 @@ namespace GingerCore.ALM
             {
                 foreach (Match m in mc)
                 {
-                    QC.ALMTSTestParameter newtsVar = new QC.ALMTSTestParameter();
-                    newtsVar.Name = m.Value.Substring(1, m.Value.Length - 2);
+                    QC.ALMTSTestParameter newtsVar = new QC.ALMTSTestParameter
+                    {
+                        Name = m.Value[1..^1]
+                    };
                     newTSTest.Parameters.Add(newtsVar);
                 }
             }
@@ -1090,7 +1100,7 @@ namespace GingerCore.ALM
             QC.ALMTSTest newTSTest = new QC.ALMTSTest();
             if (newTSTest.Runs == null)
             {
-                newTSTest.Runs = new List<ALMTSTestRun>();
+                newTSTest.Runs = [];
             }
             ALMTestCase testCase = GetTestCases(testInstance.Id);
             testCase.TestSetId = testInstance.CycleId;
@@ -1105,11 +1115,13 @@ namespace GingerCore.ALM
             QCTestCaseStepsColl TSTestSteps = GetListTSTestSteps(testCase);
             foreach (ALMTestCaseStep testcaseStep in TSTestSteps)
             {
-                QC.ALMTSTestStep newtsStep = new QC.ALMTSTestStep();
-                newtsStep.StepID = testcaseStep.Id.ToString();
-                newtsStep.StepName = testcaseStep.Name;
-                newtsStep.Description = testcaseStep.Description;
-                newtsStep.Expected = "";
+                QC.ALMTSTestStep newtsStep = new QC.ALMTSTestStep
+                {
+                    StepID = testcaseStep.Id.ToString(),
+                    StepName = testcaseStep.Name,
+                    Description = testcaseStep.Description,
+                    Expected = ""
+                };
                 newTSTest.Steps.Add(newtsStep);
                 //Get the TC parameters
                 CheckForParameter(newTSTest, newtsStep.Description);
@@ -1122,32 +1134,34 @@ namespace GingerCore.ALM
 
                 foreach (RunSuite run in TSTestRuns)
                 {
-                    QC.ALMTSTestRun newtsRun = new QC.ALMTSTestRun();
-                    newtsRun.RunID = run.Id;
-                    newtsRun.RunName = run.Name;
-                    newtsRun.Status = run.NativeStatus.Name;
-                    newtsRun.ExecutionDate = (run.GetValue("started").ToString());
-                    newtsRun.ExecutionTime = (run.GetValue("last_modified").ToString());
-                    newtsRun.Tester = (run.DefaultRunBy.FullName).ToString();
+                    QC.ALMTSTestRun newtsRun = new QC.ALMTSTestRun
+                    {
+                        RunID = run.Id,
+                        RunName = run.Name,
+                        Status = run.NativeStatus.Name,
+                        ExecutionDate = (run.GetValue("started").ToString()),
+                        ExecutionTime = (run.GetValue("last_modified").ToString()),
+                        Tester = (run.DefaultRunBy.FullName).ToString()
+                    };
                     newTSTest.Runs.Add(newtsRun);
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
-                newTSTest.Runs = new List<QC.ALMTSTestRun>();
+                newTSTest.Runs = [];
             }
             return newTSTest;
         }
 
         public List<RunSuite> GetTestSuiteRun(string testSuiteId)
         {
-            QCRunColl runColl = new QCRunColl();
+            QCRunColl runColl = [];
             EntityListResult<RunSuite> testFolders = new EntityListResult<RunSuite>();
             LogicalQueryPhrase test_Suite = new LogicalQueryPhrase("id", testSuiteId, ComparisonOperator.Equal);
             CrossQueryPhrase qd = new CrossQueryPhrase("test", test_Suite);
 
-            return octaneRepository.GetEntities<RunSuite>(GetLoginDTO(), new List<IQueryPhrase> { qd });
+            return octaneRepository.GetEntities<RunSuite>(GetLoginDTO(), [qd]);
         }
 
         public dynamic GetTSRunStatus(dynamic TSItem)
@@ -1179,17 +1193,19 @@ namespace GingerCore.ALM
                 TestSuite tsLatest = Task.Run(() =>
                 {
                     LogicalQueryPhrase test_Suite = new LogicalQueryPhrase("id", testSet.TestSetID, ComparisonOperator.Equal);
-                    return octaneRepository.GetEntities<TestSuite>(GetLoginDTO(), new List<IQueryPhrase>() { test_Suite });
+                    return octaneRepository.GetEntities<TestSuite>(GetLoginDTO(), [test_Suite]);
                 }).Result.FirstOrDefault();
                 //Create Business Flow
-                BusinessFlow busFlow = new BusinessFlow();
-                busFlow.Name = testSet.TestSetName;
-                busFlow.ExternalID = testSet.TestSetID;
-                busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Description = StripHTML(tsLatest.GetStringValue("description"));
-                busFlow.Activities = new ObservableList<Activity>();
-                busFlow.Variables = new ObservableList<VariableBase>();
-                Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
+                BusinessFlow busFlow = new BusinessFlow
+                {
+                    Name = testSet.TestSetName,
+                    ExternalID = testSet.TestSetID,
+                    Status = BusinessFlow.eBusinessFlowStatus.Development,
+                    Description = StripHTML(tsLatest.GetStringValue("description")),
+                    Activities = [],
+                    Variables = []
+                };
+                Dictionary<string, string> busVariables = [];//will store linked variables
 
                 //Create Activities Group + Activities for each TC
                 foreach (QC.ALMTSTest tc in testSet.Tests)
@@ -1203,9 +1219,11 @@ namespace GingerCore.ALM
                     foreach (KeyValuePair<string, string> var in busVariables)
                     {
                         //add as String param
-                        VariableString busVar = new VariableString();
-                        busVar.Name = var.Key;
-                        busVar.InitialStringValue = var.Value;
+                        VariableString busVar = new VariableString
+                        {
+                            Name = var.Key,
+                            InitialStringValue = var.Value
+                        };
                         busFlow.AddVariable(busVar);
                     }
                 }
@@ -1224,7 +1242,7 @@ namespace GingerCore.ALM
             //check if the TC is already exist in repository
             ActivitiesGroup tcActivsGroup;
             ActivitiesGroup repoActivsGroup = null;
-            List<string> CallingTCs = new List<string>();
+            List<string> CallingTCs = [];
             if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
             {
                 repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID == tc.LinkedTestID);
@@ -1257,8 +1275,10 @@ namespace GingerCore.ALM
             }
             else //TC not exist in Ginger repository so create new one
             {
-                tcActivsGroup = new ActivitiesGroup();
-                tcActivsGroup.Name = tc.TestName;
+                tcActivsGroup = new ActivitiesGroup
+                {
+                    Name = tc.TestName
+                };
                 if (tc.LinkedTestID == null || tc.LinkedTestID == string.Empty)
                 {
                     tcActivsGroup.ExternalID = tc.TestID;
@@ -1279,15 +1299,15 @@ namespace GingerCore.ALM
                 bool toAddStepActivity = false;
 
                 //check if mapped activity exist in repository
-                Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
+                Activity repoStepActivity = GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
                 if (repoStepActivity != null)
                 {
                     //check if it is part of the Activities Group
-                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                    ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                     if (groupStepActivityIdent != null)
                     {
                         //already in Activities Group so get link to it
-                        stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
+                        stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                         // in any case update description/expected/name - even if "step" was taken from repository
                         stepActivity.Description = step.Description;
                         stepActivity.Expected = step.Expected;
@@ -1301,11 +1321,13 @@ namespace GingerCore.ALM
                 }
                 else//Step not exist in Ginger repository so create new one
                 {
-                    stepActivity = new Activity();
-                    stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
-                    stepActivity.ExternalID = step.StepID;
-                    stepActivity.Description = step.Description;
-                    stepActivity.Expected = step.Expected;
+                    stepActivity = new Activity
+                    {
+                        ActivityName = tc.TestName + ">" + step.StepName,
+                        ExternalID = step.StepID,
+                        Description = step.Description,
+                        Expected = step.Expected
+                    };
 
                     toAddStepActivity = true;
                 }
@@ -1360,7 +1382,7 @@ namespace GingerCore.ALM
                         isflowControlParam = false;
                         if (paramSelectedValue.StartsWith("$$_"))
                         {
-                            paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                            paramSelectedValue = paramSelectedValue[3..];//get value without "$$_"
                         }
                     }
                     else if (paramSelectedValue != "<Empty>")
@@ -1376,16 +1398,20 @@ namespace GingerCore.ALM
                         if (isflowControlParam != null && isflowControlParam.Value)
                         {
                             //add it as selection list param                               
-                            stepActivityVar = new VariableSelectionList();
-                            stepActivityVar.Name = param;
+                            stepActivityVar = new VariableSelectionList
+                            {
+                                Name = param
+                            };
                             stepActivity.AddVariable(stepActivityVar);
                             stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                         }
                         else
                         {
                             //add as String param
-                            stepActivityVar = new VariableString();
-                            stepActivityVar.Name = param;
+                            stepActivityVar = new VariableString
+                            {
+                                Name = param
+                            };
                             ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                             stepActivity.AddVariable(stepActivityVar);
                         }
@@ -1395,12 +1421,14 @@ namespace GingerCore.ALM
                         //#param exist
                         if (isflowControlParam != null && isflowControlParam.Value)
                         {
-                            if (!(stepActivityVar is VariableSelectionList))
+                            if (stepActivityVar is not VariableSelectionList)
                             {
                                 //flow control param must be Selection List so transform it
                                 stepActivity.Variables.Remove(stepActivityVar);
-                                stepActivityVar = new VariableSelectionList();
-                                stepActivityVar.Name = param;
+                                stepActivityVar = new VariableSelectionList
+                                {
+                                    Name = param
+                                };
                                 stepActivity.AddVariable(stepActivityVar);
                                 stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                             }
@@ -1411,8 +1439,10 @@ namespace GingerCore.ALM
                             {
                                 //change it to be string variable
                                 stepActivity.Variables.Remove(stepActivityVar);
-                                stepActivityVar = new VariableString();
-                                stepActivityVar.Name = param;
+                                stepActivityVar = new VariableString
+                                {
+                                    Name = param
+                                };
                                 ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                 stepActivity.AddVariable(stepActivityVar);
                                 stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
@@ -1476,9 +1506,9 @@ namespace GingerCore.ALM
                 foreach (QC.ALMTSTestStep step in tc.Steps)
                 {
                     int stepIndx = tc.Steps.IndexOf(step) + 1;
-                    ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                    ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                     if (actIdent == null || actIdent.IdentifiedActivity == null) { break; }
-                    Activity act = (Activity)actIdent.IdentifiedActivity;
+                    Activity act = actIdent.IdentifiedActivity;
                     int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                     int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -1497,7 +1527,7 @@ namespace GingerCore.ALM
 
                         if (numOfSeenSteps >= stepIndx) { break; }
                     }
-                    ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                    ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                     if (identOnPlace.ActivityGuid != act.Guid)
                     {
                         //replace places in group
@@ -1552,12 +1582,14 @@ namespace GingerCore.ALM
         }
         private int CreateNewTestSet(BusinessFlow businessFlow, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields)
         {
-            TestSuite testSuite = new TestSuite();
-            testSuite.Name = businessFlow.Name;
+            TestSuite testSuite = new TestSuite
+            {
+                Name = businessFlow.Name
+            };
             testSuite.SetValue("description", businessFlow.Description);
             testSuite.SetValue("product_areas", new EntityList<BaseEntity>()
             {
-                data = new List<BaseEntity>() { new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" } }
+                data = [new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" }]
             });
             AddEntityFieldValues(testSetFields.ToList(), testSuite, "test_suite");
             TestSuite created = Task.Run(() =>
@@ -1573,18 +1605,20 @@ namespace GingerCore.ALM
         }
         private int UpdateExistingTestSet(BusinessFlow businessFlow, ALMTestSetData existingTS, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields)
         {
-            TestSuite testSuite = new TestSuite();
-            testSuite.Id = existingTS.Id;
-            testSuite.Name = businessFlow.Name;
+            TestSuite testSuite = new TestSuite
+            {
+                Id = existingTS.Id,
+                Name = businessFlow.Name
+            };
             testSuite.SetValue("description", businessFlow.Description);
             testSuite.SetValue("product_areas", new EntityList<BaseEntity>()
             {
-                data = new List<BaseEntity>() { new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" } }
+                data = [new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" }]
             });
             AddEntityFieldValues(testSetFields.ToList(), testSuite, "test_suite");
-            TestSuite created = (TestSuite)Task.Run(() =>
+            TestSuite created = Task.Run(() =>
             {
-                return this.octaneRepository.UpdateTestSuite(GetLoginDTO(), testSuite);
+                return octaneRepository.UpdateTestSuite(GetLoginDTO(), testSuite);
             }).Result;
 
             int testSuiteId = Convert.ToInt32(created.Id.ToString());
@@ -1623,7 +1657,7 @@ namespace GingerCore.ALM
             {
                 try
                 {
-                    this.octaneRepository.DeleteEntity<TestSuiteLinkToTests>(GetLoginDTO(), new List<IQueryPhrase>() { qd });
+                    this.octaneRepository.DeleteEntity<TestSuiteLinkToTests>(GetLoginDTO(), [qd]);
                 }
                 catch (Exception ex)
                 {
@@ -1667,8 +1701,10 @@ namespace GingerCore.ALM
 
         public string CreateApplicationModule(string appModuleNameTobeCreated, string desc, string paraentId)
         {
-            ApplicationModule applicationModule = new ApplicationModule();
-            applicationModule.Name = appModuleNameTobeCreated;
+            ApplicationModule applicationModule = new ApplicationModule
+            {
+                Name = appModuleNameTobeCreated
+            };
             applicationModule.SetValue("description", desc);
 
             applicationModule.SetValue("parent", new BaseEntity("application_module")
@@ -1679,7 +1715,7 @@ namespace GingerCore.ALM
 
             ApplicationModule module = Task.Run(() =>
             {
-                return this.octaneRepository.CreateEntity<ApplicationModule>(GetLoginDTO(), applicationModule, new List<string>() { "path", "id" });
+                return this.octaneRepository.CreateEntity<ApplicationModule>(GetLoginDTO(), applicationModule, ["path", "id"]);
             }).Result;
 
             return module.Id.ToString();
@@ -1737,15 +1773,17 @@ namespace GingerCore.ALM
         private string CreateNewTestCase(ActivitiesGroup activitiesGroup, string fatherId, ObservableList<ExternalItemFieldBase> testCaseFields, string testScript)
         {
             //set item fields
-            TestManual test = new TestManual();
-            test.Name = activitiesGroup.Name;
+            TestManual test = new TestManual
+            {
+                Name = activitiesGroup.Name
+            };
             test.SetValue("description", activitiesGroup.Description);
             test.SetValue("product_areas", new EntityList<BaseEntity>()
             {
-                data = new List<BaseEntity>()
-                {
+                data =
+                [
                     new BaseEntity() {Id = fatherId, TypeName = "product_area"}
-                }
+                ]
             });
 
             AddEntityFieldValues(testCaseFields.ToList(), test, "test_manual");
@@ -1826,13 +1864,13 @@ namespace GingerCore.ALM
                                     {
                                         test.SetValue(field.ExternalID, new EntityList<BaseEntity>()
                                         {
-                                            data = new List<BaseEntity>() {
+                                            data = [
                                                 new BaseEntity()
                                                 {
                                                     TypeName = "list_node",
                                                     Id = field.SelectedValue.Split('*')[1]
                                                 }
-                                            }
+                                            ]
                                         });
                                     }
                                     else
@@ -1869,24 +1907,26 @@ namespace GingerCore.ALM
 
         private string UpdateTestCase(ActivitiesGroup activitiesGroup, string fatherId, ObservableList<ExternalItemFieldBase> testCaseFields, string testScript)
         {
-            TestManual test = new TestManual();
-            test.Id = activitiesGroup.ExternalID;
-            test.Name = activitiesGroup.Name;
+            TestManual test = new TestManual
+            {
+                Id = activitiesGroup.ExternalID,
+                Name = activitiesGroup.Name
+            };
             test.SetValue("description", activitiesGroup.Description);
 
             test.SetValue("product_areas", new EntityList<BaseEntity>()
             {
-                data = new List<BaseEntity>()
-                {
+                data =
+                [
                     new BaseEntity() {Id = fatherId, TypeName = "product_area"}
-                }
+                ]
             });
 
             AddEntityFieldValues(testCaseFields.ToList(), test, "test_manual");
 
-            test = (TestManual)Task.Run(() =>
+            test = Task.Run(() =>
             {
-                return this.octaneRepository.UpdateTestCase(GetLoginDTO(), test, null);
+                return octaneRepository.UpdateTestCase(GetLoginDTO(), test, null);
             }).Result;
 
             activitiesGroup.ExternalID = test.Id.ToString();
@@ -1897,8 +1937,10 @@ namespace GingerCore.ALM
 
         private string CreateTestStep(string tcId, string script)
         {
-            TestScript testScript = new TestScript();
-            testScript.Id = new EntityId(tcId);
+            TestScript testScript = new TestScript
+            {
+                Id = new EntityId(tcId)
+            };
             testScript.SetValue("script", script);
             Task.Run(() => { return this.octaneRepository.AddStepsToTC<TestScript>(GetLoginDTO(), testScript, null); });
             return "";
@@ -1909,7 +1951,7 @@ namespace GingerCore.ALM
             List<TestSuite> testsuite = Task.Run(() =>
             {
                 LogicalQueryPhrase test_Suite = new LogicalQueryPhrase("id", tsId, ComparisonOperator.Equal);
-                return octaneRepository.GetEntities<TestSuite>(GetLoginDTO(), new List<IQueryPhrase>() { test_Suite });
+                return octaneRepository.GetEntities<TestSuite>(GetLoginDTO(), [test_Suite]);
             }).Result;
 
             if (testsuite.Any())

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using GingerCore.Actions.Common;
 using System;
@@ -23,9 +24,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCore.Actions;
-using OpenQA.Selenium;
 
 
 #nullable enable
@@ -33,8 +31,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 {
     internal sealed class ActUIElementHandler
     {
-        private static readonly IEnumerable<string> SupportedInputTypesForIsValuePopulated = new List<string>()
-        {
+        private static readonly IEnumerable<string> SupportedInputTypesForIsValuePopulated =
+        [
             "date",
             "datetime-local",
             "email",
@@ -47,7 +45,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             "time",
             "url",
             "week"
-        };
+        ];
 
         private readonly ActUIElement _act;
         private readonly IBrowserTab _browserTab;
@@ -746,7 +744,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             return key switch
             {
-                "Keys.Alt" => () => element.PressKeysAsync(["Alt","Enter","F1","F2"]),
+                "Keys.Alt" => () => element.PressKeysAsync(["Alt", "Enter", "F1", "F2"]),
                 "Keys.ArrowDown" => () => element.PressKeysAsync(["ArrowDown"]),
                 "Keys.ArrowLeft" => () => element.PressKeysAsync(["ArrowLeft"]),
                 "Keys.ArrowRight" => () => element.PressKeysAsync(["ArrowRight"]),

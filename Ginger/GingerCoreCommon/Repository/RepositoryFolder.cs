@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.Repository
 
         private ObservableList<RepositoryFolder<T>> GetDirectorySubFolders(RepositoryFolder<T> Folder, bool ContainsRepositoryItems)
         {
-            ObservableList<RepositoryFolder<T>> list = new ObservableList<RepositoryFolder<T>>();
+            ObservableList<RepositoryFolder<T>> list = [];
             string FullPath = SolutionRepository.GetFolderFullPath(Folder.FolderRelativePath);
             string[] folders = FileSystem.GetDirectorySubFolders(FullPath);
             foreach (string subFolder in folders)
@@ -172,7 +172,7 @@ namespace Amdocs.Ginger.Repository
         {
             GetFolderItems();
 
-            ObservableList<RepositoryItemBase> folderItems = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> folderItems = [];
             foreach (object item in mFolderItemsList)
                 folderItems.Add((RepositoryItemBase)item);
 
@@ -185,7 +185,7 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public override ObservableList<RepositoryFolderBase> GetSubFoldersAsFolderBase()
         {
-            ObservableList<RepositoryFolderBase> subFolders = new ObservableList<RepositoryFolderBase>();
+            ObservableList<RepositoryFolderBase> subFolders = [];
             foreach (object item in GetSubFolders())
             {
                 subFolders.Add((RepositoryFolderBase)item);
@@ -204,7 +204,7 @@ namespace Amdocs.Ginger.Repository
 
             if (list == null)
             {
-                allItemsRecursive = new ConcurrentBag<T>();
+                allItemsRecursive = [];
             }
             else
             {
@@ -233,11 +233,7 @@ namespace Amdocs.Ginger.Repository
         /// <param name="list"></param>
         private void DeleteFolderCacheItemsRecursive()
         {
-            ObservableList<T> cacheItems = new ObservableList<T>();
-            foreach (T item in mFolderItemsCache.Items<T>())
-            {
-                cacheItems.Add(item);//creating list to iterate over
-            }
+            ObservableList<T> cacheItems = [.. mFolderItemsCache.Items<T>()];
             foreach (T cacheItem in cacheItems)
             {
                 DeleteRepositoryItem((RepositoryItemBase)(object)cacheItem);
@@ -273,7 +269,7 @@ namespace Amdocs.Ginger.Repository
             // TODO: move from here to better place                
             string ContainingFolder = Folder.Replace(SolutionRepository.SolutionFolder, SolutionRepository.cSolutionRootFolderSign);
 
-            ConcurrentBag<T> list = new ConcurrentBag<T>(); // Thread safe list
+            ConcurrentBag<T> list = []; // Thread safe list
 
             string[] fileEntries = FileSystem.GetDirectoryFiles(FullPath, mSolutionRepositoryItemInfo.Pattern);
 
@@ -347,15 +343,17 @@ namespace Amdocs.Ginger.Repository
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
                 {
-                    mFileWatcher = new FileSystemWatcher();
-                    mFileWatcher.Path = base.FolderFullPath;
+                    mFileWatcher = new FileSystemWatcher
+                    {
+                        Path = base.FolderFullPath,
 
-                    //TODO: for documents or other need to have all !!!! or get from SRII the extension to watch not all...
-                    // for now we do all xml
-                    // mFileWatcher.Filter = "*.xml";
+                        //TODO: for documents or other need to have all !!!! or get from SRII the extension to watch not all...
+                        // for now we do all xml
+                        // mFileWatcher.Filter = "*.xml";
 
-                    mFileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-                    mFileWatcher.IncludeSubdirectories = false;
+                        NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+                        IncludeSubdirectories = false
+                    };
 
                     mFileWatcher.Changed += new FileSystemEventHandler(FileWatcher_Changed);
                     mFileWatcher.Deleted += new FileSystemEventHandler(FileWatcher_Changed);
@@ -487,7 +485,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     if (e.ChangeType == WatcherChangeTypes.Deleted)
                     {
-                        if (mSubFoldersCache.Any(x=> x.FolderName == e.Name))
+                        if (mSubFoldersCache.Any(x => x.FolderName == e.Name))
                         {
                             HandleDirecortyChange(e);
                         }
@@ -854,7 +852,7 @@ namespace Amdocs.Ginger.Repository
                 Thread.Sleep(100);
 
                 //update folder fields            
-                FolderRelativePath = Path.Combine(FolderRelativePath.Substring(0, FolderRelativePath.LastIndexOf(FolderName)), newFolderName); //parentFolderRelativePath + "/" + FolderName;
+                FolderRelativePath = Path.Combine(FolderRelativePath[..FolderRelativePath.LastIndexOf(FolderName)], newFolderName); //parentFolderRelativePath + "/" + FolderName;
                 OnPropertyChanged(nameof(FolderRelativePath));
                 OnPropertyChanged(nameof(FolderFullPath));
                 OnPropertyChanged(nameof(DisplayName));
@@ -880,14 +878,12 @@ namespace Amdocs.Ginger.Repository
 
         private void UpdateFolderItemsCacheFilePath()
         {
-            ObservableList<T> cacheItems = new ObservableList<T>();
-            foreach (T item in mFolderItemsCache.Items<T>())
-                cacheItems.Add(item);
+            ObservableList<T> cacheItems = [.. mFolderItemsCache.Items<T>()];
             foreach (T cacheitem in cacheItems)
             {
                 RepositoryItemBase item = (RepositoryItemBase)(object)cacheitem;
                 mFolderItemsCache.DeleteItem(item.FilePath);
-                item.FilePath = Path.Combine(FolderFullPath, Path.GetFileName(PathHelper.GetLongPath(((RepositoryItemBase)item).FilePath)));
+                item.FilePath = Path.Combine(FolderFullPath, Path.GetFileName(PathHelper.GetLongPath(item.FilePath)));
                 item.FileName = Path.Combine(FolderFullPath, Path.GetFileName(PathHelper.GetLongPath((item).FilePath)));
                 item.ContainingFolder = FolderRelativePath;
                 item.ContainingFolderFullPath = FolderFullPath;

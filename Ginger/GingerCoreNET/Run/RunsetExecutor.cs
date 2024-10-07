@@ -73,8 +73,8 @@ namespace Ginger.Run
 
         private string _currentRunSetLogFolder = string.Empty;
         private string _currentHTMLReportFolder = string.Empty;
-        ObservableList<DefectSuggestion> mDefectSuggestionsList = new ObservableList<DefectSuggestion>();
-        private List<BusinessFlowRun> AllPreviousBusinessFlowRuns = new List<BusinessFlowRun>();
+        ObservableList<DefectSuggestion> mDefectSuggestionsList = [];
+        private List<BusinessFlowRun> AllPreviousBusinessFlowRuns = [];
         RunSetConfig mRunSetConfig = null;
         internal List<Task> ALMResultsPublishTaskPool;
         public RunSetConfig RunSetConfig
@@ -101,10 +101,10 @@ namespace Ginger.Run
                 return mRunSetConfig.GingerRunners;
             }
         }
-        public List<LiteDbRunner> liteDbRunnerList = new List<LiteDbRunner>();
+        public List<LiteDbRunner> liteDbRunnerList = [];
         private ProjEnvironment mRunsetExecutionEnvironment = null;
 
-        private List<BusinessFlow> deactivatedBF = new List<BusinessFlow>();
+        private List<BusinessFlow> deactivatedBF = [];
 
 
 
@@ -169,7 +169,7 @@ namespace Ginger.Run
         {
             //Configure Runner for execution
             runner.Status = eRunStatus.Pending;
-            if (runner.Executor != null && runner.Executor is GingerExecutionEngine previousExectionEngine)
+            if (runner.Executor is not null and GingerExecutionEngine previousExectionEngine)
             {
                 previousExectionEngine.ClearBindings();
             }
@@ -187,7 +187,7 @@ namespace Ginger.Run
             }
 
             //Load the biz flows     
-            ObservableList<BusinessFlow> runnerFlows = new ObservableList<BusinessFlow>();
+            ObservableList<BusinessFlow> runnerFlows = [];
             foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList)
             {
                 ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
@@ -324,7 +324,7 @@ namespace Ginger.Run
 
         public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false)
         {
-            ObservableList<BusinessFlowExecutionSummary> BFESs = new ObservableList<BusinessFlowExecutionSummary>();
+            ObservableList<BusinessFlowExecutionSummary> BFESs = [];
             foreach (GingerRunner ARC in Runners)
             {
                 BFESs.Append(ARC.Executor.GetAllBusinessFlowsExecutionSummary(GetSummaryOnlyForExecutedFlow, ARC.Name));
@@ -492,7 +492,7 @@ namespace Ginger.Run
                 {
                     RunSetConfig.StartTimeStamp = DateTime.UtcNow;
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                    WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
+                    WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions([RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution]);
                 }
 
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && Runners.Count > 0)
@@ -525,7 +525,7 @@ namespace Ginger.Run
 
                 mStopwatch.Start();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Started", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                List<Task> runnersTasks = new List<Task>();
+                List<Task> runnersTasks = [];
                 if (RunSetConfig.RunModeParallel)
                 {
                     foreach (GingerRunner GR in Runners)
@@ -636,7 +636,7 @@ namespace Ginger.Run
                 {
                     // Process all post execution RunSet Operations
                     Reporter.ToLog(eLogLevel.INFO, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                    WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
+                    WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions([RunSetActionBase.eRunAt.ExecutionEnd]);
                 }
                 if (isReportStoredToRemote && Runners[0].Executor.ExecutionLoggerManager.Configuration.DeleteLocalDataOnPublish.Equals(eDeleteLocalDataOnPublish.Yes))
                 {
@@ -818,7 +818,7 @@ namespace Ginger.Run
                             if (RSA is RunSetActions.RunSetActionPublishToQC)
                             {
                                 RSA.PrepareDuringExecAction(Runners);
-                                ALMResultsPublishTaskPool = new List<Task>();
+                                ALMResultsPublishTaskPool = [];
                                 RSA.Errors = "";
                             }
 

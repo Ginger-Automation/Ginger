@@ -26,7 +26,6 @@ using GingerCore.FlowControlLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
@@ -79,15 +78,13 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             }
 
             ExclusiveGateway gateway = CreateGateway();
-            List<Task> conditionalTasks = new();
+            List<Task> conditionalTasks = [];
             foreach (FlowControl flowControl in _flowControls)
             {
                 conditionalTasks.AddRange(CreateConditionalTasks(gateway, flowControl));
             }
 
-            List<IProcessEntity> processEntitiesForFlowControl = new();
-            processEntitiesForFlowControl.AddRange(conditionalTasks);
-            processEntitiesForFlowControl.Add(gateway);
+            List<IProcessEntity> processEntitiesForFlowControl = [.. conditionalTasks, gateway];
 
             return processEntitiesForFlowControl;
         }
@@ -245,14 +242,14 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             Flow.Create(name: string.Empty, source: exclusiveGateway, target: conditionalTask);
             Flow.Create(flowControlActionName, conditionalTask, targetActivityTask);
 
-            return new List<Task>() { targetActivityTask };
+            return [targetActivityTask];
         }
 
         private string GetConditionalTaskName(FlowControl flowControl)
         {
             string conditionalTaskName;
             string operatorName = flowControl.Operator.ToString();
-            if (flowControl.Operator == eFCOperator.CSharp || flowControl.Operator == eFCOperator.Legacy)
+            if (flowControl.Operator is eFCOperator.CSharp or eFCOperator.Legacy)
             {
                 conditionalTaskName = $"FC - {operatorName} - {flowControl.Condition}";
             }

@@ -115,7 +115,7 @@ namespace GingerWPF.TreeViewItemsLib
         public void PrepareItemForEdit()
         {
             object treeObject = ((ITreeViewItem)this).NodeObject();
-            if (treeObject != null && treeObject is RepositoryItemBase)
+            if (treeObject is not null and RepositoryItemBase)
             {
                 ((RepositoryItemBase)treeObject).StartDirtyTracking();
             }
@@ -198,7 +198,7 @@ namespace GingerWPF.TreeViewItemsLib
         private void OpenTreeItemFolderHandler(object sender, RoutedEventArgs e)
         {
             string filePath = this.NodePath();
-            string ContainingFolderFullPath = filePath.Substring(0, filePath.LastIndexOf('\\') + 1);
+            string ContainingFolderFullPath = filePath[..(filePath.LastIndexOf('\\') + 1)];
             ViewFolderFiles(ContainingFolderFullPath);
         }
 
@@ -499,15 +499,15 @@ namespace GingerWPF.TreeViewItemsLib
 
         public RepositoryItemBase CopyTreeItemWithNewName(RepositoryItemBase itemToCopy)
         {
-            if (itemToCopy is RepositoryItemBase)
+            if (itemToCopy is not null)
             {
-                string newName = ((RepositoryItemBase)itemToCopy).ItemName + "_Copy";
+                string newName = itemToCopy.ItemName + "_Copy";
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Copied/Duplicated Item Name", "New Name:", ref newName))
                 {
                     bool nameExit = General.IsNameAlreadyexists(itemToCopy, newName);
                     if (!nameExit)
                     {
-                        RepositoryItemBase itemCopy = ((RepositoryItemBase)itemToCopy).CreateCopy();
+                        RepositoryItemBase itemCopy = itemToCopy.CreateCopy();
                         itemCopy.ItemName = newName;
                         return itemCopy;
                     }

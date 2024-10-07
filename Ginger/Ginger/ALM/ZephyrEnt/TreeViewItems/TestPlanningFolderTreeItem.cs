@@ -71,15 +71,17 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
         {
             if (entityType == EntityFolderType.Cycle)
             {
-                List<ITreeViewItem> tsChildrens = new List<ITreeViewItem>();
+                List<ITreeViewItem> tsChildrens = [];
                 CurrentChildrens.ForEach(cc =>
                 {
                     List<BaseResponseItem> phase = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(((TestPlanningFolderTreeItem)cc).Id));
                     ((ZephyrEntTreeItem)cc).Id = phase[0].TryGetItem("id").ToString();
                     if (Convert.ToInt32(phase[0].TryGetItem("testcaseCount")) > 0 && !FolderOnly)
                     {
-                        ZephyrEntPhaseTreeItem zeTS = new ZephyrEntPhaseTreeItem(phase[0]);
-                        zeTS.Path = ((TestPlanningFolderTreeItem)cc).Path;
+                        ZephyrEntPhaseTreeItem zeTS = new ZephyrEntPhaseTreeItem(phase[0])
+                        {
+                            Path = ((TestPlanningFolderTreeItem)cc).Path
+                        };
                         if (!String.IsNullOrEmpty(((TestPlanningFolderTreeItem)cc).CycleId.ToString()))
                         {
                             zeTS.TestSetID = ((TestPlanningFolderTreeItem)cc).CycleId.ToString();
@@ -95,19 +97,21 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
             }
             else
             {
-                CurrentChildrens = new List<ITreeViewItem>();
+                CurrentChildrens = [];
                 List<BaseResponseItem> module = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTreeByCretiria(entityType.ToString(), Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), 180, Convert.ToInt32(Id));
                 module.ForEach(p =>
                 {
 
-                    TestPlanningFolderTreeItem zeFolder = new TestPlanningFolderTreeItem(p);
-                    zeFolder.entityType = EntityFolderType.Module;
+                    TestPlanningFolderTreeItem zeFolder = new TestPlanningFolderTreeItem(p)
+                    {
+                        entityType = EntityFolderType.Module
+                    };
                     zeFolder.Folder = zeFolder.Name;
                     zeFolder.Path = this.Path + '\\' + zeFolder.Name;
                     zeFolder.FolderOnly = this.FolderOnly;
                     zeFolder.CycleId = CycleId;
                     zeFolder.ParentId = Convert.ToInt32(p.TryGetItem("parentId"));
-                    zeFolder.CurrentChildrens = new List<ITreeViewItem>();
+                    zeFolder.CurrentChildrens = [];
                     zeFolder.RevisionId = Convert.ToInt32(p.TryGetItem("revision"));
                     foreach (var item in (JArray)p.TryGetItem("categories"))
                     {

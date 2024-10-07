@@ -22,7 +22,6 @@ using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
 using Ginger;
-using Ginger.Run;
 using GingerCore;
 using GingerCoreNET.RunLib;
 using System;
@@ -190,8 +189,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         private string CreateExample(string solution, string runset, string env = null)
         {
             StringBuilder sb = new StringBuilder();
-            RunOptions runOptions = new RunOptions();
-            runOptions.Solution = solution;
+            RunOptions runOptions = new RunOptions
+            {
+                Solution = solution
+            };
             if (env != null)
             {
                 runOptions.Environment = env;
@@ -301,7 +302,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 string fileContent = ReadFile(fileName);
                 mCLIHandler.LoadGeneralConfigurations(fileContent, mCLIHelper);
 
-                if (fileType == "config" || fileType == "dynamic")  // not needed for script
+                if (fileType is "config" or "dynamic")  // not needed for script
                 {
                     if (!CLILoadAndPrepare(runsetConfigs: fileContent))
                     {
@@ -426,7 +427,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.ReRunFailed = runOptions.ReRunFailed;
             if (runOptions.ReRunFailed)
             {
-                if(!string.IsNullOrEmpty(runOptions.ReferenceExecutionID))
+                if (!string.IsNullOrEmpty(runOptions.ReferenceExecutionID))
                 {
                     if (!Guid.TryParse(runOptions.ReferenceExecutionID, out Guid temp))
                     {

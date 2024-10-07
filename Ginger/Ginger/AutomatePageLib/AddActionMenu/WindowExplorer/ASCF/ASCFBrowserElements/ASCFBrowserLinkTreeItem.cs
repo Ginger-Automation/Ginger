@@ -35,21 +35,25 @@ namespace Ginger.WindowExplorer.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
 
             // click link the most common
-            ActASCFBrowserElement a2 = new ActASCFBrowserElement();
-            a2.Description = "Click Link " + ASCFBrowserElementInfo.Path;
-            a2.LocateBy = eLocateBy.ByHref;
-            a2.LocateValue = ASCFBrowserElementInfo.Path;
-            a2.ControlAction = ActASCFBrowserElement.eControlAction.Click;
+            ActASCFBrowserElement a2 = new ActASCFBrowserElement
+            {
+                Description = "Click Link " + ASCFBrowserElementInfo.Path,
+                LocateBy = eLocateBy.ByHref,
+                LocateValue = ASCFBrowserElementInfo.Path,
+                ControlAction = ActASCFBrowserElement.eControlAction.Click
+            };
             list.Add(a2);
 
-            ActASCFBrowserElement a3 = new ActASCFBrowserElement();
-            a3.Description = "Get Link HREF " + ASCFBrowserElementInfo.Path;
-            a3.LocateBy = eLocateBy.ByID;
-            a3.LocateValue = ASCFBrowserElementInfo.Path;
-            a3.ControlAction = ActASCFBrowserElement.eControlAction.GetValue;
+            ActASCFBrowserElement a3 = new ActASCFBrowserElement
+            {
+                Description = "Get Link HREF " + ASCFBrowserElementInfo.Path,
+                LocateBy = eLocateBy.ByID,
+                LocateValue = ASCFBrowserElementInfo.Path,
+                ControlAction = ActASCFBrowserElement.eControlAction.GetValue
+            };
             list.Add(a3);
 
             return list;

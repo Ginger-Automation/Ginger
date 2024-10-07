@@ -60,18 +60,22 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         /// <returns></returns>
         public static StackPanel NewRepositoryItemTreeHeader(Object itemObj, string itemObjTitleProperty, eImageType itemIcon, eImageType itemSourceControlStateIcon, bool addItemModifiedIndication = false, string objItemModifiedIndicationBoolPropertyName = "")
         {
-            StackPanel headerStack = new StackPanel();
-            headerStack.Orientation = Orientation.Horizontal;
+            StackPanel headerStack = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
 
             //Add icon
             if (itemIcon != eImageType.Null)
             {
                 try
                 {
-                    ImageMakerControl icon = new ImageMakerControl();
-                    icon.ImageType = itemIcon;
-                    icon.Height = 16;
-                    icon.Width = 16;
+                    ImageMakerControl icon = new ImageMakerControl
+                    {
+                        ImageType = itemIcon,
+                        Height = 16,
+                        Width = 16
+                    };
                     headerStack.Children.Add(icon);
                 }
                 catch (Exception e)
@@ -123,15 +127,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 try
                 {
-                    ImageMakerControl modifiedIcon = new ImageMakerControl();
-                    modifiedIcon.ImageType = eImageType.ItemModified;
-                    modifiedIcon.Height = 6;
-                    modifiedIcon.Width = 6;
-                    modifiedIcon.SetAsFontImageWithSize = 6;
-                    modifiedIcon.Foreground = Brushes.DarkOrange;
-                    modifiedIcon.VerticalAlignment = VerticalAlignment.Top;
-                    modifiedIcon.Margin = new Thickness(0, 10, 10, 0);
-                    modifiedIcon.ToolTip = "This item was modified";
+                    ImageMakerControl modifiedIcon = new ImageMakerControl
+                    {
+                        ImageType = eImageType.ItemModified,
+                        Height = 6,
+                        Width = 6,
+                        SetAsFontImageWithSize = 6,
+                        Foreground = Brushes.DarkOrange,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Margin = new Thickness(0, 10, 10, 0),
+                        ToolTip = "This item was modified"
+                    };
                     if (string.IsNullOrEmpty(objItemModifiedIndicationBoolPropertyName) == false)
                     {
                         GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(modifiedIcon, ImageMakerControl.VisibilityProperty, itemObj, objItemModifiedIndicationBoolPropertyName, BindingMode: BindingMode.OneWay, bindingConvertor: new System.Windows.Controls.BooleanToVisibilityConverter());
@@ -160,10 +166,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             MenuItem mnuItem = new MenuItem();
             if (imageType != eImageType.Null)
             {
-                ImageMakerControl actionIcon = new ImageMakerControl();
-                actionIcon.ImageType = imageType;
-                actionIcon.Height = 16;
-                actionIcon.Width = 16;
+                ImageMakerControl actionIcon = new ImageMakerControl
+                {
+                    ImageType = imageType,
+                    Height = 16,
+                    Width = 16
+                };
                 mnuItem.Icon = actionIcon;
             }
             mnuItem.Header = Header;
@@ -180,8 +188,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public static StackPanel CreateItemHeader(string Header = null, string ImageFile = null, BitmapImage ImageFile2 = null, Object obj = null, string ObjProperty = null, bool IsDirty = false)
         {
 
-            StackPanel stack = new StackPanel();
-            stack.Orientation = Orientation.Horizontal;
+            StackPanel stack = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
 
             // create Image
             Image image = new Image();
@@ -198,8 +208,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             Image SCimage = null;
             if (ImageFile2 != null)
             {
-                SCimage = new Image();
-                SCimage.Source = ImageFile2;
+                SCimage = new Image
+                {
+                    Source = ImageFile2
+                };
 
                 // It is not must that this is SC image
                 // SCimage.ToolTip = "Source Control Status";
@@ -228,9 +240,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             stack.Children.Add(lbl);
             if (IsDirty)
             {
-                Image Dirty = new Image();
-                Dirty.Source = new BitmapImage(new Uri(@"/Images/RedStar8x8.png", UriKind.RelativeOrAbsolute));
-                Dirty.ToolTip = "This item was modified";
+                Image Dirty = new Image
+                {
+                    Source = new BitmapImage(new Uri(@"/Images/RedStar8x8.png", UriKind.RelativeOrAbsolute)),
+                    ToolTip = "This item was modified"
+                };
                 stack.Children.Add(Dirty);
             }
             return stack;
@@ -238,18 +252,22 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         public static StackPanel CreateItemHeader(string Header = null, eImageType imageType = eImageType.Null, Object obj = null, string ObjProperty = null, bool isDirty = false, string objItemModifiedIndicationBoolPropertyName = "")
         {
-            StackPanel headerStack = new StackPanel();
-            headerStack.Orientation = Orientation.Horizontal;
+            StackPanel headerStack = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
 
             //Add icon
             if (imageType != eImageType.Null)
             {
                 try
                 {
-                    ImageMakerControl icon = new ImageMakerControl();
-                    icon.ImageType = imageType;
-                    icon.Height = 16;
-                    icon.Width = 16;
+                    ImageMakerControl icon = new ImageMakerControl
+                    {
+                        ImageType = imageType,
+                        Height = 16,
+                        Width = 16
+                    };
                     headerStack.Children.Add(icon);
                 }
                 catch (Exception e)
@@ -278,15 +296,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 try
                 {
-                    ImageMakerControl modifiedIcon = new ImageMakerControl();
-                    modifiedIcon.ImageType = eImageType.ItemModified;
-                    modifiedIcon.Height = 6;
-                    modifiedIcon.Width = 6;
-                    modifiedIcon.SetAsFontImageWithSize = 6;
-                    modifiedIcon.Foreground = Brushes.DarkOrange;
-                    modifiedIcon.VerticalAlignment = VerticalAlignment.Top;
-                    modifiedIcon.Margin = new Thickness(0, 10, 10, 0);
-                    modifiedIcon.ToolTip = "This item was modified";
+                    ImageMakerControl modifiedIcon = new ImageMakerControl
+                    {
+                        ImageType = eImageType.ItemModified,
+                        Height = 6,
+                        Width = 6,
+                        SetAsFontImageWithSize = 6,
+                        Foreground = Brushes.DarkOrange,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Margin = new Thickness(0, 10, 10, 0),
+                        ToolTip = "This item was modified"
+                    };
                     if (string.IsNullOrEmpty(objItemModifiedIndicationBoolPropertyName) == false)
                     {
                         GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(modifiedIcon, ImageMakerControl.VisibilityProperty, obj, objItemModifiedIndicationBoolPropertyName, BindingMode: BindingMode.OneWay, bindingConvertor: new BooleanToVisibilityConverter());
@@ -303,11 +323,13 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private static void BindTVItemHeader(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property)
         {
-            Binding b = new Binding();
-            b.Source = obj;
-            b.Path = new PropertyPath(property);
-            b.Mode = BindingMode.TwoWay;
-            b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding b = new Binding
+            {
+                Source = obj,
+                Path = new PropertyPath(property),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             control.SetBinding(dependencyProperty, b);
         }
 
@@ -316,9 +338,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             MenuItem mnuItem = new MenuItem();
             if (string.IsNullOrEmpty(icon) == false)
             {
-                Image image = new Image();
-                //image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + icon, UriKind.RelativeOrAbsolute));
-                image.Source = new BitmapImage(new Uri(@"/Images/" + icon, UriKind.RelativeOrAbsolute));
+                Image image = new Image
+                {
+                    //image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + icon, UriKind.RelativeOrAbsolute));
+                    Source = new BitmapImage(new Uri(@"/Images/" + icon, UriKind.RelativeOrAbsolute))
+                };
                 mnuItem.Icon = image;
             }
             mnuItem.Header = Header;
@@ -344,10 +368,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             MenuItem mnuItem = new MenuItem();
             if (icon != eImageType.Null)
             {
-                ImageMakerControl menuIcon = new ImageMakerControl();
-                menuIcon.ImageType = icon;
-                menuIcon.Height = 16;
-                menuIcon.Width = 16;
+                ImageMakerControl menuIcon = new ImageMakerControl
+                {
+                    ImageType = icon,
+                    Height = 16,
+                    Width = 16
+                };
                 mnuItem.Icon = menuIcon;
             }
             mnuItem.Header = Header;

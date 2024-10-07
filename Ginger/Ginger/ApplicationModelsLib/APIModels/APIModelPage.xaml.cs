@@ -69,7 +69,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             mPageViewMode = viewMode;
 
-            if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
+            if (mPageViewMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
             {
                 UpdatePageAsReadOnly();
             }
@@ -161,7 +161,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             ResponseTypeComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
 
 
-            ApplicationAPIModel AAMS = mApplicationAPIModel as ApplicationAPIModel;
+            ApplicationAPIModel AAMS = mApplicationAPIModel;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SoapActionTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(AAMS.SOAPAction));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TemplateFileNameFileBrowser, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.TemplateFileNameFileBrowser));
 
@@ -375,15 +375,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void SetHTTPHeadersGrid()
         {
-            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute);
+            bool isFieldReadOnly = (mPageViewMode is Ginger.General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute);
 
             HttpHeadersGrid.Title = "Request Headers";
             HttpHeadersGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelKeyValue.Param), Header = "Header", ReadOnly = isFieldReadOnly, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelKeyValue.Value), Header = "Value", ReadOnly = isFieldReadOnly, WidthWeight = 100 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(APIModelKeyValue.Param), Header = "Header", ReadOnly = isFieldReadOnly, WidthWeight = 100 },
+                new GridColView() { Field = nameof(APIModelKeyValue.Value), Header = "Value", ReadOnly = isFieldReadOnly, WidthWeight = 100 },
+            ]
+            };
 
             HttpHeadersGrid.SetAllColumnsDefaultView(view);
             HttpHeadersGrid.InitViewItems();
@@ -406,8 +410,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void AddFormDataGridRow(object sender, RoutedEventArgs e)
         {
-            APIModelBodyKeyValue Wa = new APIModelBodyKeyValue();
-            Wa.ValueType = APIModelBodyKeyValue.eValueType.Text;
+            APIModelBodyKeyValue Wa = new APIModelBodyKeyValue
+            {
+                ValueType = APIModelBodyKeyValue.eValueType.Text
+            };
             mApplicationAPIModel.APIModelBodyKeyValueHeaders.Add(Wa);
         }
 
@@ -565,7 +571,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         break;
 
                     default:
-                        if (mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded || mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.FormData)
+                        if (mApplicationAPIModel.ContentType is ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded or ApplicationAPIUtils.eContentType.FormData)
                         {
                             if (!String.IsNullOrEmpty(mApplicationAPIModel.TemplateFileNameFileBrowser))
                             {
@@ -590,9 +596,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void TemplateFileBrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.Filter = "All Files (*.*)|*.*";
-            dlg.FilterIndex = 1;
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog
+            {
+                Filter = "All Files (*.*)|*.*",
+                FilterIndex = 1
+            };
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
@@ -617,9 +625,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void CertificatePathBrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.Filter = "All Files (*.*)|*.*";
-            dlg.FilterIndex = 1;
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog
+            {
+                Filter = "All Files (*.*)|*.*",
+                FilterIndex = 1
+            };
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
@@ -694,18 +704,23 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             FormDataGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
 
             //View with Browse and Combobox -->Form Data 
-            GridViewDef FormDataView = new GridViewDef("FormData");
-            FormDataView.GridColsView = new ObservableList<GridColView>();
-
-            FormDataView.GridColsView.Add(new GridColView() { Field = nameof(APIModelBodyKeyValue.Param), Header = "Key", WidthWeight = 100 });
+            GridViewDef FormDataView = new GridViewDef("FormData")
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(APIModelBodyKeyValue.Param), Header = "Key", WidthWeight = 100 },
+            ]
+            };
             List<ComboEnumItem> valueTypes = GingerCore.General.GetEnumValuesForCombo(typeof(APIModelBodyKeyValue.eValueType));
             FormDataView.GridColsView.Add(new GridColView() { Field = APIModelBodyKeyValue.Fields.ValueType, Header = "Value Type", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = valueTypes });
             FormDataView.GridColsView.Add(new GridColView() { Field = nameof(APIModelBodyKeyValue.Value), Header = "Value/File Path", WidthWeight = 100 });
 
             //Define URLEncoded GridView
-            GridViewDef UrlEncodedView = new GridViewDef("UrlEncoded");
-            UrlEncodedView.GridColsView = new ObservableList<GridColView>();
-            ObservableList<GridColView> UrlViewCols = new ObservableList<GridColView>();
+            GridViewDef UrlEncodedView = new GridViewDef("UrlEncoded")
+            {
+                GridColsView = []
+            };
+            ObservableList<GridColView> UrlViewCols = [];
             UrlEncodedView.GridColsView.Add(new GridColView() { Field = APIModelBodyKeyValue.Fields.ValueType, Visible = false });
 
             FormDataGrid.SetAllColumnsDefaultView(FormDataView);
@@ -860,15 +875,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             this.Height = 800;
 
             editMode = e;
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
             switch (editMode)
             {
                 case eEditMode.Design:
-                    Button okBtn2 = new Button();
-                    okBtn2.Content = "Ok";
+                    Button okBtn2 = new Button
+                    {
+                        Content = "Ok"
+                    };
                     okBtn2.Click += new RoutedEventHandler(okBtn_Click);
-                    Button undoBtn2 = new Button();
-                    undoBtn2.Content = "Undo & Close";
+                    Button undoBtn2 = new Button
+                    {
+                        Content = "Undo & Close"
+                    };
                     undoBtn2.Click += new RoutedEventHandler(undoBtn_Click);
                     winButtons.Add(okBtn2);
                     winButtons.Add(undoBtn2);
@@ -876,19 +895,25 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                 case eEditMode.View:
                     title = "View " + mApplicationAPIModel.Name + " API Model";
-                    Button okBtnView = new Button();
-                    okBtnView.Content = "Ok";
+                    Button okBtnView = new Button
+                    {
+                        Content = "Ok"
+                    };
                     okBtnView.Click += new RoutedEventHandler(okBtn_Click);
                     winButtons.Add(okBtnView);
                     break;
                 case eEditMode.FindAndReplace:
                     title = "Edit " + mApplicationAPIModel.Name + " API Model";
                     mApplicationAPIModel.SaveBackup();
-                    Button saveBtnAnalyzer = new Button();
-                    saveBtnAnalyzer.Content = "Save";
+                    Button saveBtnAnalyzer = new Button
+                    {
+                        Content = "Save"
+                    };
                     saveBtnAnalyzer.Click += new RoutedEventHandler(saveBtn_Click);
-                    Button undoBtnAnalyzer = new Button();
-                    undoBtnAnalyzer.Content = "Undo & Close";
+                    Button undoBtnAnalyzer = new Button
+                    {
+                        Content = "Undo & Close"
+                    };
                     undoBtnAnalyzer.Click += new RoutedEventHandler(undoBtn_Click);
                     winButtons.Add(undoBtnAnalyzer);
                     winButtons.Add(saveBtnAnalyzer);
@@ -910,7 +935,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
             if (parentWindow == null)
             {
-                parentWindow = (Window)App.MainWindow;
+                parentWindow = App.MainWindow;
             }
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, parentWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);

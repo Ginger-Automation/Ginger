@@ -121,7 +121,7 @@ namespace Amdocs.Ginger.CoreNET.Run.SolutionCategory
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<SolutionCategoryValue> CategoryOptionalValues = new ObservableList<SolutionCategoryValue>();
+        public ObservableList<SolutionCategoryValue> CategoryOptionalValues = [];
 
         public string CategoryOptionalValuesString
         {

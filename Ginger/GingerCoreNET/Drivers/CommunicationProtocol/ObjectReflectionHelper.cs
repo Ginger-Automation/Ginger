@@ -34,11 +34,13 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 }
                 else if (v is IObservableList)
                 {
-                    List<NewPayLoad> lst = new List<NewPayLoad>();
+                    List<NewPayLoad> lst = [];
                     foreach (object o in v)
                     {
-                        ObjectReflectionHelper ORHItem = new ObjectReflectionHelper();
-                        ORHItem.obj = o;
+                        ObjectReflectionHelper ORHItem = new ObjectReflectionHelper
+                        {
+                            obj = o
+                        };
                         NewPayLoad PL1 = ORHItem.GetObjectAsPayLoad("Item", attr);
                         lst.Add(PL1);
                     }
@@ -111,7 +113,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         // return all properites of object which contain specific attribute/annotation - can be [IsSerialLized, [IsSentToRemoteAgen] etc...
         public List<PropertyInfo> GetProperties(Attribute attr)
         {
-            List<PropertyInfo> list = new List<PropertyInfo>();
+            List<PropertyInfo> list = [];
 
             var properties = mObj.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property).OrderBy(x => x.Name);
             foreach (MemberInfo mi in properties)

@@ -43,9 +43,11 @@ namespace GingerHelper
 
         private void SourcBrowsbtn_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog();
-            dlg.Description = "Select Source Folder";
-            dlg.RootFolder = Environment.SpecialFolder.MyComputer;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = "Select Source Folder",
+                RootFolder = Environment.SpecialFolder.MyComputer
+            };
             if (SourceTextBox.Text != string.Empty)
             {
                 dlg.SelectedPath = SourceTextBox.Text;
@@ -64,9 +66,11 @@ namespace GingerHelper
 
         private void DestinationBrowsbtn_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog();
-            dlg.Description = "Select Destination Folder";
-            dlg.RootFolder = Environment.SpecialFolder.MyComputer;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = "Select Destination Folder",
+                RootFolder = Environment.SpecialFolder.MyComputer
+            };
             if (DestinationTextBox.Text != string.Empty)
             {
                 dlg.SelectedPath = DestinationTextBox.Text;

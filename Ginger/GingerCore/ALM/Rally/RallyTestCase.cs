@@ -45,8 +45,8 @@ namespace GingerCore.ALM.Rally
             CreatedBy = createdBy;
             CreationDate = creationDate;
             Description = description;
-            TestSteps = new ObservableList<RallyTestStep>();
-            Parameters = new ObservableList<RallyTestParameter>();
+            TestSteps = [];
+            Parameters = [];
             BTSID = string.Empty;
         }
         public string Seq { get; set; }

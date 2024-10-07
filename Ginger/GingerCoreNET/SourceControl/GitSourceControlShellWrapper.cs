@@ -90,7 +90,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override List<string> GetBranches()
         {
-            return new List<string>();
+            return [];
         }
 
         public override string GetCurrentBranchForSolution()

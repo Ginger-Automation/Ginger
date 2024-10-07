@@ -48,17 +48,19 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         internal void ShowAsWindow(System.Windows.Window owner)
         {
-            Button runActionBtn = new Button();
-            runActionBtn.Content = "Run Action";
+            Button runActionBtn = new Button
+            {
+                Content = "Run Action"
+            };
             runActionBtn.Click += new RoutedEventHandler(RunActionButton_Click);
 
-            Button AddActionBtn = new Button();
-            AddActionBtn.Content = "Add to " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+            Button AddActionBtn = new Button
+            {
+                Content = "Add to " + GingerDicser.GetTermResValue(eTermResKey.Activity)
+            };
             AddActionBtn.Click += new RoutedEventHandler(AddActionBtn_Click);
 
-            ObservableList<Button> Buttons = new ObservableList<Button>();
-            Buttons.Add(runActionBtn);
-            Buttons.Add(AddActionBtn);
+            ObservableList<Button> Buttons = [runActionBtn, AddActionBtn];
 
             GenericWindow genWin = null;
             GingerCore.General.LoadGenericWindow(ref genWin, owner, Ginger.eWindowShowStyle.Free, this.Title, this, Buttons);

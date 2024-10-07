@@ -95,7 +95,7 @@ namespace Ginger.Run.RunSetActions
                     int remainingChars = MAXPATHLENGTH - (reportsResultFolder.Length + DateTimeStamp.Length);
                     if (remainingChars > 0 && RunsetName.Length > remainingChars)
                     {
-                        reportsResultFolder = Path.Combine(reportsResultFolder, $"{RunsetName.Substring(0, remainingChars)}_{DateTimeStamp}");
+                        reportsResultFolder = Path.Combine(reportsResultFolder, $"{RunsetName[..remainingChars]}_{DateTimeStamp}");
                     }
                     else
                     {
@@ -147,7 +147,7 @@ namespace Ginger.Run.RunSetActions
                             {
                                 int totalRunners = WorkSpace.Instance.RunsetExecutor.Runners.Count;
                                 int totalPassed = WorkSpace.Instance.RunsetExecutor.Runners.Count(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-                                int totalExecuted = totalRunners - WorkSpace.Instance.RunsetExecutor.Runners.Count(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked);
+                                int totalExecuted = totalRunners - WorkSpace.Instance.RunsetExecutor.Runners.Count(runner => runner.Status is Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending or Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped or Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked);
                                 ReportInfo offlineReportInfo = new ReportInfo(runSetFolder);
                                 ((RunSetReport)offlineReportInfo.ReportInfoRootObject).RunSetExecutionRate = (totalExecuted * 100 / totalRunners).ToString();
                                 ((RunSetReport)offlineReportInfo.ReportInfoRootObject).GingerRunnersPassRate = (totalPassed * 100 / totalRunners).ToString();
@@ -220,9 +220,8 @@ namespace Ginger.Run.RunSetActions
                             }
                         }
                         //attach report - after generating from template                    
-                        if (r is EmailHtmlReportAttachment)
+                        if (r is EmailHtmlReportAttachment rReport)
                         {
-                            EmailHtmlReportAttachment rReport = ((EmailHtmlReportAttachment)r);
                             if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                             {
                                 mValueExpression.Value = rReport.ExtraInformation;
@@ -249,7 +248,7 @@ namespace Ginger.Run.RunSetActions
                                     mValueExpression.Value = rReport.ExtraInformation;
                                     extraInformationCalculated = mValueExpression.ValueCalculated;
 
-                                    var path = Path.Combine(extraInformationCalculated, $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}");
+                                    var path = Path.Combine(extraInformationCalculated, $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow:yyyymmddhhmmss}");
                                     if (Directory.Exists(path))
                                     {
                                         Directory.Delete(path, true);
@@ -624,9 +623,9 @@ namespace Ginger.Run.RunSetActions
         {
             fieldsNamesHTMLTableCells = new StringBuilder();
             fieldsValuesHTMLTableCells = new StringBuilder();
-            List<int> listOfHandledGingerRunnersReport = new List<int>();
+            List<int> listOfHandledGingerRunnersReport = [];
             bool firstIteration = true;
-            foreach (LiteDbRunner GR in liteDbRunSet.RunnersColl.Where(x => x.RunStatus ==  nameof(eRunStatus.Failed)).OrderBy(x => x.Seq))
+            foreach (LiteDbRunner GR in liteDbRunSet.RunnersColl.Where(x => x.RunStatus == nameof(eRunStatus.Failed)).OrderBy(x => x.Seq))
             {
                 foreach (LiteDbBusinessFlow br in GR.BusinessFlowsColl.Where(x => x.RunStatus == nameof(eRunStatus.Failed)))
                 {
@@ -762,7 +761,7 @@ namespace Ginger.Run.RunSetActions
         {
             fieldsNamesHTMLTableCells = new StringBuilder();
             fieldsValuesHTMLTableCells = new StringBuilder();
-            List<int> listOfHandledGingerRunnersReport = new List<int>();
+            List<int> listOfHandledGingerRunnersReport = [];
             string tableColor = "<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>";
             string tableStyle = @"<td style='padding: 10px; border: 1px solid #dddddd'>";
             bool firstIteration = true;
@@ -770,7 +769,7 @@ namespace Ginger.Run.RunSetActions
             {
                 foreach (LiteDbBusinessFlow br in GR.BusinessFlowsColl)
                 {
-                    List<string> selectedRunnerFields = new List<string> { GingerReport.Fields.Name, GingerReport.Fields.EnvironmentName, GingerReport.Fields.Seq };
+                    List<string> selectedRunnerFields = [GingerReport.Fields.Name, GingerReport.Fields.EnvironmentName, GingerReport.Fields.Seq];
                     fieldsValuesHTMLTableCells.Append("<tr>");
                     foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.GingerRunnerFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && selectedRunnerFields.Contains(x.FieldKey))))
                     {
@@ -799,8 +798,8 @@ namespace Ginger.Run.RunSetActions
                             }
                         }
                     }
-                    List<string> selectedBFFields = new List<string> { BusinessFlowReport.Fields.Seq, BusinessFlowReport.Fields.Name, BusinessFlowReport.Fields.Description, BusinessFlowReport.Fields.RunDescription,
-                        BusinessFlowReport.Fields.ExecutionDuration, BusinessFlowReport.Fields.RunStatus, BusinessFlowReport.Fields.ExecutionRate, BusinessFlowReport.Fields.PassPercent };
+                    List<string> selectedBFFields = [ BusinessFlowReport.Fields.Seq, BusinessFlowReport.Fields.Name, BusinessFlowReport.Fields.Description, BusinessFlowReport.Fields.RunDescription,
+                        BusinessFlowReport.Fields.ExecutionDuration, BusinessFlowReport.Fields.RunStatus, BusinessFlowReport.Fields.ExecutionRate, BusinessFlowReport.Fields.PassPercent ];
                     foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.BusinessFlowFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && selectedBFFields.Contains(x.FieldKey))))
                     {
                         string fieldName = EmailToObjectFieldName(selectedField_internal.FieldKey);
@@ -872,7 +871,7 @@ namespace Ginger.Run.RunSetActions
                 {
                     bool newBusinessFlow = true;
                     fieldsValuesHTMLTableCells.Append("<tr>");
-                    List<string> selectedRunnerFields = new List<string> { GingerReport.Fields.Name, GingerReport.Fields.Seq };
+                    List<string> selectedRunnerFields = [GingerReport.Fields.Name, GingerReport.Fields.Seq];
                     foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.GingerRunnerFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && selectedRunnerFields.Contains(x.FieldKey))))
                     {
                         string fieldName = EmailToObjectFieldName(selectedField_internal.FieldKey);
@@ -897,7 +896,7 @@ namespace Ginger.Run.RunSetActions
                             }
                         }
                     }
-                    List<string> selectedBFFields = new List<string> { BusinessFlowReport.Fields.Seq, BusinessFlowReport.Fields.Name };
+                    List<string> selectedBFFields = [BusinessFlowReport.Fields.Seq, BusinessFlowReport.Fields.Name];
                     foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.BusinessFlowFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && selectedBFFields.Contains(x.FieldKey))))
                     {
                         string fieldName = EmailToObjectFieldName(selectedField_internal.FieldKey);
@@ -934,9 +933,9 @@ namespace Ginger.Run.RunSetActions
                             fieldsValuesHTMLTableCells.Append(tableStyle + executionSeq + "</td>");
                             fieldsValuesHTMLTableCells.Append(tableStyle + businessReportName + "</td>");
                         }
-                        List<string> selectedActivityFields = new List<string> { ActivityReport.Fields.Seq, ActivityReport.Fields.ActivityGroupName, ActivityReport.Fields.ActivityName, ActivityReport.Fields.Description,
+                        List<string> selectedActivityFields = [ ActivityReport.Fields.Seq, ActivityReport.Fields.ActivityGroupName, ActivityReport.Fields.ActivityName, ActivityReport.Fields.Description,
                             ActivityReport.Fields.RunDescription, ActivityReport.Fields.StartTimeStamp, ActivityReport.Fields.EndTimeStamp, ActivityReport.Fields.ElapsedSecs, ActivityReport.Fields.NumberOfActions,
-                            ActivityReport.Fields.RunStatus, ActivityReport.Fields.ActionsDetails };
+                            ActivityReport.Fields.RunStatus, ActivityReport.Fields.ActionsDetails ];
                         foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.ActivityFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && selectedActivityFields.Contains(x.FieldKey))))
                         {
                             string fieldName = EmailToObjectFieldName(selectedField_internal.FieldKey);
@@ -997,11 +996,13 @@ namespace Ginger.Run.RunSetActions
             int totalStoppedRunners = liteDbRunSet.RunnersColl.Count(runner => runner.RunStatus == eRunStatus.Stopped.ToString());
             int totalOtherRunners = totalRunners - (totalPassedRunners + totalFailedRunners + totalStoppedRunners);
             //Ginger Runners Place Holders
-            chartData = new List<KeyValuePair<int, int>>();
-            chartData.Add(new KeyValuePair<int, int>(totalPassedRunners, 0));
-            chartData.Add(new KeyValuePair<int, int>(totalFailedRunners, 1));
-            chartData.Add(new KeyValuePair<int, int>(totalStoppedRunners, 2));
-            chartData.Add(new KeyValuePair<int, int>(totalOtherRunners, 3));
+            chartData =
+            [
+                new KeyValuePair<int, int>(totalPassedRunners, 0),
+                new KeyValuePair<int, int>(totalFailedRunners, 1),
+                new KeyValuePair<int, int>(totalStoppedRunners, 2),
+                new KeyValuePair<int, int>(totalOtherRunners, 3),
+            ];
             CreateChart(chartData, "GingerRunner" + reportTimeStamp + ".jpeg", "Ginger Runners");
 
             int totalBFs = 0, totalPassedBFs = 0, totalStoppedBFs = 0, totalFailedBFs = 0, totalOtherBFs = 0;
@@ -1033,27 +1034,33 @@ namespace Ginger.Run.RunSetActions
             totalOtherActions = totalActions - (totalPassedActions + totalFailedActions + totalStoppedActions);
 
             // Business Flows Place Holders                        
-            chartData = new List<KeyValuePair<int, int>>();
-            chartData.Add(new KeyValuePair<int, int>(totalPassedBFs, 0));
-            chartData.Add(new KeyValuePair<int, int>(totalFailedBFs, 1));
-            chartData.Add(new KeyValuePair<int, int>(totalStoppedBFs, 2));
-            chartData.Add(new KeyValuePair<int, int>(totalOtherBFs, 3));
+            chartData =
+            [
+                new KeyValuePair<int, int>(totalPassedBFs, 0),
+                new KeyValuePair<int, int>(totalFailedBFs, 1),
+                new KeyValuePair<int, int>(totalStoppedBFs, 2),
+                new KeyValuePair<int, int>(totalOtherBFs, 3),
+            ];
             CreateChart(chartData, "Businessflow" + reportTimeStamp + ".jpeg", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
 
             // Activities Place Holders                        
-            chartData = new List<KeyValuePair<int, int>>();
-            chartData.Add(new KeyValuePair<int, int>(totalPassedActivities, 0));
-            chartData.Add(new KeyValuePair<int, int>(totalFailedActivities, 1));
-            chartData.Add(new KeyValuePair<int, int>(totalStoppedActivities, 2));
-            chartData.Add(new KeyValuePair<int, int>(totalOtherActivities, 3));
+            chartData =
+            [
+                new KeyValuePair<int, int>(totalPassedActivities, 0),
+                new KeyValuePair<int, int>(totalFailedActivities, 1),
+                new KeyValuePair<int, int>(totalStoppedActivities, 2),
+                new KeyValuePair<int, int>(totalOtherActivities, 3),
+            ];
             CreateChart(chartData, "Activity" + reportTimeStamp + ".jpeg", GingerDicser.GetTermResValue(eTermResKey.Activities));
 
             // Actions Place Holders                        
-            chartData = new List<KeyValuePair<int, int>>();
-            chartData.Add(new KeyValuePair<int, int>(totalPassedActions, 0));
-            chartData.Add(new KeyValuePair<int, int>(totalFailedActions, 1));
-            chartData.Add(new KeyValuePair<int, int>(totalStoppedActions, 2));
-            chartData.Add(new KeyValuePair<int, int>(totalOtherActions, 3));
+            chartData =
+            [
+                new KeyValuePair<int, int>(totalPassedActions, 0),
+                new KeyValuePair<int, int>(totalFailedActions, 1),
+                new KeyValuePair<int, int>(totalStoppedActions, 2),
+                new KeyValuePair<int, int>(totalOtherActions, 3),
+            ];
             CreateChart(chartData, "Action" + reportTimeStamp + ".jpeg", "Actions");
             return chartData;
         }
@@ -1254,39 +1261,47 @@ namespace Ginger.Run.RunSetActions
                     {
                         IsExecutionStatistic = true;
                         //Ginger Runners Place Holders
-                        chartData = new List<KeyValuePair<int, int>>();
-                        chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersPassed, 0));
-                        chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersFailed, 1));
-                        chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersStopped, 2));
-                        chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersOther, 3));
+                        chartData =
+                        [
+                            new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersPassed, 0),
+                            new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersFailed, 1),
+                            new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersStopped, 2),
+                            new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).TotalGingerRunnersOther, 3),
+                        ];
                         CreateChart(chartData, "GingerRunner" + reportTimeStamp + ".jpeg", "Ginger Runners");
 
                         // Business Flows Place Holders                        
-                        chartData = new List<KeyValuePair<int, int>>();
-                        chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsPassed).ToList().Sum(), 0));
-                        chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsFailed).ToList().Sum(), 1));
-                        chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsStopped).ToList().Sum(), 2));
-                        chartData.Add(new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsOther).ToList().Sum(), 3));
+                        chartData =
+                        [
+                            new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsPassed).ToList().Sum(), 0),
+                            new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsFailed).ToList().Sum(), 1),
+                            new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsStopped).ToList().Sum(), 2),
+                            new KeyValuePair<int, int>(((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsOther).ToList().Sum(), 3),
+                        ];
                         CreateChart(chartData, "Businessflow" + reportTimeStamp + ".jpeg", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
 
-                        List<BusinessFlowReport> bfTotalList = new List<BusinessFlowReport>();
+                        List<BusinessFlowReport> bfTotalList = [];
                         ((RunSetReport)RI.ReportInfoRootObject).GingerReports.ForEach(x => x.BusinessFlowReports.ForEach(y => bfTotalList.Add(y)));
                         // Activities Place Holders                        
-                        chartData = new List<KeyValuePair<int, int>>();
-                        chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesPassed).ToList().Sum(), 0));
-                        chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesFailed).ToList().Sum(), 1));
-                        chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesStopped).ToList().Sum(), 2));
-                        chartData.Add(new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesOther).ToList().Sum(), 3));
+                        chartData =
+                        [
+                            new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesPassed).ToList().Sum(), 0),
+                            new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesFailed).ToList().Sum(), 1),
+                            new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesStopped).ToList().Sum(), 2),
+                            new KeyValuePair<int, int>(bfTotalList.Select(x => x.TotalActivitiesOther).ToList().Sum(), 3),
+                        ];
                         CreateChart(chartData, "Activity" + reportTimeStamp + ".jpeg", GingerDicser.GetTermResValue(eTermResKey.Activities));
 
-                        List<ActivityReport> activitiesTotalList = new List<ActivityReport>();
+                        List<ActivityReport> activitiesTotalList = [];
                         bfTotalList.ForEach(x => x.Activities.ForEach(y => activitiesTotalList.Add(y)));
                         // Actions Place Holders                        
-                        chartData = new List<KeyValuePair<int, int>>();
-                        chartData.Add(new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsPassed).ToList().Sum(), 0));
-                        chartData.Add(new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsFailed).ToList().Sum(), 1));
-                        chartData.Add(new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsStopped).ToList().Sum(), 2));
-                        chartData.Add(new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsOther).ToList().Sum(), 3));
+                        chartData =
+                        [
+                            new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsPassed).ToList().Sum(), 0),
+                            new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsFailed).ToList().Sum(), 1),
+                            new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsStopped).ToList().Sum(), 2),
+                            new KeyValuePair<int, int>(activitiesTotalList.Select(x => x.TotalActionsOther).ToList().Sum(), 3),
+                        ];
                         CreateChart(chartData, "Action" + reportTimeStamp + ".jpeg", "Actions");
                     }
                 }
@@ -1304,7 +1319,7 @@ namespace Ginger.Run.RunSetActions
                     {
                         fieldsNamesHTMLTableCells = new StringBuilder();
                         fieldsValuesHTMLTableCells = new StringBuilder();
-                        List<int> listOfHandledGingerRunnersReport = new List<int>();
+                        List<int> listOfHandledGingerRunnersReport = [];
                         bool firstIteration = true;
                         foreach (GingerReport GR in ((RunSetReport)RI.ReportInfoRootObject).GingerReports.OrderBy(x => x.Seq))
                         {
@@ -1462,7 +1477,7 @@ namespace Ginger.Run.RunSetActions
                     {
                         fieldsNamesHTMLTableCells = new StringBuilder();
                         fieldsValuesHTMLTableCells = new StringBuilder();
-                        List<int> listOfHandledGingerRunnersReport = new List<int>();
+                        List<int> listOfHandledGingerRunnersReport = [];
                         bool firstIteration = true;
                         foreach (GingerReport GR in ((RunSetReport)RI.ReportInfoRootObject).GingerReports.Where(x => x.GingerExecutionStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).OrderBy(x => x.Seq))
                         {
@@ -1615,7 +1630,7 @@ namespace Ginger.Run.RunSetActions
 
         private void ExecutedActivitiesDetailsGenrator(ReportInfo RI, HTMLReportConfiguration currentTemplate, ref string reportHTML, StringBuilder fieldsNamesHTMLTableCells, StringBuilder fieldsValuesHTMLTableCells)
         {
-            List<int> listOfHandledGingerRunnersReport = new List<int>();
+            List<int> listOfHandledGingerRunnersReport = [];
             bool firstActivityIteration = true;
             foreach (GingerReport GR in ((RunSetReport)RI.ReportInfoRootObject).GingerReports.OrderBy(x => x.Seq))
             {
@@ -1814,10 +1829,12 @@ namespace Ginger.Run.RunSetActions
         public LinkedResource GetLinkedResource(byte[] imageBytes, string id)
         {
             ContentType c = new ContentType("image/png");
-            LinkedResource linkedResource = new LinkedResource(new MemoryStream(imageBytes));
-            linkedResource.ContentType = c;
-            linkedResource.ContentId = id;
-            linkedResource.TransferEncoding = TransferEncoding.Base64;
+            LinkedResource linkedResource = new LinkedResource(new MemoryStream(imageBytes))
+            {
+                ContentType = c,
+                ContentId = id,
+                TransferEncoding = TransferEncoding.Base64
+            };
             return linkedResource;
         }
         public byte[] GetImageStream(string path)

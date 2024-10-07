@@ -36,7 +36,7 @@ namespace Ginger.Reports
         /// previously(2023.5 and earlier) it was used in this class but later on was shifted to ExecutionLoggerConfiguration.
         /// To keep track of previously saved HTML URL. we use this attribute.
         /// </summary>
-        public string CentralizedHTMLURL { get; set; }  
+        public string CentralizedHTMLURL { get; set; }
 
         private bool mLimitReportFolderSize;
         [IsSerializedForLocalRepository]
@@ -154,9 +154,9 @@ namespace Ginger.Reports
         {
             if (errorType.Equals(SerializationErrorType.PropertyNotFound))
             {
-                if (name == "CentralizedHtmlReportServiceURL" && !string.IsNullOrEmpty(value) )
+                if (name == "CentralizedHtmlReportServiceURL" && !string.IsNullOrEmpty(value))
                 {
-                    CentralizedHTMLURL = value;    
+                    CentralizedHTMLURL = value;
                     return true;
                 }
 

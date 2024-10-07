@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using GingerCore.ALM;
 using GingerCore.ALM.ZephyrEnt.Bll;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -49,8 +48,10 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
 
             treeData.ForEach(folder =>
             {
-                TestRepositoryFolderTreeItem tvv = new TestRepositoryFolderTreeItem(folder);
-                tvv.entityType = EntityFolderType.Phase;
+                TestRepositoryFolderTreeItem tvv = new TestRepositoryFolderTreeItem(folder)
+                {
+                    entityType = EntityFolderType.Phase
+                };
                 tvv.Folder = tvv.Name;
                 tvv.Path = tvv.Name;
                 GetFolderChilds(tvv, (JToken)folder.TryGetItem("categories"));
@@ -72,15 +73,17 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
             }
             foreach (var item in categories)
             {
-                TestRepositoryFolderTreeItem tvv = new TestRepositoryFolderTreeItem();
-                tvv.Id = item["id"].ToString();
-                tvv.Name = item["name"].ToString();
-                tvv.entityType = EntityFolderType.Module;
+                TestRepositoryFolderTreeItem tvv = new TestRepositoryFolderTreeItem
+                {
+                    Id = item["id"].ToString(),
+                    Name = item["name"].ToString(),
+                    entityType = EntityFolderType.Module
+                };
                 tvv.Path = ((TestRepositoryFolderTreeItem)folder).Path + '\\' + tvv.Name;
                 tvv.Folder = tvv.Name;
                 if (((JArray)item["categories"]).Count > 0)
                 {
-                    tvv.CurrentChildrens = new List<ITreeViewItem>();
+                    tvv.CurrentChildrens = [];
                     GetFolderChilds(tvv, item["categories"]);
                 }
                 ((TestRepositoryFolderTreeItem)folder).CurrentChildrens.Add(tvv);
@@ -97,11 +100,13 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
 
         public string ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button selectBtn = new Button();
-            selectBtn.Content = "Select Folder";
+            Button selectBtn = new Button
+            {
+                Content = "Select Folder"
+            };
             selectBtn.Click += new RoutedEventHandler(selectBtn_Clicked);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Browse ALM Test Repository", this, new ObservableList<Button> { selectBtn }, true, "Cancel", Cancel_Clicked);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Browse ALM Test Repository", this, [selectBtn], true, "Cancel", Cancel_Clicked);
 
             return SelectedPath;
         }

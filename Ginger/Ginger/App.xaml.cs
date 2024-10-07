@@ -47,7 +47,7 @@ namespace Ginger
 
         public new static MainWindow MainWindow { get; set; }
 
-        private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
+        private Dictionary<string, Int32> mExceptionsDic = [];
 
 
 
@@ -101,11 +101,13 @@ namespace Ginger
 
             // Each class which moved from GingerCore to GingerCoreCommon needed to be added here, so it will auto translate
             // For backward compatibility of loading old object name in xml
-            Dictionary<string, Type> list = new Dictionary<string, Type>();
-            list.Add("GingerCore.Actions.ActInputValue", typeof(ActInputValue));
-            list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
-            list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
-            list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
+            Dictionary<string, Type> list = new Dictionary<string, Type>
+            {
+                { "GingerCore.Actions.ActInputValue", typeof(ActInputValue) },
+                { "GingerCore.Actions.ActReturnValue", typeof(ActReturnValue) },
+                { "GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue) },
+                { "GingerCore.Environments.GeneralParam", typeof(GeneralParam) }
+            };
 
 
 
@@ -265,7 +267,7 @@ namespace Ginger
 
             if (!WorkSpace.Instance.RunningInExecutionMode)
             {
-                if(WorkSpace.Instance.UserProfile !=null &&  WorkSpace.Instance.UserProfile.AppLogLevel ==  eAppReporterLoggingLevel.Debug) 
+                if (WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
                     GingerLog.StartCustomTraceListeners();
                 }

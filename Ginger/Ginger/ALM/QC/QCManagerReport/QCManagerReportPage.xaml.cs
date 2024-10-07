@@ -58,8 +58,8 @@ namespace Ginger.ALM.QC
         eViewType mViewType = eViewType.Coverage;
         ObservableList<QCTestSetTreeItem> mSelectQcTestSets;
 
-        ObservableList<ALMTSTest> mQcTestCasesList = new ObservableList<ALMTSTest>();
-        ObservableList<QCManagerReportTestCaseDetails> mTestCaseDetailsList = new ObservableList<QCManagerReportTestCaseDetails>();
+        ObservableList<ALMTSTest> mQcTestCasesList = [];
+        ObservableList<QCManagerReportTestCaseDetails> mTestCaseDetailsList = [];
 
         eExecutionPeriod mExecutionPeriodSelectedFilter;
         string mExecutionTesterSelectedFilter;
@@ -119,31 +119,43 @@ namespace Ginger.ALM.QC
         {
             DetailsGrid.Title = "Ginger Automation Coverage";
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.TestSetName, Header = "Test Set", WidthWeight = 25, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.TestCaseName, Header = "Test Case", WidthWeight = 25, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupName, Header = "Matching " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), WidthWeight = 25, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupAutomationPrecentage, Header = "Automation Coverage", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.NumberOfExecutions, Header = "Executions Count.", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.PassRate, Header = "Pass Rate", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.LastExecutionTime, Header = "Last Execution Time", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.LastExecutionStatus, Header = "Last Execution Status", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.TestSetName, Header = "Test Set", WidthWeight = 25, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.TestCaseName, Header = "Test Case", WidthWeight = 25, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupName, Header = "Matching " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), WidthWeight = 25, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupAutomationPrecentage, Header = "Automation Coverage", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.NumberOfExecutions, Header = "Executions Count.", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.PassRate, Header = "Pass Rate", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.LastExecutionTime, Header = "Last Execution Time", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.LastExecutionStatus, Header = "Last Execution Status", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay },
+            ]
+            };
             DetailsGrid.SetAllColumnsDefaultView(view);
 
             //# Custom Views
-            GridViewDef coverageView = new GridViewDef("Coverage");
-            coverageView.GridColsView = new ObservableList<GridColView>();
-            coverageView.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.NumberOfExecutions, Visible = false });
-            coverageView.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.PassRate, Visible = false });
-            coverageView.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.LastExecutionTime, Visible = false });
-            coverageView.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.LastExecutionStatus, Visible = false });
+            GridViewDef coverageView = new GridViewDef("Coverage")
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.NumberOfExecutions, Visible = false },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.PassRate, Visible = false },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.LastExecutionTime, Visible = false },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.LastExecutionStatus, Visible = false },
+            ]
+            };
             DetailsGrid.AddCustomView(coverageView);
 
-            GridViewDef executionView = new GridViewDef("Execution");
-            executionView.GridColsView = new ObservableList<GridColView>();
-            executionView.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupName, Visible = false });
-            executionView.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupAutomationPrecentage, Visible = false });
+            GridViewDef executionView = new GridViewDef("Execution")
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupName, Visible = false },
+                new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupAutomationPrecentage, Visible = false },
+            ]
+            };
             DetailsGrid.AddCustomView(executionView);
 
             DetailsGrid.InitViewItems();
@@ -208,21 +220,25 @@ namespace Ginger.ALM.QC
             {
                 foreach (QCTestSetTreeItem testSetItem in mSelectQcTestSets)
                 {
-                    ALMTestSet TS = new ALMTestSet();
-                    TS.TestSetID = testSetItem.TestSetID;
-                    TS.TestSetName = testSetItem.TestSetName;
-                    TS.TestSetPath = testSetItem.Path;
+                    ALMTestSet TS = new ALMTestSet
+                    {
+                        TestSetID = testSetItem.TestSetID,
+                        TestSetName = testSetItem.TestSetName,
+                        TestSetPath = testSetItem.Path
+                    };
                     TS = ImportFromQC.ImportTestSetData(TS);//get test cases
 
                     foreach (ALMTSTest tc in TS.Tests)
                     {
                         mQcTestCasesList.Add(tc);
                         int automatedStepsCouter = 0;
-                        QCManagerReportTestCaseDetails testCaseDetails = new QCManagerReportTestCaseDetails();
-                        testCaseDetails.TestSetID = TS.TestSetID;
-                        testCaseDetails.TestSetName = TS.TestSetName;
-                        testCaseDetails.TestCaseID = tc.LinkedTestID;
-                        testCaseDetails.TestCaseName = tc.TestName;
+                        QCManagerReportTestCaseDetails testCaseDetails = new QCManagerReportTestCaseDetails
+                        {
+                            TestSetID = TS.TestSetID,
+                            TestSetName = TS.TestSetName,
+                            TestCaseID = tc.LinkedTestID,
+                            TestCaseName = tc.TestName
+                        };
 
                         //check if the TC is already exist in repository
                         ActivitiesGroup repoActivsGroup = null;
@@ -264,7 +280,7 @@ namespace Ginger.ALM.QC
                         double automatedActsPrecanteg = 0;
                         if (tc.Steps.Count > 0)
                         {
-                            automatedActsPrecanteg = ((double)automatedStepsCouter / (double)tc.Steps.Count);
+                            automatedActsPrecanteg = (automatedStepsCouter / (double)tc.Steps.Count);
                             mAutomatedPrecentage += automatedActsPrecanteg;
                             automatedActsPrecanteg = Math.Floor(automatedActsPrecanteg * 100);
                             testCaseDetails.ActivitiesGroupAutomationPrecentage = automatedActsPrecanteg.ToString() + "%";
@@ -327,7 +343,7 @@ namespace Ginger.ALM.QC
                 {
                     mExecutedNumber++;
                     mRunsNumber += testCaseDetails.NumberOfExecutions;
-                    mPassedRunsPrecentage += mRunsNumber * ((double)testCaseDetails.NumberOfPassedExecutions / (double)testCaseDetails.NumberOfExecutions);
+                    mPassedRunsPrecentage += mRunsNumber * (testCaseDetails.NumberOfPassedExecutions / (double)testCaseDetails.NumberOfExecutions);
                 }
                 try
                 {
@@ -377,12 +393,13 @@ namespace Ginger.ALM.QC
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            Button RefreshButton = new Button();
-            RefreshButton.Content = "Refresh";
+            Button RefreshButton = new Button
+            {
+                Content = "Refresh"
+            };
             RefreshButton.Click += new RoutedEventHandler(RefreshButton_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(RefreshButton);
+            ObservableList<Button> winButtons = [RefreshButton];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, null, windowStyle, "QC/ALM Manager Report", this, winButtons);
         }
@@ -403,9 +420,11 @@ namespace Ginger.ALM.QC
                     case eViewType.Coverage:
                         PieChartLayout.LegendHeader = "Coverage";
                         PieChartLayout.PlottedProperty = "Count";
-                        List<StatItem> lst = new List<StatItem>();
-                        lst.Add(new StatItem() { Description = "Automated", Count = Math.Round(mAutomatedPrecentage, 1) });
-                        lst.Add(new StatItem() { Description = "Not Automated", Count = Math.Round(DetailsGrid.DataSourceList.Count - mAutomatedPrecentage, 1) });
+                        List<StatItem> lst =
+                        [
+                            new StatItem() { Description = "Automated", Count = Math.Round(mAutomatedPrecentage, 1) },
+                            new StatItem() { Description = "Not Automated", Count = Math.Round(DetailsGrid.DataSourceList.Count - mAutomatedPrecentage, 1) },
+                        ];
                         PieChartLayout.DataContext = lst;
 
                         PiePassRate.Visibility = System.Windows.Visibility.Collapsed;
@@ -414,17 +433,21 @@ namespace Ginger.ALM.QC
                     case eViewType.Execution:
                         PieChartLayout.LegendHeader = "Executed";
                         PieChartLayout.PlottedProperty = "Count";
-                        List<StatItem> lst2 = new List<StatItem>();
-                        lst2.Add(new StatItem() { Description = "Executed", Count = mExecutedNumber });
-                        lst2.Add(new StatItem() { Description = "Not Executed", Count = DetailsGrid.DataSourceList.Count - mExecutedNumber });
+                        List<StatItem> lst2 =
+                        [
+                            new StatItem() { Description = "Executed", Count = mExecutedNumber },
+                            new StatItem() { Description = "Not Executed", Count = DetailsGrid.DataSourceList.Count - mExecutedNumber },
+                        ];
                         PieChartLayout.DataContext = lst2;
 
                         PiePassRate.Visibility = System.Windows.Visibility.Visible;
                         PieChartLayout2.LegendHeader = "Pass Rate";
                         PieChartLayout2.PlottedProperty = "Count";
-                        List<StatItem> lst3 = new List<StatItem>();
-                        lst3.Add(new StatItem() { Description = "Passed", Count = Math.Round(mPassedRunsPrecentage, 1) });
-                        lst3.Add(new StatItem() { Description = "Not Passed", Count = Math.Round(mRunsNumber - mPassedRunsPrecentage, 1) });
+                        List<StatItem> lst3 =
+                        [
+                            new StatItem() { Description = "Passed", Count = Math.Round(mPassedRunsPrecentage, 1) },
+                            new StatItem() { Description = "Not Passed", Count = Math.Round(mRunsNumber - mPassedRunsPrecentage, 1) },
+                        ];
                         PieChartLayout2.DataContext = lst3;
                         break;
                 }

@@ -85,11 +85,13 @@ namespace Ginger.SolutionWindows
                     return;
                 }
 
-                mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
-                ApplicationPlatform MainApplicationPlatform = new ApplicationPlatform();
-                MainApplicationPlatform.AppName = ApplicationLabel.Content.ToString();
-                MainApplicationPlatform.Platform = SelectedPlatform;
-                MainApplicationPlatform.Description = mainAppDescription;
+                mSolution.ApplicationPlatforms = [];
+                ApplicationPlatform MainApplicationPlatform = new ApplicationPlatform
+                {
+                    AppName = ApplicationLabel.Content.ToString(),
+                    Platform = SelectedPlatform,
+                    Description = mainAppDescription
+                };
 
                 mSolution.ApplicationPlatforms.Add(MainApplicationPlatform);
                 mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
@@ -155,22 +157,21 @@ namespace Ginger.SolutionWindows
 
         private ePlatformType ConvertStringToPlatformType(string text)
         {
-            switch (text)
+            return text switch
             {
-                case "Windows": return ePlatformType.Windows;
-                case "Unix": return ePlatformType.Unix;
-                case "Mobile": return ePlatformType.Mobile;
-                case "Web": return ePlatformType.Web;
-                case "DOS": return ePlatformType.DOS;
-                case "Java": return ePlatformType.Java;
-                case "WebServices": return ePlatformType.WebServices;
-                case "ASCF": return ePlatformType.ASCF;
-                case "MainFrame": return ePlatformType.MainFrame;
-                case "PowerBuilder": return ePlatformType.PowerBuilder;
-                case "Service": return ePlatformType.Service;
-                default: return ePlatformType.NA;
-            }
-
+                "Windows" => ePlatformType.Windows,
+                "Unix" => ePlatformType.Unix,
+                "Mobile" => ePlatformType.Mobile,
+                "Web" => ePlatformType.Web,
+                "DOS" => ePlatformType.DOS,
+                "Java" => ePlatformType.Java,
+                "WebServices" => ePlatformType.WebServices,
+                "ASCF" => ePlatformType.ASCF,
+                "MainFrame" => ePlatformType.MainFrame,
+                "PowerBuilder" => ePlatformType.PowerBuilder,
+                "Service" => ePlatformType.Service,
+                _ => ePlatformType.NA,
+            };
         }
 
         private void AddDeafultReportTemplate()
@@ -267,10 +268,12 @@ namespace Ginger.SolutionWindows
                 fs.Dispose();
             }
 
-            DataSourceBase lite = new GingerCoreNET.DataSource.GingerLiteDB();
-            lite.Name = "DefaultDataSource";
-            lite.FilePath = @"~\DataSources\LiteDB.db";
-            lite.DSType = DataSourceBase.eDSType.LiteDataBase;
+            DataSourceBase lite = new GingerCoreNET.DataSource.GingerLiteDB
+            {
+                Name = "DefaultDataSource",
+                FilePath = @"~\DataSources\LiteDB.db",
+                DSType = DataSourceBase.eDSType.LiteDataBase
+            };
 
             RepositoryFolder<DataSourceBase> dsTargetFolder1 = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
             dsTargetFolder1.AddRepositoryItem(lite);
@@ -279,9 +282,11 @@ namespace Ginger.SolutionWindows
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog();
-            dlg.Description = "Select Solution folder";
-            dlg.RootFolder = Environment.SpecialFolder.MyComputer;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = "Select Solution folder",
+                RootFolder = Environment.SpecialFolder.MyComputer
+            };
             if (mSolution.Folder != string.Empty)
             {
                 dlg.SelectedPath = mSolution.Folder;
@@ -297,17 +302,19 @@ namespace Ginger.SolutionWindows
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button createSolBtn = new Button();
-            createSolBtn.Content = "Create";
+            Button createSolBtn = new Button
+            {
+                Content = "Create"
+            };
             createSolBtn.Click += new RoutedEventHandler(OKButton_Click);
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { createSolBtn });
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, [createSolBtn]);
         }
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
             if (mSolution.ApplicationPlatforms == null)
             {
-                mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
+                mSolution.ApplicationPlatforms = [];
             }
 
             mSolution.ApplicationPlatforms.Clear();

@@ -85,7 +85,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
-                if (e.PropertyName == nameof(Context.AgentStatus) || e.PropertyName == nameof(Context.Agent))
+                if (e.PropertyName is (nameof(Context.AgentStatus)) or (nameof(Context.Agent)))
                 {
                     if (mContext.Agent != null)
                     {
@@ -136,7 +136,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         mCurrentLoadedPage = new LiveSpyPage(mContext, mDriver);
                         if (mLiveSpyPageDictonary == null)
                         {
-                            mLiveSpyPageDictonary = new List<AgentPageMappingHelper>();
+                            mLiveSpyPageDictonary = [];
                         }
                         mLiveSpyPageDictonary.Add(new AgentPageMappingHelper(context.Agent, mCurrentLoadedPage));
                     }

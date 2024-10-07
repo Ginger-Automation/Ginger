@@ -41,7 +41,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security;
 using System.Security.Principal;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -71,8 +70,10 @@ namespace GingerCore
                 {
                     winStyle = windowStyle;
                 }
-                genWindow = new GenericWindow(owner, winStyle, windowTitle, windowPage, windowBtnsList, showClosebtn, closeBtnText, closeEventHandler, loaderElement);
-                genWindow.Title = windowPage.Title;
+                genWindow = new GenericWindow(owner, winStyle, windowTitle, windowPage, windowBtnsList, showClosebtn, closeBtnText, closeEventHandler, loaderElement)
+                {
+                    Title = windowPage.Title
+                };
                 if (startupLocationWithOffset)
                 {
                     genWindow.WindowStartupLocation = WindowStartupLocation.Manual;
@@ -80,7 +81,7 @@ namespace GingerCore
                     genWindow.Top = 200;
                 }
 
-                if (winStyle == eWindowShowStyle.Dialog || winStyle == eWindowShowStyle.OnlyDialog)
+                if (winStyle is eWindowShowStyle.Dialog or eWindowShowStyle.OnlyDialog)
                 {
                     genWindow.ShowDialog();
                 }
@@ -158,9 +159,11 @@ namespace GingerCore
                     {
                         continue;
                     }
-                    ComboEnumItem CEI = new ComboEnumItem();
-                    CEI.text = GetEnumValueDescription(Etype, item);
-                    CEI.Value = item;
+                    ComboEnumItem CEI = new ComboEnumItem
+                    {
+                        text = GetEnumValueDescription(Etype, item),
+                        Value = item
+                    };
                     comboBox.Items.Add(CEI);
                 }
             }
@@ -180,9 +183,11 @@ namespace GingerCore
                         {
                             continue;
                         }
-                        ComboEnumItem CEI = new ComboEnumItem();
-                        CEI.text = GetEnumValueDescription(Etype, item);
-                        CEI.Value = item;
+                        ComboEnumItem CEI = new ComboEnumItem
+                        {
+                            text = GetEnumValueDescription(Etype, item),
+                            Value = item
+                        };
                         comboBox.Items.Add(CEI);
                     }
                 }
@@ -213,9 +218,11 @@ namespace GingerCore
                 // Get all possible enum vals
                 foreach (object item in Enum.GetValues(Etype))
                 {
-                    ComboEnumItem CEI = new ComboEnumItem();
-                    CEI.text = GetEnumValueDescription(Etype, item);
-                    CEI.Value = item;
+                    ComboEnumItem CEI = new ComboEnumItem
+                    {
+                        text = GetEnumValueDescription(Etype, item),
+                        Value = item
+                    };
                     comboBox.Items.Add(CEI);
                 }
             }
@@ -224,9 +231,11 @@ namespace GingerCore
                 // get only subset from selected enum vals - used in Edit Action locate by to limit to valid values
                 foreach (object item in values)
                 {
-                    ComboEnumItem CEI = new ComboEnumItem();
-                    CEI.text = GetEnumValueDescription(Etype, item);
-                    CEI.Value = item;
+                    ComboEnumItem CEI = new ComboEnumItem
+                    {
+                        text = GetEnumValueDescription(Etype, item),
+                        Value = item
+                    };
                     comboBox.Items.Add(CEI);
                 }
             }
@@ -246,8 +255,10 @@ namespace GingerCore
             // Get all possible enum vals
             foreach (object item in Enum.GetValues(Etype))
             {
-                ComboBoxItem CEI = new ComboBoxItem();
-                CEI.Content = item;
+                ComboBoxItem CEI = new ComboBoxItem
+                {
+                    Content = item
+                };
                 comboBox.Items.Add(CEI);
             }
             // Get the combo to be sorted
@@ -255,7 +266,7 @@ namespace GingerCore
         }
         public static List<string> GetEnumValues(Type EnumType)
         {
-            List<string> l = new List<string>();
+            List<string> l = [];
             foreach (object item in Enum.GetValues(EnumType))
             {
                 l.Add(GetEnumValueDescription(EnumType, item));
@@ -313,9 +324,11 @@ namespace GingerCore
 
             foreach (var item in ls)
             {
-                ComboEnumItem CEI = new ComboEnumItem();
-                CEI.text = item.ToString();
-                CEI.Value = item;
+                ComboEnumItem CEI = new ComboEnumItem
+                {
+                    text = item.ToString(),
+                    Value = item
+                };
                 comboBox.Items.Add(CEI);
             }
         }
@@ -634,12 +647,14 @@ namespace GingerCore
 
         public static List<ComboEnumItem> GetEnumValuesForCombo(Type Etype)
         {
-            List<ComboEnumItem> list = new List<ComboEnumItem>();
+            List<ComboEnumItem> list = [];
             foreach (object item in Enum.GetValues(Etype))
             {
-                ComboEnumItem CEI = new ComboEnumItem();
-                CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
-                CEI.Value = item;
+                ComboEnumItem CEI = new ComboEnumItem
+                {
+                    text = GingerCore.General.GetEnumValueDescription(Etype, item),
+                    Value = item
+                };
 
                 list.Add(CEI);
             }
@@ -648,7 +663,7 @@ namespace GingerCore
 
         public static List<ComboEnumItem> GetEnumValuesForComboAndAddExtraValues(Type listType, List<ComboEnumItem> comboEnumItemsValues = null)
         {
-            List<ComboEnumItem> comboEnumItemsList = new List<ComboEnumItem>();
+            List<ComboEnumItem> comboEnumItemsList = [];
             if (comboEnumItemsValues != null && comboEnumItemsValues.Count > 0)
             {
                 comboEnumItemsList.AddRange(comboEnumItemsValues);
@@ -658,12 +673,14 @@ namespace GingerCore
         }
         public static List<ComboEnumItem> GetEnumValuesForComboFromList(Type Etype, List<Object> Items)
         {
-            List<ComboEnumItem> list = new List<ComboEnumItem>();
+            List<ComboEnumItem> list = [];
             foreach (object item in Items)
             {
-                ComboEnumItem CEI = new ComboEnumItem();
-                CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
-                CEI.Value = item;
+                ComboEnumItem CEI = new ComboEnumItem
+                {
+                    text = GingerCore.General.GetEnumValueDescription(Etype, item),
+                    Value = item
+                };
 
                 list.Add(CEI);
             }
@@ -710,9 +727,11 @@ namespace GingerCore
                 }
             }
 
-            ComboEnumItem CEI = new ComboEnumItem();
-            CEI.text = itemText;
-            CEI.Value = itemtoadd;
+            ComboEnumItem CEI = new ComboEnumItem
+            {
+                text = itemText,
+                Value = itemtoadd
+            };
             comboBox.Items.Add(CEI);
         }
 
@@ -853,7 +872,7 @@ namespace GingerCore
 
         public static ResourceDictionary SelectColor(string status)
         {
-            ResourceDictionary r = new ResourceDictionary();
+            ResourceDictionary r = [];
             System.Windows.Media.SolidColorBrush myBrush = null;
             if (string.IsNullOrEmpty(status))
             {
@@ -902,37 +921,16 @@ namespace GingerCore
                 status = "Pending";
             }
 
-            switch (status)
+            myBrush = status switch
             {
-                case "Passed":
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#54A81B"));
-
-                    break;
-                case "Failed":
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#E31123"));
-
-                    break;
-                case "Fail":
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#E31123"));
-
-                    break;
-                case "Stopped":
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#ED5588"));
-
-                    break;
-                case "Pending":
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#FF8C00"));
-
-                    break;
-                case "Running":
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#800080"));
-
-                    break;
-                default:
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#1B3651"));
-
-                    break;
-            }
+                "Passed" => new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#54A81B")),
+                "Failed" => new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#E31123")),
+                "Fail" => new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#E31123")),
+                "Stopped" => new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#ED5588")),
+                "Pending" => new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#FF8C00")),
+                "Running" => new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#800080")),
+                _ => new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#1B3651")),
+            };
             return myBrush;
         }
 
@@ -944,7 +942,7 @@ namespace GingerCore
         /// <returns></returns>
         public static Dictionary<string, String> TakeDesktopScreenShot(bool captureAllScreens = false)
         {
-            Dictionary<string, String> imagePaths = new Dictionary<string, String>();
+            Dictionary<string, String> imagePaths = [];
             foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
             {
                 if (captureAllScreens == false & screen.Primary == false)
@@ -1139,22 +1137,14 @@ namespace GingerCore
         }
         public static ObservableList<T> ConvertListToObservableList<T>(List<T> List)
         {
-            ObservableList<T> ObservableList = new ObservableList<T>();
-            foreach (T o in List)
-            {
-                ObservableList.Add(o);
-            }
+            ObservableList<T> ObservableList = [.. List];
 
             return ObservableList;
         }
 
         public static List<T> ConvertObservableListToList<T>(ObservableList<T> List)
         {
-            List<T> ObservableList = new List<T>();
-            foreach (T o in List)
-            {
-                ObservableList.Add(o);
-            }
+            List<T> ObservableList = [.. List];
 
             return ObservableList;
         }
@@ -1174,8 +1164,7 @@ namespace GingerCore
                 return null;
             }
 
-            T parent = parentObject as T;
-            if (parent != null)
+            if (parentObject is T parent)
             {
                 return parent;
             }
@@ -1210,7 +1199,7 @@ namespace GingerCore
                 return dataString;
             }
             //get the password value based on start and end index
-            passwordValue = passwordValue.Substring(passwordValue.ToLower().IndexOf(passwordString));
+            passwordValue = passwordValue[passwordValue.ToLower().IndexOf(passwordString)..];
             int startIndex = passwordValue.ToLower().IndexOf(passwordString) + passwordString.Length;
             int endIndex = -1;
             if (passwordValue.Contains(";"))
@@ -1219,11 +1208,11 @@ namespace GingerCore
             }
             if (endIndex == -1)
             {
-                passwordValue = passwordValue.Substring(startIndex);
+                passwordValue = passwordValue[startIndex..];
             }
             else
             {
-                passwordValue = passwordValue.Substring(startIndex, endIndex - startIndex);
+                passwordValue = passwordValue[startIndex..endIndex];
             }
 
             if (!string.IsNullOrEmpty(passwordValue))
@@ -1243,18 +1232,12 @@ namespace GingerCore
                 string folderPath = Path.Combine(WorkSpace.Instance.Solution.Folder, "Configurations");
                 DirectoryInfo di = Directory.CreateDirectory(folderPath);
                 string configPackageFolder = string.Empty;
-                switch (eALMType)
+                configPackageFolder = eALMType switch
                 {
-                    case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
-                        configPackageFolder = "JiraConfigurationsPackage";
-                        break;
-                    case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest:
-                        configPackageFolder = "QTestConfigurationsPackage";
-                        break;
-                    default:
-                        configPackageFolder = "JiraConfigurationsPackage";
-                        break;
-                }
+                    GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira => "JiraConfigurationsPackage",
+                    GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest => "QTestConfigurationsPackage",
+                    _ => "JiraConfigurationsPackage",
+                };
                 folderPath = Path.Combine(folderPath, configPackageFolder);
                 if (Directory.Exists(folderPath))
                 {
@@ -1276,19 +1259,12 @@ namespace GingerCore
         {
             bool containSettingsFile = false;
             string configPackageFile = string.Empty;
-            switch (eALMType)
+            configPackageFile = eALMType switch
             {
-                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
-                    configPackageFile = @"JiraSettings/JiraSettings.json";
-                    break;
-                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest:
-                    configPackageFile = @"QTestSettings/QTestSettings.json";
-                    break;
-                default:
-                    configPackageFile = @"JiraSettings/JiraSettings.json";
-                    break;
-            }
-
+                GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira => @"JiraSettings/JiraSettings.json",
+                GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest => @"QTestSettings/QTestSettings.json",
+                _ => @"JiraSettings/JiraSettings.json",
+            };
             using (FileStream configPackageZipFile = new FileStream(PackageFileName, FileMode.Open))
             {
                 using (ZipArchive zipArchive = new ZipArchive(configPackageZipFile))
@@ -1309,18 +1285,12 @@ namespace GingerCore
         public static bool IsConfigPackageExists(string PackagePath, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType eALMType)
         {
             string settingsFolder = string.Empty;
-            switch (eALMType)
+            settingsFolder = eALMType switch
             {
-                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
-                    settingsFolder = "JiraSettings";
-                    break;
-                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest:
-                    settingsFolder = "QTestSettings";
-                    break;
-                default:
-                    settingsFolder = "JiraSettings";
-                    break;
-            }
+                GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira => "JiraSettings",
+                GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest => "QTestSettings",
+                _ => "JiraSettings",
+            };
             if (Directory.Exists(Path.Combine(PackagePath, settingsFolder)))
             {
                 return true;
@@ -1455,7 +1425,7 @@ namespace GingerCore
         public static byte[] Capture(System.Drawing.Point position, System.Drawing.Size size, ImageFormat format)
         {
             Bitmap image = new(size.Width, size.Height);
-            
+
             using Graphics graphics = Graphics.FromImage(image);
             System.Drawing.Point upperLeftSource = new(position.X, position.Y);
             System.Drawing.Point uppderLeftDestination = new(x: 0, y: 0);
@@ -1477,7 +1447,7 @@ namespace GingerCore
             using SKBitmap mergedBitmap = new(maxWidth, mergedHeight);
 
             using SKCanvas canvas = new(mergedBitmap);
-            
+
             int currentDrawnHeight = 0;
             foreach (SKBitmap bitmap in bitmaps)
             {
@@ -1531,15 +1501,12 @@ namespace GingerCore
         [SupportedOSPlatform("windows")]
         private static System.Drawing.Imaging.ImageFormat GenericToGDIImageFormat(ImageFormat imageFormat)
         {
-            switch(imageFormat)
+            return imageFormat switch
             {
-                case ImageFormat.Png:
-                    return System.Drawing.Imaging.ImageFormat.Png;
-                case ImageFormat.Jpeg:
-                    return System.Drawing.Imaging.ImageFormat.Jpeg;
-                default:
-                    throw new Exception($"Unknown ImageFormat '{imageFormat}'");
-            }
+                ImageFormat.Png => System.Drawing.Imaging.ImageFormat.Png,
+                ImageFormat.Jpeg => System.Drawing.Imaging.ImageFormat.Jpeg,
+                _ => throw new Exception($"Unknown ImageFormat '{imageFormat}'"),
+            };
         }
     }
 }

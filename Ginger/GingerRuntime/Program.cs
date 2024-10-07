@@ -23,7 +23,6 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.GingerRuntime.ReporterLib;
 using Amdocs.Ginger.Repository;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -116,8 +115,10 @@ namespace Amdocs.Ginger.GingerRuntime
 
         private static void InitMenu()
         {
-            mMenuManager = new MenuManager();
-            mMenuManager.MenuItems = new List<MenuItem>();
+            mMenuManager = new MenuManager
+            {
+                MenuItems = []
+            };
 
             mSolutionMenu = new SolutionMenu();
             mMenuManager.MenuItems.Add(mSolutionMenu.GetMenu());

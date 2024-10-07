@@ -68,7 +68,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
         private void InitializeValueExpression()
         {
-            mVE ??= new GingerCore.ValueExpression(mContext.Environment, mContext.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+            mVE ??= new GingerCore.ValueExpression(mContext.Environment, mContext.BusinessFlow, [], false, "", false);
         }
 
         public bool IsConfigurationChanged()
@@ -76,11 +76,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             InitializeValueExpression();
 
             mVE.Value = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL;
-            
-            
-            return 
-                !mVE.ValueCalculated.Equals(EndPointUrl) || 
-                !(Token !=null && Token.Equals(WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken));
+
+
+            return
+                !mVE.ValueCalculated.Equals(EndPointUrl) ||
+                !(Token != null && Token.Equals(WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken));
         }
 
         public void SendCreationTestSessionToSealightsAsync()
@@ -156,9 +156,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             try
             {
-                mVE = new GingerCore.ValueExpression(mContext.Environment, mContext.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                mVE = new GingerCore.ValueExpression(mContext.Environment, mContext.BusinessFlow, [], false, "", false);
 
-                RestRequest restRequest = (RestRequest)new RestRequest(api, apiMethod) { RequestFormat = RestSharp.DataFormat.Json };
+                RestRequest restRequest = new RestRequest(api, apiMethod) { RequestFormat = RestSharp.DataFormat.Json };
 
                 restRequest.AddHeader("Content-Type", "application/json");
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
@@ -244,7 +244,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             {
                 api += "/" + TestSessionId;
 
-                RestRequest restRequest = (RestRequest)new RestRequest(api, apiMethod) { RequestFormat = RestSharp.DataFormat.Json };
+                RestRequest restRequest = new RestRequest(api, apiMethod) { RequestFormat = RestSharp.DataFormat.Json };
 
                 restRequest.AddHeader("Content-Type", "application/json");
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
@@ -281,7 +281,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             {
                 api += "/" + TestSessionId;
 
-                RestRequest restRequest = (RestRequest)new RestRequest(api, apiMethod) { RequestFormat = RestSharp.DataFormat.Json };
+                RestRequest restRequest = new RestRequest(api, apiMethod) { RequestFormat = RestSharp.DataFormat.Json };
 
                 restRequest.AddHeader("Content-Type", "application/json");
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
@@ -341,7 +341,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             {
                 api += "/" + TestSessionId + "/exclude-tests?type=externalId";
 
-                RestRequest restRequest = (RestRequest)new RestRequest(api, apiMethod) { RequestFormat = RestSharp.DataFormat.Json };
+                RestRequest restRequest = new RestRequest(api, apiMethod) { RequestFormat = RestSharp.DataFormat.Json };
 
                 restRequest.AddHeader("Content-Type", "application/json");
                 restRequest.AddHeader("Authorization", "Bearer " + Token);

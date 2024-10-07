@@ -83,7 +83,7 @@ namespace Ginger.Run.RunSetActions
             AttachmentsGrid.AddButton("Add File", AddFile);
             if (runSetActionEmailReport.EmailAttachments == null)
             {
-                runSetActionEmailReport.EmailAttachments = new ObservableList<EmailAttachment>();
+                runSetActionEmailReport.EmailAttachments = [];
             }
 
             AttachmentsGrid.DataSourceList = runSetActionEmailReport.EmailAttachments;
@@ -114,7 +114,7 @@ namespace Ginger.Run.RunSetActions
         private void SetGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.AttachmentType), WidthWeight = 50, BindingMode = BindingMode.OneTime });

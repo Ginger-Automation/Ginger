@@ -55,13 +55,13 @@ namespace GingerCore.Activities
             {
                 if (mIdentifiedActivity != null)
                 {
-                    ((Activity)mIdentifiedActivity).PropertyChanged -= Activity_PropertyChanged;
+                    mIdentifiedActivity.PropertyChanged -= Activity_PropertyChanged;
                 }
                 mIdentifiedActivity = value;
                 if (mIdentifiedActivity != null)
                 {
                     RefreshActivityIdentifiers();
-                    ((Activity)mIdentifiedActivity).PropertyChanged += Activity_PropertyChanged;
+                    mIdentifiedActivity.PropertyChanged += Activity_PropertyChanged;
                 }
             }
         }
@@ -105,10 +105,10 @@ namespace GingerCore.Activities
 
         private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Activity.ActivityName)
-                    || e.PropertyName == nameof(Activity.Description)
-                        || e.PropertyName == nameof(Activity.ExternalID)
-                            || e.PropertyName == nameof(Activity.AutomationStatus))
+            if (e.PropertyName is (nameof(Activity.ActivityName))
+                    or (nameof(Activity.Description))
+                        or (nameof(Activity.ExternalID))
+                            or (nameof(Activity.AutomationStatus)))
             {
                 RefreshActivityIdentifiers();
             }

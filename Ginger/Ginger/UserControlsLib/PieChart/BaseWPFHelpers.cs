@@ -284,7 +284,7 @@ namespace Ginger.UserControlsLib.PieChart
         /// <returns>List of matching FrameworkElements</returns>
         public static List<FrameworkElement> FindDownInTree(Visual parent, IFinderMatchVisualHelper helper)
         {
-            List<FrameworkElement> lst = new List<FrameworkElement>();
+            List<FrameworkElement> lst = [];
 
             FindDownInTree(lst, parent, null, helper);
 
@@ -299,7 +299,7 @@ namespace Ginger.UserControlsLib.PieChart
         /// <returns>List of matching FrameworkElements</returns>
         public static List<FrameworkElement> FindInTree(Visual parent, IFinderMatchVisualHelper helper)
         {
-            List<FrameworkElement> lst = new List<FrameworkElement>();
+            List<FrameworkElement> lst = [];
 
             FindUpInTree(lst, parent, null, helper);
 
@@ -372,11 +372,9 @@ namespace Ginger.UserControlsLib.PieChart
             else
             {
                 // Ok, now try to get a new parent...
-                FrameworkElement feCast = parent as FrameworkElement;
-                if (feCast != null)
+                if (parent is FrameworkElement feCast)
                 {
-                    FrameworkElement feNewParent = feCast.Parent as FrameworkElement;
-                    if (feNewParent == null || feNewParent == feCast)
+                    if (feCast.Parent is not FrameworkElement feNewParent || feNewParent == feCast)
                     {
                         // Try to get the templated parent
                         feNewParent = feCast.TemplatedParent as FrameworkElement;
@@ -436,9 +434,7 @@ namespace Ginger.UserControlsLib.PieChart
 
             foreach (FrameworkElement me in lst)
             {
-                MediaElement meCast = me as MediaElement;
-
-                if (meCast != null)
+                if (me is MediaElement meCast)
                 {
                     if (meCast.CanPause)
                     {
@@ -466,9 +462,7 @@ namespace Ginger.UserControlsLib.PieChart
 
             foreach (FrameworkElement me in lst)
             {
-                MediaElement meCast = me as MediaElement;
-
-                if (meCast != null)
+                if (me is MediaElement meCast)
                 {
                     try
                     {

@@ -17,10 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.Telemetry
@@ -31,7 +27,7 @@ namespace Amdocs.Ginger.Common.Telemetry
         {
             [IsSerializedForLocalRepository]
             public string CollectorURL { get; set; } = string.Empty;
-            
+
             [IsSerializedForLocalRepository(DefaultValue: 10)]
             public int BufferSize { get; set; } = 10;
 

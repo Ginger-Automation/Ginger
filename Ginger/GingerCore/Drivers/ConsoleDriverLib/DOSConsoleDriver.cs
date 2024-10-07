@@ -170,7 +170,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     break;
                 }
 
-                mConsoleDriverWindow.ConsoleWriteText(mOutputs.Substring(mlastOutputsLength, (mOutputs.Length - mlastOutputsLength)));//get the output addition to console
+                mConsoleDriverWindow.ConsoleWriteText(mOutputs[mlastOutputsLength..]);//get the output addition to console
 
                 if (waitForRestOfOutputs)
                 {

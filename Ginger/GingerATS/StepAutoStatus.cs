@@ -46,7 +46,7 @@ namespace GingerATS
         public StepAutoStatus(long id)
         {
             this.ID = id;
-            this.Parameters = new Dictionary<string, StepParamAutoStatus>();
+            this.Parameters = [];
             this.AutomatedByGinger = null;
         }
     }

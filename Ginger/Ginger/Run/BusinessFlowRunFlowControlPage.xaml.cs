@@ -22,7 +22,6 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
-using NPOI.OpenXmlFormats.Dml;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -58,16 +57,18 @@ namespace Ginger.Run
 
         private void AddFlowControl(object sender, RoutedEventArgs e)
         {
-            FlowControl FC = new FlowControl();
-            FC.Operator = eFCOperator.ActionPassed;
-            FC.Active = true;
+            FlowControl FC = new FlowControl
+            {
+                Operator = eFCOperator.ActionPassed,
+                Active = true
+            };
             mActParentBusinessFlow.BFFlowControls.Add(FC);
         }
 
         private void SetGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
             viewCols.Add(new GridColView() { Field = FlowControl.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             viewCols.Add(new GridColView() { Field = nameof(FlowControl.Operator), Header = "Operator", WidthWeight = 150, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = OperatorList });
@@ -79,7 +80,7 @@ namespace Ginger.Run
             FlowControlGrid.SetAllColumnsDefaultView(view);
             FlowControlGrid.InitViewItems();
 
-            bool editable = _viewMode != General.eRIPageViewMode.View && _viewMode != General.eRIPageViewMode.ViewAndExecute;
+            bool editable = _viewMode is not General.eRIPageViewMode.View and not General.eRIPageViewMode.ViewAndExecute;
             SetViewMode(editable);
         }
 

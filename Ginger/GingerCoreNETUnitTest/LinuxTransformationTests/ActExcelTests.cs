@@ -249,8 +249,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         public void WriteExcelOneRowWithPKTest()
         {
             //Arrange            
-            ActExcel actExcel = new ActExcel();
-            actExcel.RunOnBusinessFlow = new GingerCore.BusinessFlow();
+            ActExcel actExcel = new ActExcel
+            {
+                RunOnBusinessFlow = new GingerCore.BusinessFlow()
+            };
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName),
                 TestResources.GetTestResourcesFile(excelPathWriteTemp));
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
@@ -264,15 +266,17 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             IExcelOperations excelOperations = new ExcelNPOIOperations();
-            DataTable dt = excelOperations.ReadData(excelPathWriteTemp, actExcel.SheetName, actExcel.SelectRowsWhere, false ,actExcel.HeaderRowNum);
+            DataTable dt = excelOperations.ReadData(excelPathWriteTemp, actExcel.SheetName, actExcel.SelectRowsWhere, false, actExcel.HeaderRowNum);
             Assert.AreEqual(string.Join(',', dt.Rows[0].ItemArray.Select(x => x).ToList()), "1,Marco,Cohen,2109 Fox Dr");
         }
         [TestMethod]
         public void WriteExcelMultiRowsWithFilterTest()
         {
             //Arrange            
-            ActExcel actExcel = new ActExcel();
-            actExcel.RunOnBusinessFlow = new GingerCore.BusinessFlow();
+            ActExcel actExcel = new ActExcel
+            {
+                RunOnBusinessFlow = new GingerCore.BusinessFlow()
+            };
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName),
                 TestResources.GetTestResourcesFile(excelPathWriteTemp));
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");

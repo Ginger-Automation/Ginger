@@ -16,19 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using Amdocs.Ginger.CoreNET.DiameterLib;
-using System.Windows.Controls;
-using System.Collections.Generic;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCore.GeneralLib;
-using System.Windows;
+using Ginger.Actions.ActionConversion;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
-using System.Windows.Data;
+using GingerCore.GeneralLib;
+using System.Collections.Generic;
 using System.Linq;
-using Ginger.Actions.ActionConversion;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
 
 namespace Ginger.Actions.WebServices
@@ -44,7 +44,7 @@ namespace Ginger.Actions.WebServices
             ResponseGrid
         }
         ActDiameter mAct;
-        ObservableList<DiameterAVP> groupedAvpsList = new ObservableList<DiameterAVP>();
+        ObservableList<DiameterAVP> groupedAvpsList = [];
 
         public ActDiameterEditPage(ActDiameter act)
         {
@@ -110,7 +110,7 @@ namespace Ginger.Actions.WebServices
         }
         private List<GridColView> GetGridColViewList(eGridType gridType)
         {
-            List<GridColView> colViews = new List<GridColView>();
+            List<GridColView> colViews = [];
 
             var nameColView = new GridColView()
             {
@@ -203,8 +203,10 @@ namespace Ginger.Actions.WebServices
 
         private GridViewDef CreateGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
             return view;
         }
         private void AddAvpToCustomResponseAvpGrid(object sender, RoutedEventArgs e)
@@ -213,8 +215,7 @@ namespace Ginger.Actions.WebServices
         }
         private void xAvpNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox? avpNameCB = sender as ComboBox;
-            if (avpNameCB != null && avpNameCB.IsDropDownOpen)
+            if (sender is ComboBox avpNameCB && avpNameCB.IsDropDownOpen)
             {
                 if ((string)avpNameCB.Tag == eGridType.RequestGrid.ToString())
                 {
@@ -264,8 +265,7 @@ namespace Ginger.Actions.WebServices
         }
         private void xDataTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox? dataTypeCB = sender as ComboBox;
-            if (dataTypeCB != null && dataTypeCB.IsDropDownOpen)
+            if (sender is ComboBox dataTypeCB && dataTypeCB.IsDropDownOpen)
             {
                 SetGroupedAvpList();
             }
@@ -312,7 +312,7 @@ namespace Ginger.Actions.WebServices
             {
                 if (groupedAvpsList.Any())
                 {
-                    List<DiameterAVP> itemsToRemove = new List<DiameterAVP>();
+                    List<DiameterAVP> itemsToRemove = [];
 
                     foreach (DiameterAVP avp in groupedAvpsList)
                     {
@@ -349,11 +349,9 @@ namespace Ginger.Actions.WebServices
         }
         private void xParentAVP_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox? parentAvpCB = sender as ComboBox;
-            if (parentAvpCB != null && parentAvpCB.IsDropDownOpen)
+            if (sender is ComboBox parentAvpCB && parentAvpCB.IsDropDownOpen)
             {
-                var selectedAvp = parentAvpCB.SelectedItem as DiameterAVP;
-                if (selectedAvp != null)
+                if (parentAvpCB.SelectedItem is DiameterAVP selectedAvp)
                 {
                     HandleRequestParentAvpChanged(selectedAvp);
                 }
@@ -385,9 +383,11 @@ namespace Ginger.Actions.WebServices
                     string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
                     if (System.IO.File.Exists(tempFilePath))
                     {
-                        DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
-                        docPage.Width = 800;
-                        docPage.Height = 800;
+                        DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty)
+                        {
+                            Width = 800,
+                            Height = 800
+                        };
                         docPage.ShowAsWindow("Raw Request Preview");
                         System.IO.File.Delete(tempFilePath);
                         return;

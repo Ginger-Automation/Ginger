@@ -51,9 +51,13 @@ namespace Ginger.Run
 
         private void SetPossibleAgentsGridView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(Agent.Name), Header = "Agent Name", WidthWeight = 100, ReadOnly = true });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(Agent.Name), Header = "Agent Name", WidthWeight = 100, ReadOnly = true },
+            ]
+            };
             grdPossibleAgents.SetAllColumnsDefaultView(defView);
             grdPossibleAgents.InitViewItems();
 
@@ -63,7 +67,7 @@ namespace Ginger.Run
 
         private void SetPossibleAgentsGridData()
         {
-            ObservableList<Agent> optionalAgents = new ObservableList<Agent>();
+            ObservableList<Agent> optionalAgents = [];
             if (mApplicationAgent != null)
             {
                 //find out the target application platform
@@ -125,12 +129,13 @@ namespace Ginger.Run
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button mapBtn = new Button();
-            mapBtn.Content = "Map";
+            Button mapBtn = new Button
+            {
+                Content = "Map"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: mapBtn, eventName: nameof(ButtonBase.Click), handler: mapBtn_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(mapBtn);
+            ObservableList<Button> winButtons = [mapBtn];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "'" + mApplicationAgent.AppName + "'- Agent Mapping", this, winButtons, true, "Cancel");
         }

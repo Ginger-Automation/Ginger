@@ -101,9 +101,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void NumberVar_TestFormulaVal()
         {
             //Arrange
-            VariableNumber NumberVar = new VariableNumber();
-            NumberVar.Name = "test";
-            NumberVar.Value = "123";
+            VariableNumber NumberVar = new VariableNumber
+            {
+                Name = "test",
+                Value = "123"
+            };
 
             //Act
             string formulaStr = NumberVar.GetFormula();
@@ -117,9 +119,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void NumberVar_TestResetVal()
         {
             //Arrange
-            VariableNumber variableNumber = new VariableNumber();
-            variableNumber.Name = "test";
-            variableNumber.Value = "1234";
+            VariableNumber variableNumber = new VariableNumber
+            {
+                Name = "test",
+                Value = "1234"
+            };
 
             //Act
             variableNumber.ResetValue();
@@ -133,12 +137,14 @@ namespace GingerCoreCommonTest.VariableTests
         public void NumberVar_Test_SetValue_Int()
         {
             //Arrange
-            VariableNumber variableNumber = new VariableNumber();
-            variableNumber.Name = "test";
-            variableNumber.Value = "99";
-            variableNumber.IsDecimalValue = false;
-            variableNumber.MinValue = "-100";
-            variableNumber.MaxValue = "100";
+            VariableNumber variableNumber = new VariableNumber
+            {
+                Name = "test",
+                Value = "99",
+                IsDecimalValue = false,
+                MinValue = "-100",
+                MaxValue = "100"
+            };
 
             //Act
             var result = variableNumber.SetValue("66");
@@ -152,12 +158,14 @@ namespace GingerCoreCommonTest.VariableTests
         public void NumberVar_Negative_Test_SetValue_Int()
         {
             //Arrange
-            VariableNumber variableNumber = new VariableNumber();
-            variableNumber.Name = "test";
-            variableNumber.Value = "99";
-            variableNumber.IsDecimalValue = false;
-            variableNumber.MinValue = "-100";
-            variableNumber.MaxValue = "100";
+            VariableNumber variableNumber = new VariableNumber
+            {
+                Name = "test",
+                Value = "99",
+                IsDecimalValue = false,
+                MinValue = "-100",
+                MaxValue = "100"
+            };
 
             //Act
             var result = variableNumber.SetValue("1233");
@@ -171,12 +179,14 @@ namespace GingerCoreCommonTest.VariableTests
         public void NumberVar_Test_SetValue_Float()
         {
             //Arrange
-            VariableNumber variableNumber = new VariableNumber();
-            variableNumber.Name = "test";
-            variableNumber.Value = "99.99";
-            variableNumber.IsDecimalValue = true;
-            variableNumber.MinValue = "-100.60";
-            variableNumber.MaxValue = "100.55";
+            VariableNumber variableNumber = new VariableNumber
+            {
+                Name = "test",
+                Value = "99.99",
+                IsDecimalValue = true,
+                MinValue = "-100.60",
+                MaxValue = "100.55"
+            };
 
             //Act
             var result = variableNumber.SetValue("100.3");
@@ -190,12 +200,14 @@ namespace GingerCoreCommonTest.VariableTests
         public void NumberVar_Negative_Test_SetValue_Float()
         {
             //Arrange
-            VariableNumber variableNumber = new VariableNumber();
-            variableNumber.Name = "test";
-            variableNumber.Value = "99.99";
-            variableNumber.IsDecimalValue = true;
-            variableNumber.MinValue = "-100.60";
-            variableNumber.MaxValue = "100.55";
+            VariableNumber variableNumber = new VariableNumber
+            {
+                Name = "test",
+                Value = "99.99",
+                IsDecimalValue = true,
+                MinValue = "-100.60",
+                MaxValue = "100.55"
+            };
 
             //Act
             var result = variableNumber.SetValue("123.3");
@@ -209,9 +221,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void NumberVar_TestVal()
         {
             //Arrange
-            VariableNumber variableNumber = new VariableNumber();
-            variableNumber.Name = "test";
-            variableNumber.Value = "123";
+            VariableNumber variableNumber = new VariableNumber
+            {
+                Name = "test",
+                Value = "123"
+            };
 
             //Act
 

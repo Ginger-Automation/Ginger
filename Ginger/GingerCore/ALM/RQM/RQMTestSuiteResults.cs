@@ -31,17 +31,21 @@ namespace GingerCore.ALM.RQM
 
         public RQMTestSuiteResults()
         {
-            RQMExecutionRecords = new ObservableList<RQMExecutionRecord>();
-            ACL_TestSuiteLog_Copy = new ACL_Data_Contract.TestSuiteLog();
-            ACL_TestSuiteLog_Copy.TestSuiteLogExecutionRecords = new System.Collections.Generic.List<ACL_Data_Contract.ExecutionResult>();
+            RQMExecutionRecords = [];
+            ACL_TestSuiteLog_Copy = new ACL_Data_Contract.TestSuiteLog
+            {
+                TestSuiteLogExecutionRecords = []
+            };
         }
 
         public RQMTestSuiteResults(string uRLPathVersioned)
         {
             URLPathVersioned = uRLPathVersioned;
-            RQMExecutionRecords = new ObservableList<RQMExecutionRecord>();
-            ACL_TestSuiteLog_Copy = new ACL_Data_Contract.TestSuiteLog();
-            ACL_TestSuiteLog_Copy.TestSuiteLogExecutionRecords = new System.Collections.Generic.List<ACL_Data_Contract.ExecutionResult>();
+            RQMExecutionRecords = [];
+            ACL_TestSuiteLog_Copy = new ACL_Data_Contract.TestSuiteLog
+            {
+                TestSuiteLogExecutionRecords = []
+            };
         }
 
         public string RQMID { get; set; }

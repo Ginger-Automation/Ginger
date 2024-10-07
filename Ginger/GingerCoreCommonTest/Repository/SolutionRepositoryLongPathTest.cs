@@ -276,7 +276,7 @@ namespace GingerCoreCommonTest.Repository
             mSolutionRepository.DeleteRepositoryItem(MRI);
 
             // Try to get from cache which should bring null
-            MyRepositoryItem MRI2 = (MyRepositoryItem)mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(guid);
+            MyRepositoryItem MRI2 = mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(guid);
 
             // Get it from all MRIs - will use the list cache - should be null too
             ObservableList<MyRepositoryItem> MRIs2 = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();

@@ -68,24 +68,23 @@ namespace Ginger.WindowExplorer.Java
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActSwitchWindow()
-            {
-                Description = "Switch Window - " + Name
-            });
-
-            list.Add(new ActWindow()
-            {
-                Description = "Check If  " + Name + " Exist",
-                WindowActionType = ActWindow.eWindowActionType.IsExist
-            });
-
-            list.Add(new ActWindow()
-            {
-                Description = "Close Window-  " + Name,
-                WindowActionType = ActWindow.eWindowActionType.Close
-            });
+            ObservableList<Act> list =
+            [
+                new ActSwitchWindow()
+                {
+                    Description = "Switch Window - " + Name
+                },
+                new ActWindow()
+                {
+                    Description = "Check If  " + Name + " Exist",
+                    WindowActionType = ActWindow.eWindowActionType.IsExist
+                },
+                new ActWindow()
+                {
+                    Description = "Close Window-  " + Name,
+                    WindowActionType = ActWindow.eWindowActionType.Close
+                },
+            ];
             return list;
         }
 
@@ -107,7 +106,7 @@ namespace Ginger.WindowExplorer.Java
 
             if (Response.Name == "ControlProperties")
             {
-                ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+                ObservableList<ControlProperty> list = [];
                 List<PayLoad> props = Response.GetListPayLoad();
                 foreach (PayLoad prop in props)
                 {

@@ -33,36 +33,34 @@ namespace Ginger.WindowExplorer.HTMLCommon
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Set Check Box ON " + this.ElementInfo.ElementTitle,
-                GenElementAction = ActGenElement.eGenElementAction.SetValue,
-                Value = "true"
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Set Check Box OFF " + this.ElementInfo.ElementTitle,
-                GenElementAction = ActGenElement.eGenElementAction.SetValue,
-                Value = "false"
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Validate CheckBox Text " + this.ElementInfo.ElementTitle,
-                GenElementAction = ActGenElement.eGenElementAction.GetValue,
-                Value = ""
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Validate CheckBox is Enabled " + this.ElementInfo.ElementTitle,
-                GenElementAction = ActGenElement.eGenElementAction.Enabled,
-                Value = ""
-                //TODO: add REturn value Actual = Enabled=true
-            });
+            ObservableList<Act> list =
+            [
+                new ActGenElement()
+                {
+                    Description = "Set Check Box ON " + this.ElementInfo.ElementTitle,
+                    GenElementAction = ActGenElement.eGenElementAction.SetValue,
+                    Value = "true"
+                },
+                new ActGenElement()
+                {
+                    Description = "Set Check Box OFF " + this.ElementInfo.ElementTitle,
+                    GenElementAction = ActGenElement.eGenElementAction.SetValue,
+                    Value = "false"
+                },
+                new ActGenElement()
+                {
+                    Description = "Validate CheckBox Text " + this.ElementInfo.ElementTitle,
+                    GenElementAction = ActGenElement.eGenElementAction.GetValue,
+                    Value = ""
+                },
+                new ActGenElement()
+                {
+                    Description = "Validate CheckBox is Enabled " + this.ElementInfo.ElementTitle,
+                    GenElementAction = ActGenElement.eGenElementAction.Enabled,
+                    Value = ""
+                    //TODO: add REturn value Actual = Enabled=true
+                },
+            ];
 
             AddGeneralHTMLActions(list);
             return list;

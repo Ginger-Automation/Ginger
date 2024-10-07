@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
@@ -36,26 +35,26 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
     public class WSDLParser : APIConfigurationsDocumentParserBase
     {
 
-        private List<string> RegularTypesList = new List<string>() { "date", "anyType", "string", "byte", "double", "short", "int", "char", "long", "boolean", "normalizedString", "dateTime", "decimal", "integer", "Array" };
-        private List<string> HeaderNamesList = new List<string>() { "header", "MessageHeader", "Hdr", "Header" };
+        private List<string> RegularTypesList = ["date", "anyType", "string", "byte", "double", "short", "int", "char", "long", "boolean", "normalizedString", "dateTime", "decimal", "integer", "Array"];
+        private List<string> HeaderNamesList = ["header", "MessageHeader", "Hdr", "Header"];
 
         string tab1 = " ";
         string tab2 = "  ";
         string tab3 = "   ";
 
-        private Dictionary<string, List<string>> AllNameSpaces = new Dictionary<string, List<string>>();
-        private Dictionary<List<string>, string> AllSourcesNameSpaces = new Dictionary<List<string>, string>();
-        private Dictionary<string, int> AllPlaceHolders = new Dictionary<string, int>();
-        private List<Element> ElementsList = new List<Element>();
-        private List<ComplexType> ComplexTypesList = new List<ComplexType>();
-        private ObservableList<ApplicationAPIModel> mAAMList = new ObservableList<ApplicationAPIModel>();
-        private List<Tuple<string, string>> AllURLs = new List<Tuple<string, string>>();
-        private List<ServiceDescriptionExtended> mServiceDescriptionsExtendedList = new List<ServiceDescriptionExtended>();
+        private Dictionary<string, List<string>> AllNameSpaces = [];
+        private Dictionary<List<string>, string> AllSourcesNameSpaces = [];
+        private Dictionary<string, int> AllPlaceHolders = [];
+        private List<Element> ElementsList = [];
+        private List<ComplexType> ComplexTypesList = [];
+        private ObservableList<ApplicationAPIModel> mAAMList = [];
+        private List<Tuple<string, string>> AllURLs = [];
+        private List<ServiceDescriptionExtended> mServiceDescriptionsExtendedList = [];
         private BindingCollection bindColl;
         private ServiceCollection Services;
         private PortTypeCollection portTypColl;
         private MessageCollection Messages;
-        private List<XmlSchemasExtended> mSchemasList = new List<XmlSchemasExtended>();
+        private List<XmlSchemasExtended> mSchemasList = [];
         private string mURL;
         public bool ErrorFound;
         public string ErrorReason;
@@ -234,7 +233,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     AAM.EndpointURL = GetEndPointURL(Services, BindingName);
                     AAM.Description = GetDescription(portTypColl, BindingName, OperationName);
-                    ObservableList<AppModelParameter> AMPList = new ObservableList<AppModelParameter>();
+                    ObservableList<AppModelParameter> AMPList = [];
 
                     string RequestBody = CreateRequestBody(messagePartsList, portTypeOperationDetails, OperationInputTag, SoapEnvelopeURL, OperationName, AMPList);
 
@@ -249,7 +248,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                             string UniqPlaceHolder = "{" + GetPlaceHolderName(XDN.LocalName.ToUpper()) + "}";
                             XDN.Value = UniqPlaceHolder;
-                            AMPList.Add(new AppModelParameter(UniqPlaceHolder, string.Empty, XDN.LocalName, XDN.XPath, new ObservableList<OptionalValue>()));
+                            AMPList.Add(new AppModelParameter(UniqPlaceHolder, string.Empty, XDN.LocalName, XDN.XPath, []));
 
                             if (XDN.Attributes != null && XDN.Attributes.Count > 0)
                             {
@@ -257,7 +256,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                                 {
                                     string UniqAttributePlaceHolder = "{" + GetPlaceHolderName(XmlAttribute.LocalName.ToUpper()) + "}";
                                     XmlAttribute.Value = UniqAttributePlaceHolder;
-                                    AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, new ObservableList<OptionalValue>()));
+                                    AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, []));
                                 }
                             }
                         }
@@ -274,7 +273,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     //MessageInputPart MessageOutputPart = GetMessagePartsByOperation(OperationOutputMessage, Messages, OperationOutputTag);
 
-                    ObservableList<AppModelParameter> AMPListOutput = new ObservableList<AppModelParameter>();
+                    ObservableList<AppModelParameter> AMPListOutput = [];
                     string ResponseBody = CreateRequestBody(messagePartsOutputList, portTypeOperationOutputDetails, OperationOutputTag, SoapEnvelopeURL, OperationName, AMPListOutput);
 
 
@@ -304,7 +303,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private List<Part> GetOperationInputParts(string operationInputMessage, MessageCollection messages, BindingOperationInputTag operationInputTag)
         {
-            List<Part> MessageParts = new List<Part>();
+            List<Part> MessageParts = [];
             foreach (Message Message in messages)
             {
                 if (Message.Name == operationInputMessage || ((operationInputTag != null) && Message.Name == operationInputTag.HeaderMessage))
@@ -312,8 +311,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     //TODO:check if can be message for OperationInputMessage AND for OperationInputTag
                     foreach (MessagePart messagePart in Message.Parts)
                     {
-                        Part part = new Part();
-                        part.PartName = messagePart.Name;
+                        Part part = new Part
+                        {
+                            PartName = messagePart.Name
+                        };
 
                         if (string.IsNullOrEmpty(messagePart.Element.Name))
                         {
@@ -346,7 +347,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             AllPlaceHolders.Clear();
 
             StringBuilder RequestBody = new StringBuilder();
-            Dictionary<string, string> NameSpacesToInclude = new Dictionary<string, string>();
+            Dictionary<string, string> NameSpacesToInclude = [];
             PopulateMessageInputPartsNameSpacesName(messagePartsList, NameSpacesToInclude);
             string Path = string.Empty;
             bool HeaderFound = false;
@@ -411,7 +412,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
             if (portTypeOperationDetails.ParameterOrder != null && !string.IsNullOrEmpty(OperationInputTag.BodyNameSpace))
             {
-                tab2 = tab2.Substring(1);
+                tab2 = tab2[1..];
                 RequestBody.Append(tab2 + "</" + NameSpacesToInclude[OperationInputTag.BodyNameSpace] + ":" + OperationName + ">" + Environment.NewLine);
 
             }
@@ -609,7 +610,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             string PathToPass = PathToPass = Path + BaseComplexType.Source + ":" + BaseComplexType.Name + "/";
                             if (BaseComplexType != null && BaseComplexType.ComplexTypeElementsList.Count != 0)
                             {
-                                List<ComplexTypeChild> CombinedComplexTypeElementsList = new List<ComplexTypeChild>();
+                                List<ComplexTypeChild> CombinedComplexTypeElementsList = [];
                                 CombinedComplexTypeElementsList = BaseComplexType.ComplexTypeElementsList.Concat(ChildElement.InnerElementComplexType.Extension.ComplexTypeElementsList).ToList();
                                 RequestBody.Append(CurrentTab + "<" + NameSpaceName + ":" + ChildElement.Name + ">" + Environment.NewLine);
                                 AppendComplexTypeElementList(RequestBody, CombinedComplexTypeElementsList, RefElement, SourceElement, ComplexType, NameSpacesToInclude[ChildElement.InnerElementComplexType.Extension.BaseNameSpace], CurrentTab + tab1, NameSpacesToInclude, PathToPass, AMPList);
@@ -686,7 +687,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                                     ComplexType BaseComplexType = GetNextComplexTypeByElementNameAndNameSpace(NextComplexType.Extension.BaseName, NextComplexType.Extension.BaseNameSpace, NameSpacesToInclude);
                                     if (BaseComplexType != null && BaseComplexType.ComplexTypeElementsList.Count != 0)
                                     {
-                                        List<ComplexTypeChild> CombinedComplexTypeElementsList = new List<ComplexTypeChild>();
+                                        List<ComplexTypeChild> CombinedComplexTypeElementsList = [];
                                         CombinedComplexTypeElementsList = BaseComplexType.ComplexTypeElementsList.Concat(NextComplexType.Extension.ComplexTypeElementsList).ToList();
                                         RequestBody.Append(CurrentTab + "<" + NameSpaceName + ":" + ChildElement.Name + ">" + Environment.NewLine);
                                         AppendComplexTypeElementList(RequestBody, CombinedComplexTypeElementsList, RefElement, SourceElement, ComplexType, NameSpacesToInclude[NextComplexType.Extension.BaseNameSpace], CurrentTab + tab1, NameSpacesToInclude, PathToPass, AMPList);
@@ -1038,7 +1039,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         public ComplexType GetComplexTypeByNameAndNameSpace(string ComplexTypeName, string ComplexTypeNameSpace)
         {
-            List<string> ComplexElementSource = new List<string>();
+            List<string> ComplexElementSource = [];
             if (AllNameSpaces.ContainsKey(ComplexTypeNameSpace))
             {
                 ComplexElementSource = AllNameSpaces[ComplexTypeNameSpace];
@@ -1064,7 +1065,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         public Element GetElementByNameAndNameSpace(string ElementName, string ElementNameSpace)
         {
-            List<string> ElementSource = new List<string>();
+            List<string> ElementSource = [];
             if (AllNameSpaces.ContainsKey(ElementNameSpace))
             {
                 ElementSource = AllNameSpaces[ElementNameSpace];
@@ -1120,7 +1121,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void PopulateMessageInputPartsNameSpacesName(List<Part> messagePartsList, Dictionary<string, string> NameSpacesToInclude)
         {
             string NameSpaceName = string.Empty;
-            List<string> NameSpaceNames = new List<string>();
+            List<string> NameSpaceNames = [];
             foreach (Part part in messagePartsList)
             {
 
@@ -1144,19 +1145,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             string WorkURL = string.Empty;
             if (headNameSpace.StartsWith("http"))
             {
-                if (headNameSpace[headNameSpace.Length - 1] == '/')
+                if (headNameSpace[^1] == '/')
                 {
-                    headNameSpace = headNameSpace.Substring(0, headNameSpace.Length - 1);
+                    headNameSpace = headNameSpace[..^1];
                 }
 
                 int StartIndex = headNameSpace.LastIndexOf("/");
                 if (StartIndex != -1)
                 {
-                    headNameSpace = headNameSpace.Substring(StartIndex + 1);
+                    headNameSpace = headNameSpace[(StartIndex + 1)..];
                 }
                 if (headNameSpace.ToUpper().StartsWith("WWW"))
                 {
-                    WorkURL = headNameSpace.Substring(4);
+                    WorkURL = headNameSpace[4..];
                 }
                 else
                 {
@@ -1174,7 +1175,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 {
                     break;
                 }
-                if (WorkURL[i] == '.' || WorkURL[i] == '_')
+                if (WorkURL[i] is '.' or '_')
                 {
                     break;
                 }
@@ -1193,7 +1194,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     {
                         if (s.Any(c => char.IsDigit(c)))
                         {
-                            s = s.Substring(0, s.Length - 1) + j;
+                            s = s[..^1] + j;
                         }
                         else
                         {
@@ -1230,8 +1231,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         XmlSchema schema = XmlSchema.Read(reader, null);
                         if (!string.IsNullOrEmpty(schema.TargetNamespace) && !AllNameSpaces.ContainsKey(schema.TargetNamespace))
                         {
-                            List<string> AllNameSpaceURLs = new List<string>();
-                            AllNameSpaceURLs.Add(CompleteURL);
+                            List<string> AllNameSpaceURLs = [CompleteURL];
                             AllNameSpaces.Add(schema.TargetNamespace, AllNameSpaceURLs);
                             AllSourcesNameSpaces.Add(AllNameSpaceURLs, schema.TargetNamespace);
                         }
@@ -1278,13 +1278,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 if (item is XmlSchemaElement)
                 {
                     XmlSchemaElement XmlSchemaElement = item as XmlSchemaElement;
-                    Element Element = new Element();
-                    Element.Name = XmlSchemaElement.Name;
-                    Element.Source = GetSourceByReferanceType(XmlSchemaElement.SourceUri);
-                    Element.TargetNameSpace = XmlSchemaElement.QualifiedName.Namespace;
+                    Element Element = new Element
+                    {
+                        Name = XmlSchemaElement.Name,
+                        Source = GetSourceByReferanceType(XmlSchemaElement.SourceUri),
+                        TargetNameSpace = XmlSchemaElement.QualifiedName.Namespace,
 
-                    Element.Type = XmlSchemaElement.SchemaTypeName.Name;
-                    Element.TypeNameSpace = XmlSchemaElement.SchemaTypeName.Namespace;
+                        Type = XmlSchemaElement.SchemaTypeName.Name,
+                        TypeNameSpace = XmlSchemaElement.SchemaTypeName.Namespace
+                    };
 
                     ElementsList.Add(Element);
                     if (XmlSchemaElement.SchemaType is XmlSchemaComplexType)
@@ -1312,8 +1314,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
 
                     XmlSchemaParticle XmlSchemaParticle = XmlSchemaComplexType.Particle;
-                    List<ComplexTypeChild> ComplexTypeElementsList = new List<ComplexTypeChild>();
-                    List<ComplexTypeChild> ExtenstionComplexTypeElementsList = new List<ComplexTypeChild>();
+                    List<ComplexTypeChild> ComplexTypeElementsList = [];
+                    List<ComplexTypeChild> ExtenstionComplexTypeElementsList = [];
                     Extension ExtensionChild = null;
                     Restriction RestrictionChild = null;
                     if (XmlSchemaParticle is XmlSchemaSequence)
@@ -1344,9 +1346,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         if (XmlSchemaSimpleContent.Content is XmlSchemaSimpleContentExtension)
                         {
                             XmlSchemaSimpleContentExtension XmlSchemaSimpleContentExtension = XmlSchemaSimpleContent.Content as XmlSchemaSimpleContentExtension;
-                            Extension Extension = new Extension();
-                            Extension.BaseName = XmlSchemaSimpleContentExtension.BaseTypeName.Name;
-                            Extension.BaseNameSpace = XmlSchemaSimpleContentExtension.BaseTypeName.Namespace;
+                            Extension Extension = new Extension
+                            {
+                                BaseName = XmlSchemaSimpleContentExtension.BaseTypeName.Name,
+                                BaseNameSpace = XmlSchemaSimpleContentExtension.BaseTypeName.Namespace
+                            };
                             if (XmlSchemaSimpleContentExtension.Attributes.Count != 0)
                             {
                                 foreach (XmlSchemaAttribute Attribute in XmlSchemaSimpleContentExtension.Attributes)
@@ -1359,9 +1363,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         else if (XmlSchemaSimpleContent.Content is XmlSchemaSimpleContentRestriction)
                         {
                             XmlSchemaSimpleContentRestriction XmlSchemaSimpleContentRestriction = XmlSchemaSimpleContent.Content as XmlSchemaSimpleContentRestriction;
-                            Restriction Restriction = new Restriction();
-                            Restriction.BaseName = XmlSchemaSimpleContentRestriction.BaseTypeName.Name;
-                            Restriction.BaseNameSpace = XmlSchemaSimpleContentRestriction.BaseTypeName.Namespace;
+                            Restriction Restriction = new Restriction
+                            {
+                                BaseName = XmlSchemaSimpleContentRestriction.BaseTypeName.Name,
+                                BaseNameSpace = XmlSchemaSimpleContentRestriction.BaseTypeName.Namespace
+                            };
                             if (XmlSchemaSimpleContentRestriction.Attributes.Count != 0)
                             {
                                 foreach (XmlSchemaAttribute Attribute in XmlSchemaSimpleContentRestriction.Attributes)
@@ -1386,9 +1392,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         else if (XmlSchemaComplexContent.Content is XmlSchemaComplexContentRestriction)
                         {
                             XmlSchemaComplexContentRestriction XmlSchemaComplexContentRestriction = XmlSchemaComplexContent.Content as XmlSchemaComplexContentRestriction;
-                            Restriction Restriction = new Restriction();
-                            Restriction.BaseName = XmlSchemaComplexContentRestriction.BaseTypeName.Name;
-                            Restriction.BaseNameSpace = XmlSchemaComplexContentRestriction.BaseTypeName.Namespace;
+                            Restriction Restriction = new Restriction
+                            {
+                                BaseName = XmlSchemaComplexContentRestriction.BaseTypeName.Name,
+                                BaseNameSpace = XmlSchemaComplexContentRestriction.BaseTypeName.Namespace
+                            };
 
                             if (XmlSchemaComplexContentRestriction.Attributes.Count != 0)
                             {
@@ -1423,13 +1431,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     }
 
 
-                    ComplexType NewComplexType = new ComplexType();
-                    NewComplexType.Name = XmlSchemaComplexType.Name;
-                    NewComplexType.Source = GetSourceByReferanceType(XmlSchemaComplexType.SourceUri);
-                    NewComplexType.TargetNameSpace = XmlSchemaComplexType.QualifiedName.Namespace;
-                    NewComplexType.ComplexTypeElementsList = ComplexTypeElementsList;
-                    NewComplexType.Extension = ExtensionChild;
-                    NewComplexType.Restriction = RestrictionChild;
+                    ComplexType NewComplexType = new ComplexType
+                    {
+                        Name = XmlSchemaComplexType.Name,
+                        Source = GetSourceByReferanceType(XmlSchemaComplexType.SourceUri),
+                        TargetNameSpace = XmlSchemaComplexType.QualifiedName.Namespace,
+                        ComplexTypeElementsList = ComplexTypeElementsList,
+                        Extension = ExtensionChild,
+                        Restriction = RestrictionChild
+                    };
                     ComplexTypesList.Add(NewComplexType);
                 }
                 else if (item is XmlSchemaSimpleType)
@@ -1440,13 +1450,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         XmlSchemaSimpleTypeRestriction XmlSchemaSimpleTypeRestriction = XmlSchemaSimpleType.Content as XmlSchemaSimpleTypeRestriction;
                         Restriction Restriction = CreateRestriction(XmlSchemaSimpleTypeRestriction);
 
-                        ComplexType NewComplexType = new ComplexType();
-                        NewComplexType.Name = XmlSchemaSimpleType.Name;
-                        NewComplexType.Restriction = Restriction;
-                        NewComplexType.Source = GetSourceByReferanceType(XmlSchemaSimpleTypeRestriction.SourceUri);
-                        NewComplexType.TargetNameSpace = XmlSchemaSimpleType.QualifiedName.Namespace;
+                        ComplexType NewComplexType = new ComplexType
+                        {
+                            Name = XmlSchemaSimpleType.Name,
+                            Restriction = Restriction,
+                            Source = GetSourceByReferanceType(XmlSchemaSimpleTypeRestriction.SourceUri),
+                            TargetNameSpace = XmlSchemaSimpleType.QualifiedName.Namespace,
 
-                        NewComplexType.ComplexTypeElementsList = new List<ComplexTypeChild>();
+                            ComplexTypeElementsList = []
+                        };
                         ComplexTypesList.Add(NewComplexType);
                     }
                 }
@@ -1457,9 +1469,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private Extension CreateExtension(XmlSchemaComplexContentExtension XmlSchemaComplexContentExtension)
         {
-            Extension Extension = new Extension();
-            Extension.BaseName = XmlSchemaComplexContentExtension.BaseTypeName.Name;
-            Extension.BaseNameSpace = XmlSchemaComplexContentExtension.BaseTypeName.Namespace;
+            Extension Extension = new Extension
+            {
+                BaseName = XmlSchemaComplexContentExtension.BaseTypeName.Name,
+                BaseNameSpace = XmlSchemaComplexContentExtension.BaseTypeName.Namespace
+            };
             if (XmlSchemaComplexContentExtension.Attributes.Count != 0)
             {
                 foreach (XmlSchemaAttribute Attribute in XmlSchemaComplexContentExtension.Attributes)
@@ -1481,10 +1495,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private Restriction CreateRestriction(XmlSchemaSimpleTypeRestriction XmlSchemaSimpleTypeRestriction)
         {
-            Restriction Restriction = new Restriction();
-            Restriction.BaseName = XmlSchemaSimpleTypeRestriction.BaseTypeName.Name;
-            Restriction.BaseNameSpace = XmlSchemaSimpleTypeRestriction.BaseTypeName.Namespace;
-            List<string> Enumerations = new List<string>();
+            Restriction Restriction = new Restriction
+            {
+                BaseName = XmlSchemaSimpleTypeRestriction.BaseTypeName.Name,
+                BaseNameSpace = XmlSchemaSimpleTypeRestriction.BaseTypeName.Namespace
+            };
+            List<string> Enumerations = [];
             foreach (var Facet in XmlSchemaSimpleTypeRestriction.Facets)
             {
                 if (Facet is XmlSchemaEnumerationFacet)
@@ -1518,7 +1534,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private List<ComplexTypeChild> GetComplexTypeChildListFromXmlSchemaObjectCollection(XmlSchemaObjectCollection xmlSchemaObjectCollection)
         {
-            List<ComplexTypeChild> ComplexTypeElementsList = new List<ComplexTypeChild>();
+            List<ComplexTypeChild> ComplexTypeElementsList = [];
 
             foreach (object ChildElementObj in xmlSchemaObjectCollection)
             {
@@ -1607,7 +1623,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private List<ComplexTypeChild> GetElementListFromSchemaChoice(XmlSchemaChoice XmlSchemaChoice)
         {
-            List<ComplexTypeChild> ComplexTypeElementsList = new List<ComplexTypeChild>();
+            List<ComplexTypeChild> ComplexTypeElementsList = [];
             string GroupID = GenerateRandomGroupID();
             foreach (object ChoiseElementObj in XmlSchemaChoice.Items)
             {
@@ -1676,8 +1692,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private ComplexType CreateComplexType(XmlSchemaElement XmlSchemaElement, XmlSchemaComplexType XmlSchemaComplexType)
         {
-            ComplexType NewComplexType = new ComplexType();
-            NewComplexType.Name = XmlSchemaElement.Name;
+            ComplexType NewComplexType = new ComplexType
+            {
+                Name = XmlSchemaElement.Name
+            };
             if (NewComplexType.Name == "ArrayOf_tns3_WSMessageType")
             {
 
@@ -1722,7 +1740,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 XmlSchemaSimpleTypeRestriction XmlSchemaSimpleTypeRestriction = XmlSchemaSimpleType.Content as XmlSchemaSimpleTypeRestriction;
                 Restriction.BaseName = XmlSchemaSimpleTypeRestriction.BaseTypeName.Name;
                 Restriction.BaseNameSpace = XmlSchemaSimpleTypeRestriction.BaseTypeName.Namespace;
-                List<string> Enumerations = new List<string>();
+                List<string> Enumerations = [];
 
                 foreach (var Facet in XmlSchemaSimpleTypeRestriction.Facets)
                 {
@@ -1741,9 +1759,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     }
                 }
                 Restriction.Enumerations = Enumerations;
-                ComplexType NewComplexType = new ComplexType();
-                NewComplexType.Name = XmlSchemaSimpleType.Name;
-                NewComplexType.Restriction = Restriction;
+                ComplexType NewComplexType = new ComplexType
+                {
+                    Name = XmlSchemaSimpleType.Name,
+                    Restriction = Restriction
+                };
 
                 if (XmlSchemaSimpleType.SourceUri != null)
                 {
@@ -1756,7 +1776,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 //if (string.IsNullOrEmpty(NewComplexType.Source))
                 NewComplexType.TargetNameSpace = XmlSchemaSimpleType.QualifiedName.Namespace;
 
-                NewComplexType.ComplexTypeElementsList = new List<ComplexTypeChild>();
+                NewComplexType.ComplexTypeElementsList = [];
                 return NewComplexType;
             }
             else
@@ -1768,9 +1788,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private Element CreateElement(XmlSchemaElement xmlSchemaElement)
         {
-            Element Element = new Element();
-
-            Element.Name = xmlSchemaElement.Name;
+            Element Element = new Element
+            {
+                Name = xmlSchemaElement.Name
+            };
             if (xmlSchemaElement.SourceUri != null)
             {
                 Element.Source = GetSourceByReferanceType(xmlSchemaElement.SourceUri);
@@ -1805,10 +1826,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private ComplexTypeChild CreateRefElement(XmlSchemaElement xmlSchemaElement)
         {
-            RefElement RefElement = new RefElement();
-
-            RefElement.Name = xmlSchemaElement.RefName.Name;
-            RefElement.RefNameSpace = xmlSchemaElement.RefName.Namespace;
+            RefElement RefElement = new RefElement
+            {
+                Name = xmlSchemaElement.RefName.Name,
+                RefNameSpace = xmlSchemaElement.RefName.Namespace
+            };
 
             if (xmlSchemaElement.SourceUri != null)
             {
@@ -1831,7 +1853,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             int lastFolderIndexBackSlash = URL.LastIndexOf(@"\");
             int lastFolderInderSlash = URL.LastIndexOf("/");
 
-            containingFolder = URL.Substring(0, Math.Max(lastFolderIndexBackSlash, lastFolderInderSlash));
+            containingFolder = URL[..Math.Max(lastFolderIndexBackSlash, lastFolderInderSlash)];
             return containingFolder;
         }
 
@@ -2063,7 +2085,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void PopulateAllURLsList()
         {
 
-            List<Tuple<string, string>> InnerImportsURLs = new List<Tuple<string, string>>();
+            List<Tuple<string, string>> InnerImportsURLs = [];
 
             foreach (XmlSchemasExtended XMLSExtended in mSchemasList)
             {
@@ -2116,7 +2138,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         int ContainingFolderLeanth = URLTuple.Item2.Length;
                         if (ContainingFolderLeanth < directory.Length)
                         {
-                            relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
+                            relativeDirectories = directory[ContainingFolderLeanth..].TrimStart('\\');
                         }
                     }
                     GetAllURLsFFromSchemaItems(Items, relativeDirectories, URLTuple.Item2);
@@ -2186,7 +2208,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 int ContainingFolderLeanth = containigFolder.Length;
                 if (ContainingFolderLeanth < directory.Length && !directory.StartsWith("http"))
                 {
-                    relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
+                    relativeDirectories = directory[ContainingFolderLeanth..].TrimStart('\\');
                 }
             }
             GetAllURLsFFromSchemaItems(Items, relativeDirectories, containigFolder);
@@ -2230,7 +2252,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 LastSlash = URL.LastIndexOf("/");
                 if (LastSlash != -1)
                 {
-                    result = URL.Substring(0, LastSlash);
+                    result = URL[..LastSlash];
                 }
             }
             else
@@ -2263,7 +2285,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     string substring = GetSubstringByIndex(Nodes, i, j);
                     int SubStringIndex = Path.IndexOf(substring);
-                    string StringToCheck = Path.Substring(SubStringIndex + substring.Length);
+                    string StringToCheck = Path[(SubStringIndex + substring.Length)..];
                     if (StringToCheck.StartsWith(substring))
                     {
                         return true;
@@ -2361,12 +2383,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
     public class Restriction
     {
         public string BaseName;
-        public List<string> Enumerations = new List<string>();
+        public List<string> Enumerations = [];
         public string MinLeanth;
         public string Source;
         public string BaseNameSpace;
-        public List<ComplexTypeChild> ComplexTypeElementsList = new List<ComplexTypeChild>();
-        public List<string> Attributes = new List<string>();
+        public List<ComplexTypeChild> ComplexTypeElementsList = [];
+        public List<string> Attributes = [];
     }
 
     public class Element : ComplexTypeChild
@@ -2382,8 +2404,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
     public class Extension
     {
         public string BaseName;
-        public List<string> Attributes = new List<string>();
-        public List<ComplexTypeChild> ComplexTypeElementsList = new List<ComplexTypeChild>();
+        public List<string> Attributes = [];
+        public List<ComplexTypeChild> ComplexTypeElementsList = [];
         public string Source;
         public string BaseNameSpace;
     }
@@ -2399,10 +2421,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
     {
         public string Name;
         public string Source;
-        public List<ComplexTypeChild> ComplexTypeElementsList = new List<ComplexTypeChild>();
+        public List<ComplexTypeChild> ComplexTypeElementsList = [];
         public Extension Extension;
         public Restriction Restriction;
-        public List<string> Attributes = new List<string>();
+        public List<string> Attributes = [];
         public string TargetNameSpace { get; set; }
     }
 

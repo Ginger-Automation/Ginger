@@ -101,9 +101,9 @@ namespace Ginger.ALM
 
         private void CurrentAlmConfigurations_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(GingerCoreNET.ALMLib.ALMConfig.ALMUserName) ||
-                 e.PropertyName == nameof(GingerCoreNET.ALMLib.ALMConfig.ALMPassword) ||
-                 e.PropertyName == nameof(GingerCoreNET.ALMLib.ALMConfig.ALMServerURL))
+            if (e.PropertyName is (nameof(GingerCoreNET.ALMLib.ALMConfig.ALMUserName)) or
+                 (nameof(GingerCoreNET.ALMLib.ALMConfig.ALMPassword)) or
+                 (nameof(GingerCoreNET.ALMLib.ALMConfig.ALMServerURL)))
             {
                 if (ALMIntegration.Instance.AlmCore != null)
                 {
@@ -122,7 +122,7 @@ namespace Ginger.ALM
             {
                 LoginServerButton.IsEnabled = true;
             }
-            else if(!string.IsNullOrEmpty(PasswordTextBox.Password) && !string.IsNullOrEmpty(ServerURLTextBox.Text) && xUsername.Visibility == Visibility.Collapsed)
+            else if (!string.IsNullOrEmpty(PasswordTextBox.Password) && !string.IsNullOrEmpty(ServerURLTextBox.Text) && xUsername.Visibility == Visibility.Collapsed)
             {
                 LoginServerButton.IsEnabled = true;
             }
@@ -155,7 +155,7 @@ namespace Ginger.ALM
             {
                 LoginServerButton.Content = "Get Projects Details";
             }
-            if (CurrentAlmConfigurations.AlmType == eALMType.RQM || CurrentAlmConfigurations.AlmType == eALMType.Azure)
+            if (CurrentAlmConfigurations.AlmType is eALMType.RQM or eALMType.Azure)
             {
                 ALMDomainSelectionPanel.Visibility = Visibility.Collapsed;
             }
@@ -248,18 +248,18 @@ namespace Ginger.ALM
             //Removing ending "/" from the ServerURL for JIRA
             if (CurrentAlmConfigurations.AlmType == eALMType.Jira && CurrentAlmConfigurations.ALMServerURL.EndsWith("/"))
             {
-                CurrentAlmConfigurations.ALMServerURL = CurrentAlmConfigurations.ALMServerURL.Substring(0, CurrentAlmConfigurations.ALMServerURL.LastIndexOf("/"));
+                CurrentAlmConfigurations.ALMServerURL = CurrentAlmConfigurations.ALMServerURL[..CurrentAlmConfigurations.ALMServerURL.LastIndexOf("/")];
             }
             bool almConn = false;
             ALMIntegration.Instance.UpdateALMType(CurrentAlmConfigurations.AlmType);
 
-            if (LoginServerButton.Content.ToString() == "Get Projects Details" || LoginServerButton.Content.ToString() == "Connect ALM Server")
+            if (LoginServerButton.Content.ToString() is "Get Projects Details" or "Connect ALM Server")
             {
                 almConn = ALMIntegration.Instance.TestALMServerConn(almConectStyle);
                 if (almConn)
                 {
-                   RefreshDomainList(almConectStyle);
-                   RefreshProjectsList();
+                    RefreshDomainList(almConectStyle);
+                    RefreshProjectsList();
                 }
                 else
                 {
@@ -390,7 +390,7 @@ namespace Ginger.ALM
 
         private void ConnectProject()
         {
-            if (ConnectProjectButton.Content.ToString() == "Save Project Mapping" || ConnectProjectButton.Content.ToString() == "Connect")
+            if (ConnectProjectButton.Content.ToString() is "Save Project Mapping" or "Connect")
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 if (ALMIntegration.Instance.TestALMProjectConn(almConectStyle))
@@ -423,7 +423,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             if (ALMIntegration.Instance.TestALMProjectConn(almConectStyle))
             {
-                if ((almConectStyle == eALMConnectType.Manual) || (almConectStyle == eALMConnectType.SettingsPage))
+                if (almConectStyle is eALMConnectType.Manual or eALMConnectType.SettingsPage)
                 {
                     SaveALMConfigs();
                 }
@@ -642,7 +642,7 @@ namespace Ginger.ALM
                     RestAPICheckBox.IsEnabled = false;
                     TokenCheckBox.Visibility = Visibility.Collapsed;
                     PasswordLabel.Content = "Personal Access Token :";
-                    
+
                     break;
 
                 default:
@@ -766,7 +766,7 @@ namespace Ginger.ALM
             if (ServerURLTextBox.Text.ToLower().Contains("qcbin"))
             {
                 //remove rest of URL
-                ServerURLTextBox.Text = ServerURLTextBox.Text.Substring(0, ServerURLTextBox.Text.ToLower().IndexOf("qcbin") + 5);
+                ServerURLTextBox.Text = ServerURLTextBox.Text[..(ServerURLTextBox.Text.ToLower().IndexOf("qcbin") + 5)];
             }
 
             SetControls();
@@ -852,7 +852,7 @@ namespace Ginger.ALM
             {
                 ToolTipService.SetToolTip(ServerURLTextBox, new ToolTip { Content = "Example: http://server", Style = FindResource("ToolTipStyle") as Style });
             }
-            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC || CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RALLY)
+            if (CurrentAlmConfigurations.AlmType is GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC or GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RALLY)
             {
                 ToolTipService.SetToolTip(ServerURLTextBox, new ToolTip { Content = "Example: http://server:8080/almbin", Style = FindResource("ToolTipStyle") as Style });
             }

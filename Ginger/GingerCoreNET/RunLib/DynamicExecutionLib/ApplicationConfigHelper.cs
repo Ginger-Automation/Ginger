@@ -29,8 +29,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
     {
         private static void ValidateApplicationConfig(ApplicationConfig ApplicationConfig)
         {
-            if(ApplicationConfig == null || (string.IsNullOrEmpty(ApplicationConfig.Name)))
-            { 
+            if (ApplicationConfig == null || (string.IsNullOrEmpty(ApplicationConfig.Name)))
+            {
                 throw new ArgumentException("Both Target Application GUID and Application Name cannot be null or empty. Atleast one of them should have a value");
             }
         }
@@ -38,11 +38,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         private static ePlatformType GetTargetAppPlatformFromGinger(ApplicationConfig application)
         {
 
-             var TargetApplicationInGinger = WorkSpace.Instance.Solution.ApplicationPlatforms
-                .FirstOrDefault((ApplicationPlatform) =>
-                {
-                    return ApplicationPlatform.AppName.Equals(application.Name);
-                });
+            var TargetApplicationInGinger = WorkSpace.Instance.Solution.ApplicationPlatforms
+               .FirstOrDefault((ApplicationPlatform) =>
+               {
+                   return ApplicationPlatform.AppName.Equals(application.Name);
+               });
 
             return TargetApplicationInGinger == null
                 ? throw new InvalidOperationException($"The Application Platform : {application.Name} does not exist in the ginger solution. Please make sure that the Application Platform exists in the ginger solution")
@@ -59,16 +59,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 Url = application.URL,
                 Platform = GetTargetAppPlatformFromGinger(application),
             };
-            
+
             return envApplication;
         }
 
 
-        public static void UpdateEnvApplicationFromConfig(ref EnvApplication AppFromGinger , ApplicationConfig App)
+        public static void UpdateEnvApplicationFromConfig(ref EnvApplication AppFromGinger, ApplicationConfig App)
         {
             ValidateApplicationConfig(App);
 
-            AppFromGinger.Platform = (AppFromGinger.Platform.Equals(ePlatformType.NA))? ePlatformType.NA  :  GetTargetAppPlatformFromGinger(App);
+            AppFromGinger.Platform = (AppFromGinger.Platform.Equals(ePlatformType.NA)) ? ePlatformType.NA : GetTargetAppPlatformFromGinger(App);
             AppFromGinger.AppVersion = App.AppVersion;
             AppFromGinger.Url = App.URL;
             AppFromGinger.Name = App.Name;

@@ -56,7 +56,7 @@ namespace Ginger.AnalyzerLib
         public BusinessFlow BusinessFlow { get; set; }
         public Solution Solution { get; set; }
 
-        public List<ActReturnValue> ReturnValues { get; set; } = new List<ActReturnValue>();
+        public List<ActReturnValue> ReturnValues { get; set; } = [];
 
         public static List<AnalyzerItemBase> Analyze(BusinessFlow businessFlow)
         {
@@ -65,9 +65,7 @@ namespace Ginger.AnalyzerLib
 
         public static List<AnalyzerItemBase> Analyze(BusinessFlow businessFlow, Check checks)
         {
-            List<AnalyzerItemBase> issues = new();
-
-            issues.AddRange(AnalyzeIndependently(businessFlow, checks));
+            List<AnalyzerItemBase> issues = [.. AnalyzeIndependently(businessFlow, checks)];
             AnalyzeEnvApplication.AnalyzeEnvAppInBusinessFlows(businessFlow, issues);
             AnalyzeValueExpInBusinessFlow(businessFlow, ref issues);
             return issues;
@@ -80,10 +78,11 @@ namespace Ginger.AnalyzerLib
 
         public static List<AnalyzerItemBase> Analyze(BusinessFlow businessFlow, Solution solution, Check checks)
         {
-            List<AnalyzerItemBase> issues = new();
-
-            issues.AddRange(AnalyzeWithSolutionDependency(businessFlow, solution, checks));
-            issues.AddRange(AnalyzeIndependently(businessFlow, checks));
+            List<AnalyzerItemBase> issues =
+            [
+                .. AnalyzeWithSolutionDependency(businessFlow, solution, checks),
+                .. AnalyzeIndependently(businessFlow, checks),
+            ];
             AnalyzeEnvApplication.AnalyzeEnvAppInBusinessFlows(businessFlow, issues);
             AnalyzeValueExpInBusinessFlow(businessFlow, ref issues);
             return issues;
@@ -91,7 +90,7 @@ namespace Ginger.AnalyzerLib
 
         private static List<AnalyzerItemBase> AnalyzeWithSolutionDependency(BusinessFlow businessFlow, Solution solution, Check checks)
         {
-            List<AnalyzerItemBase> issues = new();
+            List<AnalyzerItemBase> issues = [];
 
             if (checks.AreAllFlagsSet(Check.MissingTargetApplications) && HasMissingTargetApplications(businessFlow, solution, out AnalyzeBusinessFlow issue))
             {
@@ -103,7 +102,7 @@ namespace Ginger.AnalyzerLib
 
         private static List<AnalyzerItemBase> AnalyzeIndependently(BusinessFlow businessFlow, Check checks)
         {
-            List<AnalyzerItemBase> issues = new();
+            List<AnalyzerItemBase> issues = [];
 
             if (checks.AreAllFlagsSet(Check.NoActivities) && HasNoActivities(businessFlow, out AnalyzeBusinessFlow issue))
             {
@@ -192,7 +191,7 @@ namespace Ginger.AnalyzerLib
 
         public static bool HasMissingMandatoryInputValues(BusinessFlow businessFlow, out List<AnalyzeBusinessFlow> issueList)
         {
-            issueList = new();
+            issueList = [];
             foreach (VariableBase var in businessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true, includeOnlyMandatoryInputs: true))
             {
                 if (var.SetAsInputValue && var.MandatoryInput && string.IsNullOrWhiteSpace(var.Value) && var.MappedOutputType == VariableBase.eOutputType.None)
@@ -227,7 +226,7 @@ namespace Ginger.AnalyzerLib
         {
             issue = new()
             {
-                ReturnValues = new()
+                ReturnValues = []
             };
 
             IEnumerable<IAct> actions = businessFlow.Activities.SelectMany(x => x.Acts);
@@ -259,7 +258,7 @@ namespace Ginger.AnalyzerLib
 
         public static bool HasInvalidInputValueRules(BusinessFlow businessFlow, out List<AnalyzeBusinessFlow> issueList)
         {
-            issueList = new();
+            issueList = [];
 
             ObservableList<VariableBase> bfInputVariables = businessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true);
 
@@ -313,7 +312,7 @@ namespace Ginger.AnalyzerLib
 
                 return true;
             }
-            else if (sourceVariable != null && sourceVariable is VariableSelectionList sourceVariableSelectionList)
+            else if (sourceVariable is not null and VariableSelectionList sourceVariableSelectionList)
             {
                 if (!sourceVariableSelectionList.OptionalValuesList.Any(x => x.Value == rule.TriggerValue))
                 {
@@ -371,7 +370,7 @@ namespace Ginger.AnalyzerLib
 
             else if (targetVariable is VariableSelectionList targetVariableSelectionList)
             {
-                if (rule.OperationType == InputVariableRule.eInputVariableOperation.SetValue || rule.OperationType == InputVariableRule.eInputVariableOperation.SetOptionalValues)
+                if (rule.OperationType is InputVariableRule.eInputVariableOperation.SetValue or InputVariableRule.eInputVariableOperation.SetOptionalValues)
                 {
                     if (!targetVariableSelectionList.OptionalValuesList.Any(x => string.Equals(x.Value, rule.OperationValue)))
                     {
@@ -488,7 +487,7 @@ namespace Ginger.AnalyzerLib
 
         public static void AnalyzeValueExpInBusinessFlow(BusinessFlow businessFlow, ref List<AnalyzerItemBase> issuesList)
         {
-            if(!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(businessFlow.RunDescription, businessFlow.Environment))
+            if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(businessFlow.RunDescription, businessFlow.Environment))
             {
 
                 AnalyzeBusinessFlow issue = new()
@@ -509,7 +508,7 @@ namespace Ginger.AnalyzerLib
                 issuesList.Add(issue);
             }
 
-            var FilteredVariables =  businessFlow.Variables
+            var FilteredVariables = businessFlow.Variables
                 .Where((variable) =>
             {
                 return variable is VariableDynamic variableDynamic && !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(variableDynamic.ValueExpression, businessFlow.Environment);
@@ -533,7 +532,7 @@ namespace Ginger.AnalyzerLib
                     ItemClass = "VariableDynamic",
                     Status = eStatus.NeedFix
                 };
-                issuesList.Add(issue);  
+                issuesList.Add(issue);
             }
 
 

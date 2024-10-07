@@ -20,23 +20,17 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Telemetry;
-using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
-using Amdocs.Ginger.CoreNET.BPMN.Models;
-using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using Ginger.Activities;
 using Ginger.ALM;
 using Ginger.Repository;
-using GingerCore;
 using GingerCore.Activities;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -177,7 +171,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     }
                     exportPath = activitiesGroupToBPMNExporter.Export();
                 }
-                
+
                 string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
 
                 Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeExportPath);

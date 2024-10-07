@@ -92,11 +92,11 @@ namespace GingerCore.DragDrop
                 }
                 else if (this != null)
                 {
-                    await this.Dispatcher.BeginInvoke((Action)(() =>
+                    await this.Dispatcher.BeginInvoke(() =>
                     {
                         this.Top = p.Y + 2;
                         this.Left = p.X + 2;
-                    }));
+                    });
 
                 }
             }
@@ -119,9 +119,11 @@ namespace GingerCore.DragDrop
 
             tbDragText.Text = dragText;
 
-            ImageBrush imgBrush = new ImageBrush();
-            imgBrush.ImageSource =
-                new BitmapImage(new Uri(img));
+            ImageBrush imgBrush = new ImageBrush
+            {
+                ImageSource =
+                new BitmapImage(new Uri(img))
+            };
             DragImg.Fill = imgBrush;
         }
 
@@ -203,7 +205,7 @@ namespace GingerCore.DragDrop
             DoubleAnimationUsingKeyFrames day;
 
             // animate window move in horizontal way
-            if (LocationLockHorizontal == AlignmentX.Center || LocationLockHorizontal == AlignmentX.Right)
+            if (LocationLockHorizontal is AlignmentX.Center or AlignmentX.Right)
             {
                 dax = new DoubleAnimationUsingKeyFrames();
                 dax.KeyFrames.Add(new EasingDoubleKeyFrame(this.Left, KeyTime.FromTimeSpan(new TimeSpan(0, 0, 0, 0, 00))));
@@ -226,7 +228,7 @@ namespace GingerCore.DragDrop
             }
 
             // animate window move vertical 
-            if (LocationLockVertical == AlignmentY.Center || LocationLockVertical == AlignmentY.Bottom)
+            if (LocationLockVertical is AlignmentY.Center or AlignmentY.Bottom)
             {
                 day = new DoubleAnimationUsingKeyFrames();
                 day.KeyFrames.Add(new EasingDoubleKeyFrame(this.Top, KeyTime.FromTimeSpan(new TimeSpan(0, 0, 0, 0, 00))));

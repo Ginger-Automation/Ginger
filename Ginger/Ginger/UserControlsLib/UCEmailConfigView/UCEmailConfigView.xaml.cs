@@ -25,7 +25,6 @@ using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -106,7 +105,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
         {
             xSMTPPasswordTextBox.LostFocus += (_, _) => xSMTPPasswordTextBox.Text = EncryptPassword(xSMTPPasswordTextBox.Text);
             xCertificatePasswordTextBox.LostFocus += (_, _) => xCertificatePasswordTextBox.Text = EncryptPassword(xCertificatePasswordTextBox.Text);
-            xUserPasswordTextBox.LostFocus += (_, _) => xUserPasswordTextBox.Text = EncryptPassword(xUserPasswordTextBox.Text);                     
+            xUserPasswordTextBox.LostFocus += (_, _) => xUserPasswordTextBox.Text = EncryptPassword(xUserPasswordTextBox.Text);
         }
 
         private string EncryptPassword(string password)
@@ -186,7 +185,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
 
         private void SetMaxBodyCharCount(int maxBodyCharCount)
         {
-            if (maxBodyCharCount <= 0 || maxBodyCharCount == int.MaxValue)
+            if (maxBodyCharCount is <= 0 or int.MaxValue)
             {
                 return;
             }
@@ -224,7 +223,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             AttachmentGridBindingMap bindingMap = options.AttachmentGridBindingMap;
 
             GridViewDef gridViewDef = new(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> gridColsView = new();
+            ObservableList<GridColView> gridColsView = [];
             gridViewDef.GridColsView = gridColsView;
 
             if (isMultipleFileTypeSupported)
@@ -310,7 +309,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                     throw new NotImplementedException($"logic for setting {defaultReadmailMethod} as default Raedemail method is not implemented");
             }
         }
-        
+
         private void InitializeHasAttachmentsComboBoxItems()
         {
             xHasAttachmentsComboBox.BindControl(Enum.GetValues<EmailReadFilters.eHasAttachmentsFilter>());
@@ -502,10 +501,11 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
 
         private void xBrowseCertificateButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
-
-            openFileDialog.DefaultExt = "*.crt";
-            openFileDialog.Filter = "CRT Files (*.crt)|*.crt";
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog
+            {
+                DefaultExt = "*.crt",
+                Filter = "CRT Files (*.crt)|*.crt"
+            };
             string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -532,7 +532,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                     string newFileName = System.IO.Path.GetFileNameWithoutExtension(destinationFilePath);
                     if (newFileName.IndexOf(copySufix) != -1)
                     {
-                        newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                        newFileName = newFileName[..newFileName.IndexOf(copySufix)];
                     }
                     newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destinationFilePath);
                     destinationFilePath = System.IO.Path.Combine(targetPath, newFileName);

@@ -16,19 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Ginger.SolutionWindows;
 using Ginger.UserControls;
-using GingerCore;
 using GingerCore.Environments;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
-using System;
-using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
-using Ginger.Environments.AddEnvironmentWizardLib;
 
 namespace Ginger.Environments.GingerOpsEnvWizardLib
 {
@@ -42,11 +33,15 @@ namespace Ginger.Environments.GingerOpsEnvWizardLib
         public GingerOpsApplicationPage()
         {
             InitializeComponent();
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ProjEnvironment.Name), Header = "Environment", WidthWeight = 40 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ProjEnvironment.GingerOpsStatus), Header = "Status", WidthWeight = 40 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ProjEnvironment.GingerOpsRemark), Header = "Remark", WidthWeight = 60 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ProjEnvironment.Name), Header = "Environment", WidthWeight = 40 },
+                new GridColView() { Field = nameof(ProjEnvironment.GingerOpsStatus), Header = "Status", WidthWeight = 40 },
+                new GridColView() { Field = nameof(ProjEnvironment.GingerOpsRemark), Header = "Remark", WidthWeight = 60 },
+            ]
+            };
             SelectApplicationGrid.SetAllColumnsDefaultView(view);
             SelectApplicationGrid.InitViewItems();
         }

@@ -95,8 +95,8 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
-            ResourceType resource = (ResourceType)AlmDataContractsStd.Enums.ResourceType.TEST_RUN;
-            ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, (AlmDataContractsStd.Enums.ResourceType)resource);
+            ResourceType resource = ResourceType.TEST_RUN;
+            ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, resource);
             return ExportToQCRestAPI.ExportExceutionDetailsToALM(bizFlow, ref result, runFields, exectutedFromAutomateTab, publishToALMConfig);
         }
 
@@ -136,7 +136,7 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType = AlmDataContractsStd.Enums.ResourceType.ALL)
         {
-            return UpdatedAlmFields(ImportFromQCRest.GetALMItemFields((ResourceType)resourceType));
+            return UpdatedAlmFields(ImportFromQCRest.GetALMItemFields(resourceType));
         }
     }
 }

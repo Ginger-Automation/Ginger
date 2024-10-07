@@ -48,7 +48,7 @@ namespace GingerCore.ALM.Qtest
         public static QtestTestSuite ImportTestSuiteData(QtestTestSuite TS, long projectId)
         {
             QTestAPIStd.TestsuiteApi testsuiteApi = new QTestAPIStd.TestsuiteApi(connObj.Configuration);
-            QTestAPIStdModel.TestSuiteWithCustomFieldResource testSuite = testsuiteApi.GetTestSuite(projectId, (long)Convert.ToInt32(TS.ID));
+            QTestAPIStdModel.TestSuiteWithCustomFieldResource testSuite = testsuiteApi.GetTestSuite(projectId, Convert.ToInt32(TS.ID));
             return TS;
         }
 
@@ -64,11 +64,13 @@ namespace GingerCore.ALM.Qtest
             //Get the TC design steps
             foreach (QtestTestStep tsStep in tsTest.Steps)
             {
-                QtestTestStep newtsStep = new QtestTestStep();
-                newtsStep.StepID = tsStep.StepID.ToString();
-                newtsStep.StepName = tsStep.StepName;
-                newtsStep.Description = tsStep.Description;
-                newtsStep.Expected = tsStep.Expected;
+                QtestTestStep newtsStep = new QtestTestStep
+                {
+                    StepID = tsStep.StepID.ToString(),
+                    StepName = tsStep.StepName,
+                    Description = tsStep.Description,
+                    Expected = tsStep.Expected
+                };
                 newTSTest.Steps.Add(newtsStep);
             }
 
@@ -76,23 +78,25 @@ namespace GingerCore.ALM.Qtest
             try
             {
                 List<QtestTestRun> TSTestRuns = GetListTSTestRuns(tsTest);
-                newTSTest.Runs = new List<QtestTestRun>();
+                newTSTest.Runs = [];
                 foreach (Run run in TSTestRuns)
                 {
-                    QtestTestRun newtsRun = new QtestTestRun();
-                    newtsRun.RunID = run.ID.ToString();
-                    newtsRun.RunName = run.Name;
-                    newtsRun.Status = run.Status;
-                    newtsRun.ExecutionDate = (run["RN_EXECUTION_DATE"]).ToString();
-                    newtsRun.ExecutionTime = (run["RN_EXECUTION_TIME"]).ToString();
-                    newtsRun.Tester = (run["RN_TESTER_NAME"]).ToString();
+                    QtestTestRun newtsRun = new QtestTestRun
+                    {
+                        RunID = run.ID.ToString(),
+                        RunName = run.Name,
+                        Status = run.Status,
+                        ExecutionDate = (run["RN_EXECUTION_DATE"]).ToString(),
+                        ExecutionTime = (run["RN_EXECUTION_TIME"]).ToString(),
+                        Tester = (run["RN_TESTER_NAME"]).ToString()
+                    };
                     newTSTest.Runs.Add(newtsRun);
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
-                newTSTest.Runs = new List<QtestTestRun>();
+                newTSTest.Runs = [];
             }
 
             return newTSTest;
@@ -100,7 +104,7 @@ namespace GingerCore.ALM.Qtest
 
         private static List<QtestTestRun> GetListTSTestRuns(QtestTest tsTest)
         {
-            return new List<QtestTestRun>();
+            return [];
         }
 
         public static BusinessFlow ConvertQtestTestSuiteToBF(QtestTestSuite testSuite)
@@ -113,13 +117,15 @@ namespace GingerCore.ALM.Qtest
                 }
 
                 //Create Business Flow
-                BusinessFlow busFlow = new BusinessFlow();
-                busFlow.Name = testSuite.Name;
-                busFlow.ExternalID = testSuite.ID;
-                busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Activities = new ObservableList<Activity>();
-                busFlow.Variables = new ObservableList<VariableBase>();
-                Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
+                BusinessFlow busFlow = new BusinessFlow
+                {
+                    Name = testSuite.Name,
+                    ExternalID = testSuite.ID,
+                    Status = BusinessFlow.eBusinessFlowStatus.Development,
+                    Activities = [],
+                    Variables = []
+                };
+                Dictionary<string, string> busVariables = [];//will store linked variables
 
                 //Create Activities Group + Activities for each TC
                 foreach (QtestTest tc in testSuite.Tests)
@@ -159,8 +165,10 @@ namespace GingerCore.ALM.Qtest
                     }
                     else //TC not exist in Ginger repository so create new one
                     {
-                        tcActivsGroup = new ActivitiesGroup();
-                        tcActivsGroup.Name = tc.TestName;
+                        tcActivsGroup = new ActivitiesGroup
+                        {
+                            Name = tc.TestName
+                        };
                         if (tc.LinkedTestID == null || tc.LinkedTestID == string.Empty)
                         {
                             tcActivsGroup.ExternalID = tc.TestID;
@@ -186,11 +194,11 @@ namespace GingerCore.ALM.Qtest
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                            ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
+                                stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                                 // in any case update description/expected/name - even if "step" was taken from repository
                                 stepActivity.Description = StripHTML(step.Description);
                                 stepActivity.Expected = StripHTML(step.Expected);
@@ -204,12 +212,14 @@ namespace GingerCore.ALM.Qtest
                         }
                         else//Step not exist in Ginger repository so create new one
                         {
-                            stepActivity = new Activity();
-                            stepActivity.ActivityName = step.StepName;
-                            stepActivity.ExternalID = step.StepID;
-                            stepActivity.ExternalID2 = step.CalledTestCaseId;
-                            stepActivity.Description = step.Description;
-                            stepActivity.Expected = step.Expected;
+                            stepActivity = new Activity
+                            {
+                                ActivityName = step.StepName,
+                                ExternalID = step.StepID,
+                                ExternalID2 = step.CalledTestCaseId,
+                                Description = step.Description,
+                                Expected = step.Expected
+                            };
 
                             toAddStepActivity = true;
                         }
@@ -228,9 +238,11 @@ namespace GingerCore.ALM.Qtest
                             {
                                 stepActivity.Variables.Remove(stepActivityVar);
                             }
-                            stepActivityVar = new VariableSelectionList();
-                            stepActivityVar.Name = step.Params.Name;
-                            ObservableList<OptionalValue> optionalValuesList = new ObservableList<OptionalValue>();
+                            stepActivityVar = new VariableSelectionList
+                            {
+                                Name = step.Params.Name
+                            };
+                            ObservableList<OptionalValue> optionalValuesList = [];
                             step.Params.Values.ForEach(z => optionalValuesList.Add(new OptionalValue(z)));
                             (stepActivityVar).OptionalValuesList = optionalValuesList;
                             (stepActivityVar).SetValue(step.Params.Value);
@@ -245,12 +257,12 @@ namespace GingerCore.ALM.Qtest
                         foreach (QtestTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
-                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                             if (actIdent == null || actIdent.IdentifiedActivity == null)
                             {
                                 break; // something wrong- shouldn't be null
                             }
-                            Activity act = (Activity)actIdent.IdentifiedActivity;
+                            Activity act = actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -272,7 +284,7 @@ namespace GingerCore.ALM.Qtest
                                     break;
                                 }
                             }
-                            ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                            ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                             if (identOnPlace.ActivityGuid != act.Guid)
                             {
                                 //replace places in group
@@ -295,8 +307,10 @@ namespace GingerCore.ALM.Qtest
                     foreach (KeyValuePair<string, string> var in busVariables)
                     {
                         //add as String param
-                        VariableString busVar = new VariableString();
-                        busVar.Name = var.Key;
+                        VariableString busVar = new VariableString
+                        {
+                            Name = var.Key
+                        };
                         (busVar).InitialStringValue = var.Value;
                         busFlow.AddVariable(busVar);
                     }
@@ -317,10 +331,10 @@ namespace GingerCore.ALM.Qtest
             {
                 return;
             }
-            Dictionary<string, string> busVariables = new Dictionary<string, string>();
+            Dictionary<string, string> busVariables = [];
 
             int startGroupActsIndxInBf = 0;
-            Dictionary<string, int> activityGroupsToRemoveIndexes = new Dictionary<string, int>();
+            Dictionary<string, int> activityGroupsToRemoveIndexes = [];
             foreach (QtestTest tc in tcsList)
             {
                 var activitiesToRemove = busFlow.Activities.Where(x => x.ActivitiesGroupID == tc.TestName).ToList();
@@ -349,8 +363,10 @@ namespace GingerCore.ALM.Qtest
                 activityGroupsToRemoveIndexes.TryGetValue(tc.TestID, out activityGroupToRemoveIndex);
 
                 //check if the TC is already exist in repository
-                ActivitiesGroup tcActivsGroup = new ActivitiesGroup();
-                tcActivsGroup.Name = tc.TestName;
+                ActivitiesGroup tcActivsGroup = new ActivitiesGroup
+                {
+                    Name = tc.TestName
+                };
                 if (tc.LinkedTestID == null || tc.LinkedTestID == string.Empty)
                 {
                     tcActivsGroup.ExternalID = tc.TestID;
@@ -371,15 +387,15 @@ namespace GingerCore.ALM.Qtest
                     bool toAddStepActivity = false;
 
                     //check if mapped activity exist in repository
-                    Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
+                    Activity repoStepActivity = GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
                     if (repoStepActivity != null)
                     {
                         //check if it is part of the Activities Group
-                        ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                        ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                         if (groupStepActivityIdent != null)
                         {
                             //already in Activities Group so get link to it
-                            stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
+                            stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                         }
                         else//not in ActivitiesGroup so get instance from repo
                         {
@@ -390,11 +406,13 @@ namespace GingerCore.ALM.Qtest
                     }
                     else//Step not exist in Ginger repository so create new one
                     {
-                        stepActivity = new Activity();
-                        stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
-                        stepActivity.ExternalID = step.StepID;
-                        stepActivity.Description = StripHTML(step.Description);
-                        stepActivity.Expected = StripHTML(step.Expected);
+                        stepActivity = new Activity
+                        {
+                            ActivityName = tc.TestName + ">" + step.StepName,
+                            ExternalID = step.StepID,
+                            Description = StripHTML(step.Description),
+                            Expected = StripHTML(step.Expected)
+                        };
 
                         toAddStepActivity = true;
                     }
@@ -406,7 +424,7 @@ namespace GingerCore.ALM.Qtest
                     }
 
                     //pull TC-Step parameters and add them to the Activity level
-                    List<string> stepParamsList = new List<string>();
+                    List<string> stepParamsList = [];
                     GetStepParameters(StripHTML(step.Description), ref stepParamsList);
                     GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
                     foreach (string param in stepParamsList)
@@ -450,7 +468,7 @@ namespace GingerCore.ALM.Qtest
                             isflowControlParam = false;
                             if (paramSelectedValue.StartsWith("$$_"))
                             {
-                                paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                                paramSelectedValue = paramSelectedValue[3..];//get value without "$$_"
                             }
                         }
                         else if (paramSelectedValue != "<Empty>")
@@ -465,16 +483,20 @@ namespace GingerCore.ALM.Qtest
                             if (isflowControlParam == true)
                             {
                                 //add it as selection list param                               
-                                stepActivityVar = new VariableSelectionList();
-                                stepActivityVar.Name = param;
+                                stepActivityVar = new VariableSelectionList
+                                {
+                                    Name = param
+                                };
                                 stepActivity.AddVariable(stepActivityVar);
                                 stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                             }
                             else
                             {
                                 //add as String param
-                                stepActivityVar = new VariableString();
-                                stepActivityVar.Name = param;
+                                stepActivityVar = new VariableString
+                                {
+                                    Name = param
+                                };
                                 ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                 stepActivity.AddVariable(stepActivityVar);
                             }
@@ -484,12 +506,14 @@ namespace GingerCore.ALM.Qtest
                             //#param exist
                             if (isflowControlParam == true)
                             {
-                                if (!(stepActivityVar is VariableSelectionList))
+                                if (stepActivityVar is not VariableSelectionList)
                                 {
                                     //flow control param must be Selection List so transform it
                                     stepActivity.Variables.Remove(stepActivityVar);
-                                    stepActivityVar = new VariableSelectionList();
-                                    stepActivityVar.Name = param;
+                                    stepActivityVar = new VariableSelectionList
+                                    {
+                                        Name = param
+                                    };
                                     stepActivity.AddVariable(stepActivityVar);
                                     stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                 }
@@ -500,8 +524,10 @@ namespace GingerCore.ALM.Qtest
                                 {
                                     //change it to be string variable
                                     stepActivity.Variables.Remove(stepActivityVar);
-                                    stepActivityVar = new VariableString();
-                                    stepActivityVar.Name = param;
+                                    stepActivityVar = new VariableString
+                                    {
+                                        Name = param
+                                    };
                                     ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                     stepActivity.AddVariable(stepActivityVar);
                                     stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
@@ -558,12 +584,12 @@ namespace GingerCore.ALM.Qtest
                     foreach (QtestTestStep step in tc.Steps)
                     {
                         int stepIndx = tc.Steps.IndexOf(step) + 1;
-                        ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                        ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                         if (actIdent == null || actIdent.IdentifiedActivity == null)
                         {
                             break; // something wrong - shouldn't be null
                         }
-                        Activity act = (Activity)actIdent.IdentifiedActivity;
+                        Activity act = actIdent.IdentifiedActivity;
                         int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                         int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -585,7 +611,7 @@ namespace GingerCore.ALM.Qtest
                                 break;
                             }
                         }
-                        ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                        ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                         if (identOnPlace.ActivityGuid != act.Guid)
                         {
                             //replace places in group
@@ -610,7 +636,7 @@ namespace GingerCore.ALM.Qtest
             {
                 return;
             }
-            Dictionary<string, string> busVariables = new Dictionary<string, string>();
+            Dictionary<string, string> busVariables = [];
             int startGroupActsIndxInBf = 0;
 
             busFlow.Activities.Clear();
@@ -619,8 +645,10 @@ namespace GingerCore.ALM.Qtest
             foreach (QtestTest tc in tcsList)
             {
                 //check if the TC is already exist in repository
-                ActivitiesGroup tcActivsGroup = new ActivitiesGroup();
-                tcActivsGroup.Name = tc.TestName;
+                ActivitiesGroup tcActivsGroup = new ActivitiesGroup
+                {
+                    Name = tc.TestName
+                };
                 if (tc.LinkedTestID == null || tc.LinkedTestID == string.Empty)
                 {
                     tcActivsGroup.ExternalID = tc.TestID;
@@ -641,15 +669,15 @@ namespace GingerCore.ALM.Qtest
                     bool toAddStepActivity = false;
 
                     //check if mapped activity exist in repository
-                    Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
+                    Activity repoStepActivity = GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
                     if (repoStepActivity != null)
                     {
                         //check if it is part of the Activities Group
-                        ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                        ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                         if (groupStepActivityIdent != null)
                         {
                             //already in Activities Group so get link to it
-                            stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
+                            stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                         }
                         else//not in ActivitiesGroup so get instance from repo
                         {
@@ -660,11 +688,13 @@ namespace GingerCore.ALM.Qtest
                     }
                     else//Step not exist in Ginger repository so create new one
                     {
-                        stepActivity = new Activity();
-                        stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
-                        stepActivity.ExternalID = step.StepID;
-                        stepActivity.Description = StripHTML(step.Description);
-                        stepActivity.Expected = StripHTML(step.Expected);
+                        stepActivity = new Activity
+                        {
+                            ActivityName = tc.TestName + ">" + step.StepName,
+                            ExternalID = step.StepID,
+                            Description = StripHTML(step.Description),
+                            Expected = StripHTML(step.Expected)
+                        };
 
                         toAddStepActivity = true;
                     }
@@ -676,7 +706,7 @@ namespace GingerCore.ALM.Qtest
                     }
 
                     //pull TC-Step parameters and add them to the Activity level
-                    List<string> stepParamsList = new List<string>();
+                    List<string> stepParamsList = [];
                     GetStepParameters(StripHTML(step.Description), ref stepParamsList);
                     GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
                     foreach (string param in stepParamsList)
@@ -720,7 +750,7 @@ namespace GingerCore.ALM.Qtest
                             isflowControlParam = false;
                             if (paramSelectedValue.StartsWith("$$_"))
                             {
-                                paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                                paramSelectedValue = paramSelectedValue[3..];//get value without "$$_"
                             }
                         }
                         else if (paramSelectedValue != "<Empty>")
@@ -736,16 +766,20 @@ namespace GingerCore.ALM.Qtest
                             if (isflowControlParam == true)
                             {
                                 //add it as selection list param                               
-                                stepActivityVar = new VariableSelectionList();
-                                stepActivityVar.Name = param;
+                                stepActivityVar = new VariableSelectionList
+                                {
+                                    Name = param
+                                };
                                 stepActivity.AddVariable(stepActivityVar);
                                 stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
                             }
                             else
                             {
                                 //add as String param
-                                stepActivityVar = new VariableString();
-                                stepActivityVar.Name = param;
+                                stepActivityVar = new VariableString
+                                {
+                                    Name = param
+                                };
                                 ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                 stepActivity.AddVariable(stepActivityVar);
                             }
@@ -755,12 +789,14 @@ namespace GingerCore.ALM.Qtest
                             //#param exist
                             if (isflowControlParam == true)
                             {
-                                if (!(stepActivityVar is VariableSelectionList))
+                                if (stepActivityVar is not VariableSelectionList)
                                 {
                                     //flow control param must be Selection List so transform it
                                     stepActivity.Variables.Remove(stepActivityVar);
-                                    stepActivityVar = new VariableSelectionList();
-                                    stepActivityVar.Name = param;
+                                    stepActivityVar = new VariableSelectionList
+                                    {
+                                        Name = param
+                                    };
                                     stepActivity.AddVariable(stepActivityVar);
                                     stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                 }
@@ -771,8 +807,10 @@ namespace GingerCore.ALM.Qtest
                                 {
                                     //change it to be string variable
                                     stepActivity.Variables.Remove(stepActivityVar);
-                                    stepActivityVar = new VariableString();
-                                    stepActivityVar.Name = param;
+                                    stepActivityVar = new VariableString
+                                    {
+                                        Name = param
+                                    };
                                     ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
                                     stepActivity.AddVariable(stepActivityVar);
                                     stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
@@ -829,12 +867,12 @@ namespace GingerCore.ALM.Qtest
                     foreach (QtestTestStep step in tc.Steps)
                     {
                         int stepIndx = tc.Steps.IndexOf(step) + 1;
-                        ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                        ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                         if (actIdent == null || actIdent.IdentifiedActivity == null)
                         {
                             break; // something wrong- shouldn't be null
                         }
-                        Activity act = (Activity)actIdent.IdentifiedActivity;
+                        Activity act = actIdent.IdentifiedActivity;
                         int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                         int bfActIndx = busFlow.Activities.IndexOf(act);
 
@@ -856,7 +894,7 @@ namespace GingerCore.ALM.Qtest
                                 break;
                             }
                         }
-                        ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                        ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                         if (identOnPlace.ActivityGuid != act.Guid)
                         {
                             //replace places in group
@@ -925,7 +963,7 @@ namespace GingerCore.ALM.Qtest
 
         public static ObservableList<ExternalItemFieldBase> GetALMItemFields(AlmDataContractsStd.Enums.ResourceType resourceType)
         {
-            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fields = [];
 
             if (resourceType == AlmDataContractsStd.Enums.ResourceType.ALL)
             {
@@ -933,7 +971,7 @@ namespace GingerCore.ALM.Qtest
             }
             else
             {
-                List<QTestAPIStdModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), resourceType.ToString());
+                List<QTestAPIStdModel.FieldResource> fieldsCollection = fieldApi.GetFields(Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), resourceType.ToString());
 
                 fields.Append(AddFieldsValues(fieldsCollection, resourceType.ToString()));
             }
@@ -943,15 +981,15 @@ namespace GingerCore.ALM.Qtest
 
         private static ObservableList<ExternalItemFieldBase> GetALMItemFields()
         {
-            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fields = [];
             fieldApi = new QTestAPIStd.FieldApi(connObj.Configuration);
 
             //QC   ->testSet,    testCase,  designStep,testInstance,designStep,run
             //QTest->test-suites,test-cases,
 
-            List<QTestAPIStdModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-suites");
-            List<QTestAPIStdModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-cases");
-            List<QTestAPIStdModel.FieldResource> runfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-runs");
+            List<QTestAPIStdModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields(Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-suites");
+            List<QTestAPIStdModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields(Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-cases");
+            List<QTestAPIStdModel.FieldResource> runfieldsCollection = fieldApi.GetFields(Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-runs");
 
             fields.Append(AddFieldsValues(testSetfieldsCollection, "test-suites"));
             fields.Append(AddFieldsValues(testCasefieldsCollection, "test-cases"));
@@ -961,7 +999,7 @@ namespace GingerCore.ALM.Qtest
         }
         private static ObservableList<ExternalItemFieldBase> AddFieldsValues(List<QTestAPIStdModel.FieldResource> testSetfieldsCollection, string testSetfieldInRestSyntax)
         {
-            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fields = [];
 
             if ((testSetfieldsCollection != null) && (testSetfieldsCollection.Count > 0))
             {
@@ -972,10 +1010,12 @@ namespace GingerCore.ALM.Qtest
                         continue;
                     }
 
-                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
-                    itemfield.ID = field.OriginalName;
-                    itemfield.ExternalID = field.OriginalName;  // Temp ??? Check if ExternalID has other use in this case
-                    itemfield.Name = field.Label;
+                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase
+                    {
+                        ID = field.OriginalName,
+                        ExternalID = field.OriginalName,  // Temp ??? Check if ExternalID has other use in this case
+                        Name = field.Label
+                    };
                     bool isCheck;
                     itemfield.Mandatory = bool.TryParse(field.Required.ToString(), out isCheck);
                     itemfield.SystemFieled = bool.TryParse(field.SystemField.ToString(), out isCheck);

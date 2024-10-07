@@ -46,8 +46,7 @@ namespace Ginger.UserControlsLib
         }
         private static void OnSelectedColorPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as UcColorPickerList;
-            if (control != null && e.NewValue != null)
+            if (d is UcColorPickerList control && e.NewValue != null)
             {
                 control.SelectedColor = ((string)e.NewValue);
             }
@@ -63,8 +62,7 @@ namespace Ginger.UserControlsLib
 
         private void xPanelGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            Grid grid = sender as Grid;
-            if (grid != null)
+            if (sender is Grid grid)
             {
                 if (grid.RowDefinitions.Count == 0)
                 {

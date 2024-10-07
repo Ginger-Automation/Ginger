@@ -204,13 +204,13 @@ namespace GingerCore.Actions
                 page.Size = PageSize.Letter;
 
                 XGraphics gfx = XGraphics.FromPdfPage(page);
-                chartFrame.Draw(gfx);                
+                chartFrame.Draw(gfx);
                 document.Close();
                 document.Save(FileName);
 
                 Process.Start(new ProcessStartInfo() { FileName = FileName, UseShellExecute = true });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error while createing PDF chart", ex);
                 this.Error = "Something went wrong when generating the PDF reports";
@@ -257,7 +257,7 @@ namespace GingerCore.Actions
                 return null;
             }
 
-            Dictionary<string, string[]> tmp = new Dictionary<string, string[]>();
+            Dictionary<string, string[]> tmp = [];
 
             foreach (var el in data)
             {

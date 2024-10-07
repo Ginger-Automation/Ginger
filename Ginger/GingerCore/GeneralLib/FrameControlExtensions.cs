@@ -16,11 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
@@ -40,7 +35,7 @@ namespace GingerCore.GeneralLib
             }
 
             JournalEntry lastEntry;
-            do 
+            do
             {
                 lastEntry = thisFrame.NavigationService.RemoveBackEntry();
             } while (lastEntry != null);

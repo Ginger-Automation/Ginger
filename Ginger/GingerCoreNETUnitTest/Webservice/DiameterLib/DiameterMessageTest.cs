@@ -188,7 +188,7 @@ namespace GingerCoreNETUnitTest.Webservice.DiameterLib
         public void TestAvpListProperty()
         {
             // Arrange
-            ObservableList<DiameterAVP> expectedList = new ObservableList<DiameterAVP>();
+            ObservableList<DiameterAVP> expectedList = [];
             var avp = new DiameterAVP();
             expectedList.Add(avp);
 

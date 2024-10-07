@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
@@ -77,26 +76,33 @@ namespace WorkspaceHold
         static void Prep()
         {
             // Create new solution
-            mBusinessFlow = new BusinessFlow();
-            mBusinessFlow.Activities = new ObservableList<Activity>();
-            mBusinessFlow.Name = "MyDriver BF";
-            mBusinessFlow.Active = true;
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.NA;
+            mBusinessFlow = new BusinessFlow
+            {
+                Activities = [],
+                Name = "MyDriver BF",
+                Active = true
+            };
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.NA
+            };
             mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = mAppName });
 
             mGingerRunner = new GingerRunner();
             mGingerRunner.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            Agent agent = new Agent();
-            agent.AgentType = Agent.eAgentType.Service;
+            Agent agent = new Agent
+            {
+                AgentType = Agent.eAgentType.Service
+            };
 
-            ((GingerExecutionEngine)mGingerRunner.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGingerRunner.Executor).SolutionAgents.Add(agent);
+            ((GingerExecutionEngine)mGingerRunner.Executor).SolutionAgents = [agent];
 
             mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = mAppName, Agent = agent });
-            mGingerRunner.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGingerRunner.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA });
+            mGingerRunner.Executor.SolutionApplications =
+            [
+                new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA },
+            ];
             mGingerRunner.Executor.BusinessFlows.Add(mBusinessFlow);
 
             WorkspaceHelper.CreateWorkspaceWithTempSolution("sol1");

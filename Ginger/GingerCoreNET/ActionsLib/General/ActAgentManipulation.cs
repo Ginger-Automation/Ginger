@@ -67,7 +67,7 @@ namespace GingerCore.Actions
                         this.Error = "Agent is not mapped for the activity";
                     }
 
-                    if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.Completed || ((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.NotStarted)
+                    if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status is Agent.eStatus.Completed or Agent.eStatus.NotStarted)
                     {
                         this.ExInfo = "Agent is not running";
                     }
@@ -107,7 +107,7 @@ namespace GingerCore.Actions
                         this.Error = "Agent is not mapped for the activity";
                     }
 
-                    if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.Completed || ((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.NotStarted)
+                    if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status is Agent.eStatus.Completed or Agent.eStatus.NotStarted)
                     {
                         this.ExInfo = "Agent is not running";
                     }

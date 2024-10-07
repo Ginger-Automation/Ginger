@@ -16,13 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Threading.Tasks;
 using AccountReport.Contracts.GraphQL.ResponseModels;
 using GraphQL;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 using GraphQLClient.Extensions;
+using System;
+using System.Threading.Tasks;
 
 namespace GraphQLClient.Clients
 {

@@ -41,11 +41,10 @@ namespace Ginger.ValidationRules
 
         private object GetBoundValue(object value)
         {
-            if (value is BindingExpression)
+            // ValidationStep was UpdatedValue or CommittedValue (validate after setting)
+            // Need to pull the value out of the BindingExpression.
+            if (value is BindingExpression binding)
             {
-                // ValidationStep was UpdatedValue or CommittedValue (validate after setting)
-                // Need to pull the value out of the BindingExpression.
-                BindingExpression binding = (BindingExpression)value;
 
                 // Get the bound object and name of the property
                 string resolvedPropertyName = binding.GetType().GetProperty("ResolvedSourcePropertyName", BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance).GetValue(binding, null).ToString();

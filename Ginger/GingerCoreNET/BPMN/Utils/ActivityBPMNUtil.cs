@@ -20,15 +20,12 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.FlowControlLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Utils
@@ -42,7 +39,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Utils
                 throw new ArgumentNullException(paramName: nameof(activity));
             }
 
-            List<FlowControl> flowControls = new();
+            List<FlowControl> flowControls = [];
 
             if (activity.Acts == null)
             {

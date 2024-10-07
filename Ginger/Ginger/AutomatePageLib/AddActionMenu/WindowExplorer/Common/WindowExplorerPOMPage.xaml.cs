@@ -35,7 +35,7 @@ namespace Ginger.WindowExplorer.Common
     /// </summary>
     public partial class WindowExplorerPOMPage : Page
     {
-        ObservableList<Act> actions = new ObservableList<Act>();
+        ObservableList<Act> actions = [];
         ApplicationAgent mApplicationAgent;
 
         public WindowExplorerPOMPage(ApplicationAgent ApplicationAgent)
@@ -52,9 +52,11 @@ namespace Ginger.WindowExplorer.Common
             //ActivityComboBox.ItemsSource = App.BusinessFlow.Activities;
             ActivityComboBox.DisplayMemberPath = nameof(Activity.ActivityName);
 
-            Binding b = new Binding();
-            //b.Source = App.BusinessFlow;
-            b.Path = new PropertyPath("CurrentActivity");
+            Binding b = new Binding
+            {
+                //b.Source = App.BusinessFlow;
+                Path = new PropertyPath("CurrentActivity")
+            };
             ActivityComboBox.SetBinding(ComboBox.SelectedValueProperty, b);
 
             FillPOMS();
@@ -78,14 +80,16 @@ namespace Ginger.WindowExplorer.Common
             POMActivitiesGrid.ShowDelete = System.Windows.Visibility.Collapsed;
 
             //Set the Data Grid columns            
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivityName), WidthWeight = 100 });
-
-            // TODO: fix me temp input on desc - need to add input vars for activity
-            view.GridColsView.Add(new GridColView() { Field = nameof(Activity.Description), Header = "Input", WidthWeight = 200 });   //!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            view.GridColsView.Add(new GridColView() { Field = nameof(Activity.Screen), Header = "Output", WidthWeight = 200 });//!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(Activity.ActivityName), WidthWeight = 100 },
+                // TODO: fix me temp input on desc - need to add input vars for activity
+                new GridColView() { Field = nameof(Activity.Description), Header = "Input", WidthWeight = 200 },   //!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                new GridColView() { Field = nameof(Activity.Screen), Header = "Output", WidthWeight = 200 },//!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            ]
+            };
 
             POMActivitiesGrid.SetAllColumnsDefaultView(view);
             POMActivitiesGrid.InitViewItems();
@@ -101,13 +105,16 @@ namespace Ginger.WindowExplorer.Common
             ActionsDataGrid.ShowDelete = System.Windows.Visibility.Collapsed;
 
             //Set the Data Grid columns            
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActUIElement.Description), WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActUIElement.LocateBy), WidthWeight = 50 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActUIElement.LocateValue), WidthWeight = 50 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActUIElement.Value), WidthWeight = 100 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActUIElement.Description), WidthWeight = 100 },
+                new GridColView() { Field = nameof(ActUIElement.LocateBy), WidthWeight = 50 },
+                new GridColView() { Field = nameof(ActUIElement.LocateValue), WidthWeight = 50 },
+                new GridColView() { Field = nameof(ActUIElement.Value), WidthWeight = 100 },
+            ]
+            };
             ActionsDataGrid.SetAllColumnsDefaultView(view);
             ActionsDataGrid.InitViewItems();
         }
@@ -126,12 +133,15 @@ namespace Ginger.WindowExplorer.Common
             //TODO: add button to show all...        
 
             //Set the Data Grid columns            
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Mandatory), WidthWeight = 60 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ElementInfo.ElementName), WidthWeight = 100 },
+                new GridColView() { Field = nameof(ElementInfo.ElementType), WidthWeight = 60 },
+                new GridColView() { Field = nameof(ElementInfo.Mandatory), WidthWeight = 60 },
+            ]
+            };
 
             ElementsGrid.SetAllColumnsDefaultView(view);
             ElementsGrid.InitViewItems();

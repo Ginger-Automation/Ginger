@@ -35,55 +35,67 @@ namespace Ginger.Actions.Locators.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
 
-            ActASCFControl a1 = new ActASCFControl();
-            a1.Description = "Set " + ASCFControlInfo.Path + " Value";
-            a1.LocateBy = eLocateBy.ByName;
-            a1.LocateValue = ASCFControlInfo.Path;
-            a1.Value = "ABC";
-            a1.ControlAction = ActASCFControl.eControlAction.SetValue;
+            ActASCFControl a1 = new ActASCFControl
+            {
+                Description = "Set " + ASCFControlInfo.Path + " Value",
+                LocateBy = eLocateBy.ByName,
+                LocateValue = ASCFControlInfo.Path,
+                Value = "ABC",
+                ControlAction = ActASCFControl.eControlAction.SetValue
+            };
             list.Add(a1);
 
-            ActASCFControl a2 = new ActASCFControl();
-            a2.Description = "Get " + ASCFControlInfo.Path + " Value";
-            a2.LocateBy = eLocateBy.ByName;
-            a2.LocateValue = ASCFControlInfo.Path;
-            a2.ControlAction = ActASCFControl.eControlAction.GetControlProperty;
-            a2.ControlProperty = ActASCFControl.eControlProperty.Value;
+            ActASCFControl a2 = new ActASCFControl
+            {
+                Description = "Get " + ASCFControlInfo.Path + " Value",
+                LocateBy = eLocateBy.ByName,
+                LocateValue = ASCFControlInfo.Path,
+                ControlAction = ActASCFControl.eControlAction.GetControlProperty,
+                ControlProperty = ActASCFControl.eControlProperty.Value
+            };
             list.Add(a2);
 
-            ActASCFControl a3 = new ActASCFControl();
-            a3.Description = "Verify EditBox " + ASCFControlInfo.Path + " is Visible";
-            a3.LocateBy = eLocateBy.ByName;
-            a3.LocateValue = ASCFControlInfo.Path;
-            a3.ControlAction = ActASCFControl.eControlAction.IsVisible;
-            a3.ControlProperty = ActASCFControl.eControlProperty.Value;
+            ActASCFControl a3 = new ActASCFControl
+            {
+                Description = "Verify EditBox " + ASCFControlInfo.Path + " is Visible",
+                LocateBy = eLocateBy.ByName,
+                LocateValue = ASCFControlInfo.Path,
+                ControlAction = ActASCFControl.eControlAction.IsVisible,
+                ControlProperty = ActASCFControl.eControlProperty.Value
+            };
             list.Add(a3);
 
-            ActASCFControl a4 = new ActASCFControl();
-            a4.Description = "Verify EditBox " + ASCFControlInfo.Path + " is Enabled";
-            a4.LocateBy = eLocateBy.ByName;
-            a4.LocateValue = ASCFControlInfo.Path;
-            a4.ControlAction = ActASCFControl.eControlAction.IsEnabled;
-            a4.ControlProperty = ActASCFControl.eControlProperty.Value;
+            ActASCFControl a4 = new ActASCFControl
+            {
+                Description = "Verify EditBox " + ASCFControlInfo.Path + " is Enabled",
+                LocateBy = eLocateBy.ByName,
+                LocateValue = ASCFControlInfo.Path,
+                ControlAction = ActASCFControl.eControlAction.IsEnabled,
+                ControlProperty = ActASCFControl.eControlProperty.Value
+            };
             a4.AddOrUpdateReturnParamExpected("Value", "True");
             list.Add(a4);
 
-            ActASCFControl a5 = new ActASCFControl();
-            a5.Description = "Verify EditBox " + ASCFControlInfo.Path + " is Disabled";
-            a5.LocateBy = eLocateBy.ByName;
-            a5.LocateValue = ASCFControlInfo.Path;
-            a5.ControlAction = ActASCFControl.eControlAction.IsEnabled;
-            a5.ControlProperty = ActASCFControl.eControlProperty.Value;
+            ActASCFControl a5 = new ActASCFControl
+            {
+                Description = "Verify EditBox " + ASCFControlInfo.Path + " is Disabled",
+                LocateBy = eLocateBy.ByName,
+                LocateValue = ASCFControlInfo.Path,
+                ControlAction = ActASCFControl.eControlAction.IsEnabled,
+                ControlProperty = ActASCFControl.eControlProperty.Value
+            };
             a5.AddOrUpdateReturnParamExpected("Value", "False");
             list.Add(a5);
 
-            ActASCFControl a6 = new ActASCFControl();
-            a6.Description = "Set Focus - " + ASCFControlInfo.Path;
-            a6.LocateBy = eLocateBy.ByName;
-            a6.LocateValue = ASCFControlInfo.Path;
-            a6.ControlAction = ActASCFControl.eControlAction.SetFocus;
+            ActASCFControl a6 = new ActASCFControl
+            {
+                Description = "Set Focus - " + ASCFControlInfo.Path,
+                LocateBy = eLocateBy.ByName,
+                LocateValue = ASCFControlInfo.Path,
+                ControlAction = ActASCFControl.eControlAction.SetFocus
+            };
             list.Add(a6);
 
             return list;

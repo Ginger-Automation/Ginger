@@ -156,18 +156,22 @@ namespace Ginger.SourceControl
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button testConnBtn = new Button();
-            testConnBtn.Content = "Upload Solution";
+            Button testConnBtn = new Button
+            {
+                Content = "Upload Solution"
+            };
             testConnBtn.Click += new RoutedEventHandler(UploadSolution_Click);
 
-            loaderElement = new ImageMakerControl();
-            loaderElement.Name = "xProcessingImage";
-            loaderElement.Height = 30;
-            loaderElement.Width = 30;
-            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
-            loaderElement.Visibility = Visibility.Collapsed;
+            loaderElement = new ImageMakerControl
+            {
+                Name = "xProcessingImage",
+                Height = 30,
+                Width = 30,
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing,
+                Visibility = Visibility.Collapsed
+            };
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn }, true, "Close", new RoutedEventHandler(Close_Click), false, loaderElement);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, [testConnBtn], true, "Close", new RoutedEventHandler(Close_Click), false, loaderElement);
         }
 
         private void PopProcessIsBusyMsg()

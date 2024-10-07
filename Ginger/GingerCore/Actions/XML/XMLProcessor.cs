@@ -42,14 +42,14 @@ namespace GingerCore.Actions.XML
             XmlReader subXmlReader = null;
             string xmlElement = "";
 
-            ArrayList elementArrayList = new ArrayList();
-            List<string> DeParams = new List<string>();
+            ArrayList elementArrayList = [];
+            List<string> DeParams = [];
             foreach (ActReturnValue actReturnValue in act.ReturnValues)
             {
                 //TODO: How the user will know? add check box?
                 if (actReturnValue.Param.IndexOf("AllDescOf") == 0)
                 {
-                    DeParams.Add(actReturnValue.Param.Trim().Substring(9).Trim());
+                    DeParams.Add(actReturnValue.Param.Trim()[9..].Trim());
                 }
             }
 

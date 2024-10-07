@@ -33,7 +33,7 @@ namespace GingerCore.Actions
         protected ActWithoutDriver()
         {
             //Disable Auto Screenshot on failure by default. User can override it if needed
-            AutoScreenShotOnFailure = false;  
+            AutoScreenShotOnFailure = false;
         }
     }
 }

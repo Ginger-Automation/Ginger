@@ -33,19 +33,19 @@ namespace Ginger.WindowExplorer.Appium
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Click " + Name,
-                GenElementAction = ActGenElement.eGenElementAction.Click
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Get " + Name + " Text",
-                GenElementAction = ActGenElement.eGenElementAction.GetValue
-            });
+            ObservableList<Act> list =
+            [
+                new ActGenElement()
+                {
+                    Description = "Click " + Name,
+                    GenElementAction = ActGenElement.eGenElementAction.Click
+                },
+                new ActGenElement()
+                {
+                    Description = "Get " + Name + " Text",
+                    GenElementAction = ActGenElement.eGenElementAction.GetValue
+                },
+            ];
             return list;
         }
     }

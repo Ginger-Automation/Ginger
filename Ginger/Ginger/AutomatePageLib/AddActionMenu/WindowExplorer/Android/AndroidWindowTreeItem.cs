@@ -39,7 +39,7 @@ namespace Ginger.WindowExplorer.Android
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
             return list;
         }
 

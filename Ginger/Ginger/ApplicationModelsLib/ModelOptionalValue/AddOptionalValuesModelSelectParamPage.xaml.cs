@@ -35,7 +35,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
     {
         public AddModelOptionalValuesWizard AddModelOptionalValuesWizard;
 
-        ObservableList<AppModelParameter> OriginalAppModelParameters = new ObservableList<AppModelParameter>();
+        ObservableList<AppModelParameter> OriginalAppModelParameters = [];
         eOptionalValuesTargetType mOptionalValuesTargetType;
 
 
@@ -73,10 +73,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         private void InitLocalParametersListForGrid()
         {
-            AddModelOptionalValuesWizard.ParamsList = new ObservableList<AppModelParameter>();
+            AddModelOptionalValuesWizard.ParamsList = [];
             foreach (AppModelParameter AMP in AddModelOptionalValuesWizard.mAAMB.AppModelParameters)
             {
-                if (AddModelOptionalValuesWizard.SourceType == eSourceType.Excel || AddModelOptionalValuesWizard.SourceType == eSourceType.DB)
+                if (AddModelOptionalValuesWizard.SourceType is eSourceType.Excel or eSourceType.DB)
                 {
                     var item = AddModelOptionalValuesWizard.ParameterValues.FirstOrDefault(o => o.ParamName == AMP.ItemName);
                     if (item == null)
@@ -84,7 +84,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         continue;
                     }
                 }
-                AppModelParameter temp = new AppModelParameter(AMP.PlaceHolder, AMP.Description, AMP.TagName, AMP.Path, new ObservableList<OptionalValue>());
+                AppModelParameter temp = new AppModelParameter(AMP.PlaceHolder, AMP.Description, AMP.TagName, AMP.Path, []);
                 AddModelOptionalValuesWizard.ParamsList.Add(temp);
             }
 
@@ -97,12 +97,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 var item = AddModelOptionalValuesWizard.mAAMB.AppModelParameters.FirstOrDefault(x => x.Key.ItemName == parm.ParamName);
                 if (item == null)
                 {
-                    AppModelParameter temp = new AppModelParameter();
-                    temp.Guid = Guid.NewGuid();
-                    temp.ExecutionValue = string.Empty;
-                    temp.PlaceHolder = parm.ParamName;
-                    temp.Description = parm.Description;
-                    temp.OptionalValuesList = new ObservableList<OptionalValue>();
+                    AppModelParameter temp = new AppModelParameter
+                    {
+                        Guid = Guid.NewGuid(),
+                        ExecutionValue = string.Empty,
+                        PlaceHolder = parm.ParamName,
+                        Description = parm.Description,
+                        OptionalValuesList = []
+                    };
                     SetOptionalValueList(parm, temp);
                     AddModelOptionalValuesWizard.ParamsList.Add(temp);
                 }
@@ -110,7 +112,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     item.ItemName = parm.ParamName;
                     item.Description = parm.Description;
-                    item.OptionalValuesList = new ObservableList<OptionalValue>();
+                    item.OptionalValuesList = [];
                     SetOptionalValueList(parm, item);
                 }
             }
@@ -118,10 +120,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
         private void InitGlobalParametersListForGrid()
         {
-            AddModelOptionalValuesWizard.GlobalParamsList = new ObservableList<GlobalAppModelParameter>();
+            AddModelOptionalValuesWizard.GlobalParamsList = [];
             foreach (GlobalAppModelParameter GAMP in AddModelOptionalValuesWizard.mGlobalParamterList)
             {
-                if (AddModelOptionalValuesWizard.SourceType == eSourceType.Excel || AddModelOptionalValuesWizard.SourceType == eSourceType.DB)
+                if (AddModelOptionalValuesWizard.SourceType is eSourceType.Excel or eSourceType.DB)
                 {
                     var item = AddModelOptionalValuesWizard.ParameterValues.FirstOrDefault(o => o.ParamName == GAMP.ItemName);
                     if (item == null)
@@ -129,12 +131,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         continue;
                     }
                 }
-                GlobalAppModelParameter temp = new GlobalAppModelParameter();
-                temp.Guid = GAMP.Guid;
-                temp.CurrentValue = GAMP.CurrentValue;
-                temp.PlaceHolder = GAMP.PlaceHolder;
-                temp.Description = GAMP.Description;
-                temp.OptionalValuesList = new ObservableList<OptionalValue>();
+                GlobalAppModelParameter temp = new GlobalAppModelParameter
+                {
+                    Guid = GAMP.Guid,
+                    CurrentValue = GAMP.CurrentValue,
+                    PlaceHolder = GAMP.PlaceHolder,
+                    Description = GAMP.Description,
+                    OptionalValuesList = []
+                };
                 AddModelOptionalValuesWizard.GlobalParamsList.Add(temp);
             }
 
@@ -147,12 +151,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 var item = AddModelOptionalValuesWizard.mGlobalParamterList.FirstOrDefault(x => x.Key.ItemName == parm.ParamName);
                 if (item == null)
                 {
-                    GlobalAppModelParameter temp = new GlobalAppModelParameter();
-                    temp.Guid = Guid.NewGuid();
-                    temp.CurrentValue = string.Empty;
-                    temp.PlaceHolder = parm.ParamName;
-                    temp.Description = parm.Description;
-                    temp.OptionalValuesList = new ObservableList<OptionalValue>() { new OptionalValue { Value = "{Current Value}", IsDefault = true } };
+                    GlobalAppModelParameter temp = new GlobalAppModelParameter
+                    {
+                        Guid = Guid.NewGuid(),
+                        CurrentValue = string.Empty,
+                        PlaceHolder = parm.ParamName,
+                        Description = parm.Description,
+                        OptionalValuesList = [new OptionalValue { Value = "{Current Value}", IsDefault = true }]
+                    };
                     SetOptionalValueList(parm, temp);
                     AddModelOptionalValuesWizard.GlobalParamsList.Add(temp);
                 }
@@ -160,7 +166,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     item.ItemName = parm.ParamName;
                     item.Description = parm.Description;
-                    item.OptionalValuesList = new ObservableList<OptionalValue>();
+                    item.OptionalValuesList = [];
                     SetOptionalValueList(parm, item);
                 }
             }
@@ -184,8 +190,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
         private void InitxModelParametersGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
             if (AddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
             {
                 view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.RequiredAsInput), Header = "Selected", WidthWeight = 30, MaxWidth = 220, StyleType = GridColView.eGridColStyleType.CheckBox });

@@ -73,12 +73,13 @@ namespace Ginger.Reports
 
         public void ShowAsWindow()
         {
-            Button OKButton = new Button();
-            OKButton.Content = "Ok";
+            Button OKButton = new Button
+            {
+                Content = "Ok"
+            };
             OKButton.Click += new RoutedEventHandler(OKButton_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(OKButton);
+            ObservableList<Button> winButtons = [OKButton];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, eWindowShowStyle.Dialog, "Select Report Template", this, winButtons);
         }

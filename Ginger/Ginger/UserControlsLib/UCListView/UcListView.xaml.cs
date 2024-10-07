@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -121,7 +120,7 @@ namespace Ginger.UserControlsLib.UCListView
 
             if (Tags == null)
             {
-                Tags = new ObservableList<Guid>();
+                Tags = [];
             }
 
             if (xTagsFilter != null)
@@ -202,13 +201,13 @@ namespace Ginger.UserControlsLib.UCListView
                         Dispatcher.Invoke(() => xListView.ItemsSource = mObjList);
                     }
 
-                    if(value is ObservableList<VariableBase>)
+                    if (value is ObservableList<VariableBase>)
                     {
                         xListView.SelectedIndex = -1;
                         xListView.SelectedItem = null;
                     }
 
-                    this.Dispatcher.BeginInvoke((Action)(() =>
+                    this.Dispatcher.BeginInvoke(() =>
                     {
                         xSearchTextBox.Text = "";
 
@@ -225,7 +224,7 @@ namespace Ginger.UserControlsLib.UCListView
                         }
 
                         //show items as collapsed
-                        if(mListViewHelper != null && mListViewHelper is not DatabaseListViewHelper)
+                        if (mListViewHelper is not null and not DatabaseListViewHelper)
                         {
                             mListViewHelper.ExpandItemOnLoad = false;
                             xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
@@ -234,7 +233,7 @@ namespace Ginger.UserControlsLib.UCListView
                         {
                             xExpandCollapseBtn.ButtonImageType = eImageType.CollapseAll;
                         }
-                    }));
+                    });
 
                 }
                 catch (Exception ex)
@@ -324,7 +323,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
-                if(mObjList.CurrentItem != null && xListView.Items.Count > 0)
+                if (mObjList.CurrentItem != null && xListView.Items.Count > 0)
                 {
                     if (mObjList.CurrentItem != xListView.SelectedItem)
                     {
@@ -342,10 +341,10 @@ namespace Ginger.UserControlsLib.UCListView
             this.Dispatcher.Invoke(() =>
             {
                 //different kind of changes that may have occurred in collection
-                if (e.Action == NotifyCollectionChangedAction.Add ||
-                    e.Action == NotifyCollectionChangedAction.Replace ||
-                    e.Action == NotifyCollectionChangedAction.Remove ||
-                    e.Action == NotifyCollectionChangedAction.Move)
+                if (e.Action is NotifyCollectionChangedAction.Add or
+                    NotifyCollectionChangedAction.Replace or
+                    NotifyCollectionChangedAction.Remove or
+                    NotifyCollectionChangedAction.Move)
                 {
                     OnUcListViewEvent(UcListViewEventArgs.eEventType.UpdateIndex);
                 }
@@ -506,7 +505,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
             set
             {
-                SelectionTitle.Visibility = value;  
+                SelectionTitle.Visibility = value;
             }
         }
         public string SelectTitleContent
@@ -562,8 +561,8 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 return;
             }
-            
-            
+
+
             if (mObjList.CurrentItem == xListView.SelectedItem)
             {
                 return;
@@ -627,14 +626,16 @@ namespace Ginger.UserControlsLib.UCListView
 
                 foreach (ListItemOperation operation in listOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)))
                 {
-                    ucButton operationBtn = new ucButton();
-                    operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton;
-                    operationBtn.ButtonImageType = operation.ImageType;
-                    operationBtn.ToolTip = operation.ToolTip;
-                    operationBtn.Margin = new Thickness(-2, 0, -2, 0);
-                    operationBtn.ButtonImageHeight = 14;
-                    operationBtn.ButtonImageWidth = 14;
-                    operationBtn.ButtonFontImageSize = operation.ImageSize;
+                    ucButton operationBtn = new ucButton
+                    {
+                        ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton,
+                        ButtonImageType = operation.ImageType,
+                        ToolTip = operation.ToolTip,
+                        Margin = new Thickness(-2, 0, -2, 0),
+                        ButtonImageHeight = 14,
+                        ButtonImageWidth = 14,
+                        ButtonFontImageSize = operation.ImageSize
+                    };
 
                     if (operation.ImageForeground == null)
                     {
@@ -679,12 +680,16 @@ namespace Ginger.UserControlsLib.UCListView
                 xListExtraOperationsMenu.Visibility = Visibility.Visible;
                 foreach (ListItemOperation operation in extraOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)))
                 {
-                    MenuItem menuitem = new MenuItem();
-                    menuitem.Style = (Style)FindResource("$MenuItemStyle");
-                    ImageMakerControl iconImage = new ImageMakerControl();
-                    iconImage.ImageType = operation.ImageType;
-                    iconImage.SetAsFontImageWithSize = operation.ImageSize;
-                    iconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                    MenuItem menuitem = new MenuItem
+                    {
+                        Style = (Style)FindResource("$MenuItemStyle")
+                    };
+                    ImageMakerControl iconImage = new ImageMakerControl
+                    {
+                        ImageType = operation.ImageType,
+                        SetAsFontImageWithSize = operation.ImageSize,
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    };
                     menuitem.Icon = iconImage;
                     menuitem.Header = operation.Header;
                     menuitem.ToolTip = operation.ToolTip;
@@ -735,12 +740,16 @@ namespace Ginger.UserControlsLib.UCListView
                         if (!addedToGroup)
                         {
                             //creating the group and adding
-                            MenuItem groupMenuitem = new MenuItem();
-                            groupMenuitem.Style = (Style)FindResource("$MenuItemStyle");
-                            ImageMakerControl groupIconImage = new ImageMakerControl();
-                            groupIconImage.ImageType = operation.GroupImageType;
-                            groupIconImage.SetAsFontImageWithSize = operation.ImageSize;
-                            groupIconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                            MenuItem groupMenuitem = new MenuItem
+                            {
+                                Style = (Style)FindResource("$MenuItemStyle")
+                            };
+                            ImageMakerControl groupIconImage = new ImageMakerControl
+                            {
+                                ImageType = operation.GroupImageType,
+                                SetAsFontImageWithSize = operation.ImageSize,
+                                HorizontalAlignment = HorizontalAlignment.Left
+                            };
                             groupMenuitem.Icon = groupIconImage;
                             groupMenuitem.Header = operation.Group;
                             groupMenuitem.ToolTip = operation.Group;
@@ -806,7 +815,7 @@ namespace Ginger.UserControlsLib.UCListView
                         {
                             identityTextLength = 16;
                         }
-                        Info.Header = (rowItem as ListViewItem).Content.ToString().Substring(0, identityTextLength) + ".. + " + (selectedItemsCount - 1);
+                        Info.Header = (rowItem as ListViewItem).Content.ToString()[..identityTextLength] + ".. + " + (selectedItemsCount - 1);
                     }
                     else
                     {
@@ -839,12 +848,9 @@ namespace Ginger.UserControlsLib.UCListView
                 }
                 else
                 {
-                    RepositoryItemBase draggedItem = Info.Data as RepositoryItemBase;
-
-                    if (draggedItem != null)
+                    if (Info.Data is RepositoryItemBase draggedItem)
                     {
-                        RepositoryItemBase draggedOnItem = DragDrop2.GetRepositoryItemHit(this) as RepositoryItemBase;
-                        if (draggedOnItem != null)
+                        if (DragDrop2.GetRepositoryItemHit(this) is RepositoryItemBase draggedOnItem)
                         {
                             DragDrop2.ShuffleControlsItems(draggedItem, draggedOnItem, this);
                         }
@@ -968,12 +974,16 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 foreach (ListItemGroupOperation operation in groupOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)))
                 {
-                    MenuItem menuitem = new MenuItem();
-                    menuitem.Style = (Style)FindResource("$MenuItemStyle");
-                    ImageMakerControl iconImage = new ImageMakerControl();
-                    iconImage.ImageType = operation.ImageType;
-                    iconImage.SetAsFontImageWithSize = operation.ImageSize;
-                    iconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                    MenuItem menuitem = new MenuItem
+                    {
+                        Style = (Style)FindResource("$MenuItemStyle")
+                    };
+                    ImageMakerControl iconImage = new ImageMakerControl
+                    {
+                        ImageType = operation.ImageType,
+                        SetAsFontImageWithSize = operation.ImageSize,
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    };
                     menuitem.Icon = iconImage;
                     menuitem.Header = operation.Header;
                     menuitem.ToolTip = operation.ToolTip;
@@ -1007,12 +1017,16 @@ namespace Ginger.UserControlsLib.UCListView
                         if (!addedToGroup)
                         {
                             //creating the group and adding
-                            MenuItem groupMenuitem = new MenuItem();
-                            groupMenuitem.Style = (Style)FindResource("$MenuItemStyle");
-                            ImageMakerControl groupIconImage = new ImageMakerControl();
-                            groupIconImage.ImageType = operation.GroupImageType;
-                            groupIconImage.SetAsFontImageWithSize = operation.ImageSize;
-                            groupIconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                            MenuItem groupMenuitem = new MenuItem
+                            {
+                                Style = (Style)FindResource("$MenuItemStyle")
+                            };
+                            ImageMakerControl groupIconImage = new ImageMakerControl
+                            {
+                                ImageType = operation.GroupImageType,
+                                SetAsFontImageWithSize = operation.ImageSize,
+                                HorizontalAlignment = HorizontalAlignment.Left
+                            };
                             groupMenuitem.Icon = groupIconImage;
                             groupMenuitem.Header = operation.Group;
                             groupMenuitem.ToolTip = operation.Group;
@@ -1072,7 +1086,7 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             }
 
-            
+
             mSearchString = xSearchTextBox.Text;
 
             if (mObjList is null)
@@ -1102,7 +1116,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         public ObservableList<RepositoryItemBase> GetSelectedItems()
         {
-            ObservableList<RepositoryItemBase> selectedItemsList = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> selectedItemsList = [];
             foreach (object selectedItem in xListView.SelectedItems)
             {
                 if (selectedItem is RepositoryItemBase)

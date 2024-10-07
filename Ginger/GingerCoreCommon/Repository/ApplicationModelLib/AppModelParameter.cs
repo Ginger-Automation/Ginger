@@ -138,7 +138,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        ObservableList<OptionalValue> mOptionalValuesList = new ObservableList<OptionalValue>();
+        ObservableList<OptionalValue> mOptionalValuesList = [];
         [IsSerializedForLocalRepository]
         public ObservableList<OptionalValue> OptionalValuesList
         {

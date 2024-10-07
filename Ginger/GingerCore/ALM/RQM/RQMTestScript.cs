@@ -40,8 +40,8 @@ namespace GingerCore.ALM.RQM
             Description = description;
             CreatedBy = createdBy;
             CreationDate = creationDate;
-            Steps = new ObservableList<RQMStep>();
-            Parameters = new ObservableList<RQMTestParameter>();
+            Steps = [];
+            Parameters = [];
             BTSStepsIDs = string.Empty;
         }
 

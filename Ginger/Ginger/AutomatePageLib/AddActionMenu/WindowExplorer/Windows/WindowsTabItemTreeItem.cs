@@ -34,13 +34,14 @@ namespace Ginger.Drivers.Windows
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Select Tab " + UIAElementInfo.ElementTitle,
-                ControlAction = ActWindowsControl.eControlAction.Select
-            });
+            ObservableList<Act> list =
+            [
+                new ActWindowsControl()
+                {
+                    Description = "Select Tab " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActWindowsControl.eControlAction.Select
+                },
+            ];
             return list;
         }
     }

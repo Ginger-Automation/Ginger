@@ -41,18 +41,22 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         [TestInitialize]
         public void TestInitialize()
         {
-            BusinessFlow mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF Non-Driver Action Test";
-            mBF.Active = true;
+            BusinessFlow mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF Non-Driver Action Test",
+                Active = true
+            };
 
             Activity activity = new Activity();
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
 
-            mGR = new GingerExecutionEngine(new GingerRunner());
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-            mGR.CurrentBusinessFlow = mBF;
+            mGR = new GingerExecutionEngine(new GingerRunner())
+            {
+                CurrentSolution = new Ginger.SolutionGeneral.Solution(),
+                CurrentBusinessFlow = mBF
+            };
             mGR.BusinessFlows.Add(mBF);
 
 
@@ -154,12 +158,14 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 return;
             }
             //Arrange
-            ActScript actScript = new ActScript();
-            actScript.ScriptInterpreter = ActScript.eScriptInterpreterType.VBS.ToString();
-            actScript.ScriptCommand = ActScript.eScriptAct.Script;
-            actScript.ScriptName = TestResources.GetTestResourcesFile(Path.Combine(@"Files", @"ScriptWithGingerOutputIndexZero.vbs"));
-            actScript.Active = true;
-            actScript.AddNewReturnParams = true;
+            ActScript actScript = new ActScript
+            {
+                ScriptInterpreter = ActScript.eScriptInterpreterType.VBS.ToString(),
+                ScriptCommand = ActScript.eScriptAct.Script,
+                ScriptName = TestResources.GetTestResourcesFile(Path.Combine(@"Files", @"ScriptWithGingerOutputIndexZero.vbs")),
+                Active = true,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.RunAction(actScript);
@@ -179,12 +185,14 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             }
             //with index > 0
             //Arrange
-            ActScript actScript = new ActScript();
-            actScript.ScriptInterpreter = ActScript.eScriptInterpreterType.VBS.ToString();
-            actScript.ScriptCommand = ActScript.eScriptAct.Script;
-            actScript.ScriptName = TestResources.GetTestResourcesFile(Path.Combine(@"Files", @"ScriptWithGingerOutput.vbs"));
-            actScript.Active = true;
-            actScript.AddNewReturnParams = true;
+            ActScript actScript = new ActScript
+            {
+                ScriptInterpreter = ActScript.eScriptInterpreterType.VBS.ToString(),
+                ScriptCommand = ActScript.eScriptAct.Script,
+                ScriptName = TestResources.GetTestResourcesFile(Path.Combine(@"Files", @"ScriptWithGingerOutput.vbs")),
+                Active = true,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.RunAction(actScript);
@@ -204,12 +212,14 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             }
             //with index=-1
             //Arrange
-            ActScript actScript = new ActScript();
-            actScript.ScriptInterpreter = ActScript.eScriptInterpreterType.VBS.ToString();
-            actScript.ScriptCommand = ActScript.eScriptAct.Script;
-            actScript.ScriptName = TestResources.GetTestResourcesFile(Path.Combine(@"Files", @"ScriptWithoutOutput.vbs"));
-            actScript.Active = true;
-            actScript.AddNewReturnParams = true;
+            ActScript actScript = new ActScript
+            {
+                ScriptInterpreter = ActScript.eScriptInterpreterType.VBS.ToString(),
+                ScriptCommand = ActScript.eScriptAct.Script,
+                ScriptName = TestResources.GetTestResourcesFile(Path.Combine(@"Files", @"ScriptWithoutOutput.vbs")),
+                Active = true,
+                AddNewReturnParams = true
+            };
 
             //Act
             mGR.RunAction(actScript);
@@ -230,10 +240,12 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             {
                 return;
             }
-            ActScript v = new ActScript();
-            v.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
-            v.ScriptCommand = ActScript.eScriptAct.FreeCommand;
-            v.AddNewReturnParams = true;
+            ActScript v = new ActScript
+            {
+                ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS,
+                ScriptCommand = ActScript.eScriptAct.FreeCommand,
+                AddNewReturnParams = true
+            };
             v.AddOrUpdateInputParamCalculatedValue("Free Command", "NumberB=10\r\nNumberA=20\r\nDim Result\r\nResult= int(NumberA) + int(NumberB)\r\nWscript.Echo \"Add=\" & Result");
 
             v.Execute();
@@ -254,10 +266,12 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 return;
             }
             // Arrange
-            ActScript v = new ActScript();
-            v.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
-            v.AddNewReturnParams = true;
-            v.ScriptCommand = ActScript.eScriptAct.Script;
+            ActScript v = new ActScript
+            {
+                ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS,
+                AddNewReturnParams = true,
+                ScriptCommand = ActScript.eScriptAct.Script
+            };
             v.AddOrUpdateInputParamCalculatedValue("p1", "5");
             v.AddOrUpdateInputParamCalculatedValue("p2", "7");
 
@@ -289,10 +303,12 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 return;
             }
             // Arrange
-            ActScript v = new ActScript();
-            v.ScriptInterpreterType = ActScript.eScriptInterpreterType.BAT;
-            v.ScriptCommand = ActScript.eScriptAct.FreeCommand;
-            v.AddNewReturnParams = true;
+            ActScript v = new ActScript
+            {
+                ScriptInterpreterType = ActScript.eScriptInterpreterType.BAT,
+                ScriptCommand = ActScript.eScriptAct.FreeCommand,
+                AddNewReturnParams = true
+            };
             v.AddOrUpdateInputParamCalculatedValue("Free Command", "@echo off \r\nSET /A a = 5 \r\nSET /A b = 10 \r\nSET /A c = %a% + %b% \r\necho Add=%c% ");
 
             //Act
@@ -315,10 +331,12 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 return;
             }
             // Arrange
-            ActScript v = new ActScript();
-            v.ScriptInterpreterType = ActScript.eScriptInterpreterType.BAT;
-            v.AddNewReturnParams = true;
-            v.ScriptCommand = ActScript.eScriptAct.Script;
+            ActScript v = new ActScript
+            {
+                ScriptInterpreterType = ActScript.eScriptInterpreterType.BAT,
+                AddNewReturnParams = true,
+                ScriptCommand = ActScript.eScriptAct.Script
+            };
             v.AddOrUpdateInputParamCalculatedValue("p1", "5");
             v.AddOrUpdateInputParamCalculatedValue("p2", "7");
 

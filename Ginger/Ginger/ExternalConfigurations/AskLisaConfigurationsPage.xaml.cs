@@ -19,11 +19,8 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.UserControlsLib;
-using Ginger.ValidationRules;
 using GingerCore;
-using GingerCoreNET;
 using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 

@@ -68,8 +68,10 @@ namespace UnitTests.NonUITests
 
             string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
-            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
-            sol.ContainingFolderFullPath = TempRepositoryFolder;
+            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution
+            {
+                ContainingFolderFullPath = TempRepositoryFolder
+            };
             WorkSpace.Instance.Solution = sol;
             if (WorkSpace.Instance.Solution.SolutionOperations == null)
             {
@@ -77,31 +79,38 @@ namespace UnitTests.NonUITests
             }
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
 
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF WebServices Web API";
-            mBF.Active = true;
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF WebServices Web API",
+                Active = true
+            };
 
 
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.WebServices;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.WebServices
+            };
 
 
-            mDriver = new WebServicesDriver(mBF);
-            mDriver.SaveRequestXML = true;
-            mDriver.SavedXMLDirectoryPath = "~\\Documents";
-            mDriver.SecurityType = @"None";
+            mDriver = new WebServicesDriver(mBF)
+            {
+                SaveRequestXML = true,
+                SavedXMLDirectoryPath = "~\\Documents",
+                SecurityType = @"None"
+            };
 
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
-            ApplicationAgent mAG = new ApplicationAgent();
-            mAG.Agent = wsAgent;
+            ApplicationAgent mAG = new ApplicationAgent
+            {
+                Agent = wsAgent
+            };
 
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [wsAgent];
 
             mGR.Executor.BusinessFlows.Add(mBF);
 
@@ -132,15 +141,19 @@ namespace UnitTests.NonUITests
         {
 
             //Arrange
-            Activity Activity1 = new Activity();
-            Activity1.Active = true;
-            Activity1.ActivityName = "Web API Model";
-            Activity1.CurrentAgent = wsAgent;
+            Activity Activity1 = new Activity
+            {
+                Active = true,
+                ActivityName = "Web API Model",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(Activity1);
 
 
-            ActWebAPIModel actWebAPIModel = new ActWebAPIModel();
-            actWebAPIModel.APImodelGUID = Guid.Parse("fcac0742-4747-4939-99ab-2d23c33ab74e");
+            ActWebAPIModel actWebAPIModel = new ActWebAPIModel
+            {
+                APImodelGUID = Guid.Parse("fcac0742-4747-4939-99ab-2d23c33ab74e")
+            };
             actWebAPIModel.APIModelParamsValue.Add(new EnhancedActInputValue() { Param = "<<COUNTRYNAME>>", Value = "israel", ValueForDriver = "israel" });
             actWebAPIModel.Description = "Testing Action";
             actWebAPIModel.Active = true;
@@ -271,10 +284,12 @@ namespace UnitTests.NonUITests
         {
 
 
-            Activity Activity1 = new Activity();
-            Activity1.Active = true;
-            Activity1.ActivityName = "Web API Soap";
-            Activity1.CurrentAgent = wsAgent;
+            Activity Activity1 = new Activity
+            {
+                Active = true,
+                ActivityName = "Web API Soap",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(Activity1);
 
             ActWebAPISoap soapAct = new ActWebAPISoap();
@@ -327,8 +342,10 @@ namespace UnitTests.NonUITests
             mGR.Executor = new GingerExecutionEngine(mGR);
 
             ActWebAPIRest restAct = new ActWebAPIRest();
-            Context context = new Context();
-            context.Runner = mGR.Executor;
+            Context context = new Context
+            {
+                Runner = mGR.Executor
+            };
             restAct.Context = context;
 
             //Build REST Request:
@@ -376,8 +393,10 @@ namespace UnitTests.NonUITests
             ActWebAPISoap soapAct = new ActWebAPISoap();
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
-            Context context = new Context();
-            context.Runner = mGR.Executor;
+            Context context = new Context
+            {
+                Runner = mGR.Executor
+            };
             soapAct.Context = context;
 
             //Build SOAP Request:
@@ -423,8 +442,10 @@ namespace UnitTests.NonUITests
         {
             //Arrange:
             ActWebAPIRest restAct = new ActWebAPIRest();
-            Context context = new Context();
-            context.Runner = mGR.Executor;
+            Context context = new Context
+            {
+                Runner = mGR.Executor
+            };
             restAct.Context = context;
 
             //Build REST Request:
@@ -470,20 +491,26 @@ namespace UnitTests.NonUITests
         {
             //Arrange
             ActWebAPIRest restAct = new ActWebAPIRest();
-            Context context = new Context();
-            context.Runner = mGR.Executor;
+            Context context = new Context
+            {
+                Runner = mGR.Executor
+            };
             restAct.Context = context;
 
-            WebAPIKeyBodyValues wakv = new WebAPIKeyBodyValues();
-            wakv.Param = "name";
-            wakv.Value = "Rexi";
-            wakv.ValueType = WebAPIKeyBodyValues.eValueType.Text;
+            WebAPIKeyBodyValues wakv = new WebAPIKeyBodyValues
+            {
+                Param = "name",
+                Value = "Rexi",
+                ValueType = WebAPIKeyBodyValues.eValueType.Text
+            };
             restAct.RequestKeyValues.Add(wakv);
 
-            WebAPIKeyBodyValues wakv1 = new WebAPIKeyBodyValues();
-            wakv1.Param = "status";
-            wakv1.Value = "available";
-            wakv1.ValueType = WebAPIKeyBodyValues.eValueType.Text;
+            WebAPIKeyBodyValues wakv1 = new WebAPIKeyBodyValues
+            {
+                Param = "status",
+                Value = "available",
+                ValueType = WebAPIKeyBodyValues.eValueType.Text
+            };
             restAct.RequestKeyValues.Add(wakv1);
 
             //Build REST Request:
@@ -510,8 +537,8 @@ namespace UnitTests.NonUITests
 
             string rawRequestContent = webAPI.RequestFileContent;
 
-            string untilBoundary = rawRequestContent.Substring(0, 143);
-            string afterBoundary = rawRequestContent.Substring(180);
+            string untilBoundary = rawRequestContent[..143];
+            string afterBoundary = rawRequestContent[180..];
             StringAssert.Contains(rawRequestContent, "POST https://petstore.swagger.io/v2/pet/9223372000668906000 HTTP/1.1");
             StringAssert.Contains(rawRequestContent, "Accept: multipart/form-data");
             StringAssert.Contains(rawRequestContent, "Content-Type: multipart/form-data; boundary=");
@@ -529,14 +556,18 @@ namespace UnitTests.NonUITests
         {
             //Arrange:
             ActWebAPIRest restAct = new ActWebAPIRest();
-            Context context = new Context();
-            context.Runner = mGR.Executor;
+            Context context = new Context
+            {
+                Runner = mGR.Executor
+            };
             restAct.Context = context;
 
-            ActInputValue aiv = new ActInputValue();
-            aiv.Param = "IncludeRequestDetails";
-            aiv.Value = bool.TrueString.ToLower();
-            aiv.ValueForDriver = bool.TrueString.ToLower();
+            ActInputValue aiv = new ActInputValue
+            {
+                Param = "IncludeRequestDetails",
+                Value = bool.TrueString.ToLower(),
+                ValueForDriver = bool.TrueString.ToLower()
+            };
             restAct.HttpHeaders.Add(aiv);
 
             //Build REST Request:
@@ -574,8 +605,10 @@ namespace UnitTests.NonUITests
         {
             //Arrange:
             ActWebAPIRest restAct = new ActWebAPIRest();
-            Context context = new Context();
-            context.Runner = mGR.Executor;
+            Context context = new Context
+            {
+                Runner = mGR.Executor
+            };
             restAct.Context = context;
 
             //Build REST Request:
@@ -622,26 +655,31 @@ namespace UnitTests.NonUITests
 
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
-            ApplicationAgent mAG = new ApplicationAgent();
-            mAG.Agent = wsAgent;
+            ApplicationAgent mAG = new ApplicationAgent
+            {
+                Agent = wsAgent
+            };
 
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [wsAgent];
 
             mGR.Executor.BusinessFlows.Add(mBF);
 
-            Activity Activity2 = new Activity();
-            Activity2.Active = true;
-            Activity2.ActivityName = "Web API REST";
-            Activity2.CurrentAgent = wsAgent;
+            Activity Activity2 = new Activity
+            {
+                Active = true,
+                ActivityName = "Web API REST",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(Activity2);
 
             ActWebAPIRest restAct = new ActWebAPIRest();
-            Context context = new Context();
-            context.Runner = mGR.Executor;
+            Context context = new Context
+            {
+                Runner = mGR.Executor
+            };
             restAct.Context = context;
 
             //Build REST Request:
@@ -686,21 +724,24 @@ namespace UnitTests.NonUITests
 
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
-            ApplicationAgent mAG = new ApplicationAgent();
-            mAG.Agent = wsAgent;
+            ApplicationAgent mAG = new ApplicationAgent
+            {
+                Agent = wsAgent
+            };
 
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [wsAgent];
 
             mGR.Executor.BusinessFlows.Add(mBF);
 
-            Activity Activity2 = new Activity();
-            Activity2.Active = true;
-            Activity2.ActivityName = "Web API REST";
-            Activity2.CurrentAgent = wsAgent;
+            Activity Activity2 = new Activity
+            {
+                Active = true,
+                ActivityName = "Web API REST",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(Activity2);
 
             ActWebAPIRest restAct = new ActWebAPIRest();
@@ -750,7 +791,7 @@ namespace UnitTests.NonUITests
             string Elm = "";
             string sPath = "";
             int depth = 0;
-            ArrayList ls = new ArrayList();
+            ArrayList ls = [];
             while (rdr.Read())
             {
                 if (rdr.NodeType == XmlNodeType.Element)
@@ -818,22 +859,24 @@ namespace UnitTests.NonUITests
 
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
-            ApplicationAgent mAG = new ApplicationAgent();
-            mAG.Agent = wsAgent;
+            ApplicationAgent mAG = new ApplicationAgent
+            {
+                Agent = wsAgent
+            };
 
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [wsAgent];
 
             mGR.Executor.BusinessFlows.Add(mBF);
 
-            Activity Activity2 = new Activity();
-            Activity2.Active = true;
-            Activity2.ActivityName = "Soap UI Wrapper action";
-            Activity2.CurrentAgent = wsAgent;
+            Activity Activity2 = new Activity
+            {
+                Active = true,
+                ActivityName = "Soap UI Wrapper action",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(Activity2);
 
             ActSoapUI actSoapUi = new ActSoapUI();
@@ -854,8 +897,10 @@ namespace UnitTests.NonUITests
         public void SoapUICreateCopyTest()
         {
             //Arrange
-            ActSoapUI actSoapUI = new ActSoapUI();
-            actSoapUI.Description = "Soap Wrapper acttion test ";
+            ActSoapUI actSoapUI = new ActSoapUI
+            {
+                Description = "Soap Wrapper acttion test "
+            };
 
             var xmlFilePath = TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "calculator_soapui_project.xml");
 
@@ -881,10 +926,12 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void LegacyWebServiceToNewWebApiSoap_Converter_Test()
         {
-            Activity oldActivity = new Activity();
-            oldActivity.Active = true;
-            oldActivity.ActivityName = "Legacy Web Service activity";
-            oldActivity.CurrentAgent = wsAgent;
+            Activity oldActivity = new Activity
+            {
+                Active = true,
+                ActivityName = "Legacy Web Service activity",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(oldActivity);
 
             ActWebService actLegacyWebService = new ActWebService();
@@ -908,9 +955,12 @@ namespace UnitTests.NonUITests
             Assert.AreEqual("Åland Islands", actLegacyWebService.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
 
             //Convert the legacy action
-            Activity newActivity = new Activity() { Active = true };
-            newActivity.ActivityName = "New - " + oldActivity.ActivityName;
-            newActivity.CurrentAgent = wsAgent;
+            Activity newActivity = new Activity
+            {
+                Active = true,
+                ActivityName = "New - " + oldActivity.ActivityName,
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(newActivity);
 
             Act newAction = ((IObsoleteAction)actLegacyWebService).GetNewAction();
@@ -936,10 +986,12 @@ namespace UnitTests.NonUITests
         [Timeout(600000)]
         public void LegacyRestActionToNewWebApiRest_Converter_Test()
         {
-            Activity oldActivity = new Activity();
-            oldActivity.Active = true;
-            oldActivity.ActivityName = "Legacy Rest Service activity";
-            oldActivity.CurrentAgent = wsAgent;
+            Activity oldActivity = new Activity
+            {
+                Active = true,
+                ActivityName = "Legacy Rest Service activity",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(oldActivity);
 
             ActREST actLegacyRestService = new ActREST();
@@ -965,9 +1017,12 @@ namespace UnitTests.NonUITests
             Assert.AreNotEqual(null, expected);
 
             //Convert the legacy action
-            Activity newActivity = new Activity() { Active = true };
-            newActivity.ActivityName = "New - " + oldActivity.ActivityName;
-            newActivity.CurrentAgent = wsAgent;
+            Activity newActivity = new Activity
+            {
+                Active = true,
+                ActivityName = "New - " + oldActivity.ActivityName,
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(newActivity);
 
             Act newAction = ((IObsoleteAction)actLegacyRestService).GetNewAction();

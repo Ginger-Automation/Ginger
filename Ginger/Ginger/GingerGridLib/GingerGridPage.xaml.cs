@@ -118,8 +118,10 @@ namespace Ginger.GingerGridLib
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button OKButton = new Button();
-            OKButton.Content = "OK";
+            Button OKButton = new Button
+            {
+                Content = "OK"
+            };
         }
 
         private void ShowNodes()
@@ -138,9 +140,11 @@ namespace Ginger.GingerGridLib
 
         private void ShowNodeList()
         {
-            DataGrid DG = new DataGrid();
-            DG.IsReadOnly = true;
-            DG.ItemsSource = mGingerGrid.NodeList.ToList();
+            DataGrid DG = new DataGrid
+            {
+                IsReadOnly = true,
+                ItemsSource = mGingerGrid.NodeList.ToList()
+            };
             xServicesGrid.Children.Add(DG);
         }
 
@@ -327,13 +331,16 @@ namespace Ginger.GingerGridLib
         private void SetRemoteGridView()
         {
             //# Default View
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Name), Header = "Name" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Host), Header = "Host" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.HostPort), Header = "Port" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Active), Header = "Active" });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(RemoteServiceGrid.Name), Header = "Name" },
+                new GridColView() { Field = nameof(RemoteServiceGrid.Host), Header = "Host" },
+                new GridColView() { Field = nameof(RemoteServiceGrid.HostPort), Header = "Port" },
+                new GridColView() { Field = nameof(RemoteServiceGrid.Active), Header = "Active" },
+            ]
+            };
 
             xRemoteServiceGrid.SetAllColumnsDefaultView(view);
             xRemoteServiceGrid.InitViewItems();

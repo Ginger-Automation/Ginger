@@ -45,55 +45,73 @@ namespace UnitTests.NonUITests
         {
             TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
             mEnv = new ProjEnvironment();
-            EnvApplication app1 = new EnvApplication();
-            app1.Name = "App1";
-            app1.Url = "URL123";
+            EnvApplication app1 = new EnvApplication
+            {
+                Name = "App1",
+                Url = "URL123"
+            };
             mEnv.Applications.Add(app1);
-            Database db1 = new Database();
-            db1.Name = "DB1";
+            Database db1 = new Database
+            {
+                Name = "DB1"
+            };
             app1.Dbs.Add(db1);
-            GeneralParam GP1 = new GeneralParam();
-            GP1.Name = "GP1";
-            GP1.Value = "GP1Value";
+            GeneralParam GP1 = new GeneralParam
+            {
+                Name = "GP1",
+                Value = "GP1Value"
+            };
             app1.GeneralParams.Add(GP1);
 
             mBF = new BusinessFlow();
 
-            VariableString v1 = new VariableString();
-            v1.Name = "v1";
-            v1.Value = v1Value;
+            VariableString v1 = new VariableString
+            {
+                Name = "v1",
+                Value = v1Value
+            };
             //mBF.Variables.Add(v1);
             mBF.AddVariable(v1);
 
-            VariableString v2 = new VariableString();
-            v2.Name = "v2";
-            v2.Value = v2Value;
+            VariableString v2 = new VariableString
+            {
+                Name = "v2",
+                Value = v2Value
+            };
             //mBF.Variables.Add(v2);
             mBF.AddVariable(v2);
 
-            VariableString v3 = new VariableString();
-            v3.Name = "v3";
-            v3.Value = v3Value;
+            VariableString v3 = new VariableString
+            {
+                Name = "v3",
+                Value = v3Value
+            };
             //mBF.Variables.Add(v3);
             mBF.AddVariable(v3);
 
-            VariableString v4 = new VariableString();
-            v4.Name = "v4";
-            v4.Value = v4Value;
+            VariableString v4 = new VariableString
+            {
+                Name = "v4",
+                Value = v4Value
+            };
             //mBF.Variables.Add(v4);
             mBF.AddVariable(v4);
 
-            VariableSelectionList v5 = new VariableSelectionList();
-            v5.Name = "v5";
+            VariableSelectionList v5 = new VariableSelectionList
+            {
+                Name = "v5"
+            };
             v5.OptionalValuesList.Add(new OptionalValue("value1"));
             v5.OptionalValuesList.Add(new OptionalValue("value2"));
             v5.Value = v5.OptionalValuesList[0].Value;
             //mBF.Variables.Add(v4);
             mBF.AddVariable(v5);
 
-            VariableString v6 = new VariableString();
-            v6.Name = "v6 ";
-            v6.Value = "OK";
+            VariableString v6 = new VariableString
+            {
+                Name = "v6 ",
+                Value = "OK"
+            };
             //mBF.Variables.Add(v1);
             mBF.AddVariable(v6);
         }
@@ -105,8 +123,10 @@ namespace UnitTests.NonUITests
             //Arrange            
             string s = "Simple string";
 
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = s;
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = s
+            };
 
             //Act            
             string v = VE.ValueCalculated;
@@ -123,8 +143,10 @@ namespace UnitTests.NonUITests
             //Arrange            
             string s = "  Simple string  ";
 
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = s;
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = s
+            };
 
             //Act            
             string v = VE.ValueCalculated;
@@ -138,8 +160,10 @@ namespace UnitTests.NonUITests
         public void GetVarV1()
         {
             //Arrange            
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Var Name=v1}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Var Name=v1}"
+            };
 
             //Act            
             string v = VE.ValueCalculated;
@@ -153,9 +177,11 @@ namespace UnitTests.NonUITests
         public void GetVBSNow()
         {
             //Arrange            
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            //2 = vbShortDate
-            VE.Value = "{VBS Eval=FormatDateTime(NOW(),2)}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                //2 = vbShortDate
+                Value = "{VBS Eval=FormatDateTime(NOW(),2)}"
+            };
 
             //Act            
             string actual = VE.ValueCalculated;
@@ -172,8 +198,10 @@ namespace UnitTests.NonUITests
         public void GetNowPlus1()
         {
             //Arrange            
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{VBS Eval=DATE()+1}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{VBS Eval=DATE()+1}"
+            };
 
             //Act            
             string actual = VE.ValueCalculated;
@@ -237,8 +265,10 @@ namespace UnitTests.NonUITests
         public void VarV1WithPrefix()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "ABC {Var Name=v1}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "ABC {Var Name=v1}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -252,8 +282,10 @@ namespace UnitTests.NonUITests
         public void VarV1WithPostfix()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Var Name=v1} ABC";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Var Name=v1} ABC"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -267,8 +299,10 @@ namespace UnitTests.NonUITests
         public void VarV1WithPreAndPostfix()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "ABC {Var Name=v1} DEF";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "ABC {Var Name=v1} DEF"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -282,8 +316,10 @@ namespace UnitTests.NonUITests
         public void VarV1WithPreAndPostfixUsedMany()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "ABC {Var Name=v1} DEF {Var Name=v1} GHI";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "ABC {Var Name=v1} DEF {Var Name=v1} GHI"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -297,8 +333,10 @@ namespace UnitTests.NonUITests
         public void MultiVars()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "ABC {Var Name=v1} DEF {Var Name=v2} GHI";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "ABC {Var Name=v1} DEF {Var Name=v2} GHI"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -311,8 +349,10 @@ namespace UnitTests.NonUITests
         public void MultiVarsCompact()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "A{Var Name=v1}B{Var Name=v2}C";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "A{Var Name=v1}B{Var Name=v2}C"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -325,8 +365,10 @@ namespace UnitTests.NonUITests
         public void GetVarNotExistWillFail()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Var Name=v99}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Var Name=v99}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -370,8 +412,10 @@ namespace UnitTests.NonUITests
         public void EnvParam()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{EnvParam App=App1 Param=GP1}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{EnvParam App=App1 Param=GP1}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -386,8 +430,10 @@ namespace UnitTests.NonUITests
         public void EnvAppURL()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{EnvURL App=App1}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{EnvURL App=App1}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -401,8 +447,10 @@ namespace UnitTests.NonUITests
         public void RegMatch()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=IsMatch Pat=\d{3}-\d{3}-\d{4} P1=212-555-6666}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=IsMatch Pat=\d{3}-\d{3}-\d{4} P1=212-555-6666}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -416,8 +464,10 @@ namespace UnitTests.NonUITests
         {
 
 
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=IsMatch Pat=\d{3}-\d{3}-\d{4} P1=212-555-666}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=IsMatch Pat=\d{3}-\d{3}-\d{4} P1=212-555-666}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -429,8 +479,10 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void RegReplacesSurfix()
         {
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=Replace Pat=\d{3}-\d{3}-\d{4} P1=212-555-6666any string P2=new string}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=Replace Pat=\d{3}-\d{3}-\d{4} P1=212-555-6666any string P2=new string}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -442,8 +494,10 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void RegReplacesPrefix()
         {
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=Replace Pat=\d{3}-\d{3}-\d{4} P1=any string212-555-6666 P2=new string}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=Replace Pat=\d{3}-\d{3}-\d{4} P1=any string212-555-6666 P2=new string}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -455,8 +509,10 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void RegReplacesMulti()
         {
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=Replace Pat=\d{3}-\d{3}-\d{4} P1=any str212-555-6666ing212-555-6666 P2=}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=Replace Pat=\d{3}-\d{3}-\d{4} P1=any str212-555-6666ing212-555-6666 P2=}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -468,8 +524,10 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void RegReplacesNeg()
         {
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=Replace Pat=\d{3}-\d{3}-\d{4} P1=212-555-6666any string}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=Replace Pat=\d{3}-\d{3}-\d{4} P1=212-555-6666any string}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -483,8 +541,10 @@ namespace UnitTests.NonUITests
         public void RegGroup0()
         {
             //Arrange     
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=0 Pat=(\d{3})-(\d{3}-\d{4}) P1=212-555-6666ing212-555-6666}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=0 Pat=(\d{3})-(\d{3}-\d{4}) P1=212-555-6666ing212-555-6666}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -497,9 +557,11 @@ namespace UnitTests.NonUITests
         public void RegGroup1()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            //   VE.Value = @"{RegEx Fun=1 Pat=(\d{3})-(\d{3}-\d{4}) P1=212-555-6666ing212-555-6666}";
-            VE.Value = @"{RegEx Fun=1 Pat=access code is (\w{8}) P1=Your en.mi.univisionmobile.com access code is 4gT3hDEh. This code is case sensitive and expires in 72 hours. }";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                //   VE.Value = @"{RegEx Fun=1 Pat=(\d{3})-(\d{3}-\d{4}) P1=212-555-6666ing212-555-6666}";
+                Value = @"{RegEx Fun=1 Pat=access code is (\w{8}) P1=Your en.mi.univisionmobile.com access code is 4gT3hDEh. This code is case sensitive and expires in 72 hours. }"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -514,8 +576,10 @@ namespace UnitTests.NonUITests
             //Arrange  
             //    string s = "Simple string";
 
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=2 Pat=(\d{3})-(\d{3}-\d{4}) P1=das212-555-6666ing}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=2 Pat=(\d{3})-(\d{3}-\d{4}) P1=das212-555-6666ing}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -528,8 +592,10 @@ namespace UnitTests.NonUITests
         public void RegGroup3()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=3 Pat=(\d{3})(-)(\d{3})(-\d)(\d{3}) P1=fsd212-555-6666ing}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=3 Pat=(\d{3})(-)(\d{3})(-\d)(\d{3}) P1=fsd212-555-6666ing}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -542,8 +608,10 @@ namespace UnitTests.NonUITests
         public void RegGroup4()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=4 Pat=(\d{3})(-)(\d{3})(-\d)(\d{3}) P1=sdfds212-555-6666ing}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=4 Pat=(\d{3})(-)(\d{3})(-\d)(\d{3}) P1=sdfds212-555-6666ing}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -556,8 +624,10 @@ namespace UnitTests.NonUITests
         public void RegGroup5()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=5 Pat=(\d{3})(-)(\d{3})(-\d)(\d{2})(\d) P1=sdfds212-555-6666ing}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=5 Pat=(\d{3})(-)(\d{3})(-\d)(\d{2})(\d) P1=sdfds212-555-6666ing}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -570,8 +640,10 @@ namespace UnitTests.NonUITests
         public void RegGroup6()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=6 Pat=(\d{3})(-)(\d{3})(-\d)(\d{2})(\d) P1=sdfds212-555-6666ing}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=6 Pat=(\d{3})(-)(\d{3})(-\d)(\d{2})(\d) P1=sdfds212-555-6666ing}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -584,8 +656,10 @@ namespace UnitTests.NonUITests
         public void RegGroupTMO()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"In{RegEx Fun=0 Pat=(\d{3}-\d{3}-\d{4}) P1={Var Name=v3}}dex";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"In{RegEx Fun=0 Pat=(\d{3}-\d{3}-\d{4}) P1={Var Name=v3}}dex"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -598,8 +672,10 @@ namespace UnitTests.NonUITests
         public void RegQueryTMO()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"EN:UVM:HOM$";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"EN:UVM:HOM$"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -613,8 +689,10 @@ namespace UnitTests.NonUITests
         public void RegGroupTMO2()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"In{RegEx Fun=Replace Pat=\D+:\s P1={Var Name=v3}}dex";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"In{RegEx Fun=Replace Pat=\D+:\s P1={Var Name=v3}}dex"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -627,8 +705,10 @@ namespace UnitTests.NonUITests
         public void RegGroupTMO5()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=Replace Pat=\D+ P1={Var Name=v4}}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=Replace Pat=\D+ P1={Var Name=v4}}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -641,8 +721,10 @@ namespace UnitTests.NonUITests
         public void RegGroupTMO3()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=Replace Pat=\D+:\s P1={Var Name=v3}}{Var Name=v3}{Var Name=v3}{Var Name=v3}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=Replace Pat=\D+:\s P1={Var Name=v3}}{Var Name=v3}{Var Name=v3}{Var Name=v3}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -656,8 +738,10 @@ namespace UnitTests.NonUITests
         public void RegGroupTMO4()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"In{RegEx Fun=Replace Pat=\D+:\s P1={Var Name=v3}}{Var Name=v3}{Var Name=v3}{Var Name=v3}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"In{RegEx Fun=Replace Pat=\D+:\s P1={Var Name=v3}}{Var Name=v3}{Var Name=v3}{Var Name=v3}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -671,8 +755,10 @@ namespace UnitTests.NonUITests
         public void RegExtractLastChars()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=  1 Pat=.+([\d\D]{4})$ P1=abcdefghijkl}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=  1 Pat=.+([\d\D]{4})$ P1=abcdefghijkl}"
+            };
             //Act
             string v = VE.ValueCalculated;
 
@@ -684,8 +770,10 @@ namespace UnitTests.NonUITests
         public void RegExtractLastCharsWithNewLine()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{RegEx Fun=  1 Pat=.+([\d\D]{4})$ P1=abcdef" + Environment.NewLine + "ghijkl}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{RegEx Fun=  1 Pat=.+([\d\D]{4})$ P1=abcdef" + Environment.NewLine + "ghijkl}"
+            };
             //Act
             string v = VE.ValueCalculated;
 
@@ -697,8 +785,10 @@ namespace UnitTests.NonUITests
         public void VBS_2_Plus_2()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{VBS Eval=2+2*5}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{VBS Eval=2+2*5}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -712,8 +802,10 @@ namespace UnitTests.NonUITests
         public void VBS_Substring_MID()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{VBS Eval=mid(\"hello\",1,2)}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{VBS Eval=mid(\"hello\",1,2)}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -732,8 +824,10 @@ namespace UnitTests.NonUITests
             mBF.AddVariable(new VariableString() { Name = "Param1", Value = "5" });
             mBF.AddVariable(new VariableString() { Name = "Param2", Value = "3" });
 
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{VBS Eval={Var Name=Param1} + {Var Name=Param2}}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{VBS Eval={Var Name=Param1} + {Var Name=Param2}}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -747,8 +841,10 @@ namespace UnitTests.NonUITests
         {
             //Arrange
 
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{VBS Eval=WScript.CreateObject(\"WScript.Shell\").SpecialFolders(\"Desktop\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{VBS Eval=WScript.CreateObject(\"WScript.Shell\").SpecialFolders(\"Desktop\")}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -762,8 +858,10 @@ namespace UnitTests.NonUITests
         public void VBS_NOW()
         {
             //Arrange
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{VBS Eval=DATE()}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{VBS Eval=DATE()}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -782,8 +880,10 @@ namespace UnitTests.NonUITests
             //mBF.Variables.Add(new VariableString() { Name = "Param555", Value = "555-555-5555" + Environment.NewLine + "None " });
             mBF.AddVariable(new VariableString() { Name = "Param555", Value = "555-555-5555" + Environment.NewLine + "None " });
 
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{VBS Eval=Split(""{Var Name=Param555}"",""vbCrLf"")(0)}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{VBS Eval=Split(""{Var Name=Param555}"",""vbCrLf"")(0)}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -798,8 +898,10 @@ namespace UnitTests.NonUITests
         {
             //Arrange
 
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{VBS Eval=WScript.CreateObject(""WScript.Network"").UserName}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{VBS Eval=WScript.CreateObject(""WScript.Network"").UserName}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -814,8 +916,10 @@ namespace UnitTests.NonUITests
         {
             //Arrange
 
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = @"{VBS Eval=DateDiff(""s"", ""12/31/1969 20:00:00"", date())}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{VBS Eval=DateDiff(""s"", ""12/31/1969 20:00:00"", date())}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -831,11 +935,15 @@ namespace UnitTests.NonUITests
         {
             //Arrange
 
-            ValueExpression VE1 = new ValueExpression(mEnv, mBF);
-            VE1.Value = @"{Var Name=v5, Index=1}";
+            ValueExpression VE1 = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{Var Name=v5, Index=1}"
+            };
 
-            ValueExpression VE2 = new ValueExpression(mEnv, mBF);
-            VE2.Value = @"{Var Name=v5, Index=2}";
+            ValueExpression VE2 = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{Var Name=v5, Index=2}"
+            };
 
             //Act
             string v1 = VE1.ValueCalculated;
@@ -852,11 +960,15 @@ namespace UnitTests.NonUITests
         {
             //Arrange
 
-            ValueExpression VE1 = new ValueExpression(mEnv, mBF);
-            VE1.Value = @"{Var Name=v5, GetLength=True}";
+            ValueExpression VE1 = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{Var Name=v5, GetLength=True}"
+            };
 
-            ValueExpression VE2 = new ValueExpression(mEnv, mBF);
-            VE2.Value = @"{Var Name=v5, GetLength=False}";
+            ValueExpression VE2 = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{Var Name=v5, GetLength=False}"
+            };
 
             //Act
             string v1 = VE1.ValueCalculated;
@@ -873,8 +985,10 @@ namespace UnitTests.NonUITests
         {
             //Arrange
 
-            ValueExpression VE1 = new ValueExpression(mEnv, mBF);
-            VE1.Value = @"{Var Name=v6 }";
+            ValueExpression VE1 = new ValueExpression(mEnv, mBF)
+            {
+                Value = @"{Var Name=v6 }"
+            };
 
             //Act
             string v1 = VE1.ValueCalculated;

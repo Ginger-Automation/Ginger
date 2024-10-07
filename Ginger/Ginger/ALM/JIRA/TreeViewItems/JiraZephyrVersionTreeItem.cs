@@ -39,16 +39,18 @@ namespace Ginger.ALM.JIRA.TreeViewItems
 
         public JiraZephyrVersionTreeItem(List<JiraZephyrCycle> childrenCycles = null)
         {
-            CurrentChildrens = new List<ITreeViewItem>();
+            CurrentChildrens = [];
 
             if (childrenCycles != null)
             {
                 foreach (JiraZephyrCycle cycle in childrenCycles)
                 {
-                    JiraZephyrCycleTreeItem tvi = new JiraZephyrCycleTreeItem(cycle.FoldersList);
-                    tvi.Name = cycle.name.ToString();
-                    tvi.Id = cycle.id.ToString();
-                    tvi.VersionId = cycle.versionId.ToString();
+                    JiraZephyrCycleTreeItem tvi = new JiraZephyrCycleTreeItem(cycle.FoldersList)
+                    {
+                        Name = cycle.name.ToString(),
+                        Id = cycle.id.ToString(),
+                        VersionId = cycle.versionId.ToString()
+                    };
                     CurrentChildrens.Add(tvi);
                 }
             }

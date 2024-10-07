@@ -17,12 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.AnalyzerLib;
-using DocumentFormat.OpenXml.Bibliography;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Variables;
-using NUglify.Helpers;
-using OpenQA.Selenium.Interactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +39,7 @@ namespace Ginger.AnalyzerLib
         public static List<AnalyzerItemBase> Analyze(BusinessFlow businessFlow, Activity activity)
         {
             // Put all tests on Activity here
-            List<AnalyzerItemBase> issues = new();
+            List<AnalyzerItemBase> issues = [];
 
             CheckIfHasTargetAppliction(activity, businessFlow, ref issues);
 
@@ -207,10 +204,10 @@ namespace Ginger.AnalyzerLib
 
             return issue;
         }
-        
+
         public static List<string> GetUsedVariableFromActivity(Activity activity)
         {
-            List<string> activityUsedVariables = new List<string>();
+            List<string> activityUsedVariables = [];
             VariableBase.GetListOfUsedVariables(activity, ref activityUsedVariables);
             return activityUsedVariables;
         }
@@ -226,8 +223,8 @@ namespace Ginger.AnalyzerLib
                 issuesList.Add(analyzeActivity);
             }
 
-           var filteredVariables = activity.Variables
-                .Where((variable) => variable is VariableDynamic variableDynamic && !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(variableDynamic.ValueExpression, businessFlow.Environment));
+            var filteredVariables = activity.Variables
+                 .Where((variable) => variable is VariableDynamic variableDynamic && !AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(variableDynamic.ValueExpression, businessFlow.Environment));
 
 
             foreach (var filteredVariable in filteredVariables)

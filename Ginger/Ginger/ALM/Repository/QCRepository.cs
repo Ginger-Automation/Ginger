@@ -127,7 +127,7 @@ namespace Ginger.ALM.Repository
         {
             if (selectedTestSets != null && selectedTestSets.Any())
             {
-                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = new ObservableList<QCTestSetTreeItem>();
+                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = [];
                 foreach (QCTestSetTreeItem testSetItem in selectedTestSets)
                 {
                     //check if some of the Test Set was already imported                
@@ -160,10 +160,12 @@ namespace Ginger.ALM.Repository
                     {
                         //import test set data
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
-                        ALMTestSet TS = new ALMTestSet();
-                        TS.TestSetID = testSetItemtoImport.TestSetID;
-                        TS.TestSetName = testSetItemtoImport.TestSetName;
-                        TS.TestSetPath = testSetItemtoImport.Path;
+                        ALMTestSet TS = new ALMTestSet
+                        {
+                            TestSetID = testSetItemtoImport.TestSetID,
+                            TestSetName = testSetItemtoImport.TestSetName,
+                            TestSetPath = testSetItemtoImport.Path
+                        };
                         TS = ((QCCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(TS);
 
                         //convert test set into BF

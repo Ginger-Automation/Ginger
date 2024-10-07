@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
 using GingerCore;
-using GingerCore.Drivers;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -36,12 +35,12 @@ namespace GingerCoreNET.Application_Models
     public class PomDeltaUtils
     {
         public ApplicationPOMModel POM = null;
-        public ObservableList<ElementInfo> POMElementsCopy = new ObservableList<ElementInfo>();
-        public ObservableList<DeltaElementInfo> DeltaViewElements = new ObservableList<DeltaElementInfo>();
-        public ObservableList<ElementInfo> POMLatestElements = new ObservableList<ElementInfo>();
+        public ObservableList<ElementInfo> POMElementsCopy = [];
+        public ObservableList<DeltaElementInfo> DeltaViewElements = [];
+        public ObservableList<ElementInfo> POMLatestElements = [];
         public PomSetting pomSetting = null;
         public bool IsLearning { get; set; }
-        List<string> mVisualPropertiesList = new List<string> { "X", "Y", "Height", "Width" };
+        List<string> mVisualPropertiesList = ["X", "Y", "Height", "Width"];
         public DeltaControlProperty.ePropertiesChangesToAvoid PropertiesChangesToAvoid;
         public bool? KeepOriginalLocatorsOrderAndActivation = true;
         public PomLearnUtils PomLearnUtils = null;
@@ -78,16 +77,16 @@ namespace GingerCoreNET.Application_Models
             {
                 IsLearning = true;
                 mIWindowExplorerDriver.UnHighLightElements();
-                ((DriverBase)((AgentOperations)Agent.AgentOperations).Driver).StopProcess = false;
+                ((AgentOperations)Agent.AgentOperations).Driver.StopProcess = false;
                 POMElementsCopy.Clear();
-                DeltaViewElements.Clear(); 
+                DeltaViewElements.Clear();
                 var elementList = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web).GetUIElementFilterList();
                 PomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
                 PomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
                 PomLearnUtils.PrepareLearningConfigurations();
                 PomLearnUtils.LearnScreenShot();//this will set screen size to be same as in learning time
                 PrepareCurrentPOMElementsData();
-                ObservableList<POMPageMetaData> PomMetaData = new ObservableList<POMPageMetaData>();
+                ObservableList<POMPageMetaData> PomMetaData = [];
                 if (PomLearnUtils.LearnOnlyMappedElements)
                 {
                     List<eElementType> selectedElementList = GetSelectedElementList();
@@ -136,7 +135,7 @@ namespace GingerCoreNET.Application_Models
         }
         public void StopLearning()
         {
-            ((DriverBase)((AgentOperations)Agent.AgentOperations).Driver).StopProcess = true;
+            ((AgentOperations)Agent.AgentOperations).Driver.StopProcess = true;
             IsLearning = false;
         }
 
@@ -166,7 +165,7 @@ namespace GingerCoreNET.Application_Models
                 ElementInfo latestElement = (ElementInfo)e.NewItems[0];
                 try
                 {
-                    ElementInfo matchingOriginalElement = (ElementInfo)mIWindowExplorerDriver.GetMatchingElement(latestElement, POMElementsCopy);
+                    ElementInfo matchingOriginalElement = mIWindowExplorerDriver.GetMatchingElement(latestElement, POMElementsCopy);
                     //Set element details
                     PomLearnUtils.SetLearnedElementDetails(latestElement);
 
@@ -198,8 +197,10 @@ namespace GingerCoreNET.Application_Models
         private DeltaElementInfo ConvertElementToDelta(ElementInfo elementInfo, eDeltaStatus deltaStatus, object group, bool isSelected, string deltaExtraDetails)
         {
             //copy element and convert it to Delta
-            DeltaElementInfo newDeltaElement = new DeltaElementInfo();
-            newDeltaElement.ElementInfo = elementInfo;
+            DeltaElementInfo newDeltaElement = new DeltaElementInfo
+            {
+                ElementInfo = elementInfo
+            };
 
             elementInfo.ElementStatus = ElementInfo.eElementStatus.Unknown;
             newDeltaElement.DeltaStatus = deltaStatus;
@@ -208,25 +209,31 @@ namespace GingerCoreNET.Application_Models
             newDeltaElement.IsSelected = isSelected;
             foreach (ElementLocator locator in elementInfo.Locators)
             {
-                DeltaElementLocator deltaLocator = new DeltaElementLocator();
-                deltaLocator.ElementLocator = locator;
+                DeltaElementLocator deltaLocator = new DeltaElementLocator
+                {
+                    ElementLocator = locator
+                };
                 deltaLocator.ElementLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 deltaLocator.DeltaStatus = deltaStatus;
                 newDeltaElement.Locators.Add(deltaLocator);
             }
             foreach (ElementLocator Flocator in elementInfo.FriendlyLocators)
             {
-                DeltaElementLocator deltaFLocator = new DeltaElementLocator();
-                deltaFLocator.ElementLocator = Flocator;
+                DeltaElementLocator deltaFLocator = new DeltaElementLocator
+                {
+                    ElementLocator = Flocator
+                };
                 deltaFLocator.ElementLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 deltaFLocator.DeltaStatus = deltaStatus;
                 newDeltaElement.FriendlyLocators.Add(deltaFLocator);
             }
             foreach (ControlProperty propery in elementInfo.Properties)
             {
-                DeltaControlProperty deltaPropery = new DeltaControlProperty();
-                deltaPropery.ElementProperty = propery;
-                deltaPropery.DeltaStatus = deltaStatus;
+                DeltaControlProperty deltaPropery = new DeltaControlProperty
+                {
+                    ElementProperty = propery,
+                    DeltaStatus = deltaStatus
+                };
                 newDeltaElement.Properties.Add(deltaPropery);
             }
             return newDeltaElement;
@@ -473,8 +480,10 @@ namespace GingerCoreNET.Application_Models
             List<ControlProperty> deletedProperties = existingElement.Properties.Where(x => latestElement.Properties.FirstOrDefault(y => y.Name == x.Name) == null).ToList();
             foreach (ControlProperty deletedProperty in deletedProperties)
             {
-                DeltaControlProperty deltaProp = new DeltaControlProperty();
-                deltaProp.ElementProperty = deletedProperty;
+                DeltaControlProperty deltaProp = new DeltaControlProperty
+                {
+                    ElementProperty = deletedProperty
+                };
                 if (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.None
                             || (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.OnlySizeAndLocationProperties && mVisualPropertiesList.Contains(deletedProperty.Name) == false))
                 {
@@ -490,9 +499,9 @@ namespace GingerCoreNET.Application_Models
             }
 
             //------------ General Status set     
-            List<DeltaElementLocator> modifiedLocatorsList = matchedDeltaElement.Locators.Where(x => x.DeltaStatus == eDeltaStatus.Changed || x.DeltaStatus == eDeltaStatus.Deleted).ToList();
-            List<DeltaElementLocator> modifiedFriendlyLocatorsList = matchedDeltaElement.FriendlyLocators.Where(x => x.DeltaStatus == eDeltaStatus.Changed || x.DeltaStatus == eDeltaStatus.Deleted).ToList();
-            List<DeltaControlProperty> modifiedPropertiesList = matchedDeltaElement.Properties.Where(x => x.DeltaStatus == eDeltaStatus.Changed || x.DeltaStatus == eDeltaStatus.Deleted).ToList();
+            List<DeltaElementLocator> modifiedLocatorsList = matchedDeltaElement.Locators.Where(x => x.DeltaStatus is eDeltaStatus.Changed or eDeltaStatus.Deleted).ToList();
+            List<DeltaElementLocator> modifiedFriendlyLocatorsList = matchedDeltaElement.FriendlyLocators.Where(x => x.DeltaStatus is eDeltaStatus.Changed or eDeltaStatus.Deleted).ToList();
+            List<DeltaControlProperty> modifiedPropertiesList = matchedDeltaElement.Properties.Where(x => x.DeltaStatus is eDeltaStatus.Changed or eDeltaStatus.Deleted).ToList();
             if (modifiedLocatorsList.Count > 0 || modifiedPropertiesList.Count > 0 || modifiedFriendlyLocatorsList.Count > 0)
             {
                 matchedDeltaElement.DeltaStatus = eDeltaStatus.Changed;
@@ -518,9 +527,9 @@ namespace GingerCoreNET.Application_Models
             {
                 matchedDeltaElement.DeltaStatus = eDeltaStatus.Unchanged;
                 matchedDeltaElement.IsSelected = false;
-                List<DeltaElementLocator> minorLocatorsChangesList = matchedDeltaElement.Locators.Where(x => x.DeltaStatus == eDeltaStatus.Avoided || x.DeltaStatus == eDeltaStatus.Added || x.DeltaStatus == eDeltaStatus.Unknown).ToList();
-                List<DeltaElementLocator> minorFriednlyLocatorsChangesList = matchedDeltaElement.FriendlyLocators.Where(x => x.DeltaStatus == eDeltaStatus.Avoided || x.DeltaStatus == eDeltaStatus.Added || x.DeltaStatus == eDeltaStatus.Unknown).ToList();
-                List<DeltaControlProperty> minorPropertiesChangesList = matchedDeltaElement.Properties.Where(x => x.DeltaStatus == eDeltaStatus.Avoided || x.DeltaStatus == eDeltaStatus.Added || x.DeltaStatus == eDeltaStatus.Unknown).ToList();
+                List<DeltaElementLocator> minorLocatorsChangesList = matchedDeltaElement.Locators.Where(x => x.DeltaStatus is eDeltaStatus.Avoided or eDeltaStatus.Added or eDeltaStatus.Unknown).ToList();
+                List<DeltaElementLocator> minorFriednlyLocatorsChangesList = matchedDeltaElement.FriendlyLocators.Where(x => x.DeltaStatus is eDeltaStatus.Avoided or eDeltaStatus.Added or eDeltaStatus.Unknown).ToList();
+                List<DeltaControlProperty> minorPropertiesChangesList = matchedDeltaElement.Properties.Where(x => x.DeltaStatus is eDeltaStatus.Avoided or eDeltaStatus.Added or eDeltaStatus.Unknown).ToList();
                 if (minorLocatorsChangesList.Count > 0 || minorPropertiesChangesList.Count > 0 || minorFriednlyLocatorsChangesList.Count > 0)
                 {
                     matchedDeltaElement.DeltaExtraDetails = "Unimportant differences exists";
@@ -624,7 +633,7 @@ namespace GingerCoreNET.Application_Models
         }
         private ObservableList<DeltaControlProperty> CovertToDeltaControlProperty(ObservableList<ControlProperty> properties)
         {
-            ObservableList<DeltaControlProperty> deltaControlProperties = new ObservableList<DeltaControlProperty>();
+            ObservableList<DeltaControlProperty> deltaControlProperties = [];
             foreach (ControlProperty property in properties)
             {
                 deltaControlProperties.Add(new DeltaControlProperty() { ElementProperty = property, DeltaStatus = eDeltaStatus.Unchanged });
@@ -647,7 +656,7 @@ namespace GingerCoreNET.Application_Models
             List<DeltaElementInfo> unchangedMapped = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Unchanged && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped).ToList();
             List<DeltaElementInfo> unchangedUnmapped = DeltaViewElements.Where(x => x.DeltaStatus == eDeltaStatus.Unchanged && (ApplicationPOMModel.eElementGroup)x.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Unmapped).ToList();
 
-            List<List<DeltaElementInfo>> ElementsLists = new List<List<DeltaElementInfo>>() { deletedMappedElements, modifiedMappedElements, newMappedElements, unknownMappedElements, deletedUnMappedElements, modifiedUnMappedElements, newUnMappedElements, unknownUnMappedElements, unchangedMapped, unchangedUnmapped };
+            List<List<DeltaElementInfo>> ElementsLists = [deletedMappedElements, modifiedMappedElements, newMappedElements, unknownMappedElements, deletedUnMappedElements, modifiedUnMappedElements, newUnMappedElements, unknownUnMappedElements, unchangedMapped, unchangedUnmapped];
             DeltaViewElements.Clear();
             foreach (List<DeltaElementInfo> elementsList in ElementsLists)
             {
@@ -700,7 +709,7 @@ namespace GingerCoreNET.Application_Models
                 }
 
                 //Replacing Modified elements
-                if (elementToUpdate.DeltaStatus == eDeltaStatus.Changed || elementToUpdate.DeltaStatus == eDeltaStatus.Unchanged)
+                if (elementToUpdate.DeltaStatus is eDeltaStatus.Changed or eDeltaStatus.Unchanged)
                 {
                     ObservableList<ElementInfo> selectedGroup = null;
                     if ((ApplicationPOMModel.eElementGroup)elementToUpdate.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
@@ -760,7 +769,7 @@ namespace GingerCoreNET.Application_Models
                 }
             }
         }
-       
+
         public static void MergeElements(ElementInfo originalElement, ElementInfo secondElement)
         {
             //Merge Properties
@@ -768,7 +777,7 @@ namespace GingerCoreNET.Application_Models
             {
                 ControlProperty originalProp = originalElement.Properties.FirstOrDefault(x => x.Name == secondElement.Properties[i].Name && x.Category == secondElement.Properties[i].Category);
                 if (originalProp == null)
-                { 
+                {
                     originalElement.Properties.Add(secondElement.Properties[i]);
                 }
             }
@@ -796,7 +805,7 @@ namespace GingerCoreNET.Application_Models
 
         public ObservableList<ElementInfo> GetElementInfoListFromDeltaElementInfo(ObservableList<DeltaElementInfo> deltaElementInfos)
         {
-            ObservableList<ElementInfo> elementInfos = new ObservableList<ElementInfo>();
+            ObservableList<ElementInfo> elementInfos = [];
             foreach (var deltaElementInfo in deltaElementInfos)
             {
                 elementInfos.Add(deltaElementInfo.ElementInfo);

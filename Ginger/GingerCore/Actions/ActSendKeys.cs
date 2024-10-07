@@ -144,7 +144,7 @@ namespace Ginger.Actions
             try
             {
                 //locate by
-                if (LocateBy != eLocateBy.ByTitle && LocateBy != eLocateBy.ByClassName)
+                if (LocateBy is not eLocateBy.ByTitle and not eLocateBy.ByClassName)
                 {
                     Error = "Invalid Locate By- only ByTitle and ByClassName is supported.";
                     return;
@@ -179,7 +179,7 @@ namespace Ginger.Actions
 
                 if (window != null)
                 {
-                    winhandle = (IntPtr)window.Current.NativeWindowHandle;
+                    winhandle = window.Current.NativeWindowHandle;
                     if (winhandle != IntPtr.Zero)
                     {
                         break;

@@ -58,7 +58,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 if (WorkSpace.Instance.Solution.ShowIndicationkForLockedItems && WorkSpace.Instance.Solution.SourceControl.IsSupportingLocks && addLocksOption)
                 {
-                    if (ItemSourceControlStatus == SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser || ItemSourceControlStatus == SourceControlFileInfo.eRepositoryItemStatus.LockedByMe)
+                    if (ItemSourceControlStatus is SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser or SourceControlFileInfo.eRepositoryItemStatus.LockedByMe)
                     {
                         TreeViewUtils.AddSubMenuItem(sourceControlMenu, "UnLock Item", SourceControlUnlock, null, "@Unlock_16x16.png");
                     }
@@ -137,9 +137,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {
-            if (item is RepositoryItem)
+            if (item is RepositoryItem RI)
             {
-                RepositoryItem RI = (RepositoryItem)item;
                 if (saveOnlyIfDirty && RI.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
                 {
                     return false;//no need to Save because not Dirty
@@ -165,9 +164,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public override bool SaveBackup(object item)
         {
-            if (item is RepositoryItem)
+            if (item is RepositoryItem RI)
             {
-                RepositoryItem RI = (RepositoryItem)item;
                 RI.SaveBackup();
                 return true;
             }

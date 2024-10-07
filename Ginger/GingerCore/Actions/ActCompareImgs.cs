@@ -156,7 +156,7 @@ namespace GingerCore.Actions
             Bitmap MainWinImage;
             UIAuto.AutomationElement targetWin = null;
             UIAuto.AutomationElement gingerWin = null;
-            List<System.Drawing.Point> result = new List<System.Drawing.Point>();
+            List<System.Drawing.Point> result = [];
             //System.Drawing.Point(0,0);
             if (!string.IsNullOrWhiteSpace(WindowName))
             {
@@ -284,8 +284,7 @@ namespace GingerCore.Actions
         public List<UIAuto.AutomationElement> UIAutomationGetFirstLevelWindows()
         {
             UIAuto.TreeWalker walker = UIAuto.TreeWalker.ControlViewWalker;
-            List<UIAuto.AutomationElement> winList = new List<UIAuto.AutomationElement>();
-            winList.Add(UIAuto.AutomationElement.RootElement);
+            List<UIAuto.AutomationElement> winList = [UIAuto.AutomationElement.RootElement];
             UIAuto.AutomationElement win = walker.GetFirstChild(UIAuto.AutomationElement.RootElement);
 
             while (win != null)
@@ -303,10 +302,10 @@ namespace GingerCore.Actions
 
         public Bitmap GetWindowBitmap(UIAuto.AutomationElement window)
         {
-            Bitmap bmp = new Bitmap((int)window.Current.BoundingRectangle.Width, (int)window.Current.BoundingRectangle.Height);
+            Bitmap bmp = new Bitmap(window.Current.BoundingRectangle.Width, window.Current.BoundingRectangle.Height);
             Graphics memoryGraphics = Graphics.FromImage(bmp);
             IntPtr dc = memoryGraphics.GetHdc();
-            bool success = PrintWindow((IntPtr)window.Current.NativeWindowHandle, dc, 0);
+            bool success = PrintWindow(window.Current.NativeWindowHandle, dc, 0);
             memoryGraphics.ReleaseHdc(dc);
             return bmp;
         }
@@ -321,7 +320,7 @@ namespace GingerCore.Actions
                 for (int x = 0; x < Bmp.Width; x++)
                 {
                     c = Bmp.GetPixel(x, y);
-                    rgb = (int)((c.R + c.G + c.B) / 3);
+                    rgb = (c.R + c.G + c.B) / 3;
                     Bmp.SetPixel(x, y, Color.FromArgb(rgb, rgb, rgb));
                 }
             }
@@ -331,7 +330,7 @@ namespace GingerCore.Actions
 
         public static List<System.Drawing.Point> GetSubPositions(Image main, Image sub)
         {
-            List<System.Drawing.Point> possiblepos = new List<System.Drawing.Point>();
+            List<System.Drawing.Point> possiblepos = [];
             Bitmap mainBitmap = main as Bitmap;
             Bitmap subBitmap = sub as Bitmap;
             mainBitmap = GrayScale(mainBitmap);
@@ -419,17 +418,19 @@ namespace GingerCore.Actions
 
             public static MyColor FromARGB(byte a, byte r, byte g, byte b)
             {
-                MyColor mc = new MyColor();
-                mc.A = a;
-                mc.R = r;
-                mc.G = g;
-                mc.B = b;
+                MyColor mc = new MyColor
+                {
+                    A = a,
+                    R = r,
+                    G = g,
+                    B = b
+                };
                 return mc;
             }
 
             public override bool Equals(object obj)
             {
-                if (!(obj is MyColor))
+                if (obj is not MyColor)
                 {
                     return false;
                 }

@@ -43,12 +43,15 @@ namespace Ginger.Reports
         private void SetGridView()
         {
             grdHTMLReportTemplatesList.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = HTMLReportConfiguration.Fields.Name, WidthWeight = 200, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = HTMLReportConfiguration.Fields.IsDefault, Header = "Default Template", StyleType = GridColView.eGridColStyleType.CheckBox, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = HTMLReportConfiguration.Fields.Description, WidthWeight = 400, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = HTMLReportConfiguration.Fields.Name, WidthWeight = 200, ReadOnly = true },
+                new GridColView() { Field = HTMLReportConfiguration.Fields.IsDefault, Header = "Default Template", StyleType = GridColView.eGridColStyleType.CheckBox, ReadOnly = true },
+                new GridColView() { Field = HTMLReportConfiguration.Fields.Description, WidthWeight = 400, ReadOnly = true },
+            ]
+            };
 
             grdHTMLReportTemplatesList.SetAllColumnsDefaultView(view);
             grdHTMLReportTemplatesList.InitViewItems();

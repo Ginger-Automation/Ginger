@@ -22,7 +22,6 @@ using AlmDataContractsStd.Enums;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
-using GingerCore.ALM.QC;
 using GingerCore.ALM.ZephyrEnt.Bll;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
@@ -168,7 +167,7 @@ namespace GingerCore.ALM
                 long testerId = GetCurrentUser();
                 List<TestCaseResource> tcsPlanningList = GetTestCasesByAssignmentTree(Convert.ToInt32(bizFlow.ExternalID));
                 List<Execution> assignsList = AssigningTestCasesToTesterForExecution(tcsPlanningList.Select(z => z.tct.id).ToList(), Convert.ToInt64(bizFlow.ExternalID2), testerId, Convert.ToInt64(bizFlow.ExternalID));
-                ObservableList<ActivitiesGroup> mappedAG = new ObservableList<ActivitiesGroup>();
+                ObservableList<ActivitiesGroup> mappedAG = [];
                 foreach (ActivitiesGroup ag in bizFlow.ActivitiesGroups)
                 {
                     if (String.IsNullOrEmpty(ag.ExternalID))
@@ -288,7 +287,7 @@ namespace GingerCore.ALM
             var token = (JToken)selectedTcs[0].TryGetItem("results");
             foreach (var testInstance in token)
             {
-                testSet.Tests.Add(ImportTSTest(((JToken)testInstance).SelectToken("testcase")));
+                testSet.Tests.Add(ImportTSTest(testInstance.SelectToken("testcase")));
             }
             return testSet;
         }
@@ -297,7 +296,7 @@ namespace GingerCore.ALM
             QC.ALMTSTest newTSTest = new QC.ALMTSTest();
             if (newTSTest.Runs == null)
             {
-                newTSTest.Runs = new List<ALMTSTestRun>();
+                newTSTest.Runs = [];
             }
 
             int versionId = Convert.ToInt32(testInstance["tcrVersionNumber"]);
@@ -318,11 +317,13 @@ namespace GingerCore.ALM
                 foreach (var testcaseStep in testStepsToken)
                 {
 
-                    QC.ALMTSTestStep newtsStep = new QC.ALMTSTestStep();
-                    newtsStep.StepID = testcaseStep["id"].ToString();
-                    newtsStep.StepName = testcaseStep["step"].ToString();
-                    newtsStep.Description = testcaseStep["data"].ToString();
-                    newtsStep.Expected = testcaseStep["result"].ToString();
+                    QC.ALMTSTestStep newtsStep = new QC.ALMTSTestStep
+                    {
+                        StepID = testcaseStep["id"].ToString(),
+                        StepName = testcaseStep["step"].ToString(),
+                        Description = testcaseStep["data"].ToString(),
+                        Expected = testcaseStep["result"].ToString()
+                    };
                     newTSTest.Steps.Add(newtsStep);
                 }
             }

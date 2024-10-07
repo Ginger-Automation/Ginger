@@ -201,7 +201,7 @@ namespace GingerCore.Variables
 
             int c = 0;
             System.Threading.Thread.Sleep(1);
-            c = (int)((random.NextDouble() * (double)(Max - Min + 1)) + Min);
+            c = (int)((random.NextDouble() * (Max - Min + 1)) + Min);
             Value = RandomString(c);
             return true;
         }
@@ -215,8 +215,7 @@ namespace GingerCore.Variables
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
-            supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
+            List<VariableBase.eSetValueOptions> supportedOperations = [VariableBase.eSetValueOptions.AutoGenerateValue];
 
             return supportedOperations;
         }

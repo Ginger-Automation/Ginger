@@ -62,7 +62,7 @@ namespace GingerCore.Environments
         private string mGingerOpsRelease;
         [IsSerializedForLocalRepository]
         public string GingerOpsRelease { get { return mGingerOpsRelease; } set { if (mGingerOpsRelease != value) { mGingerOpsRelease = value; OnPropertyChanged(nameof(GingerOpsRelease)); } } }
-        
+
         private string mGingerOpsStatus; //Ginger Analytics import status
         public string GingerOpsStatus { get { return mGingerOpsStatus; } set { if (mGingerOpsStatus != value) { mGingerOpsStatus = value; OnPropertyChanged(nameof(GingerOpsStatus)); } } }
 
@@ -74,10 +74,10 @@ namespace GingerCore.Environments
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<EnvApplication> Applications { get; set; } = new ObservableList<EnvApplication>();
+        public ObservableList<EnvApplication> Applications { get; set; } = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = [];
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -167,15 +167,17 @@ namespace GingerCore.Environments
 
         public void AddApplications(IEnumerable<ApplicationPlatform> SelectedApplications)
         {
-            
-            foreach(ApplicationPlatform SelectedApplication in SelectedApplications)
+
+            foreach (ApplicationPlatform SelectedApplication in SelectedApplications)
             {
-                EnvApplication envApplication = new ();
-                envApplication.Name = SelectedApplication.AppName;
-                envApplication.ParentGuid = SelectedApplication.Guid;
-                envApplication.Description = SelectedApplication.Description;
-                envApplication.Platform = SelectedApplication.Platform;
-                envApplication.Active = true;
+                EnvApplication envApplication = new()
+                {
+                    Name = SelectedApplication.AppName,
+                    ParentGuid = SelectedApplication.Guid,
+                    Description = SelectedApplication.Description,
+                    Platform = SelectedApplication.Platform,
+                    Active = true
+                };
                 this.Applications.Add(envApplication);
                 OnPropertyChanged(nameof(Applications));
             }

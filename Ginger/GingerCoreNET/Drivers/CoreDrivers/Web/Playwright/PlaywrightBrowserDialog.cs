@@ -16,16 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
-using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
-using IPlaywrightPage = Microsoft.Playwright.IPage;
 using IPlaywrightDialog = Microsoft.Playwright.IDialog;
-using IPlaywrightLocator = Microsoft.Playwright.ILocator;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright

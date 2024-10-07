@@ -75,7 +75,7 @@ namespace Ginger.ALM.MapToALMWizard
                 {
                     if (!mWizard.testCaseUnmappedStepsDic.ContainsKey(tc.aLMTSTest.TestID))
                     {
-                        mWizard.testCaseUnmappedStepsDic.Add(tc.aLMTSTest.TestID, new ObservableList<ALMTSTestStep>());
+                        mWizard.testCaseUnmappedStepsDic.Add(tc.aLMTSTest.TestID, []);
                     }
                     tc.UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[tc.aLMTSTest.TestID].Count);
                 }
@@ -96,9 +96,13 @@ namespace Ginger.ALM.MapToALMWizard
         private void BindUnMapTestStepsGrid()
         {
             xUnMapTestStepsGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTSTestStep.StepName), Header = "ALM Step", WidthWeight = 25, AllowSorting = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ALMTSTestStep.StepName), Header = "ALM Step", WidthWeight = 25, AllowSorting = true },
+            ]
+            };
             GridViewDef mRegularView2 = new GridViewDef(eGridView.RegularView.ToString());
             xUnMapTestStepsGrid.AddToolbarTool(eImageType.MapSigns, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Map selected test case to selected ginger"), new RoutedEventHandler(MapTestStepToolbarHandler));
             xUnMapTestStepsGrid.SetAllColumnsDefaultView(view);
@@ -117,10 +121,14 @@ namespace Ginger.ALM.MapToALMWizard
         private void BindMapTestStepsGrid()
         {
             xMapTestStepsGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestStepManualMappingConfig.ActivityName), Header = GingerDicser.GetTermResValue(eTermResKey.Activity, "Ginger"), WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestStepManualMappingConfig.StepName), Header = "Mapped ALM Test Step", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ALMTestStepManualMappingConfig.ActivityName), Header = GingerDicser.GetTermResValue(eTermResKey.Activity, "Ginger"), WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = nameof(ALMTestStepManualMappingConfig.StepName), Header = "Mapped ALM Test Step", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay },
+            ]
+            };
             GridViewDef mRegularView2 = new GridViewDef(eGridView.RegularView.ToString());
             xMapTestStepsGrid.SetAllColumnsDefaultView(view);
             xMapTestStepsGrid.InitViewItems();
@@ -144,18 +152,22 @@ namespace Ginger.ALM.MapToALMWizard
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG,ex.Message, ex);
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message, ex);
             }
         }
 
         private void BindMapTestCasesGrid()
         {
             xMapTestCasesGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.ActivityGroupName), Header = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Ginger"), WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.TestCaseName), Header = "Mapped ALM Test Case", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.MappingStatusIcon), Header = "Steps Mapping Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xMappingGrid.Resources["xMappingStatusIconTemplate"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.ActivityGroupName), Header = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Ginger"), WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.TestCaseName), Header = "Mapped ALM Test Case", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.MappingStatusIcon), Header = "Steps Mapping Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xMappingGrid.Resources["xMappingStatusIconTemplate"] },
+            ]
+            };
             GridViewDef mRegularView = new GridViewDef(eGridView.RegularView.ToString());
             xMapTestCasesGrid.SetAllColumnsDefaultView(view);
             xMapTestCasesGrid.InitViewItems();
@@ -279,8 +291,7 @@ namespace Ginger.ALM.MapToALMWizard
         }
         private void TestStepsMapping_ItemDropped(object sender, EventArgs e)
         {
-            object draggedItem = ((DragInfo)sender).Data as object;
-            if (draggedItem == null)
+            if (((DragInfo)sender).Data is not object draggedItem)
             {
                 return;
             }

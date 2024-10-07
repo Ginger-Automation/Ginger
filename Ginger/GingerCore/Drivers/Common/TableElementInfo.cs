@@ -40,7 +40,7 @@ namespace GingerCore.Drivers.Common
         // ---------------------------------------------------------------------------------------------------------------------
         //  Value
         // ---------------------------------------------------------------------------------------------------------------------
-        private Dictionary<string, UIAuto.AutomationElement[]> mMainDict = new Dictionary<string, UIAuto.AutomationElement[]>();
+        private Dictionary<string, UIAuto.AutomationElement[]> mMainDict = [];
         public Dictionary<string, UIAuto.AutomationElement[]> MainDict
         {
             get

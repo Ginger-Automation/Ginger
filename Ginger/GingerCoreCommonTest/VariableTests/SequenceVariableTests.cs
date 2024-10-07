@@ -109,7 +109,7 @@ namespace GingerCoreCommonTest.VariableTests
             int curSeqVal = Convert.ToInt32(variableSequence.Value);
 
             //Assert            
-            Assert.IsTrue(curSeqVal >= 1 && curSeqVal <= 999, "num1 >= 0 && num1 <= 999");
+            Assert.IsTrue(curSeqVal is >= 1 and <= 999, "num1 >= 0 && num1 <= 999");
         }
 
         [TestMethod]
@@ -117,10 +117,12 @@ namespace GingerCoreCommonTest.VariableTests
         public void SequenceVar_Min5_Max10_Interval_2()
         {
             //Arrange
-            VariableSequence variableSequence = new VariableSequence();
-            variableSequence.Min = 5;
-            variableSequence.Max = 10;
-            variableSequence.Interval = 2;
+            VariableSequence variableSequence = new VariableSequence
+            {
+                Min = 5,
+                Max = 10,
+                Interval = 2
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -141,9 +143,11 @@ namespace GingerCoreCommonTest.VariableTests
             // same number as minimum and maximum and it should return the same number when we autogenerate
             //Arrange
             int sameNum = 13;
-            VariableSequence variableSequence = new VariableSequence();
-            variableSequence.Min = sameNum;
-            variableSequence.Max = sameNum;
+            VariableSequence variableSequence = new VariableSequence
+            {
+                Min = sameNum,
+                Max = sameNum
+            };
 
             for (int i = 0; i < 10; i++)
             {
@@ -165,10 +169,12 @@ namespace GingerCoreCommonTest.VariableTests
             //Arrange
             int minNum = 99;
             int maxNum = 999;
-            VariableSequence variableSequence = new VariableSequence();
-            variableSequence.Min = minNum;
-            variableSequence.Max = maxNum;
-            variableSequence.Interval = 9;
+            VariableSequence variableSequence = new VariableSequence
+            {
+                Min = minNum,
+                Max = maxNum,
+                Interval = 9
+            };
 
             for (int i = 0; i < 100; i++)
             {
@@ -192,10 +198,12 @@ namespace GingerCoreCommonTest.VariableTests
             int maxNum = 10;
             int itrCount = 10;
 
-            VariableSequence variableSequence = new VariableSequence();
-            variableSequence.Min = minNum;
-            variableSequence.Max = maxNum;
-            variableSequence.Interval = 1;
+            VariableSequence variableSequence = new VariableSequence
+            {
+                Min = minNum,
+                Max = maxNum,
+                Interval = 1
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -223,10 +231,12 @@ namespace GingerCoreCommonTest.VariableTests
             int interval = 1;
             string expectedFormulaStr = minNum + "-" + maxNum + " Interval " + interval;
 
-            VariableSequence variableSequence = new VariableSequence();
-            variableSequence.Min = minNum;
-            variableSequence.Max = maxNum;
-            variableSequence.Interval = interval;
+            VariableSequence variableSequence = new VariableSequence
+            {
+                Min = minNum,
+                Max = maxNum,
+                Interval = interval
+            };
 
             //Act
             string formulaVal = variableSequence.GetFormula();

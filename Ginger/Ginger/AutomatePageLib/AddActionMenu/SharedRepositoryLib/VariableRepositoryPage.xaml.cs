@@ -80,7 +80,7 @@ namespace Ginger.Repository
         private void SetVariablesGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
             viewCols.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 50, AllowSorting = true });
             viewCols.Add(new GridColView() { Field = nameof(VariableBase.Description), WidthWeight = 35, AllowSorting = true });

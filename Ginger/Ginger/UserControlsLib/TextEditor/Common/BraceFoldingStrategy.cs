@@ -70,7 +70,7 @@ namespace Ginger.UserControlsLib.TextEditor
         /// </summary>
         public IEnumerable<NewFolding> CreateNewFoldings(ITextSource document)
         {
-            List<NewFolding> newFoldings = new List<NewFolding>();
+            List<NewFolding> newFoldings = [];
 
             Stack<int> startOffsets = new Stack<int>();
             int lastNewLineOffset = 0;
@@ -92,7 +92,7 @@ namespace Ginger.UserControlsLib.TextEditor
                         newFoldings.Add(new NewFolding(startOffset, i + 1));
                     }
                 }
-                else if (c == '\n' || c == '\r')
+                else if (c is '\n' or '\r')
                 {
                     lastNewLineOffset = i + 1;
                 }

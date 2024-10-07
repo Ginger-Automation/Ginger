@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
@@ -43,13 +42,17 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "Output Simulation";
-            mBF.Active = true;
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "Output Simulation",
+                Active = true
+            };
 
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.WebServices;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.WebServices
+            };
 
             wsAgent = new Agent();
             AgentOperations agentOperations = new AgentOperations(wsAgent);
@@ -57,8 +60,10 @@ namespace UnitTests.NonUITests
 
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
-            ApplicationAgent mAG = new ApplicationAgent();
-            mAG.Agent = wsAgent;
+            ApplicationAgent mAG = new ApplicationAgent
+            {
+                Agent = wsAgent
+            };
 
             if (WorkSpace.Instance.Solution != null)
             {
@@ -67,8 +72,7 @@ namespace UnitTests.NonUITests
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [wsAgent];
 
             mGR.Executor.BusinessFlows.Add(mBF);
 
@@ -97,10 +101,12 @@ namespace UnitTests.NonUITests
         {
 
 
-            Activity Activity2 = new Activity();
-            Activity2.Active = true;
-            Activity2.ActivityName = "Web API REST";
-            Activity2.CurrentAgent = wsAgent;
+            Activity Activity2 = new Activity
+            {
+                Active = true,
+                ActivityName = "Web API REST",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(Activity2);
 
             ActWebAPIRest restAct = new ActWebAPIRest();
@@ -114,10 +120,12 @@ namespace UnitTests.NonUITests
             restAct.Active = true;
             restAct.EnableRetryMechanism = false;
             restAct.ItemName = "Web API REST";
-            ActReturnValue simulateOutput = new ActReturnValue();
-            simulateOutput.Active = true;
-            simulateOutput.Param = "TestSimulation";
-            simulateOutput.SimulatedActual = "TestSimulation";
+            ActReturnValue simulateOutput = new ActReturnValue
+            {
+                Active = true,
+                Param = "TestSimulation",
+                SimulatedActual = "TestSimulation"
+            };
 
             mBF.Activities[0].Acts.Add(restAct);
             mGR.RunInSimulationMode = true;
@@ -149,10 +157,12 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void SimulatedOuputActionFlagOn()
         {
-            Activity Activity2 = new Activity();
-            Activity2.Active = true;
-            Activity2.ActivityName = "Web API REST";
-            Activity2.CurrentAgent = wsAgent;
+            Activity Activity2 = new Activity
+            {
+                Active = true,
+                ActivityName = "Web API REST",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(Activity2);
 
             ActWebAPIRest restAct = new ActWebAPIRest();
@@ -168,10 +178,12 @@ namespace UnitTests.NonUITests
             restAct.ItemName = "Web API REST";
             restAct.SupportSimulation = true;
 
-            ActReturnValue simulateOutput = new ActReturnValue();
-            simulateOutput.Active = true;
-            simulateOutput.Param = "TestSimulation";
-            simulateOutput.SimulatedActual = "TestSimulation";
+            ActReturnValue simulateOutput = new ActReturnValue
+            {
+                Active = true,
+                Param = "TestSimulation",
+                SimulatedActual = "TestSimulation"
+            };
 
             mBF.Activities[0].Acts.Add(restAct);
 
@@ -204,10 +216,12 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void SimulatedOutputWithVETest()
         {
-            Activity Activity2 = new Activity();
-            Activity2.Active = true;
-            Activity2.ActivityName = "Web API REST with VE";
-            Activity2.CurrentAgent = wsAgent;
+            Activity Activity2 = new Activity
+            {
+                Active = true,
+                ActivityName = "Web API REST with VE",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(Activity2);
 
             ActWebAPIRest restAct = new ActWebAPIRest();
@@ -223,11 +237,15 @@ namespace UnitTests.NonUITests
             restAct.ItemName = "Web API REST Simulated Output VE";
             restAct.SupportSimulation = true;
 
-            ActReturnValue simulateOutput = new ActReturnValue();
-            simulateOutput.Active = true;
-            simulateOutput.Param = "TestSimulation";
-            ValueExpression testVE = new ValueExpression(null, mBF);
-            testVE.Value = "simulated VE";
+            ActReturnValue simulateOutput = new ActReturnValue
+            {
+                Active = true,
+                Param = "TestSimulation"
+            };
+            ValueExpression testVE = new ValueExpression(null, mBF)
+            {
+                Value = "simulated VE"
+            };
             simulateOutput.SimulatedActual = testVE.Value;
 
             mBF.Activities[0].Acts.Add(restAct);
@@ -261,10 +279,12 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void SimulatedOutputTest()
         {
-            Activity Activity3 = new Activity();
-            Activity3.Active = true;
-            Activity3.ActivityName = "Web API REST Simulated Output";
-            Activity3.CurrentAgent = wsAgent;
+            Activity Activity3 = new Activity
+            {
+                Active = true,
+                ActivityName = "Web API REST Simulated Output",
+                CurrentAgent = wsAgent
+            };
             mBF.Activities.Add(Activity3);
 
 
@@ -282,11 +302,13 @@ namespace UnitTests.NonUITests
             restAct.SupportSimulation = true;
 
             //Define dummy return value
-            ActReturnValue simulateOutput = new ActReturnValue();
-            simulateOutput.Active = true;
-            simulateOutput.Param = "TestSimulation";
-            simulateOutput.SimulatedActual = "simulated ok";
-            simulateOutput.Expected = "simulated ok";
+            ActReturnValue simulateOutput = new ActReturnValue
+            {
+                Active = true,
+                Param = "TestSimulation",
+                SimulatedActual = "simulated ok",
+                Expected = "simulated ok"
+            };
 
             restAct.ReturnValues.Add(simulateOutput);
 

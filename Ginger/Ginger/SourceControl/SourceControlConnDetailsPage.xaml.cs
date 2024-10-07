@@ -157,15 +157,19 @@ namespace Ginger.SourceControl
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button testConnBtn = new Button();
-            testConnBtn.Content = "Test Connection";
+            Button testConnBtn = new Button
+            {
+                Content = "Test Connection"
+            };
             testConnBtn.Click += new RoutedEventHandler(TestConnection_Click);
 
-            Button SaveBtn = new Button();
-            SaveBtn.Content = "Save Configuration";
+            Button SaveBtn = new Button
+            {
+                Content = "Save Configuration"
+            };
             SaveBtn.Click += new RoutedEventHandler(SaveConfiguration_Click);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn, SaveBtn }, true, "Close", Close_Click);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, [testConnBtn, SaveBtn], true, "Close", Close_Click);
         }
 
         private void SourceControlUserDetails_TextChanged(object sender, TextChangedEventArgs e)

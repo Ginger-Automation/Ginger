@@ -47,9 +47,8 @@ namespace Ginger.GherkinLib
             {
                 CreateStyles();
             }
-            if (item is GherkinStep)
+            if (item is GherkinStep step)
             {
-                GherkinStep step = (GherkinStep)item;
                 return mStyles[step.ColorIndex];
             }
             return null;

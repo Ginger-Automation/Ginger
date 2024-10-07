@@ -376,7 +376,7 @@ namespace GingerCoreCommonTest
             //Assert
             Assert.IsTrue(busFlow.Activities[3] == activity6, "Validate new Activity added in last of existing group Activities");
             Assert.IsTrue(activity6.ActivitiesGroupID == group1.Name, "Validate new Activity is mapped to existing group");
-            Assert.IsTrue(group1.ActivitiesIdentifiers[group1.ActivitiesIdentifiers.Count - 1].IdentifiedActivity == activity6, "Validate new Activity is mapped to existing group");
+            Assert.IsTrue(group1.ActivitiesIdentifiers[^1].IdentifiedActivity == activity6, "Validate new Activity is mapped to existing group");
         }
 
         [TestMethod]

@@ -164,9 +164,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void StartAgentOnRemoteGingerGrid()
         {
             // Arrange
-            Agent agent = new Agent();
-            agent.AgentType = Agent.eAgentType.Service;
-            agent.ServiceId = "SeleniumChromeService";
+            Agent agent = new Agent
+            {
+                AgentType = Agent.eAgentType.Service,
+                ServiceId = "SeleniumChromeService"
+            };
             agent.AgentOperations.StartDriver();
 
             // ActPlugIn actPlugin = new ActPlugIn() { ServiceId = "SeleniumChromeService", ActionId = "StartDriver" };
