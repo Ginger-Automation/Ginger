@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace GingerCore.Drivers.Common
 {
@@ -148,7 +147,7 @@ namespace GingerCore.Drivers.Common
                     //Need to see if we have similar item with same property under same parent if yes need to add index
                     int? index = GetPropValIndex(EI, prop, val);
                     string SIndex = null;
-                    if (index == null || index == 0)
+                    if (index is null or 0)
                     {
                         SIndex = "";
                     }
@@ -174,8 +173,10 @@ namespace GingerCore.Drivers.Common
             // none found return null - no need for index since unique
 
             ElementInfo parent = mDriver.GetElementParent(EI);
-            List<XpathPropertyCondition> conditions = new List<XpathPropertyCondition>();
-            conditions.Add(new XpathPropertyCondition() { PropertyName = prop, Op = XpathPropertyCondition.XpathConditionOperator.Equel, Value = val });
+            List<XpathPropertyCondition> conditions =
+            [
+                new XpathPropertyCondition() { PropertyName = prop, Op = XpathPropertyCondition.XpathConditionOperator.Equel, Value = val },
+            ];
 
             int? index = null;
             ElementInfo EI11 = mDriver.GetPreviousSibling(EI);
@@ -296,7 +297,7 @@ namespace GingerCore.Drivers.Common
         // Find node in BaseElement children that match the conditions - one level
         private ElementInfo FindNode(ElementInfo BaseElement, string NodePath)
         {
-            List<XpathPropertyCondition> conditions = new List<XpathPropertyCondition>();
+            List<XpathPropertyCondition> conditions = [];
 
             int? index = null;
             string XpathLeftBrck = "&#lb2F";
@@ -317,7 +318,7 @@ namespace GingerCore.Drivers.Common
 
             if (!NodePath.StartsWith("[") || index != null & index != 0)
             {
-                if (index == null || index == 0)
+                if (index is null or 0)
                 {
                     if (BaseElement == null)
                     {
@@ -353,7 +354,7 @@ namespace GingerCore.Drivers.Common
         {
             if (NodePath.IndexOf(']') > 0)
             {
-                string[] a = NodePath.Substring(1, NodePath.Length - 2).Split(':');
+                string[] a = NodePath[1..^1].Split(':');
                 if (a.Length < 3)
                 {
                     prop = a[0];
@@ -362,7 +363,7 @@ namespace GingerCore.Drivers.Common
                 else
                 {
                     int i = NodePath.IndexOf(":");
-                    prop = NodePath.Substring(1, i - 1);
+                    prop = NodePath[1..i];
                     val = NodePath.Substring(i + 1, NodePath.Length - prop.Length - 3);
                 }
             }
@@ -380,7 +381,7 @@ namespace GingerCore.Drivers.Common
                 }
                 else
                 {
-                    string[] a = NodePath.Substring(0, NodePath.Length).Split(':');
+                    string[] a = NodePath[..].Split(':');
                     prop = a[0];
                     val = a[1];
                 }
@@ -395,7 +396,7 @@ namespace GingerCore.Drivers.Common
                 return;
             }
 
-            int i1 = NodePath.Substring(1).IndexOf('[');
+            int i1 = NodePath[1..].IndexOf('[');
             int i2 = NodePath.IndexOf(']');
 
             if (i1 > 0 && i2 > 0) // We have index
@@ -403,11 +404,11 @@ namespace GingerCore.Drivers.Common
                 string sIDX = NodePath.Substring(i1 + 2, i2 - i1 - 2);
                 if (NodePath.EndsWith("]]"))
                 {
-                    NodePath = NodePath.Substring(0, i1 + 1) + "]";
+                    NodePath = NodePath[..(i1 + 1)] + "]";
                 }
                 else
                 {
-                    NodePath = NodePath.Substring(0, i1 + 1);
+                    NodePath = NodePath[..(i1 + 1)];
                 }
 
                 index = int.Parse(sIDX);

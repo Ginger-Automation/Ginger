@@ -54,8 +54,7 @@ namespace Ginger.Run.RunSetActions
 
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
-            List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
-            list.Add(RunSetActionBase.eRunAt.ExecutionEnd);
+            List<RunSetActionBase.eRunAt> list = [RunSetActionBase.eRunAt.ExecutionEnd];
             return list;
         }
 

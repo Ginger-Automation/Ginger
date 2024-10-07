@@ -54,14 +54,16 @@ namespace Amdocs.Ginger.GingerRuntime
             Stopwatch st = Stopwatch.StartNew();
             for (int i = 0; i < 1000; i++)
             {
-                GingerNodeProxy GNP = new GingerNodeProxy(WorkSpace.Instance.LocalGingerGrid.NodeList[0]);
-                GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+                GingerNodeProxy GNP = new GingerNodeProxy(WorkSpace.Instance.LocalGingerGrid.NodeList[0])
+                {
+                    GingerGrid = WorkSpace.Instance.LocalGingerGrid
+                };
                 NewPayLoad pl = GetPL();
                 GNP.RunAction(pl);
             }
             st.Stop();
-            Console.WriteLine("Elapsed: " + (long)st.ElapsedMilliseconds);
-            Console.WriteLine("AVG: " + (long)st.ElapsedMilliseconds / 1000);
+            Console.WriteLine("Elapsed: " + st.ElapsedMilliseconds);
+            Console.WriteLine("AVG: " + st.ElapsedMilliseconds / 1000);
         }
 
         NewPayLoad GetPL()
@@ -70,7 +72,7 @@ namespace Amdocs.Ginger.GingerRuntime
             NewPayLoad PL = new NewPayLoad("RunAction");
             PL.AddValue("Sum");
 
-            List<NewPayLoad> Params = new List<NewPayLoad>();
+            List<NewPayLoad> Params = [];
 
             NewPayLoad p1 = new NewPayLoad("P", "a", "1");
             Params.Add(p1);

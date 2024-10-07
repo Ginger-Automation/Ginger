@@ -60,8 +60,10 @@ namespace Amdocs.Ginger
                 while (string.IsNullOrEmpty(runSetName.Trim()) || WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().FirstOrDefault(r => r.ItemName.ToLower() == runSetName.ToLower()) != null);
             }
 
-            RunSetConfig runSetConfig = new RunSetConfig();
-            runSetConfig.Name = runSetName;
+            RunSetConfig runSetConfig = new RunSetConfig
+            {
+                Name = runSetName
+            };
 
             GingerRunner gingerRunner = new GingerRunner { Name = "Runner 1" };
             GingerExecutionEngine gingerExecutionEngine = new GingerExecutionEngine(gingerRunner);

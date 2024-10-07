@@ -28,7 +28,6 @@ using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
-using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -102,9 +101,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void SetSelectedPOMsGridView()
         {
             xSelectedPOMsGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPOMModel.NameWithRelativePath), Header = "POM", AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ApplicationPOMModel.NameWithRelativePath), Header = "POM", AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true },
+            ]
+            };
             xSelectedPOMsGrid.SetAllColumnsDefaultView(view);
             xSelectedPOMsGrid.InitViewItems();
 
@@ -260,7 +263,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             });
         }
 
-        ObservableList<ApplicationPOMModel> mPomModels = new ObservableList<ApplicationPOMModel>();
+        ObservableList<ApplicationPOMModel> mPomModels = [];
 
         private void MAppModelSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
         {

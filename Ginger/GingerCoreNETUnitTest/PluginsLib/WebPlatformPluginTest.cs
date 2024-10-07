@@ -64,10 +64,12 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
             // Start Agent
 
-            agent = new Agent();
-            agent.AgentType = Agent.eAgentType.Service;
-            agent.PluginId = "SeleniumPlugin";
-            agent.ServiceId = "SeleniumChromeService";
+            agent = new Agent
+            {
+                AgentType = Agent.eAgentType.Service,
+                PluginId = "SeleniumPlugin",
+                ServiceId = "SeleniumChromeService"
+            };
             mTestHelper.Log("StartDriver SeleniumPlugin SeleniumChromeService");
             agent.AgentOperations.StartDriver();
 

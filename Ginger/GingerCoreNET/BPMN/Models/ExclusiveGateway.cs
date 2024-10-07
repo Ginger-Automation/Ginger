@@ -17,10 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.BPMN.Models
 {
@@ -44,8 +40,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
             ProcessId = processId;
             Id = $"gateway_{guid}";
             Name = name;
-            IncomingFlows = new();
-            OutgoingFlows = new();
+            IncomingFlows = [];
+            OutgoingFlows = [];
         }
     }
 }

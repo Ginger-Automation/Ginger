@@ -69,7 +69,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eFileTransferAction)GetOrCreateInputParam<eFileTransferAction>(nameof(FileTransferAction), eFileTransferAction.GetFile);
+                return GetOrCreateInputParam<eFileTransferAction>(nameof(FileTransferAction), eFileTransferAction.GetFile);
             }
             set
             {

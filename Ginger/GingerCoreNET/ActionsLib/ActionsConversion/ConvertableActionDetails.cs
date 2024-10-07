@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET
                 ePlatformType str = ePlatformType.NA;
                 foreach (var action in Actions.Distinct().ToList())
                 {
-                    if (action != null && action is IObsoleteAction)
+                    if (action is not null and IObsoleteAction)
                     {
                         str = ((IObsoleteAction)action).GetTargetPlatform();
 
@@ -103,7 +103,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 if (str.EndsWith(","))
                 {
-                    str = str.Substring(0, str.Length - 1);
+                    str = str[..^1];
                 }
                 return str;
 
@@ -113,8 +113,8 @@ namespace Amdocs.Ginger.CoreNET
 
         public ConvertableActionDetails()
         {
-            ActivityList = new List<string>();
-            Actions = new List<Act>();
+            ActivityList = [];
+            Actions = [];
         }
     }
 }

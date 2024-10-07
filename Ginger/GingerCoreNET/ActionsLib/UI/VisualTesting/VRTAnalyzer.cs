@@ -57,7 +57,7 @@ namespace GingerCore.Actions.VisualTesting
                 Project = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.Project),
                 ApiUrl = VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl),
                 ApiKey = ValueExpression.PasswordCalculation(VE.Calculate(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey)),
-                EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes ? false : true
+                EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch != Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes
             };
         }
 
@@ -401,31 +401,21 @@ namespace GingerCore.Actions.VisualTesting
 
         private string GetImageName()
         {
-            string imageName;
             eImageNameBy imageNameBy;
             bool imageNameByResult = Enum.TryParse(mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value, out imageNameBy);
             if (!imageNameByResult)
             {
                 imageNameBy = eImageNameBy.ActionName;
             }
-            switch (imageNameBy)
+
+            var imageName = imageNameBy switch
             {
-                case eImageNameBy.ActionName:
-                    imageName = mAct.Description;
-                    break;
-                case eImageNameBy.ActionGuid:
-                    imageName = mAct.Guid.ToString();
-                    break;
-                case eImageNameBy.ActionNameGUID:
-                    imageName = mAct.Description + "_" + mAct.Guid.ToString();
-                    break;
-                case eImageNameBy.Custom:
-                    imageName = mAct.GetInputParamCalculatedValue(VRTAnalyzer.ImageName);
-                    break;
-                default:
-                    imageName = mAct.Description;
-                    break;
-            }
+                eImageNameBy.ActionName => mAct.Description,
+                eImageNameBy.ActionGuid => mAct.Guid.ToString(),
+                eImageNameBy.ActionNameGUID => mAct.Description + "_" + mAct.Guid.ToString(),
+                eImageNameBy.Custom => mAct.GetInputParamCalculatedValue(VRTAnalyzer.ImageName),
+                _ => mAct.Description,
+            };
             return imageName;
         }
 

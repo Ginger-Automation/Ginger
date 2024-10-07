@@ -21,10 +21,12 @@ namespace GingerCore.GeneralLib
             //TODO: check perf impact + reuse exisitng binding on same obj.prop
             try
             {
-                System.Windows.Data.Binding b = new System.Windows.Data.Binding();
-                b.Source = obj;
-                b.Path = new PropertyPath(property);
-                b.Mode = BindingMode;
+                System.Windows.Data.Binding b = new System.Windows.Data.Binding
+                {
+                    Source = obj,
+                    Path = new PropertyPath(property),
+                    Mode = BindingMode
+                };
                 if (bindingConvertor != null)
                 {
                     b.Converter = bindingConvertor;
@@ -62,12 +64,14 @@ namespace GingerCore.GeneralLib
             //TODO: check perf impact + reuse existing binding on same obj.prop
             try
             {
-                Binding b = new Binding();
-                b.Source = obj;
-                b.Path = new PropertyPath(property);
-                b.Mode = BindingMode;
-                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                b.NotifyOnValidationError = true;
+                Binding b = new Binding
+                {
+                    Source = obj,
+                    Path = new PropertyPath(property),
+                    Mode = BindingMode,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    NotifyOnValidationError = true
+                };
                 frameworkElement.SetBinding(dependencyProperty, b);
             }
             catch (Exception ex)
@@ -95,11 +99,13 @@ namespace GingerCore.GeneralLib
             //TODO: check perf impact + reuse exisitng binding on same obj.prop
             try
             {
-                Binding b = new Binding();
-                b.Source = obj;
-                b.Path = new PropertyPath(property);
-                b.Mode = BindingMode;
-                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding b = new Binding
+                {
+                    Source = obj,
+                    Path = new PropertyPath(property),
+                    Mode = BindingMode,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 textBlockControl.SetBinding(dependencyProperty, b);
             }
             catch (Exception ex)
@@ -121,10 +127,12 @@ namespace GingerCore.GeneralLib
             //TODO: check perf impact + reuse exisitng binding on same obj.prop
             try
             {
-                System.Windows.Data.Binding b = new System.Windows.Data.Binding();
-                b.Source = obj;
-                b.Path = new PropertyPath(property);
-                b.Mode = BindingMode;
+                System.Windows.Data.Binding b = new System.Windows.Data.Binding
+                {
+                    Source = obj,
+                    Path = new PropertyPath(property),
+                    Mode = BindingMode
+                };
                 if (bindingConvertor != null)
                 {
                     b.Converter = bindingConvertor;

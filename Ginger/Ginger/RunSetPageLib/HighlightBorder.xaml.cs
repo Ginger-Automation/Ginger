@@ -47,15 +47,11 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
 
         private void SetStatus()
         {
-            switch (Status)
+            SelectedBorder.Visibility = Status switch
             {
-                case eRunStatus.Running:
-                    SelectedBorder.Visibility = Visibility.Visible;
-                    break;
-                default:
-                    SelectedBorder.Visibility = Visibility.Collapsed;
-                    break;
-            }
+                eRunStatus.Running => Visibility.Visible,
+                _ => Visibility.Collapsed,
+            };
         }
         public BorderStatus()
         {

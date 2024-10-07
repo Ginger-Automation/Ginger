@@ -39,9 +39,9 @@ namespace Ginger.ApplicationModelsLib.APIModels
         ApplicationAPIUtils.eContentType requestBodyType;
         XmlDocument XMLDoc = null;
         JsonExtended JsonDoc = null;
-        List<AppModelParameter> mParamsPendingDelete = new List<AppModelParameter>();
+        List<AppModelParameter> mParamsPendingDelete = [];
         ApplicationAPIModel mApplicationAPIModel = null;
-        List<NodeToDelete> mNodesToDeleteList = new List<NodeToDelete>();
+        List<NodeToDelete> mNodesToDeleteList = [];
         int RemovedCharsFromRequestBodyCounter = 0;
 
         public APIModelBodyNodeSyncPage(ApplicationAPIModel applicationAPIModel, List<AppModelParameter> paramsToDelete)
@@ -167,12 +167,12 @@ namespace Ginger.ApplicationModelsLib.APIModels
                 {
                     if (stringIndex != mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item1) //No color
                     {
-                        TBH.AddText(mApplicationAPIModel.RequestBody.Substring(stringIndex, mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item1 - stringIndex));
+                        TBH.AddText(mApplicationAPIModel.RequestBody[stringIndex..mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item1]);
                         stringIndex = mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item1;
                     }
                     else //With color
                     {
-                        TBH.AddFormattedText(mApplicationAPIModel.RequestBody.Substring(stringIndex, mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2 - stringIndex), System.Windows.Media.Brushes.Red, true);
+                        TBH.AddFormattedText(mApplicationAPIModel.RequestBody[stringIndex..mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2], System.Windows.Media.Brushes.Red, true);
                         stringIndex = mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2;
                         nodeToDeleteIndex++;
                     }
@@ -181,7 +181,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
 
             if (stringIndex < mApplicationAPIModel.RequestBody.Length - 1)
             {
-                TBH.AddText(mApplicationAPIModel.RequestBody.Substring(stringIndex, mApplicationAPIModel.RequestBody.Length - stringIndex));
+                TBH.AddText(mApplicationAPIModel.RequestBody[stringIndex..]);
             }
         }
 
@@ -194,7 +194,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
                 regexString.Append(splitedSearchText[i] + ">\\s*\\n*");
             }
 
-            string regexStringAfterRemovedEndSpaces = regexString.ToString().Substring(0, regexString.ToString().Length - 6);
+            string regexStringAfterRemovedEndSpaces = regexString.ToString()[..^6];
 
             var regex = new Regex(regexStringAfterRemovedEndSpaces);
             Match match = regex.Match(mApplicationAPIModel.RequestBody);
@@ -228,28 +228,28 @@ namespace Ginger.ApplicationModelsLib.APIModels
                 regexStringBuilder.Append(splitedSearchText[i] + "\\s*\\n*}");
             }
 
-            splitedSearchText = regexStringBuilder.ToString().Substring(0, regexStringBuilder.ToString().Length - 7).Split(':');
+            splitedSearchText = regexStringBuilder.ToString()[..^7].Split(':');
             regexStringBuilder.Clear();
             for (i = 0; i < splitedSearchText.Length; i++)
             {
                 regexStringBuilder.Append(splitedSearchText[i] + ":\\s*\\n*");
             }
 
-            splitedSearchText = regexStringBuilder.ToString().Substring(0, regexStringBuilder.ToString().Length - 7).Split(',');
+            splitedSearchText = regexStringBuilder.ToString()[..^7].Split(',');
             regexStringBuilder.Clear();
             for (i = 0; i < splitedSearchText.Length; i++)
             {
                 regexStringBuilder.Append(splitedSearchText[i] + ",\\s*\\n*");
             }
 
-            splitedSearchText = regexStringBuilder.ToString().Substring(0, regexStringBuilder.ToString().Length - 7).Split('[');
+            splitedSearchText = regexStringBuilder.ToString()[..^7].Split('[');
             regexStringBuilder.Clear();
             for (i = 0; i < splitedSearchText.Length; i++)
             {
                 regexStringBuilder.Append(splitedSearchText[i] + "\\s*\\n*\\[\\s*\\n*");
             }
 
-            splitedSearchText = regexStringBuilder.ToString().Substring(0, regexStringBuilder.ToString().Length - 14).Split(']');
+            splitedSearchText = regexStringBuilder.ToString()[..^14].Split(']');
             regexStringBuilder.Clear();
             for (i = 0; i < splitedSearchText.Length; i++)
             {
@@ -257,7 +257,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
             }
 
             //string regexFinalString = regexStringBuilder.ToString().Substring(0, regexStringBuilder.ToString().Length - 7) + ',';
-            string regexFinalString = regexStringBuilder.ToString().Substring(0, regexStringBuilder.ToString().Length - 14);
+            string regexFinalString = regexStringBuilder.ToString()[..^14];
             var regex = new Regex(regexFinalString);
             Match match = regex.Match(mApplicationAPIModel.RequestBody);
 
@@ -333,19 +333,23 @@ namespace Ginger.ApplicationModelsLib.APIModels
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            if (requestBodyType == ApplicationAPIUtils.eContentType.XML || requestBodyType == ApplicationAPIUtils.eContentType.JSon)
+            if (requestBodyType is ApplicationAPIUtils.eContentType.XML or ApplicationAPIUtils.eContentType.JSon)
             {
                 PrepareNodesPendingForDelete();
 
-                Button btnDeleteParamsAndBodyNodes = new Button();
-                btnDeleteParamsAndBodyNodes.Content = "Delete Parameters And Body Nodes";
+                Button btnDeleteParamsAndBodyNodes = new Button
+                {
+                    Content = "Delete Parameters And Body Nodes"
+                };
                 btnDeleteParamsAndBodyNodes.Click += new RoutedEventHandler(DeleteParamsAndBodyNodesButton_Click);
 
-                Button btnDeleteOnlyParams = new Button();
-                btnDeleteOnlyParams.Content = "Delete Only Parameters";
+                Button btnDeleteOnlyParams = new Button
+                {
+                    Content = "Delete Only Parameters"
+                };
                 btnDeleteOnlyParams.Click += new RoutedEventHandler(DeleteOnlyParamsButton_Click);
 
-                GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { btnDeleteParamsAndBodyNodes, btnDeleteOnlyParams }, closeBtnText: "Cancel");
+                GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, [btnDeleteParamsAndBodyNodes, btnDeleteOnlyParams], closeBtnText: "Cancel");
             }
             else
             {

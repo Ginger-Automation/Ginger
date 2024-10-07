@@ -84,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         CurrentPOM = AddNewEmptyPOM("NewEmptyPOM");
                     }
-                    ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
+                    ListPOMObjectHelper = [];
                     foreach (var cPom in mApplicationPOMList)
                     {
                         ListPOMObjectHelper.Add(new POMObjectRecordingHelper() { PageTitle = cPom.Name, PageURL = cPom.PageURL, ApplicationPOM = cPom });
@@ -117,7 +117,7 @@ namespace Amdocs.Ginger.CoreNET
                 newPOM.Name = uniquTitle;
                 newPOM.PageURL = pageURL;
                 newPOM.ScreenShotImage = screenShot;
-                newPOM.MappedUIElements = new ObservableList<ElementInfo>();
+                newPOM.MappedUIElements = [];
                 if (WorkSpace.Instance.Solution != null)//check for unit tests
                 {
                     RepositoryItemKey tAppkey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == Context.Target.Name).Select(x => x.Key).FirstOrDefault();
@@ -161,7 +161,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 string uniquTitle = GetUniquePOMName(POMName);
                 newPOM.Name = uniquTitle;
-                newPOM.MappedUIElements = new ObservableList<ElementInfo>();
+                newPOM.MappedUIElements = [];
                 if (WorkSpace.Instance.Solution != null)//check for unit tests
                 {
                     RepositoryItemKey tAppkey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == Context.Target.Name).Select(x => x.Key).FirstOrDefault();
@@ -245,8 +245,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     newPOMHelper = GetNewPOM(args.PageTitle, args.PageURL, args.ScreenShot);
                     CurrentPOM = newPOMHelper.ApplicationPOM;
-                    ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
-                    ListPOMObjectHelper.Add(newPOMHelper);
+                    ListPOMObjectHelper = [newPOMHelper];
                 }
                 AddBrowserAction(args.PageTitle, args.PageURL);
             }
@@ -268,8 +267,10 @@ namespace Amdocs.Ginger.CoreNET
                     LocateBy = "NA"
                 };
 
-                ElementInfo einfo = new ElementInfo();
-                einfo.ElementTypeEnum = eElementType.Iframe;
+                ElementInfo einfo = new ElementInfo
+                {
+                    ElementTypeEnum = eElementType.Iframe
+                };
                 Act actUI = PlatformInfo.GetPlatformAction(einfo, actConfig);
                 if (actUI != null)
                 {

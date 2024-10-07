@@ -68,7 +68,7 @@ namespace Ginger.BusinessFlowPages
         {
             if (xRegularType.IsChecked == true)
             {
-                if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is ErrorHandler) || (mWizard.ActivityToAdd is CleanUpActivity))
+                if (mWizard.ActivityToAdd is null or ErrorHandler or CleanUpActivity)
                 {
                     mWizard.ActivityToAdd = new Activity() { ActivityName = "New " + GingerDicser.GetTermResValue(eTermResKey.Activity), TargetApplication = SetTargetApp(), Active = true };
                 }

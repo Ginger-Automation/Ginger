@@ -35,34 +35,33 @@ namespace Ginger.WindowExplorer.Windows
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Set Checkbox to checked " + UIAElementInfo.ElementTitle,
-                ControlAction = ActWindowsControl.eControlAction.SetValue,
-                Value = "Checked"
-            });
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Get Checkbox status " + UIAElementInfo.ElementTitle,
-                ControlAction = ActWindowsControl.eControlAction.GetValue,
-                Value = "Checked"
-            });
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Toggle Checkbox " + UIAElementInfo.ElementTitle,
-                ControlAction = ActWindowsControl.eControlAction.Toggle,
-                Value = "Checked"
-            });
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Checkbox " + UIAElementInfo.ElementTitle + " IsEnabled",
-                ControlAction = ActWindowsControl.eControlAction.IsEnabled,
-                Value = "Checked"
-            });
+            ObservableList<Act> list =
+            [
+                new ActWindowsControl()
+                {
+                    Description = "Set Checkbox to checked " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActWindowsControl.eControlAction.SetValue,
+                    Value = "Checked"
+                },
+                new ActWindowsControl()
+                {
+                    Description = "Get Checkbox status " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActWindowsControl.eControlAction.GetValue,
+                    Value = "Checked"
+                },
+                new ActWindowsControl()
+                {
+                    Description = "Toggle Checkbox " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActWindowsControl.eControlAction.Toggle,
+                    Value = "Checked"
+                },
+                new ActWindowsControl()
+                {
+                    Description = "Checkbox " + UIAElementInfo.ElementTitle + " IsEnabled",
+                    ControlAction = ActWindowsControl.eControlAction.IsEnabled,
+                    Value = "Checked"
+                },
+            ];
 
             return list;
         }

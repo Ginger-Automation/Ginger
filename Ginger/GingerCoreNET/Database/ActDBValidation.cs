@@ -25,8 +25,6 @@ using GingerCore.Actions.Common;
 using GingerCore.Environments;
 using GingerCore.NoSqlBase;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.Azure.Cosmos.Linq;
-using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -183,10 +181,10 @@ namespace GingerCore.Actions
         internal string QueryValue { get; private set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> QueryParams = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> UpdateOperationInputValues = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> UpdateOperationInputValues = [];
 
         public enum eDatabaseTye
         {
@@ -324,8 +322,7 @@ namespace GingerCore.Actions
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(UpdateOperationInputValues);
+            List<ObservableList<ActInputValue>> list = [UpdateOperationInputValues];
             return list;
         }
 
@@ -335,7 +332,7 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue("SQL", GetInputParamValue("Value"));
             }
-           
+
             if (SetDBConnection() == false)
             {
                 return;//Failed to find the DB in the Environment
@@ -410,14 +407,14 @@ namespace GingerCore.Actions
                     }
                     break;
                 case Database.eDBTypes.Hbase:
-                    
+
                     if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerHbase))
                     {
                         NoSqlDriver = new GingerHbase(DBValidationType, DB, this);
                     }
                     else
                     {
-                        NoSqlDriver.Action= DBValidationType;                        
+                        NoSqlDriver.Action = DBValidationType;
                     }
                     break;
             }

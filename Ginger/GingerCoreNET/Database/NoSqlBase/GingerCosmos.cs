@@ -92,7 +92,7 @@ namespace GingerCore.NoSqlBase
 
         public override async Task<List<string>> GetColumnList(string table)
         {
-            
+
             throw new NotImplementedException("Cosmos does not support columns");
         }
 
@@ -103,7 +103,7 @@ namespace GingerCore.NoSqlBase
 
         public override List<string> GetTableList(string Keyspace)
         {
-            List<string> colList = new List<string>();
+            List<string> colList = [];
             Database objDatabase = GetDatabaseObject(DatabaseName);
             FeedIterator<object> queryObj = objDatabase.GetContainerQueryIterator<object>();
             if (queryObj.HasMoreResults)
@@ -128,14 +128,16 @@ namespace GingerCore.NoSqlBase
         {
             try
             {
-                ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-                VE.Value = Act.QueryValue;
+                ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList)
+                {
+                    Value = Act.QueryValue
+                };
                 string SQLCalculated = VE.ValueCalculated.ToLower();
                 string dbName = "";
                 string containerName = "";
                 Action = Act.DBValidationType;
-                if (Action == eDBValidationType.SimpleSQLOneValue || Action == eDBValidationType.UpdateDB
-                    || Action == eDBValidationType.Insert)
+                if (Action is eDBValidationType.SimpleSQLOneValue or eDBValidationType.UpdateDB
+                    or eDBValidationType.Insert)
                 {
                     dbName = DatabaseName;
                     containerName = Act.Table;
@@ -166,7 +168,7 @@ namespace GingerCore.NoSqlBase
                         {
                             int indexOfFrom = SQLCalculated.IndexOf("from") + 4;
                             int indexOfWhere = SQLCalculated.IndexOf("where");
-                            containerName = SQLCalculated.Substring(indexOfFrom, indexOfWhere - indexOfFrom).Trim();
+                            containerName = SQLCalculated[indexOfFrom..indexOfWhere].Trim();
                             containerName = VE.ValueCalculated.Substring(VE.ValueCalculated.IndexOf(containerName, StringComparison.CurrentCultureIgnoreCase)
                                 , containerName.Length).Split(' ')[0];
                         }
@@ -204,7 +206,7 @@ namespace GingerCore.NoSqlBase
                         {
                             int indexOfFrom = SQLCalculated.IndexOf("from") + 4;
                             int indexOfWhere = SQLCalculated.IndexOf("where");
-                            containerName = SQLCalculated.Substring(indexOfFrom, indexOfWhere - indexOfFrom).Trim();
+                            containerName = SQLCalculated[indexOfFrom..indexOfWhere].Trim();
                             containerName = properSql.Substring(properSql.IndexOf(containerName, StringComparison.CurrentCultureIgnoreCase)
                                 , containerName.Length).Split(' ')[0];
                         }
@@ -235,7 +237,7 @@ namespace GingerCore.NoSqlBase
                             Act.Error = "Please select valid container/table";
                             return;
                         }
-                        List<PatchOperation> lstPatchOperations = new List<PatchOperation>();
+                        List<PatchOperation> lstPatchOperations = [];
                         foreach (ActInputValue cosmosPatch in Act.UpdateOperationInputValues)
                         {
                             string param, value;
@@ -253,8 +255,10 @@ namespace GingerCore.NoSqlBase
                             object outputVals = response.Resource;
                             JObject parsed = JObject.Parse(outputVals.ToString());
                             string key = parsed.GetValue("id").ToString();
-                            Dictionary<string, object> dctOutputVals = new Dictionary<string, object>();
-                            dctOutputVals.Add(key, outputVals);
+                            Dictionary<string, object> dctOutputVals = new Dictionary<string, object>
+                            {
+                                { key, outputVals }
+                            };
                             Act.AddToOutputValues(dctOutputVals);
                         }
                         break;
@@ -274,8 +278,10 @@ namespace GingerCore.NoSqlBase
                             object outputVals = objReturn.Resource;
                             JObject parsed = JObject.Parse(outputVals.ToString());
                             string key = parsed.GetValue("id").ToString();
-                            Dictionary<string, object> dctOutputVals = new Dictionary<string, object>();
-                            dctOutputVals.Add(key, outputVals);
+                            Dictionary<string, object> dctOutputVals = new Dictionary<string, object>
+                            {
+                                { key, outputVals }
+                            };
                             Act.AddToOutputValues(dctOutputVals);
                         }
                         break;
@@ -315,7 +321,7 @@ namespace GingerCore.NoSqlBase
             try
             {
                 FeedResponse<object> currentResultSet = null;
-                Dictionary<string, object> outputVals = new Dictionary<string, object>();
+                Dictionary<string, object> outputVals = [];
                 FeedIterator<object> queryResultSetIterator = null;
                 queryResultSetIterator = objContainer.GetItemQueryIterator<object>(sqlCalculated);
                 while (queryResultSetIterator.HasMoreResults)
@@ -346,7 +352,7 @@ namespace GingerCore.NoSqlBase
 
         private List<string> GetListOfDatabaseId()
         {
-            List<string> lstDb = new List<string>();
+            List<string> lstDb = [];
             try
             {
                 CosmosClient cosmosClient = GetCosmosClient();
@@ -369,7 +375,7 @@ namespace GingerCore.NoSqlBase
 
         private List<Database> GetListOfDatabases()
         {
-            List<Database> lstDb = new List<Database>();
+            List<Database> lstDb = [];
             try
             {
                 CosmosClient cosmosClient = GetCosmosClient();

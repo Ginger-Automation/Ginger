@@ -27,9 +27,11 @@ namespace GingerCore.Drivers
         public static Screenshot GetFullPageScreenshot(this ChromiumDriver driver)
         {
             //Dictionary will contain the parameters needed to get the full page screen shot
-            Dictionary<string, Object> metrics = new Dictionary<string, Object>();
-            metrics["width"] = driver.ExecuteScript("return Math.max(window.innerWidth,document.body.scrollWidth,document.documentElement.scrollWidth)");
-            metrics["height"] = driver.ExecuteScript("return Math.max(window.innerHeight,document.body.scrollHeight,document.documentElement.scrollHeight)");
+            Dictionary<string, Object> metrics = new Dictionary<string, Object>
+            {
+                ["width"] = driver.ExecuteScript("return Math.max(window.innerWidth,document.body.scrollWidth,document.documentElement.scrollWidth)"),
+                ["height"] = driver.ExecuteScript("return Math.max(window.innerHeight,document.body.scrollHeight,document.documentElement.scrollHeight)")
+            };
             object devicePixelRatio = driver.ExecuteScript("return window.devicePixelRatio");
             if (devicePixelRatio != null)
             {
@@ -53,7 +55,7 @@ namespace GingerCore.Drivers
             //You can then just screenshot it as it thinks everything is visible
             Screenshot screenshot = driver.GetScreenshot();
             //This command will return your browser back to a normal, usable form if you need to do anything else with it.
-            driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", new Dictionary<string, Object>());
+            driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", []);
 
             return screenshot;
         }

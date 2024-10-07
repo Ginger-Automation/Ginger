@@ -16,20 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.Configurations;
+using Ginger.Environments.GingerOpsEnvWizardLib;
+using Ginger.ExternalConfigurations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Protected;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Ginger.Environments.GingerOpsEnvWizardLib;
-using Ginger.Configurations;
 using static Ginger.Environments.GingerOpsEnvWizardLib.GingerOpsAPIResponseInfo;
-using Ginger.ExternalConfigurations;
 
 namespace GingerTest.GingerOps;
 
@@ -47,19 +47,19 @@ public class GingerOpsApiTest
         mockHandler = new Mock<HttpMessageHandler>();
         client = new HttpClient(mockHandler.Object);
         GingerOpsApi = new GingerOpsAPI();
-       
-            _mockUserConfig = new GingerOpsConfiguration()
-            {
-                Name = "test",
-                Token = "DummyTokenoijfdsfdsfsijwoieoweiwefjesofjewofrjew",
-                AccountUrl = "http://valid.url",
-                IdentityServiceURL = "http://identity.url",
-                ClientId = "client-id",
-                ClientSecret = "client-secret",
-                ItemName = "test",
-            };
 
-        
+        _mockUserConfig = new GingerOpsConfiguration()
+        {
+            Name = "test",
+            Token = "DummyTokenoijfdsfdsfsijwoieoweiwefjesofjewofrjew",
+            AccountUrl = "http://valid.url",
+            IdentityServiceURL = "http://identity.url",
+            ClientId = "client-id",
+            ClientSecret = "client-secret",
+            ItemName = "test",
+        };
+
+
     }
 
     [TestMethod]

@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.UIElement;
 using OpenQA.Selenium;
-using System.Collections.Generic;
 
 namespace GingerCoreNET.Drivers.CommonLib
 {

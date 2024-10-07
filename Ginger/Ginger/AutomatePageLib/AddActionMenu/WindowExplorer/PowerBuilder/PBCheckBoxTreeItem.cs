@@ -34,35 +34,33 @@ namespace Ginger.WindowExplorer.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Set Checkbox to checked " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.SetValue,
-                Value = "Checked"
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Get Checkbox status " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.GetValue,
-                Value = "Checked"
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Toggle Checkbox " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.Toggle,
-                Value = "Checked"
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Checkbox " + UIAElementInfo.ElementTitle + " IsEnabled",
-                ControlAction = ActPBControl.eControlAction.IsEnabled,
-                Value = "Checked"
-            });
+            ObservableList<Act> list =
+            [
+                new ActPBControl()
+                {
+                    Description = "Set Checkbox to checked " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.SetValue,
+                    Value = "Checked"
+                },
+                new ActPBControl()
+                {
+                    Description = "Get Checkbox status " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.GetValue,
+                    Value = "Checked"
+                },
+                new ActPBControl()
+                {
+                    Description = "Toggle Checkbox " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.Toggle,
+                    Value = "Checked"
+                },
+                new ActPBControl()
+                {
+                    Description = "Checkbox " + UIAElementInfo.ElementTitle + " IsEnabled",
+                    ControlAction = ActPBControl.eControlAction.IsEnabled,
+                    Value = "Checked"
+                },
+            ];
             return list;
         }
     }

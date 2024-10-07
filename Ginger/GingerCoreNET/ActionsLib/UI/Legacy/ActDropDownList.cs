@@ -87,7 +87,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eActDropDownListAction)GetOrCreateInputParam<eActDropDownListAction>(nameof(ActDropDownListAction), eActDropDownListAction.SetSelectedValueByValue);
+                return GetOrCreateInputParam<eActDropDownListAction>(nameof(ActDropDownListAction), eActDropDownListAction.SetSelectedValueByValue);
             }
             set
             {
@@ -129,7 +129,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform is ePlatformType.Web or ePlatformType.NA or ePlatformType.Mobile)
             {
                 return true;
             }
@@ -149,24 +149,14 @@ namespace GingerCore.Actions
             if (currentType == typeof(ActUIElement))
             {
                 // check special cases, where name should be changed. Than at default case - all names that have no change
-                switch (this.ActDropDownListAction)
+                newAct.ElementAction = this.ActDropDownListAction switch
                 {
-                    case eActDropDownListAction.SetSelectedValueByIndex:
-                        newAct.ElementAction = ActUIElement.eElementAction.SelectByIndex;
-                        break;
-                    case eActDropDownListAction.SetSelectedValueByValue:
-                        newAct.ElementAction = ActUIElement.eElementAction.Select;
-                        break;
-                    case eActDropDownListAction.SetSelectedValueByText:
-                        newAct.ElementAction = ActUIElement.eElementAction.SelectByText;
-                        break;
-                    case eActDropDownListAction.IsPrepopulated:
-                        newAct.ElementAction = ActUIElement.eElementAction.IsValuePopulated;
-                        break;
-                    default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ActDropDownListAction.ToString());
-                        break;
-                }
+                    eActDropDownListAction.SetSelectedValueByIndex => ActUIElement.eElementAction.SelectByIndex,
+                    eActDropDownListAction.SetSelectedValueByValue => ActUIElement.eElementAction.Select,
+                    eActDropDownListAction.SetSelectedValueByText => ActUIElement.eElementAction.SelectByText,
+                    eActDropDownListAction.IsPrepopulated => ActUIElement.eElementAction.IsValuePopulated,
+                    _ => (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ActDropDownListAction.ToString()),
+                };
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);

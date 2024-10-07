@@ -168,7 +168,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         public void ListsStructTestJSON()
         {
             //Arrange            
-            complexStructwithStrings s1 = new complexStructwithStrings() { a = "aaa", strings = new List<string>() { "aaa", "bbb", "ccc" }, b = "ggg" };
+            complexStructwithStrings s1 = new complexStructwithStrings() { a = "aaa", strings = ["aaa", "bbb", "ccc"], b = "ggg" };
 
             // Act
             NewPayLoad pl = new NewPayLoad("ll");

@@ -29,7 +29,7 @@ namespace GingerCoreNET.Application_Models
     {
         public static ObservableList<DeltaAPIModel> DoAPIModelsCompare(ObservableList<ApplicationAPIModel> learnedAPIModelsList, ObservableList<ApplicationAPIModel> existingAPIModels = null)
         {
-            ObservableList<DeltaAPIModel> deltaAPIModelsList = new ObservableList<DeltaAPIModel>();
+            ObservableList<DeltaAPIModel> deltaAPIModelsList = [];
 
             ObservableList<ApplicationAPIModel> existingAPIModelsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
 
@@ -38,8 +38,10 @@ namespace GingerCoreNET.Application_Models
             {
                 //ApplicationAPIModel apiModelLearned = learnedAPIModelsList[i];
 
-                DeltaAPIModel apiModelDelta = new DeltaAPIModel();
-                apiModelDelta.learnedAPI = apiModelLearned;
+                DeltaAPIModel apiModelDelta = new DeltaAPIModel
+                {
+                    learnedAPI = apiModelLearned
+                };
                 List<ApplicationAPIModel> matchingAPIModels;
                 if (existingAPIModels == null)
                 {
@@ -160,7 +162,7 @@ namespace GingerCoreNET.Application_Models
             if (startIndex == 0 && endIndex != -1 && endIndex + 1 < fullUrl.Length)
             {
                 // Removing the MGP of URL and replacing the actual endpoint
-                fullUrl = fullUrl.Substring(endIndex + 1).Trim();
+                fullUrl = fullUrl[(endIndex + 1)..].Trim();
             }
 
             return fullUrl;

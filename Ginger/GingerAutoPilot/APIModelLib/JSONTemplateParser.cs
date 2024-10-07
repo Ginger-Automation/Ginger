@@ -17,13 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
 using Microsoft.CodeAnalysis;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NJsonSchema.Infrastructure;
-using NJsonSchema.Validation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,8 +44,10 @@ namespace Amdocs.Ginger.Common.APIModelLib
 
         private static ObservableList<ApplicationAPIModel> GetParameters(string jsonText, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes, string fileName)
         {
-            ApplicationAPIModel AAM = new ApplicationAPIModel();
-            AAM.Name = Path.GetFileNameWithoutExtension(fileName);
+            ApplicationAPIModel AAM = new ApplicationAPIModel
+            {
+                Name = Path.GetFileNameWithoutExtension(fileName)
+            };
 
             //JObject jo = JObject.Parse(JSOnText);
             //IList<string> keys = jo.Properties().Select(p => p.Path).ToList();
@@ -172,7 +170,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     }
                     jt2.Replace(param);
                 }
-                AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = Jn.JsonString.Replace("\"", ""), IsDefault=true } }));
+                AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = Jn.JsonString.Replace("\"", ""), IsDefault = true } }));
 
 
             }

@@ -198,14 +198,11 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (AppType == eAppType.NativeHybride)
                 {
-                    switch (DevicePlatformType)
+                    return DevicePlatformType switch
                     {
-                        case eDevicePlatformType.iOS:
-                            return ePomElementCategory.iOS;
-                        case eDevicePlatformType.Android:
-                        default:
-                            return ePomElementCategory.Android;
-                    }
+                        eDevicePlatformType.iOS => (ePomElementCategory?)ePomElementCategory.iOS,
+                        _ => (ePomElementCategory?)ePomElementCategory.Android,
+                    };
                 }
                 else
                 {
@@ -316,11 +313,13 @@ namespace Amdocs.Ginger.CoreNET
                     return false;
                 }
 
-                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                mSeleniumDriver.isAppiumSession = true;
-                mSeleniumDriver.StopProcess = this.StopProcess;
-                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
-                mSeleniumDriver.PomCategory = this.PomCategory;
+                mSeleniumDriver = new SeleniumDriver(Driver)
+                {
+                    isAppiumSession = true,
+                    StopProcess = this.StopProcess,
+                    BusinessFlow = this.BusinessFlow,
+                    PomCategory = this.PomCategory
+                }; //used for running regular Selenium actions
 
                 if (AppType == eAppType.Web && mDefaultURL != null)
                 {
@@ -366,7 +365,7 @@ namespace Amdocs.Ginger.CoreNET
                         continue;
                     }
 
-                    if (UserCapability.Parameter.ToLower().Trim() == "defaulturl" || UserCapability.Parameter.ToLower().Trim() == "ginger:defaulturl")
+                    if (UserCapability.Parameter.ToLower().Trim() is "defaulturl" or "ginger:defaulturl")
                     {
                         mDefaultURL = UserCapability.Value;
 
@@ -442,9 +441,9 @@ namespace Amdocs.Ginger.CoreNET
 
         private bool isContainQuotationMarks(DriverConfigParam capability)
         {
-            if (capability.Value[0] == '\"' && capability.Value[capability.Value.Length - 1] == '\"')
+            if (capability.Value[0] == '\"' && capability.Value[^1] == '\"')
             {
-                capability.Value = capability.Value.Substring(1, capability.Value.Length - 2);
+                capability.Value = capability.Value[1..^1];
                 return true;
             }
             return false;
@@ -961,11 +960,11 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (DevicePlatformType == eDevicePlatformType.Android)
                 {
-                    appPackage = AppiumCapabilities.FirstOrDefault(x => x.Parameter == "appPackage" || x.Parameter == "appium:appPackage").Value;
+                    appPackage = AppiumCapabilities.FirstOrDefault(x => x.Parameter is "appPackage" or "appium:appPackage").Value;
                 }
                 else
                 {
-                    appPackage = AppiumCapabilities.FirstOrDefault(x => x.Parameter == "bundleId" || x.Parameter == "appium:bundleId").Value;
+                    appPackage = AppiumCapabilities.FirstOrDefault(x => x.Parameter is "bundleId" or "appium:bundleId").Value;
                 }
 
                 return appPackage;
@@ -1030,7 +1029,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressBackButton:
-                        PerformBackButtonPress();                        
+                        PerformBackButtonPress();
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressHomeButton:
@@ -1247,8 +1246,8 @@ namespace Amdocs.Ginger.CoreNET
             {
                 return false;
             }
-            string extention = photo.Substring(photo.LastIndexOf('.') + 1);
-            if (extention == "jpg" || extention == "jpeg" || extention == "png")
+            string extention = photo[(photo.LastIndexOf('.') + 1)..];
+            if (extention is "jpg" or "jpeg" or "png")
             {
                 return true;
             }
@@ -1296,7 +1295,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public string BiometricSimulation(string authResult, string authResultDetails)
         {
-            Dictionary<string, object> sensorSimulationMap = new Dictionary<string, object>();
+            Dictionary<string, object> sensorSimulationMap = [];
             Dictionary<string, string> simulationData = new Dictionary<string, string>
             {
                 { "authResult", authResult },
@@ -1317,7 +1316,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 returnString = new StringBuilder(returnString + entry.Key + ": " + entry.Value + ", ").ToString();
             }
-            returnString = returnString.Substring(0, returnString.Length - 2);
+            returnString = returnString[..^2];
             return returnString;
         }
 
@@ -1500,8 +1499,10 @@ namespace Amdocs.Ginger.CoreNET
                     //((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
                     break;
                 case eDevicePlatformType.iOS:
-                    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
-                    commandArgs.Add("name", "home");
+                    Dictionary<string, object> commandArgs = new Dictionary<string, object>
+                    {
+                        { "name", "home" }
+                    };
                     Driver.ExecuteScript("mobile: pressButton", commandArgs);
                     break;
             }
@@ -1558,7 +1559,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     break;
                 case eDevicePlatformType.iOS:
-                    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
+                    Dictionary<string, object> commandArgs = [];
                     switch (volumeOperation)
                     {
                         case eVolumeOperation.Up:
@@ -1805,11 +1806,13 @@ namespace Amdocs.Ginger.CoreNET
 
         List<AppWindow> IWindowExplorer.GetAppWindows()
         {
-            List<AppWindow> list = new List<AppWindow>();
+            List<AppWindow> list = [];
 
-            AppWindow AW = new AppWindow();
-            AW.WindowType = AppWindow.eWindowType.Appium;
-            AW.Title = (AppType == eAppType.Web) ? GetURL() : GetCurrentActivityDetails();   // TODO: add device name and info
+            AppWindow AW = new AppWindow
+            {
+                WindowType = AppWindow.eWindowType.Appium,
+                Title = (AppType == eAppType.Web) ? GetURL() : GetCurrentActivityDetails()   // TODO: add device name and info
+            };
 
             list.Add(AW);
             return list;
@@ -1869,7 +1872,7 @@ namespace Amdocs.Ginger.CoreNET
             XmlNode foundNode = null;
             ElementInfo foundElement = null;
             var mousePos = OnSpyingElementEvent();
-            if (mousePos != null && mousePos is Point)
+            if (mousePos is not null and Point)
             {
                 mousePosCurrent = (Point)mousePos;  // new Point((mousePos as Point).X, (mousePos as Point).Y);
             }
@@ -1908,8 +1911,10 @@ namespace Amdocs.Ginger.CoreNET
 
             if (Driver != null)
             {
-                AppWindow aw = new AppWindow();
-                aw.Title = GetCurrentActivityDetails();
+                AppWindow aw = new AppWindow
+                {
+                    Title = GetCurrentActivityDetails()
+                };
                 return aw;
             }
             else
@@ -1933,7 +1938,7 @@ namespace Amdocs.Ginger.CoreNET
 
                 if (foundElementsList == null)
                 {
-                    foundElementsList = new ObservableList<ElementInfo>();
+                    foundElementsList = [];
                 }
 
                 await GetPageSourceDocument(true);
@@ -2086,84 +2091,29 @@ namespace Amdocs.Ginger.CoreNET
 
         public static eElementType GetElementTypeFromTag(string ElementTag)
         {
-            switch (ElementTag.ToLower())
+            return ElementTag.ToLower() switch
             {
-                case "android.widget.edittext":
-                case "xcuielementtypetextfield":
-                case "xcuielementtypesearchfield":
-                    return eElementType.TextBox;
-
-                case "android.widget.button":
-                case "android.widget.ratingbar":
-                case "android.widget.framelayout":
-                case "android.widget.imageview":
-                case "android.widget.imagebutton":
-                case "android.widget.switch":
-                case "xcuielementtypebutton":
-                case "xcuielementtypeswitch":
-                    return eElementType.Button;
-
-                case "android.widget.spinner":
-                case "xcuielementtypecombobox":
-                    return eElementType.ComboBox;
-
-                case "android.widget.checkbox":
-                case "xcuielementtypecheckbox":
-                    return eElementType.CheckBox;
-
-                case "android.widget.view":
-                case "android.widget.textview":
-                case "android.widget.checkedtextview":
-                case "xcuielementtypecell":
-                case "xcuielementtypestatictext":
-                    return eElementType.Label;
-
-                case "android.widget.image":
-                case "xcuielementtypeimage":
-                    return eElementType.Image;
-
-                case "android.widget.radiobutton":
-                case "xcuielementtyperadiobutton":
-                    return eElementType.RadioButton;
-
-                case "android.widget.canvas":
-                case "android.widget.linearlayout":
-                case "android.widget.relativelayout":
-                case "xcuielementtypeother":
-                    return eElementType.Canvas;
-
-                case "xcuielementtypetab":
-                    return eElementType.Tab;
-
-                case "xcuielementtypebrowser":
-                    return eElementType.Browser;
-
-                case "xcuielementtypetable":
-                    return eElementType.Table;
-
-                case "xcuielementtypetablerow":
-                case "xcuielementtypetablecolumn":
-                    return eElementType.TableItem;
-
-                case "xcuielementtypelink":
-                    return eElementType.HyperLink;
-
-                case "android.widget.form":
-                    return eElementType.Form;
-
-                case "android.view.view":
-                    return eElementType.Div;
-
+                "android.widget.edittext" or "xcuielementtypetextfield" or "xcuielementtypesearchfield" => eElementType.TextBox,
+                "android.widget.button" or "android.widget.ratingbar" or "android.widget.framelayout" or "android.widget.imageview" or "android.widget.imagebutton" or "android.widget.switch" or "xcuielementtypebutton" or "xcuielementtypeswitch" => eElementType.Button,
+                "android.widget.spinner" or "xcuielementtypecombobox" => eElementType.ComboBox,
+                "android.widget.checkbox" or "xcuielementtypecheckbox" => eElementType.CheckBox,
+                "android.widget.view" or "android.widget.textview" or "android.widget.checkedtextview" or "xcuielementtypecell" or "xcuielementtypestatictext" => eElementType.Label,
+                "android.widget.image" or "xcuielementtypeimage" => eElementType.Image,
+                "android.widget.radiobutton" or "xcuielementtyperadiobutton" => eElementType.RadioButton,
+                "android.widget.canvas" or "android.widget.linearlayout" or "android.widget.relativelayout" or "xcuielementtypeother" => eElementType.Canvas,
+                "xcuielementtypetab" => eElementType.Tab,
+                "xcuielementtypebrowser" => eElementType.Browser,
+                "xcuielementtypetable" => eElementType.Table,
+                "xcuielementtypetablerow" or "xcuielementtypetablecolumn" => eElementType.TableItem,
+                "xcuielementtypelink" => eElementType.HyperLink,
+                "android.widget.form" => eElementType.Form,
+                "android.view.view" => eElementType.Div,
                 //case "android.widget.checkedtextview":
                 //case "xcuielementtypecell":
                 //    return eElementType.ListItem;
-
-                case "xcuielementtypewindow":
-                    return eElementType.Window;
-
-                default:
-                    return eElementType.Unknown;
-            }
+                "xcuielementtypewindow" => eElementType.Window,
+                _ => eElementType.Unknown,
+            };
         }
         private async Task<string> GetNodeXPath(XmlNode xmlNode)
         {
@@ -2217,7 +2167,7 @@ namespace Amdocs.Ginger.CoreNET
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
         {
-            List<ElementInfo> list = new List<ElementInfo>();
+            List<ElementInfo> list = [];
 
             //AppiumElementInfo EI = (AppiumElementInfo)ElementInfo;
             //XmlNode node = EI.XmlNode;
@@ -2250,7 +2200,7 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         // if we have resource id then get just the id out of it
                         string[] a = resid.Split('/');
-                        Name = a[a.Length - 1];
+                        Name = a[^1];
                     }
                 }
             }
@@ -2304,7 +2254,7 @@ namespace Amdocs.Ginger.CoreNET
                 return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo, pomSetting);
             }
 
-            ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
+            ObservableList<ElementLocator> list = [];
 
             //if (DevicePlatformType == eDevicePlatformType.iOS)
             //{
@@ -2439,11 +2389,10 @@ namespace Amdocs.Ginger.CoreNET
                 return ((IWindowExplorer)mSeleniumDriver).GetElementProperties(ElementInfo);
             }
 
-            ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+            ObservableList<ControlProperty> list = [];
 
-            XmlNode node = ElementInfo.ElementObject as XmlNode;
 
-            if (node == null)
+            if (ElementInfo.ElementObject is not XmlNode node)
             {
                 return list;
             }
@@ -2457,9 +2406,11 @@ namespace Amdocs.Ginger.CoreNET
 
             for (int i = 0; i < attrs.Count; i++)
             {
-                ControlProperty CP = new ControlProperty();
-                CP.Name = attrs[i].Name;
-                CP.Value = attrs[i].Value;
+                ControlProperty CP = new ControlProperty
+                {
+                    Name = attrs[i].Name,
+                    Value = attrs[i].Value
+                };
                 list.Add(CP);
 
                 if (CP.Name == "x")
@@ -2714,29 +2665,14 @@ namespace Amdocs.Ginger.CoreNET
 
             try
             {
-                switch (EL.LocateBy)
+                elem = EL.LocateBy switch
                 {
-                    case eLocateBy.ByResourceID:
-                        elem = Driver.FindElement(By.Id(EL.LocateValue));
-                        break;
-
-                    case eLocateBy.iOSPredicateString:
-                        elem = Driver.FindElement(MobileBy.IosNSPredicate(EL.LocateValue));
-                        break;
-
-                    case eLocateBy.iOSClassChain:
-                        elem = Driver.FindElement(MobileBy.IosClassChain(EL.LocateValue));
-                        break;
-
-                    case eLocateBy.ByRelXPath:
-                    case eLocateBy.ByXPath:
-                        elem = Driver.FindElement(By.XPath(EL.LocateValue));
-                        break;
-
-                    default:
-                        elem = mSeleniumDriver.LocateElementByLocator(EL, Driver);
-                        break;
-                }
+                    eLocateBy.ByResourceID => Driver.FindElement(By.Id(EL.LocateValue)),
+                    eLocateBy.iOSPredicateString => Driver.FindElement(MobileBy.IosNSPredicate(EL.LocateValue)),
+                    eLocateBy.iOSClassChain => Driver.FindElement(MobileBy.IosClassChain(EL.LocateValue)),
+                    eLocateBy.ByRelXPath or eLocateBy.ByXPath => Driver.FindElement(By.XPath(EL.LocateValue)),
+                    _ => mSeleniumDriver.LocateElementByLocator(EL, Driver),
+                };
             }
             catch (Exception exc)
             {
@@ -2859,7 +2795,7 @@ namespace Amdocs.Ginger.CoreNET
 
         private Byte[] GetScreenshotImageFromDriver()
         {
-            
+
             //Take screen shot
             var screenshot = Driver.GetScreenshot();
             //Update screen size for iOS as it changed per app
@@ -2899,8 +2835,10 @@ namespace Amdocs.Ginger.CoreNET
 
                 if (elemInfo != null)
                 {
-                    RecordingEventArgs args = new RecordingEventArgs();
-                    args.EventType = eRecordingEvent.ElementRecorded;
+                    RecordingEventArgs args = new RecordingEventArgs
+                    {
+                        EventType = eRecordingEvent.ElementRecorded
+                    };
 
                     ElementActionCongifuration configArgs = new ElementActionCongifuration();
 
@@ -2928,9 +2866,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public bool TestLocatorOutput(ElementInfo Elem, ElementLocator LocatorToTest)
         {
-            var elem = LocateElementByLocator(LocatorToTest) as IWebElement;
-
-            if (elem != null)
+            if (LocateElementByLocator(LocatorToTest) is IWebElement elem)
             {
                 return elem.Location.X == Elem.X && elem.Location.Y == Elem.Y;
             }
@@ -3055,7 +2991,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (ElmsNodes != null && ElmsNodes.Count > 0)
                 {
                     //move to collection for getting last node which fits to bounds
-                    ObservableList<XmlNode> ElmsNodesColc = new ObservableList<XmlNode>();
+                    ObservableList<XmlNode> ElmsNodesColc = [];
                     foreach (XmlNode elemNode in ElmsNodes)
                     {
                         //if (mDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.iOS && elemNode.LocalName == "UIAWindow") continue;                        
@@ -3087,7 +3023,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                     }
 
-                    Dictionary<XmlNode, long> foundElements = new Dictionary<XmlNode, long>();
+                    Dictionary<XmlNode, long> foundElements = [];
                     foreach (XmlNode elementNode in ElmsNodesColc.Reverse())
                     {
                         //get the element location
@@ -3233,7 +3169,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
                     var nativeSize = (Dictionary<string, object>)Driver.ExecuteScript("mobile: viewportRect");
-                    mWindowScaleFactor = (double)(Convert.ToInt32(nativeSize["width"]) / windowSize.Width);
+                    mWindowScaleFactor = Convert.ToInt32(nativeSize["width"]) / windowSize.Width;
                 }
                 else
                 {
@@ -3356,7 +3292,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public List<eTabView> SupportedViews()
         {
-            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.PageSource };
+            return [eTabView.Screenshot, eTabView.GridView, eTabView.PageSource];
         }
 
         public eTabView DefaultView()
@@ -3381,10 +3317,10 @@ namespace Amdocs.Ginger.CoreNET
             SwipeScreen(swipeSide, swipeScale, swipeDuration);
 
             if (IsRecording)
-            {                
+            {
                 ActMobileDevice mobAct = new ActMobileDevice();
                 mobAct.SwipeScale.Value = swipeScale.ToString();
-                mobAct.SwipeDuration.Value = ((TimeSpan)swipeDuration).TotalMilliseconds.ToString();
+                mobAct.SwipeDuration.Value = swipeDuration.TotalMilliseconds.ToString();
                 switch (swipeSide)
                 {
                     case eSwipeSide.Up:
@@ -3523,7 +3459,7 @@ namespace Amdocs.Ginger.CoreNET
             try
             {
                 Method method = Method.Post;
-                RestRequest restRequest = (RestRequest)new RestRequest(api, method) { RequestFormat = DataFormat.Json }.AddJsonBody(requestBody);
+                RestRequest restRequest = new RestRequest(api, method) { RequestFormat = DataFormat.Json }.AddJsonBody(requestBody);
                 RestResponse response = await restClient.ExecuteAsync(restRequest);
                 if (response.IsSuccessful)
                 {
@@ -3545,21 +3481,21 @@ namespace Amdocs.Ginger.CoreNET
 
         private Dictionary<string, string> StringToDictionary(string response)
         {
-            response = response.Substring(10, response.Length - 12);
-            List<string> responseList = new List<string>();
+            response = response[10..^2];
+            List<string> responseList = [];
             while (!string.IsNullOrEmpty(response))
             {
                 int startIndex = response.IndexOf("[") + 1;
                 int endIndex = response.IndexOf("]");
-                responseList.Add(response.Substring(startIndex, endIndex - startIndex));
+                responseList.Add(response[startIndex..endIndex]);
                 if (endIndex + 2 > response.Length)
                 {
-                    response = response.Substring(endIndex + 1);
+                    response = response[(endIndex + 1)..];
 
                 }
                 else
                 {
-                    response = response.Substring(endIndex + 2);
+                    response = response[(endIndex + 2)..];
                 }
 
             }
@@ -3567,7 +3503,7 @@ namespace Amdocs.Ginger.CoreNET
             string[] keyArray = responseList[0].Split(',');
             responseList[1] = responseList[1].Replace("\"", "");
             string[] valueArray = responseList[1].Split(',');
-            Dictionary<string, string> dict = new Dictionary<string, string>();
+            Dictionary<string, string> dict = [];
             for (int i = 0; i < keyArray.Length; i++)
             {
                 dict.Add(keyArray[i], valueArray[i]);
@@ -3596,7 +3532,7 @@ namespace Amdocs.Ginger.CoreNET
             string response = await GetDeviceMetricsString(dataType);
             if (response == null || response.Contains("error"))
             {
-                return new Dictionary<string, string>();
+                return [];
             }
             try
             {
@@ -3605,7 +3541,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception e)
             {
-                return new Dictionary<string, string>();
+                return [];
             }
         }
 
@@ -3669,7 +3605,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception e)
             {
-                return new Dictionary<string, object>();
+                return [];
             }
 
         }
@@ -3691,7 +3627,7 @@ namespace Amdocs.Ginger.CoreNET
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return true;
             }

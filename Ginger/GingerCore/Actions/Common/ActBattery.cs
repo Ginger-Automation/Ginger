@@ -71,7 +71,7 @@ namespace GingerCore.Actions.Common
         {
             get
             {
-                return (eBatteryAction)GetOrCreateInputParam<eBatteryAction>(nameof(BatteryAction), eBatteryAction.GetPowerStatus);
+                return GetOrCreateInputParam<eBatteryAction>(nameof(BatteryAction), eBatteryAction.GetPowerStatus);
             }
             set
             {

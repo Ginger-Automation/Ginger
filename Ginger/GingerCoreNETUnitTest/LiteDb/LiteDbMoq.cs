@@ -38,7 +38,7 @@ namespace GingerCoreNETUnitTest.LiteDb
         public List<GingerActvityGroup> ActivitiesGroupColl { get; set; }
         public GingerBusinessFlow()
         {
-            ActivitiesGroupColl = new List<GingerActvityGroup>();
+            ActivitiesGroupColl = [];
         }
         public static ILiteCollection<GingerBusinessFlow> IncludeAllReferences(ILiteCollection<GingerBusinessFlow> gingerBusinessFlow)
         {

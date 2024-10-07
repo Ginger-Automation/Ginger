@@ -109,7 +109,7 @@ namespace GingerCore.GeneralLib
                 mVE.Value = Email.SMTPMailHost;
                 string mailHost = mVE.ValueCalculated;
 
-                if (Email.SMTPPort == 0 || Email.SMTPPort == null)
+                if (Email.SMTPPort is 0 or null)
                 {
                     Email.SMTPPort = 25;
                 }

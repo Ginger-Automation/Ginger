@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.RunLib;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -28,7 +27,6 @@ using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.Variables;
-using NPOI.OpenXmlFormats.Dml.Diagram;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,12 +51,12 @@ namespace Ginger.AnalyzerLib
 
             //TODO: once this analyzer is taking long time due to many checks, run it using parallel
             ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            List<string> usedVariablesInSolution = new List<string>();
+            List<string> usedVariablesInSolution = [];
 
             //foreach (BusinessFlow BF in BFs)
             Parallel.ForEach(BFs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
-            {                
-                MergeVariablesList(usedVariablesInSolution, RunBusinessFlowAnalyzer(BF, issuesList));                
+            {
+                MergeVariablesList(usedVariablesInSolution, RunBusinessFlowAnalyzer(BF, issuesList));
             });
             ReportUnusedVariables(solution, usedVariablesInSolution, issuesList);
         }
@@ -77,7 +75,7 @@ namespace Ginger.AnalyzerLib
 
             // Check all GRs BFS
             //foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
-            List<Guid> checkedGuidList = new List<Guid>();
+            List<Guid> checkedGuidList = [];
             Parallel.ForEach(mRunSetConfig.GingerRunners, new ParallelOptions { MaxDegreeOfParallelism = 5 }, GR =>
             {
                 foreach (AnalyzerItemBase issue in AnalyzeGingerRunner.Analyze(GR, runnerAnalyzerChecks))
@@ -85,7 +83,7 @@ namespace Ginger.AnalyzerLib
                     AddIssue(issuesList, issue);
                 }
 
-                if(GR.Executor == null)
+                if (GR.Executor == null)
                 {
                     return;
                 }
@@ -145,12 +143,12 @@ namespace Ginger.AnalyzerLib
             return RunBusinessFlowAnalyzer(businessFlow, applicationAgents: Array.Empty<IApplicationAgent>(), solution: null, issuesList, checks);
         }
 
-        private List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, IEnumerable<IApplicationAgent> applicationAgents, 
+        private List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, IEnumerable<IApplicationAgent> applicationAgents,
             Solution solution, ObservableList<AnalyzerItemBase> issuesList, AnalyzeBusinessFlow.Check checks)
         {
-            List<string> usedVariablesInBF = new List<string>();
-            List<string> usedVariablesInActivity = new List<string>();
-            List<AnalyzerItemBase> missingVariableIssueList = new List<AnalyzerItemBase>();
+            List<string> usedVariablesInBF = [];
+            List<string> usedVariablesInActivity = [];
+            List<AnalyzerItemBase> missingVariableIssueList = [];
 
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (solution == null)
@@ -281,7 +279,7 @@ namespace Ginger.AnalyzerLib
             Activity activity = null;
             string variableSourceType = "";
             string variableSourceName = "";
-            ObservableList<VariableBase> AvailableAllVariables = new ObservableList<VariableBase>();
+            ObservableList<VariableBase> AvailableAllVariables = [];
             if (typeof(BusinessFlow).Equals(obj.GetType()))
             {
                 businessFlow = (BusinessFlow)obj;
@@ -316,33 +314,37 @@ namespace Ginger.AnalyzerLib
                 {
                     if (obj.GetType().Equals(typeof(BusinessFlow)))
                     {
-                        AnalyzeBusinessFlow aa = new AnalyzeBusinessFlow();
-                        aa.Status = AnalyzerItemBase.eStatus.NeedFix;
-                        aa.ItemName = var.Name;
-                        aa.Description = var + " is Unused in " + variableSourceType + ": " + businessFlow.Name;
-                        aa.Details = variableSourceType;
-                        aa.BusinessFlow = businessFlow;
-                        aa.ItemParent = variableSourceName;
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
-                        aa.IssueType = AnalyzerItemBase.eType.Error;
-                        aa.FixItHandler = DeleteUnusedVariables;
-                        aa.Severity = AnalyzerItemBase.eSeverity.Medium;
-                        aa.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
+                        AnalyzeBusinessFlow aa = new AnalyzeBusinessFlow
+                        {
+                            Status = AnalyzerItemBase.eStatus.NeedFix,
+                            ItemName = var.Name,
+                            Description = var + " is Unused in " + variableSourceType + ": " + businessFlow.Name,
+                            Details = variableSourceType,
+                            BusinessFlow = businessFlow,
+                            ItemParent = variableSourceName,
+                            CanAutoFix = AnalyzerItemBase.eCanFix.Yes,
+                            IssueType = AnalyzerItemBase.eType.Error,
+                            FixItHandler = DeleteUnusedVariables,
+                            Severity = AnalyzerItemBase.eSeverity.Medium,
+                            ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable)
+                        };
                         AddIssue(issuesList, aa);
                     }
                     else if (obj.GetType().Equals(typeof(Solution)))
                     {
-                        AnalyzeSolution aa = new AnalyzeSolution();
-                        aa.Status = AnalyzerItemBase.eStatus.NeedFix;
-                        aa.ItemName = var.Name;
-                        aa.Description = var + " is Unused in Solution";
-                        aa.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
-                        aa.Details = variableSourceType;
-                        aa.ItemParent = variableSourceName;
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
-                        aa.IssueType = AnalyzerItemBase.eType.Error;
-                        aa.FixItHandler = DeleteUnusedVariables;
-                        aa.Severity = AnalyzerItemBase.eSeverity.Medium;
+                        AnalyzeSolution aa = new AnalyzeSolution
+                        {
+                            Status = AnalyzerItemBase.eStatus.NeedFix,
+                            ItemName = var.Name,
+                            Description = var + " is Unused in Solution",
+                            ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable),
+                            Details = variableSourceType,
+                            ItemParent = variableSourceName,
+                            CanAutoFix = AnalyzerItemBase.eCanFix.Yes,
+                            IssueType = AnalyzerItemBase.eType.Error,
+                            FixItHandler = DeleteUnusedVariables,
+                            Severity = AnalyzerItemBase.eSeverity.Medium
+                        };
                         AddIssue(issuesList, aa);
                     }
                     else
@@ -441,10 +443,10 @@ namespace Ginger.AnalyzerLib
         /// <returns></returns>
         public bool AnalyzeRunset(RunSetConfig runset, bool reportIssues)
         {
-            ObservableList<AnalyzerItemBase> issues = new ObservableList<AnalyzerItemBase>();
+            ObservableList<AnalyzerItemBase> issues = [];
             RunRunSetConfigAnalyzer(runset, RunSetConfigAnalyzer.Check.All, AnalyzeGingerRunner.Check.All, issues);
 
-            List<AnalyzerItemBase> highCriticalIssues = issues.Where(x => x.Severity == AnalyzerItemBase.eSeverity.High || x.Severity == AnalyzerItemBase.eSeverity.Critical).ToList();
+            List<AnalyzerItemBase> highCriticalIssues = issues.Where(x => x.Severity is AnalyzerItemBase.eSeverity.High or AnalyzerItemBase.eSeverity.Critical).ToList();
             if (highCriticalIssues != null && highCriticalIssues.Count > 0)
             {
                 if (reportIssues)

@@ -41,9 +41,7 @@ namespace Ginger.Run.RunSetActions
 
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
-            List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
-            list.Add(RunSetActionBase.eRunAt.ExecutionStart);
-            list.Add(RunSetActionBase.eRunAt.ExecutionEnd);
+            List<RunSetActionBase.eRunAt> list = [RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.ExecutionEnd];
             return list;
         }
 
@@ -59,7 +57,7 @@ namespace Ginger.Run.RunSetActions
         // Attach template + RI
         // Attach its own file
         [IsSerializedForLocalRepository]
-        public ObservableList<EmailAttachment> EmailAttachments = new ObservableList<EmailAttachment>();
+        public ObservableList<EmailAttachment> EmailAttachments = [];
 
         [IsSerializedForLocalRepository]
         public eHTMLReportTemplate HTMLReportTemplate { get; set; }

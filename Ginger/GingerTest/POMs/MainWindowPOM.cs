@@ -260,8 +260,10 @@ namespace GingerWPFUnitTest.POMs
                 NewAutomatePage page2 = (NewAutomatePage)f2.Content;
                 Frame f3 = (Frame)page2.FindName("xActivitiesListFrame");
                 ActivitiesListViewPage activitiesListPage = (ActivitiesListViewPage)f3.Content;
-                Activity activity2 = new Activity();
-                activity2.ActivityName = "Test Activity";
+                Activity activity2 = new Activity
+                {
+                    ActivityName = "Test Activity"
+                };
                 Dispatcher.Invoke(() =>
                 {
                     activitiesListPage.ListView.DataSourceList.Add(activity2);
@@ -374,7 +376,7 @@ namespace GingerWPFUnitTest.POMs
 
         public List<string> GetMenus()
         {
-            List<string> list = new List<string>();
+            List<string> list = [];
             Execute(() =>
             {
                 foreach (Menu menu in FindVisualChildren<Menu>(mMainWindow))
@@ -394,7 +396,7 @@ namespace GingerWPFUnitTest.POMs
                 for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
                 {
                     DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-                    if (child != null && child is T)
+                    if (child is not null and T)
                     {
                         yield return (T)child;
                     }

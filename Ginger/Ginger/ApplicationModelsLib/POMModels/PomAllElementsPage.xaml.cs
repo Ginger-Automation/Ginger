@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -90,7 +89,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             CollectionChangedEventManager.AddHandler(source: mPOM.MappedUIElements, handler: MappedUIElements_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mPOM.UnMappedUIElements, handler: UnMappedUIElements_CollectionChanged);
-            
+
 
             mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn, editMode);
             xMappedElementsFrame.ClearAndSetContent(mappedUIElementsPage);
@@ -105,7 +104,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void SetEditMode()
         {
-            if(_editMode == General.eRIPageViewMode.View || _editMode == General.eRIPageViewMode.ViewAndExecute)
+            if (_editMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
             {
                 xLearningOperationBtns.IsEnabled = false;
             }
@@ -115,7 +114,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-    private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UnMappedUIElementsUpdate();
             if (raiseUIElementsCountUpdated != null)
@@ -273,12 +272,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            ElementInfo matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
+            ElementInfo matchingOriginalElement = mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
 
             if (matchingOriginalElement == null)
             {
                 mWinExplorer.LearnElementInfoDetails(mSpyElement);
-                matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
+                matchingOriginalElement = mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
             }
 
             if (mPOM.MappedUIElements.Contains(matchingOriginalElement))
@@ -389,7 +388,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Test All Elements",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Test All Elements", ex);
             }
         }
 

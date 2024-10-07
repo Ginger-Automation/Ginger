@@ -32,8 +32,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public bool RunInParallel { get; set; }
 
-        public List<AddRunner> AddRunners { get; set; } = new List<AddRunner>();
+        public List<AddRunner> AddRunners { get; set; } = [];
 
-        public List<AddRunsetOperation> AddRunsetOperations { get; set; } = new List<AddRunsetOperation>();
+        public List<AddRunsetOperation> AddRunsetOperations { get; set; } = [];
     }
 }

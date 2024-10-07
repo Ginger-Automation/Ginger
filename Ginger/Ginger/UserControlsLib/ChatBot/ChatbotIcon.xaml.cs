@@ -18,7 +18,6 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 
 namespace Amdocs.Ginger.UserControls
@@ -33,7 +32,7 @@ namespace Amdocs.Ginger.UserControls
 
         private void Lisa_Click(object sender, RoutedEventArgs e)
         {
-           
+
         }
     }
 }

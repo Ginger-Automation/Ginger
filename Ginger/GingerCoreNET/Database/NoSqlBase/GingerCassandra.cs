@@ -17,13 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Cassandra;
 using GingerCore.Actions;
 using GingerCore.NoSqlBase.DataAccess;
-using HBaseNet.Const;
-using Microsoft.Graph;
-using Microsoft.Graph.SecurityNamespace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +52,7 @@ namespace GingerCore.NoSqlBase
                     switch (queryArray[i])
                     {
                         case var str when str.Contains(queryTimeoutString):
-                            string queryTimeoutValue = str.Substring(str.IndexOf(queryTimeoutString) + queryTimeoutString.Length);
+                            string queryTimeoutValue = str[(str.IndexOf(queryTimeoutString) + queryTimeoutString.Length)..];
                             if (!int.TryParse(queryTimeoutValue, out int timeout))
                             {
                                 throw new ArgumentException("Query timeout value is not a valid integer.");
@@ -65,7 +61,7 @@ namespace GingerCore.NoSqlBase
                             break;
 
                         case var str when str.Contains(sslString):
-                            string sslValue = str.Substring(str.IndexOf(sslString) + sslString.Length);
+                            string sslValue = str[(str.IndexOf(sslString) + sslString.Length)..];
                             sslOptions = SetupSslOptions(sslValue);
                             break;
                         default:
@@ -79,7 +75,7 @@ namespace GingerCore.NoSqlBase
                 {
                     if (string.IsNullOrEmpty(Db.Pass) && string.IsNullOrEmpty(Db.User))
                     {
-                        if (sslOptions ==null)
+                        if (sslOptions == null)
                         {
                             cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
                         }
@@ -95,7 +91,8 @@ namespace GingerCore.NoSqlBase
                     }
                     else
                     {
-                        if (sslOptions == null) {
+                        if (sslOptions == null)
+                        {
                             cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
                         }
                         else
@@ -179,7 +176,7 @@ namespace GingerCore.NoSqlBase
         public override List<string> GetKeyspaceList()
         {
             Connect();
-            List<string> keyspaces = new List<string>();
+            List<string> keyspaces = [];
             Metadata m = cluster.Metadata;
             string keyspace = null;
             ICollection<string> GetKeyspaces = m.GetKeyspaces();
@@ -198,7 +195,7 @@ namespace GingerCore.NoSqlBase
         public override List<string> GetTableList(string keyspace)
         {
             Connect();
-            List<string> table = new List<string>();
+            List<string> table = [];
             Metadata m = cluster.Metadata;
             ICollection<string> tables = m.GetKeyspace(keyspace).GetTablesNames();
 
@@ -209,11 +206,11 @@ namespace GingerCore.NoSqlBase
             return table;
         }
 
-        public override  Task<List<string>> GetColumnList(string tablename)
+        public override Task<List<string>> GetColumnList(string tablename)
         {
             Connect();
 
-            List<string> cols = new List<string>();
+            List<string> cols = [];
             string sql = "Select * from " + tablename;
             RowSet r = session.Execute(sql);
             CqlColumn[] Cols = r.Columns;
@@ -346,7 +343,7 @@ namespace GingerCore.NoSqlBase
 
                 int a = ((Cassandra.UdtColumnInfo)((Cassandra.ListColumnInfo)col.TypeInfo).ValueTypeInfo).Fields.Count;
 
-                Dictionary<string, Type> keyvalue = new Dictionary<string, Type>();
+                Dictionary<string, Type> keyvalue = [];
 
                 Type t = null;
                 for (int k = 0; k < a; k++)
@@ -370,7 +367,7 @@ namespace GingerCore.NoSqlBase
             ConnectWithKeyspace(name);
             int a = ((Cassandra.UdtColumnInfo)col.TypeInfo).Fields.Count;
 
-            Dictionary<string, Type> keyvalue = new Dictionary<string, Type>();
+            Dictionary<string, Type> keyvalue = [];
             Type t = null;
             for (int k = 0; k < a; k++)
             {
@@ -394,7 +391,7 @@ namespace GingerCore.NoSqlBase
                 ConnectWithKeyspace(name);
                 int a = ((Cassandra.UdtColumnInfo)((Cassandra.SetColumnInfo)col.TypeInfo).KeyTypeInfo).Fields.Count;
 
-                Dictionary<string, Type> keyvalue = new Dictionary<string, Type>();
+                Dictionary<string, Type> keyvalue = [];
                 Type t = null;
                 for (int k = 0; k < a; k++)
                 {
@@ -422,7 +419,7 @@ namespace GingerCore.NoSqlBase
 
                     int a = ((Cassandra.UdtColumnInfo)((Cassandra.MapColumnInfo)col.TypeInfo).ValueTypeInfo).Fields.Count;
 
-                    Dictionary<string, Type> keyvalue = new Dictionary<string, Type>();
+                    Dictionary<string, Type> keyvalue = [];
                     Type t = null;
                     for (int k = 0; k < a; k++)
                     {
@@ -456,7 +453,7 @@ namespace GingerCore.NoSqlBase
                 int j = 0;
                 foreach (CqlColumn col in Cols)
                 {
-                    if (col.TypeCode.ToString() == "Udt" || col.TypeCode.ToString() == "Set" || col.TypeCode.ToString() == "Map" || col.TypeCode.ToString() == "List")
+                    if (col.TypeCode.ToString() is "Udt" or "Set" or "Map" or "List")
                     {
                         dynamic value = r.GetValue(typeof(object), col.Name);
 
@@ -502,8 +499,10 @@ namespace GingerCore.NoSqlBase
         {
             string SQL = Act.QueryValue;
             string keyspace = Act.Keyspace;
-            ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-            VE.Value = SQL;
+            ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList)
+            {
+                Value = SQL
+            };
             string SQLCalculated = VE.ValueCalculated;
             try
             {
@@ -612,7 +611,7 @@ namespace GingerCore.NoSqlBase
             myclass = val;
 
             int a = ((Cassandra.UdtColumnInfo)col.TypeInfo).Fields.Count;
-            Dictionary<string, object> keyvalue = new Dictionary<string, object>();
+            Dictionary<string, object> keyvalue = [];
             Type TP = myclass.GetType();
 
             for (int k = 0; k < a; k++)
@@ -641,7 +640,7 @@ namespace GingerCore.NoSqlBase
             if (am == "Udt")
             {
                 int a = ((Cassandra.UdtColumnInfo)((Cassandra.SetColumnInfo)col.TypeInfo).KeyTypeInfo).Fields.Count;
-                Dictionary<string, object> keyvalue = new Dictionary<string, object>();
+                Dictionary<string, object> keyvalue = [];
                 Type TP = myclass.GetType();
                 try
                 {
@@ -749,7 +748,7 @@ namespace GingerCore.NoSqlBase
                 dynamic abc;
                 try
                 {
-                    foreach (var item in (dynamic)myclass)
+                    foreach (var item in myclass)
                     {
                         abc = item.Value;
                         for (int k = 0; k < a; k++)
@@ -804,7 +803,7 @@ namespace GingerCore.NoSqlBase
                         dynamic value = r.GetValue(typeof(object), col.Name);
                         try
                         {
-                            if (col.TypeCode.ToString() == "Udt" || col.TypeCode.ToString() == "Set" || col.TypeCode.ToString() == "Map" || col.TypeCode.ToString() == "List")
+                            if (col.TypeCode.ToString() is "Udt" or "Set" or "Map" or "List")
                             {
                                 if (col.TypeCode.ToString() == "Udt")
                                 {

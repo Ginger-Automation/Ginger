@@ -26,7 +26,6 @@ using AzureRepositoryStd;
 using AzureRepositoryStd.BLL;
 using GingerCore.Activities;
 using GingerCore.Environments;
-using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -398,7 +397,7 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
         {
-            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fields = [];
             LoginDTO _loginDto = GetLoginDTO();
 
             string[] witType = ["Test Case", "Test Suite", "Test Plan"];
@@ -658,10 +657,12 @@ namespace GingerCore.ALM
             JsonPatchDocument json = [];
 
             // create a title field
-            JsonPatchOperation patchDocument1 = new JsonPatchOperation();
-            patchDocument1.Operation = Operation.Add;
-            patchDocument1.Path = "/fields/System.Title";
-            patchDocument1.Value = ag.Name;
+            JsonPatchOperation patchDocument1 = new JsonPatchOperation
+            {
+                Operation = Operation.Add,
+                Path = "/fields/System.Title",
+                Value = ag.Name
+            };
             json.Add(patchDocument1);
 
             // add test steps in json
@@ -838,7 +839,7 @@ namespace GingerCore.ALM
 
         public List<AzureTestPlan> GetTestSetExplorer(string PathNode)
         {
-            List<AzureTestPlan> testlabPathList = new List<AzureTestPlan>();
+            List<AzureTestPlan> testlabPathList = [];
             Dictionary<string, List<string>> listoftestPlans = GetTestPlan();
             foreach (var testset in listoftestPlans)
             {

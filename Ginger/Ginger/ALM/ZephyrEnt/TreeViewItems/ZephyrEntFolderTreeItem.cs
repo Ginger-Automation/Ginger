@@ -49,7 +49,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
         {
             if (entityType == EntityFolderType.Cycle)
             {
-                List<ITreeViewItem> tsChildrens = new List<ITreeViewItem>();
+                List<ITreeViewItem> tsChildrens = [];
                 CurrentChildrens.ForEach(cc =>
                 {
                     List<BaseResponseItem> phase = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(((ZephyrEntTreeItem)cc).Id));
@@ -64,15 +64,17 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
             }
             else
             {
-                CurrentChildrens = new List<ITreeViewItem>();
+                CurrentChildrens = [];
                 List<BaseResponseItem> module = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTreeByCretiria(entityType.ToString(), Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), 180, Convert.ToInt32(Id));
 
                 module.ForEach(p =>
                 {
                     if (((JArray)p.TryGetItem("categories")).Count > 0)
                     {
-                        ZephyrEntFolderTreeItem zeFolder = new ZephyrEntFolderTreeItem(p);
-                        zeFolder.CurrentChildrens = new List<ITreeViewItem>();
+                        ZephyrEntFolderTreeItem zeFolder = new ZephyrEntFolderTreeItem(p)
+                        {
+                            CurrentChildrens = []
+                        };
                         foreach (var item in (JArray)p.TryGetItem("categories"))
                         {
                             dynamic d = JObject.Parse(item.ToString());

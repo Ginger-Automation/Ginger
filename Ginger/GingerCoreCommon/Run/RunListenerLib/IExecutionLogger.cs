@@ -52,6 +52,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         //void SetReportRunner(IGingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, IContext mContext, string filename, int runnerCount);
         //void SetReportRunSet(RunSetReport runSetReport, string logFolder);
         void StartRunSet();
-        void DeleteLocalData(string logFolder , LiteDB.ObjectId runsetId, Guid executionId );
+        void DeleteLocalData(string logFolder, LiteDB.ObjectId runsetId, Guid executionId);
     }
 }

@@ -51,7 +51,7 @@ namespace GingerCore.Drivers.Common
         public event ButtonEventHandler ButtonClick;
 
 
-        List<Shape> mButtons = new List<Shape>();
+        List<Shape> mButtons = [];
 
         System.Windows.Shapes.Rectangle rect;
 
@@ -127,13 +127,15 @@ namespace GingerCore.Drivers.Common
 
         private void InitHighLighter()
         {
-            rect = new System.Windows.Shapes.Rectangle();
-            rect.Stroke = new SolidColorBrush(Colors.Red);
-            rect.StrokeThickness = 2;
-            rect.Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb((byte)50, (byte)100, (byte)0, 0));
-            rect.Opacity = 50;
-            rect.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-            rect.VerticalAlignment = System.Windows.VerticalAlignment.Top;
+            rect = new System.Windows.Shapes.Rectangle
+            {
+                Stroke = new SolidColorBrush(Colors.Red),
+                StrokeThickness = 2,
+                Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 100, 0, 0)),
+                Opacity = 50,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                VerticalAlignment = System.Windows.VerticalAlignment.Top
+            };
             DeviceScreenShotGrid.Children.Add(rect);
         }
 
@@ -149,7 +151,7 @@ namespace GingerCore.Drivers.Common
         {
             if (mAndroidDeviceConfig.DeviceButtons == null)
             {
-                mAndroidDeviceConfig.DeviceButtons = new List<DeviceButton>();
+                mAndroidDeviceConfig.DeviceButtons = [];
             }
 
             List<DeviceButton> list = mAndroidDeviceConfig.DeviceButtons;  // mDeviceConfigFolder GetControllerActions();
@@ -161,13 +163,15 @@ namespace GingerCore.Drivers.Common
                 if (DB.ButtonShape == DeviceButton.eButtonShape.Rectangle)
                 {
                     System.Windows.Shapes.Rectangle rect;
-                    rect = new System.Windows.Shapes.Rectangle();
-                    rect.Stroke = new SolidColorBrush(Colors.Gray);
-                    rect.StrokeThickness = 2;
-                    rect.Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb((byte)50, (byte)100, (byte)0, 0));
-                    rect.Opacity = 50;
-                    rect.Tag = DB;
-                    rect.ToolTip = DB.ToolTip;
+                    rect = new System.Windows.Shapes.Rectangle
+                    {
+                        Stroke = new SolidColorBrush(Colors.Gray),
+                        StrokeThickness = 2,
+                        Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 100, 0, 0)),
+                        Opacity = 50,
+                        Tag = DB,
+                        ToolTip = DB.ToolTip
+                    };
                     rect.MouseLeftButtonUp += rect_MouseLeftButtonUp;
                     rect.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                     rect.VerticalAlignment = System.Windows.VerticalAlignment.Top;
@@ -179,13 +183,15 @@ namespace GingerCore.Drivers.Common
                 if (DB.ButtonShape == DeviceButton.eButtonShape.Ellipse)
                 {
                     System.Windows.Shapes.Ellipse ellipse;
-                    ellipse = new System.Windows.Shapes.Ellipse();
-                    ellipse.Stroke = new SolidColorBrush(Colors.Gray);
-                    ellipse.StrokeThickness = 2;
-                    ellipse.Fill = new SolidColorBrush(Colors.Yellow);
-                    ellipse.Opacity = 30;
-                    ellipse.Tag = DB;
-                    ellipse.ToolTip = DB.ToolTip;
+                    ellipse = new System.Windows.Shapes.Ellipse
+                    {
+                        Stroke = new SolidColorBrush(Colors.Gray),
+                        StrokeThickness = 2,
+                        Fill = new SolidColorBrush(Colors.Yellow),
+                        Opacity = 30,
+                        Tag = DB,
+                        ToolTip = DB.ToolTip
+                    };
                     ellipse.MouseLeftButtonUp += rect_MouseLeftButtonUp;
                     ellipse.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                     ellipse.VerticalAlignment = System.Windows.VerticalAlignment.Top;
@@ -300,7 +306,7 @@ namespace GingerCore.Drivers.Common
             DeviceImage.Dispatcher.Invoke(() =>
             {
                 // works but give pther thread own
-                DeviceImage.Source = (ImageSource)BI;
+                DeviceImage.Source = BI;
             });
         }
 
@@ -394,20 +400,22 @@ namespace GingerCore.Drivers.Common
 
         private System.Windows.Point GetDevicePoint(System.Windows.Point point)
         {
-            System.Windows.Point p = new System.Windows.Point();
-
-            p.X = Convert.ToInt16(DeviceImage.Source.Width * point.X / DeviceImage.ActualWidth);
-            p.Y = Convert.ToInt16(DeviceImage.Source.Height * point.Y / DeviceImage.ActualHeight);
+            System.Windows.Point p = new System.Windows.Point
+            {
+                X = Convert.ToInt16(DeviceImage.Source.Width * point.X / DeviceImage.ActualWidth),
+                Y = Convert.ToInt16(DeviceImage.Source.Height * point.Y / DeviceImage.ActualHeight)
+            };
 
             return p;
         }
 
         private System.Windows.Point GetPointFromDeviceCoordinates(System.Windows.Point point)
         {
-            System.Windows.Point p = new System.Windows.Point();
-
-            p.X = point.X / scaleFactor;
-            p.Y = point.Y / scaleFactor;
+            System.Windows.Point p = new System.Windows.Point
+            {
+                X = point.X / scaleFactor,
+                Y = point.Y / scaleFactor
+            };
 
             return p;
         }
@@ -489,14 +497,15 @@ namespace GingerCore.Drivers.Common
             // if we swipe then draw a line on the canvas, give user feedback
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                Line line = new Line();
+                Line line = new Line
+                {
+                    Stroke = System.Windows.SystemColors.WindowFrameBrush,
 
-                line.Stroke = System.Windows.SystemColors.WindowFrameBrush;
+                    StrokeThickness = 3,
 
-                line.StrokeThickness = 3;
-
-                line.X1 = MouseLastPoint.X;
-                line.Y1 = MouseLastPoint.Y;
+                    X1 = MouseLastPoint.X,
+                    Y1 = MouseLastPoint.Y
+                };
                 MouseLastPoint = e.GetPosition(DeviceScreenCanvas);
                 line.X2 = MouseLastPoint.X;
                 line.Y2 = MouseLastPoint.Y;

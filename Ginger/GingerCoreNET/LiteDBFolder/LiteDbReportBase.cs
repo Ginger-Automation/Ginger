@@ -233,20 +233,20 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public Dictionary<string, int> ChildPassedItemsCount { get; set; }
         public LiteDbRunSet()
         {
-            RunnersColl = new List<LiteDbRunner>();
-            ChildExecutableItemsCount = new Dictionary<string, int>();
-            ChildExecutedItemsCount = new Dictionary<string, int>();
-            ChildPassedItemsCount = new Dictionary<string, int>();
+            RunnersColl = [];
+            ChildExecutableItemsCount = [];
+            ChildExecutedItemsCount = [];
+            ChildPassedItemsCount = [];
         }
 
         public void SetAllIterationElementsRecursively(bool value)
         {
-            foreach(LiteDbRunner runner in RunnersColl)
+            foreach (LiteDbRunner runner in RunnersColl)
             {
-                if(runner != null)
+                if (runner != null)
                 {
                     runner.SetAllIterationElementsRecursively(value);
-                }    
+                }
             }
         }
 
@@ -300,7 +300,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             get
             {
-                if(AllIterationElements || !AllBusinessFlowsColl.Any())
+                if (AllIterationElements || !AllBusinessFlowsColl.Any())
                 {
                     return AllBusinessFlowsColl;
                 }
@@ -335,10 +335,10 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public Dictionary<string, int> ChildPassedItemsCount { get; set; }
         public LiteDbRunner()
         {
-            AllBusinessFlowsColl = new List<LiteDbBusinessFlow>();
-            ChildExecutableItemsCount = new Dictionary<string, int>();
-            ChildExecutedItemsCount = new Dictionary<string, int>();
-            ChildPassedItemsCount = new Dictionary<string, int>();
+            AllBusinessFlowsColl = [];
+            ChildExecutableItemsCount = [];
+            ChildExecutedItemsCount = [];
+            ChildPassedItemsCount = [];
         }
 
         public void SetAllIterationElementsRecursively(bool value)
@@ -409,7 +409,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             get
             {
-                if(AllIterationElements || !AllActivitiesColl.Any())
+                if (AllIterationElements || !AllActivitiesColl.Any())
                 {
                     return AllActivitiesColl;
                 }
@@ -473,11 +473,11 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 
         public LiteDbBusinessFlow()
         {
-            ActivitiesGroupsColl = new List<LiteDbActivityGroup>();
-            AllActivitiesColl = new List<LiteDbActivity>();
-            ChildExecutableItemsCount = new Dictionary<string, int>();
-            ChildExecutedItemsCount = new Dictionary<string, int>();
-            ChildPassedItemsCount = new Dictionary<string, int>();
+            ActivitiesGroupsColl = [];
+            AllActivitiesColl = [];
+            ChildExecutableItemsCount = [];
+            ChildExecutedItemsCount = [];
+            ChildPassedItemsCount = [];
         }
 
         public void SetAllIterationElementsRecursively(bool value)
@@ -553,7 +553,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             get
             {
-                if(AllIterationElements || !AllActivitiesColl.Any())
+                if (AllIterationElements || !AllActivitiesColl.Any())
                 {
                     return AllActivitiesColl;
                 }
@@ -583,7 +583,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 
         public LiteDbActivityGroup()
         {
-            AllActivitiesColl = new List<LiteDbActivity>();
+            AllActivitiesColl = [];
         }
 
         public void SetAllIterationElementsRecursively(bool value)
@@ -702,7 +702,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 
         public LiteDbActivity()
         {
-            AllActionsColl = new List<LiteDbAction>();
+            AllActionsColl = [];
         }
 
         public void SetAllIterationElementsRecursively(bool value)

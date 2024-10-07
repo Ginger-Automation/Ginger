@@ -85,7 +85,7 @@ namespace Ginger.Actions.Locators.ASCF
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             // Will be overridden in derived class
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
             return list;
         }
 
@@ -98,9 +98,9 @@ namespace Ginger.Actions.Locators.ASCF
 
             if (RC.StartsWith("OK"))
             {
-                string vals = RC.Substring(3);
+                string vals = RC[3..];
                 string[] valArr = vals.Split('~');
-                ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+                ObservableList<ControlProperty> list = [];
                 foreach (string pv in valArr)
                 {
                     if (pv.Length > 0)

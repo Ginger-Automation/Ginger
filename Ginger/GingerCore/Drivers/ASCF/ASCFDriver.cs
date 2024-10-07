@@ -115,12 +115,14 @@ namespace GingerCore.Drivers.ASCF
         }
         private void ConnectToGingerToolBox()
         {
-            clientSocket = new TcpClient();
+            clientSocket = new TcpClient
+            {
+                //add timeout or it gets stuck
+                //TODO: add to driver config
 
-            //add timeout or it gets stuck
-            //TODO: add to driver config
-
-            clientSocket.ReceiveTimeout = CommunicationTimout * 1000; ;
+                ReceiveTimeout = CommunicationTimout * 1000
+            };
+            ;
             if (CommunicationTimout == 0)
             {
                 CommunicationTimout = 120;
@@ -361,16 +363,20 @@ namespace GingerCore.Drivers.ASCF
             switch (ActType)
             {
                 case "ActButton":
-                    ActButton act = new ActButton();
-                    act.LocateBy = eLocateBy.ByName;
-                    act.LocateValue = LocateValue;
+                    ActButton act = new ActButton
+                    {
+                        LocateBy = eLocateBy.ByName,
+                        LocateValue = LocateValue
+                    };
                     act.AddOrUpdateInputParamValue("Value", Value);
                     return act;
                 // break;
                 case "ActTextBox":
-                    ActTextBox actTB = new ActTextBox();
-                    actTB.LocateBy = eLocateBy.ByName;
-                    actTB.LocateValue = LocateValue;
+                    ActTextBox actTB = new ActTextBox
+                    {
+                        LocateBy = eLocateBy.ByName,
+                        LocateValue = LocateValue
+                    };
                     actTB.AddOrUpdateInputParamValue("Value", Value);
                     actTB.TextBoxAction = ActTextBox.eTextBoxAction.SetValue;
                     return actTB;
@@ -671,13 +677,13 @@ namespace GingerCore.Drivers.ASCF
                     if (AAC.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && AAC.ControlProperty == ActASCFControl.eControlProperty.DateTimeValue)
                     {
                         // in case of datetime we convert it from unix time
-                        string uxtime = AAC.ExInfo.Substring(3);
+                        string uxtime = AAC.ExInfo[3..];
                         string val = UnixTimetoDateTimeLocalString(uxtime);
                         AAC.ExInfo = val;
                     }
                     if (AAC.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                     {
-                        string val = AAC.ExInfo.Substring(3);
+                        string val = AAC.ExInfo[3..];
                         AAC.AddOrUpdateReturnParamActual(AAC.GetOrCreateInputParam("Value").Param, val);
                     }
                     return;
@@ -795,7 +801,7 @@ namespace GingerCore.Drivers.ASCF
 
             Image imageTemp;
             Bitmap bmp;
-            ObservableList<Bitmap> bmpList = new ObservableList<Bitmap>();
+            ObservableList<Bitmap> bmpList = [];
             int count = 0;
             foreach (string str in a)
             {
@@ -953,7 +959,7 @@ namespace GingerCore.Drivers.ASCF
 
         List<AppWindow> IWindowExplorer.GetAppWindows()
         {
-            List<AppWindow> list = new List<AppWindow>();
+            List<AppWindow> list = [];
 
             //TODO: get list of forms from the driver            
 
@@ -965,7 +971,7 @@ namespace GingerCore.Drivers.ASCF
             }
 
             //take all excpet the first 3 chars - OK|
-            String[] aWindows = sWindows.Substring(3).Split('|');
+            String[] aWindows = sWindows[3..].Split('|');
 
             foreach (string win in aWindows)
             {
@@ -1025,7 +1031,7 @@ namespace GingerCore.Drivers.ASCF
             s = Send("GetFocusedControl", " ", " ", " ", " ", false);
             if (s.StartsWith("OK"))
             {
-                s = s.Substring(3);
+                s = s[3..];
                 return s;
             }
             else
@@ -1040,10 +1046,12 @@ namespace GingerCore.Drivers.ASCF
             string s = Send("GetControlUnderMouse", " ", " ", " ", " ", false);
             if (s.StartsWith("OK"))
             {
-                s = s.Substring(3);
+                s = s[3..];
 
-                ASCFElementInfo EI = new ASCFElementInfo();
-                EI.XPath = s;
+                ASCFElementInfo EI = new ASCFElementInfo
+                {
+                    XPath = s
+                };
                 return EI;
             }
             else
@@ -1060,7 +1068,7 @@ namespace GingerCore.Drivers.ASCF
             if (RC.StartsWith("OK"))
             {
 
-                string[] WinInfo = RC.Substring(3).Split('^');
+                string[] WinInfo = RC[3..].Split('^');
 
                 //fixme zzz
                 AppWindow AW = new AppWindow() { Title = WinInfo[0], Path = WinInfo[1], WindowType = AppWindow.eWindowType.ASCFForm };
@@ -1276,8 +1284,10 @@ namespace GingerCore.Drivers.ASCF
                     BusinessFlow.AddAct(AAR);
                     break;
                 case "IsExist":
-                    ActWindow IsEx = new ActWindow();
-                    IsEx.WindowActionType = ActWindow.eWindowActionType.IsExist;
+                    ActWindow IsEx = new ActWindow
+                    {
+                        WindowActionType = ActWindow.eWindowActionType.IsExist
+                    };
                     SetActLocatorAndValue(IsEx, locateBy, locateValue, value);
                     IsEx.Description = "IsExist" + locateValue;
                     BusinessFlow.AddAct(IsEx);
@@ -1294,26 +1304,17 @@ namespace GingerCore.Drivers.ASCF
 
         private ActASCFControl.eControlProperty GetControlPropertyFromString(string value2)
         {
-            switch (value2)
+            return value2 switch
             {
-                case "Value":
-                    return ActASCFControl.eControlProperty.Value;
-                case "Text":
-                    return ActASCFControl.eControlProperty.Text;
-                case "Type":
-                    return ActASCFControl.eControlProperty.Type;
-                case "Enabled":
-                    return ActASCFControl.eControlProperty.Enabled;
-                case "Visible":
-                    return ActASCFControl.eControlProperty.Visible;
-                case "List":
-                    return ActASCFControl.eControlProperty.List;
-                case "ToolTip":
-                    return ActASCFControl.eControlProperty.ToolTip;
-                default:
-                    //TODO: ERR
-                    return ActASCFControl.eControlProperty.Value;
-            }
+                "Value" => ActASCFControl.eControlProperty.Value,
+                "Text" => ActASCFControl.eControlProperty.Text,
+                "Type" => ActASCFControl.eControlProperty.Type,
+                "Enabled" => ActASCFControl.eControlProperty.Enabled,
+                "Visible" => ActASCFControl.eControlProperty.Visible,
+                "List" => ActASCFControl.eControlProperty.List,
+                "ToolTip" => ActASCFControl.eControlProperty.ToolTip,
+                _ => ActASCFControl.eControlProperty.Value,//TODO: ERR
+            };
         }
 
         private void SetActLocatorAndValue(Act act, string locateBy, string locateValue, string value)
@@ -1366,7 +1367,7 @@ namespace GingerCore.Drivers.ASCF
             {
                 if (RC.Length > 3)
                 {
-                    RC2 = RC.Substring(3);
+                    RC2 = RC[3..];
                 }
                 else
                 {
@@ -1401,7 +1402,7 @@ namespace GingerCore.Drivers.ASCF
             string AttrValDeli = "_|_";
             string EquelDeli = "_=_";
 
-            List<ASCFBrowserElementInfo> list = new List<ASCFBrowserElementInfo>();
+            List<ASCFBrowserElementInfo> list = [];
 
             string script = "GetVisibleElements();";
             string RC = Send("InvokeScript", "ByName", mBrowserLocateValue, NA, script, false);
@@ -1411,17 +1412,21 @@ namespace GingerCore.Drivers.ASCF
                 string[] ElementsArray = RC.Split(new string[] { ElementDeli }, StringSplitOptions.None);
                 foreach (string Element in ElementsArray)
                 {
-                    ASCFBrowserElementInfo CI = new ASCFBrowserElementInfo();
-                    CI.ControlType = ASCFBrowserElementInfo.eControlType.Unknown;
+                    ASCFBrowserElementInfo CI = new ASCFBrowserElementInfo
+                    {
+                        ControlType = ASCFBrowserElementInfo.eControlType.Unknown
+                    };
 
                     string[] ElementsProperties = Element.Split(new string[] { AttrValDeli }, StringSplitOptions.None);
                     foreach (string prop in ElementsProperties)
                     {
                         string[] attra = prop.Split(new string[] { EquelDeli }, StringSplitOptions.None);
 
-                        ControlProperty CP = new ControlProperty();
-                        CP.Name = attra[0];
-                        CP.Value = attra[1];
+                        ControlProperty CP = new ControlProperty
+                        {
+                            Name = attra[0],
+                            Value = attra[1]
+                        };
                         CI.Properties.Add(CP);
                     }
                     CI.SetInfo();
@@ -1445,7 +1450,7 @@ namespace GingerCore.Drivers.ASCF
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             //DOTO add grid view contol lists
-            return new List<ElementInfo>();
+            return [];
         }
 
         bool IWindowExplorer.IsElementObjectValid(object obj)
@@ -1516,7 +1521,7 @@ namespace GingerCore.Drivers.ASCF
 
         public List<eTabView> SupportedViews()
         {
-            return new List<eTabView>() { /*eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView */};
+            return [];
         }
 
         public eTabView DefaultView()

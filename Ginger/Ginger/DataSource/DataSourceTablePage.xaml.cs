@@ -38,7 +38,7 @@ namespace Ginger.DataSource
     {
         DataSourceTable mDSTableDetails;
         Setter mCellSetter = null;
-        List<string> mColumnNames = new List<string>();
+        List<string> mColumnNames = [];
         Setter SetterModified = new Setter(Border.BorderBrushProperty, Brushes.Orange);
         Setter SetterError = new Setter(Border.BorderBrushProperty, Brushes.Red);
         Setter SetterBorderBold = new Setter(Border.BorderThicknessProperty, new Thickness(2, 2, 2, 2));
@@ -164,7 +164,7 @@ namespace Ginger.DataSource
 
         private ObservableList<DataRow> getKeyRows(string keyName)
         {
-            ObservableList<DataRow> mDataRow = new ObservableList<DataRow>();
+            ObservableList<DataRow> mDataRow = [];
             foreach (DataGridRow row in grdTableData.GetDataGridRows(grdTableData.Grid))
             {
                 if (((DataRowView)(row.DataContext)).Row["GINGER_KEY_NAME"].ToString() == keyName)
@@ -185,8 +185,10 @@ namespace Ginger.DataSource
 
             int iColIndex = mColumnNames.Count - 1;
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
 
             foreach (string colName in mColumnNames)
             {
@@ -195,7 +197,7 @@ namespace Ginger.DataSource
                 {
                     view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, Order = 0, WidthWeight = 10, BindingMode = BindingMode.OneWay });
                 }
-                else if (colName == "GINGER_LAST_UPDATE_DATETIME" || colName == "GINGER_LAST_UPDATED_BY")
+                else if (colName is "GINGER_LAST_UPDATE_DATETIME" or "GINGER_LAST_UPDATED_BY")
                 {
                     view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, WidthWeight = 20, BindingMode = BindingMode.OneWay });
                 }
@@ -231,7 +233,7 @@ namespace Ginger.DataSource
                 {
                     sCol.DisplayIndex = 1;
                 }
-                if (sCol.Header.ToString() == "GINGER__LAST__UPDATED__BY" || sCol.Header.ToString() == "GINGER__LAST__UPDATE__DATETIME")
+                if (sCol.Header.ToString() is "GINGER__LAST__UPDATED__BY" or "GINGER__LAST__UPDATE__DATETIME")
                 {
                     if (sCol.DisplayIndex != -1)
                     {
@@ -478,9 +480,9 @@ namespace Ginger.DataSource
         {
             if (string.IsNullOrEmpty(newName.Trim()))
             {
-                Reporter.ToUser(eUserMsgKey.DbTableNameEmpty);                
+                Reporter.ToUser(eUserMsgKey.DbTableNameEmpty);
             }
-            else  if(mDSTableDetails.DSC.DSTableList.Any(t => t.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)))
+            else if (mDSTableDetails.DSC.DSTableList.Any(t => t.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)))
             {
                 Reporter.ToUser(eUserMsgKey.DbTableNameError, newName);
             }

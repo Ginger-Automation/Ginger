@@ -35,13 +35,14 @@ namespace Ginger.Drivers.Windows
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Get Dialog Title " + UIAElementInfo.ElementTitle,
-                ControlAction = ActWindowsControl.eControlAction.GetTitle,
-            });
+            ObservableList<Act> list =
+            [
+                new ActWindowsControl()
+                {
+                    Description = "Get Dialog Title " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActWindowsControl.eControlAction.GetTitle,
+                },
+            ];
             return list;
         }
     }

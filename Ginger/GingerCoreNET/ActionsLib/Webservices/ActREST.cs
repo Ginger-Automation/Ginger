@@ -44,7 +44,7 @@ namespace GingerCore.Actions.REST
         //  static Dictionary<string, string> HostCookies = new Dictionary<string, string>();
 
         // static CookieCollection SessionCokkies = new CookieCollection();
-        static Dictionary<string, Cookie> _sessionCokkiesDic = new Dictionary<string, Cookie>();
+        static Dictionary<string, Cookie> _sessionCokkiesDic = [];
         //  static Dictionary<string, CookieCollection> HostCookies = new Dictionary<string, CookieCollection>();
 
         public new static partial class Fields
@@ -88,10 +88,10 @@ namespace GingerCore.Actions.REST
         public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> DynamicElements = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> HttpHeaders = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> HttpHeaders = [];
 
         private bool mRestRequestSave { get; set; }
         [IsSerializedForLocalRepository]
@@ -316,18 +316,22 @@ namespace GingerCore.Actions.REST
                 SetHTTPHeaders(WebReq);
                 //Nathan added customizable Network Credentials
                 NetworkCredential CustCreds = null;
-                if (URLDomain.Value != "" && URLDomain.Value != null)
+                if (URLDomain.Value is not "" and not null)
                 {
-                    CustCreds = new NetworkCredential("", "", "");
-                    CustCreds.UserName = URLUser.Value;
-                    CustCreds.Password = URLPass.Value;
-                    CustCreds.Domain = URLDomain.Value;
+                    CustCreds = new NetworkCredential("", "", "")
+                    {
+                        UserName = URLUser.Value,
+                        Password = URLPass.Value,
+                        Domain = URLDomain.Value
+                    };
                 }
-                else if (URLUser.Value != "" && URLUser.Value != null) //use current domain
+                else if (URLUser.Value is not "" and not null) //use current domain
                 {
-                    CustCreds = new NetworkCredential("", "", "");
-                    CustCreds.UserName = URLUser.Value;
-                    CustCreds.Password = URLPass.Value;
+                    CustCreds = new NetworkCredential("", "", "")
+                    {
+                        UserName = URLUser.Value,
+                        Password = URLPass.Value
+                    };
                 }
 
                 if (CustCreds == null)
@@ -377,9 +381,11 @@ namespace GingerCore.Actions.REST
                         foreach (Cookie cooki in _sessionCokkiesDic.Values)
                         {
                             Uri domainName = new Uri(EndPointURL.ValueForDriver);
-                            Cookie ck = new Cookie();
-                            ck.Name = cooki.Name;
-                            ck.Value = cooki.Value;
+                            Cookie ck = new Cookie
+                            {
+                                Name = cooki.Name,
+                                Value = cooki.Value
+                            };
                             if (String.IsNullOrEmpty(cooki.Domain) || true)
                             {
                                 cooki.Domain = null;
@@ -483,10 +489,12 @@ namespace GingerCore.Actions.REST
                                 String[] cookiearray = httpCookie.Split(new char[] { ';' }, 3);
                                 String[] cookiearray2 = cookiearray[0].Split(new char[] { '=' }, 2);
 
-                                Cookie cks = new Cookie();
-                                cks.Name = cookiearray2[0];
-                                cks.Value = cookiearray2[1];
-                                cks.Path = cookiearray[1].Split(new char[] { '=' }, 2)[1];
+                                Cookie cks = new Cookie
+                                {
+                                    Name = cookiearray2[0],
+                                    Value = cookiearray2[1],
+                                    Path = cookiearray[1].Split(new char[] { '=' }, 2)[1]
+                                };
 
                                 if (cookiearray.Length == 3)
                                 {
@@ -500,7 +508,7 @@ namespace GingerCore.Actions.REST
                                     if (cks.Path.StartsWith("."))
                                     {
 
-                                        Uri domainName = new Uri("http://" + cks.Path.Substring(1));
+                                        Uri domainName = new Uri("http://" + cks.Path[1..]);
                                         cks.Domain = domainName.Host;
                                     }
                                     else
@@ -531,7 +539,7 @@ namespace GingerCore.Actions.REST
                                 }
                                 if (cks.Path.StartsWith("."))
                                 {
-                                    cks.Path = cks.Path.Substring(1);
+                                    cks.Path = cks.Path[1..];
                                 }
                                 try
                                 {
@@ -616,7 +624,7 @@ namespace GingerCore.Actions.REST
                         }
 
 
-                        if (((resp[0] == '[') && (resp[resp.Length - 1] == ']')))
+                        if (((resp[0] == '[') && (resp[^1] == ']')))
                         {
                             doc = Newtonsoft.Json.JsonConvert.DeserializeXmlNode("{\"root\":" + resp + "}", "root");
                         }
@@ -626,7 +634,7 @@ namespace GingerCore.Actions.REST
                         }
 
 
-                        List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList = new List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem>();
+                        List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList = [];
                         outputTagsList = Amdocs.Ginger.Common.GeneralLib.General.GetXMLNodesItems(doc);
                         foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputTagsList)
                         {
@@ -653,7 +661,7 @@ namespace GingerCore.Actions.REST
                     doc = new XmlDocument();
                     doc.LoadXml(resp);
 
-                    List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList = new List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem>();
+                    List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList = [];
                     outputTagsList = Amdocs.Ginger.Common.GeneralLib.General.GetXMLNodesItems(doc);
                     foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputTagsList)
                     {
@@ -836,7 +844,7 @@ namespace GingerCore.Actions.REST
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.WebServices || platform == ePlatformType.NA)
+            if (platform is ePlatformType.WebServices or ePlatformType.NA)
             {
                 return true;
             }

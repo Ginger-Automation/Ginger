@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             WorkSpace.Instance.OpenSolution(solution);
 
             AnalyzerUtils analyzerUtils = new AnalyzerUtils();
-            ObservableList<AnalyzerItemBase> issues = new ObservableList<AnalyzerItemBase>();
+            ObservableList<AnalyzerItemBase> issues = [];
             analyzerUtils.RunSolutionAnalyzer(WorkSpace.Instance.Solution, issues);
 
             if (issues.Count == 0)

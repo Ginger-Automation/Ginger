@@ -54,8 +54,10 @@ namespace GingerCore.Extensions
             }
             renderTarget.Render(drawingVisual);
 
-            JpegBitmapEncoder jpgEncoder = new JpegBitmapEncoder();
-            jpgEncoder.QualityLevel = quality;
+            JpegBitmapEncoder jpgEncoder = new JpegBitmapEncoder
+            {
+                QualityLevel = quality
+            };
             jpgEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
 
             Byte[] _imageArray;

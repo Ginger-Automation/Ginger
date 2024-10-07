@@ -18,20 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.Telemetry;
-using DocumentFormat.OpenXml.Math;
-using GingerCore.Drivers.Selenium.SeleniumBMP;
 using GingerCoreNET.SourceControl;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
-using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GingerCore.SourceControl
@@ -158,7 +152,7 @@ namespace GingerCore.SourceControl
 
         private List<string> GetConflictsPathsforGetLatestConflict(string path)
         {
-            List<string> conflictPaths = new List<string>();
+            List<string> conflictPaths = [];
             try
             {
                 Stage("*");
@@ -198,7 +192,7 @@ namespace GingerCore.SourceControl
                 using Repository repo = new(RepositoryRootFolder);
                 path = Path.GetRelativePath(RepositoryRootFolder, path).Replace(@"\", @"/");
                 Conflict conflict = repo.Index.Conflicts[path];
-                if(conflict != null)
+                if (conflict != null)
                 {
                     Stage(path);
                 }
@@ -222,12 +216,12 @@ namespace GingerCore.SourceControl
                 string localFilePath = string.Empty;
                 if (Path.Length > (RepositoryFolderCount))
                 {
-                    localFilePath = Path.Substring(RepositoryFolderCount);
+                    localFilePath = Path[RepositoryFolderCount..];
                 }
 
                 if (localFilePath.StartsWith("\\"))
                 {
-                    localFilePath = localFilePath.Substring(1);
+                    localFilePath = localFilePath[1..];
                 }
 
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
@@ -265,7 +259,7 @@ namespace GingerCore.SourceControl
 
         private SourceControlFileInfo.eRepositoryItemStatus GetItemStatus(FileStatus state)
         {
-            if (state == FileStatus.ModifiedInWorkdir || state == FileStatus.ModifiedInIndex)
+            if (state is FileStatus.ModifiedInWorkdir or FileStatus.ModifiedInIndex)
             {
                 return SourceControlFileInfo.eRepositoryItemStatus.Modified;
             }
@@ -366,16 +360,16 @@ namespace GingerCore.SourceControl
         public override ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, bool includLockedFiles = false)
         {
             Console.WriteLine("GITHub - GetPathFilesStatus");
-            ObservableList<SourceControlFileInfo> list = new ObservableList<SourceControlFileInfo>();
+            ObservableList<SourceControlFileInfo> list = [];
 
             try
             {
                 string relativePath = System.IO.Path.GetFullPath(Path);
-                relativePath = relativePath.Substring(RepositoryRootFolder.Length);
+                relativePath = relativePath[RepositoryRootFolder.Length..];
 
                 if (relativePath.StartsWith(@"\"))
                 {
-                    relativePath = relativePath.Substring(1);
+                    relativePath = relativePath[1..];
                 }
 
                 if (File.Exists(GitIgnoreFilePath))
@@ -405,12 +399,14 @@ namespace GingerCore.SourceControl
                         //sometimes remote file path uses / otherwise \  our code should be path independent 
                         if (relativePath == string.Empty || System.IO.Path.GetFullPath(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)).StartsWith(System.IO.Path.GetFullPath(Path)))
                         {
-                            SourceControlFileInfo SCFI = new SourceControlFileInfo();
-                            SCFI.Path = RepositoryRootFolder + @"\" + item.FilePath;
-                            SCFI.SolutionPath = @"~\" + item.FilePath;
-                            SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Unknown;
-                            SCFI.Selected = true;
-                            SCFI.Diff = "";
+                            SourceControlFileInfo SCFI = new SourceControlFileInfo
+                            {
+                                Path = RepositoryRootFolder + @"\" + item.FilePath,
+                                SolutionPath = @"~\" + item.FilePath,
+                                Status = SourceControlFileInfo.eRepositoryItemStatus.Unknown,
+                                Selected = true,
+                                Diff = ""
+                            };
                             if (item.State.ToString().Contains(FileStatus.ModifiedInWorkdir.ToString()))
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Modified;
@@ -419,11 +415,11 @@ namespace GingerCore.SourceControl
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved;
                             }
-                            if (item.State == FileStatus.NewInWorkdir || item.State == FileStatus.NewInIndex)
+                            if (item.State is FileStatus.NewInWorkdir or FileStatus.NewInIndex)
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.New;
                             }
-                            if (item.State == FileStatus.DeletedFromWorkdir || item.State == FileStatus.DeletedFromIndex)
+                            if (item.State is FileStatus.DeletedFromWorkdir or FileStatus.DeletedFromIndex)
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Deleted;
                             }
@@ -454,9 +450,11 @@ namespace GingerCore.SourceControl
 
             try
             {
-                var co = new CloneOptions();
-                co.BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch;
-                co.CredentialsProvider = GetSourceCredentialsHandler();
+                var co = new CloneOptions
+                {
+                    BranchName = string.IsNullOrEmpty(SourceControlBranch) ? "master" : SourceControlBranch,
+                    CredentialsProvider = GetSourceCredentialsHandler()
+                };
                 RepositoryRootFolder = LibGit2Sharp.Repository.Clone(URI, Path, co);
             }
             catch (Exception ex)
@@ -470,9 +468,10 @@ namespace GingerCore.SourceControl
 
         private void AddSolution(ObservableList<SolutionInfo> SourceControlSolutions, string LocalFolder, string SourceControlLocation)
         {
-            SolutionInfo sol = new SolutionInfo();
-
-            sol.LocalFolder = LocalFolder;
+            SolutionInfo sol = new SolutionInfo
+            {
+                LocalFolder = LocalFolder
+            };
             if (System.IO.Directory.Exists(sol.LocalFolder))
             {
                 sol.ExistInLocaly = true;
@@ -488,14 +487,14 @@ namespace GingerCore.SourceControl
 
         public override ObservableList<SolutionInfo> GetProjectsList()
         {
-            ObservableList<SolutionInfo> SourceControlSolutions = new ObservableList<SolutionInfo>();
+            ObservableList<SolutionInfo> SourceControlSolutions = [];
             try
             {
-                string repositoryName = SourceControlURL.Substring(SourceControlURL.LastIndexOf("/") + 1);
+                string repositoryName = SourceControlURL[(SourceControlURL.LastIndexOf("/") + 1)..];
                 if (repositoryName == string.Empty)
                 {
-                    string SourceControlURLExcludeSlash = SourceControlURL.Substring(0, SourceControlURL.LastIndexOf("/"));
-                    repositoryName = SourceControlURLExcludeSlash.Substring(SourceControlURLExcludeSlash.LastIndexOf("/") + 1);
+                    string SourceControlURLExcludeSlash = SourceControlURL[..SourceControlURL.LastIndexOf("/")];
+                    repositoryName = SourceControlURLExcludeSlash[(SourceControlURLExcludeSlash.LastIndexOf("/") + 1)..];
                 }
                 //check which path to show to download
                 string localPath = SourceControlLocalFolder;
@@ -531,12 +530,12 @@ namespace GingerCore.SourceControl
                 File.WriteAllText(GitIgnoreFilePath, gitIgnoreFileContent);
                 string errorWhileAddingFile = string.Empty;
                 AddFile(GitIgnoreFilePath, ref errorWhileAddingFile);
-                if(!string.IsNullOrEmpty(errorWhileAddingFile))
+                if (!string.IsNullOrEmpty(errorWhileAddingFile))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while adding .gitignore file for source control tracking.\n{errorWhileAddingFile}");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating .gitignore file.", ex);
             }
@@ -590,7 +589,7 @@ namespace GingerCore.SourceControl
                 File.WriteAllText(GitIgnoreFilePath, gitIgnoreFileContent);
                 _lastGitIgnoreCheckTimeUtc = File.GetLastWriteTimeUtc(GitIgnoreFilePath);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while updating git ignore file at path '{GitIgnoreFilePath}'.", ex);
             }
@@ -628,7 +627,7 @@ namespace GingerCore.SourceControl
                         }
                         return true;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         error = ex.Message + Environment.NewLine + ex.InnerException;
                         return false;
@@ -654,7 +653,7 @@ namespace GingerCore.SourceControl
                     int startIndex = fileContent.IndexOf("<<<<<<< HEAD");
                     if (startIndex != 0)
                     {
-                        firstCommonResultText = fileContent.Substring(0, startIndex);
+                        firstCommonResultText = fileContent[..startIndex];
                     }
 
                     int endIndex = fileContent.IndexOf("=======");
@@ -662,9 +661,9 @@ namespace GingerCore.SourceControl
                     middleResultText = fileContent.Substring(startIndex + 14, RequestLeanth - 14);
 
                     startIndex = fileContent.IndexOf(">>>>>>>");
-                    lastCommonResultText = fileContent.Substring(startIndex);
+                    lastCommonResultText = fileContent[startIndex..];
                     startIndex = lastCommonResultText.IndexOf("\r\n");
-                    lastCommonResultText = lastCommonResultText.Substring(startIndex + 2);
+                    lastCommonResultText = lastCommonResultText[(startIndex + 2)..];
 
                     File.WriteAllText(path, firstCommonResultText + middleResultText + lastCommonResultText);
 
@@ -675,7 +674,7 @@ namespace GingerCore.SourceControl
                     int startIndex = fileContent.IndexOf("<<<<<<< HEAD");
                     if (startIndex != 0)
                     {
-                        firstCommonResultText = fileContent.Substring(0, startIndex);
+                        firstCommonResultText = fileContent[..startIndex];
                     }
 
                     startIndex = fileContent.IndexOf("=======");
@@ -684,9 +683,9 @@ namespace GingerCore.SourceControl
                     middleResultText = fileContent.Substring(startIndex + 9, RequestLeanth - 9);
 
                     startIndex = fileContent.IndexOf(">>>>>>>");
-                    lastCommonResultText = fileContent.Substring(startIndex);
+                    lastCommonResultText = fileContent[startIndex..];
                     startIndex = lastCommonResultText.IndexOf("\r\n");
-                    lastCommonResultText = lastCommonResultText.Substring(startIndex + 2);
+                    lastCommonResultText = lastCommonResultText[(startIndex + 2)..];
 
                     File.WriteAllText(path, firstCommonResultText + middleResultText + lastCommonResultText);
                 }
@@ -708,7 +707,7 @@ namespace GingerCore.SourceControl
         {
             using Repository repo = new(RepositoryRootFolder);
             Blob oursBlob = GetLocalBlobForConflict(repo, conflictFilePath);
-            if(oursBlob == null)
+            if (oursBlob == null)
             {
                 return string.Empty;
             }
@@ -733,7 +732,7 @@ namespace GingerCore.SourceControl
         {
             using Repository repo = new(RepositoryRootFolder);
             Blob theirsBlob = GetRemoteBlobForConflict(repo, conflictFilePath);
-            if(theirsBlob == null)
+            if (theirsBlob == null)
             {
                 return string.Empty;
             }
@@ -761,7 +760,7 @@ namespace GingerCore.SourceControl
 
         private string GetLocalContentFromConflictedContent(string conflictedContent)
         {
-            if(!conflictedContent.Contains(ConflictStartMarker))
+            if (!conflictedContent.Contains(ConflictStartMarker))
             {
                 return conflictedContent;
             }
@@ -822,7 +821,7 @@ namespace GingerCore.SourceControl
             int leadingContentLength = startMarkerIndex;
             if (leadingContentLength >= 0)
             {
-                leadingContent = conflictedContent.Substring(0, leadingContentLength);
+                leadingContent = conflictedContent[..leadingContentLength];
             }
 
             return leadingContent;
@@ -920,7 +919,7 @@ namespace GingerCore.SourceControl
             int endMarkerIndex = conflictedContent.IndexOf(ConflictEndMarker);
             int endMarkerCRLFIndex = conflictedContent.IndexOf(CR_LF, endMarkerIndex);
             int trailingContentStartIndex = endMarkerCRLFIndex + CR_LF.Length;
-            string trailingContent = conflictedContent.Substring(trailingContentStartIndex);
+            string trailingContent = conflictedContent[trailingContentStartIndex..];
             return trailingContent;
         }
 
@@ -1074,9 +1073,11 @@ namespace GingerCore.SourceControl
                     {
                         //undo specific changes
                         string committishOrBranchSpec = SourceControlBranch;
-                        CheckoutOptions checkoutOptions = new CheckoutOptions();
-                        checkoutOptions.CheckoutModifiers = CheckoutModifiers.Force;
-                        checkoutOptions.CheckoutNotifyFlags = CheckoutNotifyFlags.Ignored;
+                        CheckoutOptions checkoutOptions = new CheckoutOptions
+                        {
+                            CheckoutModifiers = CheckoutModifiers.Force,
+                            CheckoutNotifyFlags = CheckoutNotifyFlags.Ignored
+                        };
                         repo.CheckoutPaths(committishOrBranchSpec, new[] { path }, checkoutOptions);
                     }
                 }
@@ -1176,18 +1177,25 @@ namespace GingerCore.SourceControl
                 // Add the origin remote
                 LibGit2Sharp.Remote remote = repo.Network.Remotes.Add("origin", remoteURL);
 
-                PushOptions options = new PushOptions();
-                options.CredentialsProvider = GetSourceCredentialsHandler();
+                PushOptions options = new PushOptions
+                {
+                    CredentialsProvider = GetSourceCredentialsHandler()
+                };
 
                 if (!String.IsNullOrEmpty(SourceControlBranch) && isRemoteBranchExist())
                 {
-                    PullOptions pullOptions = new PullOptions();
+                    PullOptions pullOptions = new PullOptions
+                    {
+                        MergeOptions = new MergeOptions
+                        {
+                            FailOnConflict = true
+                        },
 
-                    pullOptions.MergeOptions = new MergeOptions();
-                    pullOptions.MergeOptions.FailOnConflict = true;
-
-                    pullOptions.FetchOptions = new FetchOptions();
-                    pullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+                        FetchOptions = new FetchOptions
+                        {
+                            CredentialsProvider = GetSourceCredentialsHandler()
+                        }
+                    };
 
                     Signature merger = author;
 
@@ -1250,7 +1258,7 @@ namespace GingerCore.SourceControl
             try
             {
                 relativePath = System.IO.Path.GetFullPath(path);
-                relativePath = relativePath.Substring(SolutionFolder.Length);
+                relativePath = relativePath[SolutionFolder.Length..];
 
                 SourceControlItemInfoDetails SCIID = new SourceControlItemInfoDetails();
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
@@ -1337,9 +1345,13 @@ namespace GingerCore.SourceControl
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                 {
 
-                    PullOptions PullOptions = new PullOptions();
-                    PullOptions.FetchOptions = new FetchOptions();
-                    PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+                    PullOptions PullOptions = new PullOptions
+                    {
+                        FetchOptions = new FetchOptions
+                        {
+                            CredentialsProvider = GetSourceCredentialsHandler()
+                        }
+                    };
                     if (!IsRepositoryPublic())
                     {
                         mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
@@ -1383,7 +1395,7 @@ namespace GingerCore.SourceControl
                     };
 
                     var unpushedCommits = repo.Commits.QueryBy(filter).ToList();
-                    ObservableList<SourceControlChangesetDetails> commits = new ObservableList<SourceControlChangesetDetails>();
+                    ObservableList<SourceControlChangesetDetails> commits = [];
                     foreach (var commit in unpushedCommits)
                     {
                         commits.Add(new SourceControlChangesetDetails() { Author = commit.Committer.Name, Date = commit.Committer.When, ID = commit.Id.Sha, Message = commit.MessageShort });
@@ -1392,14 +1404,14 @@ namespace GingerCore.SourceControl
                     return commits;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to unpushed local commit",ex);
-                return new ObservableList<SourceControlChangesetDetails>(); ;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to unpushed local commit", ex);
+                return []; ;
             }
-            
+
         }
-        
+
 
         public override bool UndoUncommitedChanges(List<SourceControlFileInfo> selectedFiles)
         {
@@ -1417,9 +1429,9 @@ namespace GingerCore.SourceControl
                                 File.Delete(file.Path);
                             }
                         }
-                        else if (file.Status == SourceControlFileInfo.eRepositoryItemStatus.Modified ||
-                                 file.Status == SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved ||
-                                 file.Status == SourceControlFileInfo.eRepositoryItemStatus.Deleted)
+                        else if (file.Status is SourceControlFileInfo.eRepositoryItemStatus.Modified or
+                                 SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved or
+                                 SourceControlFileInfo.eRepositoryItemStatus.Deleted)
                         {
                             filesPathsToUndo.Add(file.Path);
                         }
@@ -1431,7 +1443,8 @@ namespace GingerCore.SourceControl
                     }
                     return true;
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Undo Changes", ex);
                 return false;
@@ -1467,7 +1480,7 @@ namespace GingerCore.SourceControl
 
         public override List<string> GetConflictPaths()
         {
-            List<string> ConflictPaths = new List<string>();
+            List<string> ConflictPaths = [];
 
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {

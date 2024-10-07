@@ -60,7 +60,7 @@ namespace Ginger.AnalyzerLib
 
         GenericWindow _pageGenericWin = null;
 
-        ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
+        ObservableList<AnalyzerItemBase> mIssues = [];
 
         private Solution? mSolution;
         private BusinessFlow businessFlow;
@@ -112,7 +112,7 @@ namespace Ginger.AnalyzerLib
                     {
                         TotalIssues++;
                         IssuesCountLabel.Content = TotalIssues;
-                        if (item.Severity == AnalyzerItemBase.eSeverity.High || item.Severity == AnalyzerItemBase.eSeverity.Critical)
+                        if (item.Severity is AnalyzerItemBase.eSeverity.High or AnalyzerItemBase.eSeverity.Critical)
                         {
                             TotalHighAndCriticalIssues++;
                             CriticalAndHighIssuesLabelCounter.Content = TotalHighAndCriticalIssues;
@@ -211,7 +211,7 @@ namespace Ginger.AnalyzerLib
         private async Task Analyze()
         {
             using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.Analyzer);
-            
+
             // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
             mIssues.Clear();
             TotalIssues = 0;
@@ -644,18 +644,21 @@ namespace Ginger.AnalyzerLib
         {
             //# Default View
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.SeverityIcon), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Selected), Header = "Selected", WidthWeight = 3, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.AnalyzerItems.Resources["FieldActive"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemClass), Header = "Item Type", WidthWeight = 3, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemName), Header = "Item Name", WidthWeight = 10, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemParent), Header = "Item Parent", WidthWeight = 10, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Description), Header = "Issue", WidthWeight = 15, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Severity), Header = "Severity", WidthWeight = 3, MaxWidth = 50, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.CanAutoFix), Header = "Auto Fixed?", WidthWeight = 3, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Status), Header = "Status", WidthWeight = 3, AllowSorting = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(AnalyzerItemBase.SeverityIcon), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 },
+                new GridColView() { Field = nameof(AnalyzerItemBase.Selected), Header = "Selected", WidthWeight = 3, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.AnalyzerItems.Resources["FieldActive"] },
+                new GridColView() { Field = nameof(AnalyzerItemBase.ItemClass), Header = "Item Type", WidthWeight = 3, AllowSorting = true },
+                new GridColView() { Field = nameof(AnalyzerItemBase.ItemName), Header = "Item Name", WidthWeight = 10, AllowSorting = true },
+                new GridColView() { Field = nameof(AnalyzerItemBase.ItemParent), Header = "Item Parent", WidthWeight = 10, AllowSorting = true },
+                new GridColView() { Field = nameof(AnalyzerItemBase.Description), Header = "Issue", WidthWeight = 15, AllowSorting = true },
+                new GridColView() { Field = nameof(AnalyzerItemBase.Severity), Header = "Severity", WidthWeight = 3, MaxWidth = 50, AllowSorting = true },
+                new GridColView() { Field = nameof(AnalyzerItemBase.CanAutoFix), Header = "Auto Fixed?", WidthWeight = 3, AllowSorting = true },
+                new GridColView() { Field = nameof(AnalyzerItemBase.Status), Header = "Status", WidthWeight = 3, AllowSorting = true },
+            ]
+            };
 
             AnalyzerItemsGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Select/UnSelect all issues which can be auto fixed", new RoutedEventHandler(MarkUnMark));
 
@@ -680,17 +683,21 @@ namespace Ginger.AnalyzerLib
                     title = "Solution Analyzer Results";
                     break;
             }
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
 
-            Button SaveAllButton = new Button();
-            SaveAllButton.Content = "Save Fixed Items";
-            SaveAllButton.Margin = new Thickness(0, 0, 60, 0);
+            Button SaveAllButton = new Button
+            {
+                Content = "Save Fixed Items",
+                Margin = new Thickness(0, 0, 60, 0)
+            };
             //SaveAllButton.Click += new RoutedEventHandler(SaveAllButton_Click);
             SaveAllButton.Click += new RoutedEventHandler(SaveAllFixedItems_Click);
             winButtons.Add(SaveAllButton);
 
-            Button FixSelectedButton = new Button();
-            FixSelectedButton.Content = "Fix Selected";
+            Button FixSelectedButton = new Button
+            {
+                Content = "Fix Selected"
+            };
             //FixSelectedButton.Click += new RoutedEventHandler(FixSelectedButton_Click);
             FixSelectedButton.Click += async (o, e) =>
             {
@@ -731,9 +738,11 @@ namespace Ginger.AnalyzerLib
             };
             winButtons.Add(FixSelectedButton);
 
-            Button RerunButton = new Button();
-            RerunButton.Content = "Re-Analyze";
-            RerunButton.Margin = new Thickness(0, 0, 60, 0);
+            Button RerunButton = new Button
+            {
+                Content = "Re-Analyze",
+                Margin = new Thickness(0, 0, 60, 0)
+            };
             RerunButton.Click += new RoutedEventHandler(RerunButton_Click);
             winButtons.Add(RerunButton);
 
@@ -799,7 +808,7 @@ namespace Ginger.AnalyzerLib
 
         private void SaveAllFixedItems()
         {
-            Dictionary<BusinessFlow, List<AnalyzerItemBase>> itemsWhichWereSaved = new Dictionary<BusinessFlow, List<AnalyzerItemBase>>();
+            Dictionary<BusinessFlow, List<AnalyzerItemBase>> itemsWhichWereSaved = [];
             foreach (AnalyzerItemBase AI in mIssues)
             {
                 if (AI.Status == AnalyzerItemBase.eStatus.Fixed)
@@ -823,7 +832,7 @@ namespace Ginger.AnalyzerLib
                     {
                         if (itemsWhichWereSaved.ContainsKey(bs) == false)
                         {
-                            itemsWhichWereSaved.Add(bs, new List<AnalyzerItemBase>() { AI });
+                            itemsWhichWereSaved.Add(bs, [AI]);
                         }
                         else
                         {
@@ -874,18 +883,16 @@ namespace Ginger.AnalyzerLib
         private void AnalyzerItemsGrid_RowDoubleClick(object sender, EventArgs e)
         {
             //show the item edit page 
-            if (AnalyzerItemsGrid.CurrentItem is AnalyzeAction)
+            if (AnalyzerItemsGrid.CurrentItem is AnalyzeAction currentAnalyzeAction)
             {
-                AnalyzeAction currentAnalyzeAction = (AnalyzeAction)AnalyzerItemsGrid.CurrentItem;
                 Act actionIssue = currentAnalyzeAction.mAction;
                 actionIssue.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 ActionEditPage actedit = new ActionEditPage(actionIssue, General.eRIPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
                 actedit.ShowAsWindow(eWindowShowStyle.Dialog);
             }
 
-            if (AnalyzerItemsGrid.CurrentItem is AnalyzeActivity)
+            if (AnalyzerItemsGrid.CurrentItem is AnalyzeActivity currentAnalyzeActivity)
             {
-                AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
                 Activity ActivityIssue = currentAnalyzeActivity.Activity;
                 GingerWPF.BusinessFlowsLib.ActivityPage ActivityEdit = new GingerWPF.BusinessFlowsLib.ActivityPage(ActivityIssue, new Context() { BusinessFlow = currentAnalyzeActivity.BusinessFlow }, General.eRIPageViewMode.ChildWithSave);
                 ActivityEdit.ShowAsWindow(eWindowShowStyle.Dialog);

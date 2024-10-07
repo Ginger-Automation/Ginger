@@ -96,7 +96,7 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
-            return ExportToRQM.Instance.ExportExecutionDetailsToRQM(bizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig,projEnvironment);
+            return ExportToRQM.Instance.ExportExecutionDetailsToRQM(bizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig, projEnvironment);
         }
         public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
         {
@@ -110,7 +110,7 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
-            if(resourceType == AlmDataContractsStd.Enums.ResourceType.DEFECT)
+            if (resourceType == AlmDataContractsStd.Enums.ResourceType.DEFECT)
             {
                 return UpdatedAlmFields(ImportFromRQM.GetALMItemFieldsForDefect(bw, online));
             }
@@ -118,13 +118,13 @@ namespace GingerCore.ALM
             {
                 return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
             }
-            
+
         }
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
             return ExportToRQM.Instance.CreateNewALMDefects(defectsForOpening, defectsFields, useREST);
-            
+
             //return null;
         }
 
@@ -203,7 +203,7 @@ namespace GingerCore.ALM
                             Export_SettingsFile_Location.InnerText = Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Export");
                             RQMSettingsXML.Save(RQMSettingsXMLFilePath);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, $"Error witring ALM RQMConfigPackage at RQM/GeneralData/Export_SettingsFile_Location: {Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml")}", ex);
                         }
@@ -222,20 +222,22 @@ namespace GingerCore.ALM
                         }
                         XmlNode DefectFieldAPINode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/DefectFieldAPI");
                         string DefectFieldAPI = DefectFieldAPINode.InnerText;
-                        Dictionary<String, Object> dictionary = new Dictionary<string, object>();
-                        dictionary.Add("ServerURL", serverURL);
-                        dictionary.Add("IsTestSuite", IsTestSuite);
-                        dictionary.Add("PublishSkipped", PublishSkipped);
-                        dictionary.Add("DefectFieldAPI", DefectFieldAPI);
-                        return dictionary; 
+                        Dictionary<String, Object> dictionary = new Dictionary<string, object>
+                        {
+                            { "ServerURL", serverURL },
+                            { "IsTestSuite", IsTestSuite },
+                            { "PublishSkipped", PublishSkipped },
+                            { "DefectFieldAPI", DefectFieldAPI }
+                        };
+                        return dictionary;
                     }
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Error reading ALM RQMConfigPackage at: { Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml")}", e);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error reading ALM RQMConfigPackage at: {Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml")}", e);
                 }
             }
-            return new Dictionary<string, object>();
+            return [];
         }
 
         public bool IsConfigPackageExists()
@@ -254,7 +256,7 @@ namespace GingerCore.ALM
                 else
                 {
                     //Missing RQMSettings.xml file
-                    Reporter.ToLog(eLogLevel.WARN, $"RQM Configuration package not exist in solution, RqmSettings.xml not exist at: { Path.Combine(CurrRQMConfigPath, "RQMSettings.xml")}");
+                    Reporter.ToLog(eLogLevel.WARN, $"RQM Configuration package not exist in solution, RqmSettings.xml not exist at: {Path.Combine(CurrRQMConfigPath, "RQMSettings.xml")}");
                 }
             }
             else
@@ -334,7 +336,7 @@ namespace GingerCore.ALM
             }
         }
 
-        
+
         #endregion
 
         public void UpdatedRQMTestInBF(ref BusinessFlow busFlow, RQMTestPlan testPlan, List<string> TCsIDs)

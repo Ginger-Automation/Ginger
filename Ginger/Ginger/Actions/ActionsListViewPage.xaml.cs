@@ -186,15 +186,17 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActionsListView == null)
             {
-                mActionsListView = new UcListView();
-                mActionsListView.Title = "Actions";
-                mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
+                mActionsListView = new UcListView
+                {
+                    Title = "Actions",
+                    ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action
+                };
 
                 mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
                 mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
-                
+
                 mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
-                 
+
                 mActionsListView.ListSelectionMode = SelectionMode.Extended;
 
                 mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
@@ -215,7 +217,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
             }
 
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
+            if (mPageViewMode is Ginger.General.eRIPageViewMode.View or Ginger.General.eRIPageViewMode.ViewAndExecute)
             {
                 mActionsListView.IsDragDropCompatible = false;
             }
@@ -229,7 +231,7 @@ namespace GingerWPF.BusinessFlowsLib
                 //update actions platform
                 Task.Run(() =>
                 {
-                    ePlatformType platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
+                    ePlatformType platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == mContext.Activity.TargetApplication).Platform;
                     foreach (Act act in mActivity.Acts)
                     {
                         if (act is ActWithoutDriver)
@@ -307,14 +309,11 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void listActions_ItemDropped(object sender, EventArgs e)
         {
-            object droppedItem = ((DragInfo)sender).Data as object;
-
-            if (droppedItem != null)
+            if (((DragInfo)sender).Data is object droppedItem)
             {
                 int mouseIndex = -1;
-                Act actDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Act;
 
-                if (actDroppedOn != null)
+                if (DragDrop2.GetRepositoryItemHit(ListView) is Act actDroppedOn)
                 {
                     mouseIndex = ListView.DataSourceList.IndexOf(actDroppedOn);
                 }
@@ -333,8 +332,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ListView.xListView.SelectedItems.Clear();
                 for (int itemIndex = mouseIndex; itemIndex < lastAddedIndex; itemIndex++)
                 {
-                    RepositoryItemBase repoBaseItem = ListView.DataSourceList[itemIndex] as RepositoryItemBase;
-                    if (repoBaseItem != null)
+                    if (ListView.DataSourceList[itemIndex] is RepositoryItemBase repoBaseItem)
                     {
                         ListView.xListView.SelectedItems.Add(repoBaseItem);
                     }

@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.Common;
-using GingerCore.Drivers.CommunicationProtocol;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -98,15 +97,15 @@ namespace GingerCore.Actions
             }
         }
 
-        private List<ePlatformType> obsoletePlatformList = new List<ePlatformType>()
-            {
+        private List<ePlatformType> obsoletePlatformList =
+            [
                 ePlatformType.ASCF,
                 ePlatformType.Java,
                 ePlatformType.Web,
                 ePlatformType.Windows,
                 ePlatformType.PowerBuilder,
                 ePlatformType.Mobile
-            };
+            ];
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {

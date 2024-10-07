@@ -24,7 +24,6 @@ using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
-using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.TextEditor.ValueExpression;
 using Ginger.Variables;
 using GingerCore;
@@ -67,7 +66,7 @@ namespace Ginger
         ValueExpression mVE = null;
         GingerCore.Actions.ActDSTableElement actDStable = null;
         static List<HighlightingRule> mHighlightingRules = null;
-        private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();
+        private Dictionary<string, TreeViewItem> Categories = [];
         ObservableList<ProjEnvironment> mEnvs;
         public TreeViewItem rootTreeItem
         {
@@ -75,8 +74,10 @@ namespace Ginger
             {
                 if (VETree.Items.Count == 0)
                 {
-                    TreeViewItem root = new TreeViewItem();
-                    root.IsExpanded = true;
+                    TreeViewItem root = new TreeViewItem
+                    {
+                        IsExpanded = true
+                    };
                     SetItemView(root, "Expressions", "", eImageType.Variable);
                     VETree.Items.Add(root);
                 }
@@ -144,14 +145,16 @@ namespace Ginger
         {
             if (mHighlightingRules == null)
             {
-                mHighlightingRules = new List<HighlightingRule>();
+                mHighlightingRules = [];
 
                 //Color for highlight of expression in value
-                HighlightingColor color1 = new HighlightingColor();
-                color1.FontStyle = FontStyles.Italic;
-                color1.FontWeight = FontWeights.Bold;
-                color1.Foreground = redBrush;
-                color1.Background = lighGrayBackgroundBrush;
+                HighlightingColor color1 = new HighlightingColor
+                {
+                    FontStyle = FontStyles.Italic,
+                    FontWeight = FontWeights.Bold,
+                    Foreground = redBrush,
+                    Background = lighGrayBackgroundBrush
+                };
             }
 
             foreach (HighlightingRule HR in mHighlightingRules)
@@ -195,7 +198,7 @@ namespace Ginger
         }
 
 
-        
+
         private void AddGlobalModelParameters()
         {
             TreeViewItem Parent = AddOrGetCategory("Data");
@@ -337,115 +340,45 @@ namespace Ginger
 
         eImageType GetCategoryImageType(string category)
         {
-            eImageType eImageType;
-            switch (category)
+            var eImageTypeCat = category switch
             {
-                case "Regular Expressions":
-                    eImageType = eImageType.RegularExpression;
-                    break;
-                case "String":
-                    eImageType = eImageType.Text;
-                    break;
-                case "Date Time":
-                    eImageType = eImageType.Timer;
-                    break;
-                case "Output Value":
-                    eImageType = eImageType.Output;
-                    break;
-                case "Math":
-                    eImageType = eImageType.Config;
-                    break;
-                case "Data":
-                    eImageType = eImageType.Table;
-                    break;
-                case "Data Operations":
-                    eImageType = eImageType.DataManipulation;
-                    break;
-                case "Data Validation":
-                    eImageType = eImageType.CheckBox;
-                    break;
-                case "Flow Details":
-                    eImageType = eImageType.BusinessFlow;
-                    break;
-                case "Environment":
-                    eImageType = eImageType.Environment;
-                    break;
-                case "Runset":
-                    eImageType = eImageType.RunSet;
-                    break;
-                case "Runner":
-                    eImageType = eImageType.Runner;
-                    break;
-                case "Business Flow":
-                    eImageType = eImageType.BusinessFlow;
-                    break;
-                case "Activities Group":
-                    eImageType = eImageType.ActivitiesGroup;
-                    break;
-                case "Activity":
-                    eImageType = eImageType.Activity;
-                    break;
-                case "Action":
-                    eImageType = eImageType.Action;
-                    break;
-                case "Machine Details":
-                    eImageType = eImageType.Screen;
-                    break;
-                case "List":
-                    eImageType = eImageType.List;
-                    break;
-                case "Variables":
-                    eImageType = eImageType.Variable;
-                    break;
-                case "Environments":
-                    eImageType = eImageType.Environment;
-                    break;
-                case "Models Global Parameters":
-                    eImageType = eImageType.Parameter;
-                    break;
-                case "Data Source":
-                    eImageType = eImageType.DataSource;
-                    break;
-                case "Functions":
-                    eImageType = eImageType.Operations;
-                    break;
-                case "Flow Control Conditions":
-                    eImageType = eImageType.MapSigns;
-                    break;
-                case "General":
-                    eImageType = eImageType.General;
-                    break;
-                case "Solution":
-                    eImageType = eImageType.Solution;
-                    break;
-                case "Mock Data":
-                    eImageType = eImageType.Table;
-                    break;
-                case "Address":
-                    eImageType = eImageType.AddressCard;
-                    break;
-                case "Date":
-                    eImageType = eImageType.Timer;
-                    break;
-                case "Finance":
-                    eImageType = eImageType.MoneyCheckDollar;
-                    break;
-                case "Internet":
-                    eImageType = eImageType.IdCard;
-                    break;
-                case "Name":
-                    eImageType = eImageType.IdBadge;
-                    break;
-                case "Phone":
-                    eImageType = eImageType.Phone;
-                    break;
-                case "Random":
-                    eImageType = eImageType.Operations;
-                    break;
-                default:
-                    throw new KeyNotFoundException();
-            }
-            return eImageType;
+                "Regular Expressions" => eImageType.RegularExpression,
+                "String" => eImageType.Text,
+                "Date Time" => eImageType.Timer,
+                "Output Value" => eImageType.Output,
+                "Math" => eImageType.Config,
+                "Data" => eImageType.Table,
+                "Data Operations" => eImageType.DataManipulation,
+                "Data Validation" => eImageType.CheckBox,
+                "Flow Details" => eImageType.BusinessFlow,
+                "Environment" => eImageType.Environment,
+                "Runset" => eImageType.RunSet,
+                "Runner" => eImageType.Runner,
+                "Business Flow" => eImageType.BusinessFlow,
+                "Activities Group" => eImageType.ActivitiesGroup,
+                "Activity" => eImageType.Activity,
+                "Action" => eImageType.Action,
+                "Machine Details" => eImageType.Screen,
+                "List" => eImageType.List,
+                "Variables" => eImageType.Variable,
+                "Environments" => eImageType.Environment,
+                "Models Global Parameters" => eImageType.Parameter,
+                "Data Source" => eImageType.DataSource,
+                "Functions" => eImageType.Operations,
+                "Flow Control Conditions" => eImageType.MapSigns,
+                "General" => eImageType.General,
+                "Solution" => eImageType.Solution,
+                "Mock Data" => eImageType.Table,
+                "Address" => eImageType.AddressCard,
+                "Date" => eImageType.Timer,
+                "Finance" => eImageType.MoneyCheckDollar,
+                "Internet" => eImageType.IdCard,
+                "Name" => eImageType.IdBadge,
+                "Phone" => eImageType.Phone,
+                "Random" => eImageType.Operations,
+                _ => throw new KeyNotFoundException(),
+            };
+            return eImageTypeCat;
 
         }
 
@@ -852,18 +785,18 @@ namespace Ginger
             switch (varLevel)
             {
                 case eVariablesLevel.Solution:
-                    ((Solution)WorkSpace.Instance.Solution).AddVariable(newStringVar);
+                    WorkSpace.Instance.Solution.AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
                     if (mContext != null && mContext.BusinessFlow != null)
                     {
-                        ((BusinessFlow)mContext.BusinessFlow).AddVariable(newStringVar);
+                        mContext.BusinessFlow.AddVariable(newStringVar);
                     }
                     break;
                 case eVariablesLevel.Activity:
                     if (mContext != null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
                     {
-                        ((Activity)mContext.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
+                        mContext.BusinessFlow.CurrentActivity.AddVariable(newStringVar);
                     }
                     break;
             }
@@ -875,18 +808,18 @@ namespace Ginger
             switch (varLevel)
             {
                 case eVariablesLevel.Solution:
-                    ((Solution)WorkSpace.Instance.Solution).SetUniqueVariableName(newStringVar);
+                    WorkSpace.Instance.Solution.SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
                     if (mContext != null && mContext.BusinessFlow != null)
                     {
-                        ((BusinessFlow)mContext.BusinessFlow).SetUniqueVariableName(newStringVar);
+                        mContext.BusinessFlow.SetUniqueVariableName(newStringVar);
                     }
                     break;
                 case eVariablesLevel.Activity:
                     if (mContext != null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
                     {
-                        ((Activity)mContext.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
+                        mContext.BusinessFlow.CurrentActivity.SetUniqueVariableName(newStringVar);
                     }
                     break;
             }
@@ -915,19 +848,25 @@ namespace Ginger
         {
             item.Tag = value;
 
-            StackPanel stack = new StackPanel();
-            stack.Orientation = Orientation.Horizontal;
+            StackPanel stack = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
 
             // create Image           
-            ImageMakerControl treeIcon = new ImageMakerControl();
-            treeIcon.ImageType = imageType;
-            treeIcon.Height = 16;
-            treeIcon.Width = 16;
+            ImageMakerControl treeIcon = new ImageMakerControl
+            {
+                ImageType = imageType,
+                Height = 16,
+                Width = 16
+            };
 
 
             // Label
-            Label lbl = new Label();
-            lbl.Content = HeaderText;
+            Label lbl = new Label
+            {
+                Content = HeaderText
+            };
 
             // Add into stack
             stack.Children.Add(treeIcon);
@@ -993,8 +932,10 @@ namespace Ginger
             string value = xExpressionUCTextEditor.textEditor.Text;
             if (mVE == null)
             {
-                mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
-                mVE.actDSTableElement = actDStable;
+                mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)
+                {
+                    actDSTableElement = actDStable
+                };
             }
             //Update the obj attr with new Value
             if (mObj is ExpandoObject)
@@ -1024,8 +965,10 @@ namespace Ginger
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, Window ownerWindow = null)
         {
-            Button OKButton = new Button();
-            OKButton.Content = "OK";
+            Button OKButton = new Button
+            {
+                Content = "OK"
+            };
             OKButton.Click += new RoutedEventHandler(OKButton_Click);
 
             if (ownerWindow == null)
@@ -1033,7 +976,7 @@ namespace Ginger
                 ownerWindow = App.MainWindow;
             }
 
-            GingerCore.General.LoadGenericWindow(ref mWin, ownerWindow, windowStyle, this.Title, this, new ObservableList<Button> { OKButton }, true, "Cancel");
+            GingerCore.General.LoadGenericWindow(ref mWin, ownerWindow, windowStyle, this.Title, this, [OKButton], true, "Cancel");
         }
 
         private void xClearCalculatedButton_Click(object sender, RoutedEventArgs e)

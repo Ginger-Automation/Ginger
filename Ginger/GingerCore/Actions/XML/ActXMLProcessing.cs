@@ -68,12 +68,11 @@ namespace GingerCore.Actions.XML
         public ActInputValue TargetFileName { get { return GetOrCreateInputParam(Fields.TargetFileName); } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> DynamicElements = [];
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(DynamicElements);
+            List<ObservableList<ActInputValue>> list = [DynamicElements];
             return list;
         }
 

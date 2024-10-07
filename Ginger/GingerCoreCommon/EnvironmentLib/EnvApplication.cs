@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
@@ -73,16 +72,16 @@ namespace GingerCore.Environments
         public string GingerOpsRemark { get { return mGingerOpsRemark; } set { if (mGingerOpsRemark != value) { mGingerOpsRemark = value; OnPropertyChanged(nameof(GingerOpsRemark)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IDatabase> Dbs { get; set; } = new ObservableList<IDatabase>();
+        public ObservableList<IDatabase> Dbs { get; set; } = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<UnixServer> UnixServers = new ObservableList<UnixServer>();
+        public ObservableList<UnixServer> UnixServers = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<GeneralParam> GeneralParams = new ObservableList<GeneralParam>();
+        public ObservableList<GeneralParam> GeneralParams = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<LoginUser> LoginUsers = new ObservableList<LoginUser>();
+        public ObservableList<LoginUser> LoginUsers = [];
 
 
         public override string GetNameForFileName() { return Name; }
@@ -253,6 +252,6 @@ namespace GingerCore.Environments
 
         }
         [IsSerializedForLocalRepository]
-        public readonly ObservableList<VariableBase> Variables = new();
+        public readonly ObservableList<VariableBase> Variables = [];
     }
 }

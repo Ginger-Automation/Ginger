@@ -102,9 +102,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void StringVar_TestFormulaVal()
         {
             //Arrange
-            VariableString variableString = new VariableString();
-            variableString.Name = "test";
-            variableString.Value = "testVal";
+            VariableString variableString = new VariableString
+            {
+                Name = "test",
+                Value = "testVal"
+            };
 
             //Act
             string formulaStr = variableString.GetFormula();
@@ -118,9 +120,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void StringVar_TestResetVal()
         {
             //Arrange
-            VariableString variableString = new VariableString();
-            variableString.Name = "test";
-            variableString.Value = "testVal";
+            VariableString variableString = new VariableString
+            {
+                Name = "test",
+                Value = "testVal"
+            };
 
             //Act
             variableString.ResetValue();
@@ -134,9 +138,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void StringVar_TestVal()
         {
             //Arrange
-            VariableString variableString = new VariableString();
-            variableString.Name = "test";
-            variableString.Value = "testVal";
+            VariableString variableString = new VariableString
+            {
+                Name = "test",
+                Value = "testVal"
+            };
 
             //Act
 
@@ -166,12 +172,14 @@ namespace GingerCoreCommonTest.VariableTests
         {
             //Arrange
             string testVal = "testPass";
-            VariablePasswordString variableString = new VariablePasswordString();
-            variableString.Name = "p1";
-            variableString.Password = testVal;
+            VariablePasswordString variableString = new VariablePasswordString
+            {
+                Name = "p1",
+                Password = testVal,
 
-            //Act
-            variableString.Value = testVal + "change";
+                //Act
+                Value = testVal + "change"
+            };
             variableString.ResetValue();
 
             //Assert

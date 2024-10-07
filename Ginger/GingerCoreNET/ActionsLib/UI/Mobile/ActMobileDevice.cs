@@ -54,7 +54,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eMobileDeviceAction)GetOrCreateInputParam<eMobileDeviceAction>(nameof(MobileDeviceAction), eMobileDeviceAction.PressBackButton);
+                return GetOrCreateInputParam<eMobileDeviceAction>(nameof(MobileDeviceAction), eMobileDeviceAction.PressBackButton);
             }
             set
             {
@@ -67,7 +67,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eAuthResultSimulation)GetOrCreateInputParam<eAuthResultSimulation>(nameof(AuthResultSimulation), eAuthResultSimulation.Success);
+                return GetOrCreateInputParam<eAuthResultSimulation>(nameof(AuthResultSimulation), eAuthResultSimulation.Success);
             }
             set
             {
@@ -80,7 +80,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eAuthResultDetailsFailureSimulation)GetOrCreateInputParam<eAuthResultDetailsFailureSimulation>(nameof(AuthResultDetailsFailureSimulation), eAuthResultDetailsFailureSimulation.NotRecognized);
+                return GetOrCreateInputParam<eAuthResultDetailsFailureSimulation>(nameof(AuthResultDetailsFailureSimulation), eAuthResultDetailsFailureSimulation.NotRecognized);
             }
             set
             {
@@ -93,7 +93,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eAuthResultDetailsCancelSimulation)GetOrCreateInputParam<eAuthResultDetailsCancelSimulation>(nameof(AuthResultDetailsCancelSimulation), eAuthResultDetailsCancelSimulation.User);
+                return GetOrCreateInputParam<eAuthResultDetailsCancelSimulation>(nameof(AuthResultDetailsCancelSimulation), eAuthResultDetailsCancelSimulation.User);
             }
             set
             {
@@ -106,7 +106,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (ePressKey)GetOrCreateInputParam<ePressKey>(nameof(MobilePressKey), ePressKey.Keycode_HOME);
+                return GetOrCreateInputParam<ePressKey>(nameof(MobilePressKey), ePressKey.Keycode_HOME);
             }
             set
             {
@@ -302,7 +302,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Long Press XY")]
             LongPressXY,
             [EnumValueDescription("Tap XY")]
-            TapXY,          
+            TapXY,
             [EnumValueDescription("Double Tap XY")]
             DoubleTapXY,
             [EnumValueDescription("Drag XY to XY")]

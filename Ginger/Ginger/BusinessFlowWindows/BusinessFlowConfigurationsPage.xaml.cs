@@ -21,20 +21,17 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.BusinessFlowWindows;
-using Ginger.ConflictResolve;
 using Ginger.UserControls;
-using System.Collections.Generic;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System;
-using System.Collections.Specialized;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -64,12 +61,15 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16, Style = FindResource("@DataGridColumn_Image") as Style });
-            view.GridColsView.Add(new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16, Style = FindResource("@DataGridColumn_Image") as Style },
+                new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
         }
 
@@ -99,7 +99,7 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                 }
             }
-            else if (e.PropertyName == nameof(Activity.Active) || e.PropertyName == nameof(Activity.Mandatory))
+            else if (e.PropertyName is (nameof(Activity.Active)) or (nameof(Activity.Mandatory)))
             {
                 mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.Activities));
             }
@@ -126,7 +126,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void BindControls()
         {
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
+            if (mPageViewMode is Ginger.General.eRIPageViewMode.View or Ginger.General.eRIPageViewMode.ViewAndExecute)
             {
                 xNameTxtBox.IsEnabled = false;
                 xDescriptionTxt.IsEnabled = false;
@@ -151,8 +151,8 @@ namespace GingerWPF.BusinessFlowsLib
                 xExternalId.IsEnabled = true;
             }
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
-            if(!_ignoreValidationRules) 
-            { 
+            if (!_ignoreValidationRules)
+            {
                 xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
             }
             xShowIDUC.Init(mBusinessFlow);

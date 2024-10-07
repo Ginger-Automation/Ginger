@@ -58,7 +58,7 @@ namespace GingerWPF.UserControlsLib
         {
             TreeViewItem TVI = (TreeViewItem)sender;
             ITreeViewItem TVObj = (ITreeViewItem)TVI.Tag;
-            if (TVObj is ITreeViewItem)
+            if (TVObj is not null)
             {
                 DetailsFrame.ClearAndSetContent(TVObj.EditPage());
             }

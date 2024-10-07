@@ -34,26 +34,25 @@ namespace Ginger.WindowExplorer.Java
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Click Button " + Name,
-                ControlAction = ActJavaElement.eControlAction.Click,
-                WaitforIdle = ActJavaElement.eWaitForIdle.Medium
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Get " + Name + " Text",
-                ControlAction = ActJavaElement.eControlAction.GetValue
-            });
-
-            list.Add(new ActJavaElement()
-            {
-                Description = "Validate " + Name + " Is Enabled  ",
-                ControlAction = ActJavaElement.eControlAction.IsEnabled
-            });
+            ObservableList<Act> list =
+            [
+                new ActJavaElement()
+                {
+                    Description = "Click Button " + Name,
+                    ControlAction = ActJavaElement.eControlAction.Click,
+                    WaitforIdle = ActJavaElement.eWaitForIdle.Medium
+                },
+                new ActJavaElement()
+                {
+                    Description = "Get " + Name + " Text",
+                    ControlAction = ActJavaElement.eControlAction.GetValue
+                },
+                new ActJavaElement()
+                {
+                    Description = "Validate " + Name + " Is Enabled  ",
+                    ControlAction = ActJavaElement.eControlAction.IsEnabled
+                },
+            ];
 
             return list;
         }

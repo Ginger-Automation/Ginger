@@ -49,9 +49,7 @@ namespace GingerCore.Actions.MainFrame
         {
             get
             {
-                List<ePlatformType> mPf = new List<ePlatformType>();
-
-                mPf.Add(ePlatformType.MainFrame);
+                List<ePlatformType> mPf = [ePlatformType.MainFrame];
                 return mPf;
             }
         }
@@ -83,7 +81,7 @@ namespace GingerCore.Actions.MainFrame
         {
             get
             {
-                return (eDetailsToFetch)GetOrCreateInputParam<eDetailsToFetch>(nameof(DetailsToFetch), eDetailsToFetch.GetText);
+                return GetOrCreateInputParam<eDetailsToFetch>(nameof(DetailsToFetch), eDetailsToFetch.GetText);
             }
             set
             {
@@ -94,7 +92,7 @@ namespace GingerCore.Actions.MainFrame
         {
             get
             {
-                return (eTextInstance)GetOrCreateInputParam<eTextInstance>(nameof(TextInstanceType), eTextInstance.FirstInstance);
+                return GetOrCreateInputParam<eTextInstance>(nameof(TextInstanceType), eTextInstance.FirstInstance);
             }
             set
             {

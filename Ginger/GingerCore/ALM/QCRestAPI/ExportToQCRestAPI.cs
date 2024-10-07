@@ -60,7 +60,7 @@ namespace GingerCore.ALM.QCRestAPI
                     int order = 1;
                     foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
                     {
-                        CreateTestStep(test, (Activity)actIdent.IdentifiedActivity, designStepsFields, designStepsParamsFields, order++);
+                        CreateTestStep(test, actIdent.IdentifiedActivity, designStepsFields, designStepsParamsFields, order++);
                     }
                 }
                 else //##update existing test case
@@ -82,7 +82,7 @@ namespace GingerCore.ALM.QCRestAPI
         public static bool ExportBusinessFlowToQC(BusinessFlow businessFlow, QCTestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ObservableList<ExternalItemFieldBase> testInstanceFields, ref string result)
         {
             QCTestSet testSet = null;
-            ObservableList<ActivitiesGroup> existingActivitiesGroups = new ObservableList<ActivitiesGroup>();
+            ObservableList<ActivitiesGroup> existingActivitiesGroups = [];
 
             try
             {
@@ -315,7 +315,7 @@ namespace GingerCore.ALM.QCRestAPI
                                     }
 
                                     //get all execution status for all steps
-                                    ObservableList<string> stepsStatuses = new ObservableList<string>();
+                                    ObservableList<string> stepsStatuses = [];
                                     foreach (QCRunStep runStep in runSteps)
                                     {
                                         //condition to avoid that extra element present in the runSteps
@@ -426,7 +426,7 @@ namespace GingerCore.ALM.QCRestAPI
             activitiesGroup.ExternalID = test.Id;
             activitiesGroup.ExternalID2 = test.Id;
 
-            return QCRestAPIConnect.GetTestCases(new List<string> { test.Id })[0];
+            return QCRestAPIConnect.GetTestCases([test.Id])[0];
         }
 
         private static QCTestSet CreateNewTestSet(BusinessFlow businessFlow, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields)
@@ -591,7 +591,7 @@ namespace GingerCore.ALM.QCRestAPI
             else
             {
                 QCTestInstanceColl testInstances = ImportFromQCRest.ImportTestSetInstanceData(testSet);
-                ObservableList<ActivitiesGroup> existingActivitiesGroupsList = new ObservableList<ActivitiesGroup>();
+                ObservableList<ActivitiesGroup> existingActivitiesGroupsList = [];
 
                 //skip already existing instances
                 foreach (QCTestInstance testInstance in testInstances)
@@ -657,14 +657,14 @@ namespace GingerCore.ALM.QCRestAPI
         }
         private static void UpdateTestSteps(QCTestCase test, ActivitiesGroup activitiesGroup, ObservableList<ExternalItemFieldBase> designStepsFields, ObservableList<ExternalItemFieldBase> designStepsParamsFields)
         {
-            QCTestCaseStepsColl testCaseDesignStep = QCRestAPIConnect.GetTestCasesSteps(new List<string> { test.Id });
+            QCTestCaseStepsColl testCaseDesignStep = QCRestAPIConnect.GetTestCasesSteps([test.Id]);
 
             // Add new steps
             for (int i = 0; i < activitiesGroup.ActivitiesIdentifiers.Count; i++)
             {
                 if (activitiesGroup.ActivitiesIdentifiers[i].ActivityExternalID == null)
                 {
-                    CreateTestStep(test, (Activity)activitiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity, designStepsFields, designStepsParamsFields, i + 1);
+                    CreateTestStep(test, activitiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity, designStepsFields, designStepsParamsFields, i + 1);
                 }
             }
 
@@ -691,7 +691,7 @@ namespace GingerCore.ALM.QCRestAPI
 
             foreach (QCTestCaseStep step in testCaseDesignStep)
             {
-                Activity identifiedActivity = (Activity)activitiesGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.Id).IdentifiedActivity;
+                Activity identifiedActivity = activitiesGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.Id).IdentifiedActivity;
                 //set item fields
                 foreach (ExternalItemFieldBase field in designStepsFields)
                 {

@@ -53,7 +53,7 @@ namespace Ginger.Activities
 
         public eEditMode mEditMode;
 
-        public ActivitiesGroupPage(ActivitiesGroup activitiesGroup, BusinessFlow parentBusinessFlow = null, eEditMode mode = eEditMode.ExecutionFlow,Context mContext = null)
+        public ActivitiesGroupPage(ActivitiesGroup activitiesGroup, BusinessFlow parentBusinessFlow = null, eEditMode mode = eEditMode.ExecutionFlow, Context mContext = null)
         {
             InitializeComponent();
             mEditMode = mode;
@@ -139,12 +139,15 @@ namespace Ginger.Activities
         {
             grdGroupedActivities.SetTitleLightStyle = true;
 
-            GridViewDef defView2 = new GridViewDef(GridViewDef.DefaultViewName);
-            defView2.GridColsView = new ObservableList<GridColView>();
-
-            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityName), Header = "Name", WidthWeight = 30, ReadOnly = true });
-            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityDescription), Header = "Description", WidthWeight = 30, ReadOnly = true });
-            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityAutomationStatus), Header = "Auto. Status", WidthWeight = 20, ReadOnly = true });
+            GridViewDef defView2 = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActivityIdentifiers.ActivityName), Header = "Name", WidthWeight = 30, ReadOnly = true },
+                new GridColView() { Field = nameof(ActivityIdentifiers.ActivityDescription), Header = "Description", WidthWeight = 30, ReadOnly = true },
+                new GridColView() { Field = nameof(ActivityIdentifiers.ActivityAutomationStatus), Header = "Auto. Status", WidthWeight = 20, ReadOnly = true },
+            ]
+            };
             if (mEditMode == eEditMode.SharedRepository)
             {
                 defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ExistInRepository), Header = "Exist In Repository", WidthWeight = 20, ReadOnly = true });
@@ -156,7 +159,7 @@ namespace Ginger.Activities
 
         public void AttachActivitiesGroupAndRepositoryActivities()
         {
-            ObservableList<Activity> activitiesRepository = new ObservableList<Activity>();
+            ObservableList<Activity> activitiesRepository = [];
 
             if (mEditMode == eEditMode.ExecutionFlow)
             {
@@ -169,15 +172,15 @@ namespace Ginger.Activities
 
             foreach (ActivityIdentifiers actIdent in mActivitiesGroup.ActivitiesIdentifiers)
             {
-                Activity repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid);
+                Activity repoAct = activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid);
                 if (repoAct == null)
                 {
-                    repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.Guid == actIdent.ActivityGuid);
+                    repoAct = activitiesRepository.FirstOrDefault(x => x.Guid == actIdent.ActivityGuid);
                 }
 
                 if (repoAct == null)
                 {
-                    repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName);
+                    repoAct = activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName);
                 }
 
                 if (repoAct != null)
@@ -214,26 +217,30 @@ namespace Ginger.Activities
         {
             string title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
             switch (mEditMode)
             {
                 case ActivitiesGroupPage.eEditMode.ExecutionFlow:
-                    Button okBtn = new Button();
-                    okBtn.Content = "Ok";
+                    Button okBtn = new Button
+                    {
+                        Content = "Ok"
+                    };
                     WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
-                    
-                    
+
+
                     winButtons.Add(okBtn);
                     break;
 
                 case ActivitiesGroupPage.eEditMode.SharedRepository:
                     title = "Edit Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
-                    Button saveBtn = new Button();
-                    saveBtn.Content = "Save";
+                    Button saveBtn = new Button
+                    {
+                        Content = "Save"
+                    };
                     WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: saveBtn_Click);
-                    
-                    
-                   
+
+
+
                     winButtons.Add(saveBtn);
 
                     UpdateSharedRepositorySupportedOperations();
@@ -241,12 +248,14 @@ namespace Ginger.Activities
                     break;
             }
 
-            Button undoBtn = new Button();
-            undoBtn.Content = "Undo & Close";
+            Button undoBtn = new Button
+            {
+                Content = "Undo & Close"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: undoBtn_Click);
-            
-            
-            
+
+
+
             winButtons.Add(undoBtn);
 
             this.Height = 800;

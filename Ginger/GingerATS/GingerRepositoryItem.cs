@@ -56,70 +56,50 @@ namespace GingerATS
 
         public static string GetRepoItemMainFolderName(eGingerRepoItemType itemType)
         {
-            switch (itemType)
+            return itemType switch
             {
-                case (eGingerRepoItemType.ActivitiesGroup):
-                    return "ActivitiesGroup";
-                case (eGingerRepoItemType.Activity):
-                    return "Activities";
-                case (eGingerRepoItemType.Action):
-                    return "Actions";
-                case (eGingerRepoItemType.Variable):
-                    return "Variables";
-            }
-
-            return string.Empty;
+                (eGingerRepoItemType.ActivitiesGroup) => "ActivitiesGroup",
+                (eGingerRepoItemType.Activity) => "Activities",
+                (eGingerRepoItemType.Action) => "Actions",
+                (eGingerRepoItemType.Variable) => "Variables",
+                _ => string.Empty,
+            };
         }
 
         public static string GetRepoItemTypeLabelInIndexer(eGingerRepoItemType itemType)
         {
-            switch (itemType)
+            return itemType switch
             {
-                case (eGingerRepoItemType.ActivitiesGroup):
-                    return "#ACTIVITIES GROUP#";
-                case (eGingerRepoItemType.Activity):
-                    return "#ACTIVITY#";
-                case (eGingerRepoItemType.Action):
-                    return "#ACTION#";
-                case (eGingerRepoItemType.Variable):
-                    return "#VARIABLE#";
-            }
-
-            return string.Empty;
+                (eGingerRepoItemType.ActivitiesGroup) => "#ACTIVITIES GROUP#",
+                (eGingerRepoItemType.Activity) => "#ACTIVITY#",
+                (eGingerRepoItemType.Action) => "#ACTION#",
+                (eGingerRepoItemType.Variable) => "#VARIABLE#",
+                _ => string.Empty,
+            };
         }
 
         public static string GetRepoItemMainXmlNodeName(eGingerRepoItemType itemType)
         {
-            switch (itemType)
+            return itemType switch
             {
-                case (eGingerRepoItemType.ActivitiesGroup):
-                    return "ActivitiesGroup";//GingerCore.Activities.ActivitiesGroup
-                case (eGingerRepoItemType.Activity):
-                    return "Activity";//GingerCore.Activity
-                case (eGingerRepoItemType.Action):
-                    return "Act";//been changed for each Action type like: GingerCore.Actions.ActTextBox
-                case (eGingerRepoItemType.Variable):
-                    return "Variable";//been changed for each Variable type like: GingerCore.Variables.VariableString
-            }
-
-            return string.Empty;
+                (eGingerRepoItemType.ActivitiesGroup) => "ActivitiesGroup",//GingerCore.Activities.ActivitiesGroup
+                (eGingerRepoItemType.Activity) => "Activity",//GingerCore.Activity
+                (eGingerRepoItemType.Action) => "Act",//been changed for each Action type like: GingerCore.Actions.ActTextBox
+                (eGingerRepoItemType.Variable) => "Variable",//been changed for each Variable type like: GingerCore.Variables.VariableString
+                _ => string.Empty,
+            };
         }
 
         public static string GetRepoItemNameFieldLabel(eGingerRepoItemType itemType)
         {
-            switch (itemType)
+            return itemType switch
             {
-                case (eGingerRepoItemType.ActivitiesGroup):
-                    return "Name";
-                case (eGingerRepoItemType.Activity):
-                    return "ActivityName";
-                case (eGingerRepoItemType.Action):
-                    return "Name";
-                case (eGingerRepoItemType.Variable):
-                    return "Name";
-            }
-
-            return string.Empty;
+                (eGingerRepoItemType.ActivitiesGroup) => "Name",
+                (eGingerRepoItemType.Activity) => "ActivityName",
+                (eGingerRepoItemType.Action) => "Name",
+                (eGingerRepoItemType.Variable) => "Name",
+                _ => string.Empty,
+            };
         }
     }
 }

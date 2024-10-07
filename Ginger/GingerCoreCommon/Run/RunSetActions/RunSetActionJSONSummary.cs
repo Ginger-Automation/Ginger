@@ -53,8 +53,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
 
         public override List<eRunAt> GetRunOptions()
         {
-            List<eRunAt> list = new List<eRunAt>();
-            list.Add(eRunAt.ExecutionEnd);
+            List<eRunAt> list = [eRunAt.ExecutionEnd];
             return list;
         }
 

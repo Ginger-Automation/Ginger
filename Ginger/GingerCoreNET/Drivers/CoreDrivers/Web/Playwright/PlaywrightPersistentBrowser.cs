@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
 using IPlaywrightBrowserType = Microsoft.Playwright.IBrowserType;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -140,16 +138,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         private IPlaywrightBrowserType GetPlaywrightBrowserType()
         {
-            switch (_browserType)
+            return _browserType switch
             {
-                case WebBrowserType.Chrome:
-                case WebBrowserType.Edge:
-                    return _playwright.Chromium;
-                case WebBrowserType.FireFox:
-                    return _playwright.Firefox;
-                default:
-                    throw new InvalidOperationException();
-            }
+                WebBrowserType.Chrome or WebBrowserType.Edge => _playwright.Chromium,
+                WebBrowserType.FireFox => _playwright.Firefox,
+                _ => throw new InvalidOperationException(),
+            };
         }
 
         public override async Task SetWindowAsync(IBrowserWindow window)

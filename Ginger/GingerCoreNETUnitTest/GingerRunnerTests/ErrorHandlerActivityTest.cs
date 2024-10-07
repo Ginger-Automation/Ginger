@@ -58,41 +58,50 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
             string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
-            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
-            sol.ContainingFolderFullPath = TempRepositoryFolder;
+            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution
+            {
+                ContainingFolderFullPath = TempRepositoryFolder
+            };
             WorkSpace.Instance.Solution = sol;
             WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
 
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
 
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "Error Hanlder Testing";
-            mBF.Active = true;
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "Error Hanlder Testing",
+                Active = true
+            };
 
 
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.WebServices;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.WebServices
+            };
 
 
-            mDriver = new WebServicesDriver(mBF);
-            mDriver.SaveRequestXML = true;
-            mDriver.SavedXMLDirectoryPath = "~\\Documents";
-            mDriver.SecurityType = @"None";
+            mDriver = new WebServicesDriver(mBF)
+            {
+                SaveRequestXML = true,
+                SavedXMLDirectoryPath = "~\\Documents",
+                SecurityType = @"None"
+            };
 
             AgentOperations agentOperations = new AgentOperations(wsAgent);
             wsAgent.AgentOperations = agentOperations;
 
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
-            ApplicationAgent mAG = new ApplicationAgent();
-            mAG.Agent = wsAgent;
+            ApplicationAgent mAG = new ApplicationAgent
+            {
+                Agent = wsAgent
+            };
 
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [wsAgent];
 
             mGR.Executor.BusinessFlows.Add(mBF);
 
@@ -126,9 +135,11 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
         {
             CreateActivityListForBusinessFlow();
 
-            Activity Activity5 = new Activity();
-            Activity5.ActivityName = "Activity5";
-            Activity5.Active = true;
+            Activity Activity5 = new Activity
+            {
+                ActivityName = "Activity5",
+                Active = true
+            };
 
             ActWebAPIRest restAct = new ActWebAPIRest();
 
@@ -146,9 +157,11 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Activity5.ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers;
             mBF.AddActivity(Activity5, null, 3);
 
-            Context context1 = new Context();
-            context1.BusinessFlow = mBF;
-            context1.Activity = mBF.Activities[0];
+            Context context1 = new Context
+            {
+                BusinessFlow = mBF,
+                Activity = mBF.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = mBF;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
@@ -179,9 +192,11 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             mBF.AddActivity(Activity5, null, 3);
             mBF.AddActivity(errorHandlerActivity1, null, 5);
 
-            Context context1 = new Context();
-            context1.BusinessFlow = mBF;
-            context1.Activity = mBF.Activities[0];
+            Context context1 = new Context
+            {
+                BusinessFlow = mBF,
+                Activity = mBF.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = mBF;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
@@ -213,9 +228,11 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             mBF.AddActivity(Activity5, null, 3);
             mBF.AddActivity(errorHandlerActivity1, null, 5);
 
-            Context context1 = new Context();
-            context1.BusinessFlow = mBF;
-            context1.Activity = mBF.Activities[0];
+            Context context1 = new Context
+            {
+                BusinessFlow = mBF,
+                Activity = mBF.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = mBF;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
@@ -248,9 +265,11 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             mBF.AddActivity(failingActivity, null, 3);
             mBF.AddActivity(errorHandlerActivity, null, 5);
 
-            Context context = new Context();
-            context.BusinessFlow = mBF;
-            context.Activity = mBF.Activities[0];
+            Context context = new Context
+            {
+                BusinessFlow = mBF,
+                Activity = mBF.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = mBF;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
@@ -283,9 +302,11 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             mBF.AddActivity(failingActivity, null, 3);
             mBF.AddActivity(errorHandlerActivity, null, 5);
 
-            Context context = new Context();
-            context.BusinessFlow = mBF;
-            context.Activity = mBF.Activities[0];
+            Context context = new Context
+            {
+                BusinessFlow = mBF,
+                Activity = mBF.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = mBF;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
@@ -323,15 +344,16 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
             BusinessFlow dummyBF = CreateDummyBusinessFlow(1, 1);
 
-            Context context = new Context();
-            context.BusinessFlow = mBF;
-            context.Activity = mBF.Activities[0];
+            Context context = new Context
+            {
+                BusinessFlow = mBF,
+                Activity = mBF.Activities[0]
+            };
 
             GingerRunner runner = new GingerRunner();
             runner.Executor = new GingerExecutionEngine(runner);
 
-            ((GingerExecutionEngine)runner.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)runner.Executor).SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)runner.Executor).SolutionAgents = [wsAgent];
 
             runner.Executor.BusinessFlows.Add(mBF);
             runner.Executor.BusinessFlows.Add(dummyBF);
@@ -374,15 +396,16 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
             BusinessFlow dummyBF = CreateDummyBusinessFlow(1, 1);
 
-            Context context = new Context();
-            context.BusinessFlow = mBF;
-            context.Activity = mBF.Activities[0];
+            Context context = new Context
+            {
+                BusinessFlow = mBF,
+                Activity = mBF.Activities[0]
+            };
 
             GingerRunner runner = new GingerRunner();
             runner.Executor = new GingerExecutionEngine(runner);
 
-            ((GingerExecutionEngine)runner.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)runner.Executor).SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)runner.Executor).SolutionAgents = [wsAgent];
 
             runner.Executor.BusinessFlows.Add(mBF);
             runner.Executor.BusinessFlows.Add(dummyBF);
@@ -412,13 +435,17 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
         private static ErrorHandler GetErrorHandlerActivity()
         {
-            ErrorHandler errorHandlerActivity1 = new ErrorHandler();
-            errorHandlerActivity1.Active = true;
-            errorHandlerActivity1.ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers;
-            errorHandlerActivity1.ErrorHandlerPostExecutionAction = eErrorHandlerPostExecutionAction.ReRunOriginAction;
+            ErrorHandler errorHandlerActivity1 = new ErrorHandler
+            {
+                Active = true,
+                ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers,
+                ErrorHandlerPostExecutionAction = eErrorHandlerPostExecutionAction.ReRunOriginAction
+            };
 
-            ActDummy actDummy7 = new ActDummy();
-            actDummy7.Active = true;
+            ActDummy actDummy7 = new ActDummy
+            {
+                Active = true
+            };
 
             errorHandlerActivity1.Acts.Add(actDummy7);
             return errorHandlerActivity1;
@@ -426,9 +453,11 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
         private Activity GetActivityWithFailedActionScenario()
         {
-            Activity Activity5 = new Activity();
-            Activity5.ActivityName = "Activity5";
-            Activity5.Active = true;
+            Activity Activity5 = new Activity
+            {
+                ActivityName = "Activity5",
+                Active = true
+            };
 
             ActWebAPIRest restAct = new ActWebAPIRest();
 
@@ -453,52 +482,74 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
             ActivitiesGroup activityGroup = new ActivitiesGroup();
 
-            Activity activity1 = new Activity();
-            activity1.Active = true;
+            Activity activity1 = new Activity
+            {
+                Active = true
+            };
 
-            ActDummy actDummy1 = new ActDummy();
-            actDummy1.Active = true;
-            ActDummy actDummy2 = new ActDummy();
-            actDummy2.Active = true;
+            ActDummy actDummy1 = new ActDummy
+            {
+                Active = true
+            };
+            ActDummy actDummy2 = new ActDummy
+            {
+                Active = true
+            };
 
             activity1.Acts.Add(actDummy1);
             activity1.Acts.Add(actDummy2);
 
 
-            Activity activity2 = new Activity();
-            activity2.Active = true;
+            Activity activity2 = new Activity
+            {
+                Active = true
+            };
 
-            ActDummy actDummy3 = new ActDummy();
-            actDummy3.Active = true;
-            ActDummy actDummy4 = new ActDummy();
-            actDummy4.Active = true;
+            ActDummy actDummy3 = new ActDummy
+            {
+                Active = true
+            };
+            ActDummy actDummy4 = new ActDummy
+            {
+                Active = true
+            };
 
 
             activity2.Acts.Add(actDummy3);
             activity2.Acts.Add(actDummy4);
 
 
-            Activity activity3 = new Activity();
-            activity3.Active = true;
+            Activity activity3 = new Activity
+            {
+                Active = true
+            };
 
-            ActDummy actDummy5 = new ActDummy();
-            actDummy5.Active = true;
-            ActDummy actDummy6 = new ActDummy();
-            actDummy6.Active = true;
+            ActDummy actDummy5 = new ActDummy
+            {
+                Active = true
+            };
+            ActDummy actDummy6 = new ActDummy
+            {
+                Active = true
+            };
 
             activity3.Acts.Add(actDummy5);
             activity3.Acts.Add(actDummy6);
 
 
 
-            ErrorHandler errorHandlerActivity = new ErrorHandler();
-            errorHandlerActivity.Active = true;
-            errorHandlerActivity.ActivityName = "Error Handler Activity";
-            errorHandlerActivity.ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers;
-            errorHandlerActivity.ErrorHandlerPostExecutionAction = eErrorHandlerPostExecutionAction.ReRunOriginAction;
+            ErrorHandler errorHandlerActivity = new ErrorHandler
+            {
+                Active = true,
+                ActivityName = "Error Handler Activity",
+                ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers,
+                ErrorHandlerPostExecutionAction = eErrorHandlerPostExecutionAction.ReRunOriginAction
+            };
 
-            ActDummy actDummy7 = new ActDummy();
-            actDummy7.Active = true;
+            ActDummy actDummy7 = new ActDummy
+            {
+                Active = true
+            };
 
             errorHandlerActivity.Acts.Add(actDummy7);
 
@@ -544,8 +595,10 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Activity[] activities = new Activity[activityCount];
             for (int count = 0; count < activityCount; count++)
             {
-                Activity activity = new Activity();
-                activity.Active = true;
+                Activity activity = new Activity
+                {
+                    Active = true
+                };
 
                 Act[] actions = CreateDummyActions(actionCount);
                 foreach (Act action in actions)
@@ -564,8 +617,10 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Act[] actions = new Act[actionCount];
             for (int count = 0; count < actionCount; count++)
             {
-                ActDummy act = new ActDummy();
-                act.Active = true;
+                ActDummy act = new ActDummy
+                {
+                    Active = true
+                };
 
                 actions[count] = act;
             }

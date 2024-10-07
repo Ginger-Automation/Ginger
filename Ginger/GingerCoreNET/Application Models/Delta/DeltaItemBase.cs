@@ -70,23 +70,16 @@ namespace GingerCoreNET.Application_Models
         {
             get
             {
-                switch (DeltaStatus)
+                return DeltaStatus switch
                 {
-                    case eDeltaStatus.Unknown:
-                        return eImageType.Unknown;
-                    case eDeltaStatus.Deleted:
-                        return eImageType.Deleted;
-                    case eDeltaStatus.Changed:
-                        return eImageType.Changed;
-                    case eDeltaStatus.Added:
-                        return eImageType.Added;
-                    case eDeltaStatus.Unchanged:
-                        return eImageType.Unchanged;
-                    case eDeltaStatus.Avoided:
-                        return eImageType.Avoided;
-                    default:
-                        return eImageType.Unknown;
-                }
+                    eDeltaStatus.Unknown => eImageType.Unknown,
+                    eDeltaStatus.Deleted => eImageType.Deleted,
+                    eDeltaStatus.Changed => eImageType.Changed,
+                    eDeltaStatus.Added => eImageType.Added,
+                    eDeltaStatus.Unchanged => eImageType.Unchanged,
+                    eDeltaStatus.Avoided => eImageType.Avoided,
+                    _ => eImageType.Unknown,
+                };
             }
         }
 

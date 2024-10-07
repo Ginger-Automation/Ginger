@@ -16,25 +16,25 @@ limitations under the License.
 */
 #endregion
 
-using System.Data;
-using System.Reflection;
-using System;
-using System.IO;
-using Amdocs.Ginger.Common;
-using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
-using System.Linq;
-using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
-using System.Text;
-using GingerCoreNET.GeneralLib;
-using System.Net.Sockets;
-using System.Net;
-using System.Xml;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using Amdocs.Ginger.IO;
-using System.Collections.Generic;
-using System.Xml.Serialization;
-using System.Text.Json;
 using DocumentFormat.OpenXml;
+using GingerCoreNET.GeneralLib;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Text;
+using System.Text.Json;
+using System.Xml;
+using System.Xml.Serialization;
+using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
 
 namespace Amdocs.Ginger.CoreNET.DiameterLib
 {
@@ -161,25 +161,21 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
         private static string GetMessageNameFromType(eDiameterMessageType messageType)
         {
-            switch (messageType)
+            return messageType switch
             {
-                case eDiameterMessageType.CapabilitiesExchangeRequest:
-                case eDiameterMessageType.CreditControlRequest:
-                    return General.GetEnumValueDescription(typeof(eDiameterMessageType), messageType);
-                case eDiameterMessageType.None:
-                default:
-                    return "";
-            }
+                eDiameterMessageType.CapabilitiesExchangeRequest or eDiameterMessageType.CreditControlRequest => General.GetEnumValueDescription(typeof(eDiameterMessageType), messageType),
+                _ => "",
+            };
         }
 
         public static Dictionary<string, string[]> DeserializeAvpsPerMessageConfigFile(string configurationPath = "")
         {
-            Dictionary<string, string[]> avpsPerMessageDictionary = new();
+            Dictionary<string, string[]> avpsPerMessageDictionary = [];
             string avpNamesConfiguaritonPath = string.IsNullOrEmpty(configurationPath) ? Path.Combine(Path.GetDirectoryName(typeof(DiameterUtils).Assembly.Location), DIAMETER_LIB_FOLDER_NAME, AVPS_PER_MESSAGE_CONFIGURATION_FILENAME) : configurationPath;
 
             try
             {
-                using(FileStream fs = new FileStream(avpNamesConfiguaritonPath, FileMode.Open, FileAccess.Read))
+                using (FileStream fs = new FileStream(avpNamesConfiguaritonPath, FileMode.Open, FileAccess.Read))
                 {
                     using (StreamReader reader = new StreamReader(fs))
                     {
@@ -204,7 +200,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             List<DiameterAvpDictionaryItem> dictionaryItems = AvpDictionaryList.Where(avp => avpsNames.Contains(avp.Name)).ToList();
             ObservableList<DiameterAVP> avps = mapper.Map<ObservableList<DiameterAVP>>(dictionaryItems);
 
-            return avps != null && avps.Any() ? avps : new ObservableList<DiameterAVP>();
+            return avps != null && avps.Any() ? avps : [];
         }
 
         public static string GetRawRequestContentPreview(ActDiameter act)
@@ -739,7 +735,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, $"Writing value: {value} to memory stream");
-                
+
                 WriteBytesToStream(stream, data: bytes, seekPosition: offset);
             }
             catch (InvalidOperationException ex)
@@ -761,7 +757,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, $"Writing value: {value} to memory stream");
-                
+
                 WriteBytesToStream(stream, data: bytes, seekPosition: offset, offsetInData: 1, byteCount: 3);
             }
             catch (InvalidOperationException ex)
@@ -1044,7 +1040,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         private byte[] ConvertGroupedToBytes(MemoryStream stream, DiameterAVP avp, ref int padding)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Converting children AVPs to bytes");
-            List<byte> childrenAVPsBytesList = new List<byte>();
+            List<byte> childrenAVPsBytesList = [];
             foreach (var childAvp in avp.NestedAvpList)
             {
                 if (childAvp == null)
@@ -1609,7 +1605,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         }
         private ObservableList<DiameterAVP> ProcessMessageResponseAvpList(byte[] avpBytes)
         {
-            ObservableList<DiameterAVP> avps = new ObservableList<DiameterAVP>();
+            ObservableList<DiameterAVP> avps = [];
             using (MemoryStream stream = new MemoryStream(avpBytes))
             using (BinaryReader reader = new BinaryReader(stream))
             {
@@ -1800,7 +1796,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             using (MemoryStream stream = new MemoryStream(childrenData))
             using (BinaryReader reader = new BinaryReader(stream))
             {
-                childrenAVPs = new ObservableList<DiameterAVP>();
+                childrenAVPs = [];
                 while (stream.Position < childrenData.Length)
                 {
                     try

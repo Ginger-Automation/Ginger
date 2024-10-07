@@ -23,13 +23,9 @@ using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore;
 using GingerCore.Activities;
 using GingerUtils;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
@@ -56,7 +52,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 
         public string Export()
         {
-            List<BPMNFileData> bpmnFiles = new();
+            List<BPMNFileData> bpmnFiles = [];
 
             BPMNFileData businessFlowBPMNFileData = CreateBusinessFlowBPMNFileData(_businessFlow);
             bpmnFiles.Add(businessFlowBPMNFileData);
@@ -168,7 +164,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return zipDirectoryRootPath;
         }
 
-        
+
 
         private sealed class BPMNFileData
         {

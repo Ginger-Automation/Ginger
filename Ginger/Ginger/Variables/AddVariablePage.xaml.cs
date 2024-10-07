@@ -24,14 +24,9 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Variables;
-using Microsoft.Azure.Pipelines.WebApi;
 using Microsoft.VisualStudio.Services.Common;
-using Newtonsoft.Json.Linq;
-using OctaneRepositoryStd.BLL;
 using System;
-using System.Collections;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -60,7 +55,7 @@ namespace Ginger.Variables
             mVariablesParentObj = variablesParentObj;
 
 
-            if(variablesLevel.Equals(eVariablesLevel.Activity) || variablesLevel.Equals(eVariablesLevel.BusinessFlow))
+            if (variablesLevel.Equals(eVariablesLevel.Activity) || variablesLevel.Equals(eVariablesLevel.BusinessFlow))
             {
                 ControlsPanel.Visibility = Visibility.Visible;
             }
@@ -76,8 +71,10 @@ namespace Ginger.Variables
         private void SetUIControlsContent()
         {
             mLibraryVarsList = LoadLibraryVarsList();
-            mLibraryVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
-            mLibraryVarsHelper.AllowExpandItems = false;
+            mLibraryVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add)
+            {
+                AllowExpandItems = false
+            };
 
             xLibraryTabListView.xListView.SelectionChanged += OnSelectionChanged;
             xLibraryTabListView.SetDefaultListDataTemplate(mLibraryVarsHelper);
@@ -117,18 +114,18 @@ namespace Ginger.Variables
         {
             var SelectedListView = xLibraryTabListView.xListView.SelectedItem;
 
-            if(SelectedListView == null)
+            if (SelectedListView == null)
             {
                 ValueStackPanel.Visibility = Visibility.Collapsed;
                 return;
             }
 
-            if (SelectedListView is VariableRandomNumber || SelectedListView is VariableRandomString || SelectedListView is VariableTimer || SelectedListView is VariableSelectionList)
+            if (SelectedListView is VariableRandomNumber or VariableRandomString or VariableTimer or VariableSelectionList)
             {
                 ValueStackPanel.Visibility = Visibility.Collapsed;
             }
 
-            else if (SelectedListView is VariableString || SelectedListView is VariableNumber || SelectedListView is VariablePasswordString || SelectedListView is VariableSequence || SelectedListView is VariableDynamic)
+            else if (SelectedListView is VariableString or VariableNumber or VariablePasswordString or VariableSequence or VariableDynamic)
             {
                 ValueStackPanel.Visibility = Visibility.Visible;
 
@@ -161,7 +158,7 @@ namespace Ginger.Variables
         private ObservableList<VariableBase> LoadLibraryVarsList()
         {
 
-            ObservableList<VariableBase> list = new ObservableList<VariableBase>();
+            ObservableList<VariableBase> list = [];
 
             var varTypes = from type in typeof(VariableBase).Assembly.GetTypes()
                            where type.IsSubclassOf(typeof(VariableBase))
@@ -171,7 +168,7 @@ namespace Ginger.Variables
             {
                 var selectedVarTypes = varTypes.Where((type) => type.Name.Equals(typeof(VariablePasswordString).Name) || type.Name.Equals(typeof(VariableString).Name) || type.Name.Equals(typeof(VariableNumber).Name) || type.Name.Equals(typeof(VariableDynamic).Name));
 
-                varTypes = selectedVarTypes;    
+                varTypes = selectedVarTypes;
             }
 
             VariableString variableString = null;
@@ -181,21 +178,21 @@ namespace Ginger.Variables
             {
                 VariableBase v = (VariableBase)Activator.CreateInstance(t);
 
-                if(v is VariableString vs)
+                if (v is VariableString vs)
                 {
                     variableString = vs;
                     varStrIndex = pointer;
                 }
-                v.Name = (mVariablesLevel.Equals(eVariablesLevel.EnvApplication)) ? v.VariableUIType.Replace("Variable" , "Parameter") : v.VariableUIType;
+                v.Name = (mVariablesLevel.Equals(eVariablesLevel.EnvApplication)) ? v.VariableUIType.Replace("Variable", "Parameter") : v.VariableUIType;
                 if (!v.IsObsolete)
                 {
                     list.Add(v);
                     pointer++;
                 }
-            
+
             }
 
-            if (varStrIndex != -1 && variableString!=null)
+            if (varStrIndex != -1 && variableString != null)
             {
                 var tempVariable = list[0];
                 list[0] = variableString;
@@ -208,18 +205,22 @@ namespace Ginger.Variables
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
 
-            ObservableList<Button> buttons = new();
+            ObservableList<Button> buttons = [];
 
             if (mVariablesLevel.Equals(eVariablesLevel.EnvApplication))
             {
                 this.Title = "Add Parameter";
 
-                Button addParameterBtn = new();
-                addParameterBtn.Content = "Add Parameter";
+                Button addParameterBtn = new()
+                {
+                    Content = "Add Parameter"
+                };
                 addParameterBtn.Click += new RoutedEventHandler(AddVariableButton_Click);
 
-                Button addParameterBtnToAllEn = new();
-                addParameterBtnToAllEn.Content = "Add Parameter to all Environments";
+                Button addParameterBtnToAllEn = new()
+                {
+                    Content = "Add Parameter to all Environments"
+                };
                 addParameterBtnToAllEn.Click += new RoutedEventHandler(AddVariablesToAllTheEnvironmentsButton_Click);
                 buttons.Add(addParameterBtnToAllEn);
                 buttons.Add(addParameterBtn);
@@ -228,8 +229,10 @@ namespace Ginger.Variables
             else
             {
                 this.Title = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
-                Button addVarBtn = new Button();
-                addVarBtn.Content = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
+                Button addVarBtn = new Button
+                {
+                    Content = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable)
+                };
                 addVarBtn.Click += new RoutedEventHandler(AddVariableButton_Click);
                 buttons.Add(addVarBtn);
             }
@@ -267,8 +270,8 @@ namespace Ginger.Variables
         private void AddVariablesToAllTheEnvironmentsButton_Click(object sender, RoutedEventArgs e)
         {
             VariableBase varToAdd = (VariableBase)xLibraryTabListView.xListView.SelectedItem;
-            
-            
+
+
             string Name = variableName.Text;
             string Description = variableDescription.Text;
             string? Value = varToAdd is VariableDateTime dateTimeVarToAdd ? dateTimeVarToAdd.MinDateTime.ToString() : variableValue.Text;
@@ -322,7 +325,7 @@ namespace Ginger.Variables
             string Description = variableDescription.Text;
             string? Value = xLibraryTabListView.xListView.SelectedItem is VariableDateTime selectedDateTimeVar ? selectedDateTimeVar.MinDateTime.ToString() : variableValue.Text;
 
-            if(Name.Trim().Length == 0)
+            if (Name.Trim().Length == 0)
             {
                 NameError.Visibility = Visibility.Visible;
                 return false;

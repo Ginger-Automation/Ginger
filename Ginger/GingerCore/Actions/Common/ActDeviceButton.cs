@@ -88,7 +88,7 @@ namespace GingerCore.Actions.Common
         {
             get
             {
-                return (eDeviceButtonAction)GetOrCreateInputParam<eDeviceButtonAction>(nameof(DeviceButtonAction), eDeviceButtonAction.Press);
+                return GetOrCreateInputParam<eDeviceButtonAction>(nameof(DeviceButtonAction), eDeviceButtonAction.Press);
             }
             set
             {

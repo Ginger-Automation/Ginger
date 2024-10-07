@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 
-using System.Collections.Generic;
-
 namespace GingerCore.ALM.QC
 {
     public partial class ALMTestSetSummary

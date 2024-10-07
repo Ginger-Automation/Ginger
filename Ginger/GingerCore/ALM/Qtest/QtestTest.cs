@@ -24,8 +24,8 @@ namespace GingerCore.ALM.Qtest
     {
         public QtestTest()
         {
-            this.Parameters = new List<QtestTestParameter>();
-            this.Steps = new List<QtestTestStep>();
+            this.Parameters = [];
+            this.Steps = [];
         }
 
         public string TestName { get; set; }

@@ -57,10 +57,11 @@ namespace Ginger.Run.RunSetActions
         }
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-            dlg.DefaultExt = "*.crt";
-            dlg.Filter = "CRT Files (*.crt)|*.crt";
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog
+            {
+                DefaultExt = "*.crt",
+                Filter = "CRT Files (*.crt)|*.crt"
+            };
             string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -88,7 +89,7 @@ namespace Ginger.Run.RunSetActions
                     string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
                     if (newFileName.IndexOf(copySufix) != -1)
                     {
-                        newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                        newFileName = newFileName[..newFileName.IndexOf(copySufix)];
                     }
                     newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
                     destFile = System.IO.Path.Combine(targetPath, newFileName);

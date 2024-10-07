@@ -110,8 +110,7 @@ namespace GingerCore.Repository
             foreach (MemberInfo mi in properties)
             {
                 dynamic v = null;
-                IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(mi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
-                if (token == null)
+                if (Attribute.GetCustomAttribute(mi, typeof(IsSerializedForLocalRepositoryAttribute), false) is not IsSerializedForLocalRepositoryAttribute token)
                 {
                     continue;
                 }
@@ -145,8 +144,7 @@ namespace GingerCore.Repository
             foreach (MemberInfo fi in Fields)
             {
                 dynamic v = null;
-                IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(fi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
-                if (token == null)
+                if (Attribute.GetCustomAttribute(fi, typeof(IsSerializedForLocalRepositoryAttribute), false) is not IsSerializedForLocalRepositoryAttribute token)
                 {
                     continue;
                 }
@@ -425,7 +423,7 @@ namespace GingerCore.Repository
             {
                 ClassName = typeof(ActInputValue).FullName;
             }
-            if (ClassName == "GingerCore.Actions.ActReturnValue" || ClassName == "GingerCore.Common.Actions.ActInputValue")
+            if (ClassName is "GingerCore.Actions.ActReturnValue" or "GingerCore.Common.Actions.ActInputValue")
             {
                 ClassName = typeof(ActReturnValue).FullName;
             }
@@ -467,7 +465,7 @@ namespace GingerCore.Repository
 
                 if (obj == null) //GingerCoreCommon assembly
                 {
-                    if (ClassName == "GingerCore.Actions.ActInputValue" || ClassName == "GingerCore.Common.Actions.ActInputValue")
+                    if (ClassName is "GingerCore.Actions.ActInputValue" or "GingerCore.Common.Actions.ActInputValue")
                     {
                         ClassName = typeof(ActInputValue).FullName;
                     }
@@ -710,7 +708,7 @@ namespace GingerCore.Repository
                         {
                             //if (obj.GetType().Assembly == typeof(RepositoryItemBase).Assembly)
                             //{
-                            if (xdr.Name != "Created" && xdr.Name != "CreatedBy" && xdr.Name != "LastUpdate" && xdr.Name != "LastUpdateBy" && xdr.Name != "Version" && xdr.Name != "ExternalID")
+                            if (xdr.Name is not "Created" and not "CreatedBy" and not "LastUpdate" and not "LastUpdateBy" and not "Version" and not "ExternalID")
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + xdr.Name);
                             }
@@ -915,7 +913,7 @@ namespace GingerCore.Repository
                 int i1 = xml.IndexOf("<!--Ginger Repository Item created with version: ");
                 int i2 = xml.IndexOf("-->");
 
-                string BuildInfo = xml.Substring(i1, i2 - i1);
+                string BuildInfo = xml[i1..i2];
                 Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
                 Match match = regex.Match(BuildInfo);
                 if (match.Success)

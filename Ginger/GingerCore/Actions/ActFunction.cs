@@ -94,7 +94,7 @@ namespace GingerCore.Actions
         internal object[] FuncParamsAsObjectsArray()
         {
 
-            List<object> funcparams = new List<object>();
+            List<object> funcparams = [];
             if (InputValues == null)
             {
                 return funcparams.ToArray();

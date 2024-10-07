@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
 
         public override bool Equals(object obj)
         {
-            if (obj == null || obj is not Flow)
+            if (obj is null or not Flow)
             {
                 return false;
             }

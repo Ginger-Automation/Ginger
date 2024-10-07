@@ -50,39 +50,21 @@ namespace Ginger.UserControlsLib.PieChart
         public Brush SelectBrush(object item, int index)
         {
             StatItem st = (StatItem)item;
-            resourceDictionary = new ResourceDictionary();
+            resourceDictionary = [];
             resourceDictionary.Source = new Uri("pack://application:,,,/Ginger;component/Dictionaries/Skins/GingerDefaultSkinDictionary.xaml");
             //TODO: find better pallets colors
-            switch (st.Description)
+            return st.Description switch
             {
-                case "Automated":
-                case "Executed":
-                case "Passed":
-                    return (Brush)resourceDictionary["$PassedStatusColor"];
-                case "Failed":
-                case "Not Automated":
-                case "Not Executed":
-                case "Not Passed":
-                    return (Brush)resourceDictionary["$FailedStatusColor"];
-                case "Blocked":
-                    return (Brush)resourceDictionary["$BlockedStatusColor"];
-                case "Pending":
-                    return (Brush)resourceDictionary["$PendingStatusColor"];
-                case "Started":
-                case "Running":
-                case "Wait":
-                case "Canceling":
-                    return (Brush)resourceDictionary["$RunningStatusColor"];
-                case "Stopped":
-                    return (Brush)resourceDictionary["$StoppedStatusColor"];
-                case "NA":
-                case "FailIgnored":
-                case "Skipped":
-                    return (Brush)resourceDictionary["$SkippedStatusColor"];
+                "Automated" or "Executed" or "Passed" => (Brush)resourceDictionary["$PassedStatusColor"],
+                "Failed" or "Not Automated" or "Not Executed" or "Not Passed" => (Brush)resourceDictionary["$FailedStatusColor"],
+                "Blocked" => (Brush)resourceDictionary["$BlockedStatusColor"],
+                "Pending" => (Brush)resourceDictionary["$PendingStatusColor"],
+                "Started" or "Running" or "Wait" or "Canceling" => (Brush)resourceDictionary["$RunningStatusColor"],
+                "Stopped" => (Brush)resourceDictionary["$StoppedStatusColor"],
+                "NA" or "FailIgnored" or "Skipped" => (Brush)resourceDictionary["$SkippedStatusColor"],
                 //TODO: add all cover all status, or go to Act, Activity, BF and get color from status
-                default:
-                    return (Brush)resourceDictionary["$SkippedStatusColor"];
-            }
+                _ => (Brush)resourceDictionary["$SkippedStatusColor"],
+            };
         }
     }
 }

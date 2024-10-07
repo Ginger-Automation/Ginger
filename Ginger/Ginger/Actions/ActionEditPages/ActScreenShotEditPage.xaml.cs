@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -43,8 +42,10 @@ namespace Ginger.Actions
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog folderDlg = new System.Windows.Forms.FolderBrowserDialog();
-            folderDlg.ShowNewFolderButton = true;
+            System.Windows.Forms.FolderBrowserDialog folderDlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                ShowNewFolderButton = true
+            };
             System.Windows.Forms.DialogResult result = folderDlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
@@ -55,8 +56,8 @@ namespace Ginger.Actions
                 if (FileName.Contains(SolutionFolder))
                 {
                     FileName = FileName.Replace(SolutionFolder, @"~\");
-                }                                            
-                mAct.SaveToFileName = FileName;                
+                }
+                mAct.SaveToFileName = FileName;
             }
 
         }

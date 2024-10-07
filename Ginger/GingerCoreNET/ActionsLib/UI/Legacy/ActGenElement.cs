@@ -43,7 +43,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.Java)
+            if (platform is ePlatformType.Web or ePlatformType.Mobile or ePlatformType.Java)
             {
                 return true;
             }
@@ -57,34 +57,25 @@ namespace GingerCore.Actions
         {
             get
             {
-                var legacyPlatform = new List<ePlatformType>();
-                legacyPlatform.Add(ePlatformType.Web);
-                legacyPlatform.Add(ePlatformType.Java);
-                legacyPlatform.Add(ePlatformType.Mobile);
+                var legacyPlatform = new List<ePlatformType>
+                {
+                    ePlatformType.Web,
+                    ePlatformType.Java,
+                    ePlatformType.Mobile
+                };
                 return legacyPlatform;
             }
         }
 
         ePlatformType IObsoleteAction.GetTargetPlatform()
         {
-            ePlatformType targetPlatform;
-            switch (this.Platform)
+            var targetPlatform = this.Platform switch
             {
-                case ePlatformType.Web:
-                    targetPlatform = ePlatformType.Web;
-                    break;
-
-                case ePlatformType.Java:
-                    targetPlatform = ePlatformType.Java;
-                    break;
-
-                case ePlatformType.Mobile:
-                    targetPlatform = ePlatformType.Mobile;
-                    break;
-
-                default:
-                    throw new PlatformNotSupportedException();
-            }
+                ePlatformType.Web => ePlatformType.Web,
+                ePlatformType.Java => ePlatformType.Java,
+                ePlatformType.Mobile => ePlatformType.Mobile,
+                _ => throw new PlatformNotSupportedException(),
+            };
             return targetPlatform;
         }
 
@@ -114,23 +105,13 @@ namespace GingerCore.Actions
         Act IObsoleteAction.GetNewAction()
         {
             Act convertedUIElementAction = null;
-            switch (this.Platform)
+            convertedUIElementAction = this.Platform switch
             {
-                case ePlatformType.Web:
-                    convertedUIElementAction = GetNewActionForWeb();
-                    break;
-
-                case ePlatformType.Mobile:
-                    convertedUIElementAction = GetNewActionForMobile();
-                    break;
-
-                case ePlatformType.Java:
-                    convertedUIElementAction = GetNewActionForJava();
-                    break;
-                default:
-                    throw new PlatformNotSupportedException();
-            }
-
+                ePlatformType.Web => GetNewActionForWeb(),
+                ePlatformType.Mobile => GetNewActionForMobile(),
+                ePlatformType.Java => GetNewActionForJava(),
+                _ => throw new PlatformNotSupportedException(),
+            };
             return convertedUIElementAction;
         }
 
@@ -191,43 +172,16 @@ namespace GingerCore.Actions
 
         private ActUIElement.eElementAction MapJavaGenericElementAction(eGenElementAction genElementAction)
         {
-            ActUIElement.eElementAction elementAction;
-            switch (genElementAction)
+            var elementAction = genElementAction switch
             {
-                case eGenElementAction.SetValue:
-                case eGenElementAction.GetValue:
-                case eGenElementAction.Click:
-                case eGenElementAction.AsyncClick:
-                case eGenElementAction.RunJavaScript:
-                case eGenElementAction.ScrollDown:
-                case eGenElementAction.ScrollUp:
-                    elementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), GenElementAction.ToString());
-                    break;
-
-                case eGenElementAction.Enabled:
-                    elementAction = ActUIElement.eElementAction.IsEnabled;
-                    break;
-                case eGenElementAction.Visible:
-                    elementAction = ActUIElement.eElementAction.IsVisible;
-                    break;
-
-                case eGenElementAction.SelectFromDropDownByIndex:
-                    elementAction = ActUIElement.eElementAction.SelectByIndex;
-                    break;
-
-                case eGenElementAction.SelectFromDropDown:
-                    elementAction = ActUIElement.eElementAction.Select;
-                    break;
-
-                case eGenElementAction.FireMouseEvent:
-                case eGenElementAction.FireSpecialEvent:
-                    elementAction = ActUIElement.eElementAction.TriggerJavaScriptEvent;
-                    break;
-
-                default:
-                    throw new NotSupportedException();
-            }
-
+                eGenElementAction.SetValue or eGenElementAction.GetValue or eGenElementAction.Click or eGenElementAction.AsyncClick or eGenElementAction.RunJavaScript or eGenElementAction.ScrollDown or eGenElementAction.ScrollUp => (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), GenElementAction.ToString()),
+                eGenElementAction.Enabled => ActUIElement.eElementAction.IsEnabled,
+                eGenElementAction.Visible => ActUIElement.eElementAction.IsVisible,
+                eGenElementAction.SelectFromDropDownByIndex => ActUIElement.eElementAction.SelectByIndex,
+                eGenElementAction.SelectFromDropDown => ActUIElement.eElementAction.Select,
+                eGenElementAction.FireMouseEvent or eGenElementAction.FireSpecialEvent => ActUIElement.eElementAction.TriggerJavaScriptEvent,
+                _ => throw new NotSupportedException(),
+            };
             return elementAction;
         }
 
@@ -616,7 +570,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Tap Element")]
             TapElement = 53,
             [EnumValueDescription("Double Tap Element")]
-            DoubleTapElement=68,
+            DoubleTapElement = 68,
             [EnumValueDescription("Press Element")]
             PressElement = 69,
             [EnumValueDescription("Select From Drop Down (By Index)")]

@@ -80,7 +80,7 @@ namespace Ginger.UserControlsLib.PieChart
         /// is the same as the index of the item within the collection view which 
         /// it represents.
         /// </summary>
-        private List<PiePiece> piePieces = new List<PiePiece>();
+        private List<PiePiece> piePieces = [];
 
         public NewPiePlotter()
         {
@@ -104,9 +104,8 @@ namespace Ginger.UserControlsLib.PieChart
         void DataContextChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
             // handle the events that occur when the bound collection changes
-            if (this.DataContext is INotifyCollectionChanged)
+            if (this.DataContext is INotifyCollectionChanged observable)
             {
-                INotifyCollectionChanged observable = (INotifyCollectionChanged)this.DataContext;
                 observable.CollectionChanged += new NotifyCollectionChangedEventHandler(BoundCollectionChanged);
             }
 
@@ -146,8 +145,7 @@ namespace Ginger.UserControlsLib.PieChart
                 return;
             }
 
-            PiePiece piece = sender as PiePiece;
-            if (piece == null)
+            if (sender is not PiePiece piece)
             {
                 return;
             }
@@ -170,9 +168,11 @@ namespace Ginger.UserControlsLib.PieChart
             {
                 PiePiece piece = piePieces[collectionView.CurrentPosition];
 
-                DoubleAnimation a = new DoubleAnimation();
-                a.To = 0;
-                a.Duration = new Duration(TimeSpan.FromMilliseconds(200));
+                DoubleAnimation a = new DoubleAnimation
+                {
+                    To = 0,
+                    Duration = new Duration(TimeSpan.FromMilliseconds(200))
+                };
             }
         }
 
@@ -189,9 +189,11 @@ namespace Ginger.UserControlsLib.PieChart
             {
                 PiePiece piece = piePieces[collectionView.CurrentPosition];
 
-                DoubleAnimation a = new DoubleAnimation();
-                a.To = 10;
-                a.Duration = new Duration(TimeSpan.FromMilliseconds(200));
+                DoubleAnimation a = new DoubleAnimation
+                {
+                    To = 10,
+                    Duration = new Duration(TimeSpan.FromMilliseconds(200))
+                };
             }
         }
 
@@ -215,9 +217,8 @@ namespace Ginger.UserControlsLib.PieChart
 
             foreach (object item in myCollectionView)
             {
-                if (item is INotifyPropertyChanged)
+                if (item is INotifyPropertyChanged observable)
                 {
-                    INotifyPropertyChanged observable = (INotifyPropertyChanged)item;
                     observable.PropertyChanged += new PropertyChangedEventHandler(ItemPropertyChanged);
                 }
             }

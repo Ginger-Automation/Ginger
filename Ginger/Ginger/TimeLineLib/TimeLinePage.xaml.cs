@@ -37,7 +37,7 @@ namespace Ginger.TimeLineLib
 
         public void ShowAsWindow()
         {
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
 
             //    Button okBtn = new Button();
             //okBtn.Content = "Ok";

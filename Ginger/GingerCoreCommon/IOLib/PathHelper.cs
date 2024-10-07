@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.IO
             var newpath = path;
             if (newpath.StartsWith("\\"))
             {
-                newpath = @"\\?\UNC\" + newpath.Substring(2);
+                newpath = @"\\?\UNC\" + newpath[2..];
             }
             else if (newpath.Contains(":"))
             {
@@ -86,7 +86,7 @@ namespace Amdocs.Ginger.IO
             folderName = folderName.TrimEnd().TrimEnd('-').TrimEnd();
             if (folderName.Length > 30)
             {
-                folderName = folderName.Substring(0, 30);
+                folderName = folderName[..30];
             }
             folderName = folderName.TrimEnd().TrimEnd('-').TrimEnd();
             return folderName;

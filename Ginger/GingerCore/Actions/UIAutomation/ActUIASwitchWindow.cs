@@ -66,7 +66,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eWindow)GetOrCreateInputParam<eWindow>(nameof(UIASwitchWindowAction), eWindow.Application);
+                return GetOrCreateInputParam<eWindow>(nameof(UIASwitchWindowAction), eWindow.Application);
             }
             set
             {

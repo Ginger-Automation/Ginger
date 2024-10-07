@@ -75,7 +75,7 @@ namespace GingerCore.Actions.Common
         {
             get
             {
-                return (ePhoneAction)GetOrCreateInputParam<ePhoneAction>(nameof(PhoneAction), ePhoneAction.Dial);
+                return GetOrCreateInputParam<ePhoneAction>(nameof(PhoneAction), ePhoneAction.Dial);
             }
             set
             {

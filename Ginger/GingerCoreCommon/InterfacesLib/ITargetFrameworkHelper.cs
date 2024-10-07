@@ -22,7 +22,6 @@ using System.Data.Common;
 using System.Drawing;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;

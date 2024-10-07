@@ -16,29 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using GingerCore.Activities;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using Amdocs.Ginger.Common.VariablesLib;
-using Amdocs.Ginger.Common;
-using GingerCore.Activities;
-using GingerCore.Platforms;
-using amdocs.ginger.GingerCoreNET;
-using System.Collections.Specialized;
-using Windows.ApplicationModel.Chat;
-using System.Security.Cryptography;
 
 namespace Ginger.UserControlsLib
 {
@@ -51,7 +40,7 @@ namespace Ginger.UserControlsLib
         public ConsumerComboBox()
         {
             InitializeComponent();
-            _nodeList = new ObservableCollection<Node>();
+            _nodeList = [];
             if (ConsumerSource != null)
             {
                 CollectionChangedEventManager.AddHandler(ConsumerSource, ConsumerSource_CollectionChanged);
@@ -75,7 +64,7 @@ namespace Ginger.UserControlsLib
         public static readonly DependencyProperty DefaultTextProperty =
             DependencyProperty.Register("DefaultText", typeof(string), typeof(ConsumerComboBox), new UIPropertyMetadata(string.Empty));
 
-       
+
         public ObservableList<Consumer> ConsumerSource
         {
             get { return (ObservableList<Consumer>)GetValue(ConsumerSourceProperty); }
@@ -116,7 +105,7 @@ namespace Ginger.UserControlsLib
             control.SelectNodes();
             control.SetSelectedConsumer();
 
-            if (e.OldValue != null && e.OldValue is ObservableList<Consumer> oldConsumerSource)
+            if (e.OldValue is not null and ObservableList<Consumer> oldConsumerSource)
             {
                 CollectionChangedEventManager.RemoveHandler(oldConsumerSource, control.ConsumerSource_CollectionChanged);
             }
@@ -189,7 +178,7 @@ namespace Ginger.UserControlsLib
         #region Methods
         private void SelectNodes()
         {
-            if(SelectedConsumer!=null && SelectedConsumer.Count > 0)
+            if (SelectedConsumer != null && SelectedConsumer.Count > 0)
             {
                 foreach (Consumer consumer in SelectedConsumer)
                 {
@@ -199,7 +188,7 @@ namespace Ginger.UserControlsLib
                         node.IsSelected = true;
                     }
                 }
-            }   
+            }
         }
 
         private void SetSelectedConsumer()
@@ -209,7 +198,7 @@ namespace Ginger.UserControlsLib
                 return;
             }
 
-            ObservableList<Consumer> temp = new ObservableList<Consumer>();
+            ObservableList<Consumer> temp = [];
             foreach (Node node in _nodeList)
             {
                 if (node.IsSelected)
@@ -227,7 +216,7 @@ namespace Ginger.UserControlsLib
         private void DisplayInConsumer()
         {
             _nodeList.Clear();
-            
+
             foreach (Consumer keyValue in this.ConsumerSource)
             {
                 Node node = new Node(keyValue);
@@ -261,7 +250,7 @@ namespace Ginger.UserControlsLib
 
         private string? GetConsumerName(Guid consumerGuid)
         {
-            return 
+            return
                 WorkSpace
                 .Instance
                 .Solution
@@ -311,8 +300,8 @@ namespace Ginger.UserControlsLib
                 _consumer = consumer;
             }
 
-           public event PropertyChangedEventHandler? PropertyChanged;
-           protected void NotifyPropertyChanged(string propertyName)
+            public event PropertyChangedEventHandler? PropertyChanged;
+            protected void NotifyPropertyChanged(string propertyName)
             {
                 if (PropertyChanged != null)
                 {

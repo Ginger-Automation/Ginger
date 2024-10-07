@@ -62,10 +62,11 @@ namespace Ginger.Actions
 
         private void BrowseDataButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-            dlg.DefaultExt = "*.csv";
-            dlg.Filter = "CSV Files (*.csv)|*.csv";
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog
+            {
+                DefaultExt = "*.csv",
+                Filter = "CSV Files (*.csv)|*.csv"
+            };
             string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -83,7 +84,7 @@ namespace Ginger.Actions
 
         private List<string> SetParamsCombo()
         {
-            List<string> tmp = new List<string>();
+            List<string> tmp = [];
             object tempFileName = mAct.GetDataFileName();
             string dataFileName = Convert.ToString(tempFileName);
 

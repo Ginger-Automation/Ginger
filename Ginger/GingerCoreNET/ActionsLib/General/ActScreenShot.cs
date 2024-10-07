@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -171,7 +170,7 @@ namespace GingerCore.Actions
                 fileExtension = DEFAULT_IMAGE_EXTENSION;
             }
 
-            Dictionary<string, object> outputFilePaths = new();
+            Dictionary<string, object> outputFilePaths = [];
             for (int i = 0; i < ScreenShots.Count; i++)
             {
                 string sourceFileName = ScreenShots[i];
@@ -181,7 +180,7 @@ namespace GingerCore.Actions
                 File.Copy(sourceFileName, destFileName, overwrite: true);
 
                 string key = i == 0 ? "ScreenshotFilePath" : $"ScreenshotFilePath{i}";
-                Act.AddArtifactToAction(Path.GetFileName(destFileName), this, destFileName);              
+                Act.AddArtifactToAction(Path.GetFileName(destFileName), this, destFileName);
                 outputFilePaths.Add(key, destFileName);
             }
 
@@ -192,7 +191,7 @@ namespace GingerCore.Actions
         {
             try
             {
-                Artifacts = new Amdocs.Ginger.Common.ObservableList<ArtifactDetails>();
+                Artifacts = [];
                 if (ValidateInput())
                 {
                     string directoryPath = ManageFilePath();

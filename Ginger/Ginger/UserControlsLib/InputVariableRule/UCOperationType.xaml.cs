@@ -18,21 +18,10 @@ limitations under the License.
 
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static Ginger.Variables.InputVariableRule;
 
 namespace Ginger.UserControlsLib.InputVariableRule
@@ -70,8 +59,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
 
         private static void OnOperationTypePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCOperationType;
-            if (control != null)
+            if (sender is UCOperationType control)
             {
                 control.OperationTypePropertyChanged((eInputVariableOperation)args.NewValue);
             }
@@ -87,23 +75,22 @@ namespace Ginger.UserControlsLib.InputVariableRule
             else
             {
                 GingerCore.General.DisableComboItem(xOperationTypeComboBox, eInputVariableOperation.SetOptionalValues);
-                OperationType= eInputVariableOperation.SetValue;
+                OperationType = eInputVariableOperation.SetValue;
             }
         }
 
         private static void OnSelectedTargetVariabelPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {           
-            var control = sender as UCOperationType;
-            if (control != null)
+        {
+            if (sender is UCOperationType control)
             {
                 control.SelectedTargetVariabelPropertyChanged((VariableBase)args.NewValue);
             }
         }
 
         private void OperationTypePropertyChanged(eInputVariableOperation operationType)
-        {             
-             OnPropertyChanged(nameof(OperationType));
-             GingerCore.General.SelectComboValue(xOperationTypeComboBox, operationType.ToString());
+        {
+            OnPropertyChanged(nameof(OperationType));
+            GingerCore.General.SelectComboValue(xOperationTypeComboBox, operationType.ToString());
         }
 
         public UCOperationType()
@@ -117,14 +104,18 @@ namespace Ginger.UserControlsLib.InputVariableRule
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory operationtype = new FrameworkElementFactory(typeof(UCOperationType));
 
-            Binding selectedTargetVariableBinding = new Binding(selectedtargetvariableProperty);
-            selectedTargetVariableBinding.Mode = BindingMode.OneWay;
-            selectedTargetVariableBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding selectedTargetVariableBinding = new Binding(selectedtargetvariableProperty)
+            {
+                Mode = BindingMode.OneWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             operationtype.SetBinding(UCOperationType.SelectedTargetVariabelProperty, selectedTargetVariableBinding);
 
-            Binding operationTypebinding = new Binding(operationtypePropperty);
-            operationTypebinding.Mode = BindingMode.TwoWay;
-            operationTypebinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding operationTypebinding = new Binding(operationtypePropperty)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             operationtype.SetBinding(UCOperationType.OperationTypeProperty, operationTypebinding);
 
             template.VisualTree = operationtype;
@@ -136,7 +127,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
             GingerCore.General.FillComboItemsFromEnumType(xOperationTypeComboBox, typeof(eInputVariableOperation));
             BindingHandler.ObjFieldBinding(xOperationTypeComboBox, ComboBox.SelectedValueProperty, this, nameof(OperationType));
             GingerCore.General.DisableComboItem(xOperationTypeComboBox, eInputVariableOperation.SetOptionalValues);
-            xOperationTypeComboBox.SelectionChanged+=XOperationTypeComboBox_SelectionChanged;
+            xOperationTypeComboBox.SelectionChanged += XOperationTypeComboBox_SelectionChanged;
         }
 
         private void XOperationTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

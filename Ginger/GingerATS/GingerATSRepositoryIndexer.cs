@@ -64,7 +64,7 @@ namespace GingerATS
 
         public void CreateRepositoryIndexer()
         {
-            List<string> indexerRecords = new List<string>();
+            List<string> indexerRecords = [];
             List<GingerRepositoryItem> repoItems;
 
             repoItems = GetAllRepositoryFiles();
@@ -88,7 +88,7 @@ namespace GingerATS
         public void UpdateRepositoryIndexer()
         {
             DateTime indexLastRan = File.GetLastWriteTime(mIndexerFilePath);
-            List<string> UpdatedIndexerRecords = new List<string>();
+            List<string> UpdatedIndexerRecords = [];
             //Get the current file records which was not deleted/changed
             List<string> currentIndexerRecords = ReadRepositoryIndexerData();
             foreach (string line in currentIndexerRecords)
@@ -150,7 +150,7 @@ namespace GingerATS
 
         public List<string> ReadRepositoryIndexerData()
         {
-            List<string> IndexerLines = new List<string>();
+            List<string> IndexerLines = [];
             bool succeedReadingFile = false;
             int tryingCounter = 1;
             Exception savedEx = null;
@@ -182,7 +182,7 @@ namespace GingerATS
 
         private List<GingerRepositoryItem> GetAllRepositoryFiles()
         {
-            List<GingerRepositoryItem> repoFilesList = new List<GingerRepositoryItem>();
+            List<GingerRepositoryItem> repoFilesList = [];
 
             //Get the ActivitiesGroups items
             string activitiesGroupsFolderPath = mRepositoryFolderPath + @"\" +
@@ -196,8 +196,10 @@ namespace GingerATS
                     {
                         if (!filePath.ToUpper().Contains("PREVVERSIONS") && !filePath.ToUpper().Contains(".SVN") && Path.GetExtension(filePath).ToUpper() == ".XML")
                         {
-                            GingerRepositoryItem activitiesGroupItem = new GingerRepositoryItem(eGingerRepoItemType.ActivitiesGroup);
-                            activitiesGroupItem.FilePath = filePath;
+                            GingerRepositoryItem activitiesGroupItem = new GingerRepositoryItem(eGingerRepoItemType.ActivitiesGroup)
+                            {
+                                FilePath = filePath
+                            };
                             repoFilesList.Add(activitiesGroupItem);
                         }
                     }
@@ -216,8 +218,10 @@ namespace GingerATS
                     {
                         if (!filePath.ToUpper().Contains("PREVVERSIONS") && !filePath.ToUpper().Contains(".SVN") && Path.GetExtension(filePath).ToUpper() == ".XML")
                         {
-                            GingerRepositoryItem activityItem = new GingerRepositoryItem(eGingerRepoItemType.Activity);
-                            activityItem.FilePath = filePath;
+                            GingerRepositoryItem activityItem = new GingerRepositoryItem(eGingerRepoItemType.Activity)
+                            {
+                                FilePath = filePath
+                            };
                             repoFilesList.Add(activityItem);
                         }
                     }
@@ -290,12 +294,14 @@ namespace GingerATS
                     if ((indexerRecordDetails[0] == GingerRepositoryItem.GetRepoItemTypeLabelInIndexer(itemType)) &&
                         (aTSExternalID == itemExternalID))
                     {
-                        repoItem = new GingerRepositoryItem(itemType);
-                        repoItem.Name = indexerRecordDetails[1];
-                        repoItem.GUID = indexerRecordDetails[2];
-                        repoItem.ExternalID = aTSExternalID;
-                        repoItem.FilePath = indexerRecordDetails[4];
-                        repoItem.LastUpdated = indexerRecordDetails[5];
+                        repoItem = new GingerRepositoryItem(itemType)
+                        {
+                            Name = indexerRecordDetails[1],
+                            GUID = indexerRecordDetails[2],
+                            ExternalID = aTSExternalID,
+                            FilePath = indexerRecordDetails[4],
+                            LastUpdated = indexerRecordDetails[5]
+                        };
                         break;
                     }
                 }

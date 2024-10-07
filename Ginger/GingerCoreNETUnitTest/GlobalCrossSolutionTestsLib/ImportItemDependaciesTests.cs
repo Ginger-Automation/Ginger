@@ -39,9 +39,9 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
     {
         static SolutionRepository SR;
         NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
-        ObservableList<GlobalSolutionItem> SelectedItemsListToImport = new ObservableList<GlobalSolutionItem>();
-        List<VariableBase> VariableListToImport = new List<VariableBase>();
-        List<EnvApplication> EnvAppListToImport = new List<EnvApplication>();
+        ObservableList<GlobalSolutionItem> SelectedItemsListToImport = [];
+        List<VariableBase> VariableListToImport = [];
+        List<EnvApplication> EnvAppListToImport = [];
 
         static TestHelper mTestHelper = new TestHelper();
         public TestContext TestContext { get; set; }

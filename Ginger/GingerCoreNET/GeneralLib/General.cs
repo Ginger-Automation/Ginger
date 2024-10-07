@@ -24,7 +24,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.ALM;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -50,7 +49,7 @@ namespace GingerCoreNET.GeneralLib
 
         public static List<string> GetEnumValues(Type EnumType)
         {
-            List<string> l = new List<string>();
+            List<string> l = [];
             foreach (object item in Enum.GetValues(EnumType))
             {
                 l.Add(GetEnumValueDescription(EnumType, item));
@@ -150,15 +149,15 @@ namespace GingerCoreNET.GeneralLib
 
         public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc)
         {
-            List<XmlNodeItem> returnDict = new List<XmlNodeItem>();
+            List<XmlNodeItem> returnDict = [];
             XmlReader rdr1 = XmlReader.Create(new System.IO.StringReader(xmlDoc.InnerXml));
             XmlReader rdr = XmlReader.Create(new System.IO.StringReader(xmlDoc.InnerXml));
             XmlReader subrdr = null;
             string Elm = "";
 
-            ArrayList ls = new ArrayList();
-            Dictionary<string, int> lspath = new Dictionary<string, int>();
-            List<string> DeParams = new List<string>();
+            ArrayList ls = [];
+            Dictionary<string, int> lspath = [];
+            List<string> DeParams = [];
             while (rdr.Read())
             {
                 if (rdr.NodeType == XmlNodeType.Element)
@@ -277,11 +276,7 @@ namespace GingerCoreNET.GeneralLib
 
         public static ObservableList<T> ConvertListToObservableList<T>(List<T> List)
         {
-            ObservableList<T> ObservableList = new ObservableList<T>();
-            foreach (T o in List)
-            {
-                ObservableList.Add(o);
-            }
+            ObservableList<T> ObservableList = [.. List];
 
             return ObservableList;
         }
@@ -301,7 +296,7 @@ namespace GingerCoreNET.GeneralLib
             {
                 return "Invalid Data Source Value : '" + DataSourceVE + "'";
             }
-            string DSName = DSVE.Substring(0, DSVE.IndexOf(" DST="));
+            string DSName = DSVE[..DSVE.IndexOf(" DST=")];
 
             foreach (DataSourceBase ds in DSList)
             {
@@ -317,7 +312,7 @@ namespace GingerCoreNET.GeneralLib
                 return "Data Source: '" + DSName + "' used in '" + DataSourceVE + "' not found in solution.";
             }
 
-            DSVE = DSVE.Substring(DSVE.IndexOf(" DST=")).Trim();
+            DSVE = DSVE[DSVE.IndexOf(" DST=")..].Trim();
             if (DSVE.IndexOf(" ") == -1)
             {
                 return "Invalid Data Source Value : '" + DataSourceVE + "'";
@@ -357,12 +352,14 @@ namespace GingerCoreNET.GeneralLib
                 // Add all solution target app
                 foreach (ApplicationPlatform AP in WorkSpace.Instance.Solution.ApplicationPlatforms)
                 {
-                    EnvApplication EA = new EnvApplication();
-                    EA.Name = AP.AppName;
-                    EA.CoreProductName = AP.Core;
-                    EA.CoreVersion = AP.CoreVersion;
-                    EA.Active = true;
-                    EA.ParentGuid = AP.Guid;
+                    EnvApplication EA = new EnvApplication
+                    {
+                        Name = AP.AppName,
+                        CoreProductName = AP.Core,
+                        CoreVersion = AP.CoreVersion,
+                        Active = true,
+                        ParentGuid = AP.Guid
+                    };
                     newEnv.Applications.Add(EA);
                 }
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);

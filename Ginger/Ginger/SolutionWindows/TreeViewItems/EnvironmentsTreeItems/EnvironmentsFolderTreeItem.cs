@@ -22,7 +22,6 @@ using Ginger.Environments;
 using Ginger.Environments.AddEnvironmentWizardLib;
 using Ginger.Environments.GingerOpsEnvWizardLib;
 using Ginger.SolutionWindows.TreeViewItems;
-using GingerCore;
 using GingerCore.Environments;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;

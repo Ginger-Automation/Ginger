@@ -35,7 +35,7 @@ namespace Ginger.Drivers.Windows
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
             string Description = "Select list item " + UIAElementInfo.ElementTitle;
 
             list.Add(new ActWindowsControl()

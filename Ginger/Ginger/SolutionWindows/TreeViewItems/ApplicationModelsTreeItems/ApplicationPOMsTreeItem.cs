@@ -139,7 +139,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             List<ApplicationPlatform> TargetApplications = WorkSpace.Instance.Solution.GetListOfPomSupportedPlatform();
             if (TargetApplications.Count != 0)
             {
-                mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
+                mTreeView.Tree.ExpandTreeItem(this);
                 WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);
             }
             else

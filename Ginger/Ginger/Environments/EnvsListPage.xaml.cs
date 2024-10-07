@@ -58,14 +58,14 @@ namespace Ginger.Environments
             grdEnvs.SetTitleLightStyle = true;
 
             //Set the Data Grid columns
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.Name, WidthWeight = 200 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = [new GridColView() { Field = ProjEnvironment.Fields.Name, WidthWeight = 200 }]
+            };
 
             ObservableList<SolutionCategoryValue> combList = SolutionGeneral.SolutionOperations.GetSolutionReleaseValues();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ProjEnvironment.Fields.ReleaseVersion), Header = "Release", WidthWeight = 80, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = combList, ComboboxSelectedValueField = nameof(SolutionCategoryValue.Guid),ComboboxDisplayMemberField= nameof(SolutionCategoryValue.Value)  });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ProjEnvironment.Fields.ReleaseVersion), Header = "Release", WidthWeight = 80, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = combList, ComboboxSelectedValueField = nameof(SolutionCategoryValue.Guid), ComboboxDisplayMemberField = nameof(SolutionCategoryValue.Value) });
             view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.Notes, WidthWeight = 500 });
             view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.FileName), Header = "Local File Path", WidthWeight = 250 });
 

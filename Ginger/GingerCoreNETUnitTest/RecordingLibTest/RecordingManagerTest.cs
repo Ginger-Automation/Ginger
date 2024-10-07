@@ -88,7 +88,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public void DoRecordingWithPOMTest()
         {
             //Arrange
-            ObservableList<ApplicationPOMModel> lstPOM = new ObservableList<ApplicationPOMModel>();
+            ObservableList<ApplicationPOMModel> lstPOM = [];
             ApplicationPOMModel currentPOM = new ApplicationPOMModel();
             lstPOM.Add(currentPOM);
             RecordingManager mngr = new RecordingManager(lstPOM, mBF, Context, mDriver, PlatformInfo);
@@ -112,7 +112,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public void DoRecordingWithMultiplePageHandledTest()
         {
             //Arrange
-            ObservableList<ApplicationPOMModel> lstPOM = new ObservableList<ApplicationPOMModel>();
+            ObservableList<ApplicationPOMModel> lstPOM = [];
             ApplicationPOMModel currentPOM = new ApplicationPOMModel();
             lstPOM.Add(currentPOM);
             RecordingManager mngr = new RecordingManager(lstPOM, mBF, Context, mDriver, PlatformInfo);

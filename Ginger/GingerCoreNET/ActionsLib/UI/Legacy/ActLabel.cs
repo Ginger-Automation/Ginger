@@ -73,7 +73,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eLabelAction)GetOrCreateInputParam<eLabelAction>(nameof(LabelAction), eLabelAction.IsVisible);
+                return GetOrCreateInputParam<eLabelAction>(nameof(LabelAction), eLabelAction.IsVisible);
             }
             set
             {
@@ -117,7 +117,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform is ePlatformType.Web or ePlatformType.NA or ePlatformType.Mobile)
             {
                 return true;
             }
@@ -138,12 +138,10 @@ namespace GingerCore.Actions
             if (currentType == typeof(ActUIElement))
             {
                 // check special cases, where neame should be changed. Than at default case - all names that have no change
-                switch (this.LabelAction)
+                newAct.ElementAction = this.LabelAction switch
                 {
-                    default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.LabelAction.ToString());
-                        break;
-                }
+                    _ => (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.LabelAction.ToString()),
+                };
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);

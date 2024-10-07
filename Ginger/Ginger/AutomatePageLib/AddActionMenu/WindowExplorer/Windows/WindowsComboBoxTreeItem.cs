@@ -37,20 +37,20 @@ namespace Ginger.Drivers.Windows
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Set " + UIAElementInfo.ElementTitle + " Value",
-                Value = "Sample Value",
-                ControlAction = ActWindowsControl.eControlAction.SetValue
-            });
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Get " + UIAElementInfo.ElementTitle + " Value",
-                ControlAction = ActWindowsControl.eControlAction.SetValue
-            });
+            ObservableList<Act> list =
+            [
+                new ActWindowsControl()
+                {
+                    Description = "Set " + UIAElementInfo.ElementTitle + " Value",
+                    Value = "Sample Value",
+                    ControlAction = ActWindowsControl.eControlAction.SetValue
+                },
+                new ActWindowsControl()
+                {
+                    Description = "Get " + UIAElementInfo.ElementTitle + " Value",
+                    ControlAction = ActWindowsControl.eControlAction.SetValue
+                },
+            ];
 
             //Add option to select the valid values
             List<ComboBoxElementItem> ComboValues = (List<ComboBoxElementItem>)UIAElementInfo.GetElementData();

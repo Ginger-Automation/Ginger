@@ -99,7 +99,7 @@ namespace Ginger.GeneralWindows
                     }
                 }
                 xMainNavigationListView.Items.Add(menu);
-            }      
+            }
         }
 
         public void SelectFirstTopMenu()

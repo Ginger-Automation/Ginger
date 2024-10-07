@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.ValidationRules
             }
         }
 
-        List<int> mvalidValues = new List<int>();
+        List<int> mvalidValues = [];
         public List<int> ValidValues
         {
             get

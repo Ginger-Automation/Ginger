@@ -68,18 +68,18 @@ namespace GingerCoreNETUnitTest.AutoPilot
             WorkSpace.Instance.SolutionRepository.Open(TempSolutionFolder);
 
             // Initialize ApplicationAPIModels XML file names to be fetched from TestResources
-            xmlFiles = new List<string>()
-            {
+            xmlFiles =
+            [
                 @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "Create_User.Ginger.ApplicationAPIModel.xml",
                 @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "Delete_User.Ginger.ApplicationAPIModel.xml",
                 @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "PhoneVerifySOAP_CheckPhoneNumber.Ginger.ApplicationAPIModel.xml",
                 @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "Update_User.Ginger.ApplicationAPIModel.xml",
                 @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "PhoneVerifySOAP_CheckPhoneNumbers.Ginger.ApplicationAPIModel.xml",
                 @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "GetQuote_DelayedStockQuoteSoap.Ginger.ApplicationAPIModel.xml",
-            };
+            ];
 
-            existingAPIsList = new ObservableList<ApplicationAPIModel>();
-            learnedAPIsList = new List<ApplicationAPIModel>();
+            existingAPIsList = [];
+            learnedAPIsList = [];
 
             // Importing API Models from XML files (listed in xmlFiles)
             foreach (String fileName in xmlFiles)
@@ -147,7 +147,7 @@ namespace GingerCoreNETUnitTest.AutoPilot
         public void New_APIComparisonStatusTest()
         {
             // Arrange
-            ObservableList<ApplicationAPIModel> learnedModels = new ObservableList<ApplicationAPIModel>() { learnedAPIsList[0], learnedAPIsList[5] };
+            ObservableList<ApplicationAPIModel> learnedModels = [learnedAPIsList[0], learnedAPIsList[5]];
 
             //Act
             ObservableList<DeltaAPIModel> deltaAPIsList = APIDeltaUtils.DoAPIModelsCompare(learnedModels);
@@ -165,7 +165,7 @@ namespace GingerCoreNETUnitTest.AutoPilot
         public void Modified_APIComparisonStatusTest()
         {
             // Arrange
-            ObservableList<ApplicationAPIModel> learnedModels = new ObservableList<ApplicationAPIModel>() { learnedAPIsList[1], learnedAPIsList[3] };
+            ObservableList<ApplicationAPIModel> learnedModels = [learnedAPIsList[1], learnedAPIsList[3]];
 
             //Act
             ObservableList<DeltaAPIModel> deltaAPIsList = APIDeltaUtils.DoAPIModelsCompare(learnedModels);
@@ -183,7 +183,7 @@ namespace GingerCoreNETUnitTest.AutoPilot
         public void Unchanged_APIComparisonStatusTest()
         {
             // Arrange
-            ObservableList<ApplicationAPIModel> learnedModels = new ObservableList<ApplicationAPIModel>() { learnedAPIsList[2], learnedAPIsList[4] };
+            ObservableList<ApplicationAPIModel> learnedModels = [learnedAPIsList[2], learnedAPIsList[4]];
 
             //Act
             ObservableList<DeltaAPIModel> deltaAPIsList = APIDeltaUtils.DoAPIModelsCompare(learnedModels);

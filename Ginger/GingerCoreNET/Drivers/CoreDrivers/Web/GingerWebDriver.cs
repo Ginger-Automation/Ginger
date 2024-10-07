@@ -42,21 +42,21 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         //split path by comma outside of brackets
         private static readonly Regex IFramePathSplitRegex = new(@",(?![^\[]*[\]])");
 
-        private static readonly IEnumerable<WebBrowserType> SeleniumSupportedBrowserTypes = new List<WebBrowserType>()
-        {
+        private static readonly IEnumerable<WebBrowserType> SeleniumSupportedBrowserTypes =
+        [
             WebBrowserType.Chrome,
             WebBrowserType.FireFox,
             WebBrowserType.Edge,
             WebBrowserType.Brave,
             WebBrowserType.InternetExplorer,
             WebBrowserType.RemoteWebDriver,
-        };
-        private static readonly IEnumerable<WebBrowserType> PlaywrightSupportedBrowserTypes = new List<WebBrowserType>()
-        {
+        ];
+        private static readonly IEnumerable<WebBrowserType> PlaywrightSupportedBrowserTypes =
+        [
             WebBrowserType.Chrome,
             WebBrowserType.FireFox,
             WebBrowserType.Edge
-        };
+        ];
 
         [UserConfigured]
         [UserConfiguredDescription("Proxy Server:Port")]
@@ -383,7 +383,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             if (!string.IsNullOrEmpty(htmlElementInfo.Path))
             {
                 string[] xpathSegments = htmlElementInfo.Path.Split('/');
-                lastXPathSegment = xpathSegments[xpathSegments.Length - 1];
+                lastXPathSegment = xpathSegments[^1];
             }
             string xpath = string.Empty;
             if (!lastXPathSegment.Contains("frame"))
@@ -428,7 +428,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         private protected Task<string> GenerateXPathFromBrowserElementAsync(IBrowserElement element)
         {
-            string script = 
+            string script =
             @"element => {
               let xpath = """";
               let stack = [];
@@ -481,7 +481,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             }
             else if (!string.IsNullOrEmpty(valueAttributeValue))
             {
-                elementTitle = $"{(valueAttributeValue.Length > 50 ? valueAttributeValue.Substring(0, 50) + "..." : valueAttributeValue)} {tag}";
+                elementTitle = $"{(valueAttributeValue.Length > 50 ? valueAttributeValue[..50] + "..." : valueAttributeValue)} {tag}";
             }
 
             string elementName = tag;
@@ -542,7 +542,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
                 X = position.X,
                 Y = position.Y,
             };
-            
+
             return newHtmlElement;
         }
     }

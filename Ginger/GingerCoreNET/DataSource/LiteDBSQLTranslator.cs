@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         {
             ArgumentNullException.ThrowIfNull(actDSTableElement);
             this.actDSTableElement = actDSTableElement;
-            queryBuilder = new ();
+            queryBuilder = new();
         }
         public string CreateValueExpression()
         {
@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             {
                 return this.actDSTableElement.ValueExp;
             }
-            
+
             queryBuilder = new();
             queryBuilder.Append('{');
             queryBuilder.Append($"DS Name={actDSTableElement.DSName} DST={actDSTableElement.DSTableName} MASD=");
@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                 return queryBuilder.ToString();
             }
 
-            CustomizedSQLQuery.InitForCustomized(actDSTableElement , queryBuilder);
+            CustomizedSQLQuery.InitForCustomized(actDSTableElement, queryBuilder);
             queryBuilder.Append(" Query QUERY=");
             switch (actDSTableElement.ControlAction)
             {
@@ -123,12 +123,12 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         {
             if (actDSTableElement.IsKeyValueTable)
             {
-                GingerKeyValueSQLQuery.GetValueForGingerKeyValue(actDSTableElement , queryBuilder);
+                GingerKeyValueSQLQuery.GetValueForGingerKeyValue(actDSTableElement, queryBuilder);
             }
 
             else if (actDSTableElement.Customized)
             {
-                CustomizedSQLQuery.GetValueForCustomized(actDSTableElement , queryBuilder);
+                CustomizedSQLQuery.GetValueForCustomized(actDSTableElement, queryBuilder);
             }
         }
 
@@ -136,7 +136,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         {
             if (actDSTableElement.IsKeyValueTable)
             {
-                GingerKeyValueSQLQuery.SetValueForGingerKeyValue(actDSTableElement , queryBuilder);
+                GingerKeyValueSQLQuery.SetValueForGingerKeyValue(actDSTableElement, queryBuilder);
             }
             else if (actDSTableElement.Customized)
             {
@@ -144,11 +144,11 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             }
         }
 
-        private  void ValueExpressionForDeleteRow()
+        private void ValueExpressionForDeleteRow()
         {
             if (actDSTableElement.IsKeyValueTable)
             {
-                GingerKeyValueSQLQuery.DeleteRowForGingerKeyValue(actDSTableElement , queryBuilder);
+                GingerKeyValueSQLQuery.DeleteRowForGingerKeyValue(actDSTableElement, queryBuilder);
             }
 
             else if (actDSTableElement.Customized)
@@ -178,7 +178,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             if (actDSTableElement.ByWhere)
             {
                 queryBuilder.Append(" where ");
-                CustomizedSQLQuery.SetWhereConditions(actDSTableElement , queryBuilder);
+                CustomizedSQLQuery.SetWhereConditions(actDSTableElement, queryBuilder);
             }
         }
 
@@ -280,7 +280,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             else if (actDSTableElement.ByWhere)
             {
                 queryBuilder.Append("Where COND=");
-                SetWhereConditions(actDSTableElement , queryBuilder);
+                SetWhereConditions(actDSTableElement, queryBuilder);
             }
         }
         public static void GetValueForCustomized(ActDSTableElement actDSTableElement, StringBuilder queryBuilder)
@@ -289,7 +289,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             if (actDSTableElement.ByWhere)
             {
                 queryBuilder.Append($"SELECT $ FROM {actDSTableElement.DSTableName} where ");
-                SetWhereConditions(actDSTableElement , queryBuilder);
+                SetWhereConditions(actDSTableElement, queryBuilder);
 
             }
             else if (actDSTableElement.ByNextAvailable)
@@ -306,7 +306,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             if (actDSTableElement.ByWhere)
             {
                 queryBuilder.Append($"Update {actDSTableElement.DSTableName} SET {actDSTableElement.LocateColTitle} = \"{actDSTableElement.ValueUC}\" where ");
-                SetWhereConditions(actDSTableElement , queryBuilder);
+                SetWhereConditions(actDSTableElement, queryBuilder);
             }
             else if (actDSTableElement.ByRowNum)
             {
@@ -324,7 +324,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             if (actDSTableElement.ByWhere)
             {
                 queryBuilder.Append($"DELETE {actDSTableElement.DSTableName} where ");
-                SetWhereConditions(actDSTableElement , queryBuilder);
+                SetWhereConditions(actDSTableElement, queryBuilder);
             }
 
             else if (actDSTableElement.ByNextAvailable)
@@ -340,7 +340,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         }
         public static void SetWhereConditions(ActDSTableElement actDSTableElement, StringBuilder queryBuilder)
         {
-            if (actDSTableElement.WhereConditions == null) 
+            if (actDSTableElement.WhereConditions == null)
             {
                 return;
             }

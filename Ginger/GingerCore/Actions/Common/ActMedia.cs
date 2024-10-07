@@ -68,7 +68,7 @@ namespace GingerCore.Actions.Common
         {
             get
             {
-                return (eMediaAction)GetOrCreateInputParam<eMediaAction>(nameof(MediaAction), eMediaAction.RecordAudio);
+                return GetOrCreateInputParam<eMediaAction>(nameof(MediaAction), eMediaAction.RecordAudio);
             }
             set
             {

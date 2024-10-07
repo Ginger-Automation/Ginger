@@ -19,16 +19,13 @@ limitations under the License.
 using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Run;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 {

@@ -78,7 +78,7 @@ namespace Ginger.Repository
                 {
                     itemType = "ActivitiesGroup";
                 }
-                TelemetryMetadata metadata = new();
+                TelemetryMetadata metadata = [];
                 if (!string.IsNullOrEmpty(itemType))
                 {
                     metadata.Add("Type", itemType);
@@ -128,7 +128,7 @@ namespace Ginger.Repository
                 }
                 else
                 {
-                    itemCopy = (RepositoryItemBase)item.CreateCopy(false);
+                    itemCopy = item.CreateCopy(false);
                     if (item is Activity bfActivity)
                     {
                         foreach (Act bfAction in bfActivity.Acts.Cast<Act>())
@@ -336,19 +336,19 @@ namespace Ginger.Repository
             {
                 if (item is ActivitiesGroup)
                 {
-                    existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+                    existingRepoItems = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
                 }
                 else if (item is Activity)
                 {
-                    existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    existingRepoItems = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 }
                 else if (item is Act)
                 {
-                    existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+                    existingRepoItems = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
                 }
                 else if (item is VariableBase)
                 {
-                    existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+                    existingRepoItems = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
                 }
                 else
                 {
@@ -430,7 +430,7 @@ namespace Ginger.Repository
             bool isDuplicateFound = CheckForItemWithDuplicateName(selectedItem);
             if (isDuplicateFound)
             {
-                ItemValidationBase VA = ItemValidationBase.CreateNewIssue((RepositoryItemBase)selectedItem.UsageItem);
+                ItemValidationBase VA = ItemValidationBase.CreateNewIssue(selectedItem.UsageItem);
                 VA.IssueDescription = "Item with same name already exists";
                 VA.mIssueType = ItemValidationBase.eIssueType.DuplicateName;
                 VA.ItemNewName = GetUniqueItemName(selectedItem);
@@ -448,7 +448,7 @@ namespace Ginger.Repository
 
         public static bool CheckForItemWithDuplicateName(UploadItemSelection selectedItem)
         {
-            List<RepositoryItemBase> existingRepoItems = new List<RepositoryItemBase>();
+            List<RepositoryItemBase> existingRepoItems = [];
             ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
@@ -487,7 +487,7 @@ namespace Ginger.Repository
 
         public static string GetUniqueItemName(UploadItemSelection duplicateItem)
         {
-            List<string> existingRepoItems = new List<string>();
+            List<string> existingRepoItems = [];
             ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             ObservableList<Act> actions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
@@ -541,13 +541,13 @@ namespace Ginger.Repository
             try
             {
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating and Saving Linked Activity instanced in Businessflows...");
-                
+
                 await Task.Run(() =>
                 {
                     try
                     {
                         ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                        List<BusinessFlow> ChangedBFslist =[];
+                        List<BusinessFlow> ChangedBFslist = [];
                         Parallel.ForEach(BizFlows, BF =>
                         {
                             try
@@ -561,7 +561,7 @@ namespace Ginger.Repository
                                             mActivity.UpdateInstance(BF.Activities[i], nameof(eItemParts.All), BF);
 
                                             BF.MapTAToBF(eUserMsgSelection.None, BF.Activities[i], WorkSpace.Instance.Solution.ApplicationPlatforms, silently: true);
-                                            if(!ChangedBFslist.Exists(x=>x.Guid.Equals(BF.Guid)))
+                                            if (!ChangedBFslist.Exists(x => x.Guid.Equals(BF.Guid)))
                                             {
                                                 ChangedBFslist.Add(BF);
                                             }
@@ -620,7 +620,7 @@ namespace Ginger.Repository
                 sharedActivity.Type = eSharedItemType.Regular;
                 sharedActivity.DevelopmentTime = backup.DevelopmentTime.Add(LinkedActivity.LastElapsedDevelopmentTime);
                 List<KeyValuePair<Guid, Guid>> oldNewActionGuidList = [];
-                foreach(Act action in sharedActivity.Acts.Cast<Act>())
+                foreach (Act action in sharedActivity.Acts.Cast<Act>())
                 {
                     if (action.ParentGuid != Guid.Empty)
                     {
@@ -629,7 +629,7 @@ namespace Ginger.Repository
                     }
                     action.ParentGuid = Guid.Empty;
                 }
-                foreach(VariableBase variable in sharedActivity.Variables)
+                foreach (VariableBase variable in sharedActivity.Variables)
                 {
                     if (variable.ParentGuid != Guid.Empty)
                     {
@@ -637,7 +637,7 @@ namespace Ginger.Repository
                     }
                     variable.ParentGuid = Guid.Empty;
                 }
-                foreach(FlowControl fc in sharedActivity.Acts.SelectMany(a => a.FlowControls))
+                foreach (FlowControl fc in sharedActivity.Acts.SelectMany(a => a.FlowControls))
                 {
                     Guid targetGuid = fc.GetGuidFromValue();
                     if (oldNewActionGuidList.Any(oldNew => oldNew.Key == targetGuid))
@@ -646,8 +646,8 @@ namespace Ginger.Repository
                         fc.Value = fc.Value.Replace(targetGuid.ToString(), newTargetGuid.ToString());
                     }
                 }
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity,callPostSaveHandler:false);
-                WorkSpace.Instance.SolutionRepository.MoveItem(sharedActivity, sharedActFullPath,callPreSaveHandler:true,callPostSaveHandler:true);
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity, callPostSaveHandler: false);
+                WorkSpace.Instance.SolutionRepository.MoveItem(sharedActivity, sharedActFullPath, callPreSaveHandler: true, callPostSaveHandler: true);
                 LinkedActivity.EnableEdit = false;
                 await UpdateLinkedInstances(sharedActivity, ExcludeBusinessFlowGuid);
             }

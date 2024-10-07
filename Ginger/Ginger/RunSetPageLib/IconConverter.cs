@@ -35,33 +35,17 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
             if (value != null && value.GetType() == typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus))
             {
                 Amdocs.Ginger.CoreNET.Execution.eRunStatus status = (Amdocs.Ginger.CoreNET.Execution.eRunStatus)value;
-                switch (status)
+                ico = status switch
                 {
-                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed:
-                        ico = eImageType.Passed;
-                        break;
-                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
-                        ico = eImageType.Failed;
-                        break;
-                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running:
-                        ico = eImageType.Running;
-                        break;
-                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending:
-                        ico = eImageType.Pending;
-                        break;
-                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped:
-                        ico = eImageType.Stopped;
-                        break;
-                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked:
-                        ico = eImageType.Blocked;
-                        break;
-                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped:
-                        ico = eImageType.Skipped;
-                        break;
-                    default:
-                        ico = eImageType.Pending;
-                        break;
-                }
+                    Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed => eImageType.Passed,
+                    Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed => eImageType.Failed,
+                    Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running => eImageType.Running,
+                    Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending => eImageType.Pending,
+                    Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped => eImageType.Stopped,
+                    Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked => eImageType.Blocked,
+                    Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped => eImageType.Skipped,
+                    _ => eImageType.Pending,
+                };
             }
 
             return ico;

@@ -40,7 +40,7 @@ namespace GingerWPF.WizardLib
 
         WizardBase mWizard;
 
-        List<ValidationError> mValidationErrors = new List<ValidationError>();
+        List<ValidationError> mValidationErrors = [];
 
         public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false)
         {
@@ -53,7 +53,7 @@ namespace GingerWPF.WizardLib
                 {
                     SetterBaseCollection sbc = wizardWindow.NavigationList.ItemContainerStyle.Setters;
                     sbc.Add(new Setter(ListBoxItem.IsEnabledProperty, wizard.IsNavigationListEnabled));
-                    ((System.Windows.Setter)sbc[sbc.Count - 1]).Value = wizard.IsNavigationListEnabled;
+                    ((System.Windows.Setter)sbc[^1]).Value = wizard.IsNavigationListEnabled;
                 }
                 if (DoNotShowAsDialog)
                 {
@@ -85,7 +85,7 @@ namespace GingerWPF.WizardLib
             foreach (WizardPage page in mWizard.Pages)
             {
                 // send init event
-                ((IWizardPage)page.Page).WizardEvent(WizardEventArgs);
+                page.Page.WizardEvent(WizardEventArgs);
 
                 // TODO: attach validation error handler
                 ((Page)page.Page).AddHandler(Validation.ErrorEvent, new RoutedEventHandler(ValidationErrorHandler));
@@ -207,23 +207,20 @@ namespace GingerWPF.WizardLib
                     {
                         //.NET Controls Validation
                         BindingExpression bindingExpression = null;
-                        if (child is TextBox)
+                        if (child is TextBox textBox)
                         {
-                            TextBox textBox = (TextBox)child;
                             bindingExpression = textBox.GetBindingExpression(TextBox.TextProperty);
                         }
-                        else if (child is ComboBox)
+                        else if (child is ComboBox comboBox)
                         {
-                            ComboBox comboBox = (ComboBox)child;
                             bindingExpression = comboBox.GetBindingExpression(ComboBox.SelectedValueProperty);
                             if (bindingExpression == null)
                             {
                                 bindingExpression = comboBox.GetBindingExpression(ComboBox.TextProperty);
                             }
                         }
-                        else if (child is Ginger.Agents.ucAgentControl)
+                        else if (child is Ginger.Agents.ucAgentControl agentControl)
                         {
-                            Ginger.Agents.ucAgentControl agentControl = (Ginger.Agents.ucAgentControl)child;
                             bindingExpression = agentControl.GetBindingExpression(Ginger.Agents.ucAgentControl.SelectedAgentProperty);
                         }
 

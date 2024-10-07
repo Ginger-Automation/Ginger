@@ -169,32 +169,16 @@ namespace VisualRegressionTracker
                 ? await client.TestRunsController_postTestRunAsync(testRun, cancellationToken.Value)
                 : await client.TestRunsController_postTestRunAsync(testRun);
             var status = TestRunStatus.New;
-            switch (response.Status)
+            status = response.Status switch
             {
-                case "new":
-                    status = TestRunStatus.New;
-                    break;
-                case "ok":
-                    status = TestRunStatus.Ok;
-                    break;
-
-                case "unresolved":
-                    status = TestRunStatus.Unresolved;
-                    break;
-                case "failed":
-                    status = TestRunStatus.Failed;
-                    break;
-                case "approved":
-                    status = TestRunStatus.Approved;
-                    break;
-                case "autoApproved":
-                    status = TestRunStatus.AutoApproved;
-                    break;
-                default:
-                    throw new VisualRegressionTrackerError("Unexpected status");
-                    break;
-            }
-
+                "new" => TestRunStatus.New,
+                "ok" => TestRunStatus.Ok,
+                "unresolved" => TestRunStatus.Unresolved,
+                "failed" => TestRunStatus.Failed,
+                "approved" => TestRunStatus.Approved,
+                "autoApproved" => TestRunStatus.AutoApproved,
+                _ => throw new VisualRegressionTrackerError("Unexpected status"),
+            };
             var result = new TestRunResult
             {
                 Status = status,

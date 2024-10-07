@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
-using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;

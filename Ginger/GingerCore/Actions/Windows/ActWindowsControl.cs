@@ -105,7 +105,7 @@ namespace GingerCore.Actions.Windows
         {
             get
             {
-                return (eControlAction)GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
+                return GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
             }
             set
             {

@@ -107,7 +107,7 @@ namespace Ginger.Actions
             if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
             {
                 string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform; 
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform;
             }
             else
             {
@@ -121,15 +121,15 @@ namespace Ginger.Actions
             ResetView();
             ePlatformType ActivityPlatform = mAct.Platform;
 
-            if (mAct.ControlAction == ActBrowserElement.eControlAction.SwitchFrame || mAct.ControlAction == ActBrowserElement.eControlAction.SwitchToShadowDOM || mAct.ControlAction == ActBrowserElement.eControlAction.SwitchWindow || mAct.ControlAction == ActBrowserElement.eControlAction.CloseTabExcept)
+            if (mAct.ControlAction is ActBrowserElement.eControlAction.SwitchFrame or ActBrowserElement.eControlAction.SwitchToShadowDOM or ActBrowserElement.eControlAction.SwitchWindow or ActBrowserElement.eControlAction.CloseTabExcept)
             {
                 xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
                 SetLocateValueControls();
             }
-            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL || mAct.ControlAction == ActBrowserElement.eControlAction.OpenURLNewTab ||
-                     mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS || mAct.ControlAction == ActBrowserElement.eControlAction.RunJavaScript)
+            else if (mAct.ControlAction is ActBrowserElement.eControlAction.GotoURL or ActBrowserElement.eControlAction.OpenURLNewTab or
+                     ActBrowserElement.eControlAction.InjectJS or ActBrowserElement.eControlAction.RunJavaScript)
             {
-                if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL || mAct.ControlAction == ActBrowserElement.eControlAction.OpenURLNewTab)
+                if (mAct.ControlAction is ActBrowserElement.eControlAction.GotoURL or ActBrowserElement.eControlAction.OpenURLNewTab)
                 {
                     if (mAct.ControlAction == ActBrowserElement.eControlAction.GotoURL)
                     {
@@ -153,7 +153,7 @@ namespace Ginger.Actions
 
                     xValueLabel.Content = "URL:";
                 }
-                else if (mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS || mAct.ControlAction == ActBrowserElement.eControlAction.RunJavaScript)
+                else if (mAct.ControlAction is ActBrowserElement.eControlAction.InjectJS or ActBrowserElement.eControlAction.RunJavaScript)
                 {
                     ResetPOMView();
                     if (ActivityPlatform == ePlatformType.Java)
@@ -183,11 +183,11 @@ namespace Ginger.Actions
             else if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
             {
                 ResetPOMView();
-                xBlockedUrlsGrid.Visibility = System.Windows.Visibility.Visible;                
+                xBlockedUrlsGrid.Visibility = System.Windows.Visibility.Visible;
             }
             else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
             {
-                ResetPOMView();                
+                ResetPOMView();
             }
             else
             {
@@ -263,10 +263,14 @@ namespace Ginger.Actions
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "URL", WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xUpdateNetworkUrlGridPnl.Resources["UpdateNetworkParametersPathValueExpressionButton"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = "URL", WidthWeight = 250 },
+                new GridColView() { Field = "...", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xUpdateNetworkUrlGridPnl.Resources["UpdateNetworkParametersPathValueExpressionButton"] },
+            ]
+            };
             UpdateNetworkUrlGrid.SetAllColumnsDefaultView(view);
             UpdateNetworkUrlGrid.InitViewItems();
             UpdateNetworkUrlGrid.SetTitleLightStyle = true;

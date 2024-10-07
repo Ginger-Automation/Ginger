@@ -254,8 +254,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 SelectEnv();
                 mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
                 if (mRunSetConfig.ReRunConfigurations != null && mRunSetConfig.ReRunConfigurations.Active)
-                { 
-                    if( mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == Guid.Empty || mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == null)
+                {
+                    if (mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == Guid.Empty || mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == null)
                     {
                         Reporter.ToLog(eLogLevel.INFO, $"ReferenceExecutionId is empty,so checking for recent ExecutionId from Centerlized Report Service");
                         mRunSetConfig.ReRunConfigurations.ReferenceExecutionID = GetLastExecutionIdBySolutionAndRunsetId(WorkSpace.Instance.Solution.Guid, mRunSetConfig.Guid);
@@ -290,7 +290,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public Guid GetLastExecutionIdBySolutionAndRunsetId(Guid soluionGuid, Guid runsetGuid)
         {
-            List<RunSetReport> runsetsReport = new List<RunSetReport>();
+            List<RunSetReport> runsetsReport = [];
             runsetsReport = new GingerRemoteExecutionUtils().GetRunsetExecutionInfo(soluionGuid, runsetGuid);
             return runsetsReport != null ? Guid.Parse(runsetsReport.FirstOrDefault().GUID) : Guid.Empty;
         }
@@ -309,7 +309,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Preparing {0} for Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                              
+
                 if (!ShowAutoRunWindow)
                 {
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Loading {0} Runners", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -339,10 +339,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         private bool CheckforReRunConfig()
         {
             bool Result = true;
-           
+
             if (mRunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
-            {                
-                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes 
+            {
+                if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes
                     && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
                 {
                     AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
@@ -363,12 +363,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             Result = false;
                         }
                     }
-                    else if(mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.Runner)
+                    else if (mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.Runner)
                     {
                         List<AccountReportRunner> accountReportRunnerList = accountReportApiHandler.GetRunnerExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportRunnerList != null)
                         {
-                            if(accountReportRunnerList.Any(x=> x.RunStatus.Equals(eRunStatus.Failed)))
+                            if (accountReportRunnerList.Any(x => x.RunStatus.Equals(eRunStatus.Failed)))
                             {
                                 var FailedRunnerGuidList = accountReportRunnerList.Where(x => x.RunStatus.Equals(eRunStatus.Failed)).Select(x => x.EntityId);
                                 foreach (GingerRunner runner in mRunsetExecutor.RunSetConfig.GingerRunners)
@@ -398,13 +398,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         {
                             if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(eRunStatus.Failed)))
                             {
-                              
+
                                 var FailedBFGuidList = accountReportBusinessFlows.Where(x => x.RunStatus.Equals(eRunStatus.Failed)).Select(x => x.InstanceGUID);
                                 foreach (GingerRunner runner in mRunsetExecutor.RunSetConfig.GingerRunners)
                                 {
-                                    foreach(BusinessFlowRun business in runner.BusinessFlowsRunList)
+                                    foreach (BusinessFlowRun business in runner.BusinessFlowsRunList)
                                     {
-                                        if(!FailedBFGuidList.Contains(business.BusinessFlowInstanceGuid))
+                                        if (!FailedBFGuidList.Contains(business.BusinessFlowInstanceGuid))
                                         {
                                             business.BusinessFlowIsActive = false;
                                         }
@@ -509,7 +509,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any())
                 {
                     mRunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ProjEnvironment>();
-                    Reporter.ToLog(eLogLevel.INFO, $"Auto Selected the default Environment: '{ mRunsetExecutor.RunsetExecutionEnvironment.Name }'");
+                    Reporter.ToLog(eLogLevel.INFO, $"Auto Selected the default Environment: '{mRunsetExecutor.RunsetExecutionEnvironment.Name}'");
                 }
                 else
                 {
@@ -533,7 +533,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlBranch(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlBranch: '{ value }'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlBranch: '{value}'");
             WorkSpace.Instance.UserProfile.SolutionSourceControlBranch = value;
         }
 
@@ -620,9 +620,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void PasswordEncrypted(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, $"PasswordEncrypted: '{ value }'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"PasswordEncrypted: '{value}'");
             string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
-            if (value == "Y" || value == "true" || value == "True")
+            if (value is "Y" or "true" or "True")
             {
                 try
                 {
@@ -651,13 +651,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
             }
 
-            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlProxyPort: '{ value }'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlProxyPort: '{value}'");
             WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = value;
         }
 
         internal void SourceControlProxyServer(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlProxyServer: '{ value }'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlProxyServer: '{value}'");
             if (string.IsNullOrEmpty(value))
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
@@ -676,7 +676,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlUser(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlUser: '{ value }'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlUser: '{value}'");
             if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
             {
                 value = "Test";
@@ -688,7 +688,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlURL(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlUrl: '{ value }'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlUrl: '{value}'");
             if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
             {
                 if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
@@ -706,7 +706,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlType(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlType: '{ value }'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlType: '{value}'");
             if (value.Equals("GIT"))
             {
                 WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
@@ -725,7 +725,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                if(Solution != null)
+                if (Solution != null)
                 {
                     return WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
                 }
@@ -734,7 +734,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution, Solution path is empty");
                     return false;
                 }
-                
+
             }
             catch (Exception ex)
             {

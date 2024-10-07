@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using GingerTestHelper;
@@ -65,8 +64,10 @@ namespace GingerCoreCommonTest.Repository
         public void ObjWithoutTracking()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "aaa";
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem
+            {
+                Name = "aaa"
+            };
 
             //Act                        
 
@@ -81,8 +82,10 @@ namespace GingerCoreCommonTest.Repository
         public void CheckObjDirty()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "aaa";
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem
+            {
+                Name = "aaa"
+            };
             item.StartDirtyTracking();
 
             //Act            
@@ -98,8 +101,10 @@ namespace GingerCoreCommonTest.Repository
         public void PropertyNotSerializedNochangetoDirty()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "aaa";
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem
+            {
+                Name = "aaa"
+            };
 
             item.StartDirtyTracking();
 
@@ -116,9 +121,11 @@ namespace GingerCoreCommonTest.Repository
         public void ObjWitChildsTracking()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "abc";
-            item.childs = new ObservableList<MyComplextRepositoryItemChild>();
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem
+            {
+                Name = "abc",
+                childs = []
+            };
             MyComplextRepositoryItemChild child1 = new MyComplextRepositoryItemChild() { Name = "Child 1" };
             item.childs.Add(child1);
             item.StartDirtyTracking();
@@ -144,9 +151,11 @@ namespace GingerCoreCommonTest.Repository
         public void AddChildToList()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "abc";
-            item.childs = new ObservableList<MyComplextRepositoryItemChild>();
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem
+            {
+                Name = "abc",
+                childs = []
+            };
             item.StartDirtyTracking();
 
             //Act                        
@@ -162,12 +171,16 @@ namespace GingerCoreCommonTest.Repository
         public void RemoveChildFromList()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "abc";
-            item.childs = new ObservableList<MyComplextRepositoryItemChild>();
-            item.childs.Add(new MyComplextRepositoryItemChild() { Name = "Child 1" });
-            item.childs.Add(new MyComplextRepositoryItemChild() { Name = "Child 2" });
-            item.childs.Add(new MyComplextRepositoryItemChild() { Name = "Child 3" });
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem
+            {
+                Name = "abc",
+                childs =
+            [
+                new MyComplextRepositoryItemChild() { Name = "Child 1" },
+                new MyComplextRepositoryItemChild() { Name = "Child 2" },
+                new MyComplextRepositoryItemChild() { Name = "Child 3" },
+            ]
+            };
 
             item.StartDirtyTracking();
 
@@ -184,8 +197,10 @@ namespace GingerCoreCommonTest.Repository
         public void CopyItemIsDirty()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "abc";
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem
+            {
+                Name = "abc"
+            };
             item.StartDirtyTracking();
 
             //Act                        
@@ -201,9 +216,11 @@ namespace GingerCoreCommonTest.Repository
         public void UpdateChildPropertyWhichisNotSerialzied()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "Runtime";
-            item.childs = new ObservableList<MyComplextRepositoryItemChild>();
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem
+            {
+                Name = "Runtime",
+                childs = []
+            };
             MyComplextRepositoryItemChild child1 = new MyComplextRepositoryItemChild() { Name = "Child 1" };
             item.childs.Add(child1);
             item.StartDirtyTracking();
@@ -223,9 +240,11 @@ namespace GingerCoreCommonTest.Repository
         public void EditNewAddedChildToList()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "abc";
-            item.childs = new ObservableList<MyComplextRepositoryItemChild>();
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem
+            {
+                Name = "abc",
+                childs = []
+            };
             item.StartDirtyTracking();
 
             //Act           

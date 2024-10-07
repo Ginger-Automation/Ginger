@@ -83,12 +83,11 @@ namespace GingerCore.Actions.JSON
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> DynamicElements = [];
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(DynamicElements);
+            List<ObservableList<ActInputValue>> list = [DynamicElements];
             return list;
         }
 
@@ -129,7 +128,7 @@ namespace GingerCore.Actions.JSON
             }
 
             XmlDocument doc = null;
-            if (((jsonContent[0] == '[') && (jsonContent[jsonContent.Length - 1] == ']')))
+            if (((jsonContent[0] == '[') && (jsonContent[^1] == ']')))
             {
                 doc = Newtonsoft.Json.JsonConvert.DeserializeXmlNode("{\"root\":" + jsonContent + "}", "root");
             }
@@ -140,7 +139,7 @@ namespace GingerCore.Actions.JSON
 
             XmlNode root = doc.DocumentElement;
 
-            List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList = new List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem>();
+            List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList = [];
             outputTagsList = Amdocs.Ginger.Common.GeneralLib.General.GetXMLNodesItems(doc);
             foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputTagsList)
             {

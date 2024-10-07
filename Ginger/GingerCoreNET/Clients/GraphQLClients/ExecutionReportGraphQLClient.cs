@@ -22,7 +22,6 @@ using AccountReport.Contracts.GraphQL.ResponseModels;
 using GraphQL;
 using GraphQLClient.Clients;
 using System;
-using System.Collections.Generic;
 
 using System.Threading.Tasks;
 
@@ -70,15 +69,15 @@ public class ExecutionReportGraphQLClient
                 Field = "startTime",
                 Order = "DESC"
             },
-            Filters = new List<Filter>
-            {
+            Filters =
+            [
                 new Filter
                 {
                     Field = "solutionId",
                     Operator = "eq",
                     Value = solutionId
                 }
-            }
+            ]
         };
 
         if (runSetId.HasValue)

@@ -21,13 +21,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Telemetry;
 using Ginger.SolutionGeneral;
-using GingerTelemetryProto.V1;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -115,7 +111,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         public void AddLog(eLogLevel level, string msg)
         {
-            AddLog(level, msg, metadata: new());
+            AddLog(level, msg, metadata: []);
         }
 
         public void AddLog(eLogLevel level, string msg, TelemetryMetadata metadata)
@@ -177,7 +173,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
         public IFeatureTracker StartFeatureTracking(FeatureId featureId)
         {
             return new FeatureTracker(
-                featureId, 
+                featureId,
                 onStop: (featureId, duration, metadata) => AddFeatureUsage(featureId, duration, metadata));
         }
 

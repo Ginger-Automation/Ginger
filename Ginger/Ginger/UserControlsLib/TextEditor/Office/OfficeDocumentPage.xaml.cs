@@ -84,12 +84,16 @@ namespace Ginger.UserControlsLib.TextEditor.Office
 
         void OpenFile()
         {
-            System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo();
-            procStartInfo.FileName = mFileName;
-            procStartInfo.CreateNoWindow = true;
-            procStartInfo.UseShellExecute = true;
-            System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            proc.StartInfo = procStartInfo;
+            System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = mFileName,
+                CreateNoWindow = true,
+                UseShellExecute = true
+            };
+            System.Diagnostics.Process proc = new System.Diagnostics.Process
+            {
+                StartInfo = procStartInfo
+            };
             proc.Start();
         }
     }

@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.Common
         /// <returns></returns>
         /// 
 
-        private static Dictionary<object, object> CachedValues = new Dictionary<object, object>();
+        private static Dictionary<object, object> CachedValues = [];
         public static string JsonSchemaFaker(JsonSchema4 schema, List<object> ReferenceStack, bool UseXMlNames = false)
         {
             if (schema is null)
@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.Common
 
             if (ReferenceStack == null)
             {
-                ReferenceStack = new List<object>();
+                ReferenceStack = [];
             }
             ReferenceStack.Add(schema);
             if (CachedValues.ContainsKey(schema))
@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.Common
                 }
             }
 
-            Dictionary<string, object> JsonBody = new Dictionary<string, object>();
+            Dictionary<string, object> JsonBody = [];
             if (schema.AllOf.Count == 0)
             {
                 IReadOnlyDictionary<string, JsonProperty> dctJkp = schema.ActualProperties;
@@ -126,7 +126,7 @@ namespace Amdocs.Ginger.Common
                     {
                         property.Remove(property.Length - 1, 1);
                         var result = JsonSchemaFaker(schemaObject, ReferenceStack, UseXMlNames);
-                        property.Append(string.Format(",{0}", result.Substring(1, result.Length - 1)));
+                        property.Append(string.Format(",{0}", result[1..]));
                     }
                 }
                 return property.ToString();
@@ -151,16 +151,16 @@ namespace Amdocs.Ginger.Common
             }
             if (ReferenceStack == null)
             {
-                ReferenceStack = new List<object>();
+                ReferenceStack = [];
             }
 
-            List<object> PrivateStack = new List<object>();
+            List<object> PrivateStack = [];
             object output = "";
             switch (value.Type)
             {
                 case JsonObjectType.Object:
 
-                    Dictionary<string, object> JsonBody = new Dictionary<string, object>();
+                    Dictionary<string, object> JsonBody = [];
                     foreach (KeyValuePair<string, JsonProperty> jkp in value.ActualProperties)
                     {
                         string key = jkp.Key;
@@ -168,14 +168,14 @@ namespace Amdocs.Ginger.Common
                         {
                             key = jkp.Value.Xml.Name;
                         }
-                        if(jkp.Value.ActualSchema != null)
+                        if (jkp.Value.ActualSchema != null)
                         {
-                            if(jkp.Value.ActualSchema.Enumeration.Count>0)
+                            if (jkp.Value.ActualSchema.Enumeration.Count > 0)
                             {
-                              
+
                                 ReferenceStack.Add(jkp.Value.ActualSchema.Enumeration.FirstOrDefault());
                             }
-                            else if (jkp.Value.ActualSchema.Example !=null)
+                            else if (jkp.Value.ActualSchema.Example != null)
                             {
                                 ReferenceStack.Add(jkp.Value.ActualSchema.Example);
                             }
@@ -195,7 +195,7 @@ namespace Amdocs.Ginger.Common
 
 
 
-                    JObject jb = new JObject();
+                    JObject jb = [];
                     foreach (var item in value.Item.ActualProperties)
                     {
                         string key = item.Key;
@@ -236,21 +236,22 @@ namespace Amdocs.Ginger.Common
                         }
                     }
 
-                    JArray ja = new JArray();
-                    ja.Add(jb);
+                    JArray ja = [jb];
 
 
                     output = ja;
                     if (UseXMlNames)
                     {
-                        Dictionary<string, object> jsb = new Dictionary<string, object>();
-                        jsb.Add(value.Xml.Name, ja);
+                        Dictionary<string, object> jsb = new Dictionary<string, object>
+                        {
+                            { value.Xml.Name, ja }
+                        };
                         output = jsb;
                     }
                     break;
 
                 case JsonObjectType.String:
-                    if (value.Example == null && value.IsEnumeration && value.Enumeration?.Count  >0)
+                    if (value.Example == null && value.IsEnumeration && value.Enumeration?.Count > 0)
                     {
                         output = new JValue(value.Enumeration.FirstOrDefault());
                         break;
@@ -270,7 +271,7 @@ namespace Amdocs.Ginger.Common
                     output = JValue.CreateNull();
                     break;
                 case JsonObjectType.None:
-                    if(value.ActualSchema.IsEnumeration)
+                    if (value.ActualSchema.IsEnumeration)
                     {
                         if (value.ActualSchema.Enumeration.Count > 0)
                         {

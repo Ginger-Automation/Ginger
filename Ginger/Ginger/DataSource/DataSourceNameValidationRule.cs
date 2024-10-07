@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using System.Linq;
-using GingerCore.DataSource;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace Ginger.DataSource

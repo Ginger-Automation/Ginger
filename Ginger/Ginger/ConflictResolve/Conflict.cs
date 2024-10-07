@@ -22,15 +22,10 @@ using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SourceControl;
 using GingerCore.GeneralLib;
-using NPOI.OpenXmlFormats.Dml.Chart;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
 
 namespace Ginger.ConflictResolve
 {
@@ -61,12 +56,12 @@ namespace Ginger.ConflictResolve
         public string RelativePath { get; }
 
         private bool _isSelectedForResolution;
-        public bool IsSelectedForResolution 
+        public bool IsSelectedForResolution
         {
-            get => _isSelectedForResolution; 
+            get => _isSelectedForResolution;
             set
             {
-                if(_isSelectedForResolution != value)
+                if (_isSelectedForResolution != value)
                 {
                     _isSelectedForResolution = value;
                     OnPropertyChanged(nameof(IsSelectedForResolution));
@@ -75,12 +70,12 @@ namespace Ginger.ConflictResolve
         }
 
         private ResolutionType _resolution;
-        public ResolutionType Resolution 
+        public ResolutionType Resolution
         {
             get => _resolution;
             set
             {
-                if(_resolution != value)
+                if (_resolution != value)
                 {
                     _resolution = value;
                     CanResolve = CalculateCanResolve();
@@ -149,7 +144,7 @@ namespace Ginger.ConflictResolve
             _comparison = SourceControlIntegration.CompareConflictedItems(_localItem, _remoteItem);
             _comparison.PropertyChanged += (_, args) =>
             {
-                if(string.Equals(args.PropertyName, nameof(Comparison.ChildComparisons)))
+                if (string.Equals(args.PropertyName, nameof(Comparison.ChildComparisons)))
                 {
                     DiscardMergedItem();
                 }
@@ -188,7 +183,7 @@ namespace Ginger.ConflictResolve
         public bool TryCreateAndSetMergedItemFromComparison(out RepositoryItemBase? mergedItem)
         {
             int unselectedComparisonCount = Comparison.UnselectedComparisonCount();
-            if(unselectedComparisonCount > 0)
+            if (unselectedComparisonCount > 0)
             {
                 mergedItem = null;
                 return false;

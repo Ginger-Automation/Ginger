@@ -242,7 +242,7 @@ namespace GingerCoreNET.RunLib
         {
             //TODO: get return code - based on it set status if running OK
             NewPayLoad PL = new NewPayLoad("StartDriver");    //!!!! Rename to StartService + use const
-            List<NewPayLoad> DriverConfigs = new List<NewPayLoad>();
+            List<NewPayLoad> DriverConfigs = [];
 
             if (driverConfiguration != null)
             {
@@ -294,8 +294,10 @@ namespace GingerCoreNET.RunLib
         public void AttachDisplay()
         {
             //TODO: get return code - based on it set status if running OK
-            NewPayLoad PL = new NewPayLoad(nameof(IDriverDisplay.AttachDisplay));
-            PL.PaylodType = NewPayLoad.ePaylodType.DriverRequest;
+            NewPayLoad PL = new NewPayLoad(nameof(IDriverDisplay.AttachDisplay))
+            {
+                PaylodType = NewPayLoad.ePaylodType.DriverRequest
+            };
 
             //tODO
             string host = SocketHelper.GetDisplayHost();

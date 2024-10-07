@@ -45,7 +45,7 @@ namespace Ginger.DataSource
 
         public ExportToExcelConfig mExcelConfig = new ExportToExcelConfig();
 
-        public ObservableList<ActDSConditon> mWhereConditionList = new ObservableList<ActDSConditon>();
+        public ObservableList<ActDSConditon> mWhereConditionList = [];
 
         private DataTable mDataTable = new DataTable();
         private ActDSTableElement mActDSTableElement = null;
@@ -82,7 +82,7 @@ namespace Ginger.DataSource
 
             if (mWhereConditionList == null)
             {
-                mWhereConditionList = new ObservableList<ActDSConditon>();
+                mWhereConditionList = [];
             }
 
             xGrdExportCondition.DataSourceList = mWhereConditionList;
@@ -225,7 +225,7 @@ namespace Ginger.DataSource
         private void InitColumnListGrid(DataColumnCollection columns)
         {
             SetTableColumnListGridView();
-            mColumnList = new ObservableList<ColumnCheckListItem>();
+            mColumnList = [];
 
 
             foreach (DataColumn column in columns)
@@ -284,11 +284,14 @@ namespace Ginger.DataSource
             xColumnListGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Columns", new RoutedEventHandler(CheckUnCheckTableColumn));
 
             //Set the Data Grid columns            
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ColumnCheckListItem.IsSelected), Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ColumnCheckListItem.ColumnText), Header = "Table Column", WidthWeight = 100, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ColumnCheckListItem.IsSelected), Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay },
+                new GridColView() { Field = nameof(ColumnCheckListItem.ColumnText), Header = "Table Column", WidthWeight = 100, ReadOnly = true },
+            ]
+            };
 
             xColumnListGrid.SetAllColumnsDefaultView(view);
             xColumnListGrid.InitViewItems();
@@ -344,11 +347,12 @@ namespace Ginger.DataSource
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button okBtn = new Button();
-            okBtn.Content = "OK";
+            Button okBtn = new Button
+            {
+                Content = "OK"
+            };
             okBtn.Click += new RoutedEventHandler(OKButton_Click);
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(okBtn);
+            ObservableList<Button> winButtons = [okBtn];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, true, "Cancel");
         }
@@ -364,14 +368,17 @@ namespace Ginger.DataSource
             List<ComboEnumItem> lstCond = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eCondition));
             List<ComboEnumItem> lstOper = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eOperator));
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = ActDSConditon.Fields.wCondition, Header = "And/Or", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActDSConditon.Fields.PossibleCondValues, ActDSConditon.Fields.wCondition) });
-            view.GridColsView.Add(new GridColView() { Field = ActDSConditon.Fields.wTableColumn, Header = "Column", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActDSConditon.Fields.PossibleColumnValues, ActDSConditon.Fields.wTableColumn) });
-            view.GridColsView.Add(new GridColView() { Field = ActDSConditon.Fields.wOperator, Header = "Operator", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = lstOper });
-            view.GridColsView.Add(new GridColView() { Field = ActDSConditon.Fields.wValue, Header = "Value", WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.WhereGrid.Resources["ValueExpressionButton"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = ActDSConditon.Fields.wCondition, Header = "And/Or", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActDSConditon.Fields.PossibleCondValues, ActDSConditon.Fields.wCondition) },
+                new GridColView() { Field = ActDSConditon.Fields.wTableColumn, Header = "Column", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActDSConditon.Fields.PossibleColumnValues, ActDSConditon.Fields.wTableColumn) },
+                new GridColView() { Field = ActDSConditon.Fields.wOperator, Header = "Operator", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = lstOper },
+                new GridColView() { Field = ActDSConditon.Fields.wValue, Header = "Value", WidthWeight = 30 },
+                new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.WhereGrid.Resources["ValueExpressionButton"] },
+            ]
+            };
 
             xGrdExportCondition.SetAllColumnsDefaultView(view);
             xGrdExportCondition.InitViewItems();
@@ -464,7 +471,7 @@ namespace Ginger.DataSource
         private void AddWhereCondition(object sender, RoutedEventArgs e)
         {
             ActDSConditon.eCondition defaultCondition = ActDSConditon.eCondition.EMPTY;
-            ObservableList<string> Condition = new ObservableList<string>();
+            ObservableList<string> Condition = [];
             if (mWhereConditionList.Count > 0)
             {
                 foreach (ActDSConditon.eCondition item in Enum.GetValues(typeof(ActDSConditon.eCondition)))
@@ -477,7 +484,7 @@ namespace Ginger.DataSource
 
                 defaultCondition = ActDSConditon.eCondition.AND;
             }
-            List<string> cols = new List<string>();
+            List<string> cols = [];
             var columns = mDataTable.Columns;
             foreach (var item in columns)
             {
@@ -504,7 +511,7 @@ namespace Ginger.DataSource
         {
             if (mWhereConditionList.Count > 0)
             {
-                mWhereConditionList[0].PossibleCondValues = new ObservableList<string>();
+                mWhereConditionList[0].PossibleCondValues = [];
                 mWhereConditionList[0].wCondition = ActDSConditon.eCondition.EMPTY;
             }
             xGrdExportCondition.DataSourceList = mWhereConditionList;

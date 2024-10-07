@@ -89,10 +89,10 @@ namespace GingerCore.Activities
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActivityIdentifiers> ActivitiesIdentifiers { get; set; } = new ObservableList<ActivityIdentifiers>();
+        public ObservableList<ActivityIdentifiers> ActivitiesIdentifiers { get; set; } = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = [];
 
         [IsSerializedForLocalRepository]
         public string TestSuiteTitle { get; set; }
@@ -131,9 +131,11 @@ namespace GingerCore.Activities
             {
                 return;
             }
-            ActivityIdentifiers actIdents = new ActivityIdentifiers();
-            actIdents.IdentifiedActivity = activity;
-            actIdents.AddDynamicly = activity.AddDynamicly;
+            ActivityIdentifiers actIdents = new ActivityIdentifiers
+            {
+                IdentifiedActivity = activity,
+                AddDynamicly = activity.AddDynamicly
+            };
             activity.ActivitiesGroupID = this.Name;
 
             if (insertIndx >= 0)
@@ -181,7 +183,7 @@ namespace GingerCore.Activities
             {
                 foreach (ActivityIdentifiers actIdent in ActivitiesIdentifiers)
                 {
-                    ((ActivityIdentifiers)actIdent).RefreshActivityIdentifiers();
+                    actIdent.RefreshActivityIdentifiers();
                 }
                 List<ActivityIdentifiers> automatedActsInGroup = ActivitiesIdentifiers.Where(x => x.ActivityAutomationStatus ==
                                                                             eActivityAutomationStatus.Automated).ToList();
@@ -192,7 +194,7 @@ namespace GingerCore.Activities
                 }
                 else
                 {
-                    automatedActsPrecanteg = ((double)automatedActsInGroup.Count / (double)ActivitiesIdentifiers.Count);
+                    automatedActsPrecanteg = (automatedActsInGroup.Count / (double)ActivitiesIdentifiers.Count);
                     automatedActsPrecanteg = Math.Floor(automatedActsPrecanteg * 100);
                 }
 
@@ -247,7 +249,7 @@ namespace GingerCore.Activities
                 {
                     int insertIndex = currentBF.Activities.IndexOf(currentBF.Activities.FirstOrDefault(a => a.Guid == activitiesGroupInstance.ActivitiesIdentifiers[0].ActivityGuid));
 
-                    List<Activity> existingActivities = new List<Activity>();
+                    List<Activity> existingActivities = [];
 
                     int exActCount = activitiesGroupInstance.ActivitiesIdentifiers.Count;
                     for (int i = exActCount - 1; i >= 0; i--)
@@ -412,11 +414,11 @@ namespace GingerCore.Activities
         {
             get
             {
-                return ExecutionLogFolder == null || ExecutionLogFolder == string.Empty ? false : true;
+                return ExecutionLogFolder != null && ExecutionLogFolder != string.Empty;
             }
         }
 
-        public Dictionary<Guid, uint> ExecutedActivities { get; set; } = new Dictionary<Guid, uint>();
+        public Dictionary<Guid, uint> ExecutedActivities { get; set; } = [];
 
         public string TempReportFolder { get; set; }
 

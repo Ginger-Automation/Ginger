@@ -66,10 +66,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
             if (mRecording)
             {
-                ActConsoleCommand ACC = new ActConsoleCommand();
-                ACC.Description = "Command: " + CommandTextBox.Text;
+                ActConsoleCommand ACC = new ActConsoleCommand
+                {
+                    Description = "Command: " + CommandTextBox.Text,
 
-                ACC.LocateBy = eLocateBy.NA;
+                    LocateBy = eLocateBy.NA
+                };
                 ACC.AddOrUpdateInputParamValue("Free Command", CommandTextBox.Text);
                 ACC.ConsoleCommand = ActConsoleCommand.eConsoleCommand.FreeCommand;
                 mBusinessFlow.AddAct(ACC);
@@ -106,8 +108,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         public void ConsoleWriteText(string txt, bool applyFormat = false)
         {
             mConsoleBuffer.Append(txt + Environment.NewLine);
-            Paragraph p = new Paragraph();
-            p.LineHeight = 10;
+            Paragraph p = new Paragraph
+            {
+                LineHeight = 10
+            };
             if (applyFormat == true)
             {
                 ApplyStyleToText(txt, ref p);
@@ -247,8 +251,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 {
                     if (splitLine.IndexOf("m") != -1)
                     {
-                        string format = splitLine.Substring(0, splitLine.IndexOf('m'));
-                        string text = splitLine.Substring(splitLine.IndexOf('m') + 1);
+                        string format = splitLine[..splitLine.IndexOf('m')];
+                        string text = splitLine[(splitLine.IndexOf('m') + 1)..];
                         if (ApplyASCIICodeFormat(text, format, ref p) == false)
                         {
                             p.Inlines.Add(new Bold(new Run(splitLine)));

@@ -113,7 +113,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eTextBoxAction)GetOrCreateInputParam<eTextBoxAction>(nameof(TextBoxAction), eTextBoxAction.SetValueFast);
+                return GetOrCreateInputParam<eTextBoxAction>(nameof(TextBoxAction), eTextBoxAction.SetValueFast);
             }
             set
             {
@@ -157,7 +157,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform is ePlatformType.Web or ePlatformType.NA or ePlatformType.Mobile)
             {
                 return true;
             }
@@ -177,30 +177,16 @@ namespace GingerCore.Actions
             if (currentType == typeof(ActUIElement))
             {
                 // check special cases, where neame should be changed. Than at default case - all names that have no change
-                switch (this.TextBoxAction)
+                newAct.ElementAction = this.TextBoxAction switch
                 {
-                    case eTextBoxAction.SetValueFast:
-                        newAct.ElementAction = ActUIElement.eElementAction.SetValue;
-                        break;
-                    case eTextBoxAction.SetValue:
-                        newAct.ElementAction = ActUIElement.eElementAction.SetText;
-                        break;
-                    case eTextBoxAction.Clear:
-                        newAct.ElementAction = ActUIElement.eElementAction.ClearValue;
-                        break;
-                    case eTextBoxAction.IsPrepopulated:
-                        newAct.ElementAction = ActUIElement.eElementAction.IsValuePopulated;
-                        break;
-                    case eTextBoxAction.IsDisplayed:
-                        newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
-                        break;
-                    case eTextBoxAction.GetInputLength:
-                        newAct.ElementAction = ActUIElement.eElementAction.GetTextLength;
-                        break;
-                    default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.TextBoxAction.ToString());
-                        break;
-                }
+                    eTextBoxAction.SetValueFast => ActUIElement.eElementAction.SetValue,
+                    eTextBoxAction.SetValue => ActUIElement.eElementAction.SetText,
+                    eTextBoxAction.Clear => ActUIElement.eElementAction.ClearValue,
+                    eTextBoxAction.IsPrepopulated => ActUIElement.eElementAction.IsValuePopulated,
+                    eTextBoxAction.IsDisplayed => ActUIElement.eElementAction.IsVisible,
+                    eTextBoxAction.GetInputLength => ActUIElement.eElementAction.GetTextLength,
+                    _ => (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.TextBoxAction.ToString()),
+                };
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);

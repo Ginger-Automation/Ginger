@@ -101,7 +101,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             get
             {
-                if (PageViewMode == General.eRIPageViewMode.Add || PageViewMode == General.eRIPageViewMode.AddFromModel || PageViewMode == General.eRIPageViewMode.AddFromShardRepository)
+                if (PageViewMode is General.eRIPageViewMode.Add or General.eRIPageViewMode.AddFromModel or General.eRIPageViewMode.AddFromShardRepository)
                 {
                     return false;
                 }
@@ -162,18 +162,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemNameExtentionField()
         {
-            switch (PageViewMode)
+            return PageViewMode switch
             {
-                case General.eRIPageViewMode.Automation:
-                case General.eRIPageViewMode.ViewAndExecute:
-                    return nameof(Act.ElapsedSecs);
-
-                case General.eRIPageViewMode.AddFromModel: //Add from POM
-                    return nameof(ElementInfo.ElementTypeEnum);
-
-                default:
-                    return null;
-            }
+                General.eRIPageViewMode.Automation or General.eRIPageViewMode.ViewAndExecute => nameof(Act.ElapsedSecs),
+                //Add from POM
+                General.eRIPageViewMode.AddFromModel => nameof(ElementInfo.ElementTypeEnum),
+                _ => null,
+            };
         }
 
         public string GetItemTagsField()
@@ -183,19 +178,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemDescriptionField()
         {
-            switch (PageViewMode)
+            return PageViewMode switch
             {
-                case General.eRIPageViewMode.Automation:
-                case General.eRIPageViewMode.AddFromShardRepository:
-                case General.eRIPageViewMode.AddFromModel: //Add from POM
-                    return nameof(Act.ActionType);
-
-                case General.eRIPageViewMode.Add: //Actions Library
-                    return nameof(Act.ActionUserDescription);
-
-                default:
-                    return nameof(Act.ActionType);
-            }
+                General.eRIPageViewMode.Automation or General.eRIPageViewMode.AddFromShardRepository or General.eRIPageViewMode.AddFromModel => nameof(Act.ActionType),
+                //Actions Library
+                General.eRIPageViewMode.Add => nameof(Act.ActionUserDescription),
+                _ => nameof(Act.ActionType),
+            };
         }
 
         public string GetItemErrorField()
@@ -205,7 +194,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemExecutionStatusField()
         {
-            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.ViewAndExecute)
+            if (PageViewMode is General.eRIPageViewMode.Automation or General.eRIPageViewMode.ViewAndExecute)
             {
                 return nameof(Act.Status);
             }
@@ -247,36 +236,44 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemOperation> GetListOperations()
         {
-            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+            List<ListItemOperation> operationsList = [];
 
-            ListItemOperation deleteSelected = new ListItemOperation();
-            deleteSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            deleteSelected.AutomationID = "deleteSelected";
-            deleteSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            deleteSelected.ToolTip = "Delete Selected Actions (Del)";
-            deleteSelected.OperationHandler = DeleteSelectedHandler;
+            ListItemOperation deleteSelected = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "deleteSelected",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete,
+                ToolTip = "Delete Selected Actions (Del)",
+                OperationHandler = DeleteSelectedHandler
+            };
             operationsList.Add(deleteSelected);
 
-            ListItemOperation addSelected = new ListItemOperation();
-            addSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Add };
-            addSelected.AutomationID = "addSelected";
-            addSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
-            addSelected.ToolTip = "Add Selected Actions";
-            addSelected.OperationHandler = AddActionListView;
+            ListItemOperation addSelected = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Add],
+                AutomationID = "addSelected",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
+                ToolTip = "Add Selected Actions",
+                OperationHandler = AddActionListView
+            };
             operationsList.Add(addSelected);
 
-            ListItemOperation addToFlow = new ListItemOperation();
-            addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
-            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
-            addToFlow.ToolTip = "Add to Flow";
-            addToFlow.OperationHandler = AddFromRepository;
+            ListItemOperation addToFlow = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.AddFromShardRepository],
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
+                ToolTip = "Add to Flow",
+                OperationHandler = AddFromRepository
+            };
             operationsList.Add(addToFlow);
 
-            ListItemOperation editItem = new ListItemOperation();
-            editItem.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
-            editItem.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
-            editItem.ToolTip = "Edit Item";
-            editItem.OperationHandler = EditAct;
+            ListItemOperation editItem = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.AddFromShardRepository],
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit,
+                ToolTip = "Edit Item",
+                OperationHandler = EditAct
+            };
             operationsList.Add(editItem);
 
             return operationsList;
@@ -284,7 +281,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void AddActionListView(object sender, RoutedEventArgs e)
         {
-            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
+            List<RepositoryItemBase> list = [];
             List<object> SelectedItemsList = mListView.List.SelectedItems.Cast<object>().ToList();
             foreach (Act act in SelectedItemsList)
             {
@@ -330,95 +327,115 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemOperation> GetListExtraOperations()
         {
-            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+            List<ListItemOperation> extraOperationsList = [];
 
-            ListItemOperation actionVarsDep = new ListItemOperation();
-            actionVarsDep.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            actionVarsDep.AutomationID = "actionVarsDep";
-            actionVarsDep.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            actionVarsDep.Header = "Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies";
-            actionVarsDep.ToolTip = "Set Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies";
-            actionVarsDep.OperationHandler = ActionsVarsHandler;
+            ListItemOperation actionVarsDep = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "actionVarsDep",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns,
+                Header = "Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies",
+                ToolTip = "Set Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies",
+                OperationHandler = ActionsVarsHandler
+            };
             extraOperationsList.Add(actionVarsDep);
 
-            ListItemOperation activeUnactiveAllActions = new ListItemOperation();
-            activeUnactiveAllActions.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            activeUnactiveAllActions.AutomationID = "activeUnactiveAllActions";
-            activeUnactiveAllActions.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
-            activeUnactiveAllActions.Header = "Activate/Deactivate all Actions";
-            activeUnactiveAllActions.ToolTip = "Activate/Deactivate all Actions";
-            activeUnactiveAllActions.OperationHandler = ActiveUnactiveAllActionsHandler;
+            ListItemOperation activeUnactiveAllActions = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "activeUnactiveAllActions",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox,
+                Header = "Activate/Deactivate all Actions",
+                ToolTip = "Activate/Deactivate all Actions",
+                OperationHandler = ActiveUnactiveAllActionsHandler
+            };
             extraOperationsList.Add(activeUnactiveAllActions);
 
-            ListItemOperation takeUntakeSS = new ListItemOperation();
-            takeUntakeSS.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            takeUntakeSS.AutomationID = "takeUntakeSS";
-            takeUntakeSS.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image;
-            takeUntakeSS.Header = "Take/Untake Screen Shots";
-            takeUntakeSS.ToolTip = "Set Take/Untake Screen Shots to all Actions";
-            takeUntakeSS.OperationHandler = TakeUntakeSSHandler;
+            ListItemOperation takeUntakeSS = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "takeUntakeSS",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image,
+                Header = "Take/Untake Screen Shots",
+                ToolTip = "Set Take/Untake Screen Shots to all Actions",
+                OperationHandler = TakeUntakeSSHandler
+            };
             extraOperationsList.Add(takeUntakeSS);
 
-            ListItemOperation copyAllList = new ListItemOperation();
-            copyAllList.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            copyAllList.AutomationID = "copyAllList";
-            copyAllList.Group = "Clipboard";
-            copyAllList.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
-            copyAllList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
-            copyAllList.Header = "Copy All List Items";
-            copyAllList.OperationHandler = CopyAllListHandler;
+            ListItemOperation copyAllList = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "copyAllList",
+                Group = "Clipboard",
+                GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard,
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy,
+                Header = "Copy All List Items",
+                OperationHandler = CopyAllListHandler
+            };
             extraOperationsList.Add(copyAllList);
 
-            ListItemOperation cutAllList = new ListItemOperation();
-            cutAllList.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            cutAllList.AutomationID = "cutAllList";
-            cutAllList.Group = "Clipboard";
-            cutAllList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
-            cutAllList.Header = "Cut All List Items";
-            cutAllList.OperationHandler = CutAllListHandler;
+            ListItemOperation cutAllList = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "cutAllList",
+                Group = "Clipboard",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut,
+                Header = "Cut All List Items",
+                OperationHandler = CutAllListHandler
+            };
             extraOperationsList.Add(cutAllList);
 
-            ListItemOperation copySelected = new ListItemOperation();
-            copySelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            copySelected.AutomationID = "copySelected";
-            copySelected.Group = "Clipboard";
-            copySelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
-            copySelected.Header = "Copy Selected Items (Ctrl+C)";
-            copySelected.OperationHandler = CopySelectedHandler;
+            ListItemOperation copySelected = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "copySelected",
+                Group = "Clipboard",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy,
+                Header = "Copy Selected Items (Ctrl+C)",
+                OperationHandler = CopySelectedHandler
+            };
             extraOperationsList.Add(copySelected);
 
-            ListItemOperation cutSelected = new ListItemOperation();
-            cutSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            cutSelected.AutomationID = "cutSelected";
-            cutSelected.Group = "Clipboard";
-            cutSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
-            cutSelected.Header = "Cut Selected Items (Ctrl+X)";
-            cutSelected.OperationHandler = CutSelectedHandler;
+            ListItemOperation cutSelected = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "cutSelected",
+                Group = "Clipboard",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut,
+                Header = "Cut Selected Items (Ctrl+X)",
+                OperationHandler = CutSelectedHandler
+            };
             extraOperationsList.Add(cutSelected);
 
-            ListItemOperation pasteInList = new ListItemOperation();
-            pasteInList.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            pasteInList.AutomationID = "pasteInList";
-            pasteInList.Group = "Clipboard";
-            pasteInList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste;
-            pasteInList.Header = "Paste (Ctrl+V)";
-            pasteInList.OperationHandler = PasteInListHandler;
+            ListItemOperation pasteInList = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "pasteInList",
+                Group = "Clipboard",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste,
+                Header = "Paste (Ctrl+V)",
+                OperationHandler = PasteInListHandler
+            };
             extraOperationsList.Add(pasteInList);
 
-            ListItemOperation deleteAll = new ListItemOperation();
-            deleteAll.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            deleteAll.AutomationID = "deleteAll";
-            deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            deleteAll.Header = "Delete All Actions";
-            deleteAll.OperationHandler = DeleteAllHandler;
+            ListItemOperation deleteAll = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "deleteAll",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete,
+                Header = "Delete All Actions",
+                OperationHandler = DeleteAllHandler
+            };
             extraOperationsList.Add(deleteAll);
 
-            ListItemOperation addSelectedToSR = new ListItemOperation();
-            addSelectedToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            addSelectedToSR.AutomationID = "addSelectedToSR";
-            addSelectedToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-            addSelectedToSR.Header = "Add Selected to Shared Repository";
-            addSelectedToSR.OperationHandler = AddSelectedToSRHandler;
+            ListItemOperation addSelectedToSR = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "addSelectedToSR",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem,
+                Header = "Add Selected to Shared Repository",
+                OperationHandler = AddSelectedToSRHandler
+            };
             extraOperationsList.Add(addSelectedToSR);
 
             return extraOperationsList;
@@ -429,84 +446,100 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (PageViewMode != General.eRIPageViewMode.Add)
             {
                 SetItem(item);
-                List<ListItemNotification> notificationsList = new List<ListItemNotification>();
+                List<ListItemNotification> notificationsList = [];
 
-                ListItemNotification simulationInd = new ListItemNotification();
-                simulationInd.AutomationID = "simulationInd";
-                simulationInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Simulate;
-                simulationInd.ToolTip = "Action support Simulation mode";
-                simulationInd.ImageSize = 14;
-                simulationInd.BindingObject = mAction;
-                simulationInd.BindingFieldName = nameof(Act.SupportSimulation);
-                simulationInd.BindingConverter = new BoolVisibilityConverter();
+                ListItemNotification simulationInd = new ListItemNotification
+                {
+                    AutomationID = "simulationInd",
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.Simulate,
+                    ToolTip = "Action support Simulation mode",
+                    ImageSize = 14,
+                    BindingObject = mAction,
+                    BindingFieldName = nameof(Act.SupportSimulation),
+                    BindingConverter = new BoolVisibilityConverter()
+                };
                 notificationsList.Add(simulationInd);
 
-                ListItemNotification flowControlInd = new ListItemNotification();
-                flowControlInd.AutomationID = "flowControlInd";
-                flowControlInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-                flowControlInd.ToolTip = "Action contains Flow Control conditions";
-                flowControlInd.ImageSize = 14;
-                flowControlInd.BindingObject = mAction;
-                flowControlInd.BindingFieldName = nameof(Act.FlowControlsInfo);
-                flowControlInd.BindingConverter = new StringVisibilityConverter();
+                ListItemNotification flowControlInd = new ListItemNotification
+                {
+                    AutomationID = "flowControlInd",
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns,
+                    ToolTip = "Action contains Flow Control conditions",
+                    ImageSize = 14,
+                    BindingObject = mAction,
+                    BindingFieldName = nameof(Act.FlowControlsInfo),
+                    BindingConverter = new StringVisibilityConverter()
+                };
                 notificationsList.Add(flowControlInd);
 
-                ListItemNotification actionsVarsDepInd = new ListItemNotification();
-                actionsVarsDepInd.AutomationID = "actionsVarsDepInd";
-                actionsVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-                actionsVarsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables));
-                actionsVarsDepInd.ImageSize = 14;
-                actionsVarsDepInd.BindingObject = mContext.Activity;
-                actionsVarsDepInd.BindingFieldName = nameof(Activity.EnableActionsVariablesDependenciesControl);
-                actionsVarsDepInd.BindingConverter = new BoolVisibilityConverter();
+                ListItemNotification actionsVarsDepInd = new ListItemNotification
+                {
+                    AutomationID = "actionsVarsDepInd",
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns,
+                    ToolTip = string.Format("{0} Actions-{1} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables)),
+                    ImageSize = 14,
+                    BindingObject = mContext.Activity,
+                    BindingFieldName = nameof(Activity.EnableActionsVariablesDependenciesControl),
+                    BindingConverter = new BoolVisibilityConverter()
+                };
                 notificationsList.Add(actionsVarsDepInd);
 
-                ListItemNotification outputValuesInd = new ListItemNotification();
-                outputValuesInd.AutomationID = "outputValuesInd";
-                outputValuesInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Output;
-                outputValuesInd.ToolTip = "Action contains Output Values";
-                outputValuesInd.BindingObject = mAction;
-                outputValuesInd.BindingFieldName = nameof(Act.ReturnValuesCount);
-                outputValuesInd.BindingConverter = new OutPutValuesCountConverter();
+                ListItemNotification outputValuesInd = new ListItemNotification
+                {
+                    AutomationID = "outputValuesInd",
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.Output,
+                    ToolTip = "Action contains Output Values",
+                    BindingObject = mAction,
+                    BindingFieldName = nameof(Act.ReturnValuesCount),
+                    BindingConverter = new OutPutValuesCountConverter()
+                };
                 notificationsList.Add(outputValuesInd);
 
-                ListItemNotification waitInd = new ListItemNotification();
-                waitInd.AutomationID = "waitInd";
-                waitInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Clock;
-                waitInd.ToolTip = "Action contains Wait time before execution starts";
-                waitInd.BindingObject = mAction;
-                waitInd.BindingFieldName = nameof(Act.WaitVE);
-                waitInd.BindingConverter = new WaitVisibilityConverter();
+                ListItemNotification waitInd = new ListItemNotification
+                {
+                    AutomationID = "waitInd",
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.Clock,
+                    ToolTip = "Action contains Wait time before execution starts",
+                    BindingObject = mAction,
+                    BindingFieldName = nameof(Act.WaitVE),
+                    BindingConverter = new WaitVisibilityConverter()
+                };
                 notificationsList.Add(waitInd);
 
-                ListItemNotification retryInd = new ListItemNotification();
-                retryInd.AutomationID = "retryInd";
-                retryInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Retry;
-                retryInd.ToolTip = "Action configured to Rerun in case of failure";
-                retryInd.BindingObject = mAction;
-                retryInd.BindingFieldName = nameof(Act.EnableRetryMechanism);
-                retryInd.BindingConverter = new BoolVisibilityConverter();
+                ListItemNotification retryInd = new ListItemNotification
+                {
+                    AutomationID = "retryInd",
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.Retry,
+                    ToolTip = "Action configured to Rerun in case of failure",
+                    BindingObject = mAction,
+                    BindingFieldName = nameof(Act.EnableRetryMechanism),
+                    BindingConverter = new BoolVisibilityConverter()
+                };
                 notificationsList.Add(retryInd);
 
-                ListItemNotification screenshotInd = new ListItemNotification();
-                screenshotInd.AutomationID = "screenshotInd";
-                screenshotInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image;
-                screenshotInd.ToolTip = "Action configured to take Screenshot";
-                screenshotInd.BindingObject = mAction;
-                screenshotInd.BindingFieldName = nameof(Act.TakeScreenShot);
-                screenshotInd.BindingConverter = new BoolVisibilityConverter();
+                ListItemNotification screenshotInd = new ListItemNotification
+                {
+                    AutomationID = "screenshotInd",
+                    ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image,
+                    ToolTip = "Action configured to take Screenshot",
+                    BindingObject = mAction,
+                    BindingFieldName = nameof(Act.TakeScreenShot),
+                    BindingConverter = new BoolVisibilityConverter()
+                };
                 notificationsList.Add(screenshotInd);
 
                 if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository)
                 {
-                    ListItemNotification sharedRepoInd = new ListItemNotification();
-                    sharedRepoInd.AutomationID = "sharedRepoInd";
-                    sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-                    sharedRepoInd.ToolTip = "Action source is from Shared Repository";
-                    sharedRepoInd.ImageForeground = Brushes.Orange;
-                    sharedRepoInd.BindingObject = mAction;
-                    sharedRepoInd.BindingFieldName = nameof(Act.IsSharedRepositoryInstance);
-                    sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
+                    ListItemNotification sharedRepoInd = new ListItemNotification
+                    {
+                        AutomationID = "sharedRepoInd",
+                        ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem,
+                        ToolTip = "Action source is from Shared Repository",
+                        ImageForeground = Brushes.Orange,
+                        BindingObject = mAction,
+                        BindingFieldName = nameof(Act.IsSharedRepositoryInstance),
+                        BindingConverter = new BoolVisibilityConverter()
+                    };
                     notificationsList.Add(sharedRepoInd);
                 }
 
@@ -521,57 +554,69 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemOperation> GetItemOperationsList(object item)
         {
             SetItem(item);
-            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+            List<ListItemOperation> operationsList = [];
 
-            ListItemOperation edit = new ListItemOperation();
-            edit.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            edit.AutomationID = "edit";
-            edit.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
-            edit.ToolTip = "Edit Action";
-            edit.OperationHandler = EditHandler;
+            ListItemOperation edit = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "edit",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit,
+                ToolTip = "Edit Action",
+                OperationHandler = EditHandler
+            };
             operationsList.Add(edit);
 
-            ListItemOperation moveUp = new ListItemOperation();
-            moveUp.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            moveUp.AutomationID = "moveUp";
-            moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
-            moveUp.ToolTip = "Move Up";
-            moveUp.OperationHandler = MoveUpHandler;
+            ListItemOperation moveUp = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "moveUp",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp,
+                ToolTip = "Move Up",
+                OperationHandler = MoveUpHandler
+            };
             operationsList.Add(moveUp);
 
-            ListItemOperation moveDown = new ListItemOperation();
-            moveDown.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            moveDown.AutomationID = "moveDown";
-            moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
-            moveDown.ToolTip = "Move Down";
-            moveDown.OperationHandler = MoveDownHandler;
+            ListItemOperation moveDown = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "moveDown",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown,
+                ToolTip = "Move Down",
+                OperationHandler = MoveDownHandler
+            };
             operationsList.Add(moveDown);
 
-            ListItemOperation delete = new ListItemOperation();
-            delete.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            delete.AutomationID = "delete";
-            delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            delete.ToolTip = "Delete";
-            delete.OperationHandler = DeleteHandler;
+            ListItemOperation delete = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "delete",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete,
+                ToolTip = "Delete",
+                OperationHandler = DeleteHandler
+            };
             operationsList.Add(delete);
 
-            ListItemOperation active = new ListItemOperation();
-            active.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            active.AutomationID = "active";
-            active.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
-            active.ImageBindingObject = mAction;
-            active.ImageBindingFieldName = nameof(Act.Active);
-            active.ImageBindingConverter = new ActiveImageTypeConverter();
-            active.ToolTip = "Active";
-            active.OperationHandler = ActiveHandler;
+            ListItemOperation active = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "active",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active,
+                ImageBindingObject = mAction,
+                ImageBindingFieldName = nameof(Act.Active),
+                ImageBindingConverter = new ActiveImageTypeConverter(),
+                ToolTip = "Active",
+                OperationHandler = ActiveHandler
+            };
             operationsList.Add(active);
 
-            ListItemOperation viewLinkedInstances = new ListItemOperation();
-            viewLinkedInstances.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
-            viewLinkedInstances.AutomationID = "ViewLinkedInstances";
-            viewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
-            viewLinkedInstances.ToolTip = "View Item Usage";
-            viewLinkedInstances.OperationHandler = ViewRepositoryItemUsage;
+            ListItemOperation viewLinkedInstances = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.AddFromShardRepository],
+                AutomationID = "ViewLinkedInstances",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink,
+                ToolTip = "View Item Usage",
+                OperationHandler = ViewRepositoryItemUsage
+            };
             operationsList.Add(viewLinkedInstances);
 
             return operationsList;
@@ -580,76 +625,90 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemOperation> GetItemExtraOperationsList(object item)
         {
             SetItem(item);
-            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+            List<ListItemOperation> extraOperationsList = [];
 
-            ListItemOperation breakPoint = new ListItemOperation();
-            breakPoint.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute };
-            breakPoint.AutomationID = "breakPoint";
-            breakPoint.Header = "Break Point";
-            breakPoint.ToolTip = "Stop execution on that Action";
-            breakPoint.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
-            breakPoint.ImageBindingObject = mAction;
-            breakPoint.ImageBindingFieldName = nameof(Act.BreakPoint);
-            breakPoint.ImageBindingConverter = new ActiveImageTypeConverter();
-            breakPoint.OperationHandler = BreakPointHandler;
+            ListItemOperation breakPoint = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute],
+                AutomationID = "breakPoint",
+                Header = "Break Point",
+                ToolTip = "Stop execution on that Action",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active,
+                ImageBindingObject = mAction,
+                ImageBindingFieldName = nameof(Act.BreakPoint),
+                ImageBindingConverter = new ActiveImageTypeConverter(),
+                OperationHandler = BreakPointHandler
+            };
             extraOperationsList.Add(breakPoint);
 
-            ListItemOperation reset = new ListItemOperation();
-            reset.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute };
-            reset.AutomationID = "reset";
-            reset.Group = "Reset Operations";
-            reset.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
-            reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
-            reset.Header = "Reset Action execution details";
-            reset.ToolTip = "Reset Action execution details";
-            reset.OperationHandler = ResetHandler;
+            ListItemOperation reset = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute],
+                AutomationID = "reset",
+                Group = "Reset Operations",
+                GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset,
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset,
+                Header = "Reset Action execution details",
+                ToolTip = "Reset Action execution details",
+                OperationHandler = ResetHandler
+            };
             extraOperationsList.Add(reset);
 
-            ListItemOperation resetRest = new ListItemOperation();
-            resetRest.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute };
-            resetRest.AutomationID = "resetRest";
-            resetRest.Group = "Reset Operations";
-            resetRest.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
-            resetRest.Header = "Reset execution details from this Action";
-            resetRest.ToolTip = "Reset execution details from this Action";
-            resetRest.OperationHandler = ResetResetHandler;
+            ListItemOperation resetRest = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute],
+                AutomationID = "resetRest",
+                Group = "Reset Operations",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset,
+                Header = "Reset execution details from this Action",
+                ToolTip = "Reset execution details from this Action",
+                OperationHandler = ResetResetHandler
+            };
             extraOperationsList.Add(resetRest);
 
-            ListItemOperation copy = new ListItemOperation();
-            copy.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            copy.AutomationID = "copy";
-            copy.Group = "Clipboard";
-            copy.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
-            copy.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
-            copy.Header = "Copy (Ctrl+C)";
-            copy.OperationHandler = CopyHandler;
+            ListItemOperation copy = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "copy",
+                Group = "Clipboard",
+                GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard,
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy,
+                Header = "Copy (Ctrl+C)",
+                OperationHandler = CopyHandler
+            };
             extraOperationsList.Add(copy);
 
-            ListItemOperation cut = new ListItemOperation();
-            cut.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            cut.AutomationID = "cut";
-            cut.Group = "Clipboard";
-            cut.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
-            cut.Header = "Cut (Ctrl+X)";
-            cut.OperationHandler = CutHandler;
+            ListItemOperation cut = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "cut",
+                Group = "Clipboard",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut,
+                Header = "Cut (Ctrl+X)",
+                OperationHandler = CutHandler
+            };
             extraOperationsList.Add(cut);
 
-            ListItemOperation pasterAfterCurrent = new ListItemOperation();
-            pasterAfterCurrent.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            pasterAfterCurrent.AutomationID = "pasterAfterCurrent";
-            pasterAfterCurrent.Group = "Clipboard";
-            pasterAfterCurrent.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste;
-            pasterAfterCurrent.Header = "Paste (Ctrl+V)";
-            pasterAfterCurrent.OperationHandler = PasteAfterCurrentHandler;
+            ListItemOperation pasterAfterCurrent = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "pasterAfterCurrent",
+                Group = "Clipboard",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste,
+                Header = "Paste (Ctrl+V)",
+                OperationHandler = PasteAfterCurrentHandler
+            };
             extraOperationsList.Add(pasterAfterCurrent);
 
-            ListItemOperation addToSR = new ListItemOperation();
-            addToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            addToSR.AutomationID = "addToSR";
-            addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-            addToSR.Header = "Add to Shared Repository";
-            addToSR.ToolTip = "Add to Shared Repository";
-            addToSR.OperationHandler = AddToSRHandler;
+            ListItemOperation addToSR = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone],
+                AutomationID = "addToSR",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem,
+                Header = "Add to Shared Repository",
+                ToolTip = "Add to Shared Repository",
+                OperationHandler = AddToSRHandler
+            };
             extraOperationsList.Add(addToSR);
 
             return extraOperationsList;
@@ -658,22 +717,26 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemOperation> GetItemExecutionOperationsList(object item)
         {
             SetItem(item);
-            List<ListItemOperation> executionOperationsList = new List<ListItemOperation>();
+            List<ListItemOperation> executionOperationsList = [];
 
-            ListItemOperation run = new ListItemOperation();
-            run.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute };
-            run.AutomationID = "run";
-            run.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
-            run.ToolTip = "Run Action";
-            run.OperationHandler = RunHandler;
+            ListItemOperation run = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute],
+                AutomationID = "run",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run,
+                ToolTip = "Run Action",
+                OperationHandler = RunHandler
+            };
             executionOperationsList.Add(run);
 
-            ListItemOperation continueRun = new ListItemOperation();
-            continueRun.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute };
-            continueRun.AutomationID = "continueRun";
-            continueRun.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue;
-            continueRun.ToolTip = "Continue Run from Action";
-            continueRun.OperationHandler = ContinueRunHandler;
+            ListItemOperation continueRun = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute],
+                AutomationID = "continueRun",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue,
+                ToolTip = "Continue Run from Action",
+                OperationHandler = ContinueRunHandler
+            };
             executionOperationsList.Add(continueRun);
 
             return executionOperationsList;
@@ -844,13 +907,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void RunHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn, new Tuple<Activity, Act, bool>(mContext.Activity, (Act)mAction, false));
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn, new Tuple<Activity, Act, bool>(mContext.Activity, mAction, false));
         }
 
         private void ContinueRunHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.ContinueActionRun, new Tuple<Activity, Act>(mContext.Activity, (Act)mAction));
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.ContinueActionRun, new Tuple<Activity, Act>(mContext.Activity, mAction));
         }
 
         private void AddToSRHandler(object sender, RoutedEventArgs e)
@@ -863,7 +926,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
             else
             {
-                mAction.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
+                mAction.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == mContext.Activity.TargetApplication).Platform;
             }
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mAction));
         }
@@ -883,7 +946,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 }
                 else
                 {
-                    mAction.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
+                    mAction.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == mContext.Activity.TargetApplication).Platform;
                 }
             }
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));
@@ -963,9 +1026,9 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public void CutSelected()
         {
-            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
-                PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
-                   PageViewMode == General.eRIPageViewMode.Standalone)
+            if (PageViewMode is General.eRIPageViewMode.Automation or General.eRIPageViewMode.SharedReposiotry or
+                General.eRIPageViewMode.Child or General.eRIPageViewMode.ChildWithSave or
+                   General.eRIPageViewMode.Standalone)
             {
                 CutSelectedHandler(null, null);
             }
@@ -973,9 +1036,9 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public void Paste()
         {
-            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
-                PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
-                   PageViewMode == General.eRIPageViewMode.Standalone)
+            if (PageViewMode is General.eRIPageViewMode.Automation or General.eRIPageViewMode.SharedReposiotry or
+                General.eRIPageViewMode.Child or General.eRIPageViewMode.ChildWithSave or
+                   General.eRIPageViewMode.Standalone)
             {
                 PasteInListHandler(null, null);
             }
@@ -983,9 +1046,9 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public void DeleteSelected()
         {
-            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
-                PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
-                   PageViewMode == General.eRIPageViewMode.Standalone)
+            if (PageViewMode is General.eRIPageViewMode.Automation or General.eRIPageViewMode.SharedReposiotry or
+                General.eRIPageViewMode.Child or General.eRIPageViewMode.ChildWithSave or
+                   General.eRIPageViewMode.Standalone)
             {
                 DeleteSelectedHandler(null, null);
             }

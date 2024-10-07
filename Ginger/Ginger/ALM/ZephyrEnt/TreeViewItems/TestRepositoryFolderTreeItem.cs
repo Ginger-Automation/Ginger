@@ -38,7 +38,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
             entityType = EntityFolderType.Phase;
             if (((JArray)node.TryGetItem("categories")).Count > 0)
             {
-                CurrentChildrens = new List<ITreeViewItem>();
+                CurrentChildrens = [];
             }
         }
         public static bool IsCreateBusinessFlowFolder { get; set; }

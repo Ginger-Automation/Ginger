@@ -21,8 +21,6 @@ using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -30,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 {
     internal sealed class TelemetryCollector : ITelemetryCollector<TelemetryLogRecord>, ITelemetryCollector<TelemetryFeatureRecord>
     {
-        private readonly GrpcChannel _channel ;
+        private readonly GrpcChannel _channel;
         private readonly ILogger? _logger;
 
         internal TelemetryCollector(string address, ILogger? logger = null)

@@ -42,7 +42,7 @@ namespace Ginger.Actions
         public ActScriptEditPage(GingerCore.Actions.ActScript Act)
         {
             InitializeComponent();
-            this.actScript = Act;            
+            this.actScript = Act;
             GingerCore.General.FillComboFromEnumObj(ScriptActComboBox, Act.ScriptCommand);
             GingerCore.General.FillComboFromEnumObj(ScriptInterpreterComboBox, Act.ScriptInterpreterType);
 

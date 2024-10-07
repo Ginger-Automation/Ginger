@@ -56,12 +56,14 @@ namespace Ginger.Drivers.UIA
             object[] Patterns = ((UIAutomationDriverBase)mUIAElementInfo.WindowExplorer).mUIAutomationHelper
                 .GetSupportedPatterns(mUIAElementInfo.ElementObject);
 
-            List<ControlAutomationPatterm> CAPs = new List<ControlAutomationPatterm>();
+            List<ControlAutomationPatterm> CAPs = [];
             foreach (var AP in Patterns)
             {
-                ControlAutomationPatterm CAP = new ControlAutomationPatterm();
-                CAP.Pattern = AP;
-                CAP.Name = ((UIAutomationDriverBase)mUIAElementInfo.WindowExplorer).mUIAutomationHelper.GetPatternName(AP);
+                ControlAutomationPatterm CAP = new ControlAutomationPatterm
+                {
+                    Pattern = AP,
+                    Name = ((UIAutomationDriverBase)mUIAElementInfo.WindowExplorer).mUIAutomationHelper.GetPatternName(AP)
+                };
                 CAPs.Add(CAP);
             }
 
@@ -99,7 +101,7 @@ namespace Ginger.Drivers.UIA
                 return;
             }
 
-            System.Windows.Forms.Cursor.Position = new System.Drawing.Point((int)clickpoint.X, (int)clickpoint.Y);
+            System.Windows.Forms.Cursor.Position = new System.Drawing.Point(clickpoint.X, clickpoint.Y);
 
             mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, new IntPtr());
             mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, new IntPtr());

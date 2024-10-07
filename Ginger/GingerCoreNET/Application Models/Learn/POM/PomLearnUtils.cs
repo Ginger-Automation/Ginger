@@ -24,7 +24,6 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -39,12 +38,12 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
     {
         RepositoryFolder<ApplicationPOMModel> mPomModelsFolder;
         public ApplicationPOMModel POM;
-        public ObservableList<UIElementFilter> AutoMapBasicElementTypesList = new ObservableList<UIElementFilter>();
-        public ObservableList<UIElementFilter> AutoMapAdvanceElementTypesList = new ObservableList<UIElementFilter>();
-        public List<eElementType> SelectedElementTypesList = new List<eElementType>();
-        public ObservableList<ElementLocator> ElementLocatorsSettingsList = new ObservableList<ElementLocator>();
-        List<eLocateBy> mElementLocatorsList = new List<eLocateBy>();
-        public ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
+        public ObservableList<UIElementFilter> AutoMapBasicElementTypesList = [];
+        public ObservableList<UIElementFilter> AutoMapAdvanceElementTypesList = [];
+        public List<eElementType> SelectedElementTypesList = [];
+        public ObservableList<ElementLocator> ElementLocatorsSettingsList = [];
+        List<eLocateBy> mElementLocatorsList = [];
+        public ObservableList<ElementInfo> mElementsList = [];
         public PomSetting pomSetting;
 
         bool mLearnOnlyMappedElements = true;
@@ -151,7 +150,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             else
             {
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
-            }           
+            }
         }
 
         private string BitmapToBase64(Bitmap bImage)
@@ -224,7 +223,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             ClearStopLearning();
             PrepareLearningConfigurations();
             LearnScreenShot();
-            POM.PageURL = ((DriverBase)((AgentOperations)Agent.AgentOperations).Driver).GetURL();
+            POM.PageURL = ((AgentOperations)Agent.AgentOperations).Driver.GetURL();
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
             // appending Specific frame title in POM name
             if (!string.IsNullOrEmpty(SpecificFramePath))
@@ -330,7 +329,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     //set max name length to 60
                     if (name.Length > 60)
                     {
-                        name = name.Substring(0, 60);
+                        name = name[..60];
                     }
 
                     //make sure name is unique                    

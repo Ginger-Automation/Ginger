@@ -90,16 +90,14 @@ namespace Ginger.UserControlsLib.VisualFlow
                     break;
                 case eLinkStyle.DottedArrow:
                     Shape shape = DrawLinkArrow();
-                    DoubleCollection da = new DoubleCollection();
-                    da.Add(5);
-                    da.Add(2);
+                    DoubleCollection da = [5, 2];
                     shape.StrokeDashArray = da;
 
                     this.Content = path;
                     break;
                 case eLinkStyle.DataArrow:
                     Shape shape2 = DrawLinkArrow();
-                    DoubleCollection da2 = new DoubleCollection();
+                    DoubleCollection da2 = [];
                     // shape2.Fill = Brushes.Orange;
                     shape2.Stroke = Brushes.Orange;
                     da2.Add(10);
@@ -148,29 +146,39 @@ namespace Ginger.UserControlsLib.VisualFlow
 
             Point lpoint = new Point(p.X + 6, p.Y + 15);
             Point rpoint = new Point(p.X - 6, p.Y + 15);
-            LineSegment seg1 = new LineSegment();
-            seg1.Point = lpoint;
+            LineSegment seg1 = new LineSegment
+            {
+                Point = lpoint
+            };
             pathFigure.Segments.Add(seg1);
 
-            LineSegment seg2 = new LineSegment();
-            seg2.Point = rpoint;
+            LineSegment seg2 = new LineSegment
+            {
+                Point = rpoint
+            };
             pathFigure.Segments.Add(seg2);
 
-            LineSegment seg3 = new LineSegment();
-            seg3.Point = p;
+            LineSegment seg3 = new LineSegment
+            {
+                Point = p
+            };
             pathFigure.Segments.Add(seg3);
 
             pathGeometry.Figures.Add(pathFigure);
-            RotateTransform transform = new RotateTransform();
-            transform.Angle = theta + 90;
-            transform.CenterX = p.X;
-            transform.CenterY = p.Y;
+            RotateTransform transform = new RotateTransform
+            {
+                Angle = theta + 90,
+                CenterX = p.X,
+                CenterY = p.Y
+            };
             pathGeometry.Transform = transform;
             lineGroup.Children.Add(pathGeometry);
 
-            LineGeometry connectorGeometry = new LineGeometry();
-            connectorGeometry.StartPoint = p1;
-            connectorGeometry.EndPoint = p2;
+            LineGeometry connectorGeometry = new LineGeometry
+            {
+                StartPoint = p1,
+                EndPoint = p2
+            };
             lineGroup.Children.Add(connectorGeometry);
             path.Data = lineGroup;
             path.StrokeThickness = 2;

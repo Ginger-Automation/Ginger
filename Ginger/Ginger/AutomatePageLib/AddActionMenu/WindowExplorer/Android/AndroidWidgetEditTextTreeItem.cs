@@ -34,25 +34,24 @@ namespace Ginger.WindowExplorer.Android
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActUIElement()
-            {
-                Description = "Set Text " + Name,
-                ElementAction = ActUIElement.eElementAction.SetValue
-            });
-
-            list.Add(new ActUIElement()
-            {
-                Description = "Get " + Name + " Text",
-                ElementAction = ActUIElement.eElementAction.GetValue
-            });
-
-            list.Add(new ActUIElement()
-            {
-                Description = "Validate " + Name + " Is Enabled  ",
-                ElementAction = ActUIElement.eElementAction.IsEnabled
-            });
+            ObservableList<Act> list =
+            [
+                new ActUIElement()
+                {
+                    Description = "Set Text " + Name,
+                    ElementAction = ActUIElement.eElementAction.SetValue
+                },
+                new ActUIElement()
+                {
+                    Description = "Get " + Name + " Text",
+                    ElementAction = ActUIElement.eElementAction.GetValue
+                },
+                new ActUIElement()
+                {
+                    Description = "Validate " + Name + " Is Enabled  ",
+                    ElementAction = ActUIElement.eElementAction.IsEnabled
+                },
+            ];
             return list;
         }
     }

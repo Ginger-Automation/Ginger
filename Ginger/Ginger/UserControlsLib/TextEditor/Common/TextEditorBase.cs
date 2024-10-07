@@ -31,7 +31,7 @@ namespace Ginger.UserControlsLib.TextEditor
     {
         // TODO: clean or virtual        
 
-        internal List<string> mExtensions = new List<string>();
+        internal List<string> mExtensions = [];
         public abstract List<string> Extensions { get; }
         public abstract string Descritpion { get; }
         public abstract Image Icon { get; }
