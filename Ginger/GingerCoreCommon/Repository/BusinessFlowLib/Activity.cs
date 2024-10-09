@@ -524,10 +524,8 @@ namespace GingerCore
         {
             get
             {
-                if (mActs == null)
-                {
-                    mActs = [];
-                }
+                mActs ??= [];
+
                 if (mActs.LazyLoad)
                 {
                     mActs.LoadLazyInfo();
@@ -557,10 +555,8 @@ namespace GingerCore
         {
             get
             {
-                if (mVariables == null)
-                {
-                    mVariables = [];
-                }
+                mVariables ??= [];
+
                 if (mVariables.LazyLoad)
                 {
                     mVariables.LoadLazyInfo();
