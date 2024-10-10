@@ -30,9 +30,9 @@ namespace Ginger.Run
                 : new ValidationResult(true, null);
         }
 
-        private bool IsRunnerNameValid(object value)
+        private static bool IsRunnerNameValid(object value)
         {
-            return value == null || string.IsNullOrEmpty(value.ToString()) || string.IsNullOrWhiteSpace(value.ToString());
+            return string.IsNullOrWhiteSpace(value?.ToString());
         }
     }
 }
