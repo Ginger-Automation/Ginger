@@ -57,12 +57,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 args = newArgs;
             }
 
-            await ParseArgs(args);
+            CLIProcessor cLIProcessor = new CLIProcessor();
+            ParserResult<object> parserResult = args.Length != 0 ? cLIProcessor.ParseArgsOnly(args) : null;
+            await cLIProcessor.ProcessResult(parserResult);
+
+        }
+
+        public ParserResult<object> ParseArgsOnly(string[] args)
+        {
+            var parser = new Parser(settings =>
+            {
+                settings.IgnoreUnknownArguments = true;
+            });
+
+            return parser.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args);
+
         }
 
 
 
-        private async Task ParseArgs(string[] args)
+
+        public async Task ProcessResult(ParserResult<object> parserResult)
         {
             // FIXME: failing with exc of obj state
             // Do not show default version
@@ -72,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 settings.IgnoreUnknownArguments = true;
             });
 
-            int result = await parser.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args).MapResult(
+            int result = await parserResult.MapResult(
                     async (RunOptions opts) => await HandleRunOptions(opts),
                     async (GridOptions opts) => await HanldeGridOption(opts),
                     async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),

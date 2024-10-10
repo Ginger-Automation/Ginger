@@ -22,7 +22,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
+using CommandLine;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
 using Ginger.SourceControl;
@@ -240,45 +242,62 @@ namespace Ginger
             }
         }
 
-
+        CLIProcessor cLIProcessor;
 
         // Main entry point to Ginger UI/CLI
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
-
-
-
             bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
             WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
+            ParserResult<object> parserResult = null;
+            cLIProcessor = new CLIProcessor();
             if (e.Args.Length != 0)
             {
+                parserResult = cLIProcessor.ParseArgsOnly(e.Args);
+            }
+            DoOptions doOptions = null;
+            if (parserResult?.Value is DoOptions tempOptions && tempOptions.Operation == DoOptions.DoOperation.open)
+            {
+                doOptions = tempOptions; // Assign to the outer variable
+            }
+
+            if (e.Args.Length != 0 && doOptions == null)
+            {
                 WorkSpace.Instance.RunningInExecutionMode = true;
-                Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
+                Reporter.ReportAllAlsoToConsole = true;  // Needed so all reporting will be added to Console      
             }
             // add additional classes from Ginger and GingerCore
             InitClassTypesDictionary();
-
             WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());
             WorkSpace.Instance.InitTelemetry();
-
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
-
-
-            if (!WorkSpace.Instance.RunningInExecutionMode)
+            if ((!WorkSpace.Instance.RunningInExecutionMode))
             {
                 if (WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
                     GingerLog.StartCustomTraceListeners();
                 }
                 HideConsoleWindow();
-                StartGingerUI();// start regular Ginger UI
+                bool tempAutoLoad = WorkSpace.Instance.UserProfile.AutoLoadLastSolution;
+                if (doOptions != null && tempAutoLoad)
+                {
+                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;
+                }
+                StartGingerUI();
+                if (doOptions != null)
+                {
+                    DoOptionsHanlder.Run(doOptions);
+                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = tempAutoLoad;
+                }
             }
             else
             {
-                RunNewCLI(e.Args);
+                RunNewCLI(parserResult);
             }
         }
+
+
 
 
         [DllImport("kernel32.dll")]
@@ -302,11 +321,10 @@ namespace Ginger
             ShowWindow(handle, SW_SHOW);
         }
 
-        private async void RunNewCLI(string[] args)
+        private async void RunNewCLI(ParserResult<object> parserResult)
         {
-            CLIProcessor cLIProcessor = new CLIProcessor();
-            await cLIProcessor.ExecuteArgs(args);
 
+            await cLIProcessor.ProcessResult(parserResult);
             // do proper close !!!         
             System.Windows.Application.Current.Shutdown(Environment.ExitCode);
         }

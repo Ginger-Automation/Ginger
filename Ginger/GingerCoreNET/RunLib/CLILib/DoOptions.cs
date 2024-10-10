@@ -28,7 +28,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             analyze,
             info,
-            clean
+            clean,
+            open
         }
 
         [Option('o', "operation", Required = true, HelpText = "Select operation to run on solution")]

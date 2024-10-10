@@ -21,13 +21,14 @@ using Amdocs.Ginger.Common;
 using Ginger.AnalyzerLib;
 using GingerCore;
 using System;
+using System.IO;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    class DoOptionsHanlder
+    public class DoOptionsHanlder
     {
-        internal static void Run(DoOptions opts)
+        public static void Run(DoOptions opts)
         {
             switch (opts.Operation)
             {
@@ -39,6 +40,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     break;
                 case DoOptions.DoOperation.info:
                     DoInfo(opts.Solution);
+                    break;
+                case DoOptions.DoOperation.open:
+                    DoOpen(opts.Solution);
                     break;
             }
         }
@@ -57,6 +61,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
 
+        private static void DoOpen(string solution)
+        {
+            if (solution.Contains("Ginger.Solution.xml"))
+            {
+                // Remove the file name and trim the path
+                solution = Path.GetDirectoryName(solution)?.Trim() ?? string.Empty;
+            }
+            WorkSpace.Instance.OpenSolution(solution);
+        }
         private static void DoAnalyze(string solution)
         {
             WorkSpace.Instance.OpenSolution(solution);
