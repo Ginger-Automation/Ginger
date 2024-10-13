@@ -486,6 +486,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.MoveUpDown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsUpDown);
                     break;
+                case eImageType.Replace:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Pencil);
+                    break;
                 case eImageType.Reorder:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_FirstOrder);
                     break;

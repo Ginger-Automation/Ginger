@@ -385,7 +385,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             WeakEventManager<DataGrid, SelectionChangedEventArgs>.AddHandler(source: xMainElementsGrid.grdMain, eventName: nameof(DataGrid.SelectionChanged), handler: Grid_SelectionChanged);
 
-
+            xMainElementsGrid.AddToolbarTool(eImageType.Replace, toolTip:"Set missing Categories for selected Elements", new RoutedEventHandler(SetMissingCategoriesForSelectedElements));
         }
 
         /// <summary>
@@ -623,8 +623,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xElementDetails.xLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
             xElementDetails.xLocatorsGrid.btnAdd.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(AddLocatorButtonClicked));
             xElementDetails.xLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteLocatorClicked));
-            WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xLocatorsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: LocatorsGrid_PreparingCellForEdit);
-
+            WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xLocatorsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: LocatorsGrid_PreparingCellForEdit);           
 
             xElementDetails.xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
         }
@@ -640,6 +639,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 elementStatus.Add(new ComboEnumItem() { text = category.ToString(), Value = category });
             }
             return elementStatus;
+        }
+
+        private List<string> GetPossibleCategoriesAsSteing()
+        {
+            ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+            List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
+
+            List<string> categories = [];
+            foreach (ePomElementCategory category in categoriesList)
+            {
+                categories.Add(category.ToString());
+            }
+            return categories;
         }
 
         private List<ComboEnumItem> GetPositionList()
@@ -1050,6 +1062,57 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (mSelectedElement != null)
             {
                 mWinExplorer.TestElementLocators(mSelectedElement, mPOM: mPOM);
+            }
+        }
+
+        private void SetMissingCategoriesForSelectedElements(object sender, RoutedEventArgs e)
+        {            
+            if (xMainElementsGrid.Grid.SelectedItems.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select elements to set missing categories.");
+                return;
+            }
+
+            //get the Category to set               
+            string selectedCategory = "";
+            if (InputBoxWindow.OpenDialog("Set Missing Categories", "Select Category to set:", ref selectedCategory, GetPossibleCategoriesAsSteing()))
+            {
+                if (!string.IsNullOrEmpty(selectedCategory))
+                {
+                    try
+                    {
+                        Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, "setting all missing categories for selected elements...");
+                        foreach (ElementInfo element in xMainElementsGrid.Grid.SelectedItems)
+                        {
+                            SetMissingCategoriesForElement(element, (ePomElementCategory)Enum.Parse(typeof(ePomElementCategory), selectedCategory));
+                        }
+                        Reporter.HideStatusMessage();
+                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "All missing categories were set successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error in setting missing categories for selected elements", ex);
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in setting missing categories for all/some elements");
+                    }
+                }
+            }
+        }
+
+        private void SetMissingCategoriesForElement(ElementInfo element, ePomElementCategory category)
+        {
+            foreach (ElementLocator locator in element.Locators)
+            {
+                if (locator.Category == null)
+                {
+                    locator.Category = category;
+                }
+            }
+            foreach (ControlProperty property in element.Properties)
+            {
+                if (property.Category == null)
+                {
+                    property.Category = category;
+                }
             }
         }
 
