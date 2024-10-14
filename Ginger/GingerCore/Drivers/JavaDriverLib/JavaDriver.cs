@@ -230,8 +230,8 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private void ConnectToJavaDriver()
         {
-            clientSocket = new TcpClient();
-            clientSocket.ReceiveTimeout = CommunicationTimout * 1000; ;
+            clientSocket = new TcpClient { ReceiveTimeout = CommunicationTimout * 1000 };
+            ;
             if (CommunicationTimout == 0)
             {
                 CommunicationTimout = 120;
@@ -498,7 +498,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private PayLoad HandlePOMElememntExecution(ActUIElement act)
         {
-            ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
+            ObservableList<ElementLocator> locators = [];
 
             var pomExcutionUtil = new POMExecutionUtils(act, act.ElementLocateValue);
 
@@ -649,7 +649,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private void SetCommandTimeoutForAction(int? timeout)
         {
-            if (timeout != null && timeout != 0)
+            if (timeout is not null and not 0)
             {
                 PayLoad PL = new PayLoad(CommandType.AgentOperation.ToString());
                 PL.AddEnumValue(AgentOperationType.SetCommandTimeout);
@@ -876,14 +876,16 @@ namespace GingerCore.Drivers.JavaDriverLib
                     PL.AddValue(actJavaBrowserElement.LocateBy.ToString());
                     PL.AddValue(actJavaBrowserElement.LocateValueCalculated);
                     PL.AddValue(actJavaBrowserElement.ImplicitWait);
-                    List<string> jsList = new List<string>();
-                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.html2canvas, performManifyJS: true));
-                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.ArrayBuffer, performManifyJS: true));
-                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.PayLoad, performManifyJS: true));
-                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper, performManifyJS: true));
-                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS: true));
-                    jsList.Add((JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install)));
-                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min, performManifyJS: true));
+                    List<string> jsList =
+                    [
+                        JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.html2canvas, performManifyJS: true),
+                        JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.ArrayBuffer, performManifyJS: true),
+                        JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.PayLoad, performManifyJS: true),
+                        JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper, performManifyJS: true),
+                        JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS: true),
+                        (JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install)),
+                        JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min, performManifyJS: true),
+                    ];
                     PL.AddValue(jsList);
                     PL.ClosePackage();
 
@@ -1528,7 +1530,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         private PayLoad RunTableControlAction(ActTableElement AJTE)
         {
             PayLoad resp = null;
-            List<String> Locators = new List<string>();
+            List<String> Locators = [];
             List<String> vals = null;
             //New serializer restoring the value to null. So handling it to set it to empty
             if (AJTE.LocateColTitle == null)
@@ -1865,7 +1867,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                                 using (Bitmap btmp = (Bitmap)tc.ConvertFrom(screenShotbytes))
                                 {
                                     actScreenShot.AddScreenShot(btmp);
-                                } 
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -1989,7 +1991,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         List<AppWindow> IWindowExplorer.GetAppWindows()
         {
-            List<AppWindow> list = new List<AppWindow>();
+            List<AppWindow> list = [];
 
             PayLoad PL = new PayLoad(CommandType.WindowExplorerOperation.ToString());
             PL.AddEnumValue(WindowExplorerOperationType.GetAllWindows);
@@ -2017,7 +2019,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         List<AppWindow> IWindowExplorer.GetWindowAllFrames()
         {
-            List<AppWindow> frameList = new List<AppWindow>();
+            List<AppWindow> frameList = [];
 
             PayLoad PL = new PayLoad(CommandType.WindowExplorerOperation.ToString());
             PL.AddEnumValue(WindowExplorerOperationType.GetWindowAllFrames);
@@ -2121,7 +2123,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return await Task.Run(() =>
             {
 
-                List<ElementInfo> list = new List<ElementInfo>();
+                List<ElementInfo> list = [];
 
                 PayLoad Request;
                 PayLoad Response;
@@ -2191,7 +2193,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                             else
                             {
                                 list.Add(ci);
-                                List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
+                                List<ElementInfo> HTMLControlsPL = [];
                                 if (ci.ElementTypeEnum == eElementType.Browser)
                                 {
                                     PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
@@ -2253,7 +2255,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
 
             List<PayLoad> controls = Response.GetListPayLoad();
-            List<ElementInfo> list = new List<ElementInfo>();
+            List<ElementInfo> list = [];
 
             foreach (PayLoad pl in controls)
             {
@@ -2275,7 +2277,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 return null;
             }
             List<PayLoad> controls = Response.GetListPayLoad();
-            List<ElementInfo> list = new List<ElementInfo>();
+            List<ElementInfo> list = [];
 
             foreach (PayLoad pl in controls)
             {
@@ -2289,14 +2291,16 @@ namespace GingerCore.Drivers.JavaDriverLib
         //will be sent once StartRecording starts.
         public List<string> GetJSFilesList()
         {
-            List<string> jsList = new List<string>();
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.html2canvas, performManifyJS: true));
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.ArrayBuffer, performManifyJS: true));
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.PayLoad, performManifyJS: true));
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper, performManifyJS: true));
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS: true));
-            jsList.Add((JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install)));
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min, performManifyJS: true));
+            List<string> jsList =
+            [
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.html2canvas, performManifyJS: true),
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.ArrayBuffer, performManifyJS: true),
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.PayLoad, performManifyJS: true),
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper, performManifyJS: true),
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS: true),
+                (JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install)),
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min, performManifyJS: true),
+            ];
 
             return jsList;
         }
@@ -2323,14 +2327,16 @@ namespace GingerCore.Drivers.JavaDriverLib
             PL.AddValue("ByXPath");
             PL.AddValue(JEI.XPath);
             PL.AddValue(120);// We giving default wait time of 120 seconds for initialize browser to finish
-            List<string> jsList = new List<string>();
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.html2canvas, performManifyJS: true));
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.ArrayBuffer, performManifyJS: true));
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.PayLoad, performManifyJS: true));
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper, performManifyJS: true));
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS: true));
-            jsList.Add((JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install)));
-            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min, performManifyJS: true));
+            List<string> jsList =
+            [
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.html2canvas, performManifyJS: true),
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.ArrayBuffer, performManifyJS: true),
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.PayLoad, performManifyJS: true),
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper, performManifyJS: true),
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS: true),
+                (JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install)),
+                JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min, performManifyJS: true),
+            ];
             PL.AddValue(jsList);
             PL.ClosePackage();
             General.DoEvents();
@@ -2345,12 +2351,14 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         public static ElementInfo GetControlInfoFromPayLoad(PayLoad pl)
         {
-            JavaElementInfo JEI = new JavaElementInfo();
-            JEI.ElementTitle = pl.GetValueString();
-            JEI.ElementType = pl.GetValueString();
-            JEI.Value = pl.GetValueString();
-            JEI.Path = pl.GetValueString();
-            JEI.XPath = pl.GetValueString();
+            JavaElementInfo JEI = new JavaElementInfo
+            {
+                ElementTitle = pl.GetValueString(),
+                ElementType = pl.GetValueString(),
+                Value = pl.GetValueString(),
+                Path = pl.GetValueString(),
+                XPath = pl.GetValueString()
+            };
             JEI.ElementTypeEnum = JavaPlatform.GetElementType(JEI.ElementType);
             //If name if blank keep it blank. else creating issue for spy and highlight, as we try to search with below
             if (String.IsNullOrEmpty(JEI.ElementTitle))
@@ -2375,12 +2383,14 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         public static ElementInfo GetHTMLElementInfoFromPL(PayLoad PL)
         {
-            HTMLElementInfo EI = new HTMLElementInfo();
-            EI.ElementTitle = PL.GetValueString();
-            EI.ID = PL.GetValueString();
-            EI.Value = PL.GetValueString();
-            EI.Name = PL.GetValueString();
-            EI.ElementType = PL.GetValueString();
+            HTMLElementInfo EI = new HTMLElementInfo
+            {
+                ElementTitle = PL.GetValueString(),
+                ID = PL.GetValueString(),
+                Value = PL.GetValueString(),
+                Name = PL.GetValueString(),
+                ElementType = PL.GetValueString()
+            };
             EI.ElementTypeEnum = JavaPlatform.GetHTMLElementType(EI.ElementType);
             EI.Path = PL.GetValueString();
             EI.XPath = PL.GetValueString();
@@ -2475,7 +2485,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
-            ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+            ObservableList<ControlProperty> list = [];
 
             PayLoad response = null;
             if (ElementInfo.ElementType.Contains("JEditor"))
@@ -2532,7 +2542,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PLReq.ClosePackage();
                 response = Send(PLReq);
             }
-            List<PayLoad> PropertiesPLs = new List<PayLoad>();
+            List<PayLoad> PropertiesPLs = [];
             if (response.IsErrorPayLoad())
             {
                 string ErrMSG = response.GetErrorValue();
@@ -2587,7 +2597,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                 if (RespListDetails.Name == "List Items")
                 {
-                    ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+                    ObservableList<ControlProperty> list = [];
                     List<String> itemList = RespListDetails.GetListString();
                     cmbElementInfo.ItemList = itemList;
 
@@ -2596,7 +2606,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else if (ElementInfo.ElementType == eElementType.ComboBox.ToString())
             {
-                List<String> props = new List<String>();
+                List<String> props = [];
                 PayLoad PLListDetails = new PayLoad("UIElementAction", elementLocateBy.ToString(), elementLocateValue.ToString(), eElementType.ComboBox.ToString(),
                       "GetAllValues", "", "");
                 PayLoad RespListDetails = Send(PLListDetails);
@@ -2607,7 +2617,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 }
                 if (RespListDetails.Name == "ComponentValue")
                 {
-                    ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+                    ObservableList<ControlProperty> list = [];
                     props = RespListDetails.GetListString();
                 }
                 return props;
@@ -2667,7 +2677,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
-            ObservableList<ElementLocator> locatorList = new ObservableList<ElementLocator>();
+            ObservableList<ElementLocator> locatorList = [];
             String bName;
             if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
@@ -2698,9 +2708,13 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 if (ElementInfo.XPath != "/")
                 {
-                    ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
-                    locator.LocateBy = eLocateBy.ByXPath;
-                    locator.LocateValue = ElementInfo.XPath;
+                    ElementLocator locator = new ElementLocator
+                    {
+                        IsAutoLearned = true,
+                        Active = true,
+                        LocateBy = eLocateBy.ByXPath,
+                        LocateValue = ElementInfo.XPath
+                    };
                     locatorList.Add(locator);
                 }
             }
@@ -2712,9 +2726,13 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (ElementInfo.XPath != "/")
                     {
-                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
-                        locator.LocateBy = eLocateBy.ByRelXPath;
-                        locator.LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath;
+                        ElementLocator locator = new ElementLocator
+                        {
+                            IsAutoLearned = true,
+                            Active = true,
+                            LocateBy = eLocateBy.ByRelXPath,
+                            LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath
+                        };
                         locatorList.Add(locator);
                     }
                 }
@@ -2723,9 +2741,13 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (ElementInfo.XPath != "/" && !ElementInfo.ElementType.Contains("JEditor"))//?????????
                     {
-                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
-                        locator.LocateBy = eLocateBy.ByID;
-                        locator.LocateValue = ((HTMLElementInfo)ElementInfo).ID;
+                        ElementLocator locator = new ElementLocator
+                        {
+                            IsAutoLearned = true,
+                            Active = true,
+                            LocateBy = eLocateBy.ByID,
+                            LocateValue = ((HTMLElementInfo)ElementInfo).ID
+                        };
                         locatorList.Add(locator);
                     }
                 }
@@ -2734,9 +2756,13 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (!String.IsNullOrEmpty(ElementInfo.Path))
                     {
-                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
-                        locator.LocateBy = eLocateBy.ByCSSSelector;
-                        locator.LocateValue = ((HTMLElementInfo)ElementInfo).Path;
+                        ElementLocator locator = new ElementLocator
+                        {
+                            IsAutoLearned = true,
+                            Active = true,
+                            LocateBy = eLocateBy.ByCSSSelector,
+                            LocateValue = ((HTMLElementInfo)ElementInfo).Path
+                        };
                         locatorList.Add(locator);
                     }
                 }
@@ -2749,7 +2775,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             string s = "";
             if (s.StartsWith("OK"))
             {
-                s = s.Substring(3);
+                s = s[3..];
                 return s;
             }
             else
@@ -2861,7 +2887,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private List<ElementInfo> GetElementsFromPL(PayLoad PLRC)
         {
-            List<ElementInfo> list = new List<ElementInfo>();
+            List<ElementInfo> list = [];
             List<PayLoad> ElementsPL = PLRC.GetListPayLoad();
             foreach (PayLoad PL in ElementsPL)
             {
@@ -3013,8 +3039,10 @@ namespace GingerCore.Drivers.JavaDriverLib
             if (title != currentWindowTitle)
             {
                 currentWindowTitle = title;
-                RecordingEventArgs recordingEventArgs = new RecordingEventArgs();
-                recordingEventArgs.EventType = eRecordingEvent.PageChanged;
+                RecordingEventArgs recordingEventArgs = new RecordingEventArgs
+                {
+                    EventType = eRecordingEvent.PageChanged
+                };
                 PageChangedEventArgs pageArgs = new PageChangedEventArgs()
                 {
                     PageURL = title,
@@ -3025,9 +3053,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                 OnRecordingEvent(recordingEventArgs);
             }
 
-            RecordingEventArgs args = new RecordingEventArgs();
-            args.EventType = eRecordingEvent.ElementRecorded;
-            args.EventArgs = GetElementConfigFromPayload(payLoad);
+            RecordingEventArgs args = new RecordingEventArgs
+            {
+                EventType = eRecordingEvent.ElementRecorded,
+                EventArgs = GetElementConfigFromPayload(payLoad)
+            };
             OnRecordingEvent(args);
         }
 
@@ -3080,8 +3110,10 @@ namespace GingerCore.Drivers.JavaDriverLib
                 var yCord = payLoad.GetValueString();
 
 
-                elementInfo = new HTMLElementInfo();
-                elementInfo.ElementType = nameof(HTMLElementInfo);
+                elementInfo = new HTMLElementInfo
+                {
+                    ElementType = nameof(HTMLElementInfo)
+                };
                 if (configArgs.LocateBy.Equals(nameof(eLocateBy.ByXPath)))
                 {
                     elementInfo.XPath = configArgs.LocateValue;
@@ -3123,10 +3155,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                     configArgs.ElementValue = payLoad.GetValueString();
                 }
 
-                elementInfo = new JavaElementInfo();
-                elementInfo.XPath = configArgs.LocateValue;
+                elementInfo = new JavaElementInfo
+                {
+                    XPath = configArgs.LocateValue,
 
-                elementInfo.ElementType = nameof(JavaElementInfo);
+                    ElementType = nameof(JavaElementInfo)
+                };
                 SetElementSpecificConfiguration(payLoad, configArgs);
             }
 
@@ -3983,7 +4017,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 return GetWidgetElementOptionalValueList(ElementInfo, elementLocateBy, elementLocateValue);
             }
-            ObservableList<OptionalValue> props = new ObservableList<OptionalValue>();
+            ObservableList<OptionalValue> props = [];
             PayLoad PLListDetails = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
             PLListDetails.AddEnumValue(JavaDriver.WindowExplorerOperationType.GetOptionalValuesList);
             PLListDetails.AddValue(elementLocateBy.ToString());
@@ -4008,7 +4042,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private ObservableList<OptionalValue> GetWidgetElementOptionalValueList(ElementInfo elementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
-            ObservableList<OptionalValue> optionalValues = new ObservableList<OptionalValue>();
+            ObservableList<OptionalValue> optionalValues = [];
             if (elementInfo.ElementTypeEnum.Equals(eElementType.ComboBox))
             {
                 PayLoad payLoad = new PayLoad("HTMLElementAction", "GetListDetails", "ByXPath", elementInfo.XPath, "");
@@ -4098,7 +4132,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         public List<eTabView> SupportedViews()
         {
-            return new List<eTabView>() { eTabView.GridView, eTabView.TreeView };
+            return [eTabView.GridView, eTabView.TreeView];
         }
 
         public eTabView DefaultView()
@@ -4158,9 +4192,11 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         public string GetViewport()
         {
-            ElementInfo EI = new ElementInfo();
-            EI.XPath = "/";
-            EI.ElementType = eElementType.Window.ToString();
+            ElementInfo EI = new ElementInfo
+            {
+                XPath = "/",
+                ElementType = eElementType.Window.ToString()
+            };
             EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
 
             Size size = new Size();

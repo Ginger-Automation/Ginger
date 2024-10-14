@@ -67,19 +67,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         private void InitParser(string type)
         {
-            switch (type)
+            currentParser = type switch
             {
-                case ".xml":
-                case ".wsdl":
-                    currentParser = new XMLTemplateParser();
-                    break;
-                case ".json":
-                    currentParser = new JSONTemplateParser();
-                    break;
-                default:
-                    currentParser = null;
-                    break;
-            }
+                ".xml" or ".wsdl" => new XMLTemplateParser(),
+                ".json" => new JSONTemplateParser(),
+                _ => null,
+            };
         }
         public APIConfigurationsDocumentParserBase CurrentParser
         {
@@ -165,7 +158,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             int UpdatedParameters = 0;
             bool IsUpdate;
-            List<AppModelParameter> RelevantParameterList = new List<AppModelParameter>();
+            List<AppModelParameter> RelevantParameterList = [];
             foreach (AppModelParameter prm in SelectedParametersGridList)
             {
                 AppModelParameter pOriginal = AAM.AppModelParameters.FirstOrDefault(p => p.ItemName == prm.ItemName);
@@ -188,14 +181,16 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     var item = ParameterValuesByNameDic.FirstOrDefault(o => o.ParamName == tuple.y.ItemName);
                     if (item != null)
                     {
-                        tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
+                        tuple.y.OptionalValuesList = [];
                         foreach (string val in item.ParameterValuesByNameDic)
                         {
                             if (!string.IsNullOrEmpty(val))
                             {
-                                OptionalValue OptionalValue = new OptionalValue();
-                                OptionalValue.IsDefault = val.Contains("*") ? true : false;
-                                OptionalValue.Value = val.Replace("*", "");
+                                OptionalValue OptionalValue = new OptionalValue
+                                {
+                                    IsDefault = val.Contains("*"),
+                                    Value = val.Replace("*", "")
+                                };
                                 tuple.y.OptionalValuesList.Add(OptionalValue);
                                 IsUpdate = true;
                             }
@@ -238,7 +233,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             int UpdatedParameters = 0;
             bool IsUpdate;
-            List<GlobalAppModelParameter> RelevantParameterList = new List<GlobalAppModelParameter>();
+            List<GlobalAppModelParameter> RelevantParameterList = [];
             foreach (GlobalAppModelParameter prm in SelectedParametersGridList)
             {
                 GlobalAppModelParameter pOriginal = mGlobalParamterList.FirstOrDefault(p => p.ItemName == prm.ItemName);
@@ -260,7 +255,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     if (item != null)
                     {
                         string str = ParameterValuesByNameDic.Where(x => x.ParamName == CURRENT_VAL_PARAMETER).Select(x => x.ParamName).FirstOrDefault();
-                        tuple.y.OptionalValuesList = new ObservableList<OptionalValue>();
+                        tuple.y.OptionalValuesList = [];
                         if (string.IsNullOrEmpty(str))
                         {
                             tuple.y.OptionalValuesList.Add(new OptionalValue { Value = CURRENT_VAL_PARAMETER, IsDefault = true });
@@ -272,9 +267,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                             {
                                 OptionalValue OptionalValue = new OptionalValue
                                 {
-                                    Value = val.Replace("*", "")
+                                    Value = val.Replace("*", ""),
+                                    IsDefault = val.Contains("*")
                                 };
-                                OptionalValue.IsDefault = val.Contains("*") ? true : false;
 
                                 tuple.y.OptionalValuesList.Add(OptionalValue);
                                 IsUpdate = true;
@@ -525,7 +520,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <returns></returns>
         public List<string> GetSheets(bool validateSheet)
         {
-            List<string> lst = new List<string>();
+            List<string> lst = [];
             if (!string.IsNullOrEmpty(ExcelFileName))
             {
                 using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(ExcelFileName, false))
@@ -670,7 +665,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         private List<ParameterValues> GetParametersAndValuesDictionary(DataTable dt)
         {
-            List<ParameterValues> ParameterValues = new List<ParameterValues>();
+            List<ParameterValues> ParameterValues = [];
             //First column is parameter name and other columns are values
             foreach (DataRow row in dt.Rows)
             {
@@ -678,7 +673,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 if (!string.IsNullOrEmpty(row[0].ToString()))
                 {
                     string key = row[0].ToString();
-                    List<string> ValueList = new List<string>();
+                    List<string> ValueList = [];
                     foreach (DataColumn col in dt.Columns)
                     {
                         if (row[col] != null && row[0] != row[col] && !col.ColumnName.StartsWith("Desc"))
@@ -869,11 +864,13 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             if (prms != null)
             {
-                AppParameters par = new AppParameters();
-                par.ItemName = prms.ItemName;
-                par.OptionalValuesList = prms.OptionalValuesList;
-                par.OptionalValuesString = prms.OptionalValuesString;
-                par.Description = prms.Description;
+                AppParameters par = new AppParameters
+                {
+                    ItemName = prms.ItemName,
+                    OptionalValuesList = prms.OptionalValuesList,
+                    OptionalValuesString = prms.OptionalValuesString,
+                    Description = prms.Description
+                };
                 parameters.Add(par);
             }
         }
@@ -902,7 +899,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 foreach (DataTable dt in ds.Tables)
                 {
-                    List<string> lstColumn = new List<string>();
+                    List<string> lstColumn = [];
                     foreach (DataColumn dc in dt.Columns)
                     {
                         bool colEmpty = true;
@@ -960,8 +957,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <returns></returns>
         private DataTable PivotTable(DataTable dt, bool isFirstRowHeader)
         {
-            DataTable dtNew = new DataTable();
-            dtNew.TableName = dt.TableName;
+            DataTable dtNew = new DataTable
+            {
+                TableName = dt.TableName
+            };
             //adding columns    
             int cols = 0;
             for (; cols < dt.Rows.Count; cols++)
@@ -1211,7 +1210,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <returns></returns>
         private List<string> GetDefaultColumnNameListForTableCreation()
         {
-            List<string> defColList = new List<string>();
+            List<string> defColList = [];
             try
             {
                 defColList.Add("GINGER_ID");
@@ -1261,14 +1260,16 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
         #region DB
         Database db;
-        List<object> SQLResult = new List<object>();
+        List<object> SQLResult = [];
         DataTable dtDB = new DataTable();
         public void SetDBDetails(string dbType, string host, string user, string password, string connectionString = null)
         {
-            db = new Database();
-            db.TNS = host;
-            db.User = user;
-            db.Pass = password;
+            db = new Database
+            {
+                TNS = host,
+                User = user,
+                Pass = password
+            };
             if (!string.IsNullOrEmpty(connectionString))
             {
                 db.ConnectionString = connectionString;
@@ -1297,7 +1298,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         public List<ParameterValues> UpdateParametersOptionalValuesFromDB()
         {
-            Dictionary<string, List<string>> ParamAndValues = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> ParamAndValues = [];
             List<string> ParamNameList = (List<string>)SQLResult.ElementAt(0);
             List<List<string>> Record = (List<List<string>>)SQLResult.ElementAt(1);
             string[][] ParamValues = new string[ParamNameList.Count][];//create matrix ParamName -> ParamValues(List)
@@ -1324,7 +1325,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 rowValue = 0;
             }
 
-            List<ParameterValues> ParameterValuesByNameDic = new List<ParameterValues>();
+            List<ParameterValues> ParameterValuesByNameDic = [];
             dtDB = new DataTable();
             dtDB.Columns.Add(PARAMETER_NAME, typeof(string));
             for (int i = 0; i < ParamNameList.Count; i++)

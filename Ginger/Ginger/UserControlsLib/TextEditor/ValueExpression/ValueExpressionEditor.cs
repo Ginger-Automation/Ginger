@@ -122,7 +122,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         {
-            List<ICompletionData> list = new List<ICompletionData>();
+            List<ICompletionData> list = [];
             if (txt == "{")
             {
                 list.Add(new TextCompletionData("{Var Name=}", "Variable"));
@@ -157,8 +157,10 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         private TextCompletionData GETVariableTCD(VariableBase v)
         {
-            TextCompletionData TCD = new TextCompletionData("{Var Name=" + v.Name + "}");
-            TCD.Description = "Variable " + v.Name + " " + v.VariableType;
+            TextCompletionData TCD = new TextCompletionData("{Var Name=" + v.Name + "}")
+            {
+                Description = "Variable " + v.Name + " " + v.VariableType
+            };
 
 
             //TODO: replace with General.GetImage("@Variable_32x32.png")
@@ -194,12 +196,12 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 }
             }
 
-            if(txt.StartsWith("{MockDataExp Fun="))
+            if (txt.StartsWith("{MockDataExp Fun="))
             {
                 Mockdata expParams = GingerCore.ValueExpression.GetMockDataDatasetsFunction(txt);
                 if (expParams != null)
                 {
-                    p = new ValueExpressionMockDataEditorPage(mContext, SelectedContentArgs,expParams.MockDataDatasets, expParams.Function, expParams.Locale, expParams.MockExpression); 
+                    p = new ValueExpressionMockDataEditorPage(mContext, SelectedContentArgs, expParams.MockDataDatasets, expParams.Function, expParams.Locale, expParams.MockExpression);
                 }
             }
 

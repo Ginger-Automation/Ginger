@@ -194,7 +194,7 @@ namespace GingerCore.ALM.QC
                                     }
 
                                     //get all execution status for all steps
-                                    ObservableList<string> stepsStatuses = new ObservableList<string>();
+                                    ObservableList<string> stepsStatuses = [];
                                     foreach (Step step in stepsList)
                                     {
                                         stepsStatuses.Add(step.Status);
@@ -337,7 +337,7 @@ namespace GingerCore.ALM.QC
                 //Add/update all test steps + Parameters
                 foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
                 {
-                    ExportActivityAsTestStep(test, (Activity)actIdent.IdentifiedActivity);
+                    ExportActivityAsTestStep(test, actIdent.IdentifiedActivity);
                 }
 
                 return true;
@@ -430,7 +430,7 @@ namespace GingerCore.ALM.QC
         public static bool ExportBusinessFlowToQC(BusinessFlow businessFlow, TestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ref string result)
         {
             TestSet testSet;
-            ObservableList<ActivitiesGroup> existingActivitiesGroups = new ObservableList<ActivitiesGroup>();
+            ObservableList<ActivitiesGroup> existingActivitiesGroups = [];
             try
             {
                 if (mappedTestSet == null)
@@ -544,7 +544,7 @@ namespace GingerCore.ALM.QC
                     {
                         foreach (ActivityIdentifiers actIdent in ag.ActivitiesIdentifiers)
                         {
-                            ExportActivityAsTestStep(ImportFromQC.GetQCTest(ag.ExternalID), (Activity)actIdent.IdentifiedActivity);
+                            ExportActivityAsTestStep(ImportFromQC.GetQCTest(ag.ExternalID), actIdent.IdentifiedActivity);
                         }
                     }
                 }
@@ -574,13 +574,13 @@ namespace GingerCore.ALM.QC
                 CustomizationFields f = (CustomizationFields)field.Fields;
 
                 List BugFieldsList = f.get_Fields("BUG");
-                Dictionary<string, string> MandatoryFields = new Dictionary<string, string>();
-                Dictionary<string, List<string>> MandatoryListSelections = new Dictionary<string, List<string>>();
+                Dictionary<string, string> MandatoryFields = [];
+                Dictionary<string, List<string>> MandatoryListSelections = [];
                 foreach (CustomizationField BugField in BugFieldsList)
                 {
                     if (BugField.IsRequired)
                     {
-                        List<string> FieldList = new List<string>();
+                        List<string> FieldList = [];
                         //if (BugField.List != null && BugField.List.RootNode.Children.Count > 0)
                         //{
                         //    CustomizationListNode lnode = BugField.List.RootNode;

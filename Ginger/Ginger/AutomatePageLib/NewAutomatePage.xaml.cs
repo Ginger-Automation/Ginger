@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
@@ -45,12 +44,10 @@ using Ginger.Run;
 using Ginger.TimeLineLib;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.TextEditor;
-using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.DataSource;
-using GingerCore.Drivers;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
@@ -73,7 +70,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -370,8 +366,10 @@ namespace GingerWPF.BusinessFlowsLib
             PropertyChangedEventManager.AddHandler(source: mExecutionEngine.GingerRunner, handler: MRunner_PropertyChanged, propertyName: allProperties);
 
             // Add Listener so we can do GiveUserFeedback            
-            AutomatePageRunnerListener automatePageRunnerListener = new AutomatePageRunnerListener();
-            automatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
+            AutomatePageRunnerListener automatePageRunnerListener = new AutomatePageRunnerListener
+            {
+                AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback
+            };
             mExecutionEngine.RunListeners.Add(automatePageRunnerListener);
 
             mExecutionEngine.Context = mContext;
@@ -590,7 +588,7 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                     if (((AgentOperations)appAgent.Agent.AgentOperations).Status == Agent.eStatus.Running)
                     {
-                        ((DriverBase)((AgentOperations)appAgent.Agent.AgentOperations).Driver).UpdateContext(mContext);
+                        ((AgentOperations)appAgent.Agent.AgentOperations).Driver.UpdateContext(mContext);
                     }
                 }
             }
@@ -664,7 +662,7 @@ namespace GingerWPF.BusinessFlowsLib
             foreach (var existingTargetApp in mBusinessFlow.TargetApplications.OfType<TargetApplication>())
             {
                 // Check if the existing target application is not present in mBusinessFlow.TargetApplications
-                if (!userTA.Contains((existingTargetApp as TargetApplication).AppName))
+                if (!userTA.Contains(existingTargetApp.AppName))
                 {
                     // If not present, add to the removal list
                     TargetApplicationsToRemove.Add(existingTargetApp);
@@ -704,7 +702,7 @@ namespace GingerWPF.BusinessFlowsLib
                         // take it from solution main platform
                         if (mBusinessFlow.TargetApplications == null)
                         {
-                            mBusinessFlow.TargetApplications = new ObservableList<TargetBase>();
+                            mBusinessFlow.TargetApplications = [];
                         }
 
                         mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
@@ -1078,7 +1076,7 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                 }
 
-                await mExecutionEngine.RunActivityAsync((Activity)activityToExecute, false, true, resetErrorHandlerExecutedFlag: true).ConfigureAwait(false);
+                await mExecutionEngine.RunActivityAsync(activityToExecute, false, true, resetErrorHandlerExecutedFlag: true).ConfigureAwait(false);
 
                 //When running Runactivity as standalone from GUI, SetActionSkipStatus is not called. Handling it here for now.
                 foreach (Act act in activityToExecute.Acts)
@@ -1324,8 +1322,8 @@ namespace GingerWPF.BusinessFlowsLib
                         await mExecutionEngine.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.LastStoppedAction);
                         break;
                     case eContinueFrom.SpecificAction:
-                        Activity parentActivity = (Activity)((Tuple<Activity, Act>)executedItem).Item1;
-                        Act actionToExecute = (Act)((Tuple<Activity, Act>)executedItem).Item2;
+                        Activity parentActivity = ((Tuple<Activity, Act>)executedItem).Item1;
+                        Act actionToExecute = ((Tuple<Activity, Act>)executedItem).Item2;
                         try
                         {
                             if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
@@ -1713,7 +1711,7 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
-            ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>() { mBusinessFlow };
+            ObservableList<BusinessFlow> lst = [mBusinessFlow];
             WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.SingleBusinessFlow, mContext, lst), 900, 700, true);
         }
 
@@ -1724,10 +1722,12 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
-            ObservableList<BusinessFlowToConvert> lstBFToConvert = new ObservableList<BusinessFlowToConvert>();
+            ObservableList<BusinessFlowToConvert> lstBFToConvert = [];
 
-            BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
-            flowToConvert.BusinessFlow = (GingerCore.BusinessFlow)mBusinessFlow;
+            BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert
+            {
+                BusinessFlow = mBusinessFlow
+            };
             lstBFToConvert.Add(flowToConvert);
 
             ActionConversionUtils utils = new ActionConversionUtils();
@@ -1795,8 +1795,7 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
-            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
-            bfs.Add(mBusinessFlow);
+            ObservableList<BusinessFlow> bfs = [mBusinessFlow];
             if (ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)))
             {
                 ExportResultsToALMConfigPage.Instance.ShowAsWindow();
@@ -1839,7 +1838,7 @@ namespace GingerWPF.BusinessFlowsLib
                 Directory.CreateDirectory(exec_folder);
             }
 
-            if (((ExecutionLoggerManager)mExecutionEngine.ExecutionLoggerManager).OfflineBusinessFlowExecutionLog(mBusinessFlow, exec_folder))
+            if (mExecutionEngine.ExecutionLoggerManager.OfflineBusinessFlowExecutionLog(mBusinessFlow, exec_folder))
             {
                 //create the HTML report
                 try
@@ -1964,10 +1963,12 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
-            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mExecutionEngine.CurrentBusinessFlow.ExternalID.Replace("~", WorkSpace.Instance.Solution.Folder), true);
-            documentEditorPage.Title = "Gherkin Page";
-            documentEditorPage.Height = 700;
-            documentEditorPage.Width = 1000;
+            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mExecutionEngine.CurrentBusinessFlow.ExternalID.Replace("~", WorkSpace.Instance.Solution.Folder), true)
+            {
+                Title = "Gherkin Page",
+                Height = 700,
+                Width = 1000
+            };
             documentEditorPage.ShowAsWindow();
         }
 

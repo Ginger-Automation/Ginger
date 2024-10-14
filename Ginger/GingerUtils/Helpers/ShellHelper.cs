@@ -80,8 +80,10 @@ namespace Amdocs.Ginger.Common.Helpers
                 procStartInfo.RedirectStandardOutput = true;
             }
 
-            Process process = new Process();
-            process.StartInfo = procStartInfo;
+            Process process = new Process
+            {
+                StartInfo = procStartInfo
+            };
 
             Console.WriteLine("Starting Process..");
             bool started = process.Start();

@@ -32,27 +32,30 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             if (mElementLocatorsTypeList == null)
             {
-                mElementLocatorsTypeList = new List<eLocateBy>();
-                mElementLocatorsTypeList.Add(eLocateBy.ByAutomationID);
-                mElementLocatorsTypeList.Add(eLocateBy.ByRelXPath);
-                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
-                mElementLocatorsTypeList.Add(eLocateBy.ByClassName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByAutomationID);
-                mElementLocatorsTypeList.Add(eLocateBy.ByTitle);
+                mElementLocatorsTypeList =
+                [
+                    eLocateBy.ByAutomationID,
+                    eLocateBy.ByRelXPath,
+                    eLocateBy.ByXPath,
+                    eLocateBy.ByClassName,
+                    eLocateBy.ByName,
+                    eLocateBy.ByAutomationID,
+                    eLocateBy.ByTitle,
+                ];
             }
             return mElementLocatorsTypeList;
         }
 
         public override List<ActBrowserElement.eControlAction> GetPlatformBrowserControlOperations()
         {
-            List<ActBrowserElement.eControlAction> browserActElementList = new List<ActBrowserElement.eControlAction>();
-
-            browserActElementList.Add(ActBrowserElement.eControlAction.InitializeBrowser);
-            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageSource);
-            browserActElementList.Add(ActBrowserElement.eControlAction.GetPageURL);
-            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
-            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchFrame);
+            List<ActBrowserElement.eControlAction> browserActElementList =
+            [
+                ActBrowserElement.eControlAction.InitializeBrowser,
+                ActBrowserElement.eControlAction.GetPageSource,
+                ActBrowserElement.eControlAction.GetPageURL,
+                ActBrowserElement.eControlAction.SwitchToDefaultFrame,
+                ActBrowserElement.eControlAction.SwitchFrame,
+            ];
 
             return browserActElementList;
         }
@@ -60,7 +63,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             //TOOD: Currently we support only drag and drop for PB. So avoiding the call to get actions list from base
-            List<ActUIElement.eElementAction> controlActionlist = new List<ActUIElement.eElementAction>();
+            List<ActUIElement.eElementAction> controlActionlist = [];
 
             switch (ElementType)
             {
@@ -102,13 +105,13 @@ namespace GingerCore.Platforms.PlatformsInfo
         /// <returns></returns>
         public override List<ePomElementCategory> GetPlatformPOMElementCategories()
         {
-            return new List<ePomElementCategory> { ePomElementCategory.PowerBuilder };
+            return [ePomElementCategory.PowerBuilder];
         }
 
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
         {
-            List<ActUIElement.eSubElementType> list = new List<ActUIElement.eSubElementType>();
-            if (elementType == eElementType.List || elementType == eElementType.ComboBox)
+            List<ActUIElement.eSubElementType> list = [];
+            if (elementType is eElementType.List or eElementType.ComboBox)
             {
                 list.Add(ActUIElement.eSubElementType.Pane);
             }
@@ -118,15 +121,16 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             //TODO: cache in hashmap per elem type
 
-            List<string> list = new List<string>();
+            List<string> list =
+            [
+                //TODO: map all missing HTML tags and common attrs
 
-            //TODO: map all missing HTML tags and common attrs
-
-            // add attr which exist for all HTML tags
-            list.Add("Id");
-            list.Add("Name");
-            list.Add("AutomationId");
-            list.Add("XPath");
+                // add attr which exist for all HTML tags
+                "Id",
+                "Name",
+                "AutomationId",
+                "XPath",
+            ];
 
             // Per element add the attr 
             switch (ElementType)
@@ -150,20 +154,24 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList()
         {
-            List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
-            list.Add(ActUIElement.eElementAction.IsEnabled);
-            list.Add(ActUIElement.eElementAction.Exist);
-            list.Add(ActUIElement.eElementAction.NotExist);
-            list.Add(ActUIElement.eElementAction.GetValue);
+            List<ActUIElement.eElementAction> list =
+            [
+                ActUIElement.eElementAction.IsEnabled,
+                ActUIElement.eElementAction.Exist,
+                ActUIElement.eElementAction.NotExist,
+                ActUIElement.eElementAction.GetValue,
+            ];
             return list;
         }
 
         public override List<ActUIElement.eElementAction> GetPlatformUIClickTypeList()
         {
-            List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
-            list.Add(ActUIElement.eElementAction.InvokeClick);
-            list.Add(ActUIElement.eElementAction.LegacyClick);
-            list.Add(ActUIElement.eElementAction.MouseClick);
+            List<ActUIElement.eElementAction> list =
+            [
+                ActUIElement.eElementAction.InvokeClick,
+                ActUIElement.eElementAction.LegacyClick,
+                ActUIElement.eElementAction.MouseClick,
+            ];
 
             return list;
         }
@@ -173,20 +181,22 @@ namespace GingerCore.Platforms.PlatformsInfo
             // We cache the results
             if (mElementsTypeList == null)
             {
-                mElementsTypeList = new List<eElementType>();
-                mElementsTypeList.Add(eElementType.Unknown);
-                mElementsTypeList.Add(eElementType.Button);
-                mElementsTypeList.Add(eElementType.ComboBox);
-                mElementsTypeList.Add(eElementType.RadioButton);
-                mElementsTypeList.Add(eElementType.TextBox);
-                mElementsTypeList.Add(eElementType.CheckBox);
-                mElementsTypeList.Add(eElementType.Image);
-                mElementsTypeList.Add(eElementType.Label);
-                mElementsTypeList.Add(eElementType.List);
-                mElementsTypeList.Add(eElementType.Table);
-                mElementsTypeList.Add(eElementType.Text);
-                mElementsTypeList.Add(eElementType.Dialog);
-                mElementsTypeList.Add(eElementType.Window);
+                mElementsTypeList =
+                [
+                    eElementType.Unknown,
+                    eElementType.Button,
+                    eElementType.ComboBox,
+                    eElementType.RadioButton,
+                    eElementType.TextBox,
+                    eElementType.CheckBox,
+                    eElementType.Image,
+                    eElementType.Label,
+                    eElementType.List,
+                    eElementType.Table,
+                    eElementType.Text,
+                    eElementType.Dialog,
+                    eElementType.Window,
+                ];
 
             }
             return mElementsTypeList;
@@ -194,9 +204,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override List<ActUIElement.eElementDragDropType> GetPlatformDragDropTypeList()
         {
-            List<ActUIElement.eElementDragDropType> list = new List<ActUIElement.eElementDragDropType>();
-
-            list.Add(ActUIElement.eElementDragDropType.MouseDragDrop);
+            List<ActUIElement.eElementDragDropType> list = [ActUIElement.eElementDragDropType.MouseDragDrop];
             return list;
         }
 

@@ -112,9 +112,9 @@ namespace GingerCore.Drivers.ScriptDriverLib
                                 int i = RCValue.IndexOf('=');
                                 if (i > 0)
                                 {
-                                    Param = RCValue.Substring(0, i);
+                                    Param = RCValue[..i];
                                     //the rest is the value
-                                    Value = RCValue.Substring(Param.Length + 1);
+                                    Value = RCValue[(Param.Length + 1)..];
                                 }
                                 else
                                 {

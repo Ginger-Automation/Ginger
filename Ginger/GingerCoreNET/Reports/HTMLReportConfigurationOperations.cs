@@ -165,7 +165,7 @@ namespace Ginger.Reports
 
         public static ObservableList<HTMLReportConfigFieldToSelect> GetReportLevelMembers(Type reportLevelType, bool isSourceFeild = false)
         {
-            ObservableList<HTMLReportConfigFieldToSelect> fieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+            ObservableList<HTMLReportConfigFieldToSelect> fieldsToSelect = [];
             MemberInfo[] members = reportLevelType.GetMembers();
             FieldParams token = null;
 

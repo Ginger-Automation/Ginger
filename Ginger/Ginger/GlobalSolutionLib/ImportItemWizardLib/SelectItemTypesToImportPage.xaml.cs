@@ -87,12 +87,15 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         private void SetItemsListToImportGridView()
         {
             //Set the Data Grid columns            
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.Selected), Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemType), Header = "Item Type", WidthWeight = 100, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemExtraInfo), Header = "Item Extra Info", WidthWeight = 100, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(GlobalSolutionItem.Selected), Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox },
+                new GridColView() { Field = nameof(GlobalSolutionItem.ItemType), Header = "Item Type", WidthWeight = 100, ReadOnly = true },
+                new GridColView() { Field = nameof(GlobalSolutionItem.ItemExtraInfo), Header = "Item Extra Info", WidthWeight = 100, ReadOnly = true },
+            ]
+            };
 
             xItemTypesToImportGrid.SetAllColumnsDefaultView(view);
             xItemTypesToImportGrid.InitViewItems();
@@ -103,10 +106,10 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
         public ObservableList<GlobalSolutionItem> GetItemTypeListToImport()
         {
-            ObservableList<GlobalSolutionItem> ItemTypeListToImport = new ObservableList<GlobalSolutionItem>();
+            ObservableList<GlobalSolutionItem> ItemTypeListToImport = [];
             foreach (GlobalSolution.eImportItemType ItemType in GlobalSolution.GetEnumValues<GlobalSolution.eImportItemType>())
             {
-                if (ItemType == GlobalSolution.eImportItemType.Variables || ItemType == GlobalSolution.eImportItemType.TargetApplication || ItemType == GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations)
+                if (ItemType is GlobalSolution.eImportItemType.Variables or GlobalSolution.eImportItemType.TargetApplication or GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations)
                 {
                     continue;
                 }

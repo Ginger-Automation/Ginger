@@ -116,7 +116,7 @@ namespace GingerCore.Drivers.PBDriver
         {
             BusinessFlow = BF;
             LibraryType = type;
-            gridDictionary = new Dictionary<UIAuto.AutomationElement, UIAuto.AutomationElement[,]>();
+            gridDictionary = [];
         }
 
         public override void StartDriver()
@@ -334,7 +334,7 @@ namespace GingerCore.Drivers.PBDriver
             if (!actUIPBC.ElementType.Equals(eElementType.Window) && !actUIPBC.ElementAction.Equals(ActUIElement.eElementAction.Switch))
             {
                 string locateValue = actUIPBC.ElementLocateValueForDriver;
-                AE = mUIAutomationHelper.FindElementByLocator((eLocateBy)actUIPBC.ElementLocateBy, locateValue);
+                AE = mUIAutomationHelper.FindElementByLocator(actUIPBC.ElementLocateBy, locateValue);
 
                 if (AE == null && actUIPBC.ElementAction != ActUIElement.eElementAction.IsEnabled)
                 {
@@ -1180,8 +1180,10 @@ namespace GingerCore.Drivers.PBDriver
                 return null;
             }
 
-            AppWindow aw = new AppWindow();
-            aw.Title = mUIAutomationHelper.GetWindowInfo(mUIAutomationHelper.GetCurrentWindow());
+            AppWindow aw = new AppWindow
+            {
+                Title = mUIAutomationHelper.GetWindowInfo(mUIAutomationHelper.GetCurrentWindow())
+            };
             return aw;
         }
 
@@ -1350,7 +1352,7 @@ namespace GingerCore.Drivers.PBDriver
 
         public List<eTabView> SupportedViews()
         {
-            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.TreeView };
+            return [eTabView.Screenshot, eTabView.GridView, eTabView.TreeView];
         }
 
         public eTabView DefaultView()
@@ -1411,9 +1413,11 @@ namespace GingerCore.Drivers.PBDriver
 
         public string GetViewport()
         {
-            Size size = new Size();
-            size.Height = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
-            size.Width = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
+            Size size = new Size
+            {
+                Height = ((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height,
+                Width = ((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width
+            };
             return size.ToString();
         }
 

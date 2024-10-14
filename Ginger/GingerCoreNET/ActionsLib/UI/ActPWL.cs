@@ -49,7 +49,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eLocateBy)GetOrCreateInputParam<eLocateBy>(nameof(OLocateBy), eLocateBy.NA);
+                return GetOrCreateInputParam<eLocateBy>(nameof(OLocateBy), eLocateBy.NA);
             }
             set
             {

@@ -142,7 +142,7 @@ namespace Ginger.Variables
                 variableDateTime.DateTimeFormat = txtDateFormat.Text;
                 UpdateIntialDateTimePicker();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, $"{ex.Message}", ex);
             }

@@ -43,9 +43,9 @@ namespace GingerWPF.TreeViewItemsLib
     public class NewTreeViewItemBase : TreeViewItemGenericBase, INotifyPropertyChanged
     {
         private Visibility _visibility;
-        public virtual Visibility Visibility 
+        public virtual Visibility Visibility
         {
-            get => _visibility; 
+            get => _visibility;
             set
             {
                 if (_visibility != value)
@@ -57,7 +57,7 @@ namespace GingerWPF.TreeViewItemsLib
                         handler.Invoke(sender: this, new PropertyChangedEventArgs(nameof(Visibility)));
                     }
                 }
-            } 
+            }
         }
 
         public virtual TreeViewItem? TreeViewItem { get; set; }
@@ -69,9 +69,8 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {
-            if (item is RepositoryItemBase)
+            if (item is RepositoryItemBase RI)
             {
-                RepositoryItemBase RI = (RepositoryItemBase)item;
                 if (saveOnlyIfDirty && RI.DirtyStatus != eDirtyStatus.Modified)
                 {
                     return false;//no need to Save because not Dirty
@@ -94,9 +93,8 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override bool SaveBackup(object item)
         {
-            if (item is RepositoryItemBase)
+            if (item is RepositoryItemBase RI)
             {
-                RepositoryItemBase RI = (RepositoryItemBase)item;
                 RI.SaveBackup();
                 return true;
             }
@@ -116,14 +114,13 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            var repoItem = item as RepositoryItemBase;
-            if (repoItem != null)
+            if (item is RepositoryItemBase repoItem)
             {
                 if (!deleteWithoutAsking)
                 {
                     var result = Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName());
                     // None = when user clicks on the cross button
-                    if ( result.Equals(eUserMsgSelection.No) || result.Equals(eUserMsgSelection.None))
+                    if (result.Equals(eUserMsgSelection.No) || result.Equals(eUserMsgSelection.None))
                     {
                         return false;
                     }
@@ -210,9 +207,9 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override void PasteCopiedTreeItems()
         {
-            foreach (RepositoryItemBase childItemToCopy in ((RepositoryFolderBase)(((ITreeViewItem)mNodeManipulationsSource).NodeObject())).GetFolderRepositoryItems())
+            foreach (RepositoryItemBase childItemToCopy in ((RepositoryFolderBase)(mNodeManipulationsSource.NodeObject())).GetFolderRepositoryItems())
             {
-                RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)childItemToCopy);
+                RepositoryItemBase copiedItem = CopyTreeItemWithNewName(childItemToCopy);
                 if (copiedItem != null)
                 {
                     copiedItem.DirtyStatus = eDirtyStatus.NoTracked;
@@ -238,9 +235,9 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override void PasteCutTreeItems()
         {
-            foreach (RepositoryItemBase childItemToCut in ((RepositoryFolderBase)(((ITreeViewItem)mNodeManipulationsSource).NodeObject())).GetFolderRepositoryItems())
+            foreach (RepositoryItemBase childItemToCut in ((RepositoryFolderBase)(mNodeManipulationsSource.NodeObject())).GetFolderRepositoryItems())
             {
-                PasteCutTreeItem((RepositoryItemBase)childItemToCut, this);
+                PasteCutTreeItem(childItemToCut, this);
             }
         }
 
@@ -426,7 +423,7 @@ namespace GingerWPF.TreeViewItemsLib
                         if (sender is System.Collections.IEnumerable senderEnumerable)
                         {
                             List<ITreeViewItem> updatedChildren = [];
-                            foreach(object item in senderEnumerable)
+                            foreach (object item in senderEnumerable)
                             {
                                 ITreeViewItem? matchingTreeItem = _children.FirstOrDefault(treeItem => treeItem.NodeObject() == item);
                                 if (matchingTreeItem != null)
@@ -482,9 +479,7 @@ namespace GingerWPF.TreeViewItemsLib
 
         private void SourceControlUnlock(object sender, RoutedEventArgs e)
         {
-            RepositoryItemBase RI = ((ITreeViewItem)this).NodeObject() as RepositoryItemBase;
-
-            if (RI != null && RI.SourceControlStatus != eImageType.SourceControlLockedByMe && RI.SourceControlStatus != eImageType.SourceControlLockedByAnotherUser)
+            if (((ITreeViewItem)this).NodeObject() is RepositoryItemBase RI && RI.SourceControlStatus != eImageType.SourceControlLockedByMe && RI.SourceControlStatus != eImageType.SourceControlLockedByAnotherUser)
             {
                 Reporter.ToUser(eUserMsgKey.SoruceControlItemAlreadyUnlocked);
                 return;
@@ -608,8 +603,10 @@ namespace GingerWPF.TreeViewItemsLib
         protected StackPanel NewTVItemHeaderStyle(RepositoryItemBase repoItem, eImageType imageType = eImageType.Null, string NameProperty = "")
         {
             //The new item style with Source control
-            StackPanel stack = new StackPanel();
-            stack.Orientation = Orientation.Horizontal;
+            StackPanel stack = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
 
             if (WorkSpace.Instance.SourceControl != null && WorkSpace.Instance.UserProfile.ShowSourceControlStatusIcon)
             {
@@ -681,8 +678,10 @@ namespace GingerWPF.TreeViewItemsLib
         protected StackPanel NewTVItemFolderHeaderStyle(RepositoryFolderBase repoItemFolder, eImageType imageType = eImageType.Null)
         {
             //The new item style with Source control
-            StackPanel stack = new StackPanel();
-            stack.Orientation = Orientation.Horizontal;
+            StackPanel stack = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
 
             if (WorkSpace.Instance.SourceControl != null && WorkSpace.Instance.UserProfile.ShowSourceControlStatusIcon)
             {

@@ -66,28 +66,28 @@ namespace GingerCore.Drivers
             switch (VisualTestingAnalyzer)
             {
                 case eVisualTestingAnalyzer.BitmapPixelsComparison:
-                    if (!(VisualAnalyzer is MagickAnalyzer))
+                    if (VisualAnalyzer is not MagickAnalyzer)
                     {
                         VisualAnalyzer = new MagickAnalyzer();
                     }
                     break;
 
                 case eVisualTestingAnalyzer.Applitools:
-                    if (!(VisualAnalyzer is ApplitoolsAnalyzer))
+                    if (VisualAnalyzer is not ApplitoolsAnalyzer)
                     {
                         VisualAnalyzer = new ApplitoolsAnalyzer();
                     }
                     break;
 
                 case eVisualTestingAnalyzer.UIElementsComparison:
-                    if (!(VisualAnalyzer is UIElementsAnalyzer))
+                    if (VisualAnalyzer is not UIElementsAnalyzer)
                     {
                         VisualAnalyzer = new UIElementsAnalyzer();
                     }
                     break;
 
                 case eVisualTestingAnalyzer.VRT:
-                    if (!(VisualAnalyzer is VRTAnalyzer))
+                    if (VisualAnalyzer is not VRTAnalyzer)
                     {
                         VisualAnalyzer = new VRTAnalyzer();
                     }
@@ -246,7 +246,7 @@ namespace GingerCore.Drivers
         /// <summary>
         /// WIll give list of active virtual drivers
         /// </summary>
-        public static readonly List<KeyValuePair<string, DriverBase>> VirtualDrivers = new List<KeyValuePair<string, DriverBase>>();
+        public static readonly List<KeyValuePair<string, DriverBase>> VirtualDrivers = [];
 
 
         public void DriverStarted(string AgentGuid)
@@ -309,7 +309,7 @@ namespace GingerCore.Drivers
                 var locateValue = string.Empty;
 
                 var attributeCount = 0;
-                List<string> strList = new List<string>();
+                List<string> strList = [];
 
                 MatchCollection attList;
                 if (locateBy == eLocateBy.iOSPredicateString)
@@ -401,7 +401,7 @@ namespace GingerCore.Drivers
                 return 5;
             }
         }
-        
+
     }
 }
 

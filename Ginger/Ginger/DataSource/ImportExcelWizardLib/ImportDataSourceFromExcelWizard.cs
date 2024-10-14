@@ -37,7 +37,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
 
         public override string Title { get { return "Create new solution wizard"; } }
 
-        public List<PluginPackage> SelectedPluginPackages = new List<PluginPackage>();
+        public List<PluginPackage> SelectedPluginPackages = [];
 
         public string Path { get; set; }
         public string SheetName { get; set; }
@@ -84,10 +84,11 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         {
             try
             {
-                ImportOptionalValuesForParameters impParams = new ImportOptionalValuesForParameters();
-
-                impParams.ExcelFileName = Path;
-                impParams.ExcelSheetName = SheetName;
+                ImportOptionalValuesForParameters impParams = new ImportOptionalValuesForParameters
+                {
+                    ExcelFileName = Path,
+                    ExcelSheetName = SheetName
+                };
 
                 if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
                 {
@@ -120,7 +121,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 colList.Append(mDSDetails.AddNewCustomizedTableQuery() + ",");
                 foreach (DataColumn col in dt.Columns)
                 {
-                    if (col.ColumnName == "GINGER_ID" || col.ColumnName == "GINGER_USED" || col.ColumnName == "GINGER_LAST_UPDATED_BY" || col.ColumnName == "GINGER_LAST_UPDATE_DATETIME")
+                    if (col.ColumnName is "GINGER_ID" or "GINGER_USED" or "GINGER_LAST_UPDATED_BY" or "GINGER_LAST_UPDATE_DATETIME")
                     {
                         continue;
                     }
@@ -180,13 +181,17 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             string fileName = string.Empty;
             try
             {
-                DataSourceTable dsTableDetails = new DataSourceTable();
-                dsTableDetails.DSTableType = DataSourceTable.eDSTableType.Customized;
-                dsTableDetails.Name = name;
-                dsTableDetails.DSC = mDSDetails;
-                DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
-                DSTTI.DSTableDetails = dsTableDetails;
-                DSTTI.DSDetails = mDSDetails;
+                DataSourceTable dsTableDetails = new DataSourceTable
+                {
+                    DSTableType = DataSourceTable.eDSTableType.Customized,
+                    Name = name,
+                    DSC = mDSDetails
+                };
+                DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem
+                {
+                    DSTableDetails = dsTableDetails,
+                    DSDetails = mDSDetails
+                };
                 dsTableDetails.DSC.AddTable(dsTableDetails.Name, query);
                 mDSDetails.DSTableList.Add(dsTableDetails);
                 fileName = mDSDetails.FileFullPath;

@@ -171,9 +171,11 @@ namespace GingerCore.Variables
 
         public override List<eSetValueOptions> GetSupportedOperations()
         {
-            var supportedOperations = new List<eSetValueOptions>();
-            supportedOperations.Add(eSetValueOptions.SetValue);
-            supportedOperations.Add(eSetValueOptions.ResetValue);
+            var supportedOperations = new List<eSetValueOptions>
+            {
+                eSetValueOptions.SetValue,
+                eSetValueOptions.ResetValue
+            };
             return supportedOperations;
         }
 
@@ -210,11 +212,11 @@ namespace GingerCore.Variables
 
         public string ConvertDateTimeToSpecificFormat(string format, string datetimeToFormat = "")
         {
-                if (!string.IsNullOrEmpty(datetimeToFormat))
-                {
-                    return Convert.ToDateTime(datetimeToFormat).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
-                }
-                return Convert.ToDateTime(this.mInitialDateTime).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+            if (!string.IsNullOrEmpty(datetimeToFormat))
+            {
+                return Convert.ToDateTime(datetimeToFormat).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+            }
+            return Convert.ToDateTime(this.mInitialDateTime).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public bool CheckDateTimeWithInRange(string dateTimeValue)

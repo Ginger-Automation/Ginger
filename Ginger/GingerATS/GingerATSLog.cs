@@ -32,7 +32,7 @@ namespace GingerATS
         public GingerATSLog(string logsFolderPath)
         {
             mGingerATSLogPath = logsFolderPath + @"\GingerATSLog.txt";
-            mGingerATSLogLines = new List<string>();
+            mGingerATSLogLines = [];
         }
 
         public void AddLineToLog(eLogLineType logLineType, string logLineContent, Exception ex = null)

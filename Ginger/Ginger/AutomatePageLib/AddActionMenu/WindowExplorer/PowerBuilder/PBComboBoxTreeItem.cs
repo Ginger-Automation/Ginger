@@ -36,19 +36,19 @@ namespace Ginger.Drivers.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Set ComboBox to Value " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.SetValue,
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Get ComboBox Value " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.GetValue,
-            });
+            ObservableList<Act> list =
+            [
+                new ActPBControl()
+                {
+                    Description = "Set ComboBox to Value " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.SetValue,
+                },
+                new ActPBControl()
+                {
+                    Description = "Get ComboBox Value " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.GetValue,
+                },
+            ];
 
             //Add option to select the valid values
             List<ComboBoxElementItem> ComboValues = (List<ComboBoxElementItem>)UIAElementInfo.GetElementData();

@@ -66,10 +66,12 @@ namespace Ginger.GherkinLib
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
 
-            Button ImportButton = new Button();
-            ImportButton.Content = "Import";
+            Button ImportButton = new Button
+            {
+                Content = "Import"
+            };
             ImportButton.Click += new RoutedEventHandler(ImportButton_Click);
             winButtons.Add(ImportButton);
 

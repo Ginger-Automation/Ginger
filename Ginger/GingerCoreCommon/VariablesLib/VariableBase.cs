@@ -249,7 +249,7 @@ namespace GingerCore.Variables
 
         public static void UpdateVariableNameChangeInItem(object item, string prevVarName, string newVarName, ref bool namechange)
         {
-            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            var properties = item.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
                 if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
@@ -281,7 +281,7 @@ namespace GingerCore.Variables
 
                 if (value is IObservableList)
                 {
-                    List<dynamic> list = new List<dynamic>();
+                    List<dynamic> list = [];
                     foreach (object o in value)
                         UpdateVariableNameChangeInItem(o, prevVarName, newVarName, ref namechange);
                 }
@@ -330,7 +330,7 @@ namespace GingerCore.Variables
             if (item != null)
             {
                 // TODO: cache the reflection item needed
-                var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+                var properties = item.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
                 if (properties == null)
                 { return; }
                 foreach (MemberInfo mi in properties)
@@ -456,7 +456,7 @@ namespace GingerCore.Variables
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = [];
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -536,7 +536,7 @@ namespace GingerCore.Variables
         }
 
 
-        ObservableList<string> mPossibleVariables = new ObservableList<string>();
+        ObservableList<string> mPossibleVariables = [];
         public ObservableList<string> PossibleVariables
         {
             get
@@ -550,7 +550,7 @@ namespace GingerCore.Variables
             }
         }
 
-        ObservableList<VariableBase> mPossibleOutputVariables = new ObservableList<VariableBase>();
+        ObservableList<VariableBase> mPossibleOutputVariables = [];
         public ObservableList<VariableBase> PossibleOutputVariables
         {
             get
@@ -702,7 +702,8 @@ namespace GingerCore.Variables
             return variables;
         }
 
-        public virtual string GetInitialValue() { 
+        public virtual string GetInitialValue()
+        {
             return string.Empty;
         }
     }

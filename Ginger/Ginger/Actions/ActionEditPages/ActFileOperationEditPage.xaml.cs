@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Applitools;
 using GingerCore.Actions;
 using System.Windows;
 using System.Windows.Controls;
@@ -72,10 +71,10 @@ namespace Ginger.Actions
         {
             if (FileActionMode.SelectedValue != null)
             {
-                if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Copy
-                    || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.ForceCopy
-                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Move
-                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.UnZip)
+                if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue is ActFileOperations.eFileoperations.Copy
+                    or ActFileOperations.eFileoperations.ForceCopy
+                   or ActFileOperations.eFileoperations.Move
+                   or ActFileOperations.eFileoperations.UnZip)
                 {
                     PanelToWrite.Visibility = Visibility.Visible;
                     DestinationFolderTextBox.BrowserType = UCValueExpression.eBrowserType.Folder;
@@ -86,9 +85,9 @@ namespace Ginger.Actions
                     DestinationFolderTextBox.BrowserType = UCValueExpression.eBrowserType.File;
                 }
 
-                if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.CheckFolderExists
-                  || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.DeleteDirectoryFiles
-                  || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.DeleteDirectory)
+                if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue is ActFileOperations.eFileoperations.CheckFolderExists
+                  or ActFileOperations.eFileoperations.DeleteDirectoryFiles
+                  or ActFileOperations.eFileoperations.DeleteDirectory)
                 {
                     TextFileNameTextBox.BrowserType = UCValueExpression.eBrowserType.Folder;
                 }
@@ -97,8 +96,8 @@ namespace Ginger.Actions
                     TextFileNameTextBox.BrowserType = UCValueExpression.eBrowserType.File;
                 }
 
-                if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.RunCommand
-                    || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Execute)
+                if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue is ActFileOperations.eFileoperations.RunCommand
+                    or ActFileOperations.eFileoperations.Execute)
                 {
                     xPanelRunArguments.Visibility = Visibility.Visible;
                 }

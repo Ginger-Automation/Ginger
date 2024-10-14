@@ -94,10 +94,10 @@ namespace Ginger.Run
             }
         }
         [IsSerializedForLocalRepository]
-        public ObservableList<IApplicationAgent> ApplicationAgents { get; set; } = new ObservableList<IApplicationAgent>();
+        public ObservableList<IApplicationAgent> ApplicationAgents { get; set; } = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> FilterExecutionTags = new ObservableList<Guid>();
+        public ObservableList<Guid> FilterExecutionTags = [];
 
 
 
@@ -188,7 +188,8 @@ namespace Ginger.Run
 
         private bool mFilterExecutionByTags;
         [IsSerializedForLocalRepository]
-        public bool FilterExecutionByTags {
+        public bool FilterExecutionByTags
+        {
             get
             {
                 return mFilterExecutionByTags;
@@ -196,13 +197,13 @@ namespace Ginger.Run
 
             set
             {
-                if(mFilterExecutionByTags != value)
+                if (mFilterExecutionByTags != value)
                 {
                     mFilterExecutionByTags = value;
                     OnPropertyChanged(nameof(GingerRunner.FilterExecutionByTags));
                 }
             }
-                
+
         }
 
         ProjEnvironment mProjEnvironment;
@@ -214,7 +215,7 @@ namespace Ginger.Run
             }
             set
             {
-                mProjEnvironment = (ProjEnvironment)value;
+                mProjEnvironment = value;
                 //ExecutionLogger.ExecutionEnvironment = (ProjEnvironment)value;
                 Executor.Context.Environment = mProjEnvironment;
                 Executor.NotifyEnvironmentChanged();
@@ -281,7 +282,7 @@ namespace Ginger.Run
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; } = new ObservableList<BusinessFlowRun>();
+        public ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; } = [];
 
         private string mItemName;
         public override string ItemName

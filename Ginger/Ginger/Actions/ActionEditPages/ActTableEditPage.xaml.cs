@@ -130,11 +130,7 @@ namespace Ginger.Actions
         void ShowCellActions()
         {
             // Keep original actions 
-            mOriginalActions = new ObservableList<Act>();
-            foreach (Act a in mActions)
-            {
-                mOriginalActions.Add(a);
-            }
+            mOriginalActions = [.. mActions];
         }
 
         private void InitTableInfo()
@@ -157,15 +153,14 @@ namespace Ginger.Actions
             }
             else
             {
-                mColNames = new List<string>();
-                mColNames.Add("0");
+                mColNames = ["0"];
                 mRowCount = 0;
             }
         }
 
         private void HTMLTableInfo(object o)
         {
-            List<string> colNames = new List<string>();
+            List<string> colNames = [];
             mshtml.HTMLTable tab = (HTMLTable)o;
             bool collHeaderCols = true;
             foreach (mshtml.HTMLTableRow row in tab.rows)
@@ -177,7 +172,7 @@ namespace Ginger.Actions
 
                 if (row != null)
                 {
-                    List<string> temp = new List<string>();
+                    List<string> temp = [];
                     foreach (IHTMLElement cell in row.cells)
                     {
                         string text = cell.innerText;
@@ -544,7 +539,7 @@ namespace Ginger.Actions
         private void LoadColumnNameCombo()
         {
             UIAuto.AutomationElement headerElement;
-            mColNames = new List<string>();
+            mColNames = [];
             int k = 0;
             while (k < columnCount)
             {

@@ -32,7 +32,6 @@ using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
-using System.Linq;
 
 namespace GingerTest
 {
@@ -66,30 +65,32 @@ namespace GingerTest
             string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\" + solutionName);
             mSolutionRepository.Open(TempRepositoryFolder);
 
-            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
-            sol.ApplicationPlatforms = new ObservableList<GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform>();
-            sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution
             {
-                AppName = "Web-App",
-                Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web
-            });
-
-            sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
-            {
-                AppName = "Java-App",
-                Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
-            });
-            sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
-            {
-                AppName = "MyJavaApp",
-                Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
-            });
-
-            sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
-            {
-                AppName = "Window-App",
-                Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Windows
-            });
+                ApplicationPlatforms =
+            [
+                new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+                {
+                    AppName = "Web-App",
+                    Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web
+                },
+                new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+                {
+                    AppName = "Java-App",
+                    Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
+                },
+                new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+                {
+                    AppName = "MyJavaApp",
+                    Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
+                },
+                new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+                {
+                    AppName = "Window-App",
+                    Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Windows
+                },
+            ]
+            };
 
             WorkSpace.Instance.Solution = sol;
         }
@@ -123,16 +124,20 @@ namespace GingerTest
         {
             mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
 
-            Activity activity = new Activity();
-            activity.Active = true;
-            activity.SelectedForConversion = true;
-            activity.TargetApplication = "Web-App";
-            ActGenElement gen1 = new ActGenElement();
-            gen1.Active = true;
-            gen1.Description = "Set Value : first_name input";
-            gen1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
-            gen1.LocateValue = "//input[@name='first_name']";
-            gen1.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
+            Activity activity = new Activity
+            {
+                Active = true,
+                SelectedForConversion = true,
+                TargetApplication = "Web-App"
+            };
+            ActGenElement gen1 = new ActGenElement
+            {
+                Active = true,
+                Description = "Set Value : first_name input",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath,
+                LocateValue = "//input[@name='first_name']",
+                GenElementAction = ActGenElement.eGenElementAction.SendKeys
+            };
             activity.Acts.Add(gen1);
 
             mBF.AddActivity(activity);
@@ -140,51 +145,63 @@ namespace GingerTest
 
         private static void GetMultipleBFActGenElementActions()
         {
-            mListBF = new ObservableList<BusinessFlow>();
+            mListBF = [];
             BusinessFlow webBF = new BusinessFlow() { Name = "TestBFWebConversion", Active = true };
             BusinessFlow winBF = new BusinessFlow() { Name = "TestBFWinConversion", Active = true };
             BusinessFlow pbBF = new BusinessFlow() { Name = "TestBFPBConversion", Active = true };
 
-            Activity webActivity = new Activity();
-            webActivity.Active = true;
-            webActivity.SelectedForConversion = true;
-            webActivity.TargetApplication = "Web-App";
-            ActGenElement gen1 = new ActGenElement();
-            gen1.Active = true;
-            gen1.Description = "Set Value : first_name input";
-            gen1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
-            gen1.LocateValue = "//input[@name='first_name']";
-            gen1.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
+            Activity webActivity = new Activity
+            {
+                Active = true,
+                SelectedForConversion = true,
+                TargetApplication = "Web-App"
+            };
+            ActGenElement gen1 = new ActGenElement
+            {
+                Active = true,
+                Description = "Set Value : first_name input",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath,
+                LocateValue = "//input[@name='first_name']",
+                GenElementAction = ActGenElement.eGenElementAction.SendKeys
+            };
             webActivity.Acts.Add(gen1);
 
             webBF.AddActivity(webActivity);
             mListBF.Add(webBF);
 
-            Activity winActivity = new Activity();
-            winActivity.Active = true;
-            winActivity.SelectedForConversion = true;
-            winActivity.TargetApplication = "Web-App";
-            ActGenElement gen2 = new ActGenElement();
-            gen2.Active = true;
-            gen2.Description = "Set Value : last_name input";
-            gen2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
-            gen2.LocateValue = "//input[@name='last_name']";
-            gen2.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
+            Activity winActivity = new Activity
+            {
+                Active = true,
+                SelectedForConversion = true,
+                TargetApplication = "Web-App"
+            };
+            ActGenElement gen2 = new ActGenElement
+            {
+                Active = true,
+                Description = "Set Value : last_name input",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath,
+                LocateValue = "//input[@name='last_name']",
+                GenElementAction = ActGenElement.eGenElementAction.SendKeys
+            };
             winActivity.Acts.Add(gen2);
 
             winBF.AddActivity(winActivity);
             mListBF.Add(winBF);
 
-            Activity pbActivity = new Activity();
-            pbActivity.Active = true;
-            pbActivity.SelectedForConversion = true;
-            pbActivity.TargetApplication = "Web-App";
-            ActGenElement gen3 = new ActGenElement();
-            gen3.Active = true;
-            gen3.Description = "Set Value : email input";
-            gen3.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
-            gen3.LocateValue = "//input[@name='email']";
-            gen3.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
+            Activity pbActivity = new Activity
+            {
+                Active = true,
+                SelectedForConversion = true,
+                TargetApplication = "Web-App"
+            };
+            ActGenElement gen3 = new ActGenElement
+            {
+                Active = true,
+                Description = "Set Value : email input",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath,
+                LocateValue = "//input[@name='email']",
+                GenElementAction = ActGenElement.eGenElementAction.SendKeys
+            };
             pbActivity.Acts.Add(gen3);
 
             pbBF.AddActivity(pbActivity);
@@ -195,17 +212,21 @@ namespace GingerTest
         {
             mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
 
-            Activity activity = new Activity();
-            activity.SelectedForConversion = true;
+            Activity activity = new Activity
+            {
+                SelectedForConversion = true
+            };
 
-            ActUIElement gen1 = new ActUIElement();
-            gen1.Active = true;
-            gen1.Description = "Set Value : first_name input";
-            gen1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
-            gen1.LocateValue = "//input[@name='first_name']";
-            gen1.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
-            gen1.ElementAction = ActUIElement.eElementAction.SendKeys;
-            gen1.ElementLocateValue = "";
+            ActUIElement gen1 = new ActUIElement
+            {
+                Active = true,
+                Description = "Set Value : first_name input",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath,
+                LocateValue = "//input[@name='first_name']",
+                ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox,
+                ElementAction = ActUIElement.eElementAction.SendKeys,
+                ElementLocateValue = ""
+            };
             activity.Acts.Add(gen1);
 
             mBF.AddActivity(activity);
@@ -223,19 +244,21 @@ namespace GingerTest
                 ActUIElementElementTypeField = nameof(ActUIElement.ElementType)
             };
             ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
-            ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
+            ObservableList<Guid> poms = [selectedPOM];
             foreach (var item in lst)
             {
                 item.Selected = true;
             }
 
 
-            ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
+            ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications = [];
             foreach (var act in mBF.Activities)
             {
-                ConvertableTargetApplicationDetails tas = new ConvertableTargetApplicationDetails();
-                tas.SourceTargetApplicationName = act.TargetApplication;
-                tas.TargetTargetApplicationName = act.TargetApplication;
+                ConvertableTargetApplicationDetails tas = new ConvertableTargetApplicationDetails
+                {
+                    SourceTargetApplicationName = act.TargetApplication,
+                    TargetTargetApplicationName = act.TargetApplication
+                };
                 convertableTargetApplications.Add(tas);
             }
 
@@ -252,9 +275,9 @@ namespace GingerTest
         private static void ExecuteActionConversionForMultipleBF(bool addNewActivity, bool convertoSameTA = true,
                                                                  bool convertToPOMAction = false, Guid selectedPOM = default(Guid))
         {
-            ObservableList<BusinessFlowToConvert> ListOfBusinessFlowToConvert = new ObservableList<BusinessFlowToConvert>();
+            ObservableList<BusinessFlowToConvert> ListOfBusinessFlowToConvert = [];
             ActionConversionUtils utils = new ActionConversionUtils();
-            ObservableList<ConvertableActionDetails> lstCad = new ObservableList<ConvertableActionDetails>();
+            ObservableList<ConvertableActionDetails> lstCad = [];
             foreach (var bf in mListBF)
             {
                 ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(bf.Activities.ToList());
@@ -265,21 +288,25 @@ namespace GingerTest
                     lstCad.Add(cad);
                 }
 
-                BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
-                flowConversion.BusinessFlow = bf;
-                flowConversion.ConversionStatus = eConversionStatus.Pending;
-                flowConversion.TotalProcessingActionsCount = lst.Count;
+                BusinessFlowToConvert flowConversion = new BusinessFlowToConvert
+                {
+                    BusinessFlow = bf,
+                    ConversionStatus = eConversionStatus.Pending,
+                    TotalProcessingActionsCount = lst.Count
+                };
                 ListOfBusinessFlowToConvert.Add(flowConversion);
             }
-            ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
+            ObservableList<Guid> poms = [selectedPOM];
 
-            ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
+            ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications = [];
             foreach (var bf in mListBF)
             {
                 foreach (var act in bf.Activities)
                 {
-                    ConvertableTargetApplicationDetails tas = new ConvertableTargetApplicationDetails();
-                    tas.SourceTargetApplicationName = act.TargetApplication;
+                    ConvertableTargetApplicationDetails tas = new ConvertableTargetApplicationDetails
+                    {
+                        SourceTargetApplicationName = act.TargetApplication
+                    };
                     if (convertoSameTA)
                     {
                         tas.TargetTargetApplicationName = act.TargetApplication;
@@ -633,20 +660,24 @@ namespace GingerTest
         {
             mBF = new BusinessFlow() { Name = "TestConversion", Active = true };
 
-            Activity activity = new Activity();
-            activity.Active = true;
-            activity.SelectedForConversion = true;
-            activity.TargetApplication = targetApp;
+            Activity activity = new Activity
+            {
+                Active = true,
+                SelectedForConversion = true,
+                TargetApplication = targetApp
+            };
             return activity;
         }
 
         private static void ActSwitchWindowTOUISwitchWindowConvertor(Activity activity)
         {
-            ActSwitchWindow actSwitchWindow = new ActSwitchWindow();
-            actSwitchWindow.Active = true;
-            actSwitchWindow.Description = "Switch Window";
-            actSwitchWindow.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle;
-            actSwitchWindow.LocateValue = "FaceBook";
+            ActSwitchWindow actSwitchWindow = new ActSwitchWindow
+            {
+                Active = true,
+                Description = "Switch Window",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle,
+                LocateValue = "FaceBook"
+            };
             activity.Acts.Add(actSwitchWindow);
 
             mBF.AddActivity(activity);
@@ -681,13 +712,15 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "Set Value : txtEmployeeID";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "txtEmployeeID";
-            genAction.Value = "12321";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.SetValue;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "Set Value : txtEmployeeID",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "txtEmployeeID",
+                Value = "12321",
+                GenElementAction = ActGenElement.eGenElementAction.SetValue
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -702,12 +735,14 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "Get Value : txtEmployeeID";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "txtEmployeeID";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.GetValue;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "Get Value : txtEmployeeID",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "txtEmployeeID",
+                GenElementAction = ActGenElement.eGenElementAction.GetValue
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -722,12 +757,14 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "Switch Frame";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "frame1";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.SwitchFrame;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "Switch Frame",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "frame1",
+                GenElementAction = ActGenElement.eGenElementAction.SwitchFrame
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -742,13 +779,15 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "Run JavaScript";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.Unknown;
-            genAction.LocateValue = "";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.RunJavaScript;
-            genAction.Value = "document.getElementById('id1')";
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "Run JavaScript",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.Unknown,
+                LocateValue = "",
+                GenElementAction = ActGenElement.eGenElementAction.RunJavaScript,
+                Value = "document.getElementById('id1')"
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -763,12 +802,14 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "Click: Submit";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "btnSumit";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.Click;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "Click: Submit",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "btnSumit",
+                GenElementAction = ActGenElement.eGenElementAction.Click
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -782,12 +823,14 @@ namespace GingerTest
         public void JavaGenericScrollUpToUIElementScrollUp()
         {
             Activity activity = GetActivityforConversionTest("Java-App");
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "Scroll up";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "scroller1";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.ScrollUp;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "Scroll up",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "scroller1",
+                GenElementAction = ActGenElement.eGenElementAction.ScrollUp
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -802,12 +845,14 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "Scroll Down";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "scroller1";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.ScrollDown;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "Scroll Down",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "scroller1",
+                GenElementAction = ActGenElement.eGenElementAction.ScrollDown
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -822,12 +867,14 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "is visible";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "btnSumit";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.Visible;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "is visible",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "btnSumit",
+                GenElementAction = ActGenElement.eGenElementAction.Visible
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -847,12 +894,14 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "is enabled";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "btnSumit";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.Enabled;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "is enabled",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "btnSumit",
+                GenElementAction = ActGenElement.eGenElementAction.Enabled
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -872,12 +921,14 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "Click: Submit";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "btnSumit";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.AsyncClick;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "Click: Submit",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "btnSumit",
+                GenElementAction = ActGenElement.eGenElementAction.AsyncClick
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -892,13 +943,15 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "FireMouseEvent: onmouseout";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "selectCountry";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.FireMouseEvent;
-            genAction.Value = "onmouseout";
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "FireMouseEvent: onmouseout",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "selectCountry",
+                GenElementAction = ActGenElement.eGenElementAction.FireMouseEvent,
+                Value = "onmouseout"
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -920,13 +973,15 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "FireSpecialEvent: onblur";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "selectCountry";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.FireSpecialEvent;
-            genAction.Value = "onblur";
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "FireSpecialEvent: onblur",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "selectCountry",
+                GenElementAction = ActGenElement.eGenElementAction.FireSpecialEvent,
+                Value = "onblur"
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -948,13 +1003,15 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "Select : Country";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "selectCountry";
-            genAction.Value = "0";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDownByIndex;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "Select : Country",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "selectCountry",
+                Value = "0",
+                GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDownByIndex
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
@@ -976,13 +1033,15 @@ namespace GingerTest
         {
             Activity activity = GetActivityforConversionTest("Java-App");
 
-            ActGenElement genAction = new ActGenElement();
-            genAction.Active = true;
-            genAction.Description = "Select : Country";
-            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            genAction.LocateValue = "selectCountry";
-            genAction.Value = "india";
-            genAction.GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDown;
+            ActGenElement genAction = new ActGenElement
+            {
+                Active = true,
+                Description = "Select : Country",
+                LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName,
+                LocateValue = "selectCountry",
+                Value = "india",
+                GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDown
+            };
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);

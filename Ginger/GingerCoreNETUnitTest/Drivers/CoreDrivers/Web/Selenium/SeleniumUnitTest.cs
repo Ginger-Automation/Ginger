@@ -17,24 +17,16 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.Repository;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Drivers;
-using GingerCore.Drivers.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static GingerCore.Actions.ActWebSmartSync;
 
 namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
 {
@@ -135,7 +127,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.Selenium
 
             // Assert
             Assert.AreEqual(locators[2].LocateValue, result[0].LocateValue);
-          Assert.AreEqual(locators[2].LocateBy, result[0].LocateBy);
+            Assert.AreEqual(locators[2].LocateBy, result[0].LocateBy);
         }
         /// <summary>
         /// This unit test method verifies that the GetLocatorsForWebSmartSync method throws an exception when there is no active locator for the POM element.

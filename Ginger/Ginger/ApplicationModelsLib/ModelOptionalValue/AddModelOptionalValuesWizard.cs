@@ -43,14 +43,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             ModelLocalParams, GlobalParams
         }
-        public ObservableList<TemplateFile> OVFList = new ObservableList<TemplateFile>();//optional values files list
-        public List<ParameterValues> ParameterValues = new List<ParameterValues>();// EXCEL & DB
+        public ObservableList<TemplateFile> OVFList = [];//optional values files list
+        public List<ParameterValues> ParameterValues = [];// EXCEL & DB
         public ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
         public Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict;//XML&JSON
         public ObservableList<GlobalAppModelParameter> mGlobalParamterList;
         public ApplicationModelBase mAAMB;
-        public ObservableList<AppModelParameter> ParamsList = new ObservableList<AppModelParameter>();//Grid presentation
-        public ObservableList<GlobalAppModelParameter> GlobalParamsList = new ObservableList<GlobalAppModelParameter>();//Grid presentation
+        public ObservableList<AppModelParameter> ParamsList = [];//Grid presentation
+        public ObservableList<GlobalAppModelParameter> GlobalParamsList = [];//Grid presentation
 
         public eSourceType SourceType { get; set; }
         public AddModelOptionalValuesWizard(ApplicationModelBase AAMB)//Local Parameters
@@ -100,7 +100,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             else
             {
-                OptionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
+                OptionalValuesPerParameterDict = [];
                 if (ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
                 {
                     ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(mAAMB, OptionalValuesPerParameterDict);

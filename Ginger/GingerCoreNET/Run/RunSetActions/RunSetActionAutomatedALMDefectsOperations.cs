@@ -43,7 +43,7 @@ namespace Ginger.Run.RunSetActions
         {
             if ((WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null) && (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0))
             {
-                Dictionary<Guid, Dictionary<string, string>> defectsForOpening = new Dictionary<Guid, Dictionary<string, string>>();
+                Dictionary<Guid, Dictionary<string, string>> defectsForOpening = [];
 
                 ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
                 ALMDefectProfile defaultALMDefectProfile = new ALMDefectProfile();
@@ -64,7 +64,7 @@ namespace Ginger.Run.RunSetActions
                 {
                     foreach (DefectSuggestion defectSuggestion in WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.AutomatedOpeningFlag == true).ToList())
                     {
-                        Dictionary<string, string> currentALMDefectFieldsValues = new Dictionary<string, string>();
+                        Dictionary<string, string> currentALMDefectFieldsValues = [];
                         try
                         {
                             currentALMDefectFieldsValues = defaultALMDefectProfile.ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
@@ -91,7 +91,7 @@ namespace Ginger.Run.RunSetActions
                 {
                     foreach (DefectSuggestion defectSuggestion in WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList)
                     {
-                        Dictionary<string, string> currentALMDefectFieldsValues = new Dictionary<string, string>();
+                        Dictionary<string, string> currentALMDefectFieldsValues = [];
                         try
                         {
                             currentALMDefectFieldsValues = defaultALMDefectProfile.ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||

@@ -113,10 +113,10 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                         break;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 //failed to write to log
-                throw (ex);
+                throw;
             }
         }
 

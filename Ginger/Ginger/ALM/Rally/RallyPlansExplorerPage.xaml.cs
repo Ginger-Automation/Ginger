@@ -44,14 +44,17 @@ namespace Ginger.ALM.Rally
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = RallyTestPlan.Fields.RallyID, Header = "Test Plan ID", WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RallyTestPlan.Fields.Name, Header = "Test Plan Name", ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RallyTestPlan.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RallyTestPlan.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = "Import Test Plan", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ImportButton"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = RallyTestPlan.Fields.RallyID, Header = "Test Plan ID", WidthWeight = 15, ReadOnly = true },
+                new GridColView() { Field = RallyTestPlan.Fields.Name, Header = "Test Plan Name", ReadOnly = true },
+                new GridColView() { Field = RallyTestPlan.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = RallyTestPlan.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true },
+                new GridColView() { Field = "Import Test Plan", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ImportButton"] },
+            ]
+            };
 
             grdRallyTestPlanes.SetAllColumnsDefaultView(view);
             grdRallyTestPlanes.InitViewItems();
@@ -63,7 +66,7 @@ namespace Ginger.ALM.Rally
         private void SetGridData()
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            ObservableList<RallyTestPlan> mRallyTestPlansListSortedByDate = new ObservableList<RallyTestPlan>();
+            ObservableList<RallyTestPlan> mRallyTestPlansListSortedByDate = [];
             //foreach (RallyTestPlan testPlan in RallyConnect.Instance.GetRallyTestPlansByProject( ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName,  WorkSpace.Instance.Solution.Folder + @"Documents\ALM\RQM_Configs", ALMCore.DefaultAlmConfig.ALMProjectName).OrderByDescending(item => item.CreationDate))
             //{
             //    mRallyTestPlansListSortedByDate.Add(testPlan);

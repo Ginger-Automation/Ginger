@@ -68,8 +68,7 @@ namespace GingerCore.Drivers.MainFrame
 
         private static void CaretChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            TextBox tb = d as TextBox;
-            if (tb != null)
+            if (d is TextBox tb)
             {
                 tb.CaretIndex = (int)e.NewValue;
             }
@@ -88,15 +87,21 @@ namespace GingerCore.Drivers.MainFrame
             catch (Exception mfe)
             {
                 XMLScreen XMLS = new XMLScreen();
-                XMLScreenField XF = new XMLScreenField();
-                XF.Text = "Mainframe not Connected " + mfe.Message;
-                XF.Attributes = new XMLScreenAttributes();
-                XF.Attributes.Protected = true;
-                XF.Location = new XMLScreenLocation();
-                XF.Location.position = 0;
-                XF.Location.top = 0;
-                XF.Location.left = 0;
-                XF.Location.length = XF.Text.Length;
+                XMLScreenField XF = new XMLScreenField
+                {
+                    Text = "Mainframe not Connected " + mfe.Message,
+                    Attributes = new XMLScreenAttributes
+                    {
+                        Protected = true
+                    }
+                };
+                XF.Location = new XMLScreenLocation
+                {
+                    position = 0,
+                    top = 0,
+                    left = 0,
+                    length = XF.Text.Length
+                };
 
                 MainFrameUIHelper.RefreshCamvasComponents(mDriver, this, ConsoleCanvas, XMLS, XF);
             }
@@ -137,9 +142,11 @@ namespace GingerCore.Drivers.MainFrame
                         return;
                     }
 
-                    ActMainframeSendKey AMSK = new ActMainframeSendKey();
-                    AMSK.Description = ("Send " + key.ToString() + " Key to Mainframe ");
-                    mDriver.mBusinessFlow.CurrentActivity.Acts.Add((Actions.Act)AMSK);
+                    ActMainframeSendKey AMSK = new ActMainframeSendKey
+                    {
+                        Description = ("Send " + key.ToString() + " Key to Mainframe ")
+                    };
+                    mDriver.mBusinessFlow.CurrentActivity.Acts.Add(AMSK);
                 }
 
                 Refresh();

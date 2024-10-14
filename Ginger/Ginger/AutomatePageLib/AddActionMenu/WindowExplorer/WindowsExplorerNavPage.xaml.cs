@@ -82,7 +82,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
-                if (e.PropertyName == nameof(Context.AgentStatus) || e.PropertyName == nameof(Context.Agent))
+                if (e.PropertyName is (nameof(Context.AgentStatus)) or (nameof(Context.Agent)))
                 {
                     if (mContext.Agent != null)
                     {
@@ -143,7 +143,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         mCurrentLoadedPage.SetDriver(WindowExplorerDriver);
                         if (mWinExplorerPageList == null)
                         {
-                            mWinExplorerPageList = new List<AgentPageMappingHelper>();
+                            mWinExplorerPageList = [];
                         }
                         mWinExplorerPageList.Add(new AgentPageMappingHelper(mContext.Agent, mCurrentLoadedPage));
                     }

@@ -48,8 +48,8 @@ namespace GingerCore.ALM.RQM
             CreatedBy = createdBy;
             CreationDate = creationDate;
             Description = description;
-            TestScripts = new ObservableList<RQMTestScript>();
-            Parameters = new ObservableList<RQMTestParameter>();
+            TestScripts = [];
+            Parameters = [];
             BTSID = string.Empty;
             TestSuiteTitle = testSuiteTitle;
             TestSuiteId = testSuiteId;
@@ -93,12 +93,12 @@ namespace GingerCore.ALM.RQM
         public ObservableList<RQMTestParameter> Parameters { get; set; }
 
         string mSelectedTestScripts = string.Empty;
-        ObservableList<string> mTestScriptsStr = new ObservableList<string>();
+        ObservableList<string> mTestScriptsStr = [];
         public ObservableList<string> TestScriptsNamesList
         {
             get
             {
-                mTestScriptsStr = new ObservableList<string>();
+                mTestScriptsStr = [];
                 TestScripts.ToList().ForEach(y => mTestScriptsStr.Add(y.Name));
                 return mTestScriptsStr;
             }

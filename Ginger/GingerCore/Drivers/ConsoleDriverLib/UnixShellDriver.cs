@@ -302,7 +302,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             }
             try
             {
-                if (mWait == 0 || mWait == null)
+                if (mWait is 0 or null)
                 {
                     mWait = this.ImplicitWait;
                 }
@@ -436,7 +436,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     string prefix;
                     if (AIV.Value.StartsWith("~/") || AIV.Value.StartsWith("~\\"))
                     {
-                        prefix = AIV.Value.Substring(0, 2);
+                        prefix = AIV.Value[..2];
                     }
                     else
                     {

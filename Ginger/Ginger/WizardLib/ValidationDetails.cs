@@ -71,23 +71,20 @@ namespace GingerWPF
                     {
                         //.NET Controls Validation
                         BindingExpression bindingExpression = null;
-                        if (child is TextBox)
+                        if (child is TextBox textBox)
                         {
-                            TextBox textBox = (TextBox)child;
                             bindingExpression = textBox.GetBindingExpression(TextBox.TextProperty);
                         }
-                        else if (child is ComboBox)
+                        else if (child is ComboBox comboBox)
                         {
-                            ComboBox comboBox = (ComboBox)child;
                             bindingExpression = comboBox.GetBindingExpression(ComboBox.SelectedValueProperty);
                             if (bindingExpression == null)
                             {
                                 bindingExpression = comboBox.GetBindingExpression(ComboBox.TextProperty);
                             }
                         }
-                        else if (child is Ginger.Agents.ucAgentControl)
+                        else if (child is Ginger.Agents.ucAgentControl agentControl)
                         {
-                            Ginger.Agents.ucAgentControl agentControl = (Ginger.Agents.ucAgentControl)child;
                             bindingExpression = agentControl.GetBindingExpression(Ginger.Agents.ucAgentControl.SelectedAgentProperty);
                         }
 

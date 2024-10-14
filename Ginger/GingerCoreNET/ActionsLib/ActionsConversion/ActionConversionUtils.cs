@@ -68,7 +68,7 @@ namespace Amdocs.Ginger.CoreNET
 
         bool mStopConversion = false;
 
-        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlowsToConvert = new ObservableList<BusinessFlowToConvert>();
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlowsToConvert = [];
 
         /// <summary>
         /// This method stops the multiple businessflow action conversion process
@@ -183,12 +183,12 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     if (!mStopConversion)
                     {
-                        if (bfToConvert.ConversionStatus != eConversionStatus.Running && bfToConvert.ConversionStatus != eConversionStatus.Finish)
+                        if (bfToConvert.ConversionStatus is not eConversionStatus.Running and not eConversionStatus.Finish)
                         {
                             bfToConvert.ConversionStatus = eConversionStatus.Running;
                             Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, bfToConvert.BusinessFlow.Name);
                             ConvertBusinessFlowLegacyActions(bfToConvert, addNewActivity, actionsToBeConverted, convertableTargetApplications, convertToPOMAction, selectedPOMs);
-                            if (bfToConvert.ConversionStatus != eConversionStatus.Stopped && bfToConvert.ConversionStatus != eConversionStatus.NA)
+                            if (bfToConvert.ConversionStatus is not eConversionStatus.Stopped and not eConversionStatus.NA)
                             {
                                 bfToConvert.ConversionStatus = eConversionStatus.Finish;
                             }
@@ -432,7 +432,7 @@ namespace Amdocs.Ginger.CoreNET
         /// <returns></returns>
         public ObservableList<ConvertableActionDetails> GetConvertableActivityActions(List<Activity> lstSelectedActivities)
         {
-            ObservableList<ConvertableActionDetails> lst = new ObservableList<ConvertableActionDetails>();
+            ObservableList<ConvertableActionDetails> lst = [];
             try
             {
                 foreach (Activity convertibleActivity in lstSelectedActivities)
@@ -449,11 +449,13 @@ namespace Amdocs.Ginger.CoreNET
                                 ConvertableActionDetails existingConvertibleActionType = lst.FirstOrDefault(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName());
                                 if (existingConvertibleActionType == null)
                                 {
-                                    ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
-                                    newConvertibleActionType.Selected = true;
-                                    newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
-                                    newConvertibleActionType.SourceActionType = act.GetType();
-                                    newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
+                                    ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails
+                                    {
+                                        Selected = true,
+                                        SourceActionTypeName = act.ActionDescription.ToString(),
+                                        SourceActionType = act.GetType(),
+                                        TargetActionType = ((IObsoleteAction)act).TargetAction()
+                                    };
                                     if (newConvertibleActionType.TargetActionType == null)
                                     {
                                         continue;
@@ -493,7 +495,7 @@ namespace Amdocs.Ginger.CoreNET
         /// <returns></returns>
         public ObservableList<Activity> GetConvertableActivitiesFromBusinessFlow(BusinessFlow businessFlow)
         {
-            ObservableList<Activity> lst = new ObservableList<Activity>();
+            ObservableList<Activity> lst = [];
             try
             {
                 foreach (Activity convertibleActivity in businessFlow.Activities)

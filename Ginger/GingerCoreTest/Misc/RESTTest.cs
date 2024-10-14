@@ -64,13 +64,15 @@ namespace UnitTest
         public void Rest1()
         {
 
-            ActREST a2 = new ActREST();
-            a2.RequestType = ActREST.eRequestType.GET;
-            a2.ReqHttpVersion = ActREST.eHttpVersion.HTTPV10;
-            //a2.ContentType = ActREST.eContentType.TextPlain;
-            a2.ContentType = ActREST.eContentType.JSon;
-            a2.CookieMode = ActREST.eCookieMode.None;
-            a2.SecurityType = ActREST.eSercurityType.None;
+            ActREST a2 = new ActREST
+            {
+                RequestType = ActREST.eRequestType.GET,
+                ReqHttpVersion = ActREST.eHttpVersion.HTTPV10,
+                //a2.ContentType = ActREST.eContentType.TextPlain;
+                ContentType = ActREST.eContentType.JSon,
+                CookieMode = ActREST.eCookieMode.None,
+                SecurityType = ActREST.eSercurityType.None
+            };
             a2.EndPointURL.ValueForDriver = "https://jsonplaceholder.typicode.com/posts/1";
 
             //Act

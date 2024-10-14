@@ -211,7 +211,7 @@ namespace Ginger.Reports
         {
             get
             {
-                gingerReports = new List<GingerReport>();
+                gingerReports = [];
                 if (LogFolder != null)
                 {
                     foreach (string folder in System.IO.Directory.GetDirectories(LogFolder))
@@ -247,7 +247,7 @@ namespace Ginger.Reports
         {
             get
             {
-                if (DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB || DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
+                if (DataRepMethod is ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB or ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
                 {
                     return runSetExecutionStatus;
                 }
@@ -255,7 +255,7 @@ namespace Ginger.Reports
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 }
-                else if (GingerReports.Any(x=>x.IsBlocked))
+                else if (GingerReports.Any(x => x.IsBlocked))
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                 }
@@ -263,7 +263,7 @@ namespace Ginger.Reports
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                 }
-                else if (GingerReports.Count(x=>x.IsPassed || x.IsSkipped) == TotalGingerRunners)
+                else if (GingerReports.Count(x => x.IsPassed || x.IsSkipped) == TotalGingerRunners)
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
@@ -347,7 +347,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return GingerReports.Count(x=> x.IsStopped);
+                return GingerReports.Count(x => x.IsStopped);
             }
         }
 
@@ -366,6 +366,6 @@ namespace Ginger.Reports
                 return TotalGingerRunners - (TotalGingerRunnersFailed + TotalGingerRunnersPassed);
             }
         }
-        public List<LiteDbRunner> liteDbRunnerList = new List<LiteDbRunner>();
+        public List<LiteDbRunner> liteDbRunnerList = [];
     }
 }

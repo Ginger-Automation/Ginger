@@ -42,7 +42,7 @@ namespace GingerCore.Drivers.ASCF
         public string Path { get; set; }
         public eControlType ControlType { get; set; }
 
-        public ObservableList<ControlProperty> Properties = new ObservableList<ControlProperty>();
+        public ObservableList<ControlProperty> Properties = [];
 
         internal void SetPath()
         {

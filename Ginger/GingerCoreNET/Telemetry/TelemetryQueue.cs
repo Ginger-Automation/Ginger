@@ -16,18 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Services.Common;
-using Microsoft.VisualStudio.Services.WebApi;
-using NPOI.HSSF.Record.Aggregates;
-using NPOI.OpenXmlFormats.Dml;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -187,7 +180,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 await TryAddToDBAsync(records, corrId);
 
                 ITelemetryCollector<TRecord>.AddResult? result = await TrySendToCollectorAsync(records, corrId);
-                
+
                 if (result != null && result.Successful)
                 {
                     await TryDeleteRecordsFromDBAsync(records, corrId);
@@ -310,7 +303,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
             _cancellationTokenSource.Cancel();
             _cancellationTokenSource.Dispose();
             _queue.Dispose();
-           
+
             _consumerTask.Wait(QueueFlushWaitTime);
         }
     }

@@ -19,13 +19,12 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Bogus;
 using Ginger.UserControlsLib.TextEditor.Common;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Controls;
-using GingerCore;
-using Org.BouncyCastle.Asn1.Pkcs;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -86,8 +85,8 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to load ValueExpressionMockDataEditorPage", ex);
             }
         }
-        
-            
+
+
         private static List<string> GetLocales()
         {
             return Bogus.Database.GetAllLocales().ToList();
@@ -105,7 +104,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         private static List<string> GetMethodsOfType(Type objType)
         {
-            List<string> methodList = new List<string>();
+            List<string> methodList = [];
 
             if (objType != null)
             {
@@ -124,7 +123,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                                 continue;
                             }
                             string parameters = string.Join(", ", method.GetParameters().Select(p => FormatParameter(p)));
-                            
+
                             string functionString = $"{method.Name}({parameters})";
                             methodList.Add(functionString);
                         }
@@ -139,9 +138,9 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         {
             return objType switch
             {
-                "Bogus.Randomizer" => new HashSet<string> { "EnumValues", "WeightedRandom", "ArrayElement", "ArrayElements", "ListItem", "ListItems", "ReplaceSymbols" },
-                "Bogus.DataSets.Date" => new HashSet<string> { "BetweenTimeOnly" },
-                _ => new HashSet<string>()
+                "Bogus.Randomizer" => ["EnumValues", "WeightedRandom", "ArrayElement", "ArrayElements", "ListItem", "ListItems", "ReplaceSymbols"],
+                "Bogus.DataSets.Date" => ["BetweenTimeOnly"],
+                _ => []
             };
         }
 
@@ -152,7 +151,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             bool hasDefaultValue = parameter.HasDefaultValue;
             object defaultValue = hasDefaultValue ? $"{FormatDefaultValue(parameter.DefaultValue)}" : SetDefaultValue(parameter);
             return $"{defaultValue}";
-            
+
         }
 
         private static object SetDefaultValue(ParameterInfo parameter)
@@ -194,7 +193,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             }
             return array;
         }
-         
+
         private static object GetDefaultForType(Type type)
         {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
@@ -202,26 +201,21 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         private static string FormatDefaultValue(object defaultValue)
         {
-            switch (defaultValue)
+            return defaultValue switch
             {
-                case null:
-                    return "null";
-                case string s:
-                    return $"\"{s}\"";
-                case char c:
-                    return $"'{c}'";
-                case bool b:
-                    return b.ToString().ToLower();
-                default:
-                    return defaultValue.ToString();
-            }
+                null => "null",
+                string s => $"\"{s}\"",
+                char c => $"'{c}'",
+                bool b => b.ToString().ToLower(),
+                _ => defaultValue.ToString(),
+            };
         }
         public void UpdateContent()
         {
             try
             {
                 string selectedItem = (string)FunctionsList.SelectedItem;
-                string initialText = mSelectedContentArgs.TextEditor.Text.Substring(0, mSelectedContentArgs.StartPos);
+                string initialText = mSelectedContentArgs.TextEditor.Text[..mSelectedContentArgs.StartPos];
 
                 // Parsing the text editor content
                 string objStr, functions, Locale;
@@ -233,10 +227,10 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 string resultText = BuildResultText(selectedItem, expParams.MockDataDatasets, expParams.Locale, expParams.Function, caretPosition, expParams.DatasetStartIndex, expParams.DatasetEndIndex, expParams.LocaleStartIndex, expParams.LocaleEndIndex);
 
                 // Append the remaining text and update the text editor content
-                resultText += editorText.Substring(mSelectedContentArgs.EndPos + 1);
+                resultText += editorText[(mSelectedContentArgs.EndPos + 1)..];
                 mSelectedContentArgs.TextEditor.Text = resultText;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to update content in ValueExpressionMockDataEditorPage", ex);
             }
@@ -261,7 +255,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             }
             else
             {
-                
+
                 if (isWithinDataset)
                 {
                     resultText += GenerateResultText(selectedItem, "Bogus", isWithinDataset, locale);

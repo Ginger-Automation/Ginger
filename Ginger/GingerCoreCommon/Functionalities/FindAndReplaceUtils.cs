@@ -62,15 +62,15 @@ namespace Amdocs.Ginger.Common.Functionalities
 
         public void FindItemsByReflection(RepositoryItemBase OriginItemObject, RepositoryItemBase item, ObservableList<FoundItem> foundItemsList, string textToFind, SearchConfig searchConfig, RepositoryItemBase parentItemToSave, string itemParent, string foundField)
         {
-            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            var properties = item.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
 
             foreach (MemberInfo mi in properties)
             {
                 try
                 {
-                    if (mi.Name == nameof(ActInputValue.ValueForDriver) || mi.Name == /*nameof(RepositoryItemBase.mBackupDic)*/ "mBackupDic" || mi.Name == nameof(RepositoryItemBase.FileName) || mi.Name == nameof(RepositoryItemBase.Guid) ||
-                    mi.Name == nameof(RepositoryItemBase.ObjFolderName) || mi.Name == nameof(RepositoryItemBase.ObjFileExt) || mi.Name == "ScreenShots" ||
-                    mi.Name == nameof(RepositoryItemBase.ContainingFolder) || mi.Name == nameof(RepositoryItemBase.ContainingFolderFullPath) || mi.Name == nameof(RepositoryItemBase.Guid) || mi.Name == nameof(RepositoryItemBase.ParentGuid) || mi.Name == "Created" || mi.Name == "Version" || mi.Name == "CreatedBy" || mi.Name == "LastUpdate" || mi.Name == "LastUpdateBy")
+                    if (mi.Name is (nameof(ActInputValue.ValueForDriver)) or "mBackupDic" or (nameof(RepositoryItemBase.FileName)) or (nameof(RepositoryItemBase.Guid)) or
+                    (nameof(RepositoryItemBase.ObjFolderName)) or (nameof(RepositoryItemBase.ObjFileExt)) or "ScreenShots" or
+                    (nameof(RepositoryItemBase.ContainingFolder)) or (nameof(RepositoryItemBase.ContainingFolderFullPath)) or (nameof(RepositoryItemBase.Guid)) or (nameof(RepositoryItemBase.ParentGuid)) or "Created" or "Version" or "CreatedBy" or "LastUpdate" or "LastUpdateBy")
                         continue;
 
 
@@ -126,8 +126,8 @@ namespace Amdocs.Ginger.Common.Functionalities
                         {
                             index++;
                             string paramNameString = string.Empty;
-                            if (o is RepositoryItemBase)
-                                paramNameString = ((RepositoryItemBase)o).ItemName;
+                            if (o is not null)
+                                paramNameString = o.ItemName;
                             else
                                 paramNameString = o.ToString();
 
@@ -174,7 +174,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                                     FoundItem foundItem = foundItemsList.FirstOrDefault(x => x.FieldName == mi.Name && x.FieldValue == stringValue && x.ItemObject == item);
                                     if (foundItem == null)
                                     {
-                                        List<string> OptionalValuseToReplaceList = new List<string>();
+                                        List<string> OptionalValuseToReplaceList = [];
                                         if (PI.PropertyType.BaseType == typeof(Enum))
                                         {
                                             Array enumValues = Enum.GetValues(PI.PropertyType);
@@ -283,7 +283,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                     PI.SetValue(FI.ItemObject, ValueToReplace);
                     FI.FieldValue = ValueToReplace.ToString();
                     // change the dirty status of the the modified object to populate the object into the modified solution files.
-                    if (FI.ItemObject is RepositoryItemBase)
+                    if (FI.ItemObject is not null)
                     {
                         FI.ItemObject.DirtyStatus = Enums.eDirtyStatus.Modified;
                     }

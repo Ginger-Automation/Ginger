@@ -260,7 +260,7 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
 
                 }
-                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+                if (almConectStyle is not eALMConnectType.Auto and not eALMConnectType.Silence)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
@@ -269,13 +269,13 @@ namespace Ginger.ALM.Repository
             {
                 if (businessFlow.ALMTestSetLevel == "RunSet")
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Export to ALM Failed The { GingerDicser.GetTermResValue(eTermResKey.RunSet) } ' {businessFlow.Name}' failed to be exported to ALM. { Environment.NewLine }{ Environment.NewLine } Error Details: {res}");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Export to ALM Failed The {GingerDicser.GetTermResValue(eTermResKey.RunSet)} ' {businessFlow.Name}' failed to be exported to ALM. {Environment.NewLine}{Environment.NewLine} Error Details: {res}");
                 }
                 else
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
                 }
-                
+
             }
 
             Reporter.HideStatusMessage();

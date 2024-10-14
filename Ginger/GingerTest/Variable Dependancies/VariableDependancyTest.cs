@@ -50,49 +50,73 @@ namespace GingerTest.Variable_Dependancies
         {
 
 
-            BF1 = new BusinessFlow();
-            BF1.Name = "VariableDependancyTest";
-            BF1.Active = true;
+            BF1 = new BusinessFlow
+            {
+                Name = "VariableDependancyTest",
+                Active = true
+            };
 
             ActivitiesGroup activityGroup = new ActivitiesGroup();
 
-            Activity activity1 = new Activity();
-            activity1.Active = true;
+            Activity activity1 = new Activity
+            {
+                Active = true
+            };
 
-            ActDummy actDummy1 = new ActDummy();
-            actDummy1.Active = true;
-            ActDummy actDummy2 = new ActDummy();
-            actDummy2.Active = true;
+            ActDummy actDummy1 = new ActDummy
+            {
+                Active = true
+            };
+            ActDummy actDummy2 = new ActDummy
+            {
+                Active = true
+            };
 
             activity1.Acts.Add(actDummy1);
             activity1.Acts.Add(actDummy2);
 
 
-            Activity activity2 = new Activity();
-            activity2.Active = true;
+            Activity activity2 = new Activity
+            {
+                Active = true
+            };
 
-            ActDummy actDummy3 = new ActDummy();
-            actDummy3.Active = true;
-            ActDummy actDummy4 = new ActDummy();
-            actDummy4.Active = true;
+            ActDummy actDummy3 = new ActDummy
+            {
+                Active = true
+            };
+            ActDummy actDummy4 = new ActDummy
+            {
+                Active = true
+            };
 
-            ActDummy actDummy7 = new ActDummy();
-            actDummy7.Active = true;
-            ActDummy actDummy8 = new ActDummy();
-            actDummy8.Active = true;
+            ActDummy actDummy7 = new ActDummy
+            {
+                Active = true
+            };
+            ActDummy actDummy8 = new ActDummy
+            {
+                Active = true
+            };
 
             activity2.Acts.Add(actDummy3);
             activity2.Acts.Add(actDummy4);
             activity2.Acts.Add(actDummy7);
             activity2.Acts.Add(actDummy8);
 
-            Activity activity3 = new Activity();
-            activity3.Active = true;
+            Activity activity3 = new Activity
+            {
+                Active = true
+            };
 
-            ActDummy actDummy5 = new ActDummy();
-            actDummy5.Active = true;
-            ActDummy actDummy6 = new ActDummy();
-            actDummy6.Active = true;
+            ActDummy actDummy5 = new ActDummy
+            {
+                Active = true
+            };
+            ActDummy actDummy6 = new ActDummy
+            {
+                Active = true
+            };
 
             activity3.Acts.Add(actDummy5);
             activity3.Acts.Add(actDummy6);
@@ -107,8 +131,10 @@ namespace GingerTest.Variable_Dependancies
 
             BF1.ActivitiesGroups.Add(activityGroup);
 
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             BF1.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
@@ -126,27 +152,33 @@ namespace GingerTest.Variable_Dependancies
             mGR.Name = "Test Runner";
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            ProjEnvironment environment = new ProjEnvironment();
-            environment.Name = "Default";
+            ProjEnvironment environment = new ProjEnvironment
+            {
+                Name = "Default"
+            };
             BF1.Environment = environment.Name;
 
-            Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.Selenium;
+            Agent a = new Agent
+            {
+                DriverType = Agent.eDriverType.Selenium
+            };
             DriverConfigParam browserTypeParam = a.GetOrCreateParam(parameter: nameof(GingerWebDriver.BrowserType), defaultValue: nameof(WebBrowserType.Chrome));
             browserTypeParam.Value = nameof(WebBrowserType.Chrome);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
-            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
-
-            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+            mGR.Executor.SolutionApplications =
+            [
+                new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" },
+            ];
             mGR.Executor.BusinessFlows.Add(BF1);
 
-            Context context1 = new Context();
-            context1.BusinessFlow = BF1;
-            context1.Activity = BF1.Activities[0];
+            Context context1 = new Context
+            {
+                BusinessFlow = BF1,
+                Activity = BF1.Activities[0]
+            };
 
             mGR.Executor.CurrentBusinessFlow = BF1;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity = BF1.Activities[0];

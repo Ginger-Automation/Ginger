@@ -32,8 +32,10 @@ namespace Ginger.ApplicationModels.DBModels.DBModelWizard
         public AddDBModelWizard(string DBMFolder)
         {
             this.DBMFolder = DBMFolder;
-            mApplicationDBModel = new ApplicationDBModel();
-            mApplicationDBModel.ContainingFolder = DBMFolder;
+            mApplicationDBModel = new ApplicationDBModel
+            {
+                ContainingFolder = DBMFolder
+            };
             AddPage(Name: "Add DB Model", Title: "Select DB", SubTitle: "Choose ...", Page: new AddDBModelIntroWizardPage());
             AddPage(Name: "Learn DB", Title: "Learn DB", SubTitle: "Choose ...", Page: new ScanDBPage(mApplicationDBModel));
             AddPage(Name: "Save", Title: "Save", SubTitle: "Choose ...", Page: new SaveDBModelPageWizardPage(mApplicationDBModel));

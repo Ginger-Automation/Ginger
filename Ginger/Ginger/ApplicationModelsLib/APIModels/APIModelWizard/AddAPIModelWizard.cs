@@ -21,20 +21,14 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
-using Couchbase.Configuration.Server.Serialization;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.WizardLib;
 using GingerCore;
 using GingerCoreNET.Application_Models;
-using GingerWPF.ApplicationModelsLib.APIModelWizard;
-using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
 using GingerWPF.WizardLib;
-using OctaneRepositoryStd.BLL;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 {
@@ -66,7 +60,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         public string InfoTitle { get; set; }
 
-        public ObservableList<TemplateFile> XTFList = new ObservableList<TemplateFile>();
+        public ObservableList<TemplateFile> XTFList = [];
 
         public ObservableList<ApplicationAPIModel> LearnedAPIModelsList { get; set; }
         public ObservableList<DeltaAPIModel> DeltaModelsList { get; set; }
@@ -80,7 +74,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         public RepositoryItemKey TargetApplicationKey { get; set; }
 
-        public ObservableList<RepositoryItemKey> TagsKeys = new ObservableList<RepositoryItemKey>();
+        public ObservableList<RepositoryItemKey> TagsKeys = [];
 
         public bool AvoidDuplicatesNodes { get; set; }
 
@@ -104,10 +98,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             //ExportAPIFiles(SelectedAAMList);
             if (DeltaModelsList != null && DeltaModelsList.Count > 0)
             {
-                foreach (DeltaAPIModel deltaAPI in DeltaModelsList.Where(d => d.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges || d.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting).GroupBy(d => d.matchingAPIModel).Select(d => d.First()))     // (DeltaAPIModel.matchingAPIModel)))          //.Where(d => d.IsSelected))
+                foreach (DeltaAPIModel deltaAPI in DeltaModelsList.Where(d => d.SelectedOperationEnum is DeltaAPIModel.eHandlingOperations.MergeChanges or DeltaAPIModel.eHandlingOperations.ReplaceExisting).GroupBy(d => d.matchingAPIModel).Select(d => d.First()))     // (DeltaAPIModel.matchingAPIModel)))          //.Where(d => d.IsSelected))
                 {
-                    if (deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges
-                        || deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting)
+                    if (deltaAPI.SelectedOperationEnum is DeltaAPIModel.eHandlingOperations.MergeChanges
+                        or DeltaAPIModel.eHandlingOperations.ReplaceExisting)
                     {
                         if (deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
                         {
@@ -126,8 +120,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         }
         private GlobalAppModelParameter AddGlobalParam(string customurl, string placehold)
         {
-            GlobalAppModelParameter newModelGlobalParam = new GlobalAppModelParameter();
-            newModelGlobalParam.PlaceHolder = "{" + placehold + "}";
+            GlobalAppModelParameter newModelGlobalParam = new GlobalAppModelParameter
+            {
+                PlaceHolder = "{" + placehold + "}"
+            };
             var GlobalParams = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
             if (GlobalParams.Any(x => x.PlaceHolder.Equals(newModelGlobalParam.PlaceHolder)))
             {
@@ -146,19 +142,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             if (APIType == eAPIType.Swagger)
             {
                 customUrl = SelectedAAMList.FirstOrDefault()?.URLDomain;
-                 itemtoadd = AddGlobalParam(customUrl, this.InfoTitle);
+                itemtoadd = AddGlobalParam(customUrl, this.InfoTitle);
             }
-             foreach (ApplicationAPIModel apiModel in SelectedAAMList)
+            foreach (ApplicationAPIModel apiModel in SelectedAAMList)
             {
                 if (APIType == eAPIType.Swagger)
                 {
                     apiModel.EndpointURL = itemtoadd.PlaceHolder + apiModel.EndpointURL;
-                    apiModel.GlobalAppModelParameters = new ObservableList<GlobalAppModelParameter>() {  new GlobalAppModelParameter() { Guid = itemtoadd.Guid,PlaceHolder = itemtoadd.PlaceHolder,
-                     OptionalValuesList= new() { new OptionalValue() { Value = customUrl , IsDefault = true } } } };
+                    apiModel.GlobalAppModelParameters = [  new GlobalAppModelParameter() { Guid = itemtoadd.Guid,PlaceHolder = itemtoadd.PlaceHolder,
+                     OptionalValuesList= [new OptionalValue() { Value = customUrl , IsDefault = true }] } ];
                 }
 
-                Dictionary<System.Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
-                
+                Dictionary<System.Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = [];
+
                 ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
                 ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(apiModel, OptionalValuesPerParameterDict);
                 ImportOptionalValues.PopulateOptionalValuesForAPIParameters(apiModel, OptionalValuesPerParameterDict);

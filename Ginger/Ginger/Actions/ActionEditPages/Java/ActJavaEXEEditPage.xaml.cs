@@ -56,7 +56,7 @@ namespace Ginger.Actions.Java
             JavaPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActJavaEXE.Fields.JavaWSEXEPath);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, mAct, ActJavaEXE.Fields.ScriptName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptDescriptionLabel, Label.ContentProperty, mAct, ActJavaEXE.Fields.ScriptDecription);
-            
+
             WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ScriptNameComboBox, eventName: nameof(Selector.SelectionChanged), handler: ScriptNameComboBox_SelectionChanged);
         }
 
@@ -171,9 +171,11 @@ namespace Ginger.Actions.Java
 
         private string OpenFolderDialog(string desc, Environment.SpecialFolder rootFolder, string currentFolder = "")
         {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog();
-            dlg.Description = desc;
-            dlg.RootFolder = rootFolder;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = desc,
+                RootFolder = rootFolder
+            };
             if (currentFolder != "")
             {
                 dlg.SelectedPath = currentFolder;

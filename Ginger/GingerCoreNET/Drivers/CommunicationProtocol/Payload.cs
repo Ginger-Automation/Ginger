@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 
 namespace GingerCore.Drivers.CommunicationProtocol
@@ -96,7 +95,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
             Name = ReadString();
 
             //Verify integrity
-            byte b = bytes[bytes.Length - 1];
+            byte b = bytes[^1];
             if (b != LastByteMarker)
             {
                 throw new Exception("PayLoad Integrity Error - last byte != 255");
@@ -416,7 +415,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
         public List<KeyValuePair<string, string>> GetParsedResult()
         {
-            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+            List<KeyValuePair<string, string>> result = [];
             int j = 0;
 
             while (mBuffer[mBufferIndex] != LastByteMarker)
@@ -555,7 +554,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
         public List<string> GetListString()
         {
-            List<string> list = new List<string>();
+            List<string> list = [];
 
             byte b = ReadValueType();
 
@@ -586,7 +585,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
         public List<PayLoad> GetListPayLoad()
         {
-            List<PayLoad> list = new List<PayLoad>();
+            List<PayLoad> list = [];
 
             byte b = ReadValueType();
             if (b == ListPayLoadType)

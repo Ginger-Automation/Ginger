@@ -50,7 +50,7 @@ namespace Ginger.ALM.MapToALMWizard
 
         public ActivitiesGroup activitiesGroup = new ActivitiesGroup();
         public ALMTSTest aLMTSTest;
-        public ObservableList<ALMTestStepManualMappingConfig> testStepsMappingList = new ObservableList<ALMTestStepManualMappingConfig>();
+        public ObservableList<ALMTestStepManualMappingConfig> testStepsMappingList = [];
 
         public string TestCaseName
         {
@@ -115,17 +115,13 @@ namespace Ginger.ALM.MapToALMWizard
         {
             get
             {
-                switch (MappingStatus)
+                return MappingStatus switch
                 {
-                    case eMappingStatus.Mapped:
-                        return eImageType.Mapped;
-                    case eMappingStatus.Partial:
-                        return eImageType.Partial;
-                    case eMappingStatus.UnMapped:
-                        return eImageType.UnMapped;
-                    default:
-                        return eImageType.Unknown;
-                }
+                    eMappingStatus.Mapped => eImageType.Mapped,
+                    eMappingStatus.Partial => eImageType.Partial,
+                    eMappingStatus.UnMapped => eImageType.UnMapped,
+                    _ => eImageType.Unknown,
+                };
             }
         }
 

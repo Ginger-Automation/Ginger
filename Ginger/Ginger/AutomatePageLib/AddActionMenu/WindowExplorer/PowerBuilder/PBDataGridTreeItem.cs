@@ -28,7 +28,7 @@ namespace Ginger.WindowExplorer.PowerBuilder
 {
     public class PBDataGridTreeItem : PBControlTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
-        ObservableList<Act> mAvailableActions = new ObservableList<Act>();
+        ObservableList<Act> mAvailableActions = [];
         ActTableEditPage mActTableEditPage = null;
 
         StackPanel ITreeViewItem.Header()

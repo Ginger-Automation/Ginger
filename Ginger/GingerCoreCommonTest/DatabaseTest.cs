@@ -44,7 +44,7 @@ namespace GingerCoreCommonTest
             database.DatabaseOperations = new DatabaseOperations(database);
             database.EncryptDatabasePass();
             Assert.AreEqual(valueExpVar, database.Pass);
-            
+
             database.Pass = valueExpDSPattern;
             database.EncryptDatabasePass();
             Assert.AreEqual(valueExpDSPattern, database.Pass);
@@ -67,7 +67,7 @@ namespace GingerCoreCommonTest
             database.Pass = valueExpRegEx;
             database.EncryptDatabasePass();
             Assert.AreEqual(valueExpRegEx, database.Pass);
-            
+
             database.Pass = valueExpFDObj;
             database.EncryptDatabasePass();
             Assert.AreEqual(valueExpFDObj, database.Pass);

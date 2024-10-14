@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Ginger.BusinessFlowPages.ListHelpers;
-using GingerCore;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using System;
@@ -39,7 +38,7 @@ namespace Ginger.Environments
         private readonly ObservableList<IDatabase> dataSourceList;
         private readonly Database database;
         private readonly Button testConnectionButton = new();
-        private readonly Button okBtn = new ();
+        private readonly Button okBtn = new();
         private readonly DatabaseListViewHelper dbListViewHelper;
         public AddNewDatabasePage(ObservableList<IDatabase> dataSourceList, Context context, DatabaseListViewHelper dbListViewHelper)
         {
@@ -48,14 +47,16 @@ namespace Ginger.Environments
             InitializeComponent();
 
             // Initializes the Database Combobox
-            this.database = new();
-            this.database.ProjEnvironment = context.Environment;
+            this.database = new()
+            {
+                ProjEnvironment = context.Environment
+            };
 
             SQL_Selected(null, null);
 
-            
+
             this.database.DatabaseOperations = new DatabaseOperations(database);
-            xDatabaseUserName.Init(context , database, nameof(Database.User));
+            xDatabaseUserName.Init(context, database, nameof(Database.User));
             xDatabasePassword.Init(context, database, nameof(Database.Pass));
             xDatabaseTNS.Init(context, database, nameof(Database.TNS));
             xDBAccEndPoint.Init(context, database, nameof(Database.User));
@@ -80,9 +81,7 @@ namespace Ginger.Environments
 
 
             testConnectionButton.Content = "Test DB Connection";
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(okBtn);
-            winButtons.Add(testConnectionButton);
+            ObservableList<Button> winButtons = [okBtn, testConnectionButton];
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: OKButton_Click);
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: testConnectionButton, eventName: nameof(ButtonBase.Click), handler: TestConnection_Click);
 
@@ -153,7 +152,7 @@ namespace Ginger.Environments
                 okBtn.IsEnabled = true;
                 _pageGenericWin?.Close();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
@@ -163,7 +162,7 @@ namespace Ginger.Environments
         private eDBTypes? GetDBType()
         {
             var comboEnumItem = xDatabaseComboBox.SelectedValue;
-            if(comboEnumItem == null)
+            if (comboEnumItem == null)
             {
                 return null;
             }
@@ -174,7 +173,7 @@ namespace Ginger.Environments
 
             eDBTypes? databaseType = GetDBType();
 
-            if(databaseType == null)
+            if (databaseType == null)
             {
                 return;
             }
@@ -213,7 +212,7 @@ namespace Ginger.Environments
             else
             {
                 xDatabaseTNSName.Content = "Data Source:";
-            }            
+            }
 
 
             if (databaseType.Equals(eDBTypes.MSAccess))
@@ -263,9 +262,9 @@ namespace Ginger.Environments
         private void ConnectionString_Checked(object sender, RoutedEventArgs e)
         {
             xDBConnectionStringPanel.Visibility = Visibility.Visible;
-            
+
             eDBTypes? dBType = GetDBType();
-            if(dBType == null)
+            if (dBType == null)
             {
                 return;
             }
@@ -282,7 +281,7 @@ namespace Ginger.Environments
             }
             else
             {
-               xDatabaseDetailsPanel.Visibility = Visibility.Collapsed;
+                xDatabaseDetailsPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -315,7 +314,7 @@ namespace Ginger.Environments
         private void SQL_Selected(object sender, RoutedEventArgs e)
         {
             ClearDatabaseDetails();
-            if(xDatabaseComboBox != null)
+            if (xDatabaseComboBox != null)
             {
                 xDatabaseComboBox.ItemsSource = GingerCore.General
                                 .GetEnumValuesForCombo(typeof(Database.eDBTypes))
@@ -330,12 +329,12 @@ namespace Ginger.Environments
         private void NoSQL_Selected(object sender, RoutedEventArgs e)
         {
             ClearDatabaseDetails();
-            
+
             if (xDatabaseComboBox != null)
             {
                 xDatabaseComboBox.ItemsSource = GingerCore.General
                                 .GetEnumValuesForCombo(typeof(Database.eDBTypes))
-                                .Select((db)=>(eDBTypes)db.Value)
+                                .Select((db) => (eDBTypes)db.Value)
                                 .Where((dbType) =>
                                 dbType.Equals(eDBTypes.Couchbase) || dbType.Equals(eDBTypes.Cassandra)
                                 || dbType.Equals(eDBTypes.CosmosDb) || dbType.Equals(eDBTypes.MongoDb)

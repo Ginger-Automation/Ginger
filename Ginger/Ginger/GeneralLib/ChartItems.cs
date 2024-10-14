@@ -60,7 +60,7 @@ namespace Ginger
 
     public class ViewModel
     {
-        private readonly ObservableCollection<StatItems> _seriesdata = new ObservableCollection<StatItems>();
+        private readonly ObservableCollection<StatItems> _seriesdata = [];
         public ObservableCollection<StatItems> SeriesData
         {
             get

@@ -120,27 +120,35 @@ namespace Ginger.Variables
                 switch (mDepededItemType)
                 {
                     case (eDependedItemsType.Actions):
-                        DataColumn actionDesCol = new DataColumn();
-                        actionDesCol.ColumnName = "Action Description";
-                        actionDesCol.DataType = typeof(string);
-                        actionDesCol.ReadOnly = true;
+                        DataColumn actionDesCol = new DataColumn
+                        {
+                            ColumnName = "Action Description",
+                            DataType = typeof(string),
+                            ReadOnly = true
+                        };
                         mDependsDT.Columns.Add(actionDesCol);
-                        DataColumn actionTypeCol = new DataColumn();
-                        actionTypeCol.ColumnName = "Action Type";
-                        actionTypeCol.DataType = typeof(string);
-                        actionTypeCol.ReadOnly = true;
+                        DataColumn actionTypeCol = new DataColumn
+                        {
+                            ColumnName = "Action Type",
+                            DataType = typeof(string),
+                            ReadOnly = true
+                        };
                         mDependsDT.Columns.Add(actionTypeCol);
                         break;
                     case (eDependedItemsType.Activities):
-                        DataColumn col1 = new DataColumn();
-                        col1.ColumnName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Name";
-                        col1.DataType = typeof(string);
-                        col1.ReadOnly = true;
+                        DataColumn col1 = new DataColumn
+                        {
+                            ColumnName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Name",
+                            DataType = typeof(string),
+                            ReadOnly = true
+                        };
                         mDependsDT.Columns.Add(col1);
-                        DataColumn col2 = new DataColumn();
-                        col2.ColumnName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Description";
-                        col2.DataType = typeof(string);
-                        col2.ReadOnly = true;
+                        DataColumn col2 = new DataColumn
+                        {
+                            ColumnName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Description",
+                            DataType = typeof(string),
+                            ReadOnly = true
+                        };
                         mDependsDT.Columns.Add(col2);
                         break;
                 }
@@ -159,14 +167,16 @@ namespace Ginger.Variables
 
                 if (mParentListVars != null && mParentListVars.Count > 0)
                 {
-                    List<string> addedColumns = new List<string>();
+                    List<string> addedColumns = [];
                     foreach (VariableBase listVar in mParentListVars)
                     {
                         foreach (OptionalValue varOptionalVal in ((VariableSelectionList)listVar).OptionalValuesList)
                         {
-                            DataColumn varValueCol = new DataColumn();
-                            varValueCol.ColumnName = listVar.Name + ":" + System.Environment.NewLine + varOptionalVal.Value;
-                            varValueCol.DataType = typeof(bool);
+                            DataColumn varValueCol = new DataColumn
+                            {
+                                ColumnName = listVar.Name + ":" + System.Environment.NewLine + varOptionalVal.Value,
+                                DataType = typeof(bool)
+                            };
                             if (addedColumns.Contains(listVar.Name + ">" + varOptionalVal.Value) == false)
                             {
                                 mDependsDT.Columns.Add(varValueCol);
@@ -196,7 +206,7 @@ namespace Ginger.Variables
                             foreach (Act act in ((Activity)mParentObject).Acts)
                             {
                                 mDependsDT.Rows.Add(act.Description, act.ActionType);
-                                DataRow actRow = mDependsDT.Rows[mDependsDT.Rows.Count - 1];
+                                DataRow actRow = mDependsDT.Rows[^1];
 
                                 //load last saved dependencies for this action
                                 int colIndex = 2;
@@ -243,7 +253,7 @@ namespace Ginger.Variables
                             foreach (Activity activity in ((BusinessFlow)mParentObject).Activities)
                             {
                                 mDependsDT.Rows.Add(activity.ActivityName, activity.Description);
-                                DataRow actRow = mDependsDT.Rows[mDependsDT.Rows.Count - 1];
+                                DataRow actRow = mDependsDT.Rows[^1];
 
                                 //load last saved dependencies for this activity
                                 int colIndex = 2;
@@ -469,11 +479,11 @@ namespace Ginger.Variables
                             break;
                     }
                     TBH.AddLineBreak();
-                    Dictionary<string, List<string>> actionConfigs = new Dictionary<string, List<string>>();
+                    Dictionary<string, List<string>> actionConfigs = [];
                     int colsIndex = 2;
                     foreach (VariableBase var in mParentListVars)
                     {
-                        List<string> configuredVals = new List<string>();
+                        List<string> configuredVals = [];
                         foreach (OptionalValue optVal in ((VariableSelectionList)var).OptionalValuesList)
                         {
                             if ((bool)currentRow[colsIndex] == true)
@@ -576,8 +586,7 @@ namespace Ginger.Variables
         private void ColumnWasClicked(object sender, RoutedEventArgs e)
         {
             //select all column cells
-            var columnHeader = sender as DataGridColumnHeader;
-            if (columnHeader != null)
+            if (sender is DataGridColumnHeader columnHeader)
             {
                 if (grdDependencies.Grid.Items != null && grdDependencies.Grid.Items.Count > 0)
                 {
@@ -702,17 +711,19 @@ namespace Ginger.Variables
         {
             string closeContent = string.Empty;
 
-            Button okBtn = new Button();
-            okBtn.Content = "Ok";
+            Button okBtn = new Button
+            {
+                Content = "Ok"
+            };
             okBtn.Click += new RoutedEventHandler(okBtn_Click);
 
-            Button undoBtn = new Button();
-            undoBtn.Content = "Undo & Close";
+            Button undoBtn = new Button
+            {
+                Content = "Undo & Close"
+            };
             undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(okBtn);
-            winButtons.Add(undoBtn);
+            ObservableList<Button> winButtons = [okBtn, undoBtn];
 
             switch (mDepededItemType)
             {
@@ -810,7 +821,7 @@ namespace Ginger.Variables
                         case (eDependedItemsType.Activities):
                             foreach (DataRowView row in grdDependencies.grdMain.Items)
                             {
-                                Activity act = (Activity)((BusinessFlow)mParentObject).Activities[grdDependencies.grdMain.Items.IndexOf(row)];
+                                Activity act = ((BusinessFlow)mParentObject).Activities[grdDependencies.grdMain.Items.IndexOf(row)];
                                 int colsIndex = 2;
                                 foreach (VariableBase var in mParentListVars)
                                 {

@@ -16,25 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
-using Amdocs.Ginger.Repository;
 using Deque.AxeCore.Selenium;
-using Ginger.AnalyzerLib;
 using Ginger.Configurations;
-using GingerCore;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OfficeOpenXml.Attributes;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
 using System.IO;
-using System.Linq;
-using System.Runtime.Versioning;
 
 namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
 {
@@ -86,11 +78,11 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
             {
-                mact.SeverityList = new ObservableList<OperationValues>();
+                mact.SeverityList = [];
                 mact.StandardList = GetStandardTagslist();
             }
             mact.AnalyzerAccessibility(_driver, e);
-            Assert.AreEqual(mact.Status,Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);
+            Assert.AreEqual(mact.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);
         }
 
         [TestMethod]
@@ -128,7 +120,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
             mact.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard);
             if (mact.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == nameof(ActAccessibilityTesting.eAnalyzer.ByStandard))
             {
-                mact.SeverityList = new ObservableList<OperationValues>();
+                mact.SeverityList = [];
                 mact.StandardList = GetStandardTagslist();
             }
             mact.AnalyzerAccessibility(_driver, e);
@@ -173,7 +165,7 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
         {
             if (!OperatingSystem.IsWindows())
             {
-               return;
+                return;
             }
             ActAccessibilityTesting mact = new ActAccessibilityTesting();
             ObservableList<AccessibilityRuleData> ruleList = mact.GetRuleList();
@@ -183,25 +175,28 @@ namespace GingerCoreNETUnitTest.ActionsLib.UI.Web
 
         public static ObservableList<OperationValues> GetStandardTagslist()
         {
-            ObservableList<OperationValues> StandardTagList = new ObservableList<OperationValues>();
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag2a) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag2aa) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag21a) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag21aa) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag22a) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag22aa) });
-            StandardTagList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.bestpractice) });
+            ObservableList<OperationValues> StandardTagList =
+            [
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag2a) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag2aa) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag21a) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag21aa) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag22a) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.wcag22aa) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eTags.bestpractice) },
+            ];
             return StandardTagList;
         }
 
         public static ObservableList<OperationValues> GetSeverityList()
         {
-            ObservableList<OperationValues> SeverityList = new ObservableList<OperationValues>();
-
-            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Critical) });
-            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Serious) });
-            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Moderate) });
-            SeverityList.Add(new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Minor) });
+            ObservableList<OperationValues> SeverityList =
+            [
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Critical) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Serious) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Moderate) },
+                new OperationValues() { Value = nameof(ActAccessibilityTesting.eSeverity.Minor) },
+            ];
             return SeverityList;
         }
     }

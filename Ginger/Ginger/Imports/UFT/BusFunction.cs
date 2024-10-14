@@ -24,6 +24,6 @@ namespace Ginger.Imports.UFT
     public class BusFunction
     {
         public string BusFunctionName { get; set; }
-        public List<string> ListOfGuiFunctions = new List<string>();
+        public List<string> ListOfGuiFunctions = [];
     }
 }

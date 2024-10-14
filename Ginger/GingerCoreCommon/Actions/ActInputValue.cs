@@ -28,8 +28,10 @@ namespace Amdocs.Ginger.Repository
     {
         public static explicit operator ActInputValue(string Value)
         {
-            ActInputValue AIV = new ActInputValue();
-            AIV.Value = Value;
+            ActInputValue AIV = new ActInputValue
+            {
+                Value = Value
+            };
             return AIV;
         }
 

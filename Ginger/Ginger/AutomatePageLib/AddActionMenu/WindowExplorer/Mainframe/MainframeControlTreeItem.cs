@@ -42,28 +42,34 @@ namespace Ginger.WindowExplorer.Mainframe
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<GingerCore.Actions.Act> ACL = new ObservableList<GingerCore.Actions.Act>();
+            ObservableList<GingerCore.Actions.Act> ACL = [];
 
             if (XSF.Attributes.FieldType != "Hidden")
             {
-                GingerCore.Actions.MainFrame.ActMainframeGetDetails ACMGD = new GingerCore.Actions.MainFrame.ActMainframeGetDetails();
-                ACMGD.LocateBy = eLocateBy.ByCaretPosition;
-                ACMGD.DetailsToFetch = GingerCore.Actions.MainFrame.ActMainframeGetDetails.eDetailsToFetch.GetDetailsFromText;
-                ACMGD.LocateValue = XSF.Location.position.ToString();
+                GingerCore.Actions.MainFrame.ActMainframeGetDetails ACMGD = new GingerCore.Actions.MainFrame.ActMainframeGetDetails
+                {
+                    LocateBy = eLocateBy.ByCaretPosition,
+                    DetailsToFetch = GingerCore.Actions.MainFrame.ActMainframeGetDetails.eDetailsToFetch.GetDetailsFromText,
+                    LocateValue = XSF.Location.position.ToString()
+                };
                 ACL.Add(ACMGD);
 
-                GingerCore.Actions.MainFrame.ActMainframeGetDetails ACMGD2 = new GingerCore.Actions.MainFrame.ActMainframeGetDetails();
-                ACMGD2.LocateBy = eLocateBy.ByCaretPosition;
-                ACMGD2.DetailsToFetch = GingerCore.Actions.MainFrame.ActMainframeGetDetails.eDetailsToFetch.GetText;
-                ACMGD2.LocateValue = XSF.Location.ToString();
+                GingerCore.Actions.MainFrame.ActMainframeGetDetails ACMGD2 = new GingerCore.Actions.MainFrame.ActMainframeGetDetails
+                {
+                    LocateBy = eLocateBy.ByCaretPosition,
+                    DetailsToFetch = GingerCore.Actions.MainFrame.ActMainframeGetDetails.eDetailsToFetch.GetText,
+                    LocateValue = XSF.Location.ToString()
+                };
                 ACL.Add(ACMGD2);
             }
 
             if (XSF.Attributes.Protected == false)
             {
-                GingerCore.Actions.MainFrame.ActMainframeSetText AMFT = new GingerCore.Actions.MainFrame.ActMainframeSetText();
-                AMFT.LocateBy = eLocateBy.ByCaretPosition;
-                AMFT.LocateValue = XSF.Location.position.ToString();
+                GingerCore.Actions.MainFrame.ActMainframeSetText AMFT = new GingerCore.Actions.MainFrame.ActMainframeSetText
+                {
+                    LocateBy = eLocateBy.ByCaretPosition,
+                    LocateValue = XSF.Location.position.ToString()
+                };
                 ACL.Add(AMFT);
             }
             return ACL;
@@ -71,30 +77,38 @@ namespace Ginger.WindowExplorer.Mainframe
 
         ObservableList<ControlProperty> IWindowExplorerTreeItem.GetElementProperties()
         {
-            ObservableList<ControlProperty> CPL = new ObservableList<ControlProperty>();
+            ObservableList<ControlProperty> CPL = [];
 
-            ControlProperty CP1 = new ControlProperty();
-            CP1.Name = "Caret Position";
-            CP1.Value = XSF.Location.position.ToString();
+            ControlProperty CP1 = new ControlProperty
+            {
+                Name = "Caret Position",
+                Value = XSF.Location.position.ToString()
+            };
             CPL.Add(CP1);
 
-            ControlProperty CP2 = new ControlProperty();
-            CP2.Name = "X/Y";
-            CP2.Value = XSF.Location.left.ToString() + "/" + XSF.Location.top.ToString();
+            ControlProperty CP2 = new ControlProperty
+            {
+                Name = "X/Y",
+                Value = XSF.Location.left.ToString() + "/" + XSF.Location.top.ToString()
+            };
             CPL.Add(CP2);
 
 
-            ControlProperty CP3 = new ControlProperty();
-            CP3.Name = "Read Only";
-            CP3.Value = XSF.Attributes.Protected.ToString();
+            ControlProperty CP3 = new ControlProperty
+            {
+                Name = "Read Only",
+                Value = XSF.Attributes.Protected.ToString()
+            };
             CPL.Add(CP3);
             return CPL;
         }
 
         Object ITreeViewItem.NodeObject()
         {
-            ElementInfo EI = new ElementInfo();
-            EI.ElementTitle = XSF.Text;
+            ElementInfo EI = new ElementInfo
+            {
+                ElementTitle = XSF.Text
+            };
 
             if (XSF.Attributes.Protected == true)
             {

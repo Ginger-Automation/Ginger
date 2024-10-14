@@ -89,7 +89,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     string SolFolder = mSolution.Folder;
                     if (SolFolder.EndsWith(@"\"))
                     {
-                        SolFolder = SolFolder.Substring(0, SolFolder.Length - 1);
+                        SolFolder = SolFolder[..^1];
                     }
                     mConfigFileFolderPath = SolFolder + @"\Documents\RunSetShortCuts\";
                     if (!System.IO.Directory.Exists(mConfigFileFolderPath))

@@ -18,33 +18,26 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
+using Ginger.AnalyzerLib;
+using Ginger.Run;
 using Ginger.SourceControl;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCoreNET.SourceControl;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using static Ginger.ConflictResolve.Conflict;
-using GingerWPF.BusinessFlowsLib;
-using Amdocs.Ginger.Common.SourceControlLib;
-using GingerWPF.WizardLib;
-using GingerCore.GeneralLib;
-using System.Globalization;
-using System.Linq;
-using Ginger.AnalyzerLib;
-using System.Threading.Tasks;
-using Amdocs.Ginger.UserControls;
-using Amdocs.Ginger.Core;
-using Amdocs.Ginger.Common.Enums;
-using OctaneRepositoryStd.BLL;
-using System.Security.Cryptography;
-using System.Diagnostics.CodeAnalysis;
-using Ginger.Run;
 
 namespace Ginger.ConflictResolve
 {
@@ -73,7 +66,7 @@ namespace Ginger.ConflictResolve
 
         private ObservableList<Conflict> CreateConflictList(IEnumerable<string> conflictPaths)
         {
-            ObservableList<Conflict> conflicts = new();
+            ObservableList<Conflict> conflicts = [];
             foreach (string conflictPath in conflictPaths)
             {
                 bool isXMLFile = conflictPath.EndsWith(".xml");
@@ -84,7 +77,7 @@ namespace Ginger.ConflictResolve
                 }
                 else
                 {
-                    possibleResolutions = new List<ResolutionType>() { ResolutionType.KeepLocal, ResolutionType.AcceptServer };
+                    possibleResolutions = [ResolutionType.KeepLocal, ResolutionType.AcceptServer];
                 }
 
                 Conflict conflict = new(conflictPath, possibleResolutions)
@@ -127,29 +120,29 @@ namespace Ginger.ConflictResolve
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             GingerCore.General.LoadGenericWindow(
-                ref _genericWindow, 
-                owner: App.MainWindow, 
-                windowStyle, 
-                windowTitle: "Source Control Conflicts", 
-                windowPage: this, 
-                windowBtnsList: new ObservableList<Button> { _resolveButton, _analyzeButton }, 
-                showClosebtn: true, 
-                closeBtnText: "Do Not Resolve", 
-                closeEventHandler: CloseWindow, 
+                ref _genericWindow,
+                owner: App.MainWindow,
+                windowStyle,
+                windowTitle: "Source Control Conflicts",
+                windowPage: this,
+                windowBtnsList: [_resolveButton, _analyzeButton],
+                showClosebtn: true,
+                closeBtnText: "Do Not Resolve",
+                closeEventHandler: CloseWindow,
                 loaderElement: _genericWindowLoaderIcon);
         }
-        
+
         private void resolve_Click(object sender, EventArgs e)
         {
             try
             {
                 _genericWindowLoaderIcon.Visibility = Visibility.Visible;
                 Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
-                List<Conflict> resolvedConflicts = new();
+                List<Conflict> resolvedConflicts = [];
                 foreach (Conflict conflict in _conflicts)
                 {
                     bool wasConflictResolved = ResolveConflict(conflict);
-                    if(wasConflictResolved)
+                    if (wasConflictResolved)
                     {
                         resolvedConflicts.Add(conflict);
                     }
@@ -250,11 +243,11 @@ namespace Ginger.ConflictResolve
             }
 
             RepositoryItemBase? itemForResolution;
-            if(selectedConflict.Resolution == ResolutionType.AcceptServer)
+            if (selectedConflict.Resolution == ResolutionType.AcceptServer)
             {
                 itemForResolution = selectedConflict.GetRemoteItem();
             }
-            else if(selectedConflict.Resolution == ResolutionType.KeepLocal)
+            else if (selectedConflict.Resolution == ResolutionType.KeepLocal)
             {
                 itemForResolution = selectedConflict.GetLocalItem();
             }
@@ -274,11 +267,11 @@ namespace Ginger.ConflictResolve
 
         private void AnalyzeRepositoryItemBase(RepositoryItemBase? item)
         {
-            if(item is BusinessFlow businessFlow)
+            if (item is BusinessFlow businessFlow)
             {
                 Task.Run(() => AnalyzeBusinessFlow(businessFlow));
             }
-            else if(item is RunSetConfig runSetConfig)
+            else if (item is RunSetConfig runSetConfig)
             {
                 Task.Run(() => AnalyzeRunSetConfig(runSetConfig));
             }
@@ -340,8 +333,8 @@ namespace Ginger.ConflictResolve
         {
             GridViewDef view = new(GridViewDef.DefaultViewName)
             {
-                GridColsView = new()
-                {
+                GridColsView =
+                [
                     new GridColView()
                     {
                         Field = nameof(Conflict.IsSelectedForResolution),
@@ -349,7 +342,7 @@ namespace Ginger.ConflictResolve
                         WidthWeight = 16,
                         StyleType = GridColView.eGridColStyleType.Template,
                         CellTemplate = ucGrid.GetGridCheckBoxTemplate(
-                            selectedValueField: nameof(Conflict.IsSelectedForResolution), 
+                            selectedValueField: nameof(Conflict.IsSelectedForResolution),
                             style: (Style)FindResource("@GridCellCheckBoxStyle"))
                     },
                     new GridColView()
@@ -379,7 +372,7 @@ namespace Ginger.ConflictResolve
                         StyleType = GridColView.eGridColStyleType.Template,
                         CellTemplate = GetDataTemplateForReadyForResolutionCell()
                     }
-                }
+                ]
             };
 
             xConflictingItemsGrid.SetAllColumnsDefaultView(view);
@@ -404,7 +397,7 @@ namespace Ginger.ConflictResolve
         {
             bool isAnyUnselected = _conflicts.Any(conflict => !conflict.IsSelectedForResolution);
 
-            foreach(Conflict conflict in _conflicts)
+            foreach (Conflict conflict in _conflicts)
             {
                 if (isAnyUnselected)
                 {
@@ -421,10 +414,10 @@ namespace Ginger.ConflictResolve
 
         private void xConflictingItemsGrid_Toolbar_SetSameResolutionToAll(object? sender, RoutedEventArgs e)
         {
-            if(xConflictingItemsGrid.CurrentItem != null && xConflictingItemsGrid.CurrentItem is Conflict selectedConflict)
+            if (xConflictingItemsGrid.CurrentItem is not null and Conflict selectedConflict)
             {
                 Conflict.ResolutionType selectedItemResolutionType = selectedConflict.Resolution;
-                foreach(Conflict conflict in _conflicts)
+                foreach (Conflict conflict in _conflicts)
                 {
                     conflict.Resolution = selectedItemResolutionType;
                 }

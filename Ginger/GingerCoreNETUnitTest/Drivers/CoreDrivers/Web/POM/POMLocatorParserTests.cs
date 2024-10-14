@@ -21,12 +21,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Amdocs.Ginger.Repository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
@@ -131,7 +126,7 @@ namespace GingerCoreNETUnitTest.Drivers.CoreDrivers.Web.POM
                 MappedUIElements = pomMappedUIElements
             };
             string locatorValue = $"{pomId}_{elementId}";
-            Func<Guid, ApplicationPOMModel?> pomProvider = (id) => 
+            Func<Guid, ApplicationPOMModel?> pomProvider = (id) =>
             {
                 if (id == pomId)
                 {

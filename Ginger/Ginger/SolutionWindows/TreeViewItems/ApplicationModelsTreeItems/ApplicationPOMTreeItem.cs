@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
-using GingerCore;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -66,7 +65,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mPOMEditPage == null)
-            {          
+            {
                 mPOMEditPage = new POMEditPage(mApplicationPOM, General.eRIPageViewMode.Standalone);
             }
             return mPOMEditPage;

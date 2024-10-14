@@ -26,7 +26,6 @@ using GingerCore.Actions;
 using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -255,7 +254,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             {
                 uri = new(url);
             }
-            catch (Exception ex) when (ex is ArgumentNullException || ex is UriFormatException) { }
+            catch (Exception ex) when (ex is ArgumentNullException or UriFormatException) { }
 
             if (uri != null)
             {
@@ -318,7 +317,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             {
                 if (content.StartsWith("<!DOCTYPE html>"))
                 {
-                    content = content.Substring("<!DOCTYPE html>".Length);
+                    content = content["<!DOCTYPE html>".Length..];
                 }
                 _act.AddOrUpdateReturnParamActual("PageSource", content);
             }
@@ -331,7 +330,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
         private async Task HandleCloseTabExceptOperationAsync()
         {
-            if (_act.LocateBy != eLocateBy.ByTitle && _act.LocateBy != eLocateBy.ByUrl)
+            if (_act.LocateBy is not eLocateBy.ByTitle and not eLocateBy.ByUrl)
             {
                 throw new InvalidActionConfigurationException($"Error: Locator {_act.LocateBy} is not supported, use {eLocateBy.ByTitle} or {eLocateBy.ByUrl}.");
             }
@@ -443,10 +442,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                     continue;
                 }
 
-                urlString = urlArray[urlArray.Length - 1];
+                urlString = urlArray[^1];
                 if (string.IsNullOrEmpty(urlString) && urlArray.Length > 1)
                 {
-                    urlString = urlArray[urlArray.Length - 2];
+                    urlString = urlArray[^2];
                 }
                 foreach (var property in jsonObject)
                 {

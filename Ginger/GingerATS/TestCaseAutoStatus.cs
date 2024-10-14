@@ -46,7 +46,7 @@ namespace GingerATS
         public TestCaseAutoStatus(long id)
         {
             this.ID = id;
-            this.Steps = new Dictionary<long, StepAutoStatus>();
+            this.Steps = [];
             this.KnownByGinger = null;
         }
     }

@@ -31,11 +31,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
     {
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {
-            if (action is ActPlugIn)
+            if (action is ActPlugIn actPlugIn)
             {
-                ActPlugIn actPlugIn = ((ActPlugIn)action);
-
-
                 WorkSpace.Instance.Telemetry.Add("actionend",
                 new
                 {
@@ -74,8 +71,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                     Elapsed = activity.Elapsed,
                     Platform = getAgentPlatform(activity),
                     ActionCount = activity.Acts.Count,
-                    ActionsPass = activity.Acts.Count(x=> x.Status == Execution.eRunStatus.Passed),
-                    ActionsFail = activity.Acts.Count(x=> x.Status == Execution.eRunStatus.Failed),
+                    ActionsPass = activity.Acts.Count(x => x.Status == Execution.eRunStatus.Passed),
+                    ActionsFail = activity.Acts.Count(x => x.Status == Execution.eRunStatus.Failed),
                     Status = activity.Status.ToString()
                 });
         }

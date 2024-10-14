@@ -52,20 +52,24 @@ namespace Amdocs.Ginger.Repository
 
         public static GlobalAppModelParameter DuplicateAppModelParamAsGlobal(AppModelParameter appModelParameter)
         {
-            GlobalAppModelParameter globalParam = new GlobalAppModelParameter();
-            globalParam.Guid = appModelParameter.Guid;
-            globalParam.PlaceHolder = appModelParameter.PlaceHolder;
-            globalParam.Description = appModelParameter.Description;
-            globalParam.Path = appModelParameter.Path;
+            GlobalAppModelParameter globalParam = new GlobalAppModelParameter
+            {
+                Guid = appModelParameter.Guid,
+                PlaceHolder = appModelParameter.PlaceHolder,
+                Description = appModelParameter.Description,
+                Path = appModelParameter.Path,
 
-            globalParam.ExecutionValue = appModelParameter.ExecutionValue;
+                ExecutionValue = appModelParameter.ExecutionValue
+            };
 
             foreach (OptionalValue ov in appModelParameter.OptionalValuesList)
             {
-                OptionalValue newOV = new OptionalValue();
-                newOV.Guid = ov.Guid;
-                newOV.Value = ov.Value;
-                newOV.IsDefault = ov.IsDefault;
+                OptionalValue newOV = new OptionalValue
+                {
+                    Guid = ov.Guid,
+                    Value = ov.Value,
+                    IsDefault = ov.IsDefault
+                };
                 globalParam.OptionalValuesList.Add(newOV);
             }
 
@@ -83,7 +87,7 @@ namespace Amdocs.Ginger.Repository
             {
                 return;
             }
-            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            var properties = item.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
 
             Regex rxGlobalParamPattern = new Regex(@"({GlobalAppsModelsParam Name=(\D*\d*\s*)}})|({GlobalAppsModelsParam Name=(\D*\d*\s*)})", RegexOptions.Compiled);
 
@@ -116,7 +120,7 @@ namespace Amdocs.Ginger.Repository
 
                 if (value is IObservableList)
                 {
-                    List<dynamic> list = new List<dynamic>();
+                    List<dynamic> list = [];
                     foreach (object o in value)
                     {
                         GetListOfUsedAppModelGlobalParameters(o, ref usedGlobalParam);
@@ -136,7 +140,7 @@ namespace Amdocs.Ginger.Repository
                                     MatchCollection matches = rxGlobalParamPattern.Matches(stringValue);
                                     foreach (Match match in matches)
                                     {
-                                        string val = match.Value.Substring(28);
+                                        string val = match.Value[28..];
                                         val = val.Replace("}}", "}");
                                         if (!usedGlobalParam.Contains(val))
                                         {

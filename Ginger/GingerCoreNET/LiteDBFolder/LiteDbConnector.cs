@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 string dbFilePath = ConnectionString.Filename;
                 return LiteEngine.Upgrade(dbFilePath);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -62,27 +62,27 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         }
         public ILiteCollection<T> GetCollection<T>(string collectionName)
         {
-                ILiteCollection<T> collection = null;
+            ILiteCollection<T> collection = null;
 
-                try
+            try
+            {
+                using (var db = new LiteDatabase(this.ConnectionString))
                 {
-                    using (var db = new LiteDatabase(this.ConnectionString))
-                    {
-                        collection = db.GetCollection<T>(collectionName);
-                    }
+                    collection = db.GetCollection<T>(collectionName);
                 }
-                catch(UnauthorizedAccessException ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Access denied while trying to get collection: {collectionName}", ex);
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Collection: {collectionName}", ex);
-                }
-                return collection;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Access denied while trying to get collection: {collectionName}", ex);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Collection: {collectionName}", ex);
+            }
+            return collection;
         }
 
-        
+
         //This function is not used anywhere
         //public bool DeleteCollectionItems<T>(LiteCollection<T> baseColl, Query query)
         //{
@@ -106,39 +106,39 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             bool result = true;
             try
             {
-            var runSetLiteColl = GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
-            var runnerssLiteColl = GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
-            foreach (LiteDbRunner ldbRunner in liteDbRunSet.RunnersColl)
-            {
-                var businessFlowsLiteColl = GetCollection<LiteDbBusinessFlow>(NameInDb<LiteDbBusinessFlow>());
-                foreach (LiteDbBusinessFlow ldbBF in ldbRunner.BusinessFlowsColl)
+                var runSetLiteColl = GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
+                var runnerssLiteColl = GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
+                foreach (LiteDbRunner ldbRunner in liteDbRunSet.RunnersColl)
                 {
-                    var activitiesLiteColl = GetCollection<LiteDbActivity>(NameInDb<LiteDbActivity>());
-                    var activitiesGroupsLiteColl = GetCollection<LiteDbActivityGroup>(NameInDb<LiteDbActivityGroup>());
-                    foreach (LiteDbActivityGroup ldbAG in ldbBF.ActivitiesGroupsColl)
+                    var businessFlowsLiteColl = GetCollection<LiteDbBusinessFlow>(NameInDb<LiteDbBusinessFlow>());
+                    foreach (LiteDbBusinessFlow ldbBF in ldbRunner.BusinessFlowsColl)
                     {
-                        activitiesGroupsLiteColl.Delete(ldbAG._id);
-                    }
-                    foreach (LiteDbActivity ldbActivity in ldbBF.ActivitiesColl)
-                    {
-                        var actionsLiteColl = GetCollection<LiteDbAction>(NameInDb<LiteDbAction>());
-                        foreach (LiteDbAction ldbAction in ldbActivity.ActionsColl)
+                        var activitiesLiteColl = GetCollection<LiteDbActivity>(NameInDb<LiteDbActivity>());
+                        var activitiesGroupsLiteColl = GetCollection<LiteDbActivityGroup>(NameInDb<LiteDbActivityGroup>());
+                        foreach (LiteDbActivityGroup ldbAG in ldbBF.ActivitiesGroupsColl)
                         {
-                            actionsLiteColl.Delete(ldbAction._id);
+                            activitiesGroupsLiteColl.Delete(ldbAG._id);
                         }
-                        activitiesLiteColl.Delete(ldbActivity._id);
+                        foreach (LiteDbActivity ldbActivity in ldbBF.ActivitiesColl)
+                        {
+                            var actionsLiteColl = GetCollection<LiteDbAction>(NameInDb<LiteDbAction>());
+                            foreach (LiteDbAction ldbAction in ldbActivity.ActionsColl)
+                            {
+                                actionsLiteColl.Delete(ldbAction._id);
+                            }
+                            activitiesLiteColl.Delete(ldbActivity._id);
+                        }
+                        businessFlowsLiteColl.Delete(ldbBF._id);
                     }
-                    businessFlowsLiteColl.Delete(ldbBF._id);
+                    if (executedFrom == eExecutedFrom.Run)
+                    {
+                        runnerssLiteColl.Delete(ldbRunner._id);
+                    }
                 }
                 if (executedFrom == eExecutedFrom.Run)
                 {
-                    runnerssLiteColl.Delete(ldbRunner._id);
+                    runSetLiteColl.Delete(liteDbRunSet._id);
                 }
-            }
-            if (executedFrom == eExecutedFrom.Run)
-            {
-                runSetLiteColl.Delete(liteDbRunSet._id);
-            }
             }
             catch (Exception ex)
             {
@@ -156,7 +156,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             return baseColl.Find(query).ToList();
         }
-        public List<T> FilterCollection<T>(ILiteCollection<T> baseColl , BsonExpression expression)
+        public List<T> FilterCollection<T>(ILiteCollection<T> baseColl, BsonExpression expression)
         {
             return baseColl.Find(expression).ToList();
         }

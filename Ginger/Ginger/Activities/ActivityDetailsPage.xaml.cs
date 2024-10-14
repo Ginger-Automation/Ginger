@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amazon.Runtime.Internal.Transform;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
@@ -28,18 +27,13 @@ using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.BusinessFlowsLib;
-using Microsoft.Graph;
 using MongoDB.Driver.Linq;
-using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -72,7 +66,7 @@ namespace Ginger.BusinessFlowPages
         }
         private void SetUI()
         {
-            if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
+            if (mPageViewMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
             {
                 xActivityNameTxtBox.IsEnabled = false;
                 xActivityDescriptionTxt.IsEnabled = false;
@@ -169,9 +163,9 @@ namespace Ginger.BusinessFlowPages
             BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Publish));
 
-            
+
             xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-            if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.ApplicationPlatforms!=null)
+            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ApplicationPlatforms != null)
             {
                 WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged -= OnApplicationPlatformChanged;
                 WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged += OnApplicationPlatformChanged;
@@ -182,7 +176,7 @@ namespace Ginger.BusinessFlowPages
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
             mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused;
             BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
-            if(xTargetApplicationComboBox.SelectedValue == null && xTargetApplicationComboBox.ItemsSource.AsQueryable().Count() >= 1)
+            if (xTargetApplicationComboBox.SelectedValue == null && xTargetApplicationComboBox.ItemsSource.AsQueryable().Count() >= 1)
             {
                 xTargetApplicationComboBox.SelectedValue = xTargetApplicationComboBox.ItemsSource.AsQueryable().FirstOrDefault();
             }
@@ -214,8 +208,8 @@ namespace Ginger.BusinessFlowPages
             }
             PropertyChangedEventManager.RemoveHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
             PropertyChangedEventManager.AddHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
-            
-            if(mContext.BusinessFlow != null)
+
+            if (mContext.BusinessFlow != null)
             {
                 CollectionChangedEventManager.RemoveHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
                 CollectionChangedEventManager.AddHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
@@ -229,14 +223,14 @@ namespace Ginger.BusinessFlowPages
         {
             xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
 
-            if(xTargetApplicationComboBox.Items == null || mActivity == null || mActivity.TargetApplication == null)
+            if (xTargetApplicationComboBox.Items == null || mActivity == null || mActivity.TargetApplication == null)
             {
                 return;
             }
 
             int pointer = 0;
 
-            foreach(TargetApplication targetApplication in xTargetApplicationComboBox.Items)
+            foreach (TargetApplication targetApplication in xTargetApplicationComboBox.Items)
             {
 
                 if (targetApplication.AppName.Equals(mActivity.TargetApplication))
@@ -252,7 +246,7 @@ namespace Ginger.BusinessFlowPages
 
         private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if(string.Equals(e.PropertyName, nameof(UserProfile.ShowEnterpriseFeatures)))
+            if (string.Equals(e.PropertyName, nameof(UserProfile.ShowEnterpriseFeatures)))
             {
                 TargetAppSelectedComboBox();
             }
@@ -262,19 +256,19 @@ namespace Ginger.BusinessFlowPages
             Dispatcher.Invoke(() =>
             {
                 int pointer = 0;
-                foreach(TargetApplication targetApplication in xTargetApplicationComboBox.Items)
+                foreach (TargetApplication targetApplication in xTargetApplicationComboBox.Items)
                 {
-                    
-                   var ApplicationPlatform =   WorkSpace.Instance?.Solution?.ApplicationPlatforms?
-                    .FirstOrDefault((appPlat) =>
-                    {
-                        if(appPlat.NameBeforeEdit!=null && appPlat.NameBeforeEdit.Equals(targetApplication.AppName))
-                        {
-                            return true ;  
-                        }
-                        return false;
-                    });
-                    if(ApplicationPlatform != null)
+
+                    var ApplicationPlatform = WorkSpace.Instance?.Solution?.ApplicationPlatforms?
+                     .FirstOrDefault((appPlat) =>
+                     {
+                         if (appPlat.NameBeforeEdit != null && appPlat.NameBeforeEdit.Equals(targetApplication.AppName))
+                         {
+                             return true;
+                         }
+                         return false;
+                     });
+                    if (ApplicationPlatform != null)
                     {
                         targetApplication.AppName = ApplicationPlatform.AppName;
 
@@ -290,7 +284,7 @@ namespace Ginger.BusinessFlowPages
         }
         private void AutoUpdate_ConsumerList(object? sender, NotifyCollectionChangedEventArgs e)
         {
-             TargetAppSelectedComboBox();
+            TargetAppSelectedComboBox();
         }
 
         private void xErrorHandlerMappingCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -368,15 +362,15 @@ namespace Ginger.BusinessFlowPages
             {
                 mActivity.ConsumerApplications.Clear();
                 xConsumerStack.Visibility = Visibility.Collapsed;
-                
+
             }
             else
             {
-                xConsumerStack.Visibility = Visibility.Visible;                
+                xConsumerStack.Visibility = Visibility.Visible;
 
                 //logic for Consumer ComboBox for Otoma
                 ObservableList<TargetBase> targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-                ObservableList<Consumer> consumerList = new();
+                ObservableList<Consumer> consumerList = [];
                 if (mContext.BusinessFlow != null)
                 {
                     // this logic is developed to support the backward compatibility where parent guids are empty

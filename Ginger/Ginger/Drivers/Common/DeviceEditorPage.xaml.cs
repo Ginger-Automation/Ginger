@@ -22,7 +22,6 @@ using GingerCore.Drivers.Common;
 using GingerCore.Drivers.Common.Devices;
 using GingerCore.GeneralLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -83,10 +82,12 @@ namespace Ginger.Drivers.Common
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            ObservableList<Button> buttons = new ObservableList<Button>();
+            ObservableList<Button> buttons = [];
 
-            Button OKButton = new Button();
-            OKButton.Content = "OK";
+            Button OKButton = new Button
+            {
+                Content = "OK"
+            };
             OKButton.Click += OKButton_Click;
 
             buttons.Add(OKButton);
@@ -125,7 +126,7 @@ namespace Ginger.Drivers.Common
         {
             if (mDeviceConfig.DeviceControllers == null)
             {
-                mDeviceConfig.DeviceControllers = new List<DeviceControllerConfig>();
+                mDeviceConfig.DeviceControllers = [];
             }
 
             mDeviceConfig.DeviceControllers.Add(new DeviceControllerConfig());

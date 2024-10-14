@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
-using Amdocs.Ginger.Plugin.Core;
 using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Run;
@@ -28,9 +27,7 @@ using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Newtonsoft.Json;
-using NPOI.SS.Formula.Functions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -147,7 +144,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                 }
 
-                if (exeConfiguration.ShowAutoRunWindow != null && exeConfiguration.ShowAutoRunWindow == true)
+                if (exeConfiguration.ShowAutoRunWindow is not null and true)
                 {
                     cliHelper.ShowAutoRunWindow = true;
                 }

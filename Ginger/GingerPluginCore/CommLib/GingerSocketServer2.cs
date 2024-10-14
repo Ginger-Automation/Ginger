@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
     {
         Socket mServerSocketlistener;
         int mPort;
-        public List<GingerSocketInfo> Clients = new List<GingerSocketInfo>();
+        public List<GingerSocketInfo> Clients = [];
 
         // Thread signal.  
         public ManualResetEvent allDone = new ManualResetEvent(false);
@@ -126,10 +126,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 Socket socket = listener.EndAccept(ar);
 
                 // Create the state object - one per Ginger client
-                GingerSocketInfo gingerSocketInfo = new GingerSocketInfo();
-                gingerSocketInfo.Socket = socket;
-                gingerSocketInfo.SessionID = Guid.NewGuid();  // Create new session id
-                gingerSocketInfo.MessageHandler = MessageHandler;
+                GingerSocketInfo gingerSocketInfo = new GingerSocketInfo
+                {
+                    Socket = socket,
+                    SessionID = Guid.NewGuid(),  // Create new session id
+                    MessageHandler = MessageHandler
+                };
                 gingerSocketInfo.Receive();
                 Clients.Add(gingerSocketInfo);
             }

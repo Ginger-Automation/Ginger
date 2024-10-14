@@ -128,10 +128,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public List<object> ShowAsWindow(string windowTitle = "", Window ownerWindow = null, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
             bOpenasWindow = true;
-            ObservableList<Button> winButtons = new ObservableList<Button>();
+            ObservableList<Button> winButtons = [];
 
-            Button selectBtn = new Button();
-            selectBtn.Content = "Select";
+            Button selectBtn = new Button
+            {
+                Content = "Select"
+            };
             selectBtn.Click += new RoutedEventHandler(selectBtn_Click);
             winButtons.Add(selectBtn);
 
@@ -168,7 +170,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (itvItem != null && mItemSelectionType != eItemSelectionType.Folder)
             {
-                mSelectedItems = new List<object>();
+                mSelectedItems = [];
                 if (itvItem.IsExpandable())
                 {
                     if (mShowAlerts && mItemSelectionType == eItemSelectionType.Single)
@@ -234,7 +236,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
         private void Tree_ItemSelected(object sender, EventArgs e)
         {
-            mSelectedItems = new List<object>();
+            mSelectedItems = [];
             ITreeViewItem itvItem = xTreeView.Tree.CurrentSelectedTreeViewItem;
             if (mItemSelectionType == eItemSelectionType.Folder)
             {

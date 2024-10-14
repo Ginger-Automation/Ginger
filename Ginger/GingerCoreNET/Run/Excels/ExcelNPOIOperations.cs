@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         /// <param name="rowHeaderNumber"> row number at which the header columns are found </param>
         /// <param name="rowLimit">If the 'View Data / View Filtered Data' is selected on the Excel Action Page, the rowLimit is set , which means the user will only see AT MOST 'rowLimit' number of rows apart from the Column Header row </param>
         /// <returns></returns>
-        private DataTable ConvertSheetToDataTable(ISheet sheet , int rowHeaderNumber , int rowLimit = -1)
+        private DataTable ConvertSheetToDataTable(ISheet sheet, int rowHeaderNumber, int rowLimit = -1)
         {
             try
             {
@@ -56,11 +56,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                  initialColNumber -> is used to locate the first column number of the first header column
                  */
                 int initialColNumber = -1;
-                SetHeaderColumns(headerRow , ref initialColNumber, dtExcelTable);
+                SetHeaderColumns(headerRow, ref initialColNumber, dtExcelTable);
                 /*
                  intialColNumber is used to also locate where to start and end the reading of the row data. 
                  */
-                SetRowsForDataTable(sheet , dtExcelTable , initialColNumber, rowHeaderNumber, rowLimit);
+                SetRowsForDataTable(sheet, dtExcelTable, initialColNumber, rowHeaderNumber, rowLimit);
                 return dtExcelTable;
             }
             catch (Exception ex)
@@ -72,43 +72,28 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         private object GetCellValue(ICell cell, CellType cellType)
         {
-            object cellVal;
-            switch (cellType)
+            var cellVal = cellType switch
             {
-                case CellType.Numeric:
-                    cellVal = HandleNumericCellType(cell);
-                    break;
-                case CellType.String:
-                    cellVal = cell.StringCellValue;
-                    break;
-                case CellType.Boolean:
-                    cellVal = cell.BooleanCellValue;
-                    break;
-                case CellType.Formula:
-                    cellVal = GetCellValue(cell, cell.CachedFormulaResultType);
-                    break;
-                case CellType.Blank:
-                    cellVal = null;
-                    break;
-                case CellType.Error:
-                    cellVal = cell.ErrorCellValue;
-                    break;
-                default:
-                    cellVal = cell.RichStringCellValue;
-                    break;
-            }
+                CellType.Numeric => HandleNumericCellType(cell),
+                CellType.String => cell.StringCellValue,
+                CellType.Boolean => cell.BooleanCellValue,
+                CellType.Formula => GetCellValue(cell, cell.CachedFormulaResultType),
+                CellType.Blank => null,
+                CellType.Error => cell.ErrorCellValue,
+                _ => cell.RichStringCellValue,
+            };
             return cellVal;
-            }
+        }
 
 
         // Read the whole row and col data with/without filter
-        public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows , string headerRowNumber = "1")
+        public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows, string headerRowNumber = "1")
         {
             filter = filter ?? "";
             try
             {
                 GetExcelSheet(fileName, sheetName);
-                mExcelDataTable = ConvertSheetToDataTable(mSheet , int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber));
+                mExcelDataTable = ConvertSheetToDataTable(mSheet, int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber));
                 mExcelDataTable.DefaultView.RowFilter = filter;
                 mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
@@ -120,13 +105,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
         }
 
-        public DataTable ReadDataWithRowLimit(string fileName, string sheetName , string filter , bool selectedRows , string headerRowNumber="1" , int rowLimit = -1)
+        public DataTable ReadDataWithRowLimit(string fileName, string sheetName, string filter, bool selectedRows, string headerRowNumber = "1", int rowLimit = -1)
         {
             filter = filter ?? "";
             try
             {
-                GetExcelSheet(fileName , sheetName);
-                mExcelDataTable = ConvertSheetToDataTable(mSheet , int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber) , rowLimit);
+                GetExcelSheet(fileName, sheetName);
+                mExcelDataTable = ConvertSheetToDataTable(mSheet, int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber), rowLimit);
                 mExcelDataTable.DefaultView.RowFilter = filter;
                 mFilteredDataTable = string.IsNullOrEmpty(filter) ? mExcelDataTable : GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
@@ -172,10 +157,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         {
             try
             {
-                    using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
-                    {
-                        mWorkbook = WorkbookFactory.Create(fs);
-                    }
+                using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    mWorkbook = WorkbookFactory.Create(fs);
+                }
                 return mWorkbook;
             }
             catch (Exception ex)
@@ -201,14 +186,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 {
                     filter = primaryKey;
                 }
-                UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName,HeaderRowNum);
+                UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName, HeaderRowNum);
             }
             return true;
         }
 
 
         // Returns a cell's data only if the filter is set otherwise works like the ReadData() function
-        public DataTable ReadCellData(string fileName, string sheetName, string filter, bool selectedRows , string headerRowNumber)
+        public DataTable ReadCellData(string fileName, string sheetName, string filter, bool selectedRows, string headerRowNumber)
         {
             try
             {
@@ -238,7 +223,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 var dtExcelTable = new DataTable();
                 dtExcelTable.Rows.Clear();
                 dtExcelTable.Columns.Clear();
-                var headerRow = this.GetHeaderRow(mSheet , int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber));
+                var headerRow = this.GetHeaderRow(mSheet, int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber));
                 int colCount = headerRow.LastCellNum;
                 if (cellFrom.Col > colCount || cellTo.Col > colCount)
                 {
@@ -305,10 +290,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     filter = $"({filter}) and ({primaryKey})";
                 }
             }
-            return UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName , HeaderRowNum);
+            return UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName, HeaderRowNum);
         }
 
-        private bool UpdateCellsData(List<Tuple<string, object>> updateCellList, DataTable mExcelDataTable, string filter, string fileName , string HeaderRowNum)
+        private bool UpdateCellsData(List<Tuple<string, object>> updateCellList, DataTable mExcelDataTable, string filter, string fileName, string HeaderRowNum)
         {
             if (updateCellList.Count > 0)
             {
@@ -348,7 +333,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             lock (lockObj)
             {
                 Thread.Sleep(100);
-                List<string> sheets = new List<string>();
+                List<string> sheets = [];
                 mFileName = fileName;
                 GetExcelWorkbook(mFileName);
                 if (mWorkbook == null)
@@ -359,7 +344,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 {
                     sheets.Add(mWorkbook.GetSheetAt(i).SheetName);
                 }
-                return sheets.OrderBy(itm => itm).ToList(); 
+                return sheets.OrderBy(itm => itm).ToList();
             }
         }
 
@@ -388,7 +373,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         }
 
         // This function returns the Column Titles (Header Columns)
-        private IRow GetHeaderRow(ISheet sheet , int headerRowNumber=1)
+        private IRow GetHeaderRow(ISheet sheet, int headerRowNumber = 1)
         {
             IRow header = sheet.GetRow(headerRowNumber - 1);
             if (header == null)
@@ -399,7 +384,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         }
 
 
-        private void SetHeaderColumns(IRow headerRow, ref int initialColNumber, DataTable dtExcelTable )
+        private void SetHeaderColumns(IRow headerRow, ref int initialColNumber, DataTable dtExcelTable)
         {
             int colCount = headerRow.LastCellNum;
             for (var c = 0; c < colCount; c++)
@@ -432,7 +417,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         {
             var currentRowNumber = startRowNumber;
             var currentRow = sheet.GetRow(currentRowNumber);
-            while ( HasDataTableReachedRowLimit(currentRow , rowLimit , startRowNumber, currentRowNumber))
+            while (HasDataTableReachedRowLimit(currentRow, rowLimit, startRowNumber, currentRowNumber))
             {
                 var dr = dtExcelTable.NewRow();
                 for (var currentColNumber = initialColNumber; currentColNumber < (initialColNumber + dr.ItemArray.Length); currentColNumber++)
@@ -457,9 +442,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         /// <param name="rowLimit">If the 'View Data / View Filtered Data' is selected on the Excel Action Page, the rowLimit is set , which means the user will only see AT MOST 'rowLimit' number of rows apart from the Column Header row</param>
         /// <param name="startRowNumber">Start Row Number in the Excel Sheet </param>
         /// <param name="currentRowNumber">This variable denotes the current row , that is being read</param>
-        private bool HasDataTableReachedRowLimit(IRow currentRow , int rowLimit , int startRowNumber,int currentRowNumber)
+        private bool HasDataTableReachedRowLimit(IRow currentRow, int rowLimit, int startRowNumber, int currentRowNumber)
         {
-            return  (rowLimit == -1) ? currentRow!=null  : currentRow != null && (startRowNumber+rowLimit - currentRowNumber) > 0;
+            return (rowLimit == -1) ? currentRow != null : currentRow != null && (startRowNumber + rowLimit - currentRowNumber) > 0;
         }
     }
 }

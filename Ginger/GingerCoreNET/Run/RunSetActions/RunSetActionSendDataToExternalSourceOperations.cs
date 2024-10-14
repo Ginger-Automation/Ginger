@@ -43,8 +43,10 @@ namespace Ginger.Run.RunSetActions
 
         public void Execute(IReportInfo RI)
         {
-            Context mContext = new Context();
-            mContext.RunsetAction = RunSetActionSendDataToExternalSource;
+            Context mContext = new Context
+            {
+                RunsetAction = RunSetActionSendDataToExternalSource
+            };
             mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mContext, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
 
             if (!string.IsNullOrEmpty(RunSetActionSendDataToExternalSource.RequestBodyJson))
@@ -66,10 +68,12 @@ namespace Ginger.Run.RunSetActions
                 ThrowOnDeserializationError = false
             };
             RestClient restClient = new RestClient(options);
-            
-            RestRequest restRequest = new RestRequest();
-            restRequest.Method = Method.Post;
-            restRequest.RequestFormat = RestSharp.DataFormat.Json;
+
+            RestRequest restRequest = new RestRequest
+            {
+                Method = Method.Post,
+                RequestFormat = RestSharp.DataFormat.Json
+            };
             foreach (ActInputValue actInputValue in RunSetActionSendDataToExternalSource.RequestHeaders)
             {
                 mValueExpression.Value = actInputValue.Value;
@@ -104,7 +108,7 @@ namespace Ginger.Run.RunSetActions
 
         private string RequestBodyWithParametersToJson()
         {
-            Dictionary<string, string> requestBodyParams = new Dictionary<string, string>();
+            Dictionary<string, string> requestBodyParams = [];
             foreach (ActInputValue AIV in RunSetActionSendDataToExternalSource.RequestBodyParams)
             {
                 requestBodyParams.Add(AIV.Param, AIV.Value);

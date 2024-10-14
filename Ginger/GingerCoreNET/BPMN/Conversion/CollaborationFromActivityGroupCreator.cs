@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
-using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using Amdocs.Ginger.CoreNET.BPMN.Utils;
 using GingerCore;
 using GingerCore.Activities;
@@ -55,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
         public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup) : this(activityGroup, new Options()) { }
 
         public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup, Options options) : this(activityGroup, options, new WorkSpaceToSolutionFacadeAdapter(WorkSpace.Instance)) { }
-        
+
         public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade) : this(activityGroup, new Options(), solutionFacade) { }
 
         /// <summary>
@@ -112,7 +111,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             }
 
             HistoricalEnumerator<Activity> activitiesEnumerator = new(activities.GetEnumerator());
-            Dictionary<Activity, IEnumerable<Task>> activityTasksMap = new();
+            Dictionary<Activity, IEnumerable<Task>> activityTasksMap = [];
             CreateProcessEntitiesForActivities(activitiesEnumerator, collaboration, activityTasksMap);
         }
 
@@ -158,7 +157,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             if (processEntitiesForFlowControls.Any())
             {
                 ExclusiveGateway exclusiveGateway = (ExclusiveGateway)processEntitiesForFlowControls.First(pe => pe is ExclusiveGateway);
-                IEnumerable<IFlowSource> conditionalTasks = processEntitiesForFlowControls.Where(pe => pe is IFlowSource && pe is not ExclusiveGateway).Cast<IFlowSource>();
+                IEnumerable<IFlowSource> conditionalTasks = processEntitiesForFlowControls.Where(pe => pe is IFlowSource and not ExclusiveGateway).Cast<IFlowSource>();
 
                 Flow.Create(name: string.Empty, source: lastTaskForCurrentActivity, target: exclusiveGateway);
 
@@ -217,9 +216,9 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             }
 
             ProcessEntitiesFromActivityFlowControlCreator processEntitiesFromActivityFlowControlCreator = new(
-                activity, 
-                collaboration, 
-                _solutionFacade, 
+                activity,
+                collaboration,
+                _solutionFacade,
                 activityTasksMap);
             return processEntitiesFromActivityFlowControlCreator.Create();
         }
@@ -273,7 +272,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
         /// <exception cref="BPMNConversionException">If no <see cref="Participant"/> is found.</exception>
         private IEnumerable<Participant> CreateParticipants(IEnumerable<Activity> activities)
         {
-            List<Participant> participants = new();
+            List<Participant> participants = [];
             foreach (Activity activity in activities)
             {
                 participants.AddRange(CreateParticipantsForActivity(activity));
@@ -294,7 +293,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
         /// <returns>List of new <see cref="Participant"/>.</returns>
         private IEnumerable<Participant> CreateParticipantsForActivity(Activity activity)
         {
-            List<Participant> participants = new();
+            List<Participant> participants = [];
 
             if (ActivityBPMNUtil.IsWebServicesActivity(activity, _solutionFacade))
             {

@@ -16,12 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Common
 {
@@ -30,8 +25,8 @@ namespace Amdocs.Ginger.Common
         private T _value;
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
-        public T Value 
+
+        public T Value
         {
             get => _value;
             set
@@ -44,7 +39,7 @@ namespace Amdocs.Ginger.Common
         public object ValueAsObject
         {
             get => _value;
-            set 
+            set
             {
                 _value = (T)value;
                 OnPropertyChanged(nameof(ValueAsObject));

@@ -97,8 +97,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Task t1 = Task.Factory.StartNew(() =>
             {
                 GingerNodeInfo GNI1 = GG.NodeList[0];
-                GingerNodeProxy GNP1 = new GingerNodeProxy(GNI1);
-                GNP1.GingerGrid = GG;
+                GingerNodeProxy GNP1 = new GingerNodeProxy(GNI1)
+                {
+                    GingerGrid = GG
+                };
 
                 GNP1.Reserve();
                 GNP1.StartDriver();
@@ -116,8 +118,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Task t2 = Task.Factory.StartNew(() =>
             {
                 GingerNodeInfo GNI2 = GG.NodeList[1];
-                GingerNodeProxy GNP2 = new GingerNodeProxy(GNI2);
-                GNP2.GingerGrid = GG;
+                GingerNodeProxy GNP2 = new GingerNodeProxy(GNI2)
+                {
+                    GingerGrid = GG
+                };
 
                 GNP2.Reserve();
                 GNP2.StartDriver();

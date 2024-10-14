@@ -59,7 +59,7 @@ namespace GingerCore.GeneralLib
                 }
 
                 quoted = (chr == '"') ? !quoted : quoted;
-                escape = (chr == '\\') ? !escape : false;
+                escape = (chr == '\\') && !escape;
             }
 
             if (inserts.Count > 0)
@@ -72,7 +72,7 @@ namespace GingerCore.GeneralLib
                     int index = insert[0], before = insert[2], after = insert[3];
                     bool nlBefore = (insert[1] == -1), nlAfter = (insert[1] == +1);
 
-                    sb.Append(str.Substring(lastIndex, index - lastIndex));
+                    sb.Append(str[lastIndex..index]);
 
                     if (nlBefore)
                     {

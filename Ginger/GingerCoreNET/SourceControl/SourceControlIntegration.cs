@@ -23,7 +23,6 @@ using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
-using Cassandra;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
@@ -135,7 +134,7 @@ namespace Ginger.SourceControl
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Project List", ex);
-                return new ObservableList<SolutionInfo>();
+                return [];
             }
         }
 
@@ -174,7 +173,7 @@ namespace Ginger.SourceControl
         public static bool GetLatest(string path, SourceControlBase SourceControl)
         {
             string error = string.Empty;
-            List<string> conflictsPaths = new List<string>();
+            List<string> conflictsPaths = [];
             if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths))
             {
 
@@ -236,11 +235,11 @@ namespace Ginger.SourceControl
             ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", localItem, remoteItem);
             Comparison.StateType state = childComparisons.All(c => c.State == Comparison.StateType.Unmodified) ? Comparison.StateType.Unmodified : Comparison.StateType.Modified;
             Type dataType = typeof(RepositoryItemBase);
-            if(localItem != null)
+            if (localItem != null)
             {
                 dataType = localItem.GetType();
             }
-            else if(remoteItem != null)
+            else if (remoteItem != null)
             {
                 dataType = remoteItem.GetType();
             }
@@ -386,7 +385,7 @@ namespace Ginger.SourceControl
                 return false;
             }
 
-            List<string> conflictsPaths = new List<string>();
+            List<string> conflictsPaths = [];
             return mSourceControl.CommitAndCheckinChanges(paths, "check-in self healing changes.", ref error, ref conflictsPaths, false);
 
         }
@@ -589,11 +588,13 @@ namespace Ginger.SourceControl
                 }
                 if (SolutionFolder.EndsWith("\\"))
                 {
-                    SolutionFolder = SolutionFolder.Substring(0, SolutionFolder.Length - 1);
+                    SolutionFolder = SolutionFolder[..^1];
                 }
 
-                SolutionInfo sol = new SolutionInfo();
-                sol.LocalFolder = SolutionFolder;
+                SolutionInfo sol = new SolutionInfo
+                {
+                    LocalFolder = SolutionFolder
+                };
                 if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".svn")))
                 {
                     sol.ExistInLocaly = true;
@@ -607,7 +608,7 @@ namespace Ginger.SourceControl
                     sol.ExistInLocaly = false;
                 }
 
-                sol.SourceControlLocation = SolutionFolder.Substring(SolutionFolder.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                sol.SourceControlLocation = SolutionFolder[(SolutionFolder.LastIndexOf(Path.DirectorySeparatorChar) + 1)..];
 
                 if (sol == null)
                 {
@@ -616,7 +617,7 @@ namespace Ginger.SourceControl
                 }
 
                 string ProjectURI = string.Empty;
-                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && !(mSourceControl is SVNSourceControlShellWrapper))
+                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && mSourceControl is not SVNSourceControlShellWrapper)
                 {
 
                     if (WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))

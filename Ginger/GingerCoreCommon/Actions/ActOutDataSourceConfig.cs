@@ -70,7 +70,7 @@ namespace GingerCore.Actions
             }
         }
 
-        ObservableList<string> mPossibleValues = new ObservableList<string>();
+        ObservableList<string> mPossibleValues = [];
         public ObservableList<string> PossibleValues
         {
             get

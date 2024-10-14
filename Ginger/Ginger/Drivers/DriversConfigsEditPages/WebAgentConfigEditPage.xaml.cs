@@ -17,23 +17,16 @@ limitations under the License.
 #endregion
 
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web;
 using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Actions.WebServices;
 using GingerCore.Drivers;
-using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.GeneralLib;
-using Microsoft.VisualStudio.Services.Common;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using static GingerCore.Environments.Database;
 
 namespace Ginger.Drivers.DriversConfigsEditPages
 {
@@ -380,7 +373,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
 
 
-            if (result == WebBrowserType.Brave || result == WebBrowserType.InternetExplorer)
+            if (result is WebBrowserType.Brave or WebBrowserType.InternetExplorer)
             {
                 xAllBrowserNotBravePnl.Visibility = Visibility.Collapsed;
             }
@@ -400,7 +393,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
 
 
-            if (result == WebBrowserType.Edge || result == WebBrowserType.InternetExplorer)
+            if (result is WebBrowserType.Edge or WebBrowserType.InternetExplorer)
             {
                 xEdgeIE.Visibility = Visibility.Visible;
             }
@@ -417,7 +410,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// <param name="result">The browser type.</param>
         void ChromePnlvisibilitly(WebBrowserType result)
         {
-            if (result == WebBrowserType.Chrome || result == WebBrowserType.Brave)
+            if (result is WebBrowserType.Chrome or WebBrowserType.Brave)
             {
                 xChromePnl.Visibility = Visibility.Visible;
             }
@@ -434,7 +427,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         /// <param name="result">The browser type.</param>
         void ChromeFirefoxPnlVisibility(WebBrowserType result)
         {
-            if (result == WebBrowserType.Chrome || result == WebBrowserType.FireFox || result == WebBrowserType.Brave)
+            if (result is WebBrowserType.Chrome or WebBrowserType.FireFox or WebBrowserType.Brave)
             {
                 xChromeFirefoxPnl.Visibility = Visibility.Visible;
             }

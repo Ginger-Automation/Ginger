@@ -70,8 +70,10 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             string fileName = Path.Combine(TelemetryFolder, "Ginger.Telemetry.Config");
             if (!File.Exists(fileName))
             {
-                telemetry = new Telemetry();
-                telemetry.Guid = Guid.NewGuid();
+                telemetry = new Telemetry
+                {
+                    Guid = Guid.NewGuid()
+                };
                 string txt = JsonConvert.SerializeObject(telemetry);
                 File.WriteAllText(fileName, txt);
             }
@@ -103,8 +105,10 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         private static void InitClient()
         {
-            mClient = new HttpClient();
-            mClient.BaseAddress = new Uri("https://" + "gingertelemetry.azurewebsites.net");
+            mClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://" + "gingertelemetry.azurewebsites.net")
+            };
         }
 
 
@@ -260,7 +264,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
 
         // Multi thread safe
-        BlockingCollection<object> TelemetryRecords = new BlockingCollection<object>();
+        BlockingCollection<object> TelemetryRecords = [];
         public void Add(string entityType, object data)
         {
             TelemetryRecord telemetryRecord = new TelemetryRecord(entityType, data);
@@ -277,7 +281,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
                 // Adding timestamp, uid and sid
                 string controlfields = "\"timestamp\":\"" + Time + "\",\"sid\":\"" + mTelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
-                string fullobj = indexHeader + Environment.NewLine + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
+                string fullobj = indexHeader + Environment.NewLine + "{" + controlfields + objJSON[1..] + Environment.NewLine;
 
                 //TODO: add try catch
 

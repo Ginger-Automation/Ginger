@@ -27,15 +27,12 @@ using Ginger.ALM.QC.TreeViewItems;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
-using GingerCore.ALM.JIRA;
 using GingerCore.Platforms;
-using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
@@ -45,8 +42,8 @@ namespace Ginger.ALM.Repository
         AzureDevOpsCore AzureCore;
         ALMTestCase matchingTC = null;
 
-        public AzureDevOpsRepository(ALMCore almcore) 
-        { 
+        public AzureDevOpsRepository(ALMCore almcore)
+        {
             AzureCore = (AzureDevOpsCore)almcore;
         }
         public override bool ConnectALMServer(eALMConnectType userMsgStyle)
@@ -106,7 +103,7 @@ namespace Ginger.ALM.Repository
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
                 return false;
             }
-           
+
 
             ALMTestSetData matchingTS = null;
 
@@ -142,7 +139,7 @@ namespace Ginger.ALM.Repository
                 }
                 else
                 {
-                    return false ;
+                    return false;
                 }
             }
 
@@ -153,7 +150,7 @@ namespace Ginger.ALM.Repository
             //just to check if new TC needs to be created or update has to be done
             if (matchingTS == null)
             {
-               
+
                 //create upload path if checked to create separete folder
                 if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
                 {
@@ -206,20 +203,20 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.HideStatusMessage();
                 }
-                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+                if (almConectStyle is not eALMConnectType.Auto and not eALMConnectType.Silence)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
                 return true;
             }
-            else if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+            else if (almConectStyle is not eALMConnectType.Auto and not eALMConnectType.Silence)
             {
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
 
             return false;
-            
-            
+
+
         }
 
         void SetTestPlanUploadPathIfEmpty(ref string testPlanUploadPath)
@@ -233,9 +230,9 @@ namespace Ginger.ALM.Repository
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG,"test Plan upload path is empty or null");
+                Reporter.ToLog(eLogLevel.DEBUG, "test Plan upload path is empty or null");
             }
-            
+
         }
         public override eUserMsgKey GetDownloadPossibleValuesMessage()
         {
@@ -287,7 +284,7 @@ namespace Ginger.ALM.Repository
         {
             if (selectedTests != null && selectedTests.Any())
             {
-                ObservableList<AzureTestPlan> testSetsItemsToImport = new ObservableList<AzureTestPlan>();
+                ObservableList<AzureTestPlan> testSetsItemsToImport = [];
                 foreach (AzureTestPlan selectedTS in selectedTests)
                 {
                     try
@@ -302,9 +299,9 @@ namespace Ginger.ALM.Repository
                             }
                         }
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, selectedTS.Name);
-                       AzureTestPlan azureImportedTSData = ((AzureDevOpsCore)ALMIntegration.Instance.AlmCore).GetAzureTestSetData(selectedTS);
+                        AzureTestPlan azureImportedTSData = ((AzureDevOpsCore)ALMIntegration.Instance.AlmCore).GetAzureTestSetData(selectedTS);
 
-                       SetImportedTS(azureImportedTSData, importDestinationPath);
+                        SetImportedTS(azureImportedTSData, importDestinationPath);
                     }
                     catch (Exception ex)
                     {
@@ -323,14 +320,14 @@ namespace Ginger.ALM.Repository
             {
                 //import test set data
                 Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, importedTS.Name);
-               BusinessFlow tsBusFlow = ((AzureDevOpsCore)ALMIntegration.Instance.AlmCore).ConvertAzureTestSetToBF(importedTS);
-               SetBFPropertiesAfterImport(tsBusFlow);
+                BusinessFlow tsBusFlow = ((AzureDevOpsCore)ALMIntegration.Instance.AlmCore).ConvertAzureTestSetToBF(importedTS);
+                SetBFPropertiesAfterImport(tsBusFlow);
 
                 //save bf
-               AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
+                AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
                 Reporter.HideStatusMessage();
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Importing Test Plan/Suite got failed", ex);
             }
@@ -419,7 +416,7 @@ namespace Ginger.ALM.Repository
         }
         private ObservableList<ExternalItemFieldBase> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, string resourceType)
         {
-            ObservableList<ExternalItemFieldBase> fieldsToReturn = new ObservableList<ExternalItemFieldBase>();
+            ObservableList<ExternalItemFieldBase> fieldsToReturn = [];
 
             //Going through the fields to leave only Test Set fields
             for (int indx = 0; indx < fields.Count; indx++)

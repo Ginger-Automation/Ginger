@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Telemetry;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -45,8 +44,10 @@ namespace Amdocs.Ginger.Repository
 
         private ObservableList<ApplicationAPIModel> GetParameters(XmlDocument doc, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes)
         {
-            ApplicationAPIModel AAM = new ApplicationAPIModel();
-            AAM.Name = Path.GetFileNameWithoutExtension(doc.BaseURI);
+            ApplicationAPIModel AAM = new ApplicationAPIModel
+            {
+                Name = Path.GetFileNameWithoutExtension(doc.BaseURI)
+            };
             XMLDocExtended XDE = new XMLDocExtended(doc);
 
             if (avoidDuplicatesNodes)
@@ -84,7 +85,7 @@ namespace Amdocs.Ginger.Repository
                         }
 
                         string UniqAttributePlaceHolder = "{" + GetPlaceHolderName(XmlAttribute.LocalName.ToUpper()) + "}";
-                        AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, new ObservableList<OptionalValue> { new OptionalValue { Value=XmlAttribute.Value, IsDefault=true} }));
+                        AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, new ObservableList<OptionalValue> { new OptionalValue { Value = XmlAttribute.Value, IsDefault = true } }));
                         XmlAttribute.Value = UniqAttributePlaceHolder;
                     }
                 }

@@ -67,9 +67,7 @@ namespace GingerWPF.RunLib
             DependencyObject dependencyObject = VisualTreeHelper.GetParent(child);
             if (dependencyObject != null)
             {
-                T parent = dependencyObject as T;
-
-                if (parent != null)
+                if (dependencyObject is T parent)
                 {
                     return parent;
                 }

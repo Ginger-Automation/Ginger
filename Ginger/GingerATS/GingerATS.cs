@@ -81,8 +81,10 @@ namespace GingerATS
                     solutionFullLocalPath = Path.Combine(sourceConnectionDetails.GingerSolutionLocalPath, sourceConnectionDetails.GingerSolutionName);
                     try
                     {
-                        GingerATSSVNSourceControl sourceControl = new GingerATSSVNSourceControl(sourceConnectionDetails, solutionFullLocalPath);
-                        sourceControl.Logger = Logger;
+                        GingerATSSVNSourceControl sourceControl = new GingerATSSVNSourceControl(sourceConnectionDetails, solutionFullLocalPath)
+                        {
+                            Logger = Logger
+                        };
 
                         //Check if require to get the full solution data or only update it
                         if (!Directory.Exists(solutionFullLocalPath))
@@ -217,24 +219,30 @@ namespace GingerATS
                                                     }
 
                                                     //check if the variable is known to Ginger
-                                                    List<NodeAttributeValidation> variableExistsAttributes = new List<NodeAttributeValidation>();
-                                                    variableExistsAttributes.Add(new NodeAttributeValidation(GingerRepositoryItem.ActivityVariableNameAttribute, param.Name));
+                                                    List<NodeAttributeValidation> variableExistsAttributes =
+                                                    [
+                                                        new NodeAttributeValidation(GingerRepositoryItem.ActivityVariableNameAttribute, param.Name),
+                                                    ];
                                                     if (GingerATSXmlReader.ValidateNodeAttributsValue(step_Activity_VariablesXml,
                                                                                                        GingerRepositoryItem.ActivityVariablesAttributeName, variableExistsAttributes, true))
                                                     {
                                                         //Variable Exist
                                                         //check if it from typeSelection List
-                                                        List<NodeAttributeValidation> variableIsSelectionListAttributes = new List<NodeAttributeValidation>();
-                                                        variableIsSelectionListAttributes.Add(new NodeAttributeValidation(GingerRepositoryItem.VariableSelectionListNameAttribute, param.Name));
+                                                        List<NodeAttributeValidation> variableIsSelectionListAttributes =
+                                                        [
+                                                            new NodeAttributeValidation(GingerRepositoryItem.VariableSelectionListNameAttribute, param.Name),
+                                                        ];
                                                         if (GingerATSXmlReader.ValidateNodeAttributsValue(step_Activity_VariablesXml,
                                                                                                            GingerRepositoryItem.VariableSelectionListNodeName, variableIsSelectionListAttributes, true))
                                                         {
                                                             //Selection List
                                                             //check if the parameter value is supported
-                                                            List<NodeAttributeValidation> variableSelectionListValueAttributes = new List<NodeAttributeValidation>();
-                                                            variableSelectionListValueAttributes.Add(new NodeAttributeValidation(GingerRepositoryItem.VariableSelectionListNameAttribute, param.Name));
-                                                            variableSelectionListValueAttributes.Add(new NodeAttributeValidation(GingerRepositoryItem.VariableSelectionListOptionalValuesAttribute,
-                                                                                                                    param.SelectedValue, NodeAttributeValidation.eNodeAttributeValidationType.NewLineSeperatedListValue, true));
+                                                            List<NodeAttributeValidation> variableSelectionListValueAttributes =
+                                                            [
+                                                                new NodeAttributeValidation(GingerRepositoryItem.VariableSelectionListNameAttribute, param.Name),
+                                                                new NodeAttributeValidation(GingerRepositoryItem.VariableSelectionListOptionalValuesAttribute,
+                                                                                                                        param.SelectedValue, NodeAttributeValidation.eNodeAttributeValidationType.NewLineSeperatedListValue, true),
+                                                            ];
                                                             if (GingerATSXmlReader.ValidateNodeAttributsValue(step_Activity_VariablesXml,
                                                                                                                GingerRepositoryItem.VariableSelectionListNodeName, variableSelectionListValueAttributes, true))
                                                             {

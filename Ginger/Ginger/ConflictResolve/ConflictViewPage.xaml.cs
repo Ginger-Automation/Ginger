@@ -49,7 +49,7 @@ namespace Ginger.ConflictResolve
         private void SetConflictButtonUI()
         {
             xPrevConflict.xButtonText.Visibility = Visibility.Collapsed;
-            xPrevConflict.xButtonImage.Margin = new Thickness(left: 5, top: 0, right: 5, bottom: 0); 
+            xPrevConflict.xButtonImage.Margin = new Thickness(left: 5, top: 0, right: 5, bottom: 0);
             xNextConflict.xButtonText.Visibility = Visibility.Collapsed;
             xNextConflict.xButtonImage.Margin = new Thickness(left: 5, top: 0, right: 5, bottom: 0);
         }
@@ -78,7 +78,7 @@ namespace Ginger.ConflictResolve
 
         private void OnWizardPageInit()
         {
-            if(_wizard == null)
+            if (_wizard == null)
             {
                 return;
             }
@@ -122,19 +122,19 @@ namespace Ginger.ConflictResolve
 
         private void BindComparisonSelectedProperty(Comparison comparison)
         {
-            if(comparison.State == Comparison.StateType.Unmodified)
+            if (comparison.State == Comparison.StateType.Unmodified)
             {
                 return;
             }
 
             comparison.PropertyChanged += Comparison_Selected_Changed;
-            
-            if(comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted)
+
+            if (comparison.State is Comparison.StateType.Added or Comparison.StateType.Deleted)
             {
                 return;
             }
 
-            foreach(Comparison childComparison in comparison.ChildComparisons)
+            foreach (Comparison childComparison in comparison.ChildComparisons)
             {
                 BindComparisonSelectedProperty(childComparison);
             }
@@ -152,7 +152,7 @@ namespace Ginger.ConflictResolve
 
         private void UpdateRemainingConflictCount()
         {
-            if(_wizard != null)
+            if (_wizard != null)
             {
                 int remainingComparisonCount = _wizard.Comparison.UnselectedComparisonCount();
                 Dispatcher.Invoke(() => xRemainingConflictCount.Text = remainingComparisonCount.ToString());
@@ -163,7 +163,7 @@ namespace Ginger.ConflictResolve
         {
             Dispatcher.Invoke(() =>
             {
-                Dictionary<Comparison, IList<ConflictComparisonTreeViewItem>> tviRepo = new();
+                Dictionary<Comparison, IList<ConflictComparisonTreeViewItem>> tviRepo = [];
                 xLocalItemTree.AddItem(
                     new ConflictComparisonTreeViewItem(
                         comparison,
@@ -189,7 +189,7 @@ namespace Ginger.ConflictResolve
 
         private void OnWizardPageLeavingForNextPage(WizardEventArgs eventArgs)
         {
-            if(_wizard == null)
+            if (_wizard == null)
             {
                 return;
             }
@@ -214,7 +214,7 @@ namespace Ginger.ConflictResolve
 
         private void HideNavigatingToConflictLoader()
         {
-            if(_wizard == null)
+            if (_wizard == null)
             {
                 return;
             }
@@ -287,7 +287,7 @@ namespace Ginger.ConflictResolve
                 Comparison comparison = (Comparison)((ITreeViewItem)currentTreeViewItem.Tag).NodeObject();
                 bool continueIteration = true;
 
-                bool IsAddedOrDeleted = comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted;
+                bool IsAddedOrDeleted = comparison.State is Comparison.StateType.Added or Comparison.StateType.Deleted;
                 bool canBeSelected = comparison.IsSelectionEnabled;
                 bool selfAndSiblingNotSelected = !comparison.Selected && (!comparison.HasSiblingComparison || !comparison.SiblingComparison.Selected);
 

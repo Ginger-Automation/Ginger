@@ -31,7 +31,7 @@ namespace Ginger.WindowExplorer.Java
     class JEditorHTMLTableTreeItem : HTMLElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
         UIElementTableConfigPage mHTMLTablePage;
-        ObservableList<Act> mAvailableActions = new ObservableList<Act>();
+        ObservableList<Act> mAvailableActions = [];
         StackPanel ITreeViewItem.Header()
         {
             return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Table));
@@ -41,13 +41,14 @@ namespace Ginger.WindowExplorer.Java
         {
             mAvailableActions.Clear();
 
-            ActUIElement act = new ActUIElement();
+            ActUIElement act = new ActUIElement
+            {
+                AddNewReturnParams = true,
+                Description = "Get " + ElementInfo.ElementTitle + " Table RowCount",
 
-            act.AddNewReturnParams = true;
-            act.Description = "Get " + ElementInfo.ElementTitle + " Table RowCount";
-
-            act.ElementType = eElementType.EditorPane;
-            act.ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction;
+                ElementType = eElementType.EditorPane,
+                ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction
+            };
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementType, ActUIElement.eSubElementType.HTMLTable.ToString());
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementAction, ActUIElement.eElementAction.TableAction.ToString());
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eTableAction.GetRowCount.ToString());
@@ -58,13 +59,14 @@ namespace Ginger.WindowExplorer.Java
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");
             mAvailableActions.Add(act);
 
-            ActUIElement act1 = new ActUIElement();
+            ActUIElement act1 = new ActUIElement
+            {
+                AddNewReturnParams = true,
+                Description = "Get " + ElementInfo.ElementTitle + " Value",
 
-            act1.AddNewReturnParams = true;
-            act1.Description = "Get " + ElementInfo.ElementTitle + " Value";
-
-            act1.ElementType = eElementType.EditorPane;
-            act1.ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction;
+                ElementType = eElementType.EditorPane,
+                ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction
+            };
             act1.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementType, ActUIElement.eSubElementType.HTMLTable.ToString());
             act1.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementAction, ActUIElement.eElementAction.TableCellAction.ToString());
             act1.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eTableAction.GetValue.ToString());
@@ -75,13 +77,14 @@ namespace Ginger.WindowExplorer.Java
             act1.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");
             mAvailableActions.Add(act1);
 
-            ActUIElement act2 = new ActUIElement();
+            ActUIElement act2 = new ActUIElement
+            {
+                AddNewReturnParams = true,
+                Description = "Click " + ElementInfo.ElementTitle,
 
-            act2.AddNewReturnParams = true;
-            act2.Description = "Click " + ElementInfo.ElementTitle;
-
-            act2.ElementType = eElementType.EditorPane;
-            act2.ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction;
+                ElementType = eElementType.EditorPane,
+                ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction
+            };
             act2.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementType, ActUIElement.eSubElementType.HTMLTable.ToString());
             act2.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementAction, ActUIElement.eElementAction.TableCellAction.ToString());
             act2.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eTableAction.Click.ToString());

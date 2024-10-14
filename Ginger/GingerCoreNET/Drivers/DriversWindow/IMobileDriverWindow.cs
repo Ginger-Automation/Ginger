@@ -27,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
     {
         bool IsDeviceConnected { get; set; }
 
-        bool IsUftLabDevice { get;}
+        bool IsUftLabDevice { get; }
 
         eAutoScreenshotRefreshMode DeviceAutoScreenshotRefreshMode { get; set; }
 

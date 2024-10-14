@@ -53,7 +53,7 @@ namespace Ginger.VisualAutomate
             ActivitiesComboBox.ItemsSource = mBusinessFlow.Activities;
             ActivitiesComboBox.DisplayMemberPath = nameof(Activity.ActivityName);
 
-            CreateActivityDiagram((Activity)mBusinessFlow.CurrentActivity);
+            CreateActivityDiagram(mBusinessFlow.CurrentActivity);
 
             SetActionsGridView();
         }
@@ -66,10 +66,10 @@ namespace Ginger.VisualAutomate
             AvailableActionsGrid.ShowDelete = System.Windows.Visibility.Collapsed;
 
             //Set the Data Grid columns            
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Description, WidthWeight = 100 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = [new GridColView() { Field = Act.Fields.Description, WidthWeight = 100 }]
+            };
 
             AvailableActionsGrid.SetAllColumnsDefaultView(view);
             AvailableActionsGrid.InitViewItems();
@@ -97,9 +97,8 @@ namespace Ginger.VisualAutomate
             //TODO: If this is set value action open VE
             //TODO: if it is validate - then do all and no show?
 
-            if (act is ActUIElement)
+            if (act is ActUIElement AUIE)
             {
-                ActUIElement AUIE = (ActUIElement)act;
                 if (AUIE.ElementAction == ActUIElement.eElementAction.SetValue)
                 {
                     ValueExpressionEditorPage pa = new ValueExpressionEditorPage(act, ActUIElement.Fields.Value, Context.GetAsContext(act.Context));
@@ -126,7 +125,7 @@ namespace Ginger.VisualAutomate
 
         private void RefreshDiagram()
         {
-            CreateActivityDiagram((Activity)mBusinessFlow.CurrentActivity);
+            CreateActivityDiagram(mBusinessFlow.CurrentActivity);
         }
 
         private void ActivitiesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

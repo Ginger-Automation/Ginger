@@ -31,7 +31,6 @@ using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using static Ginger.Run.RunSetActions.RunSetActionBase;
 using static GingerCore.ALM.PublishToALMConfig;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
@@ -69,7 +68,7 @@ namespace Ginger.Run.RunSetActions
             PublishToALMConfig.CalculateTCRunName(mVE);
             PublishToALMConfig.FilterStatus = RunSetActionPublishToQC.FilterStatus;
             //check ALM type logic
-            if (RunSetActionPublishToQC.PublishALMType.Equals(RunSetActionPublishToQC.AlmTypeDefault,StringComparison.CurrentCultureIgnoreCase))
+            if (RunSetActionPublishToQC.PublishALMType.Equals(RunSetActionPublishToQC.AlmTypeDefault, StringComparison.CurrentCultureIgnoreCase))
             {
                 //connect as connected till now to whatever default
             }
@@ -90,7 +89,7 @@ namespace Ginger.Run.RunSetActions
         public void Execute(IReportInfo RI)
         {
             string result = string.Empty;
-            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            ObservableList<BusinessFlow> bfs = [];
             SetExportToALMConfig();
             // ALM Test Set Level: if "Run Set" convert Run Set to Business flow
             if (PublishToALMConfig.ALMTestSetLevel == eALMTestSetLevel.RunSet)
@@ -123,8 +122,8 @@ namespace Ginger.Run.RunSetActions
                 BusinessFlow businessFlow;
                 foreach (BusinessFlowReport BFR in ((ReportInfo)RI).BusinessFlows)
                 {
-                    businessFlow = (BusinessFlow)BFR.GetBusinessFlow();
-                    if(businessFlow.RunStatus != eRunStatus.Pending)
+                    businessFlow = BFR.GetBusinessFlow();
+                    if (businessFlow.RunStatus != eRunStatus.Pending)
                     {
                         bfs.Add(businessFlow);
                     }
@@ -152,14 +151,16 @@ namespace Ginger.Run.RunSetActions
                 }
 
                 //Create Business Flow
-                BusinessFlow virtualBF = new BusinessFlow();
-                virtualBF.Name = runSetExec.RunSetConfig.Name;
-                virtualBF.Description = runSetExec.RunSetConfig.Description;
-                virtualBF.Status = BusinessFlow.eBusinessFlowStatus.Unknown;
-                virtualBF.RunStatus = runSetExec.RunSetConfig.RunSetExecutionStatus;
-                virtualBF.StartTimeStamp = runSetExec.RunSetConfig.StartTimeStamp;
-                virtualBF.EndTimeStamp = runSetExec.RunSetConfig.EndTimeStamp;
-                virtualBF.ALMTestSetLevel = PublishToALMConfig.ALMTestSetLevel.ToString();
+                BusinessFlow virtualBF = new BusinessFlow
+                {
+                    Name = runSetExec.RunSetConfig.Name,
+                    Description = runSetExec.RunSetConfig.Description,
+                    Status = BusinessFlow.eBusinessFlowStatus.Unknown,
+                    RunStatus = runSetExec.RunSetConfig.RunSetExecutionStatus,
+                    StartTimeStamp = runSetExec.RunSetConfig.StartTimeStamp,
+                    EndTimeStamp = runSetExec.RunSetConfig.EndTimeStamp,
+                    ALMTestSetLevel = PublishToALMConfig.ALMTestSetLevel.ToString()
+                };
                 if (!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID))
                 {
                     virtualBF.ExternalID = runSetExec.RunSetConfig.ExternalID;
@@ -177,7 +178,7 @@ namespace Ginger.Run.RunSetActions
                     virtualBF.ExternalID2 = string.Empty;
                 }
 
-                virtualBF.Activities = new ObservableList<Activity>();
+                virtualBF.Activities = [];
                 foreach (GingerRunner runSetrunner in runSetExec.Runners)
                 {
                     // if executor is null when run if from file
@@ -187,13 +188,15 @@ namespace Ginger.Run.RunSetActions
                     }
                     foreach (BusinessFlow runSetBF in runSetrunner.Executor.BusinessFlows)
                     {
-                        ActivitiesGroup virtualAG = new ActivitiesGroup();
-                        virtualAG.Name = runSetBF.Name;
-                        virtualAG.Description = runSetBF.Description;
+                        ActivitiesGroup virtualAG = new ActivitiesGroup
+                        {
+                            Name = runSetBF.Name,
+                            Description = runSetBF.Description
+                        };
                         ProjEnvironment projEnvironment = runSetExec.RunsetExecutionEnvironment;
                         if (projEnvironment != null)
                         {
-                            IValueExpression magVE = new GingerCore.ValueExpression(projEnvironment, runSetBF, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                            IValueExpression magVE = new GingerCore.ValueExpression(projEnvironment, runSetBF, [], false, "", false);
                             runSetBF.CalculateExternalId(magVE);
                         }
                         virtualAG.ExternalID = !string.IsNullOrEmpty(runSetBF.ExternalIdCalCulated) ? runSetBF.ExternalIdCalCulated : string.Empty;
@@ -213,7 +216,7 @@ namespace Ginger.Run.RunSetActions
                         {
                             Activity activitycopy = (Activity)runSetAct.CreateCopy(false);
                             activitycopy.Status = runSetAct.Status;
-                            foreach(Act act in activitycopy.Acts)
+                            foreach (Act act in activitycopy.Acts)
                             {
                                 act.Status = runSetAct.Status;
                             }
@@ -241,7 +244,7 @@ namespace Ginger.Run.RunSetActions
                 }
                 if (businessFlow != null && !string.IsNullOrEmpty(businessFlow.ExternalID))
                 {
-                    if(!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID))
+                    if (!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID))
                     {
                         if (!General.isVariableUsed(runSetExec.RunSetConfig.ExternalID))
                         {
@@ -282,13 +285,13 @@ namespace Ginger.Run.RunSetActions
                     foreach (BusinessFlow bFlow in Bflist.Where(x => BFGuidlist.Contains(x.Guid)))
                     {
                         ActivitiesGroup activitiesGroup = businessFlow.ActivitiesGroups.FirstOrDefault(x => x.ParentGuid == bFlow.Guid);
-                        if(activitiesGroup != null)
+                        if (activitiesGroup != null)
                         {
-                            if(!string.IsNullOrEmpty(bFlow.ExternalID))
+                            if (!string.IsNullOrEmpty(bFlow.ExternalID))
                             {
                                 if (!General.isVariableUsed(bFlow.ExternalID))
                                 {
-                                    bFlow.ExternalID = !string.IsNullOrEmpty(activitiesGroup.ExternalID) ?  activitiesGroup.ExternalID : bFlow.ExternalID;
+                                    bFlow.ExternalID = !string.IsNullOrEmpty(activitiesGroup.ExternalID) ? activitiesGroup.ExternalID : bFlow.ExternalID;
                                 }
                             }
                             else

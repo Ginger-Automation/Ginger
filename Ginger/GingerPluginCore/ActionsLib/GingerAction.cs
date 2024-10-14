@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
@@ -28,8 +27,10 @@ namespace Amdocs.Ginger.Plugin.Core
 
         public GingerAction()
         {
-            Output = new GingerActionOutput();
-            Output.OutputValues = new List<IGingerActionOutputValue>();
+            Output = new GingerActionOutput
+            {
+                OutputValues = []
+            };
         }
 
         private string mExInfo;
@@ -82,10 +83,12 @@ namespace Amdocs.Ginger.Plugin.Core
 
         public void AddOutput(string param, object value, string path = null)
         {
-            GingerActionOutputValue gingerActionOutputValue = new GingerActionOutputValue();
-            gingerActionOutputValue.Param = param;
-            gingerActionOutputValue.Value = value;
-            gingerActionOutputValue.Path = path;
+            GingerActionOutputValue gingerActionOutputValue = new GingerActionOutputValue
+            {
+                Param = param,
+                Value = value,
+                Path = path
+            };
             Output.OutputValues.Add(gingerActionOutputValue);
         }
 

@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Run;
 using Ginger.SolutionWindows;
@@ -28,7 +27,6 @@ using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -88,7 +86,7 @@ namespace Ginger.Agents
         {
             this.Dispatcher.Invoke(() =>
             {
-                ApplicationAgents = new ObservableList<ApplicationAgent>();
+                ApplicationAgents = [];
                 foreach (ApplicationAgent Apag in mRunner.GingerRunner.ApplicationAgents)
                 {
                     if (Apag.ApplicationAgentOperations == null)
@@ -97,7 +95,7 @@ namespace Ginger.Agents
                     }
                     if (mRunner.SolutionApplications?.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
                     {
-                        if(Apag.Agent == null && Apag.PossibleAgents.Any())
+                        if (Apag.Agent == null && Apag.PossibleAgents.Any())
                         {
                             Apag.Agent = Apag.PossibleAgents[0] as Agent;
                         }
@@ -116,7 +114,7 @@ namespace Ginger.Agents
                 return mContext.BusinessFlow.Activities.Select((activity) => activity.TargetApplication);
             }
 
-            else if (mRunner != null && mRunner.BusinessFlows!=null)
+            else if (mRunner != null && mRunner.BusinessFlows != null)
             {
                 return mRunner.BusinessFlows.SelectMany((businessFlow) => businessFlow.Activities).Select((activity) => activity.TargetApplication);
             }
@@ -130,7 +128,7 @@ namespace Ginger.Agents
                 try
                 {
                     ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
-                    Agent agent = ((Agent)AG.Agent);
+                    Agent agent = AG.Agent;
 
                     switch (((AgentOperations)agent.AgentOperations).Status)
                     {
@@ -154,13 +152,13 @@ namespace Ginger.Agents
                         default:
                             //Start Agent
                             Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
-                            ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
-                            ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
-                            ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
-                            ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+                            AG.Agent.ProjEnvironment = mContext.Environment;
+                            AG.Agent.BusinessFlow = mContext.BusinessFlow;
+                            AG.Agent.SolutionFolder = WorkSpace.Instance.Solution.Folder;
+                            AG.Agent.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                             await System.Threading.Tasks.Task.Run(() =>
                             {
-                                ((Agent)AG.Agent).AgentOperations.StartDriver();
+                                AG.Agent.AgentOperations.StartDriver();
                             });
                             break;
                     }
@@ -225,17 +223,12 @@ namespace Ginger.Agents
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            switch ((Agent.eStatus)value)
+            return (Agent.eStatus)value switch
             {
-                case Agent.eStatus.Running:
-                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#109717"));//green
-
-                case Agent.eStatus.Starting:
-                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC268"));//yellow
-
-                default:
-                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#DC3812"));//red
-            }
+                Agent.eStatus.Running => (SolidColorBrush)(new BrushConverter().ConvertFrom("#109717")),//green
+                Agent.eStatus.Starting => (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC268")),//yellow
+                _ => (SolidColorBrush)(new BrushConverter().ConvertFrom("#DC3812")),//red
+            };
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -268,17 +261,12 @@ namespace Ginger.Agents
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            switch ((Agent.eStatus)value)
+            return (Agent.eStatus)value switch
             {
-                case Agent.eStatus.Running:
-                    return "Agent is Running, Click to Close it";
-
-                case Agent.eStatus.Starting:
-                    return "Agent is Starting...";
-
-                default:
-                    return "Agent is Not Running, Click to Start it";
-            }
+                Agent.eStatus.Running => "Agent is Running, Click to Close it",
+                Agent.eStatus.Starting => "Agent is Starting...",
+                _ => "Agent is Not Running, Click to Start it",
+            };
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -291,17 +279,12 @@ namespace Ginger.Agents
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            switch ((Agent.eStatus)value)
+            return (Agent.eStatus)value switch
             {
-                case Agent.eStatus.Running:
-                    return eImageType.ToggleOn;
-
-                case Agent.eStatus.Starting:
-                    return eImageType.ToggleOff;
-
-                default:
-                    return eImageType.ToggleOff;
-            }
+                Agent.eStatus.Running => eImageType.ToggleOn,
+                Agent.eStatus.Starting => eImageType.ToggleOff,
+                _ => (object)eImageType.ToggleOff,
+            };
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -20,7 +20,6 @@ using Ginger.UserControlsLib.TextEditor.Common;
 using ICSharpCode.AvalonEdit.Folding;
 using System;
 using System.Data;
-using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -230,7 +229,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 }
             }
 
-            textEditor.Text = textEditor.Text.Replace(tmp.Substring(0, tmp.LastIndexOf("|") + 1), txt);
+            textEditor.Text = textEditor.Text.Replace(tmp[..(tmp.LastIndexOf("|") + 1)], txt);
         }
     }
 }

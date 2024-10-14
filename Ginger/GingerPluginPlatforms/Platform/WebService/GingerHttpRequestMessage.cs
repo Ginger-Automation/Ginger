@@ -58,7 +58,7 @@ namespace Ginger.Plugin.Platform.WebService
         public List<RestAPIKeyBodyValues> RequestKeyValues { get; set; }
         public string BodyString { get; set; }
 
-        public List<KeyValuePair<String, string>> Headers = new List<KeyValuePair<string, string>>();
+        public List<KeyValuePair<String, string>> Headers = [];
 
         public eContentType BodyContentType;
 

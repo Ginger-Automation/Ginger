@@ -16,11 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.ALMLib.Azure
 {
@@ -35,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.Azure
         }
         public AzureTestPlan()
         {
-            this.TestCases = new List<AzureTestCases>();
+            this.TestCases = [];
         }
         public string Name { get; set; }
         public string AzureID { get; set; }

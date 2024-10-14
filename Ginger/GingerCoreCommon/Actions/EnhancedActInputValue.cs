@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.Repository
         //[IsSerializedForLocalRepository]
         //public ObservableList<string> OptionalValues = new ObservableList<string>();
 
-        ObservableList<string> mOptionalValues = new ObservableList<string>();
+        ObservableList<string> mOptionalValues = [];
         public ObservableList<string> OptionalValues
         {
             get

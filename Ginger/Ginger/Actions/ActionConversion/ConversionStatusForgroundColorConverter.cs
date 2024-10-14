@@ -29,25 +29,14 @@ namespace Ginger.Actions.ActionConversion
         {
             if (value != null)
             {
-                switch ((Amdocs.Ginger.Common.Enums.eImageType)value)
+                return (Amdocs.Ginger.Common.Enums.eImageType)value switch
                 {
-                    case Amdocs.Ginger.Common.Enums.eImageType.Passed:
-                    case Amdocs.Ginger.Common.Enums.eImageType.Finish:
-                        return App.Current.TryFindResource("$PassedStatusColor") as SolidColorBrush; //green
-
-                    case Amdocs.Ginger.Common.Enums.eImageType.Running:
-                        return App.Current.TryFindResource("$PrimaryColor_Black") as SolidColorBrush;//blue
-
-                    case Amdocs.Ginger.Common.Enums.eImageType.Pending:
-                        return App.Current.TryFindResource("$PendingStatusColor") as SolidColorBrush;//orange 
-
-                    case Amdocs.Ginger.Common.Enums.eImageType.Stopped:
-                    case Amdocs.Ginger.Common.Enums.eImageType.Failed:
-                        return App.Current.TryFindResource("$HighlightColor_Red") as SolidColorBrush;//red
-
-                    default:
-                        return App.Current.TryFindResource("$SkippedStatusColor") as SolidColorBrush;//gray
-                }
+                    Amdocs.Ginger.Common.Enums.eImageType.Passed or Amdocs.Ginger.Common.Enums.eImageType.Finish => App.Current.TryFindResource("$PassedStatusColor") as SolidColorBrush,//green
+                    Amdocs.Ginger.Common.Enums.eImageType.Running => App.Current.TryFindResource("$PrimaryColor_Black") as SolidColorBrush,//blue
+                    Amdocs.Ginger.Common.Enums.eImageType.Pending => App.Current.TryFindResource("$PendingStatusColor") as SolidColorBrush,//orange 
+                    Amdocs.Ginger.Common.Enums.eImageType.Stopped or Amdocs.Ginger.Common.Enums.eImageType.Failed => App.Current.TryFindResource("$HighlightColor_Red") as SolidColorBrush,//red
+                    _ => App.Current.TryFindResource("$SkippedStatusColor") as SolidColorBrush,//gray
+                };
             }
             else
             {

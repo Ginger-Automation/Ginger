@@ -43,7 +43,7 @@ namespace GingerCore.NoSqlBase
                 clusterCB = new Couchbase.Cluster(new ClientConfiguration
                 {
                     ViewRequestTimeout = 45000,
-                    Servers = new List<Uri> { new Uri(Db.DatabaseOperations.TNSCalculated.ToString()) },
+                    Servers = [new Uri(Db.DatabaseOperations.TNSCalculated.ToString())],
                 });
                 //TODO: need to decrypt the password in the Database->PassCalculated
                 String deCryptValue = EncryptionHandler.DecryptwithKey(Db.DatabaseOperations.PassCalculated.ToString());
@@ -166,22 +166,22 @@ namespace GingerCore.NoSqlBase
             {
                 if (Action == ActDBValidation.eDBValidationType.UpdateDB)
                 {
-                    bucketName = inputSQL.Substring(inputSQL.IndexOf(strUpdate, StringComparison.OrdinalIgnoreCase) + strUpdate.Length);
+                    bucketName = inputSQL[(inputSQL.IndexOf(strUpdate, StringComparison.OrdinalIgnoreCase) + strUpdate.Length)..];
                 }
                 else
                 {
-                    bucketName = inputSQL.Substring(inputSQL.IndexOf(strFrom, StringComparison.OrdinalIgnoreCase) + strFrom.Length);
+                    bucketName = inputSQL[(inputSQL.IndexOf(strFrom, StringComparison.OrdinalIgnoreCase) + strFrom.Length)..];
                 }
                 bucketNameArray = bucketName.Split('.');
                 bucketName = bucketNameArray[0].Trim();
                 int index = bucketName.IndexOf(" ");
                 if (index != -1)
                 {
-                    bucketName = bucketName.Substring(0, index).Replace("`", "");
+                    bucketName = bucketName[..index].Replace("`", "");
                 }
                 else
                 {
-                    bucketName = bucketName.Substring(0, bucketName.Length - 1).Replace("`", "");
+                    bucketName = bucketName[..^1].Replace("`", "");
                 }
             }
             return bucketName;
@@ -191,8 +191,10 @@ namespace GingerCore.NoSqlBase
         {
             string SQL = Act.QueryValue;
             string keyspace = Act.Keyspace;
-            ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-            VE.Value = SQL;
+            ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList)
+            {
+                Value = SQL
+            };
             string SQLCalculated = VE.ValueCalculated;
             string bucketName = GetBucketName(SQLCalculated);
 

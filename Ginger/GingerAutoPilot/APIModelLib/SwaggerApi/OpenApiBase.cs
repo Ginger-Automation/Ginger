@@ -27,18 +27,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Xml.Serialization;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi
 {
-    public abstract class OpenApiBase 
+    public abstract class OpenApiBase
     {
-       
+
 
         public void GenerateResponse(SwaggerOperation operation, ApplicationAPIModel basicModal)
         {
-            
+
             if (operation.Responses.Count > 0 && operation.Responses.Keys.Any(x => x.StartsWith("2")))
             {
                 //handling only the first sucess response code need to be improved
@@ -69,10 +67,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                         foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, schemaObj))
                         {
-                            ActReturnValue arv = new ActReturnValue();
-                            arv.ItemName = currModel.ItemName;
-                            arv.Path = currModel.XPath;
-                            arv.DoNotConsiderAsTemp = true;
+                            ActReturnValue arv = new ActReturnValue
+                            {
+                                ItemName = currModel.ItemName,
+                                Path = currModel.XPath,
+                                DoNotConsiderAsTemp = true
+                            };
                             basicModal.ReturnValues.Add(arv);
                         }
                     }
@@ -84,10 +84,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                         foreach (AppModelParameter currModel in generatedJsonBody)
                         {
-                            ActReturnValue arv = new ActReturnValue();
-                            arv.ItemName = currModel.ItemName;
-                            arv.Path = currModel.XPath;
-                            arv.DoNotConsiderAsTemp = true;
+                            ActReturnValue arv = new ActReturnValue
+                            {
+                                ItemName = currModel.ItemName,
+                                Path = currModel.XPath,
+                                DoNotConsiderAsTemp = true
+                            };
                             basicModal.ReturnValues.Add(arv);
                         }
                     }
@@ -96,7 +98,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             }
         }
 
-        public ApplicationAPIModel GenerateBasicModel(SwaggerOperation Operation, SwaggerOperationMethod method, ref bool supportBody, string path,SwaggerDocument apidoc)
+        public ApplicationAPIModel GenerateBasicModel(SwaggerOperation Operation, SwaggerOperationMethod method, ref bool supportBody, string path, SwaggerDocument apidoc)
         {
             ApplicationAPIModel AAM = new ApplicationAPIModel();
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("{[a-zA-Z]*}");
@@ -106,7 +108,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 path = path.Replace(Match.ToString(), modal);
                 AAM.AppModelParameters.Add(new AppModelParameter(modal, Match.ToString() + "in url", "", "", new ObservableList<OptionalValue>()));
             }
-            AAM.EndpointURL =  path;
+            AAM.EndpointURL = path;
             AAM.APIType = ApplicationAPIUtils.eWebApiType.REST;
             AAM.Name = Operation.Summary;
             if (string.IsNullOrWhiteSpace(AAM.Name))
@@ -165,10 +167,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 if (parameter.Kind == SwaggerParameterKind.Header)
                 {
                     string modelName = "<" + parameter.Name + ">";
-                    APIModelKeyValue header = new APIModelKeyValue();
-                    header.ItemName = parameter.Name;
-                    header.Param = parameter.Name;
-                    header.Value = modelName;
+                    APIModelKeyValue header = new APIModelKeyValue
+                    {
+                        ItemName = parameter.Name,
+                        Param = parameter.Name,
+                        Value = modelName
+                    };
                     ObservableList<OptionalValue> listOptions = GetListOfParamEnums(parameter);
                     AAM.AppModelParameters.Add(new AppModelParameter(modelName, parameter.Name + " in headers", "", "", listOptions));
                     AAM.HttpHeaders.Add(header);
@@ -187,9 +191,9 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             return AAM;
         }
 
-        
 
-        public  ObservableList<AppModelParameter> GenerateXMLBody(ApplicationAPIModel aAM, JsonSchema4 operation)
+
+        public ObservableList<AppModelParameter> GenerateXMLBody(ApplicationAPIModel aAM, JsonSchema4 operation)
         {
 
             string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation, null, true);
@@ -301,7 +305,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     }
 
                 }
-                else if(swaggerParameter.ActualSchema.ActualProperties.Count > 0)
+                else if (swaggerParameter.ActualSchema.ActualProperties.Count > 0)
                 {
                     foreach (var cnt in swaggerParameter.ActualSchema.ActualProperties)
                     {
@@ -319,7 +323,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         }
                     }
                 }
-                else if(swaggerParameter.ActualSchema.Enumeration.Count > 0)
+                else if (swaggerParameter.ActualSchema.Enumeration.Count > 0)
                 {
                     foreach (var item in swaggerParameter.ActualSchema.Enumeration)
                     {
@@ -330,7 +334,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         };
                         lstOptions.Add(value);
                     }
-                
+
                 }
             }
             catch (Exception ex)
@@ -344,7 +348,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
 
             Dictionary<string, string> exampleValues = new Dictionary<string, string>();
-            
+
             try
             {
                 if (operations.RequestBody != null)
@@ -413,12 +417,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                             {
                                 Value = value,
                                 IsDefault = IsDefaultValueCheck
-                        });
+                            });
                             IsDefaultValueCheck = false;
                             item.OptionalValuesList = tempList;
                         }
 
-                        
+
                     }
 
 
@@ -427,12 +431,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
         }
 
-        public  Dictionary<string,HashSet<string>> SetEnumsValue(dynamic sd)
+        public Dictionary<string, HashSet<string>> SetEnumsValue(dynamic sd)
         {
 
-            Dictionary<string,HashSet<string>> exampleValuesEnums = new Dictionary<string,HashSet<string>>();
+            Dictionary<string, HashSet<string>> exampleValuesEnums = new Dictionary<string, HashSet<string>>();
 
-            foreach(var item in sd.Value)
+            foreach (var item in sd.Value)
             {
                 if (item.Value.Parameters.Count > 0)
                 {
@@ -458,10 +462,10 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 }
             }
             return exampleValuesEnums;
-            
+
         }
 
-        public void AddValueForKey(Dictionary<string,HashSet<string>> dictionary, string key, string value)
+        public void AddValueForKey(Dictionary<string, HashSet<string>> dictionary, string key, string value)
         {
             if (!dictionary.ContainsKey(key))
             {

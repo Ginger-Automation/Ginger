@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using GingerCore;
+using GingerCore.Drivers.WebServicesDriverLib;
+using GingerCore.GeneralLib;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.GeneralLib;
-using GingerCore.Drivers.WebServicesDriverLib;
 
 namespace Ginger.Drivers.DriversConfigsEditPages
 {

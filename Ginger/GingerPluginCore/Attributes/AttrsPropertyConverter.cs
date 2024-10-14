@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.Plugin.Core
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             // we currently support only writing of JSON
-            List<Attribute> attrs = new List<Attribute>();
+            List<Attribute> attrs = [];
             JArray a = JArray.Load(reader);
 
             foreach (JObject o in a.Children<JObject>())
@@ -91,7 +91,7 @@ namespace Amdocs.Ginger.Plugin.Core
                         }
                         else if (propertyInfo.PropertyType == typeof(List<int>))
                         {
-                            List<int> list = new List<int>();
+                            List<int> list = [];
                             JArray jarr = (JArray)p.Value;
                             foreach (int val in jarr.Children())
                             {
@@ -127,7 +127,7 @@ namespace Amdocs.Ginger.Plugin.Core
 
         private void CreateAttrTypeDictionary()
         {
-            mAttrTypeDictionary = new Dictionary<string, Type>();
+            mAttrTypeDictionary = [];
             Assembly assembly = typeof(IParamProperty).Assembly;
             var actionParamPropertyAttributeTypes = from type in assembly.GetTypes()
                                                     where typeof(IParamProperty).IsAssignableFrom(type) && type.IsInterface == false
@@ -168,7 +168,7 @@ namespace Amdocs.Ginger.Plugin.Core
 
                 foreach (var property in properties)
                 {
-                    if (property.Name == nameof(Attribute.TypeId) || property.Name == nameof(IParamProperty.PropertyName))
+                    if (property.Name is (nameof(Attribute.TypeId)) or (nameof(IParamProperty.PropertyName)))
                     {
                         continue;
                     }

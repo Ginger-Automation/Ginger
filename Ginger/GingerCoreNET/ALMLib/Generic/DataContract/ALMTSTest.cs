@@ -24,9 +24,9 @@ namespace GingerCore.ALM.QC
     {
         public ALMTSTest()
         {
-            this.Parameters = new List<ALMTSTestParameter>();
-            this.Steps = new List<ALMTSTestStep>();
-            this.Runs = new List<ALMTSTestRun>();
+            this.Parameters = [];
+            this.Steps = [];
+            this.Runs = [];
         }
 
         public string TestName { get; set; }

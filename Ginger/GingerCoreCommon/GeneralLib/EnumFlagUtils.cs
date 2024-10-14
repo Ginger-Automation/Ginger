@@ -17,10 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.Common.GeneralLib
@@ -50,25 +46,25 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsByte;
                 return hasAllVerificationBits;
             }
-            else if(TryCastToShortAndOperate(thisFlags, flagsToVerify, out short thisFlagsAsShort, out short flagsToVerifyAsShort))
+            else if (TryCastToShortAndOperate(thisFlags, flagsToVerify, out short thisFlagsAsShort, out short flagsToVerifyAsShort))
             {
                 short commonSetBits = (short)(thisFlagsAsShort & flagsToVerifyAsShort);
                 bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsShort;
                 return hasAllVerificationBits;
             }
-            else if(TryCastToUShortAndOperate(thisFlags, flagsToVerify, out ushort thisFlagsAsUShort, out ushort flagsToVerifyAsUShort))
+            else if (TryCastToUShortAndOperate(thisFlags, flagsToVerify, out ushort thisFlagsAsUShort, out ushort flagsToVerifyAsUShort))
             {
                 ushort commonSetBits = (ushort)(thisFlagsAsUShort & flagsToVerifyAsUShort);
                 bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsUShort;
                 return hasAllVerificationBits;
             }
-            else if(TryCastToIntAndOperate(thisFlags, flagsToVerify, out int thisFlagsAsInt, out int flagsToVerifyAsInt))
+            else if (TryCastToIntAndOperate(thisFlags, flagsToVerify, out int thisFlagsAsInt, out int flagsToVerifyAsInt))
             {
                 int commonSetBits = thisFlagsAsInt & flagsToVerifyAsInt;
                 bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsInt;
                 return hasAllVerificationBits;
             }
-            else if(TryCastToUIntAndOperate(thisFlags, flagsToVerify, out uint thisFlagsAsUInt, out uint flagsToVerifyAsUInt))
+            else if (TryCastToUIntAndOperate(thisFlags, flagsToVerify, out uint thisFlagsAsUInt, out uint flagsToVerifyAsUInt))
             {
                 uint commonSetBits = thisFlagsAsUInt & flagsToVerifyAsUInt;
                 bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsUInt;

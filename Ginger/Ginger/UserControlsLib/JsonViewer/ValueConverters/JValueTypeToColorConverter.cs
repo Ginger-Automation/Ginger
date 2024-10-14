@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
-using Newtonsoft.Json.Linq;
 
 namespace JsonViewerDemo.ValueConverters
 {
@@ -28,8 +28,7 @@ namespace JsonViewerDemo.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var jValue = value as JValue;
-            if (jValue != null)
+            if (value is JValue jValue)
             {
                 switch (jValue.Type)
                 {

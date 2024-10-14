@@ -42,7 +42,7 @@ namespace GingerCore.ALM.RQM
         public RQMTestSuite(string uRLPathVersioned)
         {
             URLPathVersioned = uRLPathVersioned;
-            TestCases = new ObservableList<RQMTestCase>();
+            TestCases = [];
             TestSuiteExecutionRecord = new RQMTestSuiteExecutionRecord();
         }
 
@@ -53,7 +53,7 @@ namespace GingerCore.ALM.RQM
             CreatedBy = createdBy;
             CreationDate = creationDate;
             Description = description;
-            TestCases = rQMTestCasesList != null ? rQMTestCasesList : new ObservableList<RQMTestCase>();
+            TestCases = rQMTestCasesList != null ? rQMTestCasesList : [];
             TestSuiteExecutionRecord = new RQMTestSuiteExecutionRecord();
         }
 
@@ -61,7 +61,7 @@ namespace GingerCore.ALM.RQM
         {
             if (this.TestCases == null)
             {
-                this.TestCases = new ObservableList<RQMTestCase>();
+                this.TestCases = [];
             }
             return this.TestCases;
         }

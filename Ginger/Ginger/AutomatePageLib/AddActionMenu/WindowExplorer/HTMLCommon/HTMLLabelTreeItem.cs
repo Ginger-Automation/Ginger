@@ -33,13 +33,14 @@ namespace Ginger.WindowExplorer.HTMLCommon
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Validate text of label '" + this.ElementInfo.ElementTitle + "' ",
-                GenElementAction = ActGenElement.eGenElementAction.GetValue
-            });
+            ObservableList<Act> list =
+            [
+                new ActGenElement()
+                {
+                    Description = "Validate text of label '" + this.ElementInfo.ElementTitle + "' ",
+                    GenElementAction = ActGenElement.eGenElementAction.GetValue
+                },
+            ];
 
             AddGeneralHTMLActions(list);
             return list;

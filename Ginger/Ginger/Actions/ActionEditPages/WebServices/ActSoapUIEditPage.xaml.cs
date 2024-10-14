@@ -164,13 +164,17 @@ namespace Ginger.Actions.WebServices
 
             ProjectPropertiesGrid.VEGrid.Title = gridTitle;
             ProjectPropertiesGrid.VEGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new Amdocs.Ginger.Common.ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActSoapUiInputValue.Type), Header = type, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = paramTitle, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = valueTitle, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)ProjectPropertiesGrid.controlGrid.Resources["VEGridValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = valueForDriverTitle, WidthWeight = 100 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActSoapUiInputValue.Type), Header = type, WidthWeight = 100 },
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = paramTitle, WidthWeight = 100 },
+                new GridColView() { Field = nameof(ActInputValue.Value), Header = valueTitle, WidthWeight = 100 },
+                new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)ProjectPropertiesGrid.controlGrid.Resources["VEGridValueExpressionButton"] },
+                new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = valueForDriverTitle, WidthWeight = 100 },
+            ]
+            };
 
             ProjectPropertiesGrid.VEGrid.SetAllColumnsDefaultView(view);
             ProjectPropertiesGrid.VEGrid.InitViewItems();
@@ -262,7 +266,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseButtonXML_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(XMLFilePathTextBox.ValueTextBox.Text) || XMLFilePathTextBox.ValueTextBox.Text.Substring(0, 1) == "~")
+            if (string.IsNullOrEmpty(XMLFilePathTextBox.ValueTextBox.Text) || XMLFilePathTextBox.ValueTextBox.Text[..1] == "~")
             {
                 return;
             }
@@ -298,7 +302,7 @@ namespace Ginger.Actions.WebServices
                 string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
                 if (newFileName.IndexOf(copySufix) != -1)
                 {
-                    newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                    newFileName = newFileName[..newFileName.IndexOf(copySufix)];
                 }
 
                 newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
@@ -324,12 +328,12 @@ namespace Ginger.Actions.WebServices
 
             if (!XMLFiledValue.Equals(string.Empty))
             {
-                if (XMLFiledValue.ToUpper().Substring(XMLFiledValue.Length - 4).Equals(".XML"))
+                if (XMLFiledValue.ToUpper()[(XMLFiledValue.Length - 4)..].Equals(".XML"))
                 {
-                    if (XMLFiledValue.Substring(0, 1).Equals("~"))
+                    if (XMLFiledValue[..1].Equals("~"))
                     {
                         string SolutionFolder = WorkSpace.Instance.Solution.Folder;
-                        XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
+                        XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue[2..]);
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
                     {
@@ -364,12 +368,12 @@ namespace Ginger.Actions.WebServices
 
             string XMLFiledValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile);
 
-            if (XMLFiledValue.ToUpper().Substring(XMLFiledValue.Length - 4).Equals(".XML"))
+            if (XMLFiledValue.ToUpper()[(XMLFiledValue.Length - 4)..].Equals(".XML"))
             {
-                if (XMLFiledValue.Substring(0, 1).Equals("~"))
+                if (XMLFiledValue[..1].Equals("~"))
                 {
                     string SolutionFolder = WorkSpace.Instance.Solution.Folder;
-                    XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
+                    XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue[2..]);
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))
                 {
@@ -500,10 +504,10 @@ namespace Ginger.Actions.WebServices
             if (!XMLFiledValue.Equals(string.Empty))
             {
                 {
-                    if (XMLFiledValue.Substring(0, 1).Equals("~"))
+                    if (XMLFiledValue[..1].Equals("~"))
                     {
                         string SolutionFolder = mAct.SolutionFolder;
-                        XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
+                        XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue[2..]);
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
                     {
@@ -543,10 +547,10 @@ namespace Ginger.Actions.WebServices
             if (!XMLFiledValue.Equals(string.Empty))
             {
                 {
-                    if (XMLFiledValue.Substring(0, 1).Equals("~"))
+                    if (XMLFiledValue[..1].Equals("~"))
                     {
                         string SolutionFolder = mAct.SolutionFolder;
-                        XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
+                        XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue[2..]);
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
                     {
@@ -580,10 +584,10 @@ namespace Ginger.Actions.WebServices
             if (!XMLFiledValue.Equals(string.Empty))
             {
 
-                if (XMLFiledValue.Substring(0, 1).Equals("~"))
+                if (XMLFiledValue[..1].Equals("~"))
                 {
                     string SolutionFolder = mAct.SolutionFolder;
-                    XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
+                    XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue[2..]);
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))
                 {
@@ -621,10 +625,10 @@ namespace Ginger.Actions.WebServices
             if (!XMLFiledValue.Equals(string.Empty))
             {
 
-                if (XMLFiledValue.Substring(0, 1).Equals("~"))
+                if (XMLFiledValue[..1].Equals("~"))
                 {
                     string SolutionFolder = mAct.SolutionFolder;
-                    XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
+                    XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue[2..]);
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))
                 {

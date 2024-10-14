@@ -47,17 +47,19 @@ namespace Ginger.ApiModelsFolder
                     SetParamsGrid();
                     break;
                 case EventType.Active:
-                    ObservableList<EnhancedActInputValue> OldList = new ObservableList<EnhancedActInputValue>();
+                    ObservableList<EnhancedActInputValue> OldList = [];
                     foreach (EnhancedActInputValue value in mAddApiModelActionWizardPage.EnhancedInputValueList)
                     {
-                        EnhancedActInputValue oldVal = new EnhancedActInputValue();
-                        oldVal.Guid = value.Guid;
-                        oldVal.ParamGuid = value.ParamGuid;
-                        oldVal.Param = value.Param;
-                        oldVal.ParamType = value.ParamType;
-                        oldVal.Value = value.Value;
-                        oldVal.Description = value.Description;
-                        oldVal.ExtraDetails = value.ExtraDetails;
+                        EnhancedActInputValue oldVal = new EnhancedActInputValue
+                        {
+                            Guid = value.Guid,
+                            ParamGuid = value.ParamGuid,
+                            Param = value.Param,
+                            ParamType = value.ParamType,
+                            Value = value.Value,
+                            Description = value.Description,
+                            ExtraDetails = value.ExtraDetails
+                        };
                         OldList.Add(oldVal);
                     }
 
@@ -136,10 +138,12 @@ namespace Ginger.ApiModelsFolder
                         else
                         {
                             //Not exists in the list, add it, his optional values and description
-                            EnhancedActInputValue AIV = new EnhancedActInputValue();
-                            AIV.ParamGuid = AMDP.Guid;
-                            AIV.Param = AMDP.PlaceHolder;
-                            AIV.Description = AMDP.Description;
+                            EnhancedActInputValue AIV = new EnhancedActInputValue
+                            {
+                                ParamGuid = AMDP.Guid,
+                                Param = AMDP.PlaceHolder,
+                                Description = AMDP.Description
+                            };
                             string OldValue = string.Empty;
                             if (OldList != null && OldList.Any())
                             {
@@ -184,13 +188,17 @@ namespace Ginger.ApiModelsFolder
             xAPIModelParamsValueUCGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
             xAPIModelParamsValueUCGrid.AddToolbarTool(eImageType.DataSource, "Map API Parameters to DataSource", new RoutedEventHandler(MapOutputToDataSource));
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Param), Header = "Parameter", WidthWeight = 20, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Description), Header = "Description", WidthWeight = 20, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.ExtraDetails), Header = "Related API's", WidthWeight = 20, ReadOnly = true, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Value), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(EnhancedActInputValue.OptionalValues), nameof(EnhancedActInputValue.Value), true), WidthWeight = 20, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xMainGrid.Resources["ValueExpressionButton"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(EnhancedActInputValue.Param), Header = "Parameter", WidthWeight = 20, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = nameof(EnhancedActInputValue.Description), Header = "Description", WidthWeight = 20, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = nameof(EnhancedActInputValue.ExtraDetails), Header = "Related API's", WidthWeight = 20, ReadOnly = true, AllowSorting = true },
+                new GridColView() { Field = nameof(EnhancedActInputValue.Value), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(EnhancedActInputValue.OptionalValues), nameof(EnhancedActInputValue.Value), true), WidthWeight = 20, AllowSorting = true },
+                new GridColView() { Field = "...", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xMainGrid.Resources["ValueExpressionButton"] },
+            ]
+            };
             xAPIModelParamsValueUCGrid.SetAllColumnsDefaultView(view);
             xAPIModelParamsValueUCGrid.InitViewItems();
             xAPIModelParamsValueUCGrid.DataSourceList = mAddApiModelActionWizardPage.EnhancedInputValueList;

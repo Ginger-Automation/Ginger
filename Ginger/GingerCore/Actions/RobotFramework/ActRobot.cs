@@ -77,15 +77,13 @@ namespace GingerCore.Actions.RobotFramework
 
         public List<Variables.VariableBase> CreateBusinessAndActivityVariablesToList()
         {
-            List<Variables.VariableBase> lstVarBase = new List<Variables.VariableBase>();
-
-            // business flow variables
-            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.Variables)
-            { lstVarBase.Add(varBase); }
-
-            // activity variables
-            foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.CurrentActivity.Variables)
-            { lstVarBase.Add(varBase); }
+            List<Variables.VariableBase> lstVarBase =
+            [
+                // business flow variables
+                .. this.RunOnBusinessFlow.Variables,
+                // activity variables
+                .. this.RunOnBusinessFlow.CurrentActivity.Variables,
+            ];
 
             return lstVarBase;
         }
@@ -151,23 +149,27 @@ namespace GingerCore.Actions.RobotFramework
 
         public List<GingerParam> GetCreateBusinessAndActivityVariablesToJSONList()
         {
-            List<GingerParam> lstGingerParam = new List<GingerParam>();
+            List<GingerParam> lstGingerParam = [];
 
             // solution variables
             foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.GetSolutionVariables())
             {
-                GingerParam gingerParam = new GingerParam();
-                gingerParam.key = varBase.Name != null ? varBase.Name.ToString() : "";
-                gingerParam.value = varBase.Value != null ? varBase.Value.ToString() : "";
+                GingerParam gingerParam = new GingerParam
+                {
+                    key = varBase.Name != null ? varBase.Name.ToString() : "",
+                    value = varBase.Value != null ? varBase.Value.ToString() : ""
+                };
                 lstGingerParam.Add(gingerParam);
             }
 
             // business flow variables
             foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.Variables)
             {
-                GingerParam gingerParam = new GingerParam();
-                gingerParam.key = varBase.Name != null ? varBase.Name.ToString() : "";
-                gingerParam.value = varBase.Value != null ? varBase.Value.ToString() : "";
+                GingerParam gingerParam = new GingerParam
+                {
+                    key = varBase.Name != null ? varBase.Name.ToString() : "",
+                    value = varBase.Value != null ? varBase.Value.ToString() : ""
+                };
                 if (!checkVariableAlreadyExists(lstGingerParam, gingerParam.key))
                 {
                     lstGingerParam.Add(gingerParam);
@@ -177,9 +179,11 @@ namespace GingerCore.Actions.RobotFramework
             // activity variables
             foreach (Variables.VariableBase varBase in this.RunOnBusinessFlow.CurrentActivity.Variables)
             {
-                GingerParam gingerParam = new GingerParam();
-                gingerParam.key = varBase.Name != null ? varBase.Name.ToString() : "";
-                gingerParam.value = varBase.Value != null ? varBase.Value.ToString() : "";
+                GingerParam gingerParam = new GingerParam
+                {
+                    key = varBase.Name != null ? varBase.Name.ToString() : "",
+                    value = varBase.Value != null ? varBase.Value.ToString() : ""
+                };
                 if (!checkVariableAlreadyExists(lstGingerParam, gingerParam.key))
                 {
                     lstGingerParam.Add(gingerParam);
@@ -273,20 +277,23 @@ namespace GingerCore.Actions.RobotFramework
                 // Incidentally, /c tells cmd that we want it to execute the command that follows,
                 // and then exit.
                 System.Diagnostics.ProcessStartInfo procStartInfo =
-                        new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
+                        new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command)
+                        {
+                            // The following commands are needed to redirect the standard output.
+                            // This means that it will be redirected to the Process.StandardOutput StreamReader.
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,       // redirect standard error
+                            UseShellExecute = false,
 
-                // The following commands are needed to redirect the standard output.
-                // This means that it will be redirected to the Process.StandardOutput StreamReader.
-                procStartInfo.RedirectStandardOutput = true;
-                procStartInfo.RedirectStandardError = true;       // redirect standard error
-                procStartInfo.UseShellExecute = false;
-
-                // Do not create the black window.
-                procStartInfo.CreateNoWindow = true;
+                            // Do not create the black window.
+                            CreateNoWindow = true
+                        };
 
                 // Now we create a process, assign its ProcessStartInfo and start it
-                System.Diagnostics.Process procss = new System.Diagnostics.Process();
-                procss.StartInfo = procStartInfo;
+                System.Diagnostics.Process procss = new System.Diagnostics.Process
+                {
+                    StartInfo = procStartInfo
+                };
 
                 procss.OutputDataReceived += (proc, outLine) => { AddData(outLine.Data + "\n"); };
                 procss.ErrorDataReceived += (proc, outLine) => { AddError(outLine.Data + "\n"); };
@@ -386,7 +393,7 @@ namespace GingerCore.Actions.RobotFramework
 
         public List<RobotTestCase> ReadXML_GetRobotTestExecutionDetails(string fileName)
         {
-            List<RobotTestCase> lstRobotTCs = new List<RobotTestCase>();
+            List<RobotTestCase> lstRobotTCs = [];
 
             XmlDocument xmlDoc = new XmlDocument();
 
@@ -398,10 +405,11 @@ namespace GingerCore.Actions.RobotFramework
                 XmlNodeList nodeList = xmlDoc.SelectNodes("//suite/test");
                 foreach (XmlNode testNode in nodeList)
                 {
-                    RobotTestCase robotTC = new RobotTestCase();
-
-                    robotTC.test_id = testNode.Attributes["id"].Value;
-                    robotTC.test_name = testNode.Attributes["name"].Value;
+                    RobotTestCase robotTC = new RobotTestCase
+                    {
+                        test_id = testNode.Attributes["id"].Value,
+                        test_name = testNode.Attributes["name"].Value
+                    };
 
                     XmlNode xNodeStatus = testNode.SelectSingleNode("status");
                     if (xNodeStatus != null)

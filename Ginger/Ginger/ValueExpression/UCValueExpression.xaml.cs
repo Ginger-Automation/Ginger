@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Applitools;
 using GingerCore;
 using System;
 using System.Windows;
@@ -118,10 +117,12 @@ namespace Ginger.BusinessFlowWindows
                     }
                     break;
                 case eBrowserType.Folder:
-                    var dlgf = new System.Windows.Forms.FolderBrowserDialog();
-                    dlgf.Description = "Select folder";
-                    dlgf.RootFolder = Environment.SpecialFolder.MyComputer;
-                    dlgf.ShowNewFolderButton = true;
+                    var dlgf = new System.Windows.Forms.FolderBrowserDialog
+                    {
+                        Description = "Select folder",
+                        RootFolder = Environment.SpecialFolder.MyComputer,
+                        ShowNewFolderButton = true
+                    };
                     System.Windows.Forms.DialogResult resultf = dlgf.ShowDialog();
                     if (resultf == System.Windows.Forms.DialogResult.OK)
                     {

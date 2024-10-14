@@ -70,7 +70,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eTextFileEncodings)GetOrCreateInputParam<eTextFileEncodings>(nameof(TextFileEncoding), eTextFileEncodings.UTF8);
+                return GetOrCreateInputParam<eTextFileEncodings>(nameof(TextFileEncoding), eTextFileEncodings.UTF8);
             }
             set
             {
@@ -82,7 +82,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eAppendAt)GetOrCreateInputParam<eAppendAt>(nameof(AppendAt), eAppendAt.End);
+                return GetOrCreateInputParam<eAppendAt>(nameof(AppendAt), eAppendAt.End);
             }
             set
             {
@@ -106,7 +106,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eTextFileActionMode)GetOrCreateInputParam<eTextFileActionMode>(nameof(FileActionMode), eTextFileActionMode.Read);
+                return GetOrCreateInputParam<eTextFileActionMode>(nameof(FileActionMode), eTextFileActionMode.Read);
             }
             set
             {
@@ -284,62 +284,30 @@ namespace GingerCore.Actions
         private string ReadTextWithEncoding(String FilePath)
         {
             String TextfromFile = String.Empty;
-            switch (TextFileEncoding)
+            TextfromFile = TextFileEncoding switch
             {
-                case eTextFileEncodings.UTF8:
-
-                    TextfromFile = System.IO.File.ReadAllText(FilePath, Encoding.UTF8);
-                    break;
-                case eTextFileEncodings.Unicode:
-                    TextfromFile = System.IO.File.ReadAllText(FilePath, Encoding.Unicode);
-                    break;
-                case eTextFileEncodings.UTF32:
-                    TextfromFile = System.IO.File.ReadAllText(FilePath, Encoding.UTF32);
-                    break;
-                case eTextFileEncodings.UTF7:
-                    TextfromFile = System.IO.File.ReadAllText(FilePath, Encoding.UTF7);
-                    break;
-                case eTextFileEncodings.ASCII:
-                    TextfromFile = System.IO.File.ReadAllText(FilePath, Encoding.ASCII);
-                    break;
-                case eTextFileEncodings.BigEndianUnicode:
-                    TextfromFile = System.IO.File.ReadAllText(FilePath, Encoding.BigEndianUnicode);
-                    break;
-                default:
-                    TextfromFile = System.IO.File.ReadAllText(FilePath, Encoding.Default);
-                    break;
-
-            }
+                eTextFileEncodings.UTF8 => System.IO.File.ReadAllText(FilePath, Encoding.UTF8),
+                eTextFileEncodings.Unicode => System.IO.File.ReadAllText(FilePath, Encoding.Unicode),
+                eTextFileEncodings.UTF32 => System.IO.File.ReadAllText(FilePath, Encoding.UTF32),
+                eTextFileEncodings.UTF7 => System.IO.File.ReadAllText(FilePath, Encoding.UTF7),
+                eTextFileEncodings.ASCII => System.IO.File.ReadAllText(FilePath, Encoding.ASCII),
+                eTextFileEncodings.BigEndianUnicode => System.IO.File.ReadAllText(FilePath, Encoding.BigEndianUnicode),
+                _ => System.IO.File.ReadAllText(FilePath, Encoding.Default),
+            };
             return TextfromFile;
         }
         private IEnumerable<string> ReadLinesWithEncoding(String FilePath)
         {
-            IEnumerable<string> LinesfromFile;
-            switch (TextFileEncoding)
+            var LinesfromFile = TextFileEncoding switch
             {
-                case eTextFileEncodings.UTF8:
-
-                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.UTF8);
-                    break;
-                case eTextFileEncodings.Unicode:
-                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.Unicode);
-                    break;
-                case eTextFileEncodings.UTF32:
-                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.UTF32);
-                    break;
-                case eTextFileEncodings.UTF7:
-                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.UTF7);
-                    break;
-                case eTextFileEncodings.ASCII:
-                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.ASCII);
-                    break;
-                case eTextFileEncodings.BigEndianUnicode:
-                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.BigEndianUnicode);
-                    break;
-                default:
-                    LinesfromFile = System.IO.File.ReadLines(FilePath, Encoding.Default);
-                    break;
-            }
+                eTextFileEncodings.UTF8 => System.IO.File.ReadLines(FilePath, Encoding.UTF8),
+                eTextFileEncodings.Unicode => System.IO.File.ReadLines(FilePath, Encoding.Unicode),
+                eTextFileEncodings.UTF32 => System.IO.File.ReadLines(FilePath, Encoding.UTF32),
+                eTextFileEncodings.UTF7 => System.IO.File.ReadLines(FilePath, Encoding.UTF7),
+                eTextFileEncodings.ASCII => System.IO.File.ReadLines(FilePath, Encoding.ASCII),
+                eTextFileEncodings.BigEndianUnicode => System.IO.File.ReadLines(FilePath, Encoding.BigEndianUnicode),
+                _ => System.IO.File.ReadLines(FilePath, Encoding.Default),
+            };
             return LinesfromFile;
         }
         private void WriteLinesWithEncoding(String FilePath, IEnumerable<string> writeLines)

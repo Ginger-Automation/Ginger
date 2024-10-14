@@ -50,10 +50,10 @@ namespace Ginger.Run
         public string BusinessFlowRunDescription { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> BusinessFlowCustomizedRunVariables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> BusinessFlowCustomizedRunVariables = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<FlowControl> BFFlowControls = new ObservableList<FlowControl>();
+        public ObservableList<FlowControl> BFFlowControls = [];
 
         public override string ItemName
         {

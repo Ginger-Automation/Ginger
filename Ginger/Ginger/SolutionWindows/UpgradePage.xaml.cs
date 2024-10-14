@@ -101,11 +101,12 @@ namespace Ginger.SolutionWindows
             switch (mViewMode)
             {
                 case SolutionUpgradePageViewMode.UpgradeSolution:
-                    mUpgradeButton = new Button();
-                    mUpgradeButton.Content = "Upgrade";
+                    mUpgradeButton = new Button
+                    {
+                        Content = "Upgrade"
+                    };
                     mUpgradeButton.Click += new RoutedEventHandler(Upgrade);
-                    ObservableList<Button> winButtons = new ObservableList<Button>();
-                    winButtons.Add(mUpgradeButton);
+                    ObservableList<Button> winButtons = [mUpgradeButton];
                     GingerCore.General.LoadGenericWindow(ref _pageGenericWin, null, windowStyle, "Upgrade Solution Files to Latest Ginger Version", this, winButtons);
                     break;
 
@@ -165,7 +166,7 @@ namespace Ginger.SolutionWindows
             try
             {
                 NewRepositorySerializer newSerilizer = new NewRepositorySerializer();
-                mFailedFiles = new List<string>();
+                mFailedFiles = [];
 
                 // now do the upgrade file by file
                 foreach (string filePathToConvert in mFilesToShow)
@@ -191,7 +192,7 @@ namespace Ginger.SolutionWindows
                             //Do Upgrade by unserialize and serialize the item using new serializer
                             //unserialize
                             string itemXML = File.ReadAllText(filePath);
-                            RepositoryItemBase itemObject = (RepositoryItemBase)NewRepositorySerializer.DeserializeFromText(itemXML);
+                            RepositoryItemBase itemObject = NewRepositorySerializer.DeserializeFromText(itemXML);
                             itemObject.FilePath = filePath;
                             //serialize
                             newSerilizer.SaveToFile(itemObject, filePath);
@@ -248,9 +249,11 @@ namespace Ginger.SolutionWindows
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog();
-            dlg.Description = "Select Backup Folder";
-            dlg.RootFolder = Environment.SpecialFolder.MyComputer;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = "Select Backup Folder",
+                RootFolder = Environment.SpecialFolder.MyComputer
+            };
             if (mSolutionFolder != string.Empty)
             {
                 dlg.SelectedPath = mSolutionFolder;

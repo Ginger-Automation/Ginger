@@ -46,8 +46,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
             Name = name;
             ProcessId = processId;
             Conditions = new List<Condition>(conditions).AsReadOnly();
-            IncomingFlows = new();
-            OutgoingFlows = new();
+            IncomingFlows = [];
+            OutgoingFlows = [];
         }
 
         public static TTask Create<TTask>(string processId, Guid guid, string name) where TTask : Task
@@ -131,17 +131,13 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
 
             public static string GetOperationSymbol(OperationType operation)
             {
-                switch (operation)
+                return operation switch
                 {
-                    case OperationType.In:
-                        return "";
-                    case OperationType.Override:
-                        return "!";
-                    case OperationType.NotIn:
-                        return "~";
-                    default:
-                        throw new InvalidOperationException($"No operation symbol is known for {typeof(OperationType).FullName} of type {operation}.");
-                }
+                    OperationType.In => "",
+                    OperationType.Override => "!",
+                    OperationType.NotIn => "~",
+                    _ => throw new InvalidOperationException($"No operation symbol is known for {typeof(OperationType).FullName} of type {operation}."),
+                };
             }
         }
     }

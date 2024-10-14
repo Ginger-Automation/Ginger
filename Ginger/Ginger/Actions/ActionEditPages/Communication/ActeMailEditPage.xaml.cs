@@ -222,12 +222,12 @@ namespace Ginger.Actions.Communication
 
 
             xEmailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
-            
+
 
             xEmailConfigView.EmailMethodChanged += xSendEMailConfigView_EmailMethodChanged;
             xEmailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
             xEmailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
-            xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;     
+            xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;
             xEmailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
             xEmailConfigView.AttachmentNameVEButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
 

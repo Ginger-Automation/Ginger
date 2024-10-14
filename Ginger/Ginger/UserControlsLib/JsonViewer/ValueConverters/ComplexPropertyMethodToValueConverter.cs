@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
-using Newtonsoft.Json.Linq;
 
 namespace JsonViewerDemo.ValueConverters
 {
@@ -30,15 +30,14 @@ namespace JsonViewerDemo.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var methodName = parameter as string;
-            if (value == null || methodName == null)
+            if (value == null || parameter is not string methodName)
                 return null;
             var methodInfo = value.GetType().GetMethod(methodName, new Type[0]);
             if (methodInfo == null)
                 return null;
             var invocationResult = methodInfo.Invoke(value, new object[0]);
-            var jTokens = (IEnumerable<JToken>) invocationResult;
-            return jTokens.First().Children() ;
+            var jTokens = (IEnumerable<JToken>)invocationResult;
+            return jTokens.First().Children();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

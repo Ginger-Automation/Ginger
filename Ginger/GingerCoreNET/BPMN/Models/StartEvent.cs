@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
             Id = $"event_{Guid.NewGuid()}";
             Name = name;
             ProcessId = processId;
-            OutgoingFlows = new();
+            OutgoingFlows = [];
         }
     }
 }

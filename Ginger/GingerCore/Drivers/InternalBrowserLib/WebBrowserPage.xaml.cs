@@ -68,7 +68,7 @@ namespace GingerCore.Drivers
             }
 
             mshtml.IHTMLElement currentNode = element;
-            ArrayList path = new ArrayList();
+            ArrayList path = [];
 
             while (currentNode != null)
             {
@@ -95,7 +95,7 @@ namespace GingerCore.Drivers
                 return null;
             }
 
-            if (node.id != "" && node.id != null)
+            if (node.id is not "" and not null)
             {
                 nodeExpr += "[@id='" + node.id + "']";
                 // We don't really need to go back up to //HTML, since IDs are supposed

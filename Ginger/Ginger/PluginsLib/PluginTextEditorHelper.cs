@@ -31,7 +31,7 @@ namespace Ginger.PlugInsWindows
 
         internal static IEnumerable<ITextEditor> GetTextFileEditors(PluginPackage pluginPackage)
         {
-            List<ITextEditor> textEditors = new List<ITextEditor>();
+            List<ITextEditor> textEditors = [];
 
             if (string.IsNullOrEmpty(((PluginPackageOperations)pluginPackage.PluginPackageOperations).PluginPackageInfo.UIDLL))
             {

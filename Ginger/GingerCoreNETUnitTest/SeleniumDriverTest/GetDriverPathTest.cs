@@ -17,14 +17,8 @@ limitations under the License.
 #endregion
 
 using GingerCore.Drivers;
-using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GingerCoreNETUnitTest.SeleniumDriverTest
 {

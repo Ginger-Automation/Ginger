@@ -336,7 +336,7 @@ namespace Ginger.Reports.GingerExecutionReport
                         ReportHTML = ReportHTML.Replace("{BusinessFlowsTotalStopped}", ((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsStopped).ToList().Sum().ToString());
                         ReportHTML = ReportHTML.Replace("{BusinessFlowsTotalOther}", ((RunSetReport)RI.ReportInfoRootObject).GingerReports.Select(x => x.TotalBusinessFlowsOther).ToList().Sum().ToString());
 
-                        List<BusinessFlowReport> bfTotalList = new List<BusinessFlowReport>();
+                        List<BusinessFlowReport> bfTotalList = [];
                         ((RunSetReport)RI.ReportInfoRootObject).GingerReports.ForEach(x => x.BusinessFlowReports.ForEach(y => bfTotalList.Add(y)));
                         // Activities Place Holders
                         ReportHTML = ReportHTML.Replace("{ActivitiesTotalPass}", bfTotalList.Select(x => x.TotalActivitiesPassed).ToList().Sum().ToString());
@@ -344,7 +344,7 @@ namespace Ginger.Reports.GingerExecutionReport
                         ReportHTML = ReportHTML.Replace("{ActivitiesTotalStopped}", bfTotalList.Select(x => x.TotalActivitiesStopped).ToList().Sum().ToString());
                         ReportHTML = ReportHTML.Replace("{ActivitiesTotalOther}", bfTotalList.Select(x => x.TotalActivitiesOther).ToList().Sum().ToString());
 
-                        List<ActivityReport> activitiesTotalList = new List<ActivityReport>();
+                        List<ActivityReport> activitiesTotalList = [];
                         bfTotalList.ForEach(x => x.Activities.ForEach(y => activitiesTotalList.Add(y)));
                         // Actions Place Holders
                         ReportHTML = ReportHTML.Replace("{ActionsTotalPass}", activitiesTotalList.Select(x => x.TotalActionsPassed).ToList().Sum().ToString());
@@ -386,7 +386,7 @@ namespace Ginger.Reports.GingerExecutionReport
                     {
                         fieldsNamesHTMLTableOneCells = new StringBuilder();
                         fieldsValuesHTMLTableOneCells = new StringBuilder();
-                        List<int> listOfHandledGingerRunnersReport = new List<int>();
+                        List<int> listOfHandledGingerRunnersReport = [];
                         bool firstIteration = true;
 
                         foreach (GingerReport GR in ((RunSetReport)RI.ReportInfoRootObject).GingerReports.OrderBy(x => x.Seq))
@@ -766,7 +766,7 @@ namespace Ginger.Reports.GingerExecutionReport
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.GingerRunnerFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
                 fieldsNamesHTMLTableCells.Append("<td>" + selectedField.FieldName + "</td>");
-                if (((GingerReport)gr).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((GingerReport)gr)) == null)
+                if (gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr) == null)
                 {
                     fieldsValuesHTMLTableCells.Append("<td> N/A </td>");
                     continue;
@@ -774,11 +774,11 @@ namespace Ginger.Reports.GingerExecutionReport
 
                 if (selectedField.FieldKey == GingerReport.Fields.GingerExecutionStatus)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td><label class='Status" + ((GingerReport)gr).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((GingerReport)gr)).ToString() + "'>" + ((GingerReport)gr).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((GingerReport)gr)).ToString() + "</label></td>");
+                    fieldsValuesHTMLTableCells.Append("<td><label class='Status" + gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr).ToString() + "'>" + gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr).ToString() + "</label></td>");
                 }
                 else if (selectedField.FieldKey == GingerReport.Fields.BusinessFlowsPassRate)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ((GingerReport)gr).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((GingerReport)gr)) + " %</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr) + " %</td>");
                 }
                 else if ((selectedField.FieldKey == GingerReport.Fields.StartTimeStamp) || (selectedField.FieldKey == GingerReport.Fields.EndTimeStamp))
                 {
@@ -790,12 +790,12 @@ namespace Ginger.Reports.GingerExecutionReport
                 }
                 else
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ((GingerReport)gr).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((GingerReport)gr)) + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr) + "</td>");
                 }
 
                 if (selectedField.FieldKey == GingerReport.Fields.Name)
                 {
-                    currentGingerRunnerLinkText = ((GingerReport)gr).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((GingerReport)gr)).ToString();
+                    currentGingerRunnerLinkText = gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr).ToString();
                 }
             }
             ReportHTML = ReportHTML.Replace("{GingerRunnerDetails_Headers}", fieldsNamesHTMLTableCells.ToString());
@@ -1144,7 +1144,7 @@ namespace Ginger.Reports.GingerExecutionReport
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.BusinessFlowFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
                 fieldsNamesHTMLTableCells.Append("<td>" + selectedField.FieldName + "</td>");
-                if (((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)) == null)
+                if (BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport) == null)
                 {
                     fieldsValuesHTMLTableCells.Append("<td> N/A </td>");
                     continue;
@@ -1152,28 +1152,28 @@ namespace Ginger.Reports.GingerExecutionReport
 
                 if (selectedField.FieldKey == BusinessFlowReport.Fields.RunStatus)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td><label class='Status" + ((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)).ToString() + "'>" + ((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)).ToString() + "</label></td>");
+                    fieldsValuesHTMLTableCells.Append("<td><label class='Status" + BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport).ToString() + "'>" + BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport).ToString() + "</label></td>");
                 }
                 else if (selectedField.FieldKey == BusinessFlowReport.Fields.PassPercent)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)).ToString() + " %</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport).ToString() + " %</td>");
                 }
                 else if ((selectedField.FieldKey == BusinessFlowReport.Fields.StartTimeStamp) || (selectedField.FieldKey == BusinessFlowReport.Fields.EndTimeStamp))
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)).ToString()).ToLocalTime().ToString() + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport).ToString()).ToLocalTime().ToString() + "</td>");
                 }
                 else if (selectedField.FieldKey == BusinessFlowReport.Fields.Elapsed)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)).ToString()) + " </td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport).ToString()) + " </td>");
                 }
                 else
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)) + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport) + "</td>");
                 }
 
                 if (selectedField.FieldKey == BusinessFlowReport.Fields.Name)
                 {
-                    currentBusinessFlowLinkText = ((BusinessFlowReport)BusinessFlowReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((BusinessFlowReport)BusinessFlowReport)).ToString();
+                    currentBusinessFlowLinkText = BusinessFlowReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(BusinessFlowReport).ToString();
                 }
             }
 
@@ -1600,7 +1600,7 @@ namespace Ginger.Reports.GingerExecutionReport
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.ActivityGroupFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
                 fieldsNamesHTMLTableCells.Append("<td>" + selectedField.FieldName + "</td>");
-                if (((ActivityGroupReport)ActivityGroupReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityGroupReport)ActivityGroupReport)) == null)
+                if (ActivityGroupReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityGroupReport) == null)
                 {
                     fieldsValuesHTMLTableCells.Append("<td> N/A </td>");
                     continue;
@@ -1608,28 +1608,28 @@ namespace Ginger.Reports.GingerExecutionReport
 
                 if (selectedField.FieldKey == ActivityGroupReport.Fields.RunStatus)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td><label class='Status" + ((ActivityGroupReport)ActivityGroupReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityGroupReport)ActivityGroupReport)).ToString() + "'>" + ((ActivityGroupReport)ActivityGroupReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityGroupReport)ActivityGroupReport)).ToString() + "</label></td>");
+                    fieldsValuesHTMLTableCells.Append("<td><label class='Status" + ActivityGroupReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityGroupReport).ToString() + "'>" + ActivityGroupReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityGroupReport).ToString() + "</label></td>");
                 }
                 else if (selectedField.FieldKey == ActivityGroupReport.Fields.PassPercent)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ((ActivityGroupReport)ActivityGroupReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityGroupReport)ActivityGroupReport)).ToString() + " %</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + ActivityGroupReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityGroupReport).ToString() + " %</td>");
                 }
                 else if ((selectedField.FieldKey == ActivityGroupReport.Fields.StartTimeStamp) || (selectedField.FieldKey == ActivityGroupReport.Fields.EndTimeStamp))
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(((ActivityGroupReport)ActivityGroupReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityGroupReport)ActivityGroupReport)).ToString()).ToLocalTime().ToString() + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(ActivityGroupReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityGroupReport).ToString()).ToLocalTime().ToString() + "</td>");
                 }
                 else if (selectedField.FieldKey == ActivityGroupReport.Fields.Elapsed)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(((ActivityGroupReport)ActivityGroupReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityGroupReport)ActivityGroupReport)).ToString()) + " </td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(ActivityGroupReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityGroupReport).ToString()) + " </td>");
                 }
                 else
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ((ActivityGroupReport)ActivityGroupReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityGroupReport)ActivityGroupReport)) + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + ActivityGroupReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityGroupReport) + "</td>");
                 }
 
                 if (selectedField.FieldKey == ActivityGroupReport.Fields.Name)
                 {
-                    currentActivityGroupLinkText = ((ActivityGroupReport)ActivityGroupReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityGroupReport)ActivityGroupReport)).ToString();
+                    currentActivityGroupLinkText = ActivityGroupReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityGroupReport).ToString();
                 }
             }
 
@@ -1956,7 +1956,7 @@ namespace Ginger.Reports.GingerExecutionReport
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.ActivityFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
                 fieldsNamesHTMLTableCells.Append("<td>" + selectedField.FieldName + "</td>");
-                if (((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue((ActivityReport)ActivityReport) == null)
+                if (ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport) == null)
                 {
                     fieldsValuesHTMLTableCells.Append("<td> N/A </td>");
                     continue;
@@ -1964,36 +1964,36 @@ namespace Ginger.Reports.GingerExecutionReport
 
                 if (selectedField.FieldKey == ActivityReport.Fields.RunStatus)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td><label class='Status" + ((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString() + "'>" + ((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString() + "</label></td>");
+                    fieldsValuesHTMLTableCells.Append("<td><label class='Status" + ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport).ToString() + "'>" + ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport).ToString() + "</label></td>");
                 }
                 else if (selectedField.FieldKey == ActivityReport.Fields.PassPercent)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)) + " %</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport) + " %</td>");
                 }
                 else if ((selectedField.FieldKey == ActivityReport.Fields.StartTimeStamp) || (selectedField.FieldKey == ActivityReport.Fields.EndTimeStamp))
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString()).ToLocalTime().ToString() + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport).ToString()).ToLocalTime().ToString() + "</td>");
                 }
                 else if (selectedField.FieldKey == ActivityReport.Fields.ElapsedSecs)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString()) + " </td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + General.TimeConvert(ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport).ToString()) + " </td>");
                 }
                 else if (selectedField.FieldKey == ActivityReport.Fields.ActivityName)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString()) + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport).ToString()) + "</td>");
                 }
                 else if (selectedField.FieldKey == ActivityReport.Fields.Description)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)))) + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport))) + "</td>");
                 }
                 else
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)) + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport) + "</td>");
                 }
 
                 if (selectedField.FieldKey == ActivityReport.Fields.ActivityName)
                 {
-                    currentActivityLinkText = ExtensionMethods.OverrideHTMLRelatedCharacters(((ActivityReport)ActivityReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActivityReport)ActivityReport)).ToString());
+                    currentActivityLinkText = ExtensionMethods.OverrideHTMLRelatedCharacters(ActivityReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActivityReport).ToString());
                 }
             }
 
@@ -2274,7 +2274,7 @@ namespace Ginger.Reports.GingerExecutionReport
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.ActionFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldKey != ActionReport.Fields.ScreenShot && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
                 fieldsNamesHTMLTableCells.Append("<td>" + selectedField.FieldName + "</td>");
-                if (((ActionReport)ActionReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActionReport)ActionReport)) == null)
+                if (ActionReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActionReport) == null)
                 {
                     fieldsValuesHTMLTableCells.Append("<td> N/A </td>");
                     continue;
@@ -2284,21 +2284,21 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     if ((currentActionNameText == null) || (currentActionNameText.ToString() == string.Empty))
                     {
-                        currentActionNameText = ExtensionMethods.OverrideHTMLRelatedCharacters(((ActionReport)ActionReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActionReport)ActionReport)).ToString());
+                        currentActionNameText = ExtensionMethods.OverrideHTMLRelatedCharacters(ActionReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActionReport).ToString());
                     }
                 }
 
                 if (selectedField.FieldKey == ActionReport.Fields.Status)
                 {
-                    fieldsValuesHTMLTableCells.Append("<td><label class='Status" + ((ActionReport)ActionReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActionReport)ActionReport)) + "'>" + ((ActionReport)ActionReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActionReport)ActionReport)) + "</label></td>");
+                    fieldsValuesHTMLTableCells.Append("<td><label class='Status" + ActionReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActionReport) + "'>" + ActionReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActionReport) + "</label></td>");
                 }
                 else if ((selectedField.FieldKey == ActionReport.Fields.StartTimeStamp) || (selectedField.FieldKey == ActionReport.Fields.EndTimeStamp))
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(((ActionReport)ActionReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActionReport)ActionReport)).ToString()).ToLocalTime().ToString() + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(ActionReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActionReport).ToString()).ToLocalTime().ToString() + "</td>");
                 }
                 else
                 {
-                    fieldsValuesHTMLTableCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(((ActionReport)ActionReport).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((ActionReport)ActionReport)))) + "</td>");
+                    fieldsValuesHTMLTableCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(ActionReport.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(ActionReport))) + "</td>");
                 }
             }
 
@@ -2640,9 +2640,10 @@ namespace Ginger.Reports.GingerExecutionReport
 
         public static string CreateGingerExecutionReport(ReportInfo RI, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null, bool isHTMLReportPermanentFolderNameUsed = false, long maxFolderSize = 0)
         {
-            GingerExecutionReport gingerExecutionReport = new GingerExecutionReport();
-
-            gingerExecutionReport.TemplatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Reports", "GingerExecutionReport");
+            GingerExecutionReport gingerExecutionReport = new GingerExecutionReport
+            {
+                TemplatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Reports", "GingerExecutionReport")
+            };
 
             if (SelectedHTMLReportConfiguration != null)
             {
@@ -2715,16 +2716,16 @@ namespace Ginger.Reports.GingerExecutionReport
                     gingerExecutionReport.CreateSummaryViewReport(RI);
                     break;
                 case ReportInfo.ReportInfoLevel.GingerLevel:
-                    gingerExecutionReport.CreateGingerLevelReport((GingerReport)((ReportInfo)RI).ReportInfoRootObject, "", true);
+                    gingerExecutionReport.CreateGingerLevelReport((GingerReport)RI.ReportInfoRootObject, "", true);
                     break;
                 case ReportInfo.ReportInfoLevel.BussinesFlowLevel:
-                    gingerExecutionReport.CreateBusinessFlowLevelReport((BusinessFlowReport)((ReportInfo)RI).ReportInfoRootObject, "", "", true);
+                    gingerExecutionReport.CreateBusinessFlowLevelReport((BusinessFlowReport)RI.ReportInfoRootObject, "", "", true);
                     break;
                 case ReportInfo.ReportInfoLevel.ActivityLevel:
-                    gingerExecutionReport.CreateActivityLevelReport((ActivityReport)((ReportInfo)RI).ReportInfoRootObject, "", "", true);
+                    gingerExecutionReport.CreateActivityLevelReport((ActivityReport)RI.ReportInfoRootObject, "", "", true);
                     break;
                 case ReportInfo.ReportInfoLevel.ActionLevel:
-                    gingerExecutionReport.CreateActionLevelReport((ActionReport)((ReportInfo)RI).ReportInfoRootObject, "", "", true);
+                    gingerExecutionReport.CreateActionLevelReport((ActionReport)RI.ReportInfoRootObject, "", "", true);
                     break;
                 default:
                     return string.Empty;
@@ -2738,7 +2739,7 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 int totalRunners = WorkSpace.Instance.RunsetExecutor.Runners.Count;
                 int totalPassed = WorkSpace.Instance.RunsetExecutor.Runners.Count(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-                int totalExecuted = totalRunners - WorkSpace.Instance.RunsetExecutor.Runners.Count(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked);
+                int totalExecuted = totalRunners - WorkSpace.Instance.RunsetExecutor.Runners.Count(runner => runner.Status is Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending or Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped or Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked);
                 ((RunSetReport)RI.ReportInfoRootObject).RunSetExecutionRate = (totalExecuted * 100 / totalRunners).ToString();
                 ((RunSetReport)RI.ReportInfoRootObject).GingerRunnersPassRate = (totalPassed * 100 / totalRunners).ToString();
             }
@@ -2750,8 +2751,10 @@ namespace Ginger.Reports.GingerExecutionReport
 
         public static string NewFunctionCreateGingerExecutionReport(ReportInfo RI, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null, bool isHTMLReportPermanentFolderNameUsed = false, long maxFolderSize = 0, string templatesFolder = null, HTMLReportsConfiguration hTMLReportsConfiguration = null, string hTMLOutputFolder = null)
         {
-            GingerExecutionReport gingerExecutionReport = new GingerExecutionReport();
-            gingerExecutionReport.TemplatesFolder = templatesFolder;
+            GingerExecutionReport gingerExecutionReport = new GingerExecutionReport
+            {
+                TemplatesFolder = templatesFolder
+            };
 
             if (SelectedHTMLReportConfiguration != null)
             {
@@ -2836,16 +2839,16 @@ namespace Ginger.Reports.GingerExecutionReport
                     gingerExecutionReport.CreateSummaryViewReport(RI);
                     break;
                 case ReportInfo.ReportInfoLevel.GingerLevel:
-                    gingerExecutionReport.CreateGingerLevelReport((GingerReport)((ReportInfo)RI).ReportInfoRootObject, "", true);
+                    gingerExecutionReport.CreateGingerLevelReport((GingerReport)RI.ReportInfoRootObject, "", true);
                     break;
                 case ReportInfo.ReportInfoLevel.BussinesFlowLevel:
-                    gingerExecutionReport.CreateBusinessFlowLevelReport((BusinessFlowReport)((ReportInfo)RI).ReportInfoRootObject, "", "", true);
+                    gingerExecutionReport.CreateBusinessFlowLevelReport((BusinessFlowReport)RI.ReportInfoRootObject, "", "", true);
                     break;
                 case ReportInfo.ReportInfoLevel.ActivityLevel:
-                    gingerExecutionReport.CreateActivityLevelReport((ActivityReport)((ReportInfo)RI).ReportInfoRootObject, "", "", true);
+                    gingerExecutionReport.CreateActivityLevelReport((ActivityReport)RI.ReportInfoRootObject, "", "", true);
                     break;
                 case ReportInfo.ReportInfoLevel.ActionLevel:
-                    gingerExecutionReport.CreateActionLevelReport((ActionReport)((ReportInfo)RI).ReportInfoRootObject, "", "", true);
+                    gingerExecutionReport.CreateActionLevelReport((ActionReport)RI.ReportInfoRootObject, "", "", true);
                     break;
                 default:
                     return string.Empty;
@@ -2855,8 +2858,10 @@ namespace Ginger.Reports.GingerExecutionReport
 
         public static string CreateActivitiesGroupReportsOfBusinessFlow(ProjEnvironment environment, BusinessFlow BF, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null)
         {
-            Ginger.Reports.GingerExecutionReport.GingerExecutionReport l = new Ginger.Reports.GingerExecutionReport.GingerExecutionReport();
-            l.TemplatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Reports", "GingerExecutionReport");
+            Ginger.Reports.GingerExecutionReport.GingerExecutionReport l = new Ginger.Reports.GingerExecutionReport.GingerExecutionReport
+            {
+                TemplatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Reports", "GingerExecutionReport")
+            };
 
             if (SelectedHTMLReportConfiguration != null)
             {
@@ -2870,10 +2875,12 @@ namespace Ginger.Reports.GingerExecutionReport
             if (string.IsNullOrEmpty(BF.ExecutionFullLogFolder))
             {
                 string exec_folder = string.Empty;
-                Context context = new Context();
-                context.BusinessFlow = BF;
-                context.Runner = new Run.GingerExecutionEngine(new Run.GingerRunner()); //Why to create new runner ? 
-                context.Environment = environment;
+                Context context = new Context
+                {
+                    BusinessFlow = BF,
+                    Runner = new Run.GingerExecutionEngine(new Run.GingerRunner()), //Why to create new runner ? 
+                    Environment = environment
+                };
                 Run.ExecutionLoggerManager executionLoggerManager = new Run.ExecutionLoggerManager(context);
                 exec_folder = executionLoggerManager.GenerateBusinessflowOfflineExecutionLogger(context);
                 if (string.IsNullOrEmpty(exec_folder))
@@ -2897,7 +2904,7 @@ namespace Ginger.Reports.GingerExecutionReport
             switch (RI.reportInfoLevel)
             {
                 case ReportInfo.ReportInfoLevel.BussinesFlowLevel:
-                    l.CreateActivitiesGroupReportsOfBusinessFlow((BusinessFlowReport)((ReportInfo)RI).ReportInfoRootObject, ref BF, l.HTMLReportMainFolder, "", true);
+                    l.CreateActivitiesGroupReportsOfBusinessFlow((BusinessFlowReport)RI.ReportInfoRootObject, ref BF, l.HTMLReportMainFolder, "", true);
                     break;
             }
 
@@ -2933,7 +2940,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
             if ((Pos2 - Pos1) > 0)
             {
-                str = STR.Substring(Pos1, Pos2 - Pos1);
+                str = STR[Pos1..Pos2];
                 return str;
             }
             else
@@ -2973,7 +2980,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 }
                 if (logsFolder != null && logsFolder.StartsWith(@"~\"))
                 {
-                    logsFolder = Path.Combine(WorkSpace.Instance.Solution.Folder, logsFolder.Substring(2));
+                    logsFolder = Path.Combine(WorkSpace.Instance.Solution.Folder, logsFolder[2..]);
                 }
                 else
                 {
@@ -3017,7 +3024,7 @@ namespace Ginger.Reports.GingerExecutionReport
             folderName = folderName.TrimEnd().TrimEnd('-').TrimEnd();
             if (folderName.Length > 30)
             {
-                folderName = folderName.Substring(0, 30);
+                folderName = folderName[..30];
             }
             folderName = folderName.TrimEnd().TrimEnd('-').TrimEnd();
             return folderName;
@@ -3067,9 +3074,11 @@ namespace Ginger.Reports.GingerExecutionReport
         {
             if (context != null)
             {
-                ValueExpression VE = new ValueExpression(context.Environment, context.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-                VE.DecryptFlag = false;
-                VE.Value = value;
+                ValueExpression VE = new ValueExpression(context.Environment, context.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.DataSource.DataSourceBase>(), false, "", false)
+                {
+                    DecryptFlag = false,
+                    Value = value
+                };
 
                 return VE.ValueCalculated;
             }

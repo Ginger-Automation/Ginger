@@ -99,7 +99,7 @@ namespace GingerCore.ALM.Qtest
             ConnectALMServer();
             ObservableList<QTestAPIStdModel.TestCycleResource> cyclestList;
             QTestAPIStd.TestcycleApi TestcycleApi = new QTestAPIStd.TestcycleApi(connObj.Configuration);
-            cyclestList = new ObservableList<QTestAPIStdModel.TestCycleResource>(TestcycleApi.GetTestCycles((long)Convert.ToInt32(qTestProject), null, null, "descendants"));
+            cyclestList = new ObservableList<QTestAPIStdModel.TestCycleResource>(TestcycleApi.GetTestCycles(Convert.ToInt32(qTestProject), null, null, "descendants"));
             return cyclestList;
         }
 
@@ -108,67 +108,31 @@ namespace GingerCore.ALM.Qtest
             ConnectALMServer();
             ObservableList<QTestAPIStdModel.ModuleResource> modulesList;
             QTestAPIStd.ModuleApi moduleApi = new QTestAPIStd.ModuleApi(connObj.Configuration);
-            modulesList = new ObservableList<QTestAPIStdModel.ModuleResource>(moduleApi.GetModules((long)Convert.ToInt32(qTestProject), null));
+            modulesList = new ObservableList<QTestAPIStdModel.ModuleResource>(moduleApi.GetModules(Convert.ToInt32(qTestProject), null));
             return modulesList;
         }
         public string ConvertResourceType(AlmDataContractsStd.Enums.ResourceType resourceType)
         {
-            string qTestResourceType;
-            switch (resourceType)
+            var qTestResourceType = resourceType switch
             {
-                case AlmDataContractsStd.Enums.ResourceType.DEFECT:
-                    qTestResourceType = "defects";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.TEST_CASE:
-                    qTestResourceType = "test-cases";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.TEST_CYCLE:
-                    qTestResourceType = "test-cycles";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.REQUIREMENT:
-                    qTestResourceType = "requirements";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.TEST_FOLDERS:
-                    qTestResourceType = "modules";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.RELEASES:
-                    qTestResourceType = "releases";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.TEST_RUN:
-                    qTestResourceType = "test-runs";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.TEST_SET:
-                    qTestResourceType = "test-suites";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP:
-                    qTestResourceType = "test-steps";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.REQ_COVER:
-                    qTestResourceType = "linked-artifacts";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.ENUMERATIONS:
-                    qTestResourceType = "fields";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.TempSystem_Field:
-                    qTestResourceType = "fields";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.USERS:
-                    qTestResourceType = "users";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.LINK:
-                    qTestResourceType = "linked-artifacts";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.TEST_CASE_PARAMETERS:
-                    qTestResourceType = "users";
-                    break;
-                case AlmDataContractsStd.Enums.ResourceType.PARAMETERS:
-                    qTestResourceType = "parameters";
-                    break;
-                default:
-                    qTestResourceType = "fields";
-                    break;
-            }
-
+                AlmDataContractsStd.Enums.ResourceType.DEFECT => "defects",
+                AlmDataContractsStd.Enums.ResourceType.TEST_CASE => "test-cases",
+                AlmDataContractsStd.Enums.ResourceType.TEST_CYCLE => "test-cycles",
+                AlmDataContractsStd.Enums.ResourceType.REQUIREMENT => "requirements",
+                AlmDataContractsStd.Enums.ResourceType.TEST_FOLDERS => "modules",
+                AlmDataContractsStd.Enums.ResourceType.RELEASES => "releases",
+                AlmDataContractsStd.Enums.ResourceType.TEST_RUN => "test-runs",
+                AlmDataContractsStd.Enums.ResourceType.TEST_SET => "test-suites",
+                AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP => "test-steps",
+                AlmDataContractsStd.Enums.ResourceType.REQ_COVER => "linked-artifacts",
+                AlmDataContractsStd.Enums.ResourceType.ENUMERATIONS => "fields",
+                AlmDataContractsStd.Enums.ResourceType.TempSystem_Field => "fields",
+                AlmDataContractsStd.Enums.ResourceType.USERS => "users",
+                AlmDataContractsStd.Enums.ResourceType.LINK => "linked-artifacts",
+                AlmDataContractsStd.Enums.ResourceType.TEST_CASE_PARAMETERS => "users",
+                AlmDataContractsStd.Enums.ResourceType.PARAMETERS => "parameters",
+                _ => "fields",
+            };
             return qTestResourceType;
         }
     }

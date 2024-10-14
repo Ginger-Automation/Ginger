@@ -40,7 +40,7 @@ namespace Ginger.WindowExplorer.Mainframe
 
         public ObservableList<GingerCore.Actions.Act> GetElementActions()
         {
-            ObservableList<GingerCore.Actions.Act> ACL = new ObservableList<GingerCore.Actions.Act>();
+            ObservableList<GingerCore.Actions.Act> ACL = [];
             return ACL;
         }
 
@@ -51,7 +51,7 @@ namespace Ginger.WindowExplorer.Mainframe
 
         public List<ITreeViewItem> Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
             //TODO: improve below to use really automate page used mainfram driver
             Agent agent = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().FirstOrDefault(x => x.DriverType == Agent.eDriverType.MainFrame3270 && ((AgentOperations)x.AgentOperations).Status == Agent.eStatus.Running);
             if (agent != null)
@@ -60,10 +60,12 @@ namespace Ginger.WindowExplorer.Mainframe
                 XMLScreen XMLS = MFDriver.GetRenderedScreen();
                 foreach (XMLScreenField xf in XMLS.Fields)
                 {
-                    MainframeControlTreeItem MFTI = new MainframeControlTreeItem();
-                    MFTI.Name = xf.Text;
-                    MFTI.XSF = xf;
-                    MFTI.Path = xf.Location.left + "/" + xf.Location.top;
+                    MainframeControlTreeItem MFTI = new MainframeControlTreeItem
+                    {
+                        Name = xf.Text,
+                        XSF = xf,
+                        Path = xf.Location.left + "/" + xf.Location.top
+                    };
                     Childrens.Add(MFTI);
                 }
             }

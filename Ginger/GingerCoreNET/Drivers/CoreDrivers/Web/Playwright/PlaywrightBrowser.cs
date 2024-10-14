@@ -16,8 +16,6 @@ using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -65,20 +63,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         private protected void ExecutePlaywrightInstallationCommand(WebBrowserType browserType)
         {
-            string browserTypeString;
-            switch (browserType)
+            var browserTypeString = browserType switch
             {
-                case WebBrowserType.Chrome:
-                case WebBrowserType.Edge:
-                    browserTypeString = BrowserType.Chromium;
-                    break;
-                case WebBrowserType.FireFox:
-                    browserTypeString = BrowserType.Firefox;
-                    break;
-                default:
-                    throw new ArgumentException($"Unknown browser type '{browserType}'");
-            }
-
+                WebBrowserType.Chrome or WebBrowserType.Edge => BrowserType.Chromium,
+                WebBrowserType.FireFox => BrowserType.Firefox,
+                _ => throw new ArgumentException($"Unknown browser type '{browserType}'"),
+            };
             int exitCode = Program.Main(new[] { "install", browserTypeString });
             if (exitCode != 0)
             {

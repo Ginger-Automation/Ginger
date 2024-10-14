@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amazon.Util.Internal.PlatformServices;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -27,7 +26,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Amdocs.Ginger.Common.GeneralLib;
 
 public enum SolutionUpgradePageViewMode
 {
@@ -54,9 +52,9 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         public static void ClearPreviousScans()
         {
             solutionFilesWithVersion = null;
-        }        
+        }
 
-        static ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
+        static ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = [];
 
         /// <summary>
         /// Return list of Solution files path with their version compare result
@@ -68,7 +66,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         {
             if (solutionFilesWithVersion == null)
             {
-                solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
+                solutionFilesWithVersion = [];
 
                 // read all XMLs and check for version
                 Parallel.ForEach(solutionFiles, FileName =>
@@ -153,7 +151,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         {
             // read all XMLs and check for version
 
-            ConcurrentBag<string> requiredFiles = new ConcurrentBag<string>();
+            ConcurrentBag<string> requiredFiles = [];
 
             Parallel.ForEach(solutionFilesWithVersionCompare, solFile =>
             {
@@ -305,7 +303,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 int i1 = xml.IndexOf("<!--Ginger Repository Item created with version: ");
                 int i2 = xml.IndexOf("-->");
 
-                string BuildInfo = xml.Substring(i1, i2 - i1);
+                string BuildInfo = xml[i1..i2];
                 Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
                 Match match = regex.Match(BuildInfo);
                 if (match.Success)

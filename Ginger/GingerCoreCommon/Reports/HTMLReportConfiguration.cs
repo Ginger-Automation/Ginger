@@ -168,44 +168,44 @@ namespace Ginger.Reports
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> ActionFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> ActionFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> ActivityFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> ActivityFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> ActivityGroupFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> ActivityGroupFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> BusinessFlowFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> BusinessFlowFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> GingerRunnerFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> GingerRunnerFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> RunSetFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> RunSetFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> EmailSummaryViewFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> EmailSummaryViewFieldsToSelect = [];
 
         //Source Feilds Config
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> ActionSourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> ActionSourceFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> ActivitySourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> ActivitySourceFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> ActivityGroupSourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> ActivityGroupSourceFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> BusinessFlowSourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> BusinessFlowSourceFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> GingerRunnerSourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> GingerRunnerSourceFieldsToSelect = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<HTMLReportConfigFieldToSelect> RunSetSourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+        public ObservableList<HTMLReportConfigFieldToSelect> RunSetSourceFieldsToSelect = [];
 
 
         public override string GetNameForFileName()

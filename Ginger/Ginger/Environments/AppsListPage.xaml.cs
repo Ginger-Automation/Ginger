@@ -116,16 +116,18 @@ namespace Ginger.Environments
             grdApps.ShowUndo = Visibility.Visible;
 
             //Set the Data Grid columns
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Platform), Header="Platform Type",WidthWeight = 100 });
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Description), WidthWeight = 200 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.AppVersion), WidthWeight = 150, Header = "Application Version" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Url), WidthWeight = 100, Header = "URL" });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
+                new GridColView() { Field = nameof(EnvApplication.Name), WidthWeight = 100 },
+                new GridColView() { Field = nameof(EnvApplication.Platform), Header="Platform Type",WidthWeight = 100 },
+                new GridColView() { Field = nameof(EnvApplication.Description), WidthWeight = 200 },
+                new GridColView() { Field = nameof(EnvApplication.AppVersion), WidthWeight = 150, Header = "Application Version" },
+                new GridColView() { Field = nameof(EnvApplication.Url), WidthWeight = 100, Header = "URL" },
+            ]
+            };
 
             grdApps.SetAllColumnsDefaultView(view);
             grdApps.InitViewItems();
@@ -140,7 +142,7 @@ namespace Ginger.Environments
             {
                 grdApps.DisableGridColoumns();
                 grdApps.btnClearAll.IsEnabled = false;
-                grdApps.btnDelete.IsEnabled = false; 
+                grdApps.btnDelete.IsEnabled = false;
             }
         }
 
@@ -253,7 +255,7 @@ namespace Ginger.Environments
             // Check if any other parameters have changed or new parameters added
             foreach (var param in item.GOpsApplicationParameters)
             {
-                if (param.Name != "Application Type" && param.Name != "Application URL")
+                if (param.Name is not "Application Type" and not "Application URL")
                 {
                     if (!existingParamNames.Contains(param.Name) || existingApp.Variables.FirstOrDefault(v => v.Name == param.Name)?.Value != param.Value)
                     {
@@ -269,7 +271,7 @@ namespace Ginger.Environments
                 existingApp.Variables.ClearAll();
                 foreach (var param in item.GOpsApplicationParameters)
                 {
-                    if (param.Name != "Application Type" && param.Name != "Application URL")
+                    if (param.Name is not "Application Type" and not "Application URL")
                     {
                         existingApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value, GOpsFlag = true, SetAsInputValue = false, SetAsOutputValue = false });
                     }
@@ -291,7 +293,7 @@ namespace Ginger.Environments
                 // Add all other parameters to GeneralParams
                 foreach (var param in item.GOpsApplicationParameters)
                 {
-                    if (param.Name != "Application Type" && param.Name != "Application URL")
+                    if (param.Name is not "Application Type" and not "Application URL")
                     {
                         newEnvApp.AddVariable(new VariableString() { Name = param.Name, Value = param.Value, GOpsFlag = true, SetAsInputValue = false, SetAsOutputValue = false });
                     }
@@ -364,7 +366,7 @@ namespace Ginger.Environments
             });
         }
 
-        private  void ShowLoader()
+        private void ShowLoader()
         {
             this.Dispatcher.Invoke(() =>
             {

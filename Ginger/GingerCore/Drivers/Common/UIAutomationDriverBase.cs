@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.UIAutomation;
-using GingerCore.Drivers.PBDriver;
 using mshtml;
 using System;
 using System.Collections.Generic;
@@ -168,7 +167,7 @@ namespace GingerCore.Drivers.Common
             ObservableList<ControlProperty> list = null;
             if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
-                list = ((HTMLHelper)mUIAutomationHelper.GetHTMLHelper()).GetHTMLElementProperties(ElementInfo);
+                list = mUIAutomationHelper.GetHTMLHelper().GetHTMLElementProperties(ElementInfo);
             }
             else
             {
@@ -179,7 +178,7 @@ namespace GingerCore.Drivers.Common
 
         public List<ElementInfo> GetElementChildren(ElementInfo ElementInfo)
         {
-            List<ElementInfo> list = new List<ElementInfo>();
+            List<ElementInfo> list = [];
             if (mUIAutomationHelper.IsWindowValid(ElementInfo.ElementObject))
             {
                 if (ElementInfo.GetType() == typeof(UIAElementInfo))
@@ -190,9 +189,11 @@ namespace GingerCore.Drivers.Common
                         mUIAutomationHelper.InitializeBrowser(ElementInfo.ElementObject);
 
 
-                        ElementInfo htmlRootEI = new ElementInfo();
-                        htmlRootEI.XPath = "/";
-                        htmlRootEI.WindowExplorer = ElementInfo.WindowExplorer;
+                        ElementInfo htmlRootEI = new ElementInfo
+                        {
+                            XPath = "/",
+                            WindowExplorer = ElementInfo.WindowExplorer
+                        };
 
                         list = mUIAutomationHelper.GetHTMLHelper().GetElementChildren(htmlRootEI);
                     }

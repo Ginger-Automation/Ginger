@@ -72,7 +72,7 @@ namespace GingerCore.Actions.MainFrame
         {
             get
             {
-                return (eSetTextMode)GetOrCreateInputParam<eSetTextMode>(nameof(SetTextMode), eSetTextMode.SetSingleField);
+                return GetOrCreateInputParam<eSetTextMode>(nameof(SetTextMode), eSetTextMode.SetSingleField);
             }
             set
             {
@@ -99,9 +99,7 @@ namespace GingerCore.Actions.MainFrame
         {
             get
             {
-                List<ePlatformType> mPf = new List<ePlatformType>();
-
-                mPf.Add(ePlatformType.MainFrame);
+                List<ePlatformType> mPf = [ePlatformType.MainFrame];
                 return mPf;
             }
         }
@@ -116,7 +114,7 @@ namespace GingerCore.Actions.MainFrame
 
         public void LoadCaretValueList()
         {
-            ObservableList<ActInputValue> mCaretValueList = new ObservableList<ActInputValue>();
+            ObservableList<ActInputValue> mCaretValueList = [];
             String LoadText = ValueForDriver;
             if (String.IsNullOrWhiteSpace(LoadText))
             {
@@ -155,6 +153,6 @@ namespace GingerCore.Actions.MainFrame
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> CaretValueList = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> CaretValueList = [];
     }
 }

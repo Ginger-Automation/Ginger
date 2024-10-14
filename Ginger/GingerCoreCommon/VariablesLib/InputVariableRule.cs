@@ -16,20 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Variables;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.Variables
 {
     public class InputVariableRule : RepositoryItemBase
-    {    
+    {
 
         public enum eInputVariableOperation
         {
@@ -59,7 +56,7 @@ namespace Ginger.Variables
             Contains,
             [EnumValueDescription("Does Not Contains")]
             DoesNotContains,
-            Evaluate           
+            Evaluate
         }
 
         public enum eVisibilityOptions
@@ -68,7 +65,7 @@ namespace Ginger.Variables
             Hide
         }
 
-        ObservableList<VariableBase> mSourceVariableList = new ObservableList<VariableBase>();
+        ObservableList<VariableBase> mSourceVariableList = [];
         public ObservableList<VariableBase> SourceVariableList
         {
             get
@@ -81,23 +78,23 @@ namespace Ginger.Variables
                 OnPropertyChanged(nameof(SourceVariableList));
             }
         }
-        
+
         public ObservableList<VariableBase> TargetVariableList
         {
             get
             {
-                if(SourceVariableGuid!=null)
+                if (SourceVariableGuid != null)
                 {
                     return new ObservableList<VariableBase>(SourceVariableList.Where(x => x.Guid != SourceVariableGuid));
-                }  
+                }
                 else
                 {
                     return null;
-                }    
-            }           
+                }
+            }
         }
 
-        ObservableList<string> mVariableValuesList = new ObservableList<string>();
+        ObservableList<string> mVariableValuesList = [];
         public ObservableList<string> variableValueList
         {
             get
@@ -110,13 +107,13 @@ namespace Ginger.Variables
                 OnPropertyChanged(nameof(variableValueList));
             }
         }
-        
+
         public VariableBase SelectedSourceVariable
         {
             get
             {
                 return SourceVariableList.FirstOrDefault(x => x.Guid == SourceVariableGuid);
-            }           
+            }
         }
 
         private VariableBase mSelectedTargetVariable;
@@ -124,7 +121,7 @@ namespace Ginger.Variables
         {
             get
             {
-                return TargetVariableList.FirstOrDefault(x => x.Guid== TargetVariableGuid);                
+                return TargetVariableList.FirstOrDefault(x => x.Guid == TargetVariableGuid);
             }
             set
             {
@@ -135,8 +132,8 @@ namespace Ginger.Variables
 
         private bool mActive;
         [IsSerializedForLocalRepository]
-        public bool Active 
-        { 
+        public bool Active
+        {
             get
             {
                 return mActive;
@@ -153,7 +150,7 @@ namespace Ginger.Variables
 
         private Guid mSourceVariableGuid;
         [IsSerializedForLocalRepository]
-        public Guid SourceVariableGuid 
+        public Guid SourceVariableGuid
         {
             get
             {
@@ -162,27 +159,27 @@ namespace Ginger.Variables
 
             set
             {
-                if(value!= mSourceVariableGuid)
+                if (value != mSourceVariableGuid)
                 {
                     mSourceVariableGuid = value;
                     OnPropertyChanged(nameof(SelectedSourceVariable));
                     OnPropertyChanged(nameof(TargetVariableList));
                     OnPropertyChanged(nameof(SourceVariableGuid));
-                }                            
+                }
             }
         }
 
         private string mTriggerValue;
         [IsSerializedForLocalRepository]
-        public string TriggerValue 
-        { 
+        public string TriggerValue
+        {
             get
             {
                 return mTriggerValue;
             }
             set
             {
-                if(value != mTriggerValue)
+                if (value != mTriggerValue)
                 {
                     mTriggerValue = value;
                     OnPropertyChanged(nameof(TriggerValue));
@@ -192,7 +189,7 @@ namespace Ginger.Variables
 
         private Guid mTargetVariableGuid;
         [IsSerializedForLocalRepository]
-        public Guid TargetVariableGuid 
+        public Guid TargetVariableGuid
         {
             get
             {
@@ -204,15 +201,15 @@ namespace Ginger.Variables
                 if (value != mTargetVariableGuid)
                 {
                     mTargetVariableGuid = value;
-                    OnPropertyChanged(nameof(SelectedTargetVariable)); 
+                    OnPropertyChanged(nameof(SelectedTargetVariable));
                 }
-            } 
+            }
         }
 
         private eInputVariableOperation mOperationType;
         [IsSerializedForLocalRepository]
-        public eInputVariableOperation OperationType 
-        { 
+        public eInputVariableOperation OperationType
+        {
             get
             {
                 return mOperationType;
@@ -222,7 +219,7 @@ namespace Ginger.Variables
                 if (value != mOperationType)
                 {
                     mOperationType = value;
-                    OnPropertyChanged(nameof(OperationType)); 
+                    OnPropertyChanged(nameof(OperationType));
                 }
             }
         }
@@ -240,15 +237,15 @@ namespace Ginger.Variables
                 if (value != mOperator)
                 {
                     mOperator = value;
-                    OnPropertyChanged(nameof(Operator)); 
+                    OnPropertyChanged(nameof(Operator));
                 }
             }
         }
 
         private string mOperationValue;
         [IsSerializedForLocalRepository]
-        public string OperationValue 
-        { 
+        public string OperationValue
+        {
             get
             {
                 return mOperationValue;
@@ -258,7 +255,7 @@ namespace Ginger.Variables
                 if (value != mOperationValue)
                 {
                     mOperationValue = value;
-                    OnPropertyChanged(nameof(OperationValue)); 
+                    OnPropertyChanged(nameof(OperationValue));
                 }
             }
         }
@@ -276,11 +273,11 @@ namespace Ginger.Variables
                 if (value != mOperationValueList)
                 {
                     mOperationValueList = value;
-                    OnPropertyChanged(nameof(OperationValueList)); 
+                    OnPropertyChanged(nameof(OperationValueList));
                 }
             }
         }
-      
+
         public override string ItemName
         {
             get

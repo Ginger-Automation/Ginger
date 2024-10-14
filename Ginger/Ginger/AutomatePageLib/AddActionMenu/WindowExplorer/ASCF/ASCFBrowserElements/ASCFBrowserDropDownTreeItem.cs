@@ -35,14 +35,16 @@ namespace Ginger.WindowExplorer.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
 
             // click link the most common
-            ActASCFBrowserElement a2 = new ActASCFBrowserElement();
-            a2.Description = "Click Drop Down" + ASCFBrowserElementInfo.Path;
-            a2.LocateBy = eLocateBy.ByID;
-            a2.LocateValue = ASCFBrowserElementInfo.Path;
-            a2.ControlAction = ActASCFBrowserElement.eControlAction.Click;
+            ActASCFBrowserElement a2 = new ActASCFBrowserElement
+            {
+                Description = "Click Drop Down" + ASCFBrowserElementInfo.Path,
+                LocateBy = eLocateBy.ByID,
+                LocateValue = ASCFBrowserElementInfo.Path,
+                ControlAction = ActASCFBrowserElement.eControlAction.Click
+            };
             list.Add(a2);
             return list;
         }
