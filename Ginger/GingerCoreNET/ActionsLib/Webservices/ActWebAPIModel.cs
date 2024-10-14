@@ -216,7 +216,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
 
         private ObservableList<WebAPIKeyBodyValues> ConvertAPIModelBodyKeyValueToWebAPIKeyBodyValue(ObservableList<APIModelBodyKeyValue> aPIModelBodyKeyValueHeaders, ActWebAPIModel actWebAPIModel)
         {
-            ObservableList<WebAPIKeyBodyValues> WebAPIKeyBodyValues = [];
+            ObservableList<WebAPIKeyBodyValues> webAPIKeyBodyValues = new ObservableList<WebAPIKeyBodyValues>();
 
             if (aPIModelBodyKeyValueHeaders != null)
             {
@@ -227,13 +227,13 @@ namespace GingerCore.Actions.WebServices.WebAPI
                         Param = AMKV.Param,
                         Value = AMKV.Value,
                         ValueType = ConvertToWebAPIKeyBodyValueType(AMKV.ValueType),
-                        ValueForDriver = ReplacePlaceHolderParameneterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue)
+                        ValueForDriver = ReplacePlaceHolderParameterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue)
                     };
-                    WebAPIKeyBodyValues.Add(AIV);
+                    webAPIKeyBodyValues.Add(AIV);
                 }
             }
 
-            return WebAPIKeyBodyValues;
+            return webAPIKeyBodyValues;
         }
 
         private static WebAPIKeyBodyValues.eValueType ConvertToWebAPIKeyBodyValueType(APIModelBodyKeyValue.eValueType valueType)
@@ -256,7 +256,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
                     {
                         Param = AMKV.Param,
                         Value = AMKV.Value,
-                        ValueForDriver = ReplacePlaceHolderParameneterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue)
+                        ValueForDriver = ReplacePlaceHolderParameterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue)
                     };
                     GingerCoreHttpHeaders.Add(AIV);
                 }
@@ -289,7 +289,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
             return AAMBDuplicate;
         }
 
-        private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
+        private string ReplacePlaceHolderParameterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
         {
             if (string.IsNullOrEmpty(ValueBeforeReplacing))
             {
