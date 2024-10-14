@@ -57,12 +57,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 args = newArgs;
             }
 
-            CLIProcessor cLIProcessor = new CLIProcessor();
-            ParserResult<object> parserResult = args.Length != 0 ? cLIProcessor.ParseArgsOnly(args) : null;
-            await cLIProcessor.ProcessResult(parserResult);
+            ParserResult<object> parserResult = args.Length != 0 ? ParseArgsOnly(args) : null;
+            await ProcessResult(parserResult);
 
         }
-
+        s
         public ParserResult<object> ParseArgsOnly(string[] args)
         {
             var parser = new Parser(settings =>
