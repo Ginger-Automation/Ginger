@@ -89,7 +89,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             int result = await parserResult.MapResult(
                     async (RunOptions opts) => await HandleRunOptions(opts),
-                    async (GridOptions opts) => await HanldeGridOption(opts),
+                    async (GridOptions opts) => await HandleGridOption(opts),
                     async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
                     async (DynamicOptions opts) => await HandleFileOptions("dynamic", opts.FileName, opts.VerboseLevel),
                     async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
@@ -340,7 +340,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
 
-        private async Task<int> HanldeGridOption(GridOptions gridOptions)
+        private async Task<int> HandleGridOption(GridOptions gridOptions)
         {
             WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.grid;
             return await Task.Run(() =>

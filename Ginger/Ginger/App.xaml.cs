@@ -34,6 +34,7 @@ using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -242,7 +243,7 @@ namespace Ginger
             }
         }
 
-        CLIProcessor cLIProcessor;
+        CLIProcessor cliProcessor;
 
         // Main entry point to Ginger UI/CLI
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -251,10 +252,10 @@ namespace Ginger
             bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
             WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
             ParserResult<object> parserResult = null;
-            cLIProcessor = new CLIProcessor();
+            cliProcessor = new CLIProcessor();
             if (e.Args.Length != 0)
             {
-                parserResult = cLIProcessor.ParseArgsOnly(e.Args);
+                parserResult = cliProcessor.ParseArgsOnly(e.Args);
             }
             DoOptions doOptions = null;
             if (parserResult?.Value is DoOptions tempOptions && tempOptions.Operation == DoOptions.DoOperation.open)
@@ -280,14 +281,20 @@ namespace Ginger
                 }
                 HideConsoleWindow();
                 bool tempAutoLoad = WorkSpace.Instance.UserProfile.AutoLoadLastSolution;
-                if (doOptions != null && tempAutoLoad)
+                try
                 {
-                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;
+                    if (doOptions != null && tempAutoLoad)
+                    {
+                        WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;
+                    }
+                    StartGingerUI();
+                    if (doOptions != null)
+                    {
+                        DoOptionsHanlder.Run(doOptions);
+                    }
                 }
-                StartGingerUI();
-                if (doOptions != null)
+                finally
                 {
-                    DoOptionsHanlder.Run(doOptions);
                     WorkSpace.Instance.UserProfile.AutoLoadLastSolution = tempAutoLoad;
                 }
             }
@@ -321,10 +328,11 @@ namespace Ginger
             ShowWindow(handle, SW_SHOW);
         }
 
-        private async void RunNewCLI(ParserResult<object> parserResult)
+        private async Task RunNewCLI(ParserResult<object> parserResult)
         {
-
-            await cLIProcessor.ProcessResult(parserResult);
+            if (parserResult != null) {
+                await cliProcessor.ProcessResult(parserResult);
+            }
             // do proper close !!!         
             System.Windows.Application.Current.Shutdown(Environment.ExitCode);
         }
