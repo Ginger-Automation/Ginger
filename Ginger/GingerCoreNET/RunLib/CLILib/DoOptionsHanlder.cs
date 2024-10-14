@@ -26,7 +26,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    public static class DoOptionsHanlder
+    public static class DoOptionsHandler
     {
         public static void Run(DoOptions opts)
         {

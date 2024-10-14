@@ -116,7 +116,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
              {
                  try
                  {
-                     DoOptionsHanlder.Run(opts);
+                     DoOptionsHandler.Run(opts);
                      return 0;
                  }
                  catch (Exception ex)

@@ -372,7 +372,7 @@ namespace Ginger
 
                 if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
                 {
-                    DoOptionsHanlder.Run(doOptions);
+                    DoOptionsHandler.Run(doOptions);
                 }
             }
             finally
