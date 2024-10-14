@@ -57,12 +57,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 args = newArgs;
             }
 
-            ParserResult<object> parserResult = args.Length != 0 ? ParseArgsOnly(args) : null;
-            await ProcessResult(parserResult);
+            ParserResult<object> parserResult = args.Length != 0 ? ParseArguments(args) : null;
+            await ProcessParsedArguments(parserResult);
 
         }
-        s
-        public ParserResult<object> ParseArgsOnly(string[] args)
+
+        ///<summary>
+        /// Parses the command line arguments and returns the parsed result.
+        /// </summary>
+        /// <param name="args">The command line arguments.</param>
+        /// <returns>The parsed result of the command line arguments.</returns>
+        public ParserResult<object> ParseArguments(string[] args)
         {
             var parser = new Parser(settings =>
             {
@@ -70,13 +75,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             });
 
             return parser.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args);
-
         }
 
 
 
 
-        public async Task ProcessResult(ParserResult<object> parserResult)
+        public async Task ProcessParsedArguments(ParserResult<object> parserResult)
         {
             // FIXME: failing with exc of obj state
             // Do not show default version
@@ -95,7 +99,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     async (VersionOptions opts) => await HandleVersionOptions(opts),
                     async (ExampleOptions opts) => await HandleExampleOptions(opts),
                     async (DoOptions opts) => await HandleDoOptions(opts),
-
 
                     async errs => await HandleCLIParseError(errs)
             );

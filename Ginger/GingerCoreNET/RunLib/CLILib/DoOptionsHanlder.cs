@@ -61,14 +61,44 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
 
-        private static void DoOpen(string solution)
+        private static void DoOpen(string solutionFolder)
         {
-            if (solution.Contains("Ginger.Solution.xml"))
+            try
             {
-                // Remove the file name and trim the path
-                solution = Path.GetDirectoryName(solution)?.Trim() ?? string.Empty;
+                // Check if solutionFolder is null or empty
+                if (string.IsNullOrWhiteSpace(solutionFolder))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "The provided solution folder path is null or empty.");
+                    return;
+                }
+
+                // Check if the folder path contains the solution file name
+                if (solutionFolder.Contains("Ginger.Solution.xml"))
+                {
+                    solutionFolder = Path.GetDirectoryName(solutionFolder)?.Trim() ?? string.Empty;
+
+                    if (string.IsNullOrEmpty(solutionFolder))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Invalid solution folder path derived from the solution file.");
+                        return;
+                    }
+                }
+
+                // Check if the directory exists
+                if (!Directory.Exists(solutionFolder))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"The provided folder path '{solutionFolder}' does not exist.");
+                    return;
+                }
+
+                // Attempt to open the solution
+                WorkSpace.Instance.OpenSolution(solutionFolder);
             }
-            WorkSpace.Instance.OpenSolution(solution);
+            catch (Exception ex)
+            {
+                // Handle any other unexpected errors
+                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while opening the solution in folder '{solutionFolder}'. Error: {ex.Message}");
+            }
         }
         private static void DoAnalyze(string solution)
         {
