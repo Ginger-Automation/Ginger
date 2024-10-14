@@ -129,7 +129,7 @@ namespace GingerCore.GeneralLib
             ValueTextBox.Visibility = System.Windows.Visibility.Collapsed;
             xValueComboBox.Visibility = System.Windows.Visibility.Visible;
             xValueComboBox.ItemsSource = possibleValues;
-            xValueComboBox.SelectedValue = possibleValues[0];//auto selecting first value
+            xValueComboBox.SelectedIndex = 0;//auto selecting first value
             xValueComboBox.Focus();
         }
 

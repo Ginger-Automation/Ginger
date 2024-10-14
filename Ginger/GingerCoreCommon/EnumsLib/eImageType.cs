@@ -158,7 +158,7 @@ namespace Amdocs.Ginger.Common.Enums
         MoveUp,
         MoveDown,
         MoveUpDown,
-        Replace,
+        Category,
         ParallelExecution,
         SequentialExecution,
         Duplicate,

@@ -385,7 +385,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             WeakEventManager<DataGrid, SelectionChangedEventArgs>.AddHandler(source: xMainElementsGrid.grdMain, eventName: nameof(DataGrid.SelectionChanged), handler: Grid_SelectionChanged);
 
-            xMainElementsGrid.AddToolbarTool(eImageType.Replace, toolTip:"Set missing Categories for selected Elements", new RoutedEventHandler(SetMissingCategoriesForSelectedElements));
+            xMainElementsGrid.AddToolbarTool(eImageType.Category, toolTip:"Set missing Categories for selected Elements", new RoutedEventHandler(SetMissingCategoriesForSelectedElements));
         }
 
         /// <summary>
@@ -1081,7 +1081,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     try
                     {
-                        Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, "setting all missing categories for selected elements...");
+                        Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "setting all missing categories for selected elements...");
                         foreach (ElementInfo element in xMainElementsGrid.Grid.SelectedItems)
                         {
                             SetMissingCategoriesForElement(element, (ePomElementCategory)Enum.Parse(typeof(ePomElementCategory), selectedCategory));
