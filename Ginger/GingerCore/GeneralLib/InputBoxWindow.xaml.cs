@@ -61,6 +61,10 @@ namespace GingerCore.GeneralLib
         public static bool OpenDialog(string title, string message, ref string Value, List<string> possibleValues)
         {
             InputBoxWindow IBW = new InputBoxWindow();
+            if (possibleValues == null || possibleValues.Count == 0)
+            {
+                throw new ArgumentException("possibleValues cannot be null or empty", nameof(possibleValues));
+            }
             IBW.Init(title, message, possibleValues);
             CurrentInputBoxWindow = IBW;
             IBW.ShowDialog();
@@ -118,9 +122,14 @@ namespace GingerCore.GeneralLib
         {
             winTitle.Content = title;
             MessageLabel.Text = message;
+            if (possibleValues == null || possibleValues.Count == 0)
+            {
+                throw new ArgumentException("possibleValues cannot be null or empty", nameof(possibleValues));
+            }
             ValueTextBox.Visibility = System.Windows.Visibility.Collapsed;
             xValueComboBox.Visibility = System.Windows.Visibility.Visible;
             xValueComboBox.ItemsSource = possibleValues;
+            xValueComboBox.SelectedValue = possibleValues[0];//auto selecting first value
             xValueComboBox.Focus();
         }
 

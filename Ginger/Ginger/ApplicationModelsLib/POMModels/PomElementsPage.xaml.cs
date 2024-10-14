@@ -641,12 +641,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             return elementStatus;
         }
 
-        private List<string> GetPossibleCategoriesAsSteing()
+        private List<string> GetPossibleCategoriesAsString()
         {
             ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
             List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
 
-            List<string> categories = [];
+            List<string> categories = new List<string>();
             foreach (ePomElementCategory category in categoriesList)
             {
                 categories.Add(category.ToString());
@@ -1075,7 +1075,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             //get the Category to set               
             string selectedCategory = "";
-            if (InputBoxWindow.OpenDialog("Set Missing Categories", "Select Category to set:", ref selectedCategory, GetPossibleCategoriesAsSteing()))
+            if (InputBoxWindow.OpenDialog("Set Missing Categories", "Select Category to set:", ref selectedCategory, GetPossibleCategoriesAsString()))
             {
                 if (!string.IsNullOrEmpty(selectedCategory))
                 {
