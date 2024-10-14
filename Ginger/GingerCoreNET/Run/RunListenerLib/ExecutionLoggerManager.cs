@@ -495,15 +495,23 @@ namespace Ginger.Run
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {
             // if user set special action log in output
-            if (action.EnableActionLogConfig)
+            try
             {
-                if (mGingerRunnerLogger == null)
+                if (action.EnableActionLogConfig && !string.IsNullOrEmpty(mExecutionLogger.ExecutionLogfolder))
                 {
-                    string loggerFile = Path.Combine(mExecutionLogger.ExecutionLogfolder, FileSystem.AppendTimeStamp("GingerLog.txt"));
-                    mGingerRunnerLogger = new GingerRunnerLogger(loggerFile);
+                    if (mGingerRunnerLogger == null)
+                    {
+                        string loggerFile = Path.Combine(mExecutionLogger.ExecutionLogfolder, FileSystem.AppendTimeStamp("GingerLog.txt"));
+                        mGingerRunnerLogger = new GingerRunnerLogger(loggerFile);
+                    }
+                    mGingerRunnerLogger.LogAction(action);
                 }
-                mGingerRunnerLogger.LogAction(action);
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in LogAction", ex);
+            }
+
             Activity currentActivity = null;
             try
             {
