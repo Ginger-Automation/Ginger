@@ -252,31 +252,38 @@ namespace Ginger
         /// </summary>
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
-            InitLogging();
-
-            bool startGrid = ShouldStartGrid(e.Args);
-            WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
-
-            var parserResult = ParseCommandLineArguments(e.Args);
-
-            DoOptions doOptions = ExtractDoOptions(parserResult);
-
-            if (IsExecutionMode(e.Args, doOptions))
+            try
             {
-                WorkSpace.Instance.RunningInExecutionMode = true;
-                Reporter.ReportAllAlsoToConsole = true;
+                InitLogging();
+
+                bool startGrid = ShouldStartGrid(e.Args);
+                WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
+
+                var parserResult = ParseCommandLineArguments(e.Args);
+
+                DoOptions doOptions = ExtractDoOptions(parserResult);
+
+                if (IsExecutionMode(e.Args, doOptions))
+                {
+                    WorkSpace.Instance.RunningInExecutionMode = true;
+                    Reporter.ReportAllAlsoToConsole = true;
+                }
+
+                InitializeGingerCore();
+
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    ProcessGingerUIStartup(doOptions);
+                }
+                else
+                {
+                    await RunNewCLI(parserResult);
+                }
+            }
+            catch (Exception ex) {
+                Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
             }
 
-            InitializeGingerCore();
-
-            if (!WorkSpace.Instance.RunningInExecutionMode)
-            {
-                ProcessGingerUIStartup(doOptions);
-            }
-            else
-            {
-               await RunNewCLI(parserResult);
-            }
         }
 
         /// <summary>
