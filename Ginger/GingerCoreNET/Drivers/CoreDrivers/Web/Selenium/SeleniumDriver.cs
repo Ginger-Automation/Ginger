@@ -8998,7 +8998,9 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.ScrollToElement:
                         try
                         {
-                            ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].scrollIntoView(true);", e);
+                            string scrollAlignment = act.GetInputParamCalculatedValue(ActUIElement.Fields.ScrollAlignment).ToLower();
+                            string command = $"arguments[0].scrollIntoView({{ block: '{scrollAlignment}' }});";
+                            ((IJavaScriptExecutor)Driver).ExecuteScript(command, e);
                         }
                         catch (Exception)
                         {

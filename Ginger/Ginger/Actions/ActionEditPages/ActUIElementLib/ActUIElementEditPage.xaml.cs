@@ -276,6 +276,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     pageContent = new UIElementXYCoordinatePage(mAction);
                     break;
 
+                case eElementAction.ScrollToElement:
+                    pageContent = new UIElementScrollToOptionsPage(mAction);
+                    break;
 
                 case eElementAction.DoubleClick:
                 case eElementAction.WinClick:
