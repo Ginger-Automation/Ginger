@@ -22,7 +22,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
-using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerWPF.DragDropLib;

@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.Repository
         public bool SystemFieled { get; set; }
         public bool IsMultiple { get; set; } = false;
 
-        ObservableList<string> mPossibleValues = new ObservableList<string>();
+        ObservableList<string> mPossibleValues = [];
         public ObservableList<string> PossibleValues
         {
             get

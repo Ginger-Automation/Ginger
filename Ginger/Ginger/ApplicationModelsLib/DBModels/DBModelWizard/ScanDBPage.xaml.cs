@@ -64,8 +64,10 @@ namespace Ginger.ApplicationModels.DBModels.DBModelWizard
 
                 foreach (System.Data.DataRow row in DT.Rows)
                 {
-                    ApplicationDBTableModel t = new ApplicationDBTableModel();
-                    t.Name = (string)row["TABLE_NAME"];
+                    ApplicationDBTableModel t = new ApplicationDBTableModel
+                    {
+                        Name = (string)row["TABLE_NAME"]
+                    };
                     mApplicationDBModel.Tables.Add(t);
                 }
             }

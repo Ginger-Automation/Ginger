@@ -21,9 +21,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Drivers;
 using GingerCore.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -92,7 +90,7 @@ namespace Ginger.Agents
             {
                 //Grid 
                 DriverConfigurationGrid.Visibility = System.Windows.Visibility.Visible;
-                if(_viewMode == General.eRIPageViewMode.View || _viewMode == General.eRIPageViewMode.ViewAndExecute)
+                if (_viewMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
                 {
                     DriverConfigurationGrid.IsEnabled = false;
                 }
@@ -118,13 +116,16 @@ namespace Ginger.Agents
         {
             DriverConfigurationGrid.SetTitleLightStyle = true;
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Parameter, BindingMode = BindingMode.OneWay, WidthWeight = 20 });
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Value, WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ParamValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Description, BindingMode = BindingMode.OneWay, WidthWeight = 45 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = DriverConfigParam.Fields.Parameter, BindingMode = BindingMode.OneWay, WidthWeight = 20 },
+                new GridColView() { Field = DriverConfigParam.Fields.Value, WidthWeight = 30 },
+                new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ParamValueExpressionButton"] },
+                new GridColView() { Field = DriverConfigParam.Fields.Description, BindingMode = BindingMode.OneWay, WidthWeight = 45 },
+            ]
+            };
 
             DriverConfigurationGrid.SetAllColumnsDefaultView(view);
             DriverConfigurationGrid.InitViewItems();

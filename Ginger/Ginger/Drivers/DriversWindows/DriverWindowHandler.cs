@@ -30,7 +30,7 @@ namespace Ginger.Drivers.DriversWindows
 {
     public class DriverWindowHandler
     {
-        static Dictionary<DriverBase, Window> mOpenWindowsDic = new Dictionary<DriverBase, Window>();
+        static Dictionary<DriverBase, Window> mOpenWindowsDic = [];
 
         public static void Init()
         {

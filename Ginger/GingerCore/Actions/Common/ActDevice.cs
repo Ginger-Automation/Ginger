@@ -76,7 +76,7 @@ namespace GingerCore.Actions.Common
         {
             get
             {
-                return (eDeviceAction)GetOrCreateInputParam<eDeviceAction>(nameof(DeviceAction), eDeviceAction.ScreenRecord);
+                return GetOrCreateInputParam<eDeviceAction>(nameof(DeviceAction), eDeviceAction.ScreenRecord);
             }
             set
             {

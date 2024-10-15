@@ -30,7 +30,7 @@ namespace Ginger.ApiModelsFolder
     public class AddApiModelActionWizardPage : WizardBase
     {
         public Context mContext;
-        private ObservableList<ApplicationAPIModel> mAAMList = new ObservableList<ApplicationAPIModel>();
+        private ObservableList<ApplicationAPIModel> mAAMList = [];
 
         ObservableList<IAct> mActions;
 
@@ -71,7 +71,7 @@ namespace Ginger.ApiModelsFolder
             }
         }
 
-        private ObservableList<EnhancedActInputValue> mEnhancedInputValueList = new ObservableList<EnhancedActInputValue>();
+        private ObservableList<EnhancedActInputValue> mEnhancedInputValueList = [];
         public ObservableList<EnhancedActInputValue> EnhancedInputValueList
         {
             get { return mEnhancedInputValueList; }
@@ -88,16 +88,17 @@ namespace Ginger.ApiModelsFolder
         {
             foreach (ApplicationAPIModel aamb in AAMList)
             {
-                ActWebAPIModel aNew = new ActWebAPIModel();
-
-                aNew.Description = aamb.Name + "- API Model Execution";
-                aNew.Active = true;
-                aNew.SupportSimulation = aamb.SupportSimulation;
-                aNew.APImodelGUID = aamb.Guid;
-                aNew.APIModelParamsValue = GetEnhancedUpdatedParams(aamb.MergedParamsList);
-                aNew.ReturnValues = ConvertTemplateReturnValues(aamb.ReturnValues);
-                aNew.AddNewReturnParams = true;
-                aNew.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+                ActWebAPIModel aNew = new ActWebAPIModel
+                {
+                    Description = aamb.Name + "- API Model Execution",
+                    Active = true,
+                    SupportSimulation = aamb.SupportSimulation,
+                    APImodelGUID = aamb.Guid,
+                    APIModelParamsValue = GetEnhancedUpdatedParams(aamb.MergedParamsList),
+                    ReturnValues = ConvertTemplateReturnValues(aamb.ReturnValues),
+                    AddNewReturnParams = true,
+                    SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper()
+                };
 
 
                 mActions.Add(aNew);
@@ -120,17 +121,19 @@ namespace Ginger.ApiModelsFolder
 
         private ObservableList<ActReturnValue> ConvertTemplateReturnValues(ObservableList<ActReturnValue> modelReturnValues)
         {
-            ObservableList<ActReturnValue> returnValuesList = new ObservableList<ActReturnValue>();
+            ObservableList<ActReturnValue> returnValuesList = [];
             foreach (ActReturnValue modelRV in modelReturnValues)
             {
-                ActReturnValue rv = new ActReturnValue();
-                rv.AddedAutomatically = true;
-                rv.Guid = modelRV.Guid;
-                rv.Active = modelRV.Active;
-                rv.Param = modelRV.Param;
-                rv.Path = modelRV.Path;
-                rv.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
-                rv.Expected = modelRV.Expected;
+                ActReturnValue rv = new ActReturnValue
+                {
+                    AddedAutomatically = true,
+                    Guid = modelRV.Guid,
+                    Active = modelRV.Active,
+                    Param = modelRV.Param,
+                    Path = modelRV.Path,
+                    Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals,
+                    Expected = modelRV.Expected
+                };
 
                 if (!string.IsNullOrEmpty(modelRV.StoreToValue))
                 {
@@ -144,15 +147,17 @@ namespace Ginger.ApiModelsFolder
 
         private ObservableList<EnhancedActInputValue> GetEnhancedUpdatedParams(ObservableList<AppModelParameter> paramsList)
         {
-            ObservableList<EnhancedActInputValue> enhancedParamsList = new ObservableList<EnhancedActInputValue>();
+            ObservableList<EnhancedActInputValue> enhancedParamsList = [];
             foreach (AppModelParameter ADP in paramsList)
             {
                 if (ADP.RequiredAsInput == true)
                 {
-                    EnhancedActInputValue AIV = new EnhancedActInputValue();
-                    AIV.ParamGuid = ADP.Guid;
-                    AIV.Param = ADP.PlaceHolder;
-                    AIV.Description = ADP.Description;
+                    EnhancedActInputValue AIV = new EnhancedActInputValue
+                    {
+                        ParamGuid = ADP.Guid,
+                        Param = ADP.PlaceHolder,
+                        Description = ADP.Description
+                    };
                     foreach (OptionalValue optionalValue in ADP.OptionalValuesList)
                     {
                         AIV.OptionalValues.Add(optionalValue.Value);

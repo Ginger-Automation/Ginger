@@ -65,14 +65,14 @@ namespace GingerTest.APIModelLib
 
             Agent mChromeAgent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == "ChromeAgent" select x).SingleOrDefault();
             //Act
-            prioritizedLocatorsList = new List<ElementLocator>()
-            {
+            prioritizedLocatorsList =
+            [
                 new ElementLocator() { Active = false, LocateBy = eLocateBy.ByName },
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID },
                 new ElementLocator() { Active = false, LocateBy = eLocateBy.ByXPath },
                 new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath }
-            };
-            mLearnedPOM = mPOMsPOM.CreatePOM(name, description, "MyWebApp", mChromeAgent, @"HTML\HTMLControls.html", new List<eElementType>() { eElementType.HyperLink, eElementType.Table, eElementType.ListItem }, prioritizedLocatorsList);
+            ];
+            mLearnedPOM = mPOMsPOM.CreatePOM(name, description, "MyWebApp", mChromeAgent, @"HTML\HTMLControls.html", [eElementType.HyperLink, eElementType.Table, eElementType.ListItem], prioritizedLocatorsList);
         }
 
 

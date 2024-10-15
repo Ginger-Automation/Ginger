@@ -53,11 +53,13 @@ namespace GingerPlugIns
             //TODO: check perf impact + reuse exisitng binding on same obj.prop
             try
             {
-                Binding b = new Binding();
-                b.Source = obj;
-                b.Path = new PropertyPath(property);
-                b.Mode = BindingMode;
-                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding b = new Binding
+                {
+                    Source = obj,
+                    Path = new PropertyPath(property),
+                    Mode = BindingMode,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 control.SetBinding(dependencyProperty, b);
             }
             catch (Exception ex)

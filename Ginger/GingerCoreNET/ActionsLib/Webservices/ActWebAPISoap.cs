@@ -67,9 +67,10 @@ namespace GingerCore.Actions.WebServices
                 platformAction.InputParams.Add("RequestBody", GetCalulatedRequestBodyString());
             }
 
-            Dictionary<string, string> sHttpHeaders = new Dictionary<string, string>();
-
-            sHttpHeaders.Add("SOAPAction", SoapAction);
+            Dictionary<string, string> sHttpHeaders = new Dictionary<string, string>
+            {
+                { "SOAPAction", SoapAction }
+            };
             foreach (ActInputValue header in this.HttpHeaders)
             {
 

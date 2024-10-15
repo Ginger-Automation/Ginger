@@ -28,7 +28,6 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Ginger.AnalyzerLib.RunSetConfigAnalyzer;
 
 #nullable enable
 namespace Ginger.AnalyzerLib
@@ -54,7 +53,7 @@ namespace Ginger.AnalyzerLib
 
         public static List<AnalyzerItemBase> Analyze(RunSetConfig RSC, Solution solution, Check checks = Check.All)
         {
-            List<AnalyzerItemBase> IssuesList = new();
+            List<AnalyzerItemBase> IssuesList = [];
             // check that we have Runners
             if (checks.AreAllFlagsSet(Check.NoRunners) && !RSC.GingerRunners.Any())
             {
@@ -72,7 +71,7 @@ namespace Ginger.AnalyzerLib
             //check we do not have duplicates Agents, ignore the check for single runner 
             if (checks.AreAllFlagsSet(Check.DuplicateAgents) && RSC.RunModeParallel && RSC.GingerRunners.Count > 1)
             {
-                List<Guid> Agents = new List<Guid>();
+                List<Guid> Agents = [];
                 foreach (GingerRunner GR in RSC.GingerRunners)
                 {
                     foreach (ApplicationAgent AA in GR.ApplicationAgents)
@@ -182,9 +181,9 @@ namespace Ginger.AnalyzerLib
 
             if (checks.AreAllFlagsSet(Check.ActivityOutputVariablesMappingValidity))
             {
-                foreach(GingerRunner runner in RSC.GingerRunners)
+                foreach (GingerRunner runner in RSC.GingerRunners)
                 {
-                    foreach(BusinessFlowRun bfRun in runner.BusinessFlowsRunList)
+                    foreach (BusinessFlowRun bfRun in runner.BusinessFlowsRunList)
                     {
                         BusinessFlow? bf = runner
                             .Executor
@@ -207,7 +206,7 @@ namespace Ginger.AnalyzerLib
                             Activity? targetActivity = bf
                                 .Activities
                                 .FirstOrDefault(activity => activity.Variables.Any(var => var.Guid == customizedVar.Guid));
-                            
+
                             if (targetActivity == null)
                             {
                                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
@@ -287,10 +286,12 @@ namespace Ginger.AnalyzerLib
 
         static RunSetConfigAnalyzer CreateNewIssue(List<AnalyzerItemBase> IssuesList, RunSetConfig RSC)
         {
-            RunSetConfigAnalyzer RSCA = new RunSetConfigAnalyzer();
-            RSCA.Status = AnalyzerItemBase.eStatus.NeedFix;
-            RSCA.ItemName = RSC.Name;
-            RSCA.ItemClass = "Run Set";
+            RunSetConfigAnalyzer RSCA = new RunSetConfigAnalyzer
+            {
+                Status = AnalyzerItemBase.eStatus.NeedFix,
+                ItemName = RSC.Name,
+                ItemClass = "Run Set"
+            };
             IssuesList.Add(RSCA);
             return RSCA;
         }

@@ -144,7 +144,7 @@ namespace GingerCore.Actions.Java
         {
             get
             {
-                return (eControlAction)GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
+                return GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
             }
             set
             {
@@ -156,7 +156,7 @@ namespace GingerCore.Actions.Java
         {
             get
             {
-                return (eWaitForIdle)GetOrCreateInputParam<eWaitForIdle>(nameof(WaitforIdle), eWaitForIdle.None);
+                return GetOrCreateInputParam<eWaitForIdle>(nameof(WaitforIdle), eWaitForIdle.None);
             }
             set
             {
@@ -219,7 +219,7 @@ namespace GingerCore.Actions.Java
             return pl;
         }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Java }; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return [ePlatformType.Java]; } }
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType actionPlatform)
         {
@@ -285,145 +285,43 @@ namespace GingerCore.Actions.Java
 
         private ActUIElement.eElementAction GetElementActionType(eControlAction controlAction)
         {
-            ActUIElement.eElementAction type;
-            switch (controlAction)
+            var type = controlAction switch
             {
-                case eControlAction.SetValue:
-                    type = ActUIElement.eElementAction.SetValue;
-                    break;
-
-                case eControlAction.GetValue:
-                    type = ActUIElement.eElementAction.GetValue;
-                    break;
-
-                case eControlAction.Toggle:
-                    type = ActUIElement.eElementAction.Toggle;
-                    break;
-
-                case eControlAction.Select:
-                    type = ActUIElement.eElementAction.Select;
-                    break;
-
-                case eControlAction.AsyncSelect:
-                    type = ActUIElement.eElementAction.AsyncSelect;
-                    break;
-
-                case eControlAction.Click:
-                    type = ActUIElement.eElementAction.Click;
-                    break;
-
-                case eControlAction.AsyncClick:
-                    type = ActUIElement.eElementAction.AsyncClick;
-                    break;
-
-                case eControlAction.WinClick:
-                    type = ActUIElement.eElementAction.WinClick;
-                    break;
-
-                case eControlAction.winDoubleClick:
-                    type = ActUIElement.eElementAction.winDoubleClick;
-                    break;
-
-                case eControlAction.MouseClick:
-                    type = ActUIElement.eElementAction.MouseClick;
-                    break;
-
-                case eControlAction.MousePressRelease:
-                    type = ActUIElement.eElementAction.MousePressRelease;
-                    break;
-
-                case eControlAction.IsVisible:
-                    type = ActUIElement.eElementAction.IsVisible;
-                    break;
-
-                case eControlAction.IsMandatory:
-                    type = ActUIElement.eElementAction.IsMandatory;
-                    break;
-
-                case eControlAction.IsEnabled:
-                    type = ActUIElement.eElementAction.IsEnabled;
-                    break;
-
-                case eControlAction.GetName:
-                    type = ActUIElement.eElementAction.GetName;
-                    break;
-
-                case eControlAction.AcceptDialog:
-                    type = ActUIElement.eElementAction.AcceptDialog;
-                    break;
-
-                case eControlAction.DismissDialog:
-                    type = ActUIElement.eElementAction.DismissDialog;
-                    break;
-
-                case eControlAction.ScrollUp:
-                    type = ActUIElement.eElementAction.ScrollUp;
-                    break;
-
-                case eControlAction.ScrollDown:
-                    type = ActUIElement.eElementAction.ScrollDown;
-                    break;
-
-                case eControlAction.ScrollLeft:
-                    type = ActUIElement.eElementAction.ScrollLeft;
-                    break;
-
-                case eControlAction.ScrollRight:
-                    type = ActUIElement.eElementAction.ScrollRight;
-                    break;
-
-                case eControlAction.SelectByIndex:
-                    type = ActUIElement.eElementAction.SelectByIndex;
-                    break;
-
-                case eControlAction.GetValueByIndex:
-                    type = ActUIElement.eElementAction.GetValueByIndex;
-                    break;
-
-                case eControlAction.GetItemCount:
-                    type = ActUIElement.eElementAction.GetItemCount;
-                    break;
-
-                case eControlAction.SendKeys:
-                    type = ActUIElement.eElementAction.SetText;
-                    break;
-
-                case eControlAction.SendKeyPressRelease:
-                    type = ActUIElement.eElementAction.SendKeyPressRelease;
-                    break;
-
-                case eControlAction.DoubleClick:
-                    type = ActUIElement.eElementAction.DoubleClick;
-                    break;
-
-                case eControlAction.SetFocus:
-                    type = ActUIElement.eElementAction.SetFocus;
-                    break;
-
-                case eControlAction.GetState:
-                    type = ActUIElement.eElementAction.GetControlProperty;
-                    break;
-
-                case eControlAction.GetDialogText:
-                    type = ActUIElement.eElementAction.GetDialogText;
-                    break;
-
-                case eControlAction.Type:
-                    type = ActUIElement.eElementAction.SendKeys;
-                    break;
-
-                case eControlAction.SelectDate:
-                    type = ActUIElement.eElementAction.SetDate;
-                    break;
-
-                case eControlAction.IsChecked:
-                    type = ActUIElement.eElementAction.IsChecked;
-                    break;
-
-                default:
-                    type = ActUIElement.eElementAction.Unknown;
-                    break;
-            }
+                eControlAction.SetValue => ActUIElement.eElementAction.SetValue,
+                eControlAction.GetValue => ActUIElement.eElementAction.GetValue,
+                eControlAction.Toggle => ActUIElement.eElementAction.Toggle,
+                eControlAction.Select => ActUIElement.eElementAction.Select,
+                eControlAction.AsyncSelect => ActUIElement.eElementAction.AsyncSelect,
+                eControlAction.Click => ActUIElement.eElementAction.Click,
+                eControlAction.AsyncClick => ActUIElement.eElementAction.AsyncClick,
+                eControlAction.WinClick => ActUIElement.eElementAction.WinClick,
+                eControlAction.winDoubleClick => ActUIElement.eElementAction.winDoubleClick,
+                eControlAction.MouseClick => ActUIElement.eElementAction.MouseClick,
+                eControlAction.MousePressRelease => ActUIElement.eElementAction.MousePressRelease,
+                eControlAction.IsVisible => ActUIElement.eElementAction.IsVisible,
+                eControlAction.IsMandatory => ActUIElement.eElementAction.IsMandatory,
+                eControlAction.IsEnabled => ActUIElement.eElementAction.IsEnabled,
+                eControlAction.GetName => ActUIElement.eElementAction.GetName,
+                eControlAction.AcceptDialog => ActUIElement.eElementAction.AcceptDialog,
+                eControlAction.DismissDialog => ActUIElement.eElementAction.DismissDialog,
+                eControlAction.ScrollUp => ActUIElement.eElementAction.ScrollUp,
+                eControlAction.ScrollDown => ActUIElement.eElementAction.ScrollDown,
+                eControlAction.ScrollLeft => ActUIElement.eElementAction.ScrollLeft,
+                eControlAction.ScrollRight => ActUIElement.eElementAction.ScrollRight,
+                eControlAction.SelectByIndex => ActUIElement.eElementAction.SelectByIndex,
+                eControlAction.GetValueByIndex => ActUIElement.eElementAction.GetValueByIndex,
+                eControlAction.GetItemCount => ActUIElement.eElementAction.GetItemCount,
+                eControlAction.SendKeys => ActUIElement.eElementAction.SetText,
+                eControlAction.SendKeyPressRelease => ActUIElement.eElementAction.SendKeyPressRelease,
+                eControlAction.DoubleClick => ActUIElement.eElementAction.DoubleClick,
+                eControlAction.SetFocus => ActUIElement.eElementAction.SetFocus,
+                eControlAction.GetState => ActUIElement.eElementAction.GetControlProperty,
+                eControlAction.GetDialogText => ActUIElement.eElementAction.GetDialogText,
+                eControlAction.Type => ActUIElement.eElementAction.SendKeys,
+                eControlAction.SelectDate => ActUIElement.eElementAction.SetDate,
+                eControlAction.IsChecked => ActUIElement.eElementAction.IsChecked,
+                _ => ActUIElement.eElementAction.Unknown,
+            };
             return type;
         }
 

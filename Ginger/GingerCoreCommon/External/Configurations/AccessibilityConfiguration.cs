@@ -16,14 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.Repository;
 
 namespace Ginger.Configurations
@@ -33,7 +26,7 @@ namespace Ginger.Configurations
         private string mName;
         [IsSerializedForLocalRepository]
         public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
-        
+
 
 
         ObservableList<AccessibilityRuleData> mExcludedRules;

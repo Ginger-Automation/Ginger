@@ -124,7 +124,7 @@ namespace Amdocs.Ginger.Repository
         public static bool IsValidYaml(string filename)
         {
             string extension = Path.GetExtension(filename).ToLower();
-            if(extension.Equals(".yaml") || extension.Equals(".yml"))
+            if (extension.Equals(".yaml") || extension.Equals(".yml"))
             {
                 return true;
             }
@@ -136,9 +136,9 @@ namespace Amdocs.Ginger.Repository
 
         public static string FileContentProvider(string filename)
         {
-            
+
             Uri url = new Uri(filename);
-            
+
 
             string orignaljson = "";
             if (url.IsFile)
@@ -155,20 +155,20 @@ namespace Amdocs.Ginger.Repository
 
         public static string ConvertYamlToJson(string originalYaml)
         {
-                using (var stringReader = new StringReader(originalYaml))
+            using (var stringReader = new StringReader(originalYaml))
+            {
+                var deserializer = new Deserializer();
+                var yamlObject = deserializer.Deserialize(stringReader);
+
+                using (var jsonStringWriter = new StringWriter())
                 {
-                    var deserializer = new Deserializer();
-                    var yamlObject = deserializer.Deserialize(stringReader);
+                    var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
+                    jsonSerializer.Serialize(jsonStringWriter, yamlObject);
+                    var resultJson = jsonStringWriter.ToString();
 
-                    using (var jsonStringWriter = new StringWriter())
-                    {
-                        var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
-                        jsonSerializer.Serialize(jsonStringWriter, yamlObject);
-                        var resultJson = jsonStringWriter.ToString();
-
-                        return resultJson;
-                    }
+                    return resultJson;
                 }
+            }
         }
     }
 }

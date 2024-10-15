@@ -19,7 +19,6 @@ limitations under the License.
 using GingerCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Ginger.Reports.HTMLReports
 {
@@ -51,7 +50,7 @@ namespace Ginger.Reports.HTMLReports
 
             foreach (BusinessFlowReport BFR in BizFlows)
             {
-                BusinessFlow BF = (BusinessFlow)BFR.GetBusinessFlow();
+                BusinessFlow BF = BFR.GetBusinessFlow();
                 string runColor = "#00000";
                 TableSize = TableSize + 16.7;
                 if (BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)

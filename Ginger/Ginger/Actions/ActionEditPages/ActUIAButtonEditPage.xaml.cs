@@ -36,7 +36,7 @@ namespace Ginger.Actions
     {
         public static Act currentAct;
         public ObservableCollection<string> lstParentWindows { get; set; }
-        public ObservableList<Act> olParentLocators = new ObservableList<Act>();
+        public ObservableList<Act> olParentLocators = [];
         public bool RootWindow { get; set; }
 
         public ActUIAButtonEditPage(GingerCore.Actions.ActUIAButton Act)
@@ -57,15 +57,17 @@ namespace Ginger.Actions
 
         public void SetGridView()
         {
-            List<string> lstLocateBy = new List<string>();
+            List<string> lstLocateBy = [];
             Type Etype = eLocateBy.ByID.GetType();
             foreach (object item in Enum.GetValues(Etype))
             {
                 lstLocateBy.Add(item.ToString());
             }
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView = []
+            };
 
             grdParentProps.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocator));
 

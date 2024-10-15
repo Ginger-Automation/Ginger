@@ -58,7 +58,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             ResetControls();
 
             mLabel = Regex.Replace(Regex.Replace(Regex.Replace(mActInputValue.Param, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2"), @"(\P{Ll}\p{Ll})", m => m.ToString().ToLower());
-            mLabel = char.ToUpper(mLabel[0]) + mLabel.Substring(1);
+            mLabel = char.ToUpper(mLabel[0]) + mLabel[1..];
             SetParamLayout();
             SetControlToInputValue();
             SetParamValidations();
@@ -253,7 +253,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         void SetListGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             // Create grid columns based on list item properties
@@ -270,7 +270,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
-            dynamic currentListItem = (dynamic)xListInputGrid.CurrentItem;
+            dynamic currentListItem = xListInputGrid.CurrentItem;
             //get name of relevant field
             int currentColIndex = xListInputGrid.Grid.CurrentColumn.DisplayIndex;
             object field = xListInputGrid.Grid.Columns[currentColIndex - 1].Header;

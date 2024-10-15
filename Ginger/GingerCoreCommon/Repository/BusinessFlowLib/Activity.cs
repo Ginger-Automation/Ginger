@@ -32,10 +32,9 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.FlowControlLib;
-using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
+using Microsoft.CodeAnalysis;
 
 //TODO: change add core
 namespace GingerCore
@@ -98,7 +97,7 @@ namespace GingerCore
 
         #region Activity-Error Handler Mapping
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> MappedErrorHandlers { get; set; } = new ObservableList<Guid>();
+        public ObservableList<Guid> MappedErrorHandlers { get; set; } = [];
 
         eHandlerMappingType mErrorHandlerMappingType;
 
@@ -117,7 +116,7 @@ namespace GingerCore
         }
         #endregion
 
-        public bool IsNotGherkinOptimizedActivity { get { return ActivitiesGroupID != "Optimized Activities" && ActivitiesGroupID != "Optimized Activities - Not in Use"; } }
+        public bool IsNotGherkinOptimizedActivity { get { return ActivitiesGroupID is not "Optimized Activities" and not "Optimized Activities - Not in Use"; } }
 
         private bool mAGSelected;
         public bool AGSelected { get { return mAGSelected; } set { if (mAGSelected != value) { mAGSelected = value; OnPropertyChanged(nameof(AGSelected)); } } }
@@ -518,17 +517,15 @@ namespace GingerCore
         /// <summary>
         /// Been used to identify if Acts were lazy loaded already or not
         /// </summary>
-        public bool ActsLazyLoad { get { return (mActs != null) ? mActs.LazyLoad : false; } }
+        public bool ActsLazyLoad { get { return (mActs != null) && mActs.LazyLoad; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<IAct> Acts
         {
             get
             {
-                if (mActs == null)
-                {
-                    mActs = new ObservableList<IAct>();
-                }
+                mActs ??= [];
+
                 if (mActs.LazyLoad)
                 {
                     mActs.LoadLazyInfo();
@@ -551,17 +548,15 @@ namespace GingerCore
         /// <summary>
         /// Been used to identify if Activity Variables were lazy loaded already or not
         /// </summary>
-        public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
+        public bool VariablesLazyLoad { get { return (mVariables != null) && mVariables.LazyLoad; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables
         {
             get
             {
-                if (mVariables == null)
-                {
-                    mVariables = new ObservableList<VariableBase>();
-                }
+                mVariables ??= [];
+
                 if (mVariables.LazyLoad)
                 {
                     mVariables.LoadLazyInfo();
@@ -579,7 +574,7 @@ namespace GingerCore
         }
 
 
-        private ObservableList<Consumer> mConsumerApplications = new();
+        private ObservableList<Consumer> mConsumerApplications = [];
         [IsSerializedForLocalRepository]
         public ObservableList<Consumer> ConsumerApplications
         {
@@ -598,7 +593,7 @@ namespace GingerCore
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = [];
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -758,7 +753,7 @@ namespace GingerCore
         public override string GetNameForFileName() { return ActivityName; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableDependency> VariablesDependencies { get; set; } = new ObservableList<VariableDependency>();
+        public ObservableList<VariableDependency> VariablesDependencies { get; set; } = [];
 
         /// <summary>
         /// Check if the Activity supposed to be executed according to it variables dependencies configurations
@@ -950,9 +945,9 @@ namespace GingerCore
             return copy;
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extradetails=null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extradetails = null)
         {
-            
+
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
             Activity newInstance = null;
@@ -966,7 +961,7 @@ namespace GingerCore
                 newInstance.Type = activityInstance.Type;
                 newInstance.Active = activityInstance.Active;
 
-                if(newInstance.Guid == this.Guid)
+                if (newInstance.Guid == this.Guid)
                 {
                     newInstance.DevelopmentTime = newInstance.DevelopmentTime.Add(this.DevelopmentTime);
                 }
@@ -986,12 +981,12 @@ namespace GingerCore
             else
             {
                 newInstance = CopySharedRepositoryActivity(this, originFromSharedRepository: false);
-                
+
                 if (this.Guid == activityInstance.Guid)
                 {
                     newInstance.DevelopmentTime = this.DevelopmentTime;
                 }
-                else 
+                else
                 {
                     newInstance.DevelopmentTime = activityInstance.DevelopmentTime;
                 }
@@ -1202,6 +1197,7 @@ namespace GingerCore
             }
         }
 
+
         public override bool IsLinkedItem
         {
             get
@@ -1217,7 +1213,7 @@ namespace GingerCore
         {
             get
             {
-                return eImageType.Activity;
+                return AIGenerated ? eImageType.AIActivity : eImageType.Activity;
             }
         }
 
@@ -1268,5 +1264,22 @@ namespace GingerCore
         }
 
         public bool IsAutoLearned { get; set; }
+
+        /// <summary>
+        /// Gets the summary of variables in the activity.
+        /// </summary>
+        public List<General.VariableMinimalRecord> VariablesSummary
+        {
+            get
+            {
+                List<General.VariableMinimalRecord> variableDetails = [];
+                foreach (VariableBase variable in Variables)
+                {
+                    variableDetails.Add(new General.VariableMinimalRecord(variable.Name, variable.GetInitialValue(), variable.Value));
+                }
+                return variableDetails;
+            }
+        }
+
     }
 }

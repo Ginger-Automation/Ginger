@@ -49,14 +49,14 @@ namespace Ginger.Run.RunSetActions
         private bool mToExportReportLink;
         [IsSerializedForLocalRepository]
         public bool ToExportReportLink
-        { 
+        {
             get
             {
                 return mToExportReportLink;
             }
             set
             {
-                if(mToExportReportLink != value)
+                if (mToExportReportLink != value)
                 {
                     mToExportReportLink = value;
                     OnPropertyChanged(nameof(ToExportReportLink));
@@ -121,7 +121,7 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        private ObservableList<ExternalItemFieldBase> mAlmFields = new ObservableList<ExternalItemFieldBase>();
+        private ObservableList<ExternalItemFieldBase> mAlmFields = [];
         [IsSerializedForLocalRepository]
         public ObservableList<ExternalItemFieldBase> AlmFields
         {
@@ -170,9 +170,7 @@ namespace Ginger.Run.RunSetActions
         }
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
-            List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
-            list.Add(RunSetActionBase.eRunAt.ExecutionEnd);
-            list.Add(RunSetActionBase.eRunAt.DuringExecution);
+            List<RunSetActionBase.eRunAt> list = [RunSetActionBase.eRunAt.ExecutionEnd, RunSetActionBase.eRunAt.DuringExecution];
             return list;
         }
 

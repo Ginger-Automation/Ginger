@@ -281,16 +281,17 @@ namespace GingerCore
 
         private void ProcessOutput(string txtOutput)
         {
-            Dictionary<string, object> dctOutput = new Dictionary<string, object>();
-
-            dctOutput.Add("Output", txtOutput);
+            Dictionary<string, object> dctOutput = new Dictionary<string, object>
+            {
+                { "Output", txtOutput }
+            };
             AddToOutputValues(dctOutput);
         }
 
         private void ExecuteImageOperation()
         {
             string resultText = string.Empty;
-            Dictionary<string, object> dctOutput = new Dictionary<string, object>();
+            Dictionary<string, object> dctOutput = [];
             switch (SelectedOcrImageOperation)
             {
                 case eActOcrImageOperations.ReadTextAfterLabel:
@@ -307,7 +308,7 @@ namespace GingerCore
                 case eActOcrImageOperations.ReadTextBetweenTwoStrings:
                     string err = string.Empty;
 
-                    resultText = GingerOcrOperations.ReadTextFromImageBetweenStrings(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(SecondString), ref err );
+                    resultText = GingerOcrOperations.ReadTextFromImageBetweenStrings(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(SecondString), ref err);
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -343,9 +344,9 @@ namespace GingerCore
             // If ValueExpression is used , Calculate returns the decrypted value , else it will return the encrypted value
             // Hence before decrpyting , checking if the string is encrypted is required otherwise an error is thrown.
             string password = ValueExpression.Calculate(OcrPassword);
-            string decryptedPassword =  (EncryptionHandler.IsStringEncrypted(password)) ?  EncryptionHandler.DecryptwithKey(password) : password;
+            string decryptedPassword = (EncryptionHandler.IsStringEncrypted(password)) ? EncryptionHandler.DecryptwithKey(password) : password;
             string resultText = string.Empty;
-            Dictionary<string, object> dctOutput = new Dictionary<string, object>();
+            Dictionary<string, object> dctOutput = [];
             switch (SelectedOcrPdfOperation)
             {
                 case eActOcrPdfOperations.ReadTextAfterLabel:
@@ -362,7 +363,7 @@ namespace GingerCore
                 case eActOcrPdfOperations.ReadTextBetweenTwoStrings:
                     string err = string.Empty;
                     resultText = GingerOcrOperations.ReadTextBetweenLabelsPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString),
-                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), (int)SelectedOcrDPIOperation,ref err,decryptedPassword);
+                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), (int)SelectedOcrDPIOperation, ref err, decryptedPassword);
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);

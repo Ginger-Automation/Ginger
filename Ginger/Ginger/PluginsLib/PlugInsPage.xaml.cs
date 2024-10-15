@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using System.Windows;
@@ -49,12 +48,15 @@ namespace Ginger.PlugInsWindows
             PlugInsGrid.ShowUpDown = Visibility.Collapsed;
             PlugInsGrid.SetTitleLightStyle = true;
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginId), Header = "Plugin ID", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.Folder), Header = "Folder", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginPackageVersion), Header = "Version", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(PluginPackage.PluginId), Header = "Plugin ID", WidthWeight = 300, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = nameof(PluginPackage.Folder), Header = "Folder", WidthWeight = 300, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = nameof(PluginPackage.PluginPackageVersion), Header = "Version", WidthWeight = 300, BindingMode = BindingMode.OneWay },
+            ]
+            };
             //view.GridColsView.Add(new GridColView() { Field = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
             //view.GridColsView.Add(new GridColView() { Field = "PlugInType", Header = "Type", WidthWeight = 300, BindingMode = BindingMode.OneWay }); 
 

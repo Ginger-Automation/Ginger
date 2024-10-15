@@ -81,7 +81,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public string GetLoggerDirectory(string logsFolder)
         {
-            if (!string.IsNullOrEmpty(logsFolder) &&  logsFolder.StartsWith(@"~"))
+            if (!string.IsNullOrEmpty(logsFolder) && logsFolder.StartsWith(@"~"))
             {
                 logsFolder = SetAbsolutePath(logsFolder);
             }
@@ -150,7 +150,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             folderName = folderName.TrimEnd().TrimEnd('-').TrimEnd();
             if (folderName.Length > 30)
             {
-                folderName = folderName.Substring(0, 30);
+                folderName = folderName[..30];
             }
             folderName = folderName.TrimEnd().TrimEnd('-').TrimEnd();
             return folderName;

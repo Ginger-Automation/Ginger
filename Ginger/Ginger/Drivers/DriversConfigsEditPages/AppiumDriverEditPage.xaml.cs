@@ -68,13 +68,13 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xProxyTextBox, TextBox.ToolTipProperty, proxy, nameof(DriverConfigParam.Description));
             xUseProxyChkBox.IsChecked = !string.IsNullOrEmpty(proxy.Value);
 
-            DriverConfigParam screenScaleFactorCorrectionX = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionX));
-            xScreenScaleFactorCorrectionXTextBox.Init(null, screenScaleFactorCorrectionX, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionXTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionX)), nameof(DriverConfigParam.Description));
-            
-            DriverConfigParam screenScaleFactorCorrectionY = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY));
-            xScreenScaleFactorCorrectionYTextBox.Init(null, screenScaleFactorCorrectionY, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionYTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY)), nameof(DriverConfigParam.Description));
+            //DriverConfigParam screenScaleFactorCorrectionX = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionX));
+            //xScreenScaleFactorCorrectionXTextBox.Init(null, screenScaleFactorCorrectionX, nameof(DriverConfigParam.Value));
+            //BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionXTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionX)), nameof(DriverConfigParam.Description));
+
+            //DriverConfigParam screenScaleFactorCorrectionY = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY));
+            //xScreenScaleFactorCorrectionYTextBox.Init(null, screenScaleFactorCorrectionY, nameof(DriverConfigParam.Value));
+            //BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionYTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY)), nameof(DriverConfigParam.Description));
 
             xLoadTimeoutTxtbox.Init(null, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));
@@ -88,7 +88,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             if (mAppiumCapabilities.MultiValues == null || mAppiumCapabilities.MultiValues.Count == 0)
             {
-                mAppiumCapabilities.MultiValues = new ObservableList<DriverConfigParam>();
+                mAppiumCapabilities.MultiValues = [];
                 AutoSetCapabilities(true);
             }
             SetCapabilitiesGridView();
@@ -96,43 +96,46 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void BindRadioButtons()
         {
-            mDeviceAutoScreenshotRefreshMode = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceAutoScreenshotRefreshMode), eAutoScreenshotRefreshMode.Live.ToString());
-            BindingHandler.ObjFieldBinding(xLiveRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.Live.ToString());
-            BindingHandler.ObjFieldBinding(xPostOperationRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.PostOperation.ToString());
-            BindingHandler.ObjFieldBinding(xDisabledRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.Disabled.ToString());
+            mDeviceAutoScreenshotRefreshMode = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceAutoScreenshotRefreshMode), nameof(eAutoScreenshotRefreshMode.Live));
+            BindingHandler.ObjFieldBinding(xLiveRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eAutoScreenshotRefreshMode.Live));
+            BindingHandler.ObjFieldBinding(xPostOperationRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eAutoScreenshotRefreshMode.PostOperation));
+            BindingHandler.ObjFieldBinding(xDisabledRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eAutoScreenshotRefreshMode.Disabled));
 
             mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
-            BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDevicePlatformType.Android.ToString());
-            BindingHandler.ObjFieldBinding(xIOSRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDevicePlatformType.iOS.ToString());
+            BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.Android));
+            BindingHandler.ObjFieldBinding(xIOSRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDevicePlatformType.iOS));
 
             if (IsUFTCapabilityExist())
             {
-                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource), eDeviceSource.MicroFoucsUFTMLab.ToString());
+                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource), nameof(eDeviceSource.MicroFoucsUFTMLab));
             }
             else
             {
                 mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource));
             }
-            BindingHandler.ObjFieldBinding(xLocalAppiumRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.LocalAppium.ToString());
-            BindingHandler.ObjFieldBinding(xUFTRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.MicroFoucsUFTMLab.ToString());
-            BindingHandler.ObjFieldBinding(xKobitonRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.Kobiton.ToString());
+            BindingHandler.ObjFieldBinding(xLocalAppiumRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDeviceSource.LocalAppium));
+            BindingHandler.ObjFieldBinding(xUFTRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDeviceSource.MicroFoucsUFTMLab));
+            BindingHandler.ObjFieldBinding(xKobitonRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eDeviceSource.Kobiton));
 
             mAppType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppType));
-            BindingHandler.ObjFieldBinding(xNativeHybRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAppType.NativeHybride.ToString());
-            BindingHandler.ObjFieldBinding(xWebRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAppType.Web.ToString());
+            BindingHandler.ObjFieldBinding(xNativeHybRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eAppType.NativeHybride));
+            BindingHandler.ObjFieldBinding(xWebRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: nameof(eAppType.Web));
         }
 
         private void SetCapabilitiesGridView()
         {
             xCapabilitiesGrid.SetTitleLightStyle = true;
 
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Parameter, Header = "Capability", WidthWeight = 20 });
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Value, WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ParamValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Description, BindingMode = BindingMode.OneWay, WidthWeight = 45 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = DriverConfigParam.Fields.Parameter, Header = "Capability", WidthWeight = 20 },
+                new GridColView() { Field = DriverConfigParam.Fields.Value, WidthWeight = 30 },
+                new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ParamValueExpressionButton"] },
+                new GridColView() { Field = DriverConfigParam.Fields.Description, BindingMode = BindingMode.OneWay, WidthWeight = 45 },
+            ]
+            };
 
             xCapabilitiesGrid.SetAllColumnsDefaultView(view);
             xCapabilitiesGrid.InitViewItems();
@@ -147,7 +150,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
             DriverConfigParam platformName = new DriverConfigParam() { Parameter = "platformName", Description = "Which mobile OS platform to use" };
             DriverConfigParam automationName = new DriverConfigParam() { Parameter = "appium:automationName", Description = "Which automation engine to use" };
-            if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
+            if (mDevicePlatformType.Value == nameof(eDevicePlatformType.Android))
             {
                 platformName.Value = "Android";
                 automationName.Value = "UiAutomator2";
@@ -163,17 +166,17 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetDeviceSourceCapabilities()
         {
-            if (mDeviceSource.Value == eDeviceSource.LocalAppium.ToString())
+            if (mDeviceSource.Value == nameof(eDeviceSource.LocalAppium))
             {
                 DeleteUFTMServerCapabilities();
                 DeleteUFTMSupportSimulationsCapabilities();
                 DeleteKobitonServerCapabilities();
 
             }
-            else if (mDeviceSource.Value == eDeviceSource.MicroFoucsUFTMLab.ToString() && !IsUFTCapabilityExist())
+            else if (mDeviceSource.Value == nameof(eDeviceSource.MicroFoucsUFTMLab) && !IsUFTCapabilityExist())
             {
-                DriverConfigParam uftAppiumVersion = new DriverConfigParam() { Parameter = "uftm:appiumVersion", Value ="v2.x", Description = "Appium server version to use in UFT '1.x' or '2.x'" };
-                DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description= "UFT Execution key Client Id" };
+                DriverConfigParam uftAppiumVersion = new DriverConfigParam() { Parameter = "uftm:appiumVersion", Value = "v2.x", Description = "Appium server version to use in UFT '1.x' or '2.x'" };
+                DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description = "UFT Execution key Client Id" };
                 DriverConfigParam uftClientSecret = new DriverConfigParam() { Parameter = "uftm:oauthClientSecret", Description = "UFT Execution key Client Password" };
                 DriverConfigParam uftTenantId = new DriverConfigParam() { Parameter = "uftm:tenantId", Value = "\"999999999\"", Description = "Default value (Need to change only when using UFT shared spaces))" };
 
@@ -189,10 +192,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     SetUFTMSupportSimulationsCapabilities();
                 }
             }
-            else if (mDeviceSource.Value == eDeviceSource.Kobiton.ToString())
-            {               
+            else if (mDeviceSource.Value == nameof(eDeviceSource.Kobiton) && !IsKobitonCapabilityExist())
+            {
                 DriverConfigParam kobitonUserName = new DriverConfigParam() { Parameter = "username", Description = "Kobiton account User Name" };
-                DriverConfigParam kobitonAccessKey = new DriverConfigParam() { Parameter = "accessKey", Description = "Kobitn account Access Key" };
+                DriverConfigParam kobitonAccessKey = new DriverConfigParam() { Parameter = "accessKey", Description = "Kobiton account Access Key" };
                 DriverConfigParam KobitonSessionName = new DriverConfigParam() { Parameter = "sessionName", Value = "Mobile testing via Ginger by Amdocs", Description = "Testing session name" };
                 DriverConfigParam kobitonDeviceGroup = new DriverConfigParam() { Parameter = "deviceGroup", Value = "KOBITON", Description = "The device group within the Kobiton test session metadata" };
 
@@ -219,9 +222,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "appium:bundleId", Description = "Bundle ID of the application under test", Value = "com.apple.Preferences" };
             DriverConfigParam browserName = new DriverConfigParam() { Parameter = "browserName", Description = "Name of mobile web browser to automate" };
             DriverConfigParam defualtURL = new DriverConfigParam() { Parameter = "ginger:defaultURL", Description = "Ginger Capability | Default URL to load on browser connection", Value = "https://ginger.amdocs.com/" };
-            if (mAppType.Value == eAppType.NativeHybride.ToString())
+            if (mAppType.Value == nameof(eAppType.NativeHybride))
             {
-                if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
+                if (mDevicePlatformType.Value == nameof(eDevicePlatformType.Android))
                 {
                     if (!init)
                     {
@@ -247,7 +250,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
             else
             {
-                if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
+                if (mDevicePlatformType.Value == nameof(eDevicePlatformType.Android))
                 {
                     browserName.Value = "Chrome";
                 }
@@ -267,7 +270,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         {
             DriverConfigParam deviceName = new DriverConfigParam() { Parameter = "appium:deviceName", Value = string.Empty };
             DriverConfigParam udid = new DriverConfigParam() { Parameter = "appium:udid", Description = "Unique device identifier of the connected physical device", Value = string.Empty };
-            if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
+            if (mDevicePlatformType.Value == nameof(eDevicePlatformType.Android))
             {
                 deviceName.Description = "The kind of mobile device to use, for example 'Galaxy S21'";
             }
@@ -294,7 +297,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 SetCurrentCapabilityValue(noReset);
             }
             AddOrUpdateCapability(newCommandTimeout);
-            if (mAppType.Value == eAppType.NativeHybride.ToString())
+            if (mAppType.Value == nameof(eAppType.NativeHybride))
             {
                 AddOrUpdateCapability(noReset);
             }
@@ -328,6 +331,19 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
         }
 
+        private bool IsKobitonCapabilityExist()
+        {
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues?.FirstOrDefault(x => x.Parameter == "username" && x.Description == "Kobiton account User Name");
+            if (existingCap != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void SetCurrentCapabilityValue(DriverConfigParam capability)
         {
             DriverConfigParam existingCap = FindExistingCapability(capability.Parameter);
@@ -343,7 +359,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             if (existingCap != null)
             {
                 mAppiumCapabilities.MultiValues.Remove(existingCap);
-            }            
+            }
         }
 
         private DriverConfigParam FindExistingCapability(string capabilityName)
@@ -483,7 +499,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             DeleteCapabilityIfExist("uftm:appiumVersion");
             DeleteCapabilityIfExist("uftm:oauthClientId");
             DeleteCapabilityIfExist("uftm:oauthClientSecret");
-            DeleteCapabilityIfExist("uftm:tenantId");            
+            DeleteCapabilityIfExist("uftm:tenantId");
         }
 
         private void DeleteKobitonServerCapabilities()

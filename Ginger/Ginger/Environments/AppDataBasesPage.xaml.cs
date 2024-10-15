@@ -49,14 +49,17 @@ namespace Ginger.Environments
 
         private void SetDBListView()
         {
-            
-            DatabaseListView = new ();
-            DatabaseListView.ListTitleVisibility = Visibility.Collapsed;
-            DatabaseListView.ListImageVisibility = Visibility.Collapsed;
+
+            DatabaseListView = new()
+            {
+                ListTitleVisibility = Visibility.Collapsed,
+                ListImageVisibility = Visibility.Collapsed
+            };
 
             dbListViewHelper.DatabaseListItemEvent += ShowEditPageEvent;
             DatabaseListView.SetDefaultListDataTemplate(dbListViewHelper);
             DatabaseListView.ListSelectionMode = SelectionMode.Extended;
+
 
             DatabaseListView.List.MouseDoubleClick += DBListView_MouseDoubleClick;
             DatabaseListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
@@ -67,7 +70,7 @@ namespace Ginger.Environments
         {
             if (EventArgs.EventType.Equals(ListItemEventArgs.eEventType.ShowEditPage))
             {
-                    ShowOrHideEditPage((Database)EventArgs.EventObject);
+                ShowOrHideEditPage((Database)EventArgs.EventObject);
             }
         }
 
@@ -82,7 +85,7 @@ namespace Ginger.Environments
 
         private void ShowOrHideEditPage(Database? database)
         {
-            if(database != null)
+            if (database != null)
             {
                 xBackToListGrid.Visibility = Visibility.Visible;
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, database, nameof(Database.Name));
@@ -102,7 +105,7 @@ namespace Ginger.Environments
             {
                 db.PropertyChanged -= this.dbListViewHelper.DbPropertyChanged;
                 db.PropertyChanged += this.dbListViewHelper.DbPropertyChanged;
-                DatabaseOperations databaseOperations = new (db);
+                DatabaseOperations databaseOperations = new(db);
                 db.DatabaseOperations = databaseOperations;
             }
         }

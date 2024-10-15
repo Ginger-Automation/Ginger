@@ -110,7 +110,7 @@ namespace Ginger.Reports
         {
             try
             {
-                mHTMLReportConfiguration.HTMLReportConfigurationMaximalFolderSize = (long)Convert.ToInt32(SizeTextBox.Text.ToString());
+                mHTMLReportConfiguration.HTMLReportConfigurationMaximalFolderSize = Convert.ToInt32(SizeTextBox.Text.ToString());
             }
             catch
             {

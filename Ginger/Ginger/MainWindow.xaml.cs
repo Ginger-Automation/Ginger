@@ -19,10 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.SourceControlLib;
-using GingerCoreNET.GenAIServices;
 using Amdocs.Ginger.CoreNET.GeneralLib;
-using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -42,14 +39,11 @@ using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.ALM;
-using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
-using GingerWPF.WizardLib;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -65,9 +59,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
-using System.Windows.Interop;
 using System.Windows.Threading;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger
 {
@@ -80,7 +73,7 @@ namespace Ginger
 
         private bool mAskUserIfToClose = true;
 
-        ObservableList<HelpLayoutArgs> mHelpLayoutList = new ObservableList<HelpLayoutArgs>();
+        ObservableList<HelpLayoutArgs> mHelpLayoutList = [];
         private bool mRestartApplication = false;
         private bool mLaunchInAdminMode = false;
         public MainWindow()
@@ -135,7 +128,7 @@ namespace Ginger
 
 
         }
-        
+
         private void XVersionAndNewsIcon_MouseDown(object sender, MouseButtonEventArgs e)
         {
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
@@ -212,13 +205,13 @@ namespace Ginger
                 }
                 else
                 {
-                    xAdminModeIcon.Foreground = (SolidColorBrush)FindResource("$HighlightColor_Yellow"); 
+                    xAdminModeIcon.Foreground = (SolidColorBrush)FindResource("$HighlightColor_Yellow");
                 }
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
                 WorkSpace.Instance.UserProfile.PropertyChanged += AskLisaPropertyChanged;
 
-                }
+            }
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.ApplicationInitError, ex.Message);
@@ -232,7 +225,7 @@ namespace Ginger
                     AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
                 }
             }
-            
+
         }
 
 
@@ -268,7 +261,7 @@ namespace Ginger
 
         private void XChatbotWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if(xChatbotWindow.Visibility == Visibility.Collapsed && xChatbotIcon.Visibility == Visibility.Collapsed)
+            if (xChatbotWindow.Visibility == Visibility.Collapsed && xChatbotIcon.Visibility == Visibility.Collapsed)
             {
                 xChatbotIcon.Visibility = Visibility.Visible;
             }
@@ -367,7 +360,7 @@ namespace Ginger
                     WorkSpace.Instance.SolutionRepository.ModifiedFiles.CollectionChanged += ModifiedFilesChanged;
                     EnableChatBot();
                     WorkSpace.Instance.Solution.AskLisaConfiguration.PropertyChanged += AskLisaPropertyChanged;
-                    
+
                 }
             }
 
@@ -608,7 +601,7 @@ namespace Ginger
             }
 
             SelectedSolutionTab = eSolutionTabType.None;
-            if (!(xMainWindowFrame.Content is LoadingPage))
+            if (xMainWindowFrame.Content is not LoadingPage)
             {
                 xMainWindowFrame.Visibility = Visibility.Collapsed;
             }
@@ -714,7 +707,7 @@ namespace Ginger
                 {
                     xChatbotIcon.Visibility = Visibility.Visible;
                 }
-                else 
+                else
                 {
                     xChatbotIcon.Visibility = Visibility.Collapsed;
                 }
@@ -729,7 +722,7 @@ namespace Ginger
 
         private void UpdateSourceControlIndicators()
         {
-            if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl !=null)
+            if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl != null)
             {
                 Task.Run(() =>
                 {
@@ -840,11 +833,15 @@ namespace Ginger
             //show solution folder files
             if (WorkSpace.Instance.Solution != null)
             {
-                ProcessStartInfo pi = new ProcessStartInfo(WorkSpace.Instance.Solution.Folder);
-                pi.UseShellExecute = true;
+                ProcessStartInfo pi = new ProcessStartInfo(WorkSpace.Instance.Solution.Folder)
+                {
+                    UseShellExecute = true
+                };
 
-                Process proc = new Process();
-                proc.StartInfo = pi;
+                Process proc = new Process
+                {
+                    StartInfo = pi
+                };
 
                 proc.Start();
             }
@@ -914,7 +911,7 @@ namespace Ginger
             List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
             ResolveConflictWindow resolveConflictWindow = new(conflictPaths);
             resolveConflictWindow.ShowAsWindow();
-            if(resolveConflictWindow.IsResolved)
+            if (resolveConflictWindow.IsResolved)
             {
                 HideConflictIndicators();
             }
@@ -1193,7 +1190,7 @@ namespace Ginger
             string OriginalUserName = Convert.ToString(xUserNameLbl.Content);
             if (OriginalUserName.Length > 10)
             {
-                displayName = OriginalUserName.Substring(0, 7) + "...";
+                displayName = OriginalUserName[..7] + "...";
             }
             else
             {
@@ -1243,10 +1240,12 @@ namespace Ginger
 
         private void AddSubMenuItem(MenuItem parentMenuItem, string itemHeader, object itemTag, RoutedEventHandler clickEventHandler, int insertIndex, string toolTip = "", eImageType iconType = eImageType.Null)
         {
-            MenuItem subMenuItem = new MenuItem();
-            subMenuItem.Style = (Style)TryFindResource("$MenuItemStyle_ButtonSubMenuItem");
-            subMenuItem.Header = itemHeader;
-            subMenuItem.Tag = itemTag;
+            MenuItem subMenuItem = new MenuItem
+            {
+                Style = (Style)TryFindResource("$MenuItemStyle_ButtonSubMenuItem"),
+                Header = itemHeader,
+                Tag = itemTag
+            };
             subMenuItem.Click += clickEventHandler;
             if (!string.IsNullOrEmpty(toolTip))
             {
@@ -1255,11 +1254,13 @@ namespace Ginger
             if (iconType != eImageType.Null)
             {
                 //< usercontrols:ImageMakerControl SetAsFontImageWithSize = "16" ImageType = "Edit" />
-                ImageMakerControl imageMaker = new ImageMakerControl();
-                imageMaker.SetAsFontImageWithSize = 16;
-                imageMaker.ImageType = iconType;
+                ImageMakerControl imageMaker = new ImageMakerControl
+                {
+                    SetAsFontImageWithSize = 16,
+                    ImageType = iconType
+                };
                 subMenuItem.Icon = imageMaker;
-                imageMaker.Margin = new Thickness(5,0,-5,0);
+                imageMaker.Margin = new Thickness(5, 0, -5, 0);
             }
             parentMenuItem.Items.Insert(insertIndex, subMenuItem);
         }
@@ -1748,12 +1749,12 @@ namespace Ginger
 
         private void ChatbotIcon_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(xChatbotWindow.Visibility == Visibility.Collapsed)
+            if (xChatbotWindow.Visibility == Visibility.Collapsed)
             {
                 xChatbotWindow.Visibility = Visibility.Visible;
                 xChatbotIcon.Visibility = Visibility.Collapsed;
             }
-            
+
         }
 
         private void xChatbotIcon_MouseRightButtonDown(object sender, MouseButtonEventArgs e)

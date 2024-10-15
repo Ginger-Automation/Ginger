@@ -78,14 +78,16 @@ namespace GingerCoreNETUnitTest.LiteDb
 
         private List<GingerActvityGroup> GetGingerActvityGroup()
         {
-            List<GingerActvityGroup> data = new List<GingerActvityGroup>();
+            List<GingerActvityGroup> data = [];
             for (var a = 0; a < 5; a++)
             {
-                GingerActvityGroup item = new GingerActvityGroup();
-                item.Name = ($"name.{a.ToString()}");
-                item.Description = ($"description.{a.ToString()}");
-                item.GUID = Guid.NewGuid().ToString();
-                item.RunStatus = "run";
+                GingerActvityGroup item = new GingerActvityGroup
+                {
+                    Name = ($"name.{a}"),
+                    Description = ($"description.{a}"),
+                    GUID = Guid.NewGuid().ToString(),
+                    RunStatus = "run"
+                };
                 data.Add(item);
             }
             return data;
@@ -93,11 +95,11 @@ namespace GingerCoreNETUnitTest.LiteDb
 
         private List<GingerBusinessFlow> GetGingerBf(List<GingerActvityGroup> acGrpData)
         {
-            return new List<GingerBusinessFlow>()
-            {
+            return
+            [
               new  GingerBusinessFlow{ Description = "bf desc1", Name = "bf name1", GUID = Guid.NewGuid().ToString(),
                 RunStatus = "failed", ActivitiesGroupColl = acGrpData }
-            };
+            ];
 
         }
 

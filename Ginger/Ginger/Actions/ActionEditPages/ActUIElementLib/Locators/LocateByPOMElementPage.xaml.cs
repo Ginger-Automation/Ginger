@@ -27,7 +27,6 @@ using Ginger.Run;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -139,7 +138,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                             xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
 
                             Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                            ElementInfo selectedPOMElement = (ElementInfo)SelectedPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
+                            ElementInfo selectedPOMElement = SelectedPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
                             if (selectedPOMElement == null)
                             {
                                 Reporter.ToUser(eUserMsgKey.POMElementSearchByGUIDFailed);
@@ -172,11 +171,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private ObservableList<ElementInfo> GenerateElementsDataSourseList()
         {
-            ObservableList<ElementInfo> tempList = new ObservableList<ElementInfo>();
-            foreach (ElementInfo EI in SelectedPOM.MappedUIElements)
-            {
-                tempList.Add(EI);
-            }
+            ObservableList<ElementInfo> tempList = [.. SelectedPOM.MappedUIElements];
             return tempList;
         }
 
@@ -322,13 +317,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void SetControlsGridView()
         {
             xPOMElementsGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnumDescription), Header = "Type", WidthWeight = 40, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 40, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
+                new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true },
+                new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true },
+                new GridColView() { Field = nameof(ElementInfo.ElementTypeEnumDescription), Header = "Type", WidthWeight = 40, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true },
+                new GridColView() { Field = nameof(ElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 40, ReadOnly = true, BindingMode = BindingMode.OneWay },
+            ]
+            };
             xPOMElementsGrid.SetAllColumnsDefaultView(view);
             xPOMElementsGrid.InitViewItems();
         }
@@ -336,13 +335,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
             ApplicationAgent currentAgent = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.FirstOrDefault(z => z.AppName == mTargetApplication);
-            if ((currentAgent == null) || !(((AgentOperations)((Agent)currentAgent.Agent).AgentOperations).Driver is IWindowExplorer) || (((AgentOperations)((Agent)currentAgent.Agent).AgentOperations).Status != Agent.eStatus.Running))
+            if ((currentAgent == null) || ((AgentOperations)currentAgent.Agent.AgentOperations).Driver is not IWindowExplorer || (((AgentOperations)currentAgent.Agent.AgentOperations).Status != Agent.eStatus.Running))
             {
                 Reporter.ToUser(eUserMsgKey.NoRelevantAgentInRunningStatus);
             }
             else
             {
-                IWindowExplorer windowExplorer = ((IWindowExplorer)((AgentOperations)((Agent)currentAgent.Agent).AgentOperations).Driver);
+                IWindowExplorer windowExplorer = ((IWindowExplorer)((AgentOperations)currentAgent.Agent.AgentOperations).Driver);
                 windowExplorer.HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true, SelectedPOM.MappedUIElements);
             }
         }

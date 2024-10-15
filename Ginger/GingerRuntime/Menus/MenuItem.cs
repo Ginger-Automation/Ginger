@@ -38,6 +38,6 @@ namespace Amdocs.Ginger.GingerRuntime
             Active = active;
         }
 
-        public List<MenuItem> SubItems = new List<MenuItem>();
+        public List<MenuItem> SubItems = [];
     }
 }

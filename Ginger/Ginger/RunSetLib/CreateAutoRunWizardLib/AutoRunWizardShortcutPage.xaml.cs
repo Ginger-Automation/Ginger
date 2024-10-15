@@ -178,7 +178,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         private void xCopyBtn_Click(object sender, RoutedEventArgs e)
         {
-             GingerCore.General.SetClipboardText(xShortcutContentTextBox.Text.ToString());
+            GingerCore.General.SetClipboardText(xShortcutContentTextBox.Text.ToString());
         }
     }
 }

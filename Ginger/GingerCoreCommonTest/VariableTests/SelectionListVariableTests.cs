@@ -112,7 +112,7 @@ namespace GingerCoreCommonTest.VariableTests
             OptionalValue newVal2 = new OptionalValue("Two");
             variableSelectionList.OptionalValuesList.Add(newVal2);
 
-            List<string> list = new List<string>();
+            List<string> list = [];
             foreach (OptionalValue val in variableSelectionList.OptionalValuesList)
             {
                 list.Add(val.Value);
@@ -134,7 +134,7 @@ namespace GingerCoreCommonTest.VariableTests
             //Arrange
             VariableSelectionList variableSelectionList = new VariableSelectionList();
 
-            List<string> list = new List<string>();
+            List<string> list = [];
             foreach (OptionalValue val in variableSelectionList.OptionalValuesList)
             {
                 list.Add(val.Value);
@@ -545,7 +545,7 @@ namespace GingerCoreCommonTest.VariableTests
             OptionalValue newVal2 = new OptionalValue("Two");
             variableSelectionList.OptionalValuesList.Add(newVal2);
 
-            Dictionary<string, string> extraParamsDict = new Dictionary<string, string>();
+            Dictionary<string, string> extraParamsDict = [];
             extraParamsDict.TryAdd("GetLength", "True");
             //Todo Add no loop ticker
 
@@ -576,7 +576,7 @@ namespace GingerCoreCommonTest.VariableTests
             string errorMsg = string.Empty;
             variableSelectionList.Value = variableSelectionList.OptionalValuesList[0].Value;
 
-            Dictionary<string, string> extraParamsDict = new Dictionary<string, string>();
+            Dictionary<string, string> extraParamsDict = [];
             extraParamsDict.TryAdd("GetLength", "False");
             //Todo Add no loop ticker
 

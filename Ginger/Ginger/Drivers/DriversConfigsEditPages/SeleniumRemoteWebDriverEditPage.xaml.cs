@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using GingerCore;
 using GingerCore.Drivers;
 using System;
@@ -35,14 +36,14 @@ namespace Ginger.Drivers.DriversConfigsEditPages
     /// </summary>
     public partial class SeleniumRemoteWebDriverEditPage : Page
     {
-        
+
         public SeleniumRemoteWebDriverEditPage(GingerCore.Agent mAgent)
         {
             InitializeComponent();
 
             if (mAgent.DriverConfiguration == null)
             {
-                mAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+                mAgent.DriverConfiguration = [];
             }
 
             DriverConfigParam GridHostDCP = mAgent.GetOrCreateParam(SeleniumDriver.RemoteGridHubParam, "http://127.0.0.1:4444");
@@ -61,12 +62,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         //Loading Browser Combobox Data
         private void BrowserComboBox_Loaded(object sender, RoutedEventArgs e)
         {
-            List<string> data = new List<string>();
-            data.Add("chrome");
-            data.Add("firefox");
-            data.Add("internet explorer");
-            data.Add("safari");
-            data.Add("MicrosoftEdge");
+            List<string> data = ["chrome", "firefox", "internet explorer", "safari", "MicrosoftEdge"];
 
             var comboBox = sender as ComboBox;
             comboBox.ItemsSource = data;
@@ -75,11 +71,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         //Loading Platform Combobox Data
         private void PlatformComboBox_Loaded(object sender, RoutedEventArgs e)
         {
-            List<string> data = new List<string>();
-            data.Add("WINDOWS");
-            data.Add("XP");
-            data.Add("VISTA");
-            data.Add("MAC");
+            List<string> data = ["WINDOWS", "XP", "VISTA", "MAC"];
 
             var comboBox = sender as ComboBox;
             comboBox.ItemsSource = data;
@@ -117,7 +109,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             string hostPort = GridHostTextBox.Text;
             int hostPortLeanth = hostPort.Length;
-            string port = hostPort.Substring(hostPortLeanth - 4);
+            string port = hostPort[(hostPortLeanth - 4)..];
 
             //Creating the bat file
             if (!File.Exists(batHubFileName))
@@ -196,11 +188,14 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             string fireFoxDriverFile = "geckodriver.exe";
             string IEDriverFile = "IEDriverServer.exe";
             string EdgeDriverFile = "msedgedriver.exe";
-            SeleniumDriver seleniumDriver = new SeleniumDriver();
+            SeleniumDriver seleniumDriver = new SeleniumDriver
+            {
+                BrowserType = WebBrowserType.Chrome
+            };
             string chromeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Chrome);
             string chromeDestFile = System.IO.Path.Combine(targetPath, chromeDriverFile);
 
-            if(!System.IO.File.Exists(chromeDestFile))
+            if (!System.IO.File.Exists(chromeDestFile))
             {
                 if (System.IO.File.Exists(chromeSourceFile))
                 {
@@ -210,16 +205,16 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "chrome Driver not found");
                 }
-                
-            }
 
+            }
+            seleniumDriver.BrowserType = WebBrowserType.FireFox;
             string fireFoxSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.FireFox);
             string fireFoxDestFile = System.IO.Path.Combine(targetPath, fireFoxDriverFile);
 
-            if(!System.IO.File.Exists(fireFoxDestFile))
+            if (!System.IO.File.Exists(fireFoxDestFile))
             {
-                
-                if(System.IO.File.Exists(fireFoxSourceFile))
+
+                if (System.IO.File.Exists(fireFoxSourceFile))
                 {
                     System.IO.File.Copy(fireFoxSourceFile, fireFoxDestFile);
                 }
@@ -228,13 +223,13 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     Reporter.ToLog(eLogLevel.DEBUG, "firefox Driver not found");
                 }
             }
-
+            seleniumDriver.BrowserType = WebBrowserType.InternetExplorer;
             string IESourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.IE);
             string IEDestFile = System.IO.Path.Combine(targetPath, IEDriverFile);
 
-            if(!System.IO.File.Exists(IEDestFile))
+            if (!System.IO.File.Exists(IEDestFile))
             {
-                if(System.IO.File.Exists(IESourceFile))
+                if (System.IO.File.Exists(IESourceFile))
                 {
                     System.IO.File.Copy(IESourceFile, IEDestFile);
                 }
@@ -243,14 +238,14 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     Reporter.ToLog(eLogLevel.DEBUG, "IE Driver not found");
                 }
             }
-
+            seleniumDriver.BrowserType = WebBrowserType.Edge;
             string edgeSourceFile = seleniumDriver.GetDriverPath(SeleniumDriver.eBrowserType.Edge);
             string edgeDestFile = System.IO.Path.Combine(targetPath, EdgeDriverFile);
 
-            if(!System.IO.File.Exists(edgeDestFile))
+            if (!System.IO.File.Exists(edgeDestFile))
             {
-                
-                if(System.IO.File.Exists(edgeSourceFile))
+
+                if (System.IO.File.Exists(edgeSourceFile))
                 {
                     System.IO.File.Copy(edgeSourceFile, edgeDestFile);
                 }
@@ -265,7 +260,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             string hostIpAndPort = GridHostTextBox.Text;
             int hostPortLeanth = hostIpAndPort.Length;
-            string port = hostIpAndPort.Substring(hostPortLeanth - 4);
+            string port = hostIpAndPort[(hostPortLeanth - 4)..];
 
             //Getting the IP from the field
             string localp = GetIP();
@@ -350,7 +345,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
                 IPAddress[] addr = ipEntry.AddressList;
 
-                return addr[addr.Length - 1].ToString();
+                return addr[^1].ToString();
             }
             else
             {

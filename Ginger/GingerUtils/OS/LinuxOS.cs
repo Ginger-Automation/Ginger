@@ -67,7 +67,7 @@ namespace Amdocs.Ginger.Common.OS
                 .GetTypeInfo()
                 .GetField("s_modules", BindingFlags.Static | BindingFlags.NonPublic)
                 .GetValue(smtpAuthenticationManager);
-            List<object> removeModules = new List<object>();
+            List<object> removeModules = [];
             for (int i = 0; i < modules.Count; i++)
             {
                 var fullName = modules[i].GetType().FullName;

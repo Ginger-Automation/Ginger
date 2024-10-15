@@ -73,12 +73,14 @@ namespace Ginger.WindowExplorer.Java
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             // Will be overridden in derived class
-            ObservableList<Act> list = new ObservableList<Act>();
-            ActUIElement act = new ActUIElement();
-            act.AddNewReturnParams = true;
-            act.Description = "Get Control Property for " + Name;
-            act.ElementType = eElementType.Unknown;
-            act.ElementAction = ActUIElement.eElementAction.GetControlProperty;
+            ObservableList<Act> list = [];
+            ActUIElement act = new ActUIElement
+            {
+                AddNewReturnParams = true,
+                Description = "Get Control Property for " + Name,
+                ElementType = eElementType.Unknown,
+                ElementAction = ActUIElement.eElementAction.GetControlProperty
+            };
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, ActUIElement.eElementProperty.Value.ToString());
             list.Add(act);
             return list;
@@ -102,7 +104,7 @@ namespace Ginger.WindowExplorer.Java
 
             if (Response.Name == "ControlProperties")
             {
-                ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+                ObservableList<ControlProperty> list = [];
                 List<PayLoad> props = Response.GetListPayLoad();
                 foreach (PayLoad prop in props)
                 {

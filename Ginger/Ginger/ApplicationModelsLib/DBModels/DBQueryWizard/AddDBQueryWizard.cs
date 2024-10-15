@@ -30,8 +30,10 @@ namespace GingerWPF.ApplicationModels.DBModels.DBQueryWizard
         public AddDBQueryWizard(string Folder)
         {
             this.DBMFolder = Folder;
-            mApplicationDBQueryModel = new ApplicationDBQueryModel();
-            mApplicationDBQueryModel.ContainingFolder = Folder;
+            mApplicationDBQueryModel = new ApplicationDBQueryModel
+            {
+                ContainingFolder = Folder
+            };
             AddPage(Name: "Add Query Intro", Title: "Add query Intro", SubTitle: "Choose ...", Page: new AddDBQueryIntroWizardPage());
         }
 

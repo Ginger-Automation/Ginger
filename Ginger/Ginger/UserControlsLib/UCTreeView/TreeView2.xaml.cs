@@ -81,11 +81,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             //TODO: Enable sticky tool like swithc to Grid
 
-            Button tool = new Button();
-            tool.Visibility = toolVisibility;
-            tool.ToolTip = toolTip;
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri(@"/Images/" + toolImage, UriKind.RelativeOrAbsolute));
+            Button tool = new Button
+            {
+                Visibility = toolVisibility,
+                ToolTip = toolTip
+            };
+            Image image = new Image
+            {
+                Source = new BitmapImage(new Uri(@"/Images/" + toolImage, UriKind.RelativeOrAbsolute))
+            };
             tool.Content = image;
             tool.Click += clickHandler;
             tool.CommandParameter = CommandParameter;
@@ -100,20 +104,24 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
         public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, object CommandParameter = null)
         {
-            ImageMakerControl image = new ImageMakerControl();
-            image.Width = 16;
-            image.Height = 16;
-            image.ImageType = imageType;
+            ImageMakerControl image = new ImageMakerControl
+            {
+                Width = 16,
+                Height = 16,
+                ImageType = imageType
+            };
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility, CommandParameter);
         }
 
         private void AddToolbarTool(object userControl, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, object CommandParameter = null)
         {
-            Button tool = new Button();
-            tool.Visibility = toolVisibility;
-            tool.ToolTip = toolTip;
+            Button tool = new Button
+            {
+                Visibility = toolVisibility,
+                ToolTip = toolTip,
 
-            tool.Content = userControl;
+                Content = userControl
+            };
             tool.Click += clickHandler;
             tool.CommandParameter = CommandParameter;
 
@@ -153,8 +161,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         public void SetBtnImage(Button btn, string imageName)
         {
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
+            Image image = new Image
+            {
+                Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute))
+            };
             btn.Content = image;
         }
 

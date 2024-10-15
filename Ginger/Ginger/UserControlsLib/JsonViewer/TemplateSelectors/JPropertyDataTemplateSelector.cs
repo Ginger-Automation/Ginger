@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Newtonsoft.Json.Linq;
 
 namespace JsonViewerDemo.TemplateSelectors
 {
@@ -31,27 +31,22 @@ namespace JsonViewerDemo.TemplateSelectors
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if(item == null)
+            if (item == null)
                 return null;
 
-            var frameworkElement = container as FrameworkElement;
-            if(frameworkElement == null)
+            if (container is not FrameworkElement frameworkElement)
                 return null;
 
             var type = item.GetType();
             if (type == typeof(JProperty))
             {
                 var jProperty = item as JProperty;
-                switch (jProperty.Value.Type)
+                return jProperty.Value.Type switch
                 {
-                    case JTokenType.Object:
-                        return frameworkElement.FindResource("ObjectPropertyTemplate") as DataTemplate;
-                    case JTokenType.Array:
-                        return frameworkElement.FindResource("ArrayPropertyTemplate") as DataTemplate;
-                    default:
-                        return frameworkElement.FindResource("PrimitivePropertyTemplate") as DataTemplate;
-
-                }
+                    JTokenType.Object => frameworkElement.FindResource("ObjectPropertyTemplate") as DataTemplate,
+                    JTokenType.Array => frameworkElement.FindResource("ArrayPropertyTemplate") as DataTemplate,
+                    _ => frameworkElement.FindResource("PrimitivePropertyTemplate") as DataTemplate,
+                };
             }
 
             var key = new DataTemplateKey(type);

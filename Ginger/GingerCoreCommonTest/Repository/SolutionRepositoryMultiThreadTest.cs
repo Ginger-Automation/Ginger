@@ -124,8 +124,10 @@ namespace GingerCoreCommonTest.Repository
             // Add another 100 big item so it will take time loading and we can check multi thread access while load in progress
             for (int i = 0; i < 100; i++)
             {
-                MyRepositoryItem bigItem = new MyRepositoryItem("Big Item #" + i);
-                bigItem.BigStringHolderSlowSet = new string('a', 150000);
+                MyRepositoryItem bigItem = new MyRepositoryItem("Big Item #" + i)
+                {
+                    BigStringHolderSlowSet = new string('a', 150000)
+                };
                 bigFolder.AddRepositoryItem(bigItem);
             }
 

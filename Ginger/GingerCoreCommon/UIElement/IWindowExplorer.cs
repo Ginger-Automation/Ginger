@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.Common.UIElement
     {
         List<AppWindow> GetAppWindows();
         void SwitchWindow(string Title);
-        void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false,IList<ElementInfo> MappedUIElements = null);
+        void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null);
         void UnHighLightElements();
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();

@@ -24,10 +24,10 @@ namespace Ginger.Actions
 {
     public partial class UIAutomation
     {
-        public ObservableList<Act> ElementLocators = new ObservableList<Act>();
-        public ObservableList<Act> ParentLocators = new ObservableList<Act>();
-        public static ObservableList<Act> PriorParent = new ObservableList<Act>();
-        public static ObservableList<Act> CurrentParent = new ObservableList<Act>();
+        public ObservableList<Act> ElementLocators = [];
+        public ObservableList<Act> ParentLocators = [];
+        public static ObservableList<Act> PriorParent = [];
+        public static ObservableList<Act> CurrentParent = [];
 
         public void CreateLocatorList(ucGrid LocatorsGrid, ObservableList<Act> Locators)
         {
@@ -70,7 +70,7 @@ namespace Ginger.Actions
 
         public ObservableList<Act> CreateParentLocators(Act a)
         {
-            ObservableList<Act> olParLoc = new ObservableList<Act>();
+            ObservableList<Act> olParLoc = [];
             //TODO make multi properties object oriented
             if (a.LocateValue.IndexOf('#') >= 0)
             {

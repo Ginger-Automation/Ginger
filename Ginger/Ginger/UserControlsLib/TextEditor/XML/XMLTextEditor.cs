@@ -35,8 +35,7 @@ namespace Ginger.UserControlsLib.TextEditor.XML
         {
             get
             {
-                List<string> list = new List<string>();
-                list.Add(".xml");
+                List<string> list = [".xml"];
                 return list;
             }
         }

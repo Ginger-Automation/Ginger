@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.Plugin.Core
     {
         public string PropertyName => "ValidValue";
 
-        public List<object> ValidValue { get; set; } = new List<object>();
+        public List<object> ValidValue { get; set; } = [];
 
         public ValidValueAttribute()
         {

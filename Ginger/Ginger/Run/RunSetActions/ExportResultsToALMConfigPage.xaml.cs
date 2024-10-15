@@ -28,14 +28,11 @@ using GingerCore;
 using GingerCore.ALM;
 using GingerCore.GeneralLib;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using YamlDotNet.Core;
-using static Ginger.AnalyzerLib.AnalyzerItemBase;
 using static GingerCore.ALM.PublishToALMConfig;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -47,7 +44,7 @@ namespace Ginger.Run
     public partial class ExportResultsToALMConfigPage : Page
     {
         GenericWindow genWin = null;
-        ObservableList<BusinessFlow> mBfs = new ObservableList<BusinessFlow>();
+        ObservableList<BusinessFlow> mBfs = [];
         PublishToALMConfig mPublishToALMConfig = new PublishToALMConfig();
         ExecutionLoggerConfiguration mExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
         public bool IsProcessing = false;
@@ -72,7 +69,7 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(SearchALMEntityByName, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.SearchALMEntityByName));
             xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
             xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType),
-                GingerCore.General.GetEnumValuesForComboAndAddExtraValues(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = RunSetActionPublishToQC.AlmTypeDefault, Value = RunSetActionPublishToQC.AlmTypeDefault } }), ComboBox.TextProperty);
+                GingerCore.General.GetEnumValuesForComboAndAddExtraValues(typeof(eALMType), [new ComboEnumItem() { text = RunSetActionPublishToQC.AlmTypeDefault, Value = RunSetActionPublishToQC.AlmTypeDefault }]), ComboBox.TextProperty);
             xALMTestSetLevelCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ALMTestSetLevel), Enum.GetValues(typeof(eALMTestSetLevel)).Cast<eALMTestSetLevel>().ToList(), ComboBox.SelectedValueProperty);
             xALMTestSetLevelCbx.ComboBox.SelectionChanged += xALMTestSetLevelCbx_SelectionChanged;
             xExportTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ExportType), Enum.GetValues(typeof(eExportType)).Cast<eExportType>().ToList(), ComboBox.SelectedValueProperty);
@@ -174,7 +171,7 @@ namespace Ginger.Run
                 ExportReportLinkChkbx.IsEnabled = false;
                 mBfs = bfs;
                 mVE = VE;
-                mContext = Context;  
+                mContext = Context;
                 return true;
             }
             else
@@ -185,20 +182,24 @@ namespace Ginger.Run
         }
         internal void ShowAsWindow()
         {
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            Button SaveAllButton = new Button();
-            SaveAllButton.Content = "Export To ALM";
+            ObservableList<Button> winButtons = [];
+            Button SaveAllButton = new Button
+            {
+                Content = "Export To ALM"
+            };
             SaveAllButton.Click += new RoutedEventHandler(xExportToALMBtn_Click);
             winButtons.Add(SaveAllButton);
             this.Width = 500;
             this.Height = 180;
-            loaderElement = new ImageMakerControl();
-            loaderElement.Name = "xProcessingImage";
-            loaderElement.Height = 30;
-            loaderElement.Width = 30;
-            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
-            loaderElement.Visibility = Visibility.Collapsed;
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, winButtons, true,null,null,false, loaderElement);
+            loaderElement = new ImageMakerControl
+            {
+                Name = "xProcessingImage",
+                Height = 30,
+                Width = 30,
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing,
+                Visibility = Visibility.Collapsed
+            };
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, winButtons, true, null, null, false, loaderElement);
         }
 
         private async void xExportToALMBtn_Click(object sender, RoutedEventArgs e)
@@ -275,11 +276,7 @@ namespace Ginger.Run
                 {
                     ALMIntegration.Instance.UpdateALMType(AlmConfig.AlmType, true);
                     ObservableList<ExternalItemFieldBase> almItemFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, AlmDataContractsStd.Enums.ResourceType.ALL, null);
-                    ObservableList<ExternalItemFieldBase> operationItemFields = new ObservableList<ExternalItemFieldBase>();
-                    foreach (ExternalItemFieldBase field in mPublishToALMConfig.AlmFields)
-                    {
-                        operationItemFields.Add(field);
-                    }
+                    ObservableList<ExternalItemFieldBase> operationItemFields = [.. mPublishToALMConfig.AlmFields];
                     foreach (ExternalItemFieldBase field in operationItemFields)
                     {
                         mPublishToALMConfig.AlmFields.Remove(field);

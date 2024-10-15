@@ -47,9 +47,7 @@ namespace GingerCore.Actions.MainFrame
         {
             get
             {
-                List<ePlatformType> mPf = new List<ePlatformType>();
-
-                mPf.Add(ePlatformType.MainFrame);
+                List<ePlatformType> mPf = [ePlatformType.MainFrame];
                 return mPf;
             }
         }
@@ -66,7 +64,7 @@ namespace GingerCore.Actions.MainFrame
         {
             get
             {
-                return (TnKey)GetOrCreateInputParam<TnKey>(nameof(KeyToSend), TnKey.Key);
+                return GetOrCreateInputParam<TnKey>(nameof(KeyToSend), TnKey.Key);
             }
             set
             {

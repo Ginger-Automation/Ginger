@@ -54,22 +54,20 @@ namespace Ginger.Reports.HTMLReports
         {
             //TODO: use the new cool style and create in parallel
 
-            List<string> headers = new List<string>();
-            headers.Add(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-            headers.Add("Elapsed");
-            headers.Add("Status");
+            List<string> headers = [GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), "Elapsed", "Status"];
 
-            List<BusinessFlowReport> ll = new List<BusinessFlowReport>();
-            ll.Add(businessFlowReport);
+            List<BusinessFlowReport> ll = [businessFlowReport];
             XNode m = CreateHTMLTable(ll, headers, BizFlowHTMLColumns);
             mStringBuilder.Append(m.ToString());
 
             //append Activites
-            List<string> headers2 = new List<string>();
-            headers2.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
-            headers2.Add(nameof(ActivityReport.ActivityName));
-            headers2.Add(nameof(ActivityReport.RunStatus));
-            headers2.Add(nameof(ActivityReport.ElapsedSecs));
+            List<string> headers2 =
+            [
+                GingerDicser.GetTermResValue(eTermResKey.Activities),
+                nameof(ActivityReport.ActivityName),
+                nameof(ActivityReport.RunStatus),
+                nameof(ActivityReport.ElapsedSecs),
+            ];
 
             //XNode m2 = CreateHTMLTable(businessFlowReport.Activities, headers2, BizFlowHTMLColumns);
             //mStringBuilder.Append(m2.ToString());

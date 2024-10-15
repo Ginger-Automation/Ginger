@@ -56,7 +56,7 @@ namespace Ginger.GingerCoreNETTestLib
 
         SolutionRepository mSolutionRepository;
         // GingerGrid mGingerGrid;
-        List<MyAction> Actions = new List<MyAction>();
+        List<MyAction> Actions = [];
 
         public GingerCoreNETWindow()
         {
@@ -281,9 +281,9 @@ namespace Ginger.GingerCoreNETTestLib
                 Log("Done: Elapsed=" + st.Elapsed);
 
                 long StopBytes = System.GC.GetTotalMemory(true);
-                long MemUsedBytes = ((long)(StopBytes - StartBytes));
+                long MemUsedBytes = StopBytes - StartBytes;
 
-                double memkb = (double)((double)MemUsedBytes / (double)1000);
+                double memkb = (double)(MemUsedBytes / (double)1000);
                 MemKBLabel.Content = memkb.ToString("N2");
                 ElapsedLabel.Content = st.ElapsedMilliseconds;
                 TotalmemeoryLabel.Content = (StopBytes / 1000000).ToString("N0");

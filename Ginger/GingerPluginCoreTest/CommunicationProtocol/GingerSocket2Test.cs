@@ -48,8 +48,10 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
             public void Start()
             {
-                mGingerSocketServer = new GingerSocketServer2();
-                mGingerSocketServer.MessageHandler = MessageHandler;
+                mGingerSocketServer = new GingerSocketServer2
+                {
+                    MessageHandler = MessageHandler
+                };
                 ServerPort = SocketHelper.GetOpenPort();
                 mGingerSocketServer.StartServer(ServerPort);
             }
@@ -126,8 +128,10 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
             public void Connect()
             {
-                mGingerSocketClient2 = new GingerSocketClient2();
-                mGingerSocketClient2.MessageHandler = MessageHandler;
+                mGingerSocketClient2 = new GingerSocketClient2
+                {
+                    MessageHandler = MessageHandler
+                };
 
                 IPAddress ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
                 mGingerSocketClient2.Connect(SocketHelper.GetLocalHostIP(), mMyGingerServer.ServerPort);
@@ -299,24 +303,24 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
                 sb.Append("0123456789");
             }
 
-            List<string> list = new List<string>();
-            list.Add(sb.ToString().Substring(0, 106660));
-
-            list.Add(sb.ToString().Substring(0, 10));
-            list.Add(sb.ToString().Substring(0, 500));
-            list.Add(sb.ToString().Substring(0, 30000));
-            list.Add(sb.ToString().Substring(0, 10));
-            list.Add(sb.ToString().Substring(0, 1));
-            list.Add(sb.ToString().Substring(0, 20000));
-            list.Add(sb.ToString().Substring(0, 100));
-            list.Add(sb.ToString().Substring(0, 1000000));
-            list.Add(sb.ToString().Substring(0, 400));
-            list.Add(sb.ToString().Substring(0, 10000));
-            list.Add(sb.ToString().Substring(0, 1024));
-            list.Add(sb.ToString().Substring(0, 50000));
-
-            list.Add(sb.ToString().Substring(0, 1350));
-            list.Add(sb.ToString().Substring(0, 8921));
+            List<string> list =
+            [
+                sb.ToString()[..106660],
+                sb.ToString()[..10],
+                sb.ToString()[..500],
+                sb.ToString()[..30000],
+                sb.ToString()[..10],
+                sb.ToString()[..1],
+                sb.ToString()[..20000],
+                sb.ToString()[..100],
+                sb.ToString()[..1000000],
+                sb.ToString()[..400],
+                sb.ToString()[..10000],
+                sb.ToString()[..1024],
+                sb.ToString()[..50000],
+                sb.ToString()[..1350],
+                sb.ToString()[..8921],
+            ];
 
 
             int count = 0;
@@ -437,7 +441,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         public void Run10ClientsParallel()
         {
             // Arrange
-            List<Task> list = new List<Task>();
+            List<Task> list = [];
 
             for (int i = 0; i < 10; i++)
             {

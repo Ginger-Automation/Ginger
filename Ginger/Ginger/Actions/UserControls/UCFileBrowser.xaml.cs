@@ -31,7 +31,7 @@ namespace Ginger.Actions
         private object obj;
         private string AttrName;
         private bool MakePathsRelative = false;
-        public List<string> FileExtensions = new List<string>();
+        public List<string> FileExtensions = [];
         public UCFileBrowser()
         {
             InitializeComponent();
@@ -59,7 +59,7 @@ namespace Ginger.Actions
             string filter = string.Empty;
             foreach (string extension in FileExtensions)
             {
-                filter = extension.Substring(1).ToUpper() + " Files (*" + extension + ")|*" + extension;
+                filter = extension[1..].ToUpper() + " Files (*" + extension + ")|*" + extension;
             }
             filter += "|All Files (*.*)|*.*";
             if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()

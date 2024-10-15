@@ -34,25 +34,24 @@ namespace Ginger.Drivers.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Click Button " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.Click
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Get Button Text - " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.GetValue
-            });
-
-            list.Add(new ActPBControl()
-            {
-                Description = "Verify Button is Enabled - " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.IsEnabled
-            });
+            ObservableList<Act> list =
+            [
+                new ActPBControl()
+                {
+                    Description = "Click Button " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.Click
+                },
+                new ActPBControl()
+                {
+                    Description = "Get Button Text - " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.GetValue
+                },
+                new ActPBControl()
+                {
+                    Description = "Verify Button is Enabled - " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActPBControl.eControlAction.IsEnabled
+                },
+            ];
 
             return list;
         }

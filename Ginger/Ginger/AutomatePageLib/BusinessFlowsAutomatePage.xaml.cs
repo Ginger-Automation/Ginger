@@ -109,7 +109,7 @@ namespace Ginger.BusinessFlowWindows
             {
                 ITreeViewItem iv = (ITreeViewItem)i.Tag;
 
-                if (iv.NodeObject() != null && iv.NodeObject() is BusinessFlow)
+                if (iv.NodeObject() is not null and BusinessFlow)
                 {
                     App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, (BusinessFlow)iv.NodeObject());
                 }

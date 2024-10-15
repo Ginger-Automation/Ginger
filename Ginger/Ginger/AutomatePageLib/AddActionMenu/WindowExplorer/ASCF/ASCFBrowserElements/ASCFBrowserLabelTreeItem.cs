@@ -35,21 +35,25 @@ namespace Ginger.WindowExplorer.ASCF
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = [];
 
-            ActASCFBrowserElement a2 = new ActASCFBrowserElement();
-            a2.Description = "Get Label Text " + ASCFBrowserElementInfo.Path;
-            a2.LocateBy = eLocateBy.ByName;
-            a2.LocateValue = ASCFBrowserElementInfo.Path;
-            a2.ControlAction = ActASCFBrowserElement.eControlAction.GetValue;
+            ActASCFBrowserElement a2 = new ActASCFBrowserElement
+            {
+                Description = "Get Label Text " + ASCFBrowserElementInfo.Path,
+                LocateBy = eLocateBy.ByName,
+                LocateValue = ASCFBrowserElementInfo.Path,
+                ControlAction = ActASCFBrowserElement.eControlAction.GetValue
+            };
             list.Add(a2);
 
 
-            ActASCFBrowserElement a3 = new ActASCFBrowserElement();
-            a3.Description = "Get Label Text " + ASCFBrowserElementInfo.Path;
-            a3.LocateBy = eLocateBy.ByID;
-            a3.LocateValue = ASCFBrowserElementInfo.Path;
-            a3.ControlAction = ActASCFBrowserElement.eControlAction.GetValue;
+            ActASCFBrowserElement a3 = new ActASCFBrowserElement
+            {
+                Description = "Get Label Text " + ASCFBrowserElementInfo.Path,
+                LocateBy = eLocateBy.ByID,
+                LocateValue = ASCFBrowserElementInfo.Path,
+                ControlAction = ActASCFBrowserElement.eControlAction.GetValue
+            };
             list.Add(a3);
             return list;
         }

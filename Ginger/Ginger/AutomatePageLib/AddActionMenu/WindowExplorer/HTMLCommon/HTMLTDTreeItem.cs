@@ -34,26 +34,25 @@ namespace Ginger.WindowExplorer.HTMLCommon
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Click " + this.ElementInfo.ElementType + " " + this.ElementInfo.ElementTitle,
-                GenElementAction = ActGenElement.eGenElementAction.Click
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Validate " + this.ElementInfo.ElementType + " Text " + this.ElementInfo.ElementTitle,
-                GenElementAction = ActGenElement.eGenElementAction.GetValue
-            });
-
-            list.Add(new ActGenElement()
-            {
-                Description = "Validate " + this.ElementInfo.ElementType + " is Enabled " + this.ElementInfo.ElementTitle,
-                GenElementAction = ActGenElement.eGenElementAction.Enabled,
-                //TODO: add REturn value Actual = Enabled=true
-            });
+            ObservableList<Act> list =
+            [
+                new ActGenElement()
+                {
+                    Description = "Click " + this.ElementInfo.ElementType + " " + this.ElementInfo.ElementTitle,
+                    GenElementAction = ActGenElement.eGenElementAction.Click
+                },
+                new ActGenElement()
+                {
+                    Description = "Validate " + this.ElementInfo.ElementType + " Text " + this.ElementInfo.ElementTitle,
+                    GenElementAction = ActGenElement.eGenElementAction.GetValue
+                },
+                new ActGenElement()
+                {
+                    Description = "Validate " + this.ElementInfo.ElementType + " is Enabled " + this.ElementInfo.ElementTitle,
+                    GenElementAction = ActGenElement.eGenElementAction.Enabled,
+                    //TODO: add REturn value Actual = Enabled=true
+                },
+            ];
 
             AddGeneralHTMLActions(list);
 

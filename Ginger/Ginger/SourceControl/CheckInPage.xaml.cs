@@ -87,7 +87,7 @@ namespace Ginger.SourceControl
         private void SetCheckinGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             // TODO: use fields
@@ -133,7 +133,7 @@ namespace Ginger.SourceControl
                              }
                              else
                              {
-                                 SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
+                                 SCFI.Name = SCFI.Path[(SCFI.Path.LastIndexOf('\\') + 1)..];
                              }
                          }
                          catch (Exception ex)
@@ -142,7 +142,7 @@ namespace Ginger.SourceControl
                              //TODO: fix the path changes 
                              if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
                              {
-                                 SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
+                                 SCFI.Name = SCFI.Path[(SCFI.Path.LastIndexOf('\\') + 1)..];
                              }
 
                              Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
@@ -346,7 +346,7 @@ namespace Ginger.SourceControl
             string error = string.Empty;
             bool result = true;
             bool conflict = conflictHandled;
-            List<string> conflictsPaths = new List<string>();
+            List<string> conflictsPaths = [];
             if (!SourceControl.CommitAndCheckinChanges(pathsToCommit, Comments, ref error, ref conflictsPaths, includeLocks))
             {
                 if (conflictsPaths.Count != 0)
@@ -406,7 +406,7 @@ namespace Ginger.SourceControl
 
         private void TriggerSourceControlIconChanged(List<SourceControlFileInfo> selectedFiles)
         {
-            parentFolders = new List<string>();
+            parentFolders = [];
             foreach (SourceControlFileInfo fi in selectedFiles)
             {
                 FileAttributes attr;
@@ -553,10 +553,12 @@ namespace Ginger.SourceControl
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            ObservableList<Button> windowBtnsList = new ObservableList<Button>();
+            ObservableList<Button> windowBtnsList = [];
 
-            Button CommitAndCheckin = new Button();
-            CommitAndCheckin.Content = "Commit and Push";
+            Button CommitAndCheckin = new Button
+            {
+                Content = "Commit and Push"
+            };
             CommitAndCheckin.Click += CommitAndCheckinButton_Click;
 
             windowBtnsList.Add(CommitAndCheckin);
@@ -564,13 +566,17 @@ namespace Ginger.SourceControl
 
             if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
-                Button LocalCommit = new Button();
-                LocalCommit.Content = "Commit Locally";
+                Button LocalCommit = new Button
+                {
+                    Content = "Commit Locally"
+                };
                 LocalCommit.Click += LocalCommitButton_Click;
                 windowBtnsList.Add(LocalCommit);
 
-                Button UndoLocalChanges = new Button();
-                UndoLocalChanges.Content = "Undo Changes";
+                Button UndoLocalChanges = new Button
+                {
+                    Content = "Undo Changes"
+                };
                 UndoLocalChanges.Click += LocalUndoChanges_Click;
                 windowBtnsList.Add(UndoLocalChanges);
             }
@@ -601,14 +607,18 @@ namespace Ginger.SourceControl
 
         public void openDiff(string diff)
         {
-            System.Diagnostics.Process p = new System.Diagnostics.Process();
-            p.StartInfo = new System.Diagnostics.ProcessStartInfo("TortoiseUDiff.exe");
-            p.StartInfo.RedirectStandardInput = true;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.CreateNoWindow = true;
+            System.Diagnostics.Process p = new System.Diagnostics.Process
+            {
+                StartInfo = new System.Diagnostics.ProcessStartInfo("TortoiseUDiff.exe")
+                {
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
 
             try
             {
@@ -709,7 +719,7 @@ namespace Ginger.SourceControl
 
         private static List<string> StageTheFilesToCommit(List<SourceControlFileInfo> SelectedFiles)
         {
-            List<string> pathsToCommit = new List<string>();
+            List<string> pathsToCommit = [];
             foreach (SourceControlFileInfo fi in SelectedFiles)
             {
                 switch (fi.Status)
@@ -785,7 +795,7 @@ namespace Ginger.SourceControl
         private void SetLocalCommitGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = nameof(SourceControlChangesetDetails.ID), Header = "ID", WidthWeight = 20, AllowSorting = true });

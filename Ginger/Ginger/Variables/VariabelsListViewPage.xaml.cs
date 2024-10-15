@@ -31,7 +31,6 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
-using OctaneRepositoryStd.BLL;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -74,6 +73,15 @@ namespace Ginger.BusinessFlowPages
                 xDeleteBtn.ToolTip = $"Delete {GingerDicser.GetTermResValue(eTermResKey.Parameter)}";
                 xResetValueBtn.ToolTip = $"Reset {GingerDicser.GetTermResValue(eTermResKey.Parameter)} Value";
             }
+
+
+            if (mVariabelsParent.GOpsFlag)
+            {
+                xDeleteBtn.IsEnabled = false;
+                xResetValueBtn.IsEnabled = false;
+                xUndoBtn.IsEnabled = false;
+            }
+
             mContext = context;
             mPageViewMode = pageViewMode;
             if (pageViewMode == General.eRIPageViewMode.Standalone)
@@ -151,7 +159,7 @@ namespace Ginger.BusinessFlowPages
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mVarBeenEdit, nameof(VariableBase.Name));
 
                 bool showAsReadOnly = false;
-                if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
+                if (mPageViewMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
                 {
                     showAsReadOnly = true;
                     xEditAndValueChangeOperationsPnl.Visibility = Visibility.Collapsed;
@@ -174,7 +182,7 @@ namespace Ginger.BusinessFlowPages
                 }
                 else if (mVariabelsParent is Activity)
                 {
-                    if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
+                    if (mPageViewMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
                     {
                         mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.View, parent: mVariabelsParent);
                     }
@@ -239,7 +247,7 @@ namespace Ginger.BusinessFlowPages
             if (mVariabelsListView == null)
             {
                 mVariabelsListView = new UcListView();
-                if(mVariabelsParent is EnvApplication)
+                if (mVariabelsParent is EnvApplication)
                 {
                     mVariabelsListView.ListTitleVisibility = Visibility.Collapsed;
                     mVariabelsListView.ListImageVisibility = Visibility.Collapsed;
@@ -262,7 +270,7 @@ namespace Ginger.BusinessFlowPages
                 mVariabelsListView.List.MouseDoubleClick += VariabelsListView_MouseDoubleClick;
                 mVariabelsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
 
-                if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
+                if (mPageViewMode is Ginger.General.eRIPageViewMode.View or Ginger.General.eRIPageViewMode.ViewAndExecute)
                 {
                     mVariabelsListView.IsDragDropCompatible = false;
                 }
@@ -344,17 +352,13 @@ namespace Ginger.BusinessFlowPages
 
         private void ListVars_ItemDropped(object sender, EventArgs e)
         {
-            object droppedItem = ((DragInfo)sender).Data as object;
-
-            if (droppedItem != null)
+            if (((DragInfo)sender).Data is object droppedItem)
             {
-                VariableBase droppedAtVar = DragDrop2.GetRepositoryItemHit(ListView) as VariableBase;
-
                 VariableBase varDropped = droppedItem as VariableBase;
 
                 VariableBase instance = (VariableBase)varDropped.CreateInstance(true);
 
-                if (droppedAtVar != null)
+                if (DragDrop2.GetRepositoryItemHit(ListView) is VariableBase droppedAtVar)
                 {
                     int targetIndex = GetVariablesList().IndexOf(droppedAtVar);
 

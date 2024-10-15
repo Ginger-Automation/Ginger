@@ -49,14 +49,14 @@ namespace GingerCore.ALM.Rally
             CreatedBy = createdBy;
             CreationDate = creationDate;
             Description = string.Empty;
-            TestCases = new ObservableList<RallyTestCase>();
+            TestCases = [];
         }
 
         public ObservableList<RallyTestCase> RallyTestCases()
         {
             if (this.TestCases == null)
             {
-                this.TestCases = new ObservableList<RallyTestCase>();
+                this.TestCases = [];
             }
             return this.TestCases;
         }

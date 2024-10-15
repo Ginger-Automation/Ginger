@@ -136,7 +136,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
 
         public void RunBusinessFlow(string name)
         {
-            BusinessFlow BF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x=> x.Name == name);
+            BusinessFlow BF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.Name == name);
             if (BF == null)
             {
                 // !!! Err

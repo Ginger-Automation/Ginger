@@ -51,11 +51,13 @@ namespace Ginger.Actions
             //create your data
             //Load above Data in Data Grid
 
-            ActUIAGrid act = new ActUIAGrid();
-            act.LocateBy = eLocateBy.ByAutomationID;
-            act.GridAction = ActUIAGrid.eGridAction.GetFullGridData;
-            act.LocateValueCalculated = "1021";
-            act.Active = true;
+            ActUIAGrid act = new ActUIAGrid
+            {
+                LocateBy = eLocateBy.ByAutomationID,
+                GridAction = ActUIAGrid.eGridAction.GetFullGridData,
+                LocateValueCalculated = "1021",
+                Active = true
+            };
         }
     }
 }

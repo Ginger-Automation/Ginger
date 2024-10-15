@@ -37,7 +37,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace GingerCore.Drivers.WebServicesDriverLib
@@ -254,7 +253,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             HttpWebClientUtils WebAPI = new HttpWebClientUtils();
 
-            if (act is ActWebAPISoap || act is ActWebAPIRest)
+            if (act is ActWebAPISoap or ActWebAPIRest)
             {
                 if (WebAPI.RequestContstructor((ActWebAPIBase)act, WebServicesProxy, UseServerProxySettings))
                 {
@@ -277,11 +276,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 ActWebAPIBase actWebAPI = null;
                 if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
                 {
-                    actWebAPI = ActWAPIM.CreateActWebAPIREST((ApplicationAPIModel)AAMB, ActWAPIM);
+                    actWebAPI = ActWAPIM.CreateActWebAPIREST(AAMB, ActWAPIM);
                 }
                 else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
                 {
-                    actWebAPI = ActWAPIM.CreateActWebAPISOAP((ApplicationAPIModel)AAMB, ActWAPIM);
+                    actWebAPI = ActWAPIM.CreateActWebAPISOAP(AAMB, ActWAPIM);
                 }
                 else
                 {
@@ -301,7 +300,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public override void RunAction(Act act)
         {
             //TODO: add func to Act + Enum for switch
-            act.Artifacts = new ObservableList<ArtifactDetails>();
+            act.Artifacts = [];
             if (act is ActWebService)
             {
                 mActWebService = (ActWebService)act;
@@ -327,7 +326,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 runSoapCommand(act);
             }
-            else if (act is ActWebAPISoap || act is ActWebAPIRest)
+            else if (act is ActWebAPISoap or ActWebAPIRest)
             {
                 mActWebAPI = (ActWebAPIBase)act;
                 HandleWebApiRequest((ActWebAPIBase)act);
@@ -352,11 +351,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 ActWebAPIBase actWebAPI = null;
                 if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
                 {
-                    actWebAPI = ActWAPIM.CreateActWebAPIREST((ApplicationAPIModel)AAMB, ActWAPIM);
+                    actWebAPI = ActWAPIM.CreateActWebAPIREST(AAMB, ActWAPIM);
                 }
                 else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
                 {
-                    actWebAPI = ActWAPIM.CreateActWebAPISOAP((ApplicationAPIModel)AAMB, ActWAPIM);
+                    actWebAPI = ActWAPIM.CreateActWebAPISOAP(AAMB, ActWAPIM);
                 }
 
                 if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
@@ -546,7 +545,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         private void TestToOutput(SoapUIUtils soapUIUtils, Act act)
         {
-            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> dict = [];
             dict = soapUIUtils.RequestsAndResponds();
             foreach (KeyValuePair<string, List<string>> kpr in dict)
             {
@@ -591,7 +590,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                             XmlDocument xmlDoc1 = new XmlDocument();
                             xmlDoc1.LoadXml(kpr.Value[2]);
 
-                            List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList1 = new List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem>();
+                            List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList1 = [];
                             outputTagsList1 = General.GetXMLNodesItems(xmlDoc1);
                             foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputTagsList1)
                             {
@@ -620,7 +619,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 }
             }
 
-            Dictionary<List<string>, List<string>> dictValues = new Dictionary<List<string>, List<string>>();
+            Dictionary<List<string>, List<string>> dictValues = [];
             dictValues = soapUIUtils.OutputParamAndValues();
             foreach (KeyValuePair<List<string>, List<string>> Kpr in dictValues)
             {
@@ -688,8 +687,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 }
 
                 SetStatus("Preparing new Web Service data");
-                WebServiceXML c1 = new WebServiceXML();
-                c1.ServiceConnectionTimeOut = timeout;
+                WebServiceXML c1 = new WebServiceXML
+                {
+                    ServiceConnectionTimeOut = timeout
+                };
                 string ResponseCode = null;
 
                 SetStatus("Sending Request XML, Length=" + mRequest.Length);
@@ -698,7 +699,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 string resp;
                 try
                 {
-                    if (mActWebService.URLUser.Value == "" || mActWebService.URLUser.Value == null)
+                    if (mActWebService.URLUser.Value is "" or null)
                     {
                         resp = c1.SendXMLRequest(URL, SOAPAction, mRequest, ref ResponseCode, ref FailFlag);
 
@@ -709,12 +710,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     }
                     else
                     {
-                        if (mActWebService.URLDomain.Value != "" && mActWebService.URLDomain.Value != null)
+                        if (mActWebService.URLDomain.Value is not "" and not null)
                         {
-                            NetworkCredential CustCreds = new NetworkCredential("", "", "");
-                            CustCreds.UserName = mActWebService.URLUser.Value;
-                            CustCreds.Password = mActWebService.URLPass.Value;
-                            CustCreds.Domain = mActWebService.URLDomain.Value;
+                            NetworkCredential CustCreds = new NetworkCredential("", "", "")
+                            {
+                                UserName = mActWebService.URLUser.Value,
+                                Password = mActWebService.URLPass.Value,
+                                Domain = mActWebService.URLDomain.Value
+                            };
                             resp = c1.SendXMLRequest(URL, SOAPAction, mRequest, ref ResponseCode, ref FailFlag, CustCreds);
 
                             if (FailFlag == true)
@@ -724,9 +727,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                         }
                         else //use current domain
                         {
-                            NetworkCredential CustCreds = new NetworkCredential("", "", "");
-                            CustCreds.UserName = mActWebService.URLUser.Value;
-                            CustCreds.Password = mActWebService.URLPass.Value;
+                            NetworkCredential CustCreds = new NetworkCredential("", "", "")
+                            {
+                                UserName = mActWebService.URLUser.Value,
+                                Password = mActWebService.URLPass.Value
+                            };
                             resp = c1.SendXMLRequest(URL, SOAPAction, mRequest, ref ResponseCode, ref FailFlag, CustCreds);
 
                             if (FailFlag == true)
@@ -747,7 +752,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     string FilePath = createRequestOrResponseXML("Request", mRequest);
                     mActWebService.AddOrUpdateReturnParamActual("Saved Request File Name", Path.GetFileName(FilePath));
-                    Act.AddArtifactToAction(Path.GetFileName(FilePath), mActWebService, FilePath);                   
+                    Act.AddArtifactToAction(Path.GetFileName(FilePath), mActWebService, FilePath);
                 }
 
 
@@ -773,11 +778,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     string FilePath = createRequestOrResponseXML("Response", resp);
                     mActWebService.AddOrUpdateReturnParamActual("Saved Response File Name", Path.GetFileName(FilePath));
-                    Act.AddArtifactToAction(Path.GetFileName(FilePath), mActWebService, FilePath);                   
+                    Act.AddArtifactToAction(Path.GetFileName(FilePath), mActWebService, FilePath);
                 }
                 try
                 {
-                    List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputList = new List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem>();
+                    List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputList = [];
                     outputList = Amdocs.Ginger.Common.GeneralLib.General.GetXMLNodesItems(xmlReqDoc);
                     foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputList)
                     {
@@ -819,7 +824,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss") + "_" + Guid.NewGuid();
                 xmlFileName = xmlFilesDir + @"\" + mActWebService.Description + "_" + timeStamp + "_" + fileType + ".xml";
-                xmlDoc.Save(xmlFileName);                           
+                xmlDoc.Save(xmlFileName);
             }
             catch (Exception e)
             {

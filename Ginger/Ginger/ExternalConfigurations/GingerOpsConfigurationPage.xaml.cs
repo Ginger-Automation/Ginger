@@ -16,41 +16,35 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger.Configurations;
 using Ginger.UserControlsLib;
-using Amdocs.Ginger.Common;
-using System.Windows;
-using GingerCore;
-using amdocs.ginger.GingerCoreNET;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System;
-using IdentityModel.Client;
 using Ginger.ValidationRules;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using GingerCore;
+using System;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace Ginger.ExternalConfigurations
 {
     /// <summary>
-    /// Interaction logic for GingerAnalyticsConfigurationPage.xaml
+    /// Interaction logic for GingerOpsConfigurationPage.xaml
     /// </summary>
-    public partial class GingerAnalyticsConfigurationPage : GingerUIPage
+    public partial class GingerOpsConfigurationPage : GingerUIPage
     {
-        public GingerAnalyticsConfiguration gingerAnalyticsUserConfig;
-        public GingerAnalyticsAPI analyticsAPI;
-        public GingerAnalyticsConfigurationPage()
+        public GingerOpsConfiguration gingerOpsUserConfig;
+        public GingerOpsAPI OpsAPI;
+        public GingerOpsConfigurationPage()
         {
             InitializeComponent();
             Init();
         }
         private void Init()
         {
-            analyticsAPI = new GingerAnalyticsAPI();
-            gingerAnalyticsUserConfig  = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerAnalyticsConfiguration>().Count == 0 ? new GingerAnalyticsConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerAnalyticsConfiguration>();
-            gingerAnalyticsUserConfig.StartDirtyTracking();
+            OpsAPI = new GingerOpsAPI();
+            gingerOpsUserConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerOpsConfiguration>().Count == 0 ? new GingerOpsConfiguration() : WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<GingerOpsConfiguration>();
+            gingerOpsUserConfig.StartDirtyTracking();
             SetControls();
 
         }
@@ -59,10 +53,10 @@ namespace Ginger.ExternalConfigurations
         {
             Context mContext = new();
 
-            xGAAURLTextBox.Init(mContext, gingerAnalyticsUserConfig, nameof(GingerAnalyticsConfiguration.AccountUrl));
-            xISURLTextBox.Init(mContext, gingerAnalyticsUserConfig, nameof(GingerAnalyticsConfiguration.IdentityServiceURL));
-            xClientIdTextBox.Init(mContext, gingerAnalyticsUserConfig, nameof(GingerAnalyticsConfiguration.ClientId));
-            xClientSecretTextBox.Init(mContext, gingerAnalyticsUserConfig, nameof(GingerAnalyticsConfiguration.ClientSecret));
+            xGAAURLTextBox.Init(mContext, gingerOpsUserConfig, nameof(GingerOpsConfiguration.AccountUrl));
+            xISURLTextBox.Init(mContext, gingerOpsUserConfig, nameof(GingerOpsConfiguration.IdentityServiceURL));
+            xClientIdTextBox.Init(mContext, gingerOpsUserConfig, nameof(GingerOpsConfiguration.ClientId));
+            xClientSecretTextBox.Init(mContext, gingerOpsUserConfig, nameof(GingerOpsConfiguration.ClientSecret));
             ApplyValidationRules();
 
         }
@@ -88,11 +82,12 @@ namespace Ginger.ExternalConfigurations
                 return;
             }
 
-            GingerCoreNET.GeneralLib.General.CreateGingerAnalyticsConfiguration(gingerAnalyticsUserConfig);
+            GingerCoreNET.GeneralLib.General.CreateGingerOpsConfiguration();
 
-            if (GingerAnalyticsAPI.IsTokenValid())
+
+            if (GingerOpsAPI.IsTokenValid())
             {
-                Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionSuccess);
+                Reporter.ToUser(eUserMsgKey.GingerOpsConnectionSuccess);
                 HideLoader();
                 xTestConBtn.IsEnabled = true;
                 return;
@@ -106,19 +101,19 @@ namespace Ginger.ExternalConfigurations
 
         public bool AreRequiredFieldsEmpty()
         {
-            return string.IsNullOrEmpty(gingerAnalyticsUserConfig.AccountUrl)
-                || string.IsNullOrEmpty(gingerAnalyticsUserConfig.IdentityServiceURL)
-                || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientId)
-                || string.IsNullOrEmpty(gingerAnalyticsUserConfig.ClientSecret);
+            return string.IsNullOrEmpty(gingerOpsUserConfig.AccountUrl)
+                || string.IsNullOrEmpty(gingerOpsUserConfig.IdentityServiceURL)
+                || string.IsNullOrEmpty(gingerOpsUserConfig.ClientId)
+                || string.IsNullOrEmpty(gingerOpsUserConfig.ClientSecret);
         }
 
         public async Task<bool> HandleTokenAuthorization()
         {
-            if (string.IsNullOrEmpty(gingerAnalyticsUserConfig.Token))
+            if (string.IsNullOrEmpty(gingerOpsUserConfig.Token))
             {
-                return await GingerAnalyticsAPI.RequestToken(ValueExpression.PasswordCalculation(gingerAnalyticsUserConfig.ClientId),
-                                          ValueExpression.PasswordCalculation(gingerAnalyticsUserConfig.ClientSecret),
-                                          ValueExpression.PasswordCalculation(gingerAnalyticsUserConfig.IdentityServiceURL));
+                return await GingerOpsAPI.RequestToken(ValueExpression.PasswordCalculation(gingerOpsUserConfig.ClientId),
+                                          ValueExpression.PasswordCalculation(gingerOpsUserConfig.ClientSecret),
+                                          ValueExpression.PasswordCalculation(gingerOpsUserConfig.IdentityServiceURL));
             }
 
             return true;
@@ -128,11 +123,11 @@ namespace Ginger.ExternalConfigurations
         {
             if (isAuthorized)
             {
-                Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionSuccess);
+                Reporter.ToUser(eUserMsgKey.GingerOpsConnectionSuccess);
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.GingerAnalyticsConnectionFail);
+                Reporter.ToUser(eUserMsgKey.GingerOpsConnectionFail);
             }
         }
 
@@ -156,22 +151,22 @@ namespace Ginger.ExternalConfigurations
         }
 
 
-        
+
 
         public void HideLoader()
         {
-        this.Dispatcher.Invoke(() =>
-        {
-            xProcessingImage.Visibility = Visibility.Hidden;
-        });
+            this.Dispatcher.Invoke(() =>
+            {
+                xProcessingImage.Visibility = Visibility.Hidden;
+            });
         }
 
         public void ShowLoader()
         {
-        this.Dispatcher.Invoke(() =>
-        {
-            xProcessingImage.Visibility = Visibility.Visible;
-        });
+            this.Dispatcher.Invoke(() =>
+            {
+                xProcessingImage.Visibility = Visibility.Visible;
+            });
         }
     }
 }

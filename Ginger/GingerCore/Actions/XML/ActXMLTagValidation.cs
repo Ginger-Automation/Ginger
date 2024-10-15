@@ -43,7 +43,7 @@ namespace GingerCore.Actions.XML
         {
             public static string InputFile = "InputFile";
             public static string ReqisFromFile = "ReqisFromFile";
-            public static string DocumentType = "DocumentType";            
+            public static string DocumentType = "DocumentType";
         }
 
 
@@ -83,7 +83,7 @@ namespace GingerCore.Actions.XML
                 return GetOrCreateInputParam(Fields.InputFile);
 
             }
-        }        
+        }
 
         [IsSerializedForLocalRepository(true)]
         public bool ReqisFromFile
@@ -107,13 +107,12 @@ namespace GingerCore.Actions.XML
 
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> DynamicElements = [];
 
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(DynamicElements);
+            List<ObservableList<ActInputValue>> list = [DynamicElements];
             return list;
         }
 
@@ -127,7 +126,7 @@ namespace GingerCore.Actions.XML
         [IsSerializedForLocalRepository]
         public bool ReadJustXMLAttributeValues
         {
-            get;set;
+            get; set;
         }
         public override eImageType Image { get { return eImageType.CodeFile; } }
 
@@ -196,8 +195,10 @@ namespace GingerCore.Actions.XML
 
             foreach (ActInputValue aiv in DynamicElements)
             {
-                ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                VE.Value = @aiv.Param;
+                ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList)
+                {
+                    Value = @aiv.Param
+                };
                 if (string.IsNullOrEmpty(VE.ValueCalculated))
                 {
                     continue;
@@ -232,8 +233,10 @@ namespace GingerCore.Actions.XML
             {
                 foreach (ActInputValue aiv in DynamicElements)
                 {
-                    ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                    VE.Value = @aiv.Param;
+                    ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList)
+                    {
+                        Value = @aiv.Param
+                    };
                     // var.Value = VE.ValueCalculated;
 
                     XmlNode node = ReadNodeFromXmlDoc(xmlReqDoc, VE.ValueCalculated);

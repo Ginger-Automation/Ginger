@@ -91,7 +91,7 @@ namespace GingerCore
             DoubleAnimationUsingKeyFrames day;
 
             // animate window move in horizontal way
-            if (LocationLockHorizontal == AlignmentX.Center || LocationLockHorizontal == AlignmentX.Right)
+            if (LocationLockHorizontal is AlignmentX.Center or AlignmentX.Right)
             {
                 dax = new DoubleAnimationUsingKeyFrames();
                 dax.KeyFrames.Add(new EasingDoubleKeyFrame(w.Left, KeyTime.FromTimeSpan(new TimeSpan(0, 0, 0, 0, 00))));
@@ -114,7 +114,7 @@ namespace GingerCore
             }
 
             // animate window move vertical 
-            if (LocationLockVertical == AlignmentY.Center || LocationLockVertical == AlignmentY.Bottom)
+            if (LocationLockVertical is AlignmentY.Center or AlignmentY.Bottom)
             {
                 day = new DoubleAnimationUsingKeyFrames();
                 day.KeyFrames.Add(new EasingDoubleKeyFrame(w.Top, KeyTime.FromTimeSpan(new TimeSpan(0, 0, 0, 0, 00))));

@@ -19,20 +19,12 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using GingerCore.Variables;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.UserControlsLib.InputVariableRule
 {
@@ -104,8 +96,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
 
         private static void OnTargetVariabelPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCTargetVariable;
-            if (control != null)
+            if (sender is UCTargetVariable control)
             {
                 control.TargetVariabelsPropertyChanged((ObservableList<VariableBase>)args.NewValue);
             }
@@ -113,8 +104,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
 
         private static void OnTargetVariabelGuidPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCTargetVariable;
-            if (control != null)
+            if (sender is UCTargetVariable control)
             {
                 control.TargetVariabelGuidPropertyChanged((Guid)args.NewValue);
             }
@@ -137,7 +127,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
         {
             bool isValid = true;
 
-            if(!TargeteVariables.Any(x => x.Guid == guid))
+            if (!TargeteVariables.Any(x => x.Guid == guid))
             {
                 isValid = false;
             }
@@ -157,16 +147,15 @@ namespace Ginger.UserControlsLib.InputVariableRule
 
         private static void OnSourceVariabelGuidPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCTargetVariable;
-            if (control != null)
+            if (sender is UCTargetVariable control)
             {
                 control.SourceVariabelGuidPropertyChanged((Guid)args.NewValue);
             }
         }
 
         private void SourceVariabelGuidPropertyChanged(Guid guid)
-        {            
-           OnPropertyChanged(nameof(UCTargetVariable.SourceVariableGuid));          
+        {
+            OnPropertyChanged(nameof(UCTargetVariable.SourceVariableGuid));
         }
 
         private void SetComboBoxValue(Guid guid)
@@ -187,7 +176,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
                 xVariablesComboBox.DisplayMemberPath = nameof(VariableBase.Name);
                 xVariablesComboBox.SelectedValuePath = nameof(VariableBase.Guid);
                 xVariablesComboBox.ItemsSource = variableList.OrderBy(nameof(VariableBase.Name));
-                xVariablesComboBox.SelectionChanged +=XVariablesComboBox_SelectionChanged;
+                xVariablesComboBox.SelectionChanged += XVariablesComboBox_SelectionChanged;
             }
         }
 
@@ -197,7 +186,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
             if (comboBox.Items.Count > 0)
             {
                 VariableBase variableBase = (VariableBase)(comboBox).SelectedItem;
-                if (variableBase!=null)
+                if (variableBase != null)
                 {
                     TargetVariableGuid = variableBase.Guid;
                     OnOperationValueEvent(variableBase);
@@ -212,27 +201,33 @@ namespace Ginger.UserControlsLib.InputVariableRule
 
             if (string.IsNullOrEmpty(sourceVariableGuidProperty) == false)
             {
-                Binding sourcevariableGuidBinding = new Binding(sourceVariableGuidProperty);
-                sourcevariableGuidBinding.Mode = BindingMode.TwoWay;
-                sourcevariableGuidBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding sourcevariableGuidBinding = new Binding(sourceVariableGuidProperty)
+                {
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 ucTargetVariable.SetBinding(UCTargetVariable.SourceVariabelGuidProperty, sourcevariableGuidBinding);
             }
 
             if (string.IsNullOrEmpty(targetvariablesProperty) == false)
             {
-                Binding targetvariablesBinding = new Binding(targetvariablesProperty);
-                targetvariablesBinding.Mode = BindingMode.OneWay;
-                targetvariablesBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding targetvariablesBinding = new Binding(targetvariablesProperty)
+                {
+                    Mode = BindingMode.OneWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 ucTargetVariable.SetBinding(UCTargetVariable.TargetVariabelsProperty, targetvariablesBinding);
             }
 
             if (string.IsNullOrEmpty(targetVariablesguidProperty) == false)
             {
-                Binding targetVariablesBinding = new Binding(targetVariablesguidProperty);
-                targetVariablesBinding.Mode = BindingMode.TwoWay;
-                targetVariablesBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                Binding targetVariablesBinding = new Binding(targetVariablesguidProperty)
+                {
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
                 ucTargetVariable.SetBinding(UCTargetVariable.TargetVariabelGuidProperty, targetVariablesBinding);
-            }            
+            }
 
             template.VisualTree = ucTargetVariable;
             return template;

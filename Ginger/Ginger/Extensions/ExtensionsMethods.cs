@@ -81,11 +81,7 @@ namespace Ginger
         public static void BindControl(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist, bool isSorted = true)
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
-            List<object> l = new List<object>();
-            foreach (var v in enumslist)
-            {
-                l.Add(v);
-            }
+            List<object> l = [.. enumslist];
 
             // Get yhe current value so it will be sleected in the combo after the list created
             PropertyInfo PI = obj.GetType().GetProperty(Field);
@@ -99,13 +95,15 @@ namespace Ginger
         public static void BindControlWithGrouping(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist)
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
-            List<ComboGroupedEnumItem> l = new List<ComboGroupedEnumItem>();
+            List<ComboGroupedEnumItem> l = [];
             foreach (var v in enumslist)
             {
-                ComboGroupedEnumItem item = new ComboGroupedEnumItem();
-                item.text = GingerCore.General.GetEnumValueDescription(v.GetType(), v);
-                item.Category = GingerCore.General.GetEnumDescription(v.GetType(), v);
-                item.Value = v;
+                ComboGroupedEnumItem item = new ComboGroupedEnumItem
+                {
+                    text = GingerCore.General.GetEnumValueDescription(v.GetType(), v),
+                    Category = GingerCore.General.GetEnumDescription(v.GetType(), v),
+                    Value = v
+                };
 
                 l.Add(item);
             }
@@ -190,11 +188,7 @@ namespace Ginger
         // ------------------------------------------------------------
         public static void BindControl(this ComboBox ComboBox, dynamic enumslist)
         {
-            List<object> l = new List<object>();
-            foreach (var v in enumslist)
-            {
-                l.Add(v);
-            }
+            List<object> l = [.. enumslist];
             // Get yhe current value so it will be sleected in the combo after the list created
             GingerCore.General.FillComboFromEnumObj(ComboBox, l[0], l);
         }
@@ -392,14 +386,16 @@ namespace Ginger
             var textBlock = new FrameworkElementFactory(typeof(TextBlock));
 
             //Bind the textblock to validation error
-            Binding b2 = new Binding();
-            b2.Source = frameworkElement;
-            //b2.Path = new PropertyPath("(Validation.Errors)[0].ErrorContent"); // OK
+            Binding b2 = new Binding
+            {
+                Source = frameworkElement,
+                //b2.Path = new PropertyPath("(Validation.Errors)[0].ErrorContent"); // OK
 
-            // '/' = CurrentItem which is better than [0] as the list might be empty
-            b2.Path = new PropertyPath("(Validation.Errors)/ErrorContent");
-            b2.Mode = BindingMode.OneWay;
-            b2.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                // '/' = CurrentItem which is better than [0] as the list might be empty
+                Path = new PropertyPath("(Validation.Errors)/ErrorContent"),
+                Mode = BindingMode.OneWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             textBlock.SetBinding(TextBlock.TextProperty, b2);
 
             textBlock.SetValue(TextBlock.ForegroundProperty, Brushes.Red);

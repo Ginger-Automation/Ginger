@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
@@ -70,7 +69,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                         xReLearnButton.Visibility = Visibility.Visible;
                         Learn();
-                        
+
                     }
                     break;
 
@@ -98,21 +97,23 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void StartTimer()
         {
             // Create and configure the DispatcherTimer
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1); // Update every second
+            timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1) // Update every second
+            };
             timer.Tick += Timer_Tick;
 
             // Initialize elapsed time
             elapsedTime = TimeSpan.Zero;
 
             // Start the timer
-            try 
-            { 
-            timer.Start();
+            try
+            {
+                timer.Start();
             }
             catch (Exception ex)
-            { 
-                Reporter.ToLog(eLogLevel.DEBUG, "Error while starting the timer", ex); 
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while starting the timer", ex);
             }
         }
 
@@ -128,13 +129,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         // You can stop the timer if needed
         private void StopTimer()
         {
-            if(timer != null)
+            if (timer != null)
             {
                 try
                 {
                     timer.Stop();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Error while stopping the timer", ex);
                 }
@@ -151,7 +152,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     window.Activate();
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Error while bring Ginger window to front", ex);
             }
@@ -199,8 +200,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mPomAllElementsPage == null)
             {
-                mPomAllElementsPage = new PomAllElementsPage(mWizard.mPomLearnUtils.POM, PomAllElementsPage.eAllElementsPageContext.AddPOMWizard, false);
-                mPomAllElementsPage.ShowTestAllElementsButton = Visibility.Collapsed;
+                mPomAllElementsPage = new PomAllElementsPage(mWizard.mPomLearnUtils.POM, PomAllElementsPage.eAllElementsPageContext.AddPOMWizard, false)
+                {
+                    ShowTestAllElementsButton = Visibility.Collapsed
+                };
                 mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
                 xPomElementsMappingPageFrame.ClearAndSetContent(mPomAllElementsPage);
             }

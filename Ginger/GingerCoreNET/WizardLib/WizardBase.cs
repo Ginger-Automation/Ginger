@@ -23,7 +23,7 @@ namespace GingerWPF.WizardLib
 {
     public abstract class WizardBase
     {
-        public ObservableList<WizardPage> Pages = new ObservableList<WizardPage>();
+        public ObservableList<WizardPage> Pages = [];
 
         public IWizardWindow mWizardWindow;
 
@@ -213,7 +213,7 @@ namespace GingerWPF.WizardLib
 
         public bool IsLastPage()
         {
-            if (Pages.CurrentItem == Pages[Pages.Count - 1])
+            if (Pages.CurrentItem == Pages[^1])
             {
                 return true;
             }

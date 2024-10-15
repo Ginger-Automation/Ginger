@@ -29,7 +29,7 @@ namespace GingerCore.GeneralLib
 
         public Email()
         {
-            Attachments = new List<string>();
+            Attachments = [];
         }
 
         public enum eEmailMethod
@@ -147,7 +147,7 @@ namespace GingerCore.GeneralLib
         [IsSerializedForLocalRepository]
         public List<string> Attachments; // { get; set; } // File names
 
-        public List<KeyValuePair<string, string>> EmbededAttachment = new List<KeyValuePair<string, string>>();
+        public List<KeyValuePair<string, string>> EmbededAttachment = [];
 
         private string mSMTPMailHost = "";
         [IsSerializedForLocalRepository]
@@ -193,15 +193,15 @@ namespace GingerCore.GeneralLib
 
         private eEmailMethod mEmailMethod;
         [IsSerializedForLocalRepository]
-        public eEmailMethod EmailMethod 
-        { 
+        public eEmailMethod EmailMethod
+        {
             get
             {
                 return mEmailMethod;
             }
             set
             {
-                if(mEmailMethod != value)
+                if (mEmailMethod != value)
                 {
                     mEmailMethod = value;
                     OnPropertyChanged(nameof(EmailMethod));
@@ -256,7 +256,7 @@ namespace GingerCore.GeneralLib
 
         private string mCertificatePasswordUCValueExpression;
         [IsSerializedForLocalRepository]
-        public string CertificatePasswordUCValueExpression 
+        public string CertificatePasswordUCValueExpression
         {
             get
             {
@@ -264,7 +264,7 @@ namespace GingerCore.GeneralLib
             }
             set
             {
-                if(mCertificatePasswordUCValueExpression != value)
+                if (mCertificatePasswordUCValueExpression != value)
                 {
                     mCertificatePasswordUCValueExpression = value;
                     OnPropertyChanged(nameof(CertificatePasswordUCValueExpression));

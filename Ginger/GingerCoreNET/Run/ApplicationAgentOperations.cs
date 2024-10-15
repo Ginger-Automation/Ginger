@@ -37,7 +37,7 @@ namespace GingerCore.Platforms
         {
             get
             {
-                List<IAgent> possibleAgents = new List<IAgent>();
+                List<IAgent> possibleAgents = [];
 
                 //find out the target application platform
                 ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == ApplicationAgent.AppName);//todo: make it be based on AppID and not name

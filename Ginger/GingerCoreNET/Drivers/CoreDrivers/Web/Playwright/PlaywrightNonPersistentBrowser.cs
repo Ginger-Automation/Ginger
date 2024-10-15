@@ -1,14 +1,30 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
 using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 using IPlaywrightBrowser = Microsoft.Playwright.IBrowser;
 using IPlaywrightBrowserContext = Microsoft.Playwright.IBrowserContext;
 using IPlaywrightBrowserType = Microsoft.Playwright.IBrowserType;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -17,7 +33,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
     {
         private readonly IPlaywrightBrowser _browser;
         private IBrowserWindow _currentWindow;
-        
+
         public override IBrowserWindow CurrentWindow => _currentWindow;
 
         internal PlaywrightNonPersistentBrowser(IPlaywright playwright, WebBrowserType browserType, Options? options = null, IBrowser.OnBrowserClose? onBrowserClose = null) :
@@ -41,7 +57,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 throw new Exception($"Error occurred while creating {nameof(IBrowserWindow)}");
             }
-            
+
             if (_browser.Contexts.Count <= 0)
             {
                 _currentWindow = Task.Run(async () => await NewWindowAsync()).Result;
@@ -131,16 +147,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         private IPlaywrightBrowserType GetPlaywrightBrowserType()
         {
-            switch (_browserType)
+            return _browserType switch
             {
-                case WebBrowserType.Chrome:
-                case WebBrowserType.Edge:
-                    return _playwright.Chromium;
-                case WebBrowserType.FireFox:
-                    return _playwright.Firefox;
-                default:
-                    throw new InvalidOperationException();
-            }
+                WebBrowserType.Chrome or WebBrowserType.Edge => _playwright.Chromium,
+                WebBrowserType.FireFox => _playwright.Firefox,
+                _ => throw new InvalidOperationException(),
+            };
         }
 
         public override async Task SetWindowAsync(IBrowserWindow window)

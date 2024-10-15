@@ -36,15 +36,13 @@ namespace Ginger.Agents
 
             if (Config.OptionalValues == null || Config.OptionalValues.Count == 0)
             {
-                Ginger.Actions.UCValueExpression txtBox = new Ginger.Actions.UCValueExpression()
+                Ginger.Actions.UCValueExpression txtBox = new Ginger.Actions.UCValueExpression
                 {
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Width = 600
-
+                    Width = 600,
+                    Visibility = Visibility.Visible
                 };
-
-                txtBox.Visibility = Visibility.Visible;
                 txtBox.Init(null, Config, "Value", isVENeeded: true);
                 ControlPanel.Children.Add(txtBox);
             }

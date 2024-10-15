@@ -31,8 +31,10 @@ namespace GingerATS
                 {
                     XmlReaderSettings settings;
 
-                    settings = new XmlReaderSettings();
-                    settings.IgnoreWhitespace = true;
+                    settings = new XmlReaderSettings
+                    {
+                        IgnoreWhitespace = true
+                    };
                     XmlReader reader = XmlReader.Create(fileSteam, settings);
                     return reader;
                 }
@@ -48,8 +50,10 @@ namespace GingerATS
             try
             {
                 XmlReaderSettings settings;
-                settings = new XmlReaderSettings();
-                settings.IgnoreWhitespace = true;
+                settings = new XmlReaderSettings
+                {
+                    IgnoreWhitespace = true
+                };
                 XmlReader reader = XmlReader.Create(new StringReader(xmlString), settings);
                 return reader;
             }

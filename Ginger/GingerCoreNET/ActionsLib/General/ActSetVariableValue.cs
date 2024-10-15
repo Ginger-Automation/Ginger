@@ -91,7 +91,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (VariableBase.eSetValueOptions)GetOrCreateInputParam<VariableBase.eSetValueOptions>(nameof(SetVariableValueOption), VariableBase.eSetValueOptions.SetValue);
+                return GetOrCreateInputParam<VariableBase.eSetValueOptions>(nameof(SetVariableValueOption), VariableBase.eSetValueOptions.SetValue);
             }
             set
             {
@@ -223,7 +223,7 @@ namespace GingerCore.Actions
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.AutoGenerateValue)
             {
                 string errorMsg = String.Empty;
-                isAutoGenerateValuesucceed = ((VariableBase)Var).GenerateAutoValue(ref errorMsg);
+                isAutoGenerateValuesucceed = Var.GenerateAutoValue(ref errorMsg);
                 if (!isAutoGenerateValuesucceed)
                 {
                     Error = errorMsg;

@@ -57,7 +57,7 @@ namespace Ginger
             Trace.Listeners.Clear();
 
             //getting switchs values from config file
-            bool tracelog = WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug ? true : false;
+            bool tracelog = WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug;
             _traceActivateSwitch = tracelog;
             _traceLevelSwitch_Error = tracelog;
             _traceLevelSwitch_Info = tracelog;
@@ -68,7 +68,7 @@ namespace Ginger
             _logFilesPath = WorkSpace.Instance.DefualtUserLocalWorkingFolder;
 
             //creating the default file stream
-            _customFileStreamsList = new ArrayList();
+            _customFileStreamsList = [];
             AddFileStreamToList("DEFAULT");
 
             //Set the App.config watcher- update switches and files definitions if config file changed
@@ -119,8 +119,10 @@ namespace Ginger
                             logsDirectory.Create();
                         }
 
-                        CustomFileStream newFileStream = new CustomFileStream();
-                        newFileStream.subApplicationName = subAppNameFromList.Trim().ToUpper();
+                        CustomFileStream newFileStream = new CustomFileStream
+                        {
+                            subApplicationName = subAppNameFromList.Trim().ToUpper()
+                        };
                         DateTime date = DateTime.Now;
                         if (newFileStream.subApplicationName == "DEFAULT")
                         {
@@ -342,10 +344,9 @@ namespace Ginger
 
                 if (_isVerifiedToWrite && (value != null))
                 {
-                    if (value is Exception)
+                    //expected "value" to be an Exception object
+                    if (value is Exception ex)
                     {
-                        //expected "value" to be an Exception object
-                        Exception ex = (Exception)value;
 
                         //Write Exception object details
                         this.Write(string.Format("{0} |Session ID: {1} |Level: {2}\r\n{3}\r\n", DateTime.Now.ToString("dd-MMM-yy HH:mm:ss"), _sessionID, _traceLevel, "****** EXCEPTION ******"));

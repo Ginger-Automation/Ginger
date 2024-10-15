@@ -34,11 +34,10 @@ namespace Ginger.Run.RunSetActions
         public bool ConfiguerDynamicParameters { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> DynamicParameters = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> DynamicParameters = [];
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
-            List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
-            list.Add(RunSetActionBase.eRunAt.ExecutionEnd);
+            List<RunSetActionBase.eRunAt> list = [RunSetActionBase.eRunAt.ExecutionEnd];
             return list;
         }
 
@@ -82,7 +81,7 @@ namespace Ginger.Run.RunSetActions
         {
             if (errorType == SerializationErrorType.PropertyNotFound)
             {
-                if (name == "SaveResultstoFolderName" || name == "OpenExecutionResultsFolder" || name == "SaveindividualBFReport")
+                if (name is "SaveResultstoFolderName" or "OpenExecutionResultsFolder" or "SaveindividualBFReport")
                 {
                     return true;
                 }

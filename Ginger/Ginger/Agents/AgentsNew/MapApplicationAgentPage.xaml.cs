@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger;
-using GingerCore;
 using GingerCore.Platforms;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,13 +47,14 @@ namespace GingerWPF.AgentsLib
 
         public GenericWindow ShowAsWindow(System.Windows.Window owner)
         {
-            Button AddBtn = new Button();
-            AddBtn.Content = "Add Agent";
-            AddBtn.Name = "AddAgent";
+            Button AddBtn = new Button
+            {
+                Content = "Add Agent",
+                Name = "AddAgent"
+            };
             AddBtn.Click += new RoutedEventHandler(AddAgentButton_Click);
 
-            ObservableList<Button> Buttons = new ObservableList<Button>();
-            Buttons.Add(AddBtn);
+            ObservableList<Button> Buttons = [AddBtn];
 
             GenericWindow genWin = null;
             GenericWindow.LoadGenericWindow(ref genWin, owner, eWindowShowStyle.Free, this.Title, this, Buttons);
@@ -70,7 +70,7 @@ namespace GingerWPF.AgentsLib
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             ApplicationAgent a = (ApplicationAgent)mApps.CurrentItem;
-            ((Agent)a.Agent).AgentOperations.StartDriver();
+            a.Agent.AgentOperations.StartDriver();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)

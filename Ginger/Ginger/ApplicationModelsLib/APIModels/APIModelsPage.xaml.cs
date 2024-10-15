@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -56,11 +55,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void SetAPIModelsGridView()
         {
             xAPIModelsGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Name), Header = "Name", ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Description), Header = "Description", ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItem.RelativeFilePath), Header = "Local File Path", ReadOnly = true, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ApplicationAPIModel.Name), Header = "Name", ReadOnly = true },
+                new GridColView() { Field = nameof(ApplicationAPIModel.Description), Header = "Description", ReadOnly = true },
+                new GridColView() { Field = nameof(RepositoryItem.RelativeFilePath), Header = "Local File Path", ReadOnly = true, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
             xAPIModelsGrid.SetAllColumnsDefaultView(view);
             xAPIModelsGrid.InitViewItems();

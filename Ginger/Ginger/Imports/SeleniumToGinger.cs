@@ -76,8 +76,11 @@ namespace Ginger.Import
                             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf);
                         }
                         bf = new BusinessFlow(row.Descendants("title").FirstOrDefault().InnerText);
-                        result = new Activity() { Active = true };
-                        result.ActivityName = row.Descendants("title").FirstOrDefault().InnerText;
+                        result = new Activity
+                        {
+                            Active = true,
+                            ActivityName = row.Descendants("title").FirstOrDefault().InnerText
+                        };
                         bf.Activities.Add(result);
                     }
                     else

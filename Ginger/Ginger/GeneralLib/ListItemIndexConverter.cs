@@ -32,7 +32,7 @@ namespace GingerWPF.GeneralLib
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             ListViewItem LBI = (ListViewItem)value;
-            ListView LB = GetParentOfType<ListView>((ListViewItem)LBI);
+            ListView LB = GetParentOfType<ListView>(LBI);
             int i = LB.ItemContainerGenerator.IndexFromContainer(LBI);
             i++;  // base 1 counting
             return i.ToString();
@@ -48,7 +48,7 @@ namespace GingerWPF.GeneralLib
             }
 
             DependencyObject parent = VisualTreeHelper.GetParent(element);
-            if (parent == null && ((FrameworkElement)element).Parent is DependencyObject)
+            if (parent == null && ((FrameworkElement)element).Parent is not null)
             {
                 parent = ((FrameworkElement)element).Parent;
             }

@@ -78,7 +78,7 @@ namespace GingerCore.Actions
 
 
                 int i;
-                return int.TryParse(GetOrCreateInputParam(Fields.WaitTime).Value, out i) ? i : (int?)null; ;
+                return int.TryParse(GetOrCreateInputParam(Fields.WaitTime).Value, out i) ? i : null; ;
 
             }
             set

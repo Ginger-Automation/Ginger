@@ -55,8 +55,7 @@ namespace Ginger.Actions.UserControls
             DependencyProperty.Register("mActParentBusinessFlow", typeof(BusinessFlow), typeof(UCFlowControlAction), new PropertyMetadata(OnActParentBusinessFlowPropertyChanged));
         private static void OnActParentBusinessFlowPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCFlowControlAction;
-            if (control != null)
+            if (sender is UCFlowControlAction control)
             {
                 control.OnActParentBusinessFlowChanged((BusinessFlow)args.NewValue);
             }
@@ -71,8 +70,7 @@ namespace Ginger.Actions.UserControls
             DependencyProperty.Register("mActParentActivity", typeof(Activity), typeof(UCFlowControlAction), new PropertyMetadata(OnActParentActivityPropertyChanged));
         private static void OnActParentActivityPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCFlowControlAction;
-            if (control != null)
+            if (sender is UCFlowControlAction control)
             {
                 control.OnActParentActivityChanged((Activity)args.NewValue);
             }
@@ -87,8 +85,7 @@ namespace Ginger.Actions.UserControls
             DependencyProperty.Register("mEditMode", typeof(General.eRIPageViewMode), typeof(UCFlowControlAction), new PropertyMetadata(OnRepositoryItemModePropertyChanged));
         private static void OnRepositoryItemModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCFlowControlAction;
-            if (control != null)
+            if (sender is UCFlowControlAction control)
             {
                 control.OnRepositoryItemModeChanged((General.eRIPageViewMode)args.NewValue);
             }
@@ -105,8 +102,7 @@ namespace Ginger.Actions.UserControls
 
         private static void OnBfParentRunnerPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCFlowControlAction;
-            if (control != null)
+            if (sender is UCFlowControlAction control)
             {
                 control.OnBfParentRunnerChanged((GingerRunner)args.NewValue);
             }
@@ -125,8 +121,7 @@ namespace Ginger.Actions.UserControls
 
         private static void OnActionPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as UCFlowControlAction;
-            if (control != null)
+            if (sender is UCFlowControlAction control)
             {
                 control.OnActionChanged((Act)args.NewValue);
             }
@@ -223,9 +218,11 @@ namespace Ginger.Actions.UserControls
                                     continue;
                                 }
 
-                                ComboEnumItem CEI = new ComboEnumItem();
-                                CEI.Value = bf.InstanceGuid + FC.GUID_NAME_SEPERATOR + bf.Name;//adding also name as second option search to be used when pulling the activity from Shared Repository
-                                CEI.text = bf.Name;
+                                ComboEnumItem CEI = new ComboEnumItem
+                                {
+                                    Value = bf.InstanceGuid + FC.GUID_NAME_SEPERATOR + bf.Name,//adding also name as second option search to be used when pulling the activity from Shared Repository
+                                    text = bf.Name
+                                };
                                 ActionValueComboBox.Items.Add(CEI);
 
                                 if (ActionValueComboBox.SelectedItem == null || (ActionValueComboBox.SelectedItem != null && bf.Active))
@@ -317,9 +314,11 @@ namespace Ginger.Actions.UserControls
                                         continue;
                                     }
 
-                                    ComboEnumItem CEI = new ComboEnumItem();
-                                    CEI.Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.ActivityName;//adding also name as second option search to be used when pulling the activity from Shared Repository
-                                    CEI.text = a.ActivityName;
+                                    ComboEnumItem CEI = new ComboEnumItem
+                                    {
+                                        Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.ActivityName,//adding also name as second option search to be used when pulling the activity from Shared Repository
+                                        text = a.ActivityName
+                                    };
                                     ActionValueComboBox.Items.Add(CEI);
 
                                     if (ActionValueComboBox.SelectedItem == null ||

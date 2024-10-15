@@ -48,11 +48,12 @@ namespace GingerWPF.AgentsLib
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button okBtn = new Button();
-            okBtn.Content = "OK";
+            Button okBtn = new Button
+            {
+                Content = "OK"
+            };
             okBtn.Click += new RoutedEventHandler(OKButton_Click);
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(okBtn);
+            ObservableList<Button> winButtons = [okBtn];
 
             GenericWindow.LoadGenericWindow(ref mGenericWindow, null, windowStyle, this.Title, this, winButtons, true, "Cancel");
         }

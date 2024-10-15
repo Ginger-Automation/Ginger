@@ -121,7 +121,7 @@ namespace Amdocs.Ginger.CoreNET.Platform
                 String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
                 actName = PathHelper.CleanInValidPathChars(mAct.Description);
                 fullFileName = Path.Combine(directoryFullPath, actName + "_" + timeStamp + "_" + fileType + "." + extension);
-                Act.AddArtifactToAction(Path.GetFileName(fullFileName), mAct, fullFileName);                
+                Act.AddArtifactToAction(Path.GetFileName(fullFileName), mAct, fullFileName);
                 if (contentType != ApplicationAPIUtils.eContentType.PDF.ToString())
                 {
                     File.WriteAllText(fullFileName, fileContent);

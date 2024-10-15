@@ -121,7 +121,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"RQM connection Failed {ex.Message}" , ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"RQM connection Failed {ex.Message}", ex);
             }
             return isUserAuthen;
         }
@@ -140,15 +140,14 @@ namespace GingerCore.ALM.RQM
 
         public List<string> GetRQMDomains()
         {
-            List<string> RQMDomains = new List<string>();
-            RQMDomains.Add("RQM Domain");
+            List<string> RQMDomains = ["RQM Domain"];
             return RQMDomains;
 
         }
 
         public Dictionary<string, string> GetRQMDomainProjects()
         {
-            List<string> RQMProjects = new List<string>();
+            List<string> RQMProjects = [];
             try
             {
                 LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
@@ -175,7 +174,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Project not found{ex.Message}",ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Project not found{ex.Message}", ex);
             }
             return RQMProjects.ToDictionary(x => x, x => x);
         }
@@ -216,22 +215,22 @@ namespace GingerCore.ALM.RQM
                     {
                         XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
 
-                        FileStream fs = new FileStream(importConfigTemplate, FileMode.Open,FileAccess.Read);
+                        FileStream fs = new FileStream(importConfigTemplate, FileMode.Open, FileAccess.Read);
                         reader = XmlReader.Create(fs);
                         RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
                         fs.Close();
-                    } 
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to import RQM test plans, RQM_ImportConfigs_Template.xml wasn't found {ex.Message} ",ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to import RQM test plans, RQM_ImportConfigs_Template.xml wasn't found {ex.Message} ", ex);
             }
         }
 
         public ObservableList<RQMTestPlan> GetRQMTestPlansByProject(string RQMServerUrl, string RQMUserName, string RQMPassword, string RQMProject, string solutionFolder)
         {
-            ObservableList<RQMTestPlan> RQMTestPlanList = new ObservableList<RQMTestPlan>();
+            ObservableList<RQMTestPlan> RQMTestPlanList = [];
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, " In GetRQMTestPlansByProject");
@@ -292,7 +291,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Plan list not found {ex.Message} ",ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Plan list not found {ex.Message} ", ex);
             }
             return RQMTestPlanList;
         }
@@ -486,7 +485,7 @@ namespace GingerCore.ALM.RQM
         }
         public ObservableList<RQMTestCase> BuildRQMTestCaseList(XmlNodeList testCases, XmlNamespaceManager nsmgr, LoginDTO loginData, RQMProject currentRQMProjectMapping, XmlReader reader, string TestSuiteTitle, string TestSuiteId)
         {
-            ObservableList<RQMTestCase> RQMTestCaseList = new ObservableList<RQMTestCase>();
+            ObservableList<RQMTestCase> RQMTestCaseList = [];
             try
             {
 
@@ -613,7 +612,7 @@ namespace GingerCore.ALM.RQM
 
         public ObservableList<RQMExecutionRecord> GetExecutionRecordsByTestPlan(LoginDTO loginData, XmlReader reader, RQMProject currentRQMProjectMapping, string currentProjPrefix, string currentProjGuid, string testPlanURLPathVersioned)
         {
-            ObservableList<RQMExecutionRecord> RQMExecutionRecords = new ObservableList<RQMExecutionRecord>();
+            ObservableList<RQMExecutionRecord> RQMExecutionRecords = [];
             try
             {
                 RqmResponseData responseDataExecutionRecords = RQMRep.GetExecutionByTestPlan(loginData, currentProjPrefix, currentProjGuid, testPlanURLPathVersioned);
@@ -676,7 +675,7 @@ namespace GingerCore.ALM.RQM
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Case by test plan not found { ex.Message}", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Case by test plan not found {ex.Message}", ex);
                     }
                 }
             }
@@ -799,7 +798,7 @@ namespace GingerCore.ALM.RQM
                 return null;
             }
 
-            ObservableList<RQMExecutionRecord> RQMExecutionRecords = new ObservableList<RQMExecutionRecord>();
+            ObservableList<RQMExecutionRecord> RQMExecutionRecords = [];
             try
             {
 
@@ -873,11 +872,11 @@ namespace GingerCore.ALM.RQM
                 try //skip result incase of error, defect #5164
                 {
                     XmlDocument doc = new XmlDocument();
-                    if(responseData.ErrorCode == 400)
+                    if (responseData.ErrorCode == 400)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - Test Case not found {responseData.ErrorCode}, {responseData.ErrorDesc}");
                     }
-                    else if(responseData.ErrorCode != 0)
+                    else if (responseData.ErrorCode != 0)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {responseData.ErrorCode}, {responseData.ErrorDesc}");
                     }

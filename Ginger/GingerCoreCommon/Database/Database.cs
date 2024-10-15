@@ -64,7 +64,8 @@ namespace GingerCore.Environments
         // if it passes the status changes accordingly
 
         private eRunStatus mTestConnectionStatus = eRunStatus.Pending;
-        public eRunStatus TestConnectionStatus {
+        public eRunStatus TestConnectionStatus
+        {
 
             get
             {
@@ -180,14 +181,14 @@ namespace GingerCore.Environments
         // checks if oracle version is lower than 10.2
         private bool mIsOracleVersionLow;
         [IsSerializedForLocalRepository]
-        public bool IsOracleVersionLow 
-        { 
-            get { return mIsOracleVersionLow; } 
-            set 
-            { 
-                mIsOracleVersionLow = value; 
-                OnPropertyChanged(nameof(IsOracleVersionLow)); 
-            } 
+        public bool IsOracleVersionLow
+        {
+            get { return mIsOracleVersionLow; }
+            set
+            {
+                mIsOracleVersionLow = value;
+                OnPropertyChanged(nameof(IsOracleVersionLow));
+            }
         }
 
         public static List<string> DbTypes
@@ -203,7 +204,7 @@ namespace GingerCore.Environments
 
         public static List<eConfigType> GetSupportedConfigurations(eDBTypes CurrentDbType)
         {
-            List<eConfigType> SupportedConfigs = new List<eConfigType>();
+            List<eConfigType> SupportedConfigs = [];
 
             switch (CurrentDbType)
             {

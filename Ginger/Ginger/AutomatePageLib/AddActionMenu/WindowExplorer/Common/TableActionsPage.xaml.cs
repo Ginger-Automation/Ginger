@@ -69,10 +69,7 @@ namespace Ginger.WindowExplorer.Common
             object o = mElementInfo.GetElementData();
 
             //Create sample columns
-            mColNames = new List<string>();
-            mColNames.Add("aaa");
-            mColNames.Add("bbb");
-            mColNames.Add("cc");
+            mColNames = ["aaa", "bbb", "cc"];
             ColName.ItemsSource = mColNames;
         }
 
@@ -81,11 +78,7 @@ namespace Ginger.WindowExplorer.Common
             // Keep original actions 
             if (mOriginalActions == null)
             {
-                mOriginalActions = new ObservableList<Act>();
-                foreach (Act a in mActions)
-                {
-                    mOriginalActions.Add(a);
-                }
+                mOriginalActions = [.. mActions];
             }
         }
 
@@ -195,7 +188,7 @@ namespace Ginger.WindowExplorer.Common
         private void LoadColumnNameCombo()
         {
             UIAuto.AutomationElement headerElement;
-            mColNames = new List<string>();
+            mColNames = [];
             int k = 0;
             while (k < columnCount)
             {

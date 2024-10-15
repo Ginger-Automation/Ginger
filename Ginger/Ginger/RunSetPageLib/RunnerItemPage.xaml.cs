@@ -143,7 +143,7 @@ namespace Ginger.Run
             {
                 for (int i = 0; i < mItemChilds.Count; i++)
                 {
-                    RunnerItemPage page = (RunnerItemPage)mItemChilds[i];
+                    RunnerItemPage page = mItemChilds[i];
                     page.ClearBindings();
                     page = null;
                 }
@@ -155,7 +155,7 @@ namespace Ginger.Run
 
         public void LoadChildRunnerItems()
         {
-            mItemChilds = new ObservableList<RunnerItemPage>();
+            mItemChilds = [];
 
             if (ItemObject.GetType() == typeof(BusinessFlow))
             {
@@ -218,7 +218,7 @@ namespace Ginger.Run
             {
                 if (ItemObject.GetType() == typeof(GingerCore.BusinessFlow))
                 {
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(BusinessFlow.RunStatus), BindingMode.OneWay);                   
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(BusinessFlow.RunStatus), BindingMode.OneWay);
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessflowActive, ucButton.ButtonImageTypeProperty, ItemObject, nameof(BusinessFlow.Active), bindingConvertor: new ActiveIconConverter(), BindingMode.TwoWay);
                     PropertyChangedEventManager.AddHandler(source: ((BusinessFlow)ItemObject), handler: RunnerItem_BusinessflowPropertyChanged, propertyName: allProperties);
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
@@ -252,7 +252,7 @@ namespace Ginger.Run
                 xRunnerItemMenu.Visibility = Visibility.Collapsed;
             }
 
-            if(_runnerItemEventHandler != null)
+            if (_runnerItemEventHandler != null)
             {
                 WeakEventManager<RunnerItemPage, RunnerItemEventArgs>.RemoveHandler(source: this, eventName: nameof(RunnerItemEvent), handler: _runnerItemEventHandler);
                 WeakEventManager<RunnerItemPage, RunnerItemEventArgs>.AddHandler(source: this, eventName: nameof(RunnerItemEvent), handler: _runnerItemEventHandler);
@@ -300,10 +300,10 @@ namespace Ginger.Run
             {
                 Click(this, e);
             }
-            if(e.Handled)
+            if (e.Handled)
             {
                 OnRunnerItemEvent(RunnerItemEventArgs.eEventType.ViewConfiguration, this, ItemtType, ItemObject);
-            }            
+            }
         }
         public event RoutedEventHandler ClickAutomate;
         private void xautomateBusinessflow_Click(object sender, RoutedEventArgs e)
@@ -395,7 +395,7 @@ namespace Ginger.Run
 
         private void UserControl_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (((RunnerItemPage)sender).ItemObject is Act || ((RunnerItemPage)sender).ItemObject is Activity)
+            if (((RunnerItemPage)sender).ItemObject is Act or Activity)
             {
                 OnRunnerItemEvent(RunnerItemEventArgs.eEventType.ViewRunnerItemRequired, this, ItemtType, ItemObject);
             }
@@ -409,8 +409,7 @@ namespace Ginger.Run
         {
             if (ItemObject.GetType() == typeof(GingerCore.BusinessFlow))
             {
-                ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
-                bfs.Add(((BusinessFlow)ItemObject));
+                ObservableList<BusinessFlow> bfs = [((BusinessFlow)ItemObject)];
 
                 if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
                 {
@@ -448,7 +447,7 @@ namespace Ginger.Run
             {
                 PropertyChangedEventManager.RemoveHandler(source: ((Act)ItemObject), handler: RunnerItem_ActionPropertyChanged, propertyName: allProperties);
             }
-            
+
 
             WeakEventManager<ucButton, RoutedEventArgs>.RemoveHandler(source: this.xDetailView, eventName: nameof(ucButton.Click), handler: xDetailView_Click);
             WeakEventManager<Control, MouseButtonEventArgs>.RemoveHandler(source: this, eventName: nameof(ucButton.MouseDoubleClick), handler: UserControl_MouseDoubleClick);

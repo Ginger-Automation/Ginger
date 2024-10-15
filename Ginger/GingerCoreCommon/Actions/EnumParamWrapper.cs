@@ -22,7 +22,7 @@ namespace Amdocs.Ginger.Common.Actions
 {
     public class EnumParamWrapper
     {
-        List<string> mList = new List<string>();
+        List<string> mList = [];
 
         public EnumParamWrapper(string values)
         {

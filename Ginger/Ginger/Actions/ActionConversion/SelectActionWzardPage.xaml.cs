@@ -21,7 +21,6 @@ using Amdocs.Ginger.CoreNET;
 using Ginger.UserControls;
 using GingerCore;
 using GingerWPF.WizardLib;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 
@@ -100,10 +99,10 @@ namespace Ginger.Actions.ActionConversion
 
             if (mWizard.LstSelectedActivities.Count != 0)
             {
-                xGridConvertibleActions.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
-                {
+                xGridConvertibleActions.ValidationRules =
+                [
                     ucGrid.eUcGridValidationRules.CheckedRowCount
-                };
+                ];
 
                 if (mWizard.ActionToBeConverted == null || mWizard.ActionToBeConverted.Count <= 0)
                 {
@@ -135,7 +134,7 @@ namespace Ginger.Actions.ActionConversion
         /// <returns></returns>
         private IObservableList GetDistinctList(ObservableList<ConvertableActionDetails> actionToBeConverted)
         {
-            ObservableList<ConvertableActionDetails> list = new ObservableList<ConvertableActionDetails>();
+            ObservableList<ConvertableActionDetails> list = [];
             foreach (var act in actionToBeConverted)
             {
                 ConvertableActionDetails det = list.FirstOrDefault(x => x.SourceActionTypeName == act.SourceActionTypeName && x.TargetActionTypeName == act.TargetActionTypeName);
@@ -150,11 +149,14 @@ namespace Ginger.Actions.ActionConversion
         private void SetGridView()
         {
             //Set the Data Grid columns
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay },
+                new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" },
+            ]
+            };
             if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.SingleBusinessFlow)
             {
                 view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });

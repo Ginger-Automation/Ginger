@@ -109,8 +109,8 @@ namespace GingerCore.FlowControlLib
 
     public class FlowControl : RepositoryItemBase
     {
-        public static readonly List<object> BusinessFlowFlowControls = new List<object> { eFCOperator.BusinessFlowPassed, eFCOperator.BusinessFlowFailed, eFCOperator.CSharp, eFCOperator.Legacy };
-        public static readonly List<object> ActionFlowControls = new List<object> { eFCOperator.ActionPassed, eFCOperator.ActionFailed, eFCOperator.LastActivityPassed, eFCOperator.LastActivityFailed, eFCOperator.CSharp, eFCOperator.Legacy };
+        public static readonly List<object> BusinessFlowFlowControls = [eFCOperator.BusinessFlowPassed, eFCOperator.BusinessFlowFailed, eFCOperator.CSharp, eFCOperator.Legacy];
+        public static readonly List<object> ActionFlowControls = [eFCOperator.ActionPassed, eFCOperator.ActionFailed, eFCOperator.LastActivityPassed, eFCOperator.LastActivityFailed, eFCOperator.CSharp, eFCOperator.Legacy];
         public static partial class Fields
         {
             public static string Active = "Active";
@@ -209,7 +209,7 @@ namespace GingerCore.FlowControlLib
                     mOperator = value;
                     OnPropertyChanged(nameof(Operator));
                 }
-                if (!(mOperator.Value == eFCOperator.Legacy || mOperator.Value == eFCOperator.CSharp))
+                if (mOperator.Value is not (eFCOperator.Legacy or eFCOperator.CSharp))
                 {
                     Condition = string.Empty;
                 }
@@ -409,16 +409,18 @@ namespace GingerCore.FlowControlLib
         }
         public List<eFlowControlAction> GetFlowControlActionsForErrorAndPopupHandler()
         {
-            List<eFlowControlAction> errorFlowControlActions = new List<eFlowControlAction>();
-            errorFlowControlActions.Add(eFlowControlAction.FailActionAndStopBusinessFlow);
-            errorFlowControlActions.Add(eFlowControlAction.FailureIsAutoOpenedDefect);
-            errorFlowControlActions.Add(eFlowControlAction.GoToAction);
-            errorFlowControlActions.Add(eFlowControlAction.GoToNextAction);
-            errorFlowControlActions.Add(eFlowControlAction.MessageBox);
-            errorFlowControlActions.Add(eFlowControlAction.RerunAction);
-            errorFlowControlActions.Add(eFlowControlAction.SetVariableValue);
-            errorFlowControlActions.Add(eFlowControlAction.StopBusinessFlow);
-            errorFlowControlActions.Add(eFlowControlAction.StopRun);
+            List<eFlowControlAction> errorFlowControlActions =
+            [
+                eFlowControlAction.FailActionAndStopBusinessFlow,
+                eFlowControlAction.FailureIsAutoOpenedDefect,
+                eFlowControlAction.GoToAction,
+                eFlowControlAction.GoToNextAction,
+                eFlowControlAction.MessageBox,
+                eFlowControlAction.RerunAction,
+                eFlowControlAction.SetVariableValue,
+                eFlowControlAction.StopBusinessFlow,
+                eFlowControlAction.StopRun,
+            ];
 
             return errorFlowControlActions;
         }

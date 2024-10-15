@@ -20,8 +20,6 @@ using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
 using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Responses;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Amdocs.Ginger.CoreNET.Run.RemoteExecution.ExecutionHandlerAPIClient;
 

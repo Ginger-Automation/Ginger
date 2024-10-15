@@ -24,9 +24,6 @@ using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.VisualStudio.Services.Common;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,7 +38,7 @@ namespace Ginger.SolutionWindows
         GenericWindow _pageGenericWin = null;
         Solution mSolution;
         bool isApplicationLoadedFromNewSolution = false;
-        public AddApplicationPage(Solution Solution , bool isApplicationLoadedFromNewSolution)
+        public AddApplicationPage(Solution Solution, bool isApplicationLoadedFromNewSolution)
         {
             InitializeComponent();
             SelectApplicationGrid.SelectionMode = DataGridSelectionMode.Single;
@@ -58,18 +55,18 @@ namespace Ginger.SolutionWindows
             // Later on get this list from our public web site
 
             // meanwhile grid will do
-            ObservableList<ApplicationPlatform> APs = new ObservableList<ApplicationPlatform>();
-
-
-            APs.Add(new ApplicationPlatform() { AppName = "MyWebApp", Platform = ePlatformType.Web, Description = "Web Application" });
-            APs.Add(new ApplicationPlatform() { AppName = "MyJavaApp", Platform = ePlatformType.Java, Description = "Java Application" });
-            APs.Add(new ApplicationPlatform() { AppName = "MyWebServicesApp", Platform = ePlatformType.WebServices, Description = "WebServices Application" });
-            APs.Add(new ApplicationPlatform() { AppName = "MyMobileApp", Platform = ePlatformType.Mobile, Description = "Mobile Application" });
-            APs.Add(new ApplicationPlatform() { AppName = "Mediation", Platform = ePlatformType.Unix, Description = "Amdocs Mediation" });
-            APs.Add(new ApplicationPlatform() { AppName = "MyDosApp", Platform = ePlatformType.DOS, Description = "DOS Application" });
-            APs.Add(new ApplicationPlatform() { AppName = "MyMainFrameApp", Platform = ePlatformType.MainFrame, Description = "MainFrame Application" });
-            APs.Add(new ApplicationPlatform() { AppName = "MyWindowsApp", Platform = ePlatformType.Windows, Description = "Windows Application" });
-            APs.Add(new ApplicationPlatform() { AppName = "MyPowerBuilderApp", Platform = ePlatformType.PowerBuilder, Description = "Power Builder Application" });
+            ObservableList<ApplicationPlatform> APs =
+            [
+                new ApplicationPlatform() { AppName = "MyWebApp", Platform = ePlatformType.Web, Description = "Web Application" },
+                new ApplicationPlatform() { AppName = "MyJavaApp", Platform = ePlatformType.Java, Description = "Java Application" },
+                new ApplicationPlatform() { AppName = "MyWebServicesApp", Platform = ePlatformType.WebServices, Description = "WebServices Application" },
+                new ApplicationPlatform() { AppName = "MyMobileApp", Platform = ePlatformType.Mobile, Description = "Mobile Application" },
+                new ApplicationPlatform() { AppName = "Mediation", Platform = ePlatformType.Unix, Description = "Amdocs Mediation" },
+                new ApplicationPlatform() { AppName = "MyDosApp", Platform = ePlatformType.DOS, Description = "DOS Application" },
+                new ApplicationPlatform() { AppName = "MyMainFrameApp", Platform = ePlatformType.MainFrame, Description = "MainFrame Application" },
+                new ApplicationPlatform() { AppName = "MyWindowsApp", Platform = ePlatformType.Windows, Description = "Windows Application" },
+                new ApplicationPlatform() { AppName = "MyPowerBuilderApp", Platform = ePlatformType.PowerBuilder, Description = "Power Builder Application" },
+            ];
             SelectApplicationGrid.DataSourceList = APs;
             SelectApplicationGrid.SearchVisibility = Visibility.Collapsed;
         }
@@ -82,10 +79,14 @@ namespace Ginger.SolutionWindows
             SelectApplicationGrid.ShowDelete = System.Windows.Visibility.Collapsed;
             SelectApplicationGrid.ShowEdit = System.Windows.Visibility.Collapsed;
             SelectApplicationGrid.ShowUpDown = System.Windows.Visibility.Collapsed;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), Header="Select Platform",  WidthWeight = 40 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 },
+                new GridColView() { Field = nameof(ApplicationPlatform.Platform), Header="Select Platform",  WidthWeight = 40 },
+            ]
+            };
 
             SelectApplicationGrid.SetAllColumnsDefaultView(view);
             SelectApplicationGrid.InitViewItems();
@@ -95,11 +96,12 @@ namespace Ginger.SolutionWindows
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button CloseButton = new Button();
-            CloseButton.Content = "OK";
+            Button CloseButton = new Button
+            {
+                Content = "OK"
+            };
             CloseButton.Click += new RoutedEventHandler(OKButton_Click);
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(CloseButton);
+            ObservableList<Button> winButtons = [CloseButton];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, null, windowStyle, "Add Application to solution", this, winButtons, true);
             _pageGenericWin.Width = 800;
@@ -117,7 +119,7 @@ namespace Ginger.SolutionWindows
         {
             if (mSolution.ApplicationPlatforms == null)
             {
-                mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
+                mSolution.ApplicationPlatforms = [];
             }
             var name = applicationName.Text.Trim();
             var description = applicationDescription.Text.Trim();
@@ -160,17 +162,18 @@ namespace Ginger.SolutionWindows
             {
                 var ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
 
-                ProjEnvironments.ForEach((projEnv) => { 
-              
-                    projEnv.StartDirtyTracking(); 
-                    projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid, Platform = selectedApp.Platform, Active=true }); 
-                    projEnv.OnPropertyChanged(nameof(projEnv.Applications)); 
+                ProjEnvironments.ForEach((projEnv) =>
+                {
+
+                    projEnv.StartDirtyTracking();
+                    projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid, Platform = selectedApp.Platform, Active = true });
+                    projEnv.OnPropertyChanged(nameof(projEnv.Applications));
                 });
             }
 
             mSolution.ApplicationPlatforms.Add(selectedApp);
 
-            
+
             if (!msgSelection.Equals(eUserMsgSelection.Yes))
             {
                 this.NewlyAddedApplicationPlatform = selectedApp;

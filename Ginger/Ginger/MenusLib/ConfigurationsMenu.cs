@@ -19,17 +19,17 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.Configurations;
+using Ginger.ExternalConfigurations;
 using Ginger.GeneralWindows;
 using Ginger.Reports;
 using Ginger.SolutionWindows;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.TagsLib;
 using Ginger.TwoLevelMenuLib;
+using GingerCore;
 using GingerWPF.UserControlsLib;
 using System;
 using System.Windows.Controls;
-using GingerCore;
-using Ginger.ExternalConfigurations;
 
 namespace Ginger.ConfigurationsLib
 {
@@ -91,7 +91,7 @@ namespace Ginger.ConfigurationsLib
             externalConfigMenu.Add(eImageType.Applitools, "Applitools Configuration", GetApplitoolsExteranalConfigsPage, ConsoleKey.X, "Applitools External Configurations", "Applitools Configuration AID");
             externalConfigMenu.Add(eImageType.Sealights, "Sealights Configuration", GetSealightsExteranalConfigsPage, ConsoleKey.X, "Sealights External Configurations", "Sealights Configuration AID");
             externalConfigMenu.Add(eImageType.Exchange, "Ask Lisa Configuration", GetAskLisaConfigsPage, ConsoleKey.X, "Ask Lisa Configurations", "Ask Lisa Configuration AID");
-            externalConfigMenu.Add(eImageType.GingerAnalytics, "Ginger Analytics Configuration", GetGingerAnalyticsPage, ConsoleKey.X, "Ginger Analytics Configuration", "Ginger Analytics Configuration AID");
+            externalConfigMenu.Add(eImageType.GingerAnalytics, "GingerOps Configuration", GetGingerOpsPage, ConsoleKey.X, "GingerOps Configuration", "GingerOps Configuration AID");
             twoLevelMenu.Add(externalConfigMenu);
 
             TopMenuItem accessiblityRulesMenu = new TopMenuItem(eImageType.Accessibility, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", ConsoleKey.T, $"{GingerCore.General.GetEnumValueDescription(typeof(eTermResKey), nameof(eTermResKey.AccessibilityRules))}", "Name & rules of the Accessibility which been present current json");
@@ -120,8 +120,10 @@ namespace Ginger.ConfigurationsLib
 
         private static Page AgentsList()
         {
-            AgentsFolderTreeItem AgentsRoot = new AgentsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<GingerCore.Agent>());
-            AgentsRoot.IsGingerDefualtFolder = true;
+            AgentsFolderTreeItem AgentsRoot = new AgentsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<GingerCore.Agent>())
+            {
+                IsGingerDefualtFolder = true
+            };
             SingleItemTreeViewExplorerPage agentsPage = new SingleItemTreeViewExplorerPage("Agents", eImageType.Agent, AgentsRoot, AgentsRoot.SaveAllTreeFolderItemsHandler, AgentsRoot.AddItemHandler, isSaveButtonHidden: true, showTitle: true);
             return agentsPage;
         }
@@ -134,9 +136,11 @@ namespace Ginger.ConfigurationsLib
 
         private static Page ReportsList()
         {
-            HTMLGingerReportsTreeItem reportsRoot = new HTMLGingerReportsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<HTMLReportConfiguration>());
-            reportsRoot.IsGingerDefualtFolder = true;
-            SingleItemTreeViewExplorerPage reportsPage = new SingleItemTreeViewExplorerPage("Reports Templates", eImageType.Report, reportsRoot, reportsRoot.SaveAllTreeFolderItemsHandler, reportsRoot.AddItemHandler, isSaveButtonHidden: true, showTitle:true);
+            HTMLGingerReportsTreeItem reportsRoot = new HTMLGingerReportsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<HTMLReportConfiguration>())
+            {
+                IsGingerDefualtFolder = true
+            };
+            SingleItemTreeViewExplorerPage reportsPage = new SingleItemTreeViewExplorerPage("Reports Templates", eImageType.Report, reportsRoot, reportsRoot.SaveAllTreeFolderItemsHandler, reportsRoot.AddItemHandler, isSaveButtonHidden: true, showTitle: true);
             return reportsPage;
         }
 
@@ -157,9 +161,9 @@ namespace Ginger.ConfigurationsLib
             return new AskLisaConfigurationsPage();
         }
 
-        private static Page GetGingerAnalyticsPage()
+        private static Page GetGingerOpsPage()
         {
-            return new GingerAnalyticsConfigurationPage();
+            return new GingerOpsConfigurationPage();
         }
         //Remove when we add other pages
         private static Page OthersPage()

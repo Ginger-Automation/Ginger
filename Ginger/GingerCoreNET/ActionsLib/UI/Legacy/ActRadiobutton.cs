@@ -76,7 +76,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eActRadioButtonAction)GetOrCreateInputParam<eActRadioButtonAction>(nameof(RadioButtonAction), eActRadioButtonAction.SelectByIndex);
+                return GetOrCreateInputParam<eActRadioButtonAction>(nameof(RadioButtonAction), eActRadioButtonAction.SelectByIndex);
             }
             set
             {

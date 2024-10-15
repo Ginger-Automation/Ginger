@@ -16,9 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
-using GingerCore;
 using Newtonsoft.Json.Linq;
 using NSwag;
 using System;
@@ -33,48 +31,38 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
             if (IsValidYaml(FileName))
             {
-                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning))
+                try
                 {
-                    try
-                    {
-                        featureTracker.Metadata.Add("APIType", "Swagger");
-                        featureTracker.Metadata.Add("FileType", "YAML");
-                        string fileContent = FileContentProvider(FileName);
-                        string fileConverted = ConvertYamlToJson(fileContent);
-                        JToken.Parse(fileConverted); // doing the Jtoken to validate the json file
-                        Swaggerdoc = SwaggerDocument.FromJsonAsync(fileConverted).Result;
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided yaml document ", ex);
-                        Reporter.ToUser(eUserMsgKey.InvalidYAML);
-                    }
-                }                
+                    string fileContent = FileContentProvider(FileName);
+                    string fileConverted = ConvertYamlToJson(fileContent);
+                    JToken.Parse(fileConverted); // doing the Jtoken to validate the json file
+                    Swaggerdoc = SwaggerDocument.FromJsonAsync(fileConverted).Result;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided yaml document ", ex);
+                    Reporter.ToUser(eUserMsgKey.InvalidYAML);
+                }
             }
             else
             {
-                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning))
+                try
                 {
-                    try
-                    {
-                        featureTracker.Metadata.Add("APIType", "Swagger");
-                        featureTracker.Metadata.Add("FileType", "JSON");
-                        string fileContent = FileContentProvider(FileName);
-                        JToken.Parse(fileContent);  // doing the Jtoken to validate the json file
-                        Swaggerdoc = SwaggerDocument.FromJsonAsync(FileContentProvider(FileName)).Result;
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided json document ", ex);
-                        Reporter.ToUser(eUserMsgKey.InvalidJSON);
-                    }
+                    string fileContent = FileContentProvider(FileName);
+                    JToken.Parse(fileContent);  // doing the Jtoken to validate the json file
+                    Swaggerdoc = SwaggerDocument.FromJsonAsync(FileContentProvider(FileName)).Result;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided json document ", ex);
+                    Reporter.ToUser(eUserMsgKey.InvalidJSON);
                 }
             }
 
             if (Swaggerdoc.SchemaType.ToString() == "Swagger2")
             {
                 SwaggerVer2 s2 = new SwaggerVer2();
-                SwaggerModels = s2.SwaggerTwo(Swaggerdoc,SwaggerModels);
+                SwaggerModels = s2.SwaggerTwo(Swaggerdoc, SwaggerModels);
             }
             else
             {

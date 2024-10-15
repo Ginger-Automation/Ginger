@@ -46,11 +46,15 @@ namespace Ginger.ALM.RQM
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.RQMID, Header = "Test Case ID", WidthWeight = 7, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 30, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 30, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = RQMTestCase.Fields.RQMID, Header = "Test Case ID", WidthWeight = 7, ReadOnly = true },
+                new GridColView() { Field = RQMTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 30, ReadOnly = true },
+                new GridColView() { Field = RQMTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 30, ReadOnly = true },
+            ]
+            };
             if (mTestPlan.TestCases.Where(z => z.TestSuiteId != null && z.TestSuiteId != string.Empty).ToList().Count > 0)
             {
                 view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.TestSuiteTitle, Header = "RQM Test Suite", WidthWeight = 30, ReadOnly = true });
@@ -71,11 +75,13 @@ namespace Ginger.ALM.RQM
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button importButton = new Button();
-            importButton.Content = "Import";
-            importButton.ToolTip = "Import current Test Plan's Test Cases with selected Test Scripts";
+            Button importButton = new Button
+            {
+                Content = "Import",
+                ToolTip = "Import current Test Plan's Test Cases with selected Test Scripts"
+            };
             importButton.Click += new RoutedEventHandler(ImportTestPlan);
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { importButton });
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, [importButton]);
         }
 
         private void RefreshGrid(object sender, RoutedEventArgs e)
@@ -90,8 +96,7 @@ namespace Ginger.ALM.RQM
 
         private void ImportTestPlan()
         {
-            ObservableList<Object> rqmTestPlanList = new ObservableList<Object>();
-            rqmTestPlanList.Add(mTestPlan);
+            ObservableList<Object> rqmTestPlanList = [mTestPlan];
 
             if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, rqmTestPlanList) == true)
             {

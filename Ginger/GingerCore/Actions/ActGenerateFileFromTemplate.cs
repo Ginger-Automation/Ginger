@@ -70,7 +70,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eFileAction)GetOrCreateInputParam<eFileAction>(nameof(FileAction), eFileAction.CSVFromTemplate);
+                return GetOrCreateInputParam<eFileAction>(nameof(FileAction), eFileAction.CSVFromTemplate);
             }
             set
             {
@@ -295,7 +295,7 @@ namespace GingerCore.Actions
             // Process Data for each line use l as template
             string[] lines = convertExcelToStringArray(DataFilePath, "Sheet1");
             string[] headers = lines[0].Split(','); //get col headers
-            List<string> results = new List<string>();
+            List<string> results = [];
             string template = l;
             for (int i = 1; i < lines.Length; i++)
             {
@@ -323,14 +323,16 @@ namespace GingerCore.Actions
             OleDbConnection conn = null;
             OleDbCommand cmd = null;
             OleDbDataAdapter da = null;
-            List<string> ls = new List<string>();
+            List<string> ls = [];
             try
             {
                 conn = new OleDbConnection(strConn);
                 conn.Open();
 
-                cmd = new OleDbCommand("SELECT * FROM [" + worksheetName + "$]", conn);
-                cmd.CommandType = CommandType.Text;
+                cmd = new OleDbCommand("SELECT * FROM [" + worksheetName + "$]", conn)
+                {
+                    CommandType = CommandType.Text
+                };
 
                 da = new OleDbDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -343,7 +345,7 @@ namespace GingerCore.Actions
                     {
                         rowString += dt.Rows[x][y].ToString() + ",";
                     }
-                    ls.Add(rowString.Substring(0, rowString.Length - 1));
+                    ls.Add(rowString[..^1]);
                 }
             }
             catch (Exception exc)

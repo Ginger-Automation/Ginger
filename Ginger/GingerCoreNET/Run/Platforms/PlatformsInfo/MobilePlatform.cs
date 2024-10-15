@@ -168,7 +168,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         /// <returns></returns>
         public override List<ePomElementCategory> GetPlatformPOMElementCategories()
         {
-            return new List<ePomElementCategory> { ePomElementCategory.Android, ePomElementCategory.iOS, ePomElementCategory.Web };
+            return [ePomElementCategory.Android, ePomElementCategory.iOS, ePomElementCategory.Web];
         }
 
         public override string GetPageUrlRadioLabelText()
@@ -179,16 +179,16 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
             //ObservableList<ElementLocator> learningLocatorsList = base.GetLearningLocators();//taken from WebPlatform
-            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
-
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.iOSPredicateString, Help = "Highly Recommended as Predicate Matching is built into XCUITest" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByResourceID, Help = "Highly Recommended for Resource-Ids being unique" });
-
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTagName, Help = "Recommended" });
+            ObservableList<ElementLocator> learningLocatorsList =
+            [
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Very Recommended (usually unique)" },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.iOSPredicateString, Help = "Highly Recommended as Predicate Matching is built into XCUITest" },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByResourceID, Help = "Highly Recommended for Resource-Ids being unique" },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Very Recommended (usually unique)" },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" },
+                new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTagName, Help = "Recommended" },
+            ];
             return learningLocatorsList;
         }
 

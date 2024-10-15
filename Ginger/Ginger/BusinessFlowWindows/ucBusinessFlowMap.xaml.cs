@@ -55,9 +55,11 @@ namespace Ginger.BusinessFlowWindows
                 {
                     xGoToAutomateBtn.Visibility = Visibility.Visible;
                 }
-                mBusinessFlowRepositoryKey = new RepositoryItemKey();
-                mBusinessFlowRepositoryKey.Guid = mBusinessFlow.Guid;
-                mBusinessFlowRepositoryKey.ItemName = mBusinessFlow.Name;
+                mBusinessFlowRepositoryKey = new RepositoryItemKey
+                {
+                    Guid = mBusinessFlow.Guid,
+                    ItemName = mBusinessFlow.Name
+                };
                 if (mObjectElementType != null)
                 {
                     mObjectElementType.GetType().GetProperty(mElementTypeFieldName).SetValue(mObjectElementType, mBusinessFlowRepositoryKey);
@@ -68,7 +70,7 @@ namespace Ginger.BusinessFlowWindows
         private string GetBusinessFlowDisplayPath()
         {
             StringBuilder actualPath = new StringBuilder();
-            string path = mBusinessFlow.FilePath.Substring(mBusinessFlow.FilePath.IndexOf("BusinessFlows") + "BusinessFlows".Length);
+            string path = mBusinessFlow.FilePath[(mBusinessFlow.FilePath.IndexOf("BusinessFlows") + "BusinessFlows".Length)..];
             if (!string.IsNullOrEmpty(path))
             {
                 string[] item = path.Split('\\');

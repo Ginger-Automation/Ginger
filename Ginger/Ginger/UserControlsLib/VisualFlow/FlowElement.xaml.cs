@@ -180,9 +180,8 @@ namespace Ginger.UserControlsLib.VisualFlow
         {
             foreach (UIElement e in MainGrid.Children)
             {
-                if (e is System.Windows.Shapes.Rectangle)
+                if (e is System.Windows.Shapes.Rectangle r)
                 {
-                    System.Windows.Shapes.Rectangle r = (System.Windows.Shapes.Rectangle)e;
                     if ((string)r.Tag == destinationConnectorName)
                     {
                         // Get X,Y of r relative to the FlowElemnet we are on    

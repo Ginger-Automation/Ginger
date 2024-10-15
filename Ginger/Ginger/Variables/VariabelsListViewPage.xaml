@@ -43,8 +43,8 @@
                 </UserControls:ucButton>
                 <StackPanel  x:Name="xEditAndValueChangeOperationsPnl" Orientation="Horizontal">
                     <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="4,4,4,4" Height="18"/>
-                    <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="17" ButtonImageType="Undo" />
-                    <UserControls:ucButton x:Name="xDeleteBtn" ButtonType="ImageButton" Click="xDeleteBtn_Click" ButtonFontImageSize="16" ButtonImageType="Delete">
+                    <UserControls:ucButton x:Name="xUndoBtn" IsEnabled="True" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="17" ButtonImageType="Undo" />
+                    <UserControls:ucButton x:Name="xDeleteBtn" IsEnabled="True" ButtonType="ImageButton" Click="xDeleteBtn_Click" ButtonFontImageSize="16" ButtonImageType="Delete">
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Delete [Variable]"/>
                         </UserControls:ucButton.ToolTip>
@@ -65,7 +65,7 @@
                         </MenuItem>
                     </Menu>-->
                     <GridSplitter x:Name="xValueChangeSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="4,4,4,4" Height="18"/>
-                    <UserControls:ucButton x:Name="xResetValueBtn" ButtonType="ImageButton" Click="xResetValueBtn_Click" ButtonFontImageSize="16" ButtonImageType="Reset">
+                    <UserControls:ucButton x:Name="xResetValueBtn" IsEnabled="True" ButtonType="ImageButton" Click="xResetValueBtn_Click" ButtonFontImageSize="16" ButtonImageType="Reset">
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Reset [Variable] Value"/>
                         </UserControls:ucButton.ToolTip>

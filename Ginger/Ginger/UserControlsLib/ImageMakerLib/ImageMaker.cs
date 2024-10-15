@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.UserControls
         private static void ContentChanged(DependencyObject sender, DependencyPropertyChangedEventArgs evt)
         {
             // If target is not a ContenControl just ignore: 
-            if (!(sender is ContentControl))
+            if (sender is not ContentControl)
             {
                 return;
             }
@@ -52,14 +52,16 @@ namespace Amdocs.Ginger.UserControls
             ContentControl target = (ContentControl)sender;
 
             // If value is not a eIcon ignore
-            if (!(evt.NewValue is eImageType))
+            if (evt.NewValue is not eImageType)
             {
                 return;
             }
 
             // We create a new ImageMAkerControl for display in the content control
-            ImageMakerControl IM = new ImageMakerControl();
-            IM.ImageType = (eImageType)evt.NewValue;
+            ImageMakerControl IM = new ImageMakerControl
+            {
+                ImageType = (eImageType)evt.NewValue
+            };
             target.Content = IM;
         }
     }

@@ -25,8 +25,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Text.RegularExpressions;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,7 +43,7 @@ namespace Ginger.Actions
         public ActionEditPage actp;
         private ActExcel mAct;
         private IExcelOperations mExcelOperations = new ExcelNPOIOperations();
-        private const int VIEW_DATA_ROW_LIMIT = 50; 
+        private const int VIEW_DATA_ROW_LIMIT = 50;
         private List<string>? SheetsList;
         public ActExcelEditPage(ActExcel act)
         {
@@ -61,12 +61,12 @@ namespace Ginger.Actions
             SelectRowsWhereTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SelectRowsWhere));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SelectAllRows, CheckBox.IsCheckedProperty, mAct, nameof(ActExcel.SelectAllRows));
             PrimaryKeyColumnTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.PrimaryKeyColumn));
-            HeaderRowNumTextBox.BindControl(Context.GetAsContext(mAct.Context) , mAct , nameof(ActExcel.HeaderRowNum));
+            HeaderRowNumTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.HeaderRowNum));
 
             SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SetDataUsed));
             ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ColMappingRules));
 
-            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData || mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData)
+            if (mAct.ExcelActionType is ActExcel.eExcelActionType.ReadData or ActExcel.eExcelActionType.ReadCellData)
             {
                 this.ColMappingRulesSection.Visibility = Visibility.Collapsed;
                 SetDataUsedSection.Visibility = Visibility.Visible;
@@ -202,7 +202,7 @@ namespace Ginger.Actions
         {
             CreateExcelDataGridColumns(excelSheetData);
 
-            ObservableCollection<object?[]> excelDataGridRows = new ObservableCollection<object?[]>();
+            ObservableCollection<object?[]> excelDataGridRows = [];
             BindingOperations.EnableCollectionSynchronization(excelDataGridRows, excelDataGridRows);
             ExcelDataGrid.ItemsSource = excelDataGridRows;
 
@@ -267,8 +267,8 @@ namespace Ginger.Actions
                 {
                     ContextProcessInputValueForDriver();
 
-                    if (!mAct.CheckMandatoryFieldsExists(new List<string>() {
-                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.SelectRowsWhere)}))
+                    if (!mAct.CheckMandatoryFieldsExists([
+                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.SelectRowsWhere)]))
                     {
                         return;
                     }
@@ -308,7 +308,7 @@ namespace Ginger.Actions
         {
             try
             {
-                if (!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName) }))
+                if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName)]))
                 {
                     return null;
                 }
@@ -316,7 +316,7 @@ namespace Ginger.Actions
                 {
                     return mExcelOperations.ReadCellData(mAct.CalculatedFileName, mAct.CalculatedSheetName, mAct.CalculatedFilter, mAct.SelectAllRows, mAct.CalculatedHeaderRowNum);
                 }
-                return mExcelOperations.ReadDataWithRowLimit(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, mAct.SelectAllRows , mAct.CalculatedHeaderRowNum , VIEW_DATA_ROW_LIMIT);
+                return mExcelOperations.ReadDataWithRowLimit(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, mAct.SelectAllRows, mAct.CalculatedHeaderRowNum, VIEW_DATA_ROW_LIMIT);
             }
             catch (Exception ex)
             {
@@ -328,7 +328,7 @@ namespace Ginger.Actions
         {
             ContextProcessInputValueForDriver();
 
-            if (ExcelActionComboBox.SelectedValue.ToString() == "ReadData"   || ExcelActionComboBox.SelectedValue.ToString() == "ReadCellData")
+            if (ExcelActionComboBox.SelectedValue.ToString() is "ReadData" or "ReadCellData")
             {
                 SetDataUsedSection.Visibility = Visibility.Visible;
                 ColMappingRulesSection.Visibility = Visibility.Collapsed;
@@ -347,10 +347,10 @@ namespace Ginger.Actions
             mAct.SheetName = SheetNamComboBox.Text;
             ContextProcessInputValueForDriver();
         }
-        
+
         private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            if (!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName) }))
+            if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)]))
             {
                 return;
             }
@@ -366,7 +366,7 @@ namespace Ginger.Actions
 
         private void xOpenExcelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName) }))
+            if (!mAct.CheckMandatoryFieldsExists([nameof(mAct.CalculatedFileName)]))
             {
                 return;
             }

@@ -102,7 +102,7 @@ namespace Ginger.Actions
                 GingerAgentFromOtherRdb.IsChecked = true;
             }
 
-            if(mAct.IsCustomApplicationProcessName)
+            if (mAct.IsCustomApplicationProcessName)
             {
                 ApplicationProcessNameChkBox.IsChecked = true;
             }
@@ -214,9 +214,11 @@ namespace Ginger.Actions
 
         private string OpenFolderDialog(string desc, Environment.SpecialFolder rootFolder, string currentFolder = "")
         {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog();
-            dlg.Description = desc;
-            dlg.RootFolder = rootFolder;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = desc,
+                RootFolder = rootFolder
+            };
             if (currentFolder != "")
             {
                 dlg.SelectedPath = currentFolder;

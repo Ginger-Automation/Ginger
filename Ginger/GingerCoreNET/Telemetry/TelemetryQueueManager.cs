@@ -1,14 +1,29 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Telemetry;
 using Ginger.SolutionGeneral;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -96,7 +111,7 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
 
         public void AddLog(eLogLevel level, string msg)
         {
-            AddLog(level, msg, metadata: new());
+            AddLog(level, msg, metadata: []);
         }
 
         public void AddLog(eLogLevel level, string msg, TelemetryMetadata metadata)
@@ -106,65 +121,67 @@ namespace Amdocs.Ginger.CoreNET.Telemetry
                 return;
             }
 
-            Solution? solution = WorkSpace.Instance.Solution;
+            Solution? solution = WorkSpace.Instance?.Solution;
+            string? userId = WorkSpace.Instance?.UserProfile.UserName;
 
-            AddLog(new TelemetryLogRecord()
+            TelemetryLogRecord logRecord = new()
             {
                 SolutionId = solution != null ? solution.Guid.ToString() : "",
-                Account = solution != null ? solution.Account : "",
+                Account = solution != null && solution.Account != null ? solution.Account : "",
                 AppVersion = ApplicationInfo.ApplicationBackendVersion,
-                UserId = WorkSpace.Instance.UserProfile.UserName,
+                UserId = userId,
                 CreationTimestamp = DateTime.UtcNow,
                 LastUpdateTimestamp = DateTime.UtcNow,
                 Level = level.ToString(),
                 Message = msg,
                 Metadata = metadata.ToJSON(),
-            });
+            };
+
+            _logQueue.Enqueue(logRecord);
         }
 
         public void AddFeatureUsage(FeatureId featureId)
         {
-            AddFeatureUsage(featureId, metadata: new());
+            AddFeatureUsage(featureId, duration: null, metadata: []);
         }
 
         public void AddFeatureUsage(FeatureId featureId, TelemetryMetadata metadata)
         {
+            AddFeatureUsage(featureId, duration: null, metadata);
+        }
 
+        private void AddFeatureUsage(FeatureId featureId, TimeSpan? duration, TelemetryMetadata metadata)
+        {
             Solution? solution = WorkSpace.Instance.Solution;
 
-            AddFeatureUsage(new TelemetryFeatureRecord()
+            TelemetryFeatureRecord featureRecord = new()
             {
                 SolutionId = solution != null ? solution.Guid.ToString() : "",
-                Account = solution != null ? solution.Account : "",
+                Account = solution != null && solution.Account != null ? solution.Account : "",
                 AppVersion = ApplicationInfo.ApplicationBackendVersion,
                 UserId = WorkSpace.Instance.UserProfile.UserName,
                 CreationTimestamp = DateTime.UtcNow,
                 LastUpdateTimestamp = DateTime.UtcNow,
                 FeatureId = featureId.ToString(),
+                Duration = duration,
                 Metadata = metadata.ToJSON(),
-            });
+            };
+
+            _featureQueue.Enqueue(featureRecord);
         }
 
         public IFeatureTracker StartFeatureTracking(FeatureId featureId)
         {
-            return new FeatureTracker(featureId, onStop: AddFeatureUsage);
-        }
-
-        private void AddLog(TelemetryLogRecord logRecord)
-        {
-            _logQueue.Enqueue(logRecord);
-        }
-
-        private void AddFeatureUsage(TelemetryFeatureRecord featureRecord)
-        {
-            _featureQueue.Enqueue(featureRecord);
+            return new FeatureTracker(
+                featureId,
+                onStop: (featureId, duration, metadata) => AddFeatureUsage(featureId, duration, metadata));
         }
 
         private sealed class DebugLogger : ILogger
         {
             public IDisposable? BeginScope<TState>(TState state) where TState : notnull
             {
-                throw new NotImplementedException();
+                return null;
             }
 
             public bool IsEnabled(LogLevel logLevel)

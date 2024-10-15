@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.VisualTesting;
@@ -354,7 +353,7 @@ namespace GingerCore.Actions
         {
             mDriver = driver;
             mVisualAnalyzer = ((DriverBase)mDriver).GetVisualAnalyzer(VisualTestingAnalyzer);
-            Artifacts = new ObservableList<ArtifactDetails>();
+            Artifacts = [];
             if (mDriver is SeleniumDriver)
             {
                 if (!CheckSetAppWindowSize())
@@ -454,7 +453,7 @@ namespace GingerCore.Actions
 
         public List<int> GetWindowResolution()
         {
-            List<int> Resolution = new List<int>();
+            List<int> Resolution = [];
             switch (ChangeAppWindowSize)
             {
                 case eChangeAppWindowSize.None:
@@ -523,7 +522,7 @@ namespace GingerCore.Actions
                 Error = "Baseline file not found - " + fullBaseFilePath;
                 return;
             }
-            Act.AddArtifactToAction("Baseline_Image", this, fullBaseFilePath);                       
+            Act.AddArtifactToAction("Baseline_Image", this, fullBaseFilePath);
             baseImage = new Bitmap(fullBaseFilePath);
 
             // ----------------------------------------------------------------
@@ -547,7 +546,7 @@ namespace GingerCore.Actions
                     return;
 
                 }
-                Act.AddArtifactToAction("Target_Image", this, fullTargetFilePath);                               
+                Act.AddArtifactToAction("Target_Image", this, fullTargetFilePath);
                 targetImage = new Bitmap(fullTargetFilePath);
             }
 
@@ -593,7 +592,7 @@ namespace GingerCore.Actions
             mDriver = driver;
             //TODO: verify we have driver            
             // get updated screen shot
-            baseImage = mDriver.GetScreenShot(null, IsFullPageScreenshot);            
+            baseImage = mDriver.GetScreenShot(null, IsFullPageScreenshot);
             //Verify we have screenshots folder
             string SAVING_PATH = System.IO.Path.Combine(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder, @"Documents\ScreenShots\");
             if (!Directory.Exists(SAVING_PATH))
@@ -623,7 +622,7 @@ namespace GingerCore.Actions
             }
             baseImage.Save(FullPath);
 
-            Act.AddArtifactToAction("Baseline_Image", this, FullPath);                       
+            Act.AddArtifactToAction("Baseline_Image", this, FullPath);
         }
 
         // TODO: move from here to general or use general

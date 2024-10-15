@@ -11,7 +11,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-See the License for the specific language governing permissions and 
+See the License for the specific language governing permissions and     
 limitations under the License. 
 */
 #endregion
@@ -44,8 +44,8 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// List of files and folders to exclude from solution load and Source Control
         /// </summary>
-        private static List<string> mSolutionPathsToAvoid = new List<string>()
-        {
+        private static List<string> mSolutionPathsToAvoid =
+        [
              @"AutoSave\",
              @"Recover\",
              @"RecentlyUsed.dat",
@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.Repository
              @"SharedRepository\Actions\PrevVerions\",
              @"SharedRepository\Variables\PrevVerions\",
              @"SharedRepository\ActivitiesGroup\PrevVerions\"
-        };
+        ];
 
         private List<string> mCalculatedSolutionPathsToAvoid = null;
 
@@ -84,15 +84,15 @@ namespace Amdocs.Ginger.Repository
 
         private string mSolutionFolderPath;
         public string SolutionFolder { get { return mSolutionFolderPath; } }
-        private List<RepositoryFolderBase> mSolutionRootFolders = new List<RepositoryFolderBase>();
+        private List<RepositoryFolderBase> mSolutionRootFolders = [];
         public List<RepositoryFolderBase> SolutionRootFolders
         {
             get { return mSolutionRootFolders; }
         }
 
-        public ObservableList<RepositoryItemBase> ModifiedFiles = new ObservableList<RepositoryItemBase>();
+        public ObservableList<RepositoryItemBase> ModifiedFiles = [];
 
-        Dictionary<Type, SolutionRepositoryItemInfoBase> mSolutionRepositoryItemInfoDictionary = new Dictionary<Type, SolutionRepositoryItemInfoBase>();
+        Dictionary<Type, SolutionRepositoryItemInfoBase> mSolutionRepositoryItemInfoDictionary = [];
         public bool IsItemTypeHandled(RepositoryItemBase repositoryItem)
         {
             SolutionRepositoryItemInfoBase SRII = null;
@@ -129,17 +129,17 @@ namespace Amdocs.Ginger.Repository
 
         }
 
-
-
-
         /// <summary>
-        /// Save the Repository Item to the Root folder and add it to cache
+        /// Adds a repository item to the solution repository.
         /// </summary>
-        /// <param name="repositoryItem"></param>
-        public void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false)
+        /// <param name="repositoryItem">The repository item to add.</param>
+        /// <param name="doNotSave">Indicates whether to save the repository item.</param>
+        /// <param name="callPreSaveHandler">Indicates whether to call the pre-save handler.</param>
+        /// <param name="callPostSaveHandler">Indicates whether to call the post-save handler.</param>
+        public void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
-            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem, doNotSave);
+            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem, doNotSave, callPreSaveHandler: callPreSaveHandler, callPostSaveHandler: callPostSaveHandler);
         }
 
         public async Task SaveRepositoryItemAsync(RepositoryItemBase repositoryItem)
@@ -148,10 +148,12 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
-        /// Save changes of exsiting Repository Item to file system
+        /// Save changes of existing Repository Item to file system
         /// </summary>
-        /// <param name="repositoryItem"></param>
-        public void SaveRepositoryItem(RepositoryItemBase repositoryItem)
+        /// <param name="repositoryItem">The Repository Item to be saved</param>
+        /// <param name="callPreSaveHandler">Flag indicating whether to call the PreSaveHandler method</param>
+        /// <param name="callPostSaveHandler">Flag indicating whether to call the PostSaveHandler method</param>
+        public void SaveRepositoryItem(RepositoryItemBase repositoryItem, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             try
             {
@@ -159,7 +161,8 @@ namespace Amdocs.Ginger.Repository
                 {
                     throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
                 }
-                if (repositoryItem.PreSaveHandler())
+
+                if (callPreSaveHandler && repositoryItem.PreSaveHandler())
                 {
                     return;
                 }
@@ -181,12 +184,15 @@ namespace Amdocs.Ginger.Repository
                     repositoryItem.SetDirtyStatusToNoChange();
                 }
 
+                // Create a backup of the repository item
                 repositoryItem.CreateBackup();
-                if (ModifiedFiles.Contains(repositoryItem))
+
+                ModifiedFiles.Remove(repositoryItem);
+
+                if (callPostSaveHandler)
                 {
-                    ModifiedFiles.Remove(repositoryItem);
+                    repositoryItem.PostSaveHandler();
                 }
-                repositoryItem.PostSaveHandler();
             }
             catch (Exception ex)
             {
@@ -230,7 +236,7 @@ namespace Amdocs.Ginger.Repository
         public RepositoryItemBase GetRepositoryItemByPath(string filePath)
         {
             RepositoryItemBase repoItem = null;
-            ObservableList<RepositoryItemBase> repoItemList = new ObservableList<RepositoryItemBase>();
+            ObservableList<RepositoryItemBase> repoItemList = [];
             RepositoryFolderBase repositoryFolderBase = GetRepositoryFolderByPath(Path.GetDirectoryName(filePath));
             if (repositoryFolderBase != null)
             {
@@ -431,7 +437,7 @@ namespace Amdocs.Ginger.Repository
 
             //List only need directories which have repo items // But we say all rename to get all repo or...
             //Do not add documents, ExecutionResults, HTMLReports
-            ConcurrentBag<RepositoryFile> fileEntries = new ConcurrentBag<RepositoryFile>();
+            ConcurrentBag<RepositoryFile> fileEntries = [];
 
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
@@ -485,7 +491,7 @@ namespace Amdocs.Ginger.Repository
         {
             if (mCalculatedSolutionPathsToAvoid == null)
             {
-                mCalculatedSolutionPathsToAvoid = new List<string>();
+                mCalculatedSolutionPathsToAvoid = [];
                 foreach (string path in mSolutionPathsToAvoid)
                 {
                     mCalculatedSolutionPathsToAvoid.Add(Path.GetFullPath(Path.Combine(SolutionFolder, path)));
@@ -504,15 +510,17 @@ namespace Amdocs.Ginger.Repository
 
         public void AddItemInfo<T>(string pattern, string rootFolder, bool containRepositoryItems, string displayName, string PropertyNameForFileName)
         {
-            SolutionRepositoryItemInfo<T> SRII = new SolutionRepositoryItemInfo<T>();
-            SRII.ItemFileSystemRootFolder = rootFolder;
-            SRII.PropertyForFileName = PropertyNameForFileName;
-            SRII.Pattern = pattern;
-            SRII.DisplayName = displayName;
+            SolutionRepositoryItemInfo<T> SRII = new SolutionRepositoryItemInfo<T>
+            {
+                ItemFileSystemRootFolder = rootFolder,
+                PropertyForFileName = PropertyNameForFileName,
+                Pattern = pattern,
+                DisplayName = displayName
+            };
             SRII.ItemRootReposiotryfolder = new RepositoryFolder<T>(this, SRII, pattern, rootFolder, containRepositoryItems, displayName, true);
 
             mSolutionRepositoryItemInfoDictionary.Add(typeof(T), SRII);
-            mSolutionRootFolders.Add((RepositoryFolderBase)SRII.ItemRootRepositoryFolder);
+            mSolutionRootFolders.Add(SRII.ItemRootRepositoryFolder);
         }
 
         public SolutionRepositoryItemInfoBase GetSolutionRepositoryItemInfo(Type type)
@@ -567,7 +575,13 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        internal void SaveNewRepositoryItem(RepositoryItemBase repositoryItem)
+        /// <summary>
+        /// Saves a new repository item to the solution repository.
+        /// </summary>
+        /// <param name="repositoryItem">The repository item to be saved.</param>
+        /// <param name="callPreSaveHandler">Flag indicating whether to call the pre-save handler.</param>
+        /// <param name="callPostSaveHandler">Flag indicating whether to call the post-save handler.</param>
+        internal void SaveNewRepositoryItem(RepositoryItemBase repositoryItem, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             //check if file already exist
             string filePath = CreateRepositoryItemFileName(repositoryItem);
@@ -575,7 +589,7 @@ namespace Amdocs.Ginger.Repository
             {
                 throw new Exception("Repository file already exist - " + filePath);
             }
-            SaveRepositoryItem(repositoryItem);
+            SaveRepositoryItem(repositoryItem, callPreSaveHandler, callPostSaveHandler);
         }
 
         //TODO: fix this method name or cretae or !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -635,7 +649,7 @@ namespace Amdocs.Ginger.Repository
                     if (fileName.Length > 255)
                     {
                         noOfCharToEscape = filefullPath.Length + 2 - 255;
-                        newFileName = fileName.Substring(0, fileName.Length - noOfCharToEscape);   //TODO: validate that works as expected using unit test !!!!!!!!!! file extension must remain or give err
+                        newFileName = fileName[..^noOfCharToEscape];   //TODO: validate that works as expected using unit test !!!!!!!!!! file extension must remain or give err
 
                         newFileName = newFileName + "~1";
                         newFileName = repositoryItemInfoBaseType.Pattern.Replace("*", newFileName);
@@ -645,7 +659,7 @@ namespace Amdocs.Ginger.Repository
                     if (filefullPath.Length > 260 && fileName.Length > 3)
                     {
                         noOfCharToEscape = filefullPath.Length - 257;
-                        newFileName = fileName.Substring(0, fileName.Length - noOfCharToEscape);
+                        newFileName = fileName[..^noOfCharToEscape];
 
                         if (newFileName.Length < 3)
                         {
@@ -737,7 +751,14 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public void MoveItem(RepositoryItemBase repositoryItem, string targetFolder)
+        /// <summary>
+        /// Moves a repository item to the specified target folder.
+        /// </summary>
+        /// <param name="repositoryItem">The repository item to be moved.</param>
+        /// <param name="targetFolder">The target folder path.</param>
+        /// <param name="callPreSaveHandler">Flag indicating whether to call the pre-save handler.</param>
+        /// <param name="callPostSaveHandler">Flag indicating whether to call the post-save handler.</param>
+        public void MoveItem(RepositoryItemBase repositoryItem, string targetFolder, bool callPreSaveHandler = true, bool callPostSaveHandler = true)
         {
             RepositoryFolderBase RF = GetItemRepositoryFolder(repositoryItem);
             RepositoryFolderBase targetRF = GetRepositoryFolderByPath(targetFolder);
@@ -745,7 +766,7 @@ namespace Amdocs.Ginger.Repository
             if (RF != null && targetRF != null)
             {
                 RF.DeleteRepositoryItem(repositoryItem);
-                targetRF.AddRepositoryItem(repositoryItem);
+                targetRF.AddRepositoryItem(repositoryItem, callPreSaveHandler: callPreSaveHandler, callPostSaveHandler: callPostSaveHandler);
             }
             else
             {
@@ -781,7 +802,7 @@ namespace Amdocs.Ginger.Repository
 
                 if (targetFileName.Length > 255)
                 {
-                    targetFileName = targetFileName.Substring(0, 250) + new Random().Next(1000).ToString();
+                    targetFileName = targetFileName[..250] + new Random().Next(1000).ToString();
                 }
 
                 try

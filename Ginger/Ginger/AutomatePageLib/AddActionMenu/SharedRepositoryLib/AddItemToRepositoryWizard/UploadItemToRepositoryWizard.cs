@@ -83,9 +83,11 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         public static UploadItemSelection CreateUploadItem(RepositoryItemBase item, Context context, bool IsConvert = false, eActivityInstanceType ConvertType = eActivityInstanceType.LinkInstance)
         {
             string strComment = "";
-            UploadItemSelection uploadItem = new UploadItemSelection();
-            uploadItem.Context = context;
-            uploadItem.Selected = true;
+            UploadItemSelection uploadItem = new UploadItemSelection
+            {
+                Context = context,
+                Selected = true
+            };
             UploadItemSelection.eExistingItemType existingItemType = UploadItemSelection.eExistingItemType.NA;
             RepositoryItemBase existingItem = ExistingItemCheck(item, ref strComment, ref existingItemType);
             if (existingItem != null)
@@ -169,19 +171,19 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             if (item is ActivitiesGroup)
             {
-                existingRepoItems = (IEnumerable<object>)activitiesGroup;
+                existingRepoItems = activitiesGroup;
             }
             else if (item is Activity)
             {
-                existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                existingRepoItems = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             }
             else if (item is Act)
             {
-                existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+                existingRepoItems = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             }
             else if (item is VariableBase)
             {
-                existingRepoItems = (IEnumerable<object>)WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+                existingRepoItems = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
             }
 
             RepositoryItemBase exsitingItem = SharedRepositoryOperations.GetMatchingRepoItem((RepositoryItemBase)item, existingRepoItems, ref existingItemIsExternalID, ref existingItemIsParent);

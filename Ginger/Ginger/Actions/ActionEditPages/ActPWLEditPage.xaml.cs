@@ -32,11 +32,7 @@ namespace Ginger.Actions
             InitializeComponent();
 
             this.f = Act;
-            List<object> l = new List<object>();
-            foreach (var v in f.AvailableLocateBy())
-            {
-                l.Add(v);
-            }
+            List<object> l = [.. f.AvailableLocateBy()];
             // List<object> l = a.AvailableLocateBy(). .ToList<object>();
             GingerCore.General.FillComboFromEnumObj(cbooLocateBy, f.AvailableLocateBy(), l);
 

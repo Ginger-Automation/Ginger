@@ -63,7 +63,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eUIAClickOnPointAction)GetOrCreateInputParam<eUIAClickOnPointAction>(nameof(ActUIAClickOnPointAction), eUIAClickOnPointAction.ClickXY);
+                return GetOrCreateInputParam<eUIAClickOnPointAction>(nameof(ActUIAClickOnPointAction), eUIAClickOnPointAction.ClickXY);
             }
             set
             {

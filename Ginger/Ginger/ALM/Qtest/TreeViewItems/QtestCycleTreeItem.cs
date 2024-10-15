@@ -41,16 +41,18 @@ namespace Ginger.ALM.Qtest.TreeViewItems
 
         public QtestCycleTreeItem(List<QTestAPIStdModel.TestCycleResource> childrenCycles = null, List<QTestAPIStdModel.TestSuiteWithCustomFieldResource> childrenSuites = null)
         {
-            currentChildrens = new List<ITreeViewItem>();
+            currentChildrens = [];
 
             if (childrenCycles != null)
             {
                 foreach (QTestAPIStdModel.TestCycleResource cycle in childrenCycles)
                 {
-                    QtestCycleTreeItem pfn = new QtestCycleTreeItem(cycle.TestCycles, cycle.TestSuites);
-                    pfn.Name = cycle.Name.ToString();
-                    pfn.ID = cycle.Id.ToString();
-                    pfn.Path = cycle.Path.ToString();
+                    QtestCycleTreeItem pfn = new QtestCycleTreeItem(cycle.TestCycles, cycle.TestSuites)
+                    {
+                        Name = cycle.Name.ToString(),
+                        ID = cycle.Id.ToString(),
+                        Path = cycle.Path.ToString()
+                    };
                     currentChildrens.Add(pfn);
                 }
             }
@@ -59,9 +61,11 @@ namespace Ginger.ALM.Qtest.TreeViewItems
             {
                 foreach (QTestAPIStdModel.TestSuiteWithCustomFieldResource suite in childrenSuites)
                 {
-                    QtestSuiteTreeItem pfn = new QtestSuiteTreeItem();
-                    pfn.Name = suite.Name.ToString();
-                    pfn.ID = suite.Id.ToString();
+                    QtestSuiteTreeItem pfn = new QtestSuiteTreeItem
+                    {
+                        Name = suite.Name.ToString(),
+                        ID = suite.Id.ToString()
+                    };
                     currentChildrens.Add(pfn);
                 }
             }

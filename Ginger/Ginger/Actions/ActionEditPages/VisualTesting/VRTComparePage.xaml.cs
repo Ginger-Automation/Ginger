@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.Actions.UserControls;
 using GingerCore.Actions;
@@ -33,8 +32,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -78,8 +75,8 @@ namespace Ginger.Actions.VisualTesting
                     Dispatcher.Invoke(() =>
                     {
                         VRTPreviewBaselineImageFrame.ClearAndSetContent(new LoadingPage(
-                            loadingLabel: "loading baseline image...", 
-                            width: 40, 
+                            loadingLabel: "loading baseline image...",
+                            width: 40,
                             height: 40,
                             fontSize: 15));
                     });
@@ -104,7 +101,7 @@ namespace Ginger.Actions.VisualTesting
             xTestNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTParamBuildName, buildTestName), true, false);
 
 
-            List<eLocateBy> locatorsTypeList = mAct.AvailableLocateBy().Where(e => e != eLocateBy.iOSClassChain && e != eLocateBy.iOSPredicateString).ToList();
+            List<eLocateBy> locatorsTypeList = mAct.AvailableLocateBy().Where(e => e is not eLocateBy.iOSClassChain and not eLocateBy.iOSPredicateString).ToList();
             if (mAct.Platform == ePlatformType.NA)
             {
                 mAct.Platform = GetActionPlatform();
@@ -123,7 +120,7 @@ namespace Ginger.Actions.VisualTesting
             VRTAnalyzer.eVRTAction vrtAction = (VRTAnalyzer.eVRTAction)Enum.Parse(typeof(VRTAnalyzer.eVRTAction), xVRTActionComboBox.ComboBox.SelectedValue.ToString(), true);
             VRTAnalyzer.eActionBy actionBy = (VRTAnalyzer.eActionBy)Enum.Parse(typeof(VRTAnalyzer.eActionBy), xActionByComboBox.ComboBox.SelectedValue.ToString(), true);
             VRTAnalyzer.eImageNameBy imageNameBy = (VRTAnalyzer.eImageNameBy)Enum.Parse(typeof(VRTAnalyzer.eImageNameBy), xVRTImageNameActionComboBox.ComboBox.SelectedValue.ToString(), true);
-            VRTAnalyzer.eBaselineImageBy baselineImageBy = (VRTAnalyzer.eBaselineImageBy)Enum.Parse(typeof(VRTAnalyzer.eBaselineImageBy), mAct.GetInputParamValue(VRTAnalyzer.BaselineImage),true);
+            VRTAnalyzer.eBaselineImageBy baselineImageBy = (VRTAnalyzer.eBaselineImageBy)Enum.Parse(typeof(VRTAnalyzer.eBaselineImageBy), mAct.GetInputParamValue(VRTAnalyzer.BaselineImage), true);
             visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Collapsed);
             visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility, eVisualTestingVisibility.Collapsed);
             visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);
@@ -173,7 +170,7 @@ namespace Ginger.Actions.VisualTesting
                     xTestNameUCVE.Visibility = Visibility.Collapsed;
                     xVRTActionByLabel.Visibility = Visibility.Visible;
                     xActionByComboBox.Visibility = Visibility.Visible;
-                    if(!string.IsNullOrEmpty(mAct.previewBaselineImageName))
+                    if (!string.IsNullOrEmpty(mAct.previewBaselineImageName))
                     {
                         xPreviewBaselineImage.Visibility = Visibility.Visible;
                         VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Visible;
@@ -183,7 +180,7 @@ namespace Ginger.Actions.VisualTesting
                         xPreviewBaselineImage.Visibility = Visibility.Collapsed;
                         VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Collapsed;
                     }
-                    
+
                     if (actionBy == VRTAnalyzer.eActionBy.Region)
                     {
                         xLocateByAndValuePanel.Visibility = Visibility.Visible;
@@ -219,7 +216,7 @@ namespace Ginger.Actions.VisualTesting
                         xBaselineImagePath.Visibility = Visibility.Collapsed;
                         xPreviewImage.Visibility = Visibility.Collapsed;
                     }
-                    if (xCreateBaselineCheckbox.IsChecked??false)
+                    if (xCreateBaselineCheckbox.IsChecked ?? false)
                     {
                         xBaselineImage.Visibility = Visibility.Visible;
                         xBaselineImageRadioButtonPnl.Visibility = Visibility.Visible;
@@ -235,7 +232,7 @@ namespace Ginger.Actions.VisualTesting
                         xBaselineImagePath.Visibility = Visibility.Collapsed;
                         xPreviewImage.Visibility = Visibility.Collapsed;
                     }
-                    
+
                     break;
 
                 case VRTAnalyzer.eVRTAction.Stop:
@@ -346,7 +343,7 @@ namespace Ginger.Actions.VisualTesting
             if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
             {
                 string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform; 
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform;
             }
             else
             {
@@ -401,13 +398,13 @@ namespace Ginger.Actions.VisualTesting
         private Task<string> GetBaseLineImageAsync()
         {
             return GingerCoreNET.GeneralLib.General.DownloadBaselineImage(
-                ImageURL: $"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{mAct.previewBaselineImageName}", 
+                ImageURL: $"{WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl}/{mAct.previewBaselineImageName}",
                 mAct);
         }
 
         private void SetBaseLineImage(string imagePath)
         {
-            if(string.IsNullOrEmpty(imagePath))
+            if (string.IsNullOrEmpty(imagePath))
             {
                 Reporter.ToLog(eLogLevel.ERROR, "unable to fetch the baseline image");
                 return;

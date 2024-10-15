@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
         private IEnumerable<Participant> CreateParticipants()
         {
-            List<Participant> participants = new();
+            List<Participant> participants = [];
             IEnumerable<ActivitiesGroup> activityGroups = _businessFlow.ActivitiesGroups.Where(ag => ActivitiesGroupBPMNUtil.IsActive(ag, _solutionFacade));
             if (!activityGroups.Any())
             {
@@ -81,7 +81,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             foreach (ActivitiesGroup activityGroup in activityGroups)
             {
                 Participant? participant = CreateParticipant(activityGroup);
-                if(participant == null)
+                if (participant == null)
                 {
                     continue;
                 }
@@ -160,10 +160,10 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
                 Flow.Create(name: string.Empty, previousFlowSource, endEvent);
             }
 
-            if(allActivityGroupsAreEmpty)
+            if (allActivityGroupsAreEmpty)
             {
                 throw new BPMNConversionException($"All {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups)} cannot be empty.");
-            }    
+            }
         }
 
         private StartEvent CreateStartEventInParticipantOfActivityGroup(ActivitiesGroup activityGroup, Collaboration collaboration)

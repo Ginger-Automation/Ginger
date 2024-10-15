@@ -106,13 +106,15 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                         if (applicationModel == null)
                         {
                             isModelExists = false;
-                            applicationModel = new ApplicationAPIModel();
-                            applicationModel.TargetApplicationKey = ta;
+                            applicationModel = new ApplicationAPIModel
+                            {
+                                TargetApplicationKey = ta
+                            };
                             CreateAPIModelFromWebserviceAction(ref applicationModel, act, pullValidations, parameterizeRequestBody);
                         }
 
                         //Parse optional values
-                        Dictionary<System.Tuple<string, string>, List<string>> optionalValuesPulledFromConvertedAction = new Dictionary<Tuple<string, string>, List<string>>();
+                        Dictionary<System.Tuple<string, string>, List<string>> optionalValuesPulledFromConvertedAction = [];
                         if (applicationModel.AppModelParameters != null && applicationModel.AppModelParameters.Count > 0)
                         {
                             optionalValuesPulledFromConvertedAction = ParseParametersOptionalValues(applicationModel, (ActWebAPIBase)act);
@@ -165,15 +167,17 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
 
         private ObservableList<EnhancedActInputValue> GetAPIActionParams(ObservableList<AppModelParameter> paramsList, Dictionary<System.Tuple<string, string>, List<string>> optionalValuesPulledFromConvertedAction)
         {
-            ObservableList<EnhancedActInputValue> enhancedParamsList = new ObservableList<EnhancedActInputValue>();
+            ObservableList<EnhancedActInputValue> enhancedParamsList = [];
             foreach (AppModelParameter apiModelParam in paramsList)
             {
                 if (apiModelParam.RequiredAsInput == true)
                 {
-                    EnhancedActInputValue actAPIModelParam = new EnhancedActInputValue();
-                    actAPIModelParam.ParamGuid = apiModelParam.Guid;
-                    actAPIModelParam.Param = apiModelParam.PlaceHolder;
-                    actAPIModelParam.Description = apiModelParam.Description;
+                    EnhancedActInputValue actAPIModelParam = new EnhancedActInputValue
+                    {
+                        ParamGuid = apiModelParam.Guid,
+                        Param = apiModelParam.PlaceHolder,
+                        Description = apiModelParam.Description
+                    };
                     foreach (OptionalValue optionalValue in apiModelParam.OptionalValuesList)
                     {
                         actAPIModelParam.OptionalValues.Add(optionalValue.Value);
@@ -239,7 +243,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         /// <param name="actApiModel"></param>
         private Dictionary<System.Tuple<string, string>, List<string>> ParseParametersOptionalValues(ApplicationAPIModel aPIModel, ActWebAPIBase actionToConvert)
         {
-            Dictionary<System.Tuple<string, string>, List<string>> optionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
+            Dictionary<System.Tuple<string, string>, List<string>> optionalValuesPerParameterDict = [];
             try
             {
                 string requestBody = null;
@@ -308,7 +312,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
 
                 if (!string.IsNullOrEmpty(requestBody))
                 {
-                    ObservableList<ApplicationAPIModel> applicationAPIModels = new ObservableList<ApplicationAPIModel>();
+                    ObservableList<ApplicationAPIModel> applicationAPIModels = [];
                     if (aPIModel.RequestBody.StartsWith("{"))//TODO: find better way to identify JSON format
                     {
                         JSONTemplateParser jsonTemplate = new JSONTemplateParser();
@@ -341,17 +345,19 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         /// <returns></returns>
         private ObservableList<AppModelParameter> ParseParametersFromRequestBodyInputs(ApplicationAPIModel aPIModel, ObservableList<ActInputValue> actInputs)
         {
-            ObservableList<AppModelParameter> lstParameters = new ObservableList<AppModelParameter>();
+            ObservableList<AppModelParameter> lstParameters = [];
             foreach (var inptVal in actInputs)
             {
-                AppModelParameter param = new AppModelParameter();
-                param.ItemName = inptVal.ItemName;
+                AppModelParameter param = new AppModelParameter
+                {
+                    ItemName = inptVal.ItemName
+                };
                 OptionalValue opVal = new OptionalValue()
                 {
                     Value = inptVal.Value,
                     IsDefault = true
                 };
-                param.OptionalValuesList = new ObservableList<OptionalValue>() { opVal };
+                param.OptionalValuesList = [opVal];
                 lstParameters.Add(param);
             }
             foreach (var par in lstParameters)
@@ -446,15 +452,17 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 {
                     if (aPIModel.HttpHeaders == null)
                     {
-                        aPIModel.HttpHeaders = new ObservableList<APIModelKeyValue>();
+                        aPIModel.HttpHeaders = [];
                     }
                     foreach (var header in ((ActWebAPIBase)actionToConvert).HttpHeaders)
                     {
-                        APIModelKeyValue keyVal = new APIModelKeyValue();
-                        keyVal.ItemName = header.ItemName;
-                        keyVal.Param = header.ItemName;
-                        keyVal.FileName = header.ItemName;
-                        keyVal.Value = header.Value;
+                        APIModelKeyValue keyVal = new APIModelKeyValue
+                        {
+                            ItemName = header.ItemName,
+                            Param = header.ItemName,
+                            FileName = header.ItemName,
+                            Value = header.Value
+                        };
                         aPIModel.HttpHeaders.Add(keyVal);
                     }
                 }

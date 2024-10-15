@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.CoreNET.Telemetry;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.CoreNET.Telemetry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
@@ -17,7 +35,7 @@ namespace GingerCoreNETUnitTest.Telemetry
             int eachTaskItemCount = 20;
             Task[] tasks = new Task[parallelTaskCount];
             Random random = new();
-            for(int index = 0; index < parallelTaskCount; index++)
+            for (int index = 0; index < parallelTaskCount; index++)
             {
                 tasks[index] = new(() =>
                 {
@@ -27,8 +45,8 @@ namespace GingerCoreNETUnitTest.Telemetry
                     }
                 });
             }
-            
-            foreach(Task task in tasks)
+
+            foreach (Task task in tasks)
             {
                 task.Start();
             }
@@ -43,7 +61,7 @@ namespace GingerCoreNETUnitTest.Telemetry
             BlockingBufferQueue<int> queue = new(bufferSize: 2);
 
             Task dequeueTask = Task.Run(queue.Dequeue);
-            await Task.Delay(TimeSpan.FromMilliseconds(50));
+            await TaskTryWaitAsync(dequeueTask, TimeSpan.FromSeconds(1));
 
             Assert.IsFalse(dequeueTask.IsCompleted);
         }
@@ -55,7 +73,8 @@ namespace GingerCoreNETUnitTest.Telemetry
 
             Task dequeueTask1 = Task.Run(queue.Dequeue);
             Task dequeueTask2 = Task.Run(queue.Dequeue);
-            await Task.Delay(TimeSpan.FromMilliseconds(50));
+            await TaskTryWaitAsync(dequeueTask1, TimeSpan.FromSeconds(1));
+            await TaskTryWaitAsync(dequeueTask2, TimeSpan.FromSeconds(1));
 
             Assert.IsFalse(dequeueTask1.IsCompleted);
             Assert.IsFalse(dequeueTask2.IsCompleted);
@@ -69,9 +88,18 @@ namespace GingerCoreNETUnitTest.Telemetry
             Task dequeueTask = Task.Run(queue.Dequeue);
             queue.Enqueue(new Random().Next());
             queue.Enqueue(new Random().Next());
-            await Task.Delay(TimeSpan.FromMilliseconds(50));
+            await TaskTryWaitAsync(dequeueTask, TimeSpan.FromSeconds(1));
 
             Assert.IsTrue(dequeueTask.IsCompleted);
+        }
+
+        private static async Task TaskTryWaitAsync(Task taskToWait, TimeSpan timeout)
+        {
+            try
+            {
+                await taskToWait.WaitAsync(timeout);
+            }
+            catch { }
         }
 
         #region Flaky Tests Group 1

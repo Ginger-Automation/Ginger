@@ -16,18 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
-using Microsoft.CodeAnalysis;
-using GingerCore.Activities;
 
 namespace Ginger.Configurations
 {
 
-    public class GingerAnalyticsConfiguration : RepositoryItemBase
+    public class GingerOpsConfiguration : RepositoryItemBase
     {
-        public delegate void GingerAnalyticsConfigurationChangedEvent();
+        public delegate void GingerOpsConfigurationChangedEvent();
 
 
         private string mName;
@@ -87,6 +83,7 @@ namespace Ginger.Configurations
                 {
                     mIdentityServiceURL = value;
                     OnPropertyChanged(nameof(IdentityServiceURL));
+                    InvalidateToken();
                 }
             }
         }
@@ -105,6 +102,7 @@ namespace Ginger.Configurations
                 {
                     mClientId = value;
                     OnPropertyChanged(nameof(ClientId));
+                    InvalidateToken();
                 }
             }
         }
@@ -123,6 +121,7 @@ namespace Ginger.Configurations
                 {
                     mClientSecret = value;
                     OnPropertyChanged(nameof(ClientSecret));
+                    InvalidateToken();
                 }
             }
         }
@@ -134,9 +133,9 @@ namespace Ginger.Configurations
             get { return mToken; }
             set
             {
-                if(mToken != value)
+                if (mToken != value)
                 {
-                    mToken=value;
+                    mToken = value;
                 }
             }
         }
@@ -150,6 +149,14 @@ namespace Ginger.Configurations
             set
             {
                 this.Name = value;
+            }
+        }
+
+        private void InvalidateToken()
+        {
+            if (!string.IsNullOrEmpty(mToken))
+            {
+                mToken = string.Empty;
             }
         }
 

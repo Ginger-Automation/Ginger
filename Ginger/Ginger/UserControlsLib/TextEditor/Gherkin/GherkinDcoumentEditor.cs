@@ -84,13 +84,13 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
         public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         {
-            List<ICompletionData> list = new List<ICompletionData>();
+            List<ICompletionData> list = [];
 
             //TODO: fix me - only when in the beginning of line - allow lower case too
             string CurrentLine = SelectedContentArgs.CaretLineText();
             while (CurrentLine.StartsWith(" ") || CurrentLine.StartsWith("\t"))
             {
-                CurrentLine = CurrentLine.Substring(1);
+                CurrentLine = CurrentLine[1..];
             }
 
             bool IsAtStartOfLine = CurrentLine.Length == 1;
@@ -153,32 +153,32 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
                 while (CurrentLine.StartsWith(" ") || CurrentLine.StartsWith("\t"))
                 {
-                    CurrentLine = CurrentLine.Substring(1);
+                    CurrentLine = CurrentLine[1..];
                 }
 
                 if (CurrentLine.StartsWith("Given"))
                 {
-                    CurrentLine = CurrentLine.Substring(5);
+                    CurrentLine = CurrentLine[5..];
                 }
 
                 if (CurrentLine.StartsWith("When"))
                 {
-                    CurrentLine = CurrentLine.Substring(4);
+                    CurrentLine = CurrentLine[4..];
                 }
 
                 if (CurrentLine.StartsWith("Then"))
                 {
-                    CurrentLine = CurrentLine.Substring(4);
+                    CurrentLine = CurrentLine[4..];
                 }
 
                 if (CurrentLine.StartsWith("And"))
                 {
-                    CurrentLine = CurrentLine.Substring(3);
+                    CurrentLine = CurrentLine[3..];
                 }
 
                 while (CurrentLine.StartsWith(" ") || CurrentLine.StartsWith("\t"))
                 {
-                    CurrentLine = CurrentLine.Substring(1);
+                    CurrentLine = CurrentLine[1..];
                 }
 
                 if (CurrentLine != string.Empty && OptimizedSteps != null)
@@ -254,8 +254,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
         private GherkinTextCompletionData GETVTDM(GherkinStep GS)
         {
-            GherkinTextCompletionData TCD = new GherkinTextCompletionData(GS.Text);
-            TCD.Description = "Step: " + GS.Text + " - " + GS.AutomationStatus;
+            GherkinTextCompletionData TCD = new GherkinTextCompletionData(GS.Text)
+            {
+                Description = "Step: " + GS.Text + " - " + GS.AutomationStatus
+            };
 
             BitmapImage b = new BitmapImage();
             b.BeginInit();
@@ -268,8 +270,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
         private TextCompletionData GetTagName(GherkinTag GT)
         {
-            TextCompletionData TCD = new TextCompletionData(GT.Name);
-            TCD.Description = "Step: " + GT.Name + " - " + GT.Line;
+            TextCompletionData TCD = new TextCompletionData(GT.Name)
+            {
+                Description = "Step: " + GT.Name + " - " + GT.Line
+            };
 
             BitmapImage b = new BitmapImage();
             b.BeginInit();
@@ -282,8 +286,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
         private TextCompletionData GetTagName(RepositoryItemTag GT)
         {
-            TextCompletionData TCD = new TextCompletionData("@" + GT.Name);
-            TCD.Description = GT.Description;
+            TextCompletionData TCD = new TextCompletionData("@" + GT.Name)
+            {
+                Description = GT.Description
+            };
 
             BitmapImage b = new BitmapImage();
             b.BeginInit();

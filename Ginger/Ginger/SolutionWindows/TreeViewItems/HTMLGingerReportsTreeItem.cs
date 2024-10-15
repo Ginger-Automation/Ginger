@@ -76,7 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             //Add direct children's 
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
             ObservableList<HTMLReportConfiguration> templates = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
             CollectionChangedEventManager.RemoveHandler(source: templates, handler: TreeFolderItems_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: templates, handler: TreeFolderItems_CollectionChanged);//adding event handler to add/remove tree items automatically based on folder items collection changes

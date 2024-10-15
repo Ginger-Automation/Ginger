@@ -46,11 +46,13 @@ namespace Ginger.Drivers.Windows
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-            list.Add(new ActWindow()
-            {
-                Description = "Switch Window " + UIAElementInfo.ElementTitle,
-            });
+            ObservableList<Act> list =
+            [
+                new ActWindow()
+                {
+                    Description = "Switch Window " + UIAElementInfo.ElementTitle,
+                },
+            ];
             return list;
         }
 

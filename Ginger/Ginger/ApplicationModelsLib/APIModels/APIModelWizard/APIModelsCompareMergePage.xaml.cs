@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
@@ -67,7 +68,19 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             this.Width = 1200;
             this.Height = 800;
 
-            GingerCore.General.LoadGenericWindow(ref mWin, mOwnerWindow, windowStyle, @"Compare & Merge", this, null, true, "OK");
+            Button okBtn = new Button
+            {
+                Content = "OK"
+            };
+            okBtn.Click += new RoutedEventHandler(OKButton_Click);
+            ObservableList<Button> winButtons = [okBtn];
+
+            GingerCore.General.LoadGenericWindow(ref mWin, mOwnerWindow, windowStyle, @"Compare & Merge", this, winButtons, true, "OK");
+        }
+
+        private void OKButton_Click(object sender, RoutedEventArgs e)
+        {
+            mWin.Close();
         }
 
         void ToggleSections()

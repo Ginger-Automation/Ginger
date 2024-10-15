@@ -118,13 +118,15 @@ namespace Ginger
         public static string OpenSelectFolderDialog(string Title)
         {
             // We use open file since it is a better UI than folder selection, the user can type at the address and naviagte quicker - more user friendly
-            var OFD = new System.Windows.Forms.OpenFileDialog();
-            OFD.FileName = "Folder Selection";
-            OFD.Title = Title;
-            OFD.Filter = "Folder|Folder";
-            OFD.ValidateNames = false;
-            OFD.CheckFileExists = false;
-            OFD.CheckPathExists = true;
+            var OFD = new System.Windows.Forms.OpenFileDialog
+            {
+                FileName = "Folder Selection",
+                Title = Title,
+                Filter = "Folder|Folder",
+                ValidateNames = false,
+                CheckFileExists = false,
+                CheckPathExists = true
+            };
             if (OFD.ShowDialog() == DialogResult.OK)
             {
                 string p = OFD.FileName;
@@ -253,7 +255,7 @@ namespace Ginger
 
             if ((Pos2 - Pos1) > 0)
             {
-                str = STR.Substring(Pos1, Pos2 - Pos1);
+                str = STR[Pos1..Pos2];
                 return str;
             }
             else
@@ -295,28 +297,30 @@ namespace Ginger
             }
             viewbox = new Viewbox();
             Grid grd = new Grid();
-            var parent = VisualTreeHelper.GetParent(control) as StackPanel;
-            if (parent != null)
+            if (VisualTreeHelper.GetParent(control) is StackPanel parent)
             {
                 parent.Children.Remove(control);
             }
 
             grd.Children.Add(control);
             grd.Children.Add(CreateAnEllipse());
-            TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 125, 0, 0), FontWeight = FontWeights.Bold };
-            //if (typ == 0)
-            //{
-            //    App.RunsetBFTextbox = txt;
-            //}
-            //else if (typ == 1)
-            //{
-            //    App.RunsetActivityTextbox = txt;
-            //}
-            //else
-            //{
-            //    App.RunsetActionTextbox = txt;
-            //}
-            txt.Text = count.ToString();
+            TextBlock txt = new TextBlock
+            {
+                Margin = new Thickness(xAxis, 125, 0, 0),
+                FontWeight = FontWeights.Bold,             //if (typ == 0)
+                                                           //{
+                                                           //    App.RunsetBFTextbox = txt;
+                                                           //}
+                                                           //else if (typ == 1)
+                                                           //{
+                                                           //    App.RunsetActivityTextbox = txt;
+                                                           //}
+                                                           //else
+                                                           //{
+                                                           //    App.RunsetActionTextbox = txt;
+                                                           //}
+                Text = count.ToString()
+            };
             grd.Children.Add(txt);
             viewbox.Child = grd;
             viewbox.Measure(new System.Windows.Size(400, 200));
@@ -328,9 +332,11 @@ namespace Ginger
         public static Ellipse CreateAnEllipse()
         {
             // Create an Ellipse
-            Ellipse blueRectangle = new Ellipse();
-            blueRectangle.Height = 50;
-            blueRectangle.Width = 50;
+            Ellipse blueRectangle = new Ellipse
+            {
+                Height = 50,
+                Width = 50
+            };
 
             // Create a blue and a black Brush
             SolidColorBrush blueBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#d2c5b8"));
@@ -435,8 +441,10 @@ namespace Ginger
         public static System.Windows.Controls.Image GetImage(string imageName, int width = -1, int height = -1)
         {
             //TODO: replace all places where we have pack://application:,,,/Ginger;component/Images/ with below function
-            System.Windows.Controls.Image img = new System.Windows.Controls.Image();
-            img.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
+            System.Windows.Controls.Image img = new System.Windows.Controls.Image
+            {
+                Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute))
+            };
             if (width > 0)
             {
                 img.Width = width;
@@ -532,13 +540,13 @@ namespace Ginger
         {
             //calculate the ratio
             double dbl = (double)source.Width / (double)source.Height;
-            if ((int)((double)boxHight * dbl) <= boxWidth)
+            if ((int)(boxHight * dbl) <= boxWidth)
             {
-                return new Tuple<int, int>((int)((double)boxHight * dbl), boxHight);
+                return new Tuple<int, int>((int)(boxHight * dbl), boxHight);
             }
             else
             {
-                return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
+                return new Tuple<int, int>(boxWidth, (int)(boxWidth / dbl));
             }
         }
 
@@ -639,6 +647,21 @@ namespace Ginger
                 return userId == 0;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Escape all underscores ('_') from the provided string <paramref name="s"/> with double underscores ('__'). This is helpful in case of displaying underscore in <see cref="Label"/> controls where the first underscore is considered as Access Key. For more details, https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/issues/1427.
+        /// </summary>
+        /// <param name="s">string to escape</param>
+        /// <returns>Escaped string where all the underscores ('_') is escaped using double underscores ('__').</returns>
+        public static string EscapeAccessKey(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return s;
+            }
+
+            return s.Replace("_", "__");
         }
     }
 }

@@ -69,7 +69,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eLabelAction)GetOrCreateInputParam<eLabelAction>(nameof(LabelAction), eLabelAction.Click);
+                return GetOrCreateInputParam<eLabelAction>(nameof(LabelAction), eLabelAction.Click);
             }
             set
             {

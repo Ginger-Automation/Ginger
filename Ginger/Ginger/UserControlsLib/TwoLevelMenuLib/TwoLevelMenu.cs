@@ -23,7 +23,7 @@ namespace Ginger.TwoLevelMenuLib
 {
     public class TwoLevelMenu
     {
-        public ObservableList<TopMenuItem> MenuList = new ObservableList<TopMenuItem>();
+        public ObservableList<TopMenuItem> MenuList = [];
 
         internal void Add(TopMenuItem topMenuItem)
         {
@@ -36,7 +36,7 @@ namespace Ginger.TwoLevelMenuLib
             {
                 if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
                 {
-                    if (WorkSpace.Instance.Solution!= null && topMenuItem.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
+                    if (WorkSpace.Instance.Solution != null && topMenuItem.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
                     {
                         continue;
                     }

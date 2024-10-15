@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
 
         public int Id { get { return mProcess.Id; } }
 
-        public bool IsProcessExited { get { return mProcess != null ? mProcess.HasExited : false; } }
+        public bool IsProcessExited { get { return mProcess != null && mProcess.HasExited; } }
         public string MainWindowTitle
         {
             get

@@ -227,7 +227,7 @@ namespace GingerCore.ALM.QC
 
         public static List<string> GetQCDomains()
         {
-            List<string> QCDomains = new List<string>();
+            List<string> QCDomains = [];
 
             foreach (dynamic Dom in mTDConn.VisibleDomains)
             {
@@ -241,7 +241,7 @@ namespace GingerCore.ALM.QC
         public static Dictionary<string, string> GetQCDomainProjects(string domainName)
         {
             dynamic lstProjects = mTDConn.VisibleProjects[domainName];
-            List<string> strProjects = new List<string>();
+            List<string> strProjects = [];
             foreach (dynamic project in lstProjects)
             {
                 strProjects.Add(project.ToString());
@@ -256,7 +256,7 @@ namespace GingerCore.ALM.QC
 
             SubjectNode SubjRoot = (SubjectNode)treeM.get_NodeByPath(PathNode);
             List SubjectNodeList = SubjRoot.NewList();
-            List<string> testPlanPathList = new List<string>();
+            List<string> testPlanPathList = [];
 
             foreach (SubjectNode oSubjectNode in SubjectNodeList)
             {
@@ -277,7 +277,7 @@ namespace GingerCore.ALM.QC
             }
 
             List FoldersList = tsFolder.NewList();
-            List<string> testlabPathList = new List<string>();
+            List<string> testlabPathList = [];
 
             foreach (TestSetFolder folder in FoldersList)
             {
@@ -311,12 +311,14 @@ namespace GingerCore.ALM.QC
             }
 
             List TestsetList = TSetFact.NewList(tsFilter.Text);
-            List<ALMTestSetSummary> testlabPathList = new List<ALMTestSetSummary>();
+            List<ALMTestSetSummary> testlabPathList = [];
             foreach (TestSet testset in TestsetList)
             {
-                ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary();
-                QCTestSetTreeItem.TestSetID = testset.ID;
-                QCTestSetTreeItem.TestSetName = testset.Name;
+                ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary
+                {
+                    TestSetID = testset.ID,
+                    TestSetName = testset.Name
+                };
                 testlabPathList.Add(QCTestSetTreeItem);
             }
 

@@ -83,11 +83,13 @@ namespace GingerCore.GeneralLib
 
         void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property)
         {
-            Binding b = new Binding();
-            b.Source = obj;
-            b.Path = new PropertyPath(property);
-            b.Mode = BindingMode.TwoWay;
-            b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding b = new Binding
+            {
+                Source = obj,
+                Path = new PropertyPath(property),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
             control.SetBinding(dependencyProperty, b);
         }
 

@@ -31,7 +31,6 @@ using GingerCore.Drivers;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,13 +49,13 @@ namespace Ginger.AnalyzerLib
         public static List<AnalyzerItemBase> Analyze(BusinessFlow BusinessFlow, Activity parentActivity, Act a, ObservableList<DataSourceBase> DSList, DriverBase? driver = null)
         {
             // Put all tests on Action here
-            List<string> ActivityUsedVariables = new List<string>();
-            List<string> mUsedGlobalParameters = new List<string>();
-            List<string> mMissingStoreToGlobalParameters = new List<string>();
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
+            List<string> ActivityUsedVariables = [];
+            List<string> mUsedGlobalParameters = [];
+            List<string> mMissingStoreToGlobalParameters = [];
+            List<AnalyzerItemBase> IssuesList = [];
             ObservableList<GlobalAppModelParameter> mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
 
-            AnalyzeValueExpInAction(a, BusinessFlow , parentActivity, ref IssuesList);
+            AnalyzeValueExpInAction(a, BusinessFlow, parentActivity, ref IssuesList);
 
             //Flow Control -> GoToAction , Check if Action u want to go to exist
             if (a.FlowControls.Count > 0)
@@ -246,7 +245,7 @@ namespace Ginger.AnalyzerLib
                                             issueFound = true;
                                         }
                                     }
-                                    else 
+                                    else
                                     {
                                         issueFound = true;
                                     }
@@ -424,7 +423,7 @@ namespace Ginger.AnalyzerLib
                     else
                     {
                         Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                        ElementInfo selectedPOMElement = (ElementInfo)POM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
+                        ElementInfo selectedPOMElement = POM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
                         if (selectedPOMElement == null)
                         {
                             AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
@@ -479,7 +478,7 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
-            if (driver != null && driver is IIncompleteDriver incompleteDriver)
+            if (driver is not null and IIncompleteDriver incompleteDriver)
             {
                 if (!incompleteDriver.IsActionSupported(a, out string message))
                 {
@@ -525,7 +524,8 @@ namespace Ginger.AnalyzerLib
                                 .ToList();
 
 
-            if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(action.RunDescription, businessFlow.Environment)){
+            if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(action.RunDescription, businessFlow.Environment))
+            {
 
                 ValueExpsNotInCurrEnv.Add("used in Run Description");
             }
@@ -535,15 +535,15 @@ namespace Ginger.AnalyzerLib
                                     .ActFlowControls
                                     .Select((actFlowControl) =>
                                     {
-                                       if(!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Condition, businessFlow.Environment))
-                                       {
+                                        if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Condition, businessFlow.Environment))
+                                        {
                                             return $"{actFlowControl.Condition} used in Custom Condition in the Flow Control Tab";
-                                       }
+                                        }
 
-                                       if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Value, businessFlow.Environment))
-                                       {
+                                        if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actFlowControl.Value, businessFlow.Environment))
+                                        {
                                             return $"{actFlowControl.Value} used in the Flow Control Tab";
-                                       }
+                                        }
                                         return string.Empty;
                                     })
                                     .Where((filteredFlowControl) => !string.Equals(filteredFlowControl, string.Empty));
@@ -555,7 +555,7 @@ namespace Ginger.AnalyzerLib
                                 .Select((actReturnValue) =>
                                 {
 
-                                    if(!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Param, businessFlow.Environment))
+                                    if (!AnalyzeEnvApplication.DoesEnvParamOrURLExistInValueExp(actReturnValue.Param, businessFlow.Environment))
                                     {
                                         return $"{actReturnValue.Param} used in Param in Output Values Tab";
                                     }
@@ -570,7 +570,7 @@ namespace Ginger.AnalyzerLib
                                         return $"{actReturnValue.Expected} used in Expected Value in the Output Values Tab";
                                     }
                                     return string.Empty;
-                                    
+
                                 })
                                 .Where((filteredReturnValue) => !string.Equals(filteredReturnValue, string.Empty));
 
@@ -580,18 +580,20 @@ namespace Ginger.AnalyzerLib
 
             foreach (var filteredValueExp in ValueExpsNotInCurrEnv)
             {
-                AnalyzeAction AA = new AnalyzeAction();
-                AA.Status = eStatus.NeedFix;
-                AA.mActivity = activity;
-                AA.Description = $"Cannot Calculate Value Expression: {filteredValueExp}";
-                AA.ItemName = action.Description;
-                AA.ItemParent = businessFlow.Name + " > " + activity.ActivityName;
-                AA.mAction = action;
-                AA.mBusinessFlow = businessFlow;
-                AA.ItemClass = "Action";
-                AA.CanAutoFix = eCanFix.No;
-                AA.Severity = eSeverity.High;
-                AA.HowToFix = $"Please ensure that you have selected the appropriate environment and that the parameter/URL exists in the chosen environment: '{businessFlow.Environment}'";
+                AnalyzeAction AA = new AnalyzeAction
+                {
+                    Status = eStatus.NeedFix,
+                    mActivity = activity,
+                    Description = $"Cannot Calculate Value Expression: {filteredValueExp}",
+                    ItemName = action.Description,
+                    ItemParent = businessFlow.Name + " > " + activity.ActivityName,
+                    mAction = action,
+                    mBusinessFlow = businessFlow,
+                    ItemClass = "Action",
+                    CanAutoFix = eCanFix.No,
+                    Severity = eSeverity.High,
+                    HowToFix = $"Please ensure that you have selected the appropriate environment and that the parameter/URL exists in the chosen environment: '{businessFlow.Environment}'"
+                };
                 issues.Add(AA);
             }
 
@@ -601,7 +603,7 @@ namespace Ginger.AnalyzerLib
 
         public static List<string> GetUsedVariableFromAction(Act action)
         {
-            List<string> actionUsedVariables = new List<string>();
+            List<string> actionUsedVariables = [];
             VariableBase.GetListOfUsedVariables(action, ref actionUsedVariables);
             return actionUsedVariables;
         }
@@ -646,7 +648,7 @@ namespace Ginger.AnalyzerLib
             FlowControl flowControl = (FlowControl)AA.ErrorInfoObject;
             if (AA.mBusinessFlow.GetActivity(flowControl.GetGuidFromValue(true), flowControl.GetNameFromValue(true)) == null)
             {
-                Activity similarNameActivity = (Activity)AA.mBusinessFlow.Activities.FirstOrDefault(x => x.ActivityName == flowControl.GetNameFromValue());
+                Activity similarNameActivity = AA.mBusinessFlow.Activities.FirstOrDefault(x => x.ActivityName == flowControl.GetNameFromValue());
                 if (similarNameActivity != null)
                 {
                     string updatedMappingValue = similarNameActivity.Guid + flowControl.GUID_NAME_SEPERATOR + similarNameActivity.Description;
@@ -678,14 +680,16 @@ namespace Ginger.AnalyzerLib
         }
         static AnalyzeAction CreateNewIssue(BusinessFlow BusinessFlow, Activity Activity, Act action)
         {
-            AnalyzeAction AA = new AnalyzeAction();
-            AA.Status = AnalyzerItemBase.eStatus.NeedFix;
-            AA.mActivity = Activity;
-            AA.ItemName = action.Description;
-            AA.ItemParent = BusinessFlow.Name + " > " + Activity.ActivityName;
-            AA.mAction = action;
-            AA.mBusinessFlow = BusinessFlow;
-            AA.ItemClass = "Action";
+            AnalyzeAction AA = new AnalyzeAction
+            {
+                Status = AnalyzerItemBase.eStatus.NeedFix,
+                mActivity = Activity,
+                ItemName = action.Description,
+                ItemParent = BusinessFlow.Name + " > " + Activity.ActivityName,
+                mAction = action,
+                mBusinessFlow = BusinessFlow,
+                ItemClass = "Action"
+            };
             return AA;
         }
 

@@ -63,11 +63,7 @@ namespace GingerCore.Actions
 
         public override List<eLocateBy> AvailableLocateBy()
         {
-            List<eLocateBy> l = new List<eLocateBy>();
-
-            l.Add(eLocateBy.ByName);
-            l.Add(eLocateBy.ByTitle);
-            l.Add(eLocateBy.ByXPath);
+            List<eLocateBy> l = [eLocateBy.ByName, eLocateBy.ByTitle, eLocateBy.ByXPath];
 
             return l;
         }
@@ -87,7 +83,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eWindowActionType)GetOrCreateInputParam<eWindowActionType>(nameof(WindowActionType), eWindowActionType.Switch);
+                return GetOrCreateInputParam<eWindowActionType>(nameof(WindowActionType), eWindowActionType.Switch);
             }
             set
             {
@@ -104,7 +100,7 @@ namespace GingerCore.Actions
         }
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform is ePlatformType.Web or ePlatformType.NA or ePlatformType.Mobile)
             {
                 return true;
             }
@@ -133,36 +129,20 @@ namespace GingerCore.Actions
             newAct.ElementType = eElementType.Window;
             newAct.ElementLocateValue = this.LocateValue;
 
-            switch (this.WindowActionType)
+            newAct.ElementAction = this.WindowActionType switch
             {
-                case eWindowActionType.Close:
-                    newAct.ElementAction = ActUIElement.eElementAction.CloseWindow;
-                    break;
-                case eWindowActionType.IsExist:
-                    newAct.ElementAction = ActUIElement.eElementAction.IsExist;
-                    break;
-                case eWindowActionType.Switch:
-                    newAct.ElementAction = ActUIElement.eElementAction.Switch;
-                    break;
-                default:
-                    newAct.ElementAction = ActUIElement.eElementAction.Unknown;
-                    break;
-            }
-            switch (LocateBy)
+                eWindowActionType.Close => ActUIElement.eElementAction.CloseWindow,
+                eWindowActionType.IsExist => ActUIElement.eElementAction.IsExist,
+                eWindowActionType.Switch => ActUIElement.eElementAction.Switch,
+                _ => ActUIElement.eElementAction.Unknown,
+            };
+            newAct.ElementLocateBy = LocateBy switch
             {
-                case eLocateBy.ByName:
-                    newAct.ElementLocateBy = eLocateBy.ByName;
-                    break;
-                case eLocateBy.ByTitle:
-                    newAct.ElementLocateBy = eLocateBy.ByTitle;
-                    break;
-                case eLocateBy.ByXPath:
-                    newAct.ElementLocateBy = eLocateBy.ByXPath;
-                    break;
-                default:
-                    newAct.ElementLocateBy = eLocateBy.Unknown;
-                    break;
-            }
+                eLocateBy.ByName => eLocateBy.ByName,
+                eLocateBy.ByTitle => eLocateBy.ByTitle,
+                eLocateBy.ByXPath => eLocateBy.ByXPath,
+                _ => eLocateBy.Unknown,
+            };
             newAct.Active = false;
             newAct.Description = "*** Partially Converted *** - " + this.Description + System.Environment.NewLine + "Please update the Locate By and Locate Value as shown in Windows Explorer for Java Driver.";
             return newAct;

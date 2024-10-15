@@ -38,9 +38,9 @@ namespace GingerCore.ALM.QCRestAPI
         public static string CurrentProject { get; set; }
         public static QCClient QcRestClient { get; set; }
 
-        public static Dictionary<string, string> ExploredTestLabFolder = new Dictionary<string, string>();
-        public static Dictionary<string, string> ExploredTestSets = new Dictionary<string, string>();
-        public static Dictionary<string, string> ExploredTestPlanFolder = new Dictionary<string, string>();
+        public static Dictionary<string, string> ExploredTestLabFolder = [];
+        public static Dictionary<string, string> ExploredTestSets = [];
+        public static Dictionary<string, string> ExploredTestPlanFolder = [];
 
         public static bool ConnectQCServer(string qcServerUrl, string qcUserName, string qcPassword)
         {
@@ -156,7 +156,7 @@ namespace GingerCore.ALM.QCRestAPI
         public static int GetLastTestPlanIdFromPath(string PathNode)
         {
             string[] separatePath = PathNode.Split('\\');
-            List<string> testPlanPathList = new List<string>();
+            List<string> testPlanPathList = [];
 
             separatePath[0] = ExploredTestPlanFolder.ContainsKey("Subject") ? ExploredTestPlanFolder["Subject"] : QcRestClient.GetTestPlanRootFolder().Id;
 
@@ -176,7 +176,7 @@ namespace GingerCore.ALM.QCRestAPI
         public static int GetLastTestSetIdFromPath(string PathNode)
         {
             string[] separatePath = PathNode.Split('\\');
-            List<string> testSetPathList = new List<string>();
+            List<string> testSetPathList = [];
 
             separatePath[0] = ExploredTestLabFolder.ContainsKey("Root") ? ExploredTestLabFolder["Root"] : QcRestClient.GetTestSetRootFolder().Id;
 
@@ -197,7 +197,7 @@ namespace GingerCore.ALM.QCRestAPI
         public static List<string> GetTestPlanExplorer(string PathNode)
         {
             string[] separatePath = PathNode.Split('\\');
-            List<string> testPlanPathList = new List<string>();
+            List<string> testPlanPathList = [];
 
             separatePath[0] = ExploredTestPlanFolder.ContainsKey("Subject") ? ExploredTestPlanFolder["Subject"] : QcRestClient.GetTestPlanRootFolder().Id;
 
@@ -211,7 +211,7 @@ namespace GingerCore.ALM.QCRestAPI
                 separatePath[i] = GetTestPlanFolderId(separatePath[i], separatePath[i - 1]);
             }
 
-            QCTestPlan testPlanToExplor = QcRestClient.GetTestPlanTreeLayerByFilter(separatePath[separatePath.Length - 1], "");
+            QCTestPlan testPlanToExplor = QcRestClient.GetTestPlanTreeLayerByFilter(separatePath[^1], "");
 
             foreach (QCTestFolder folder in testPlanToExplor.folders)
             {
@@ -229,7 +229,7 @@ namespace GingerCore.ALM.QCRestAPI
         public static List<string> GetTestLabExplorer(string PathNode)
         {
             string[] separatePath = PathNode.Split('\\');
-            List<string> testlabPathList = new List<string>();
+            List<string> testlabPathList = [];
             try
             {
                 separatePath[0] = ExploredTestLabFolder.ContainsKey("Root") ? ExploredTestLabFolder["Root"] : QcRestClient.GetTestSetRootFolder().Id;
@@ -244,7 +244,7 @@ namespace GingerCore.ALM.QCRestAPI
                     separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
                 }
 
-                QCTestSetFolderColl foldersToExplor = QcRestClient.GetTestSetTreeLayerByFilter(separatePath[separatePath.Length - 1], "");
+                QCTestSetFolderColl foldersToExplor = QcRestClient.GetTestSetTreeLayerByFilter(separatePath[^1], "");
 
                 foreach (QCTestSetFolder folders in foldersToExplor)
                 {
@@ -261,7 +261,7 @@ namespace GingerCore.ALM.QCRestAPI
         // get test set explorer(tree view)
         public static List<ALMTestSetSummary> GetTestSetExplorer(string PathNode)
         {
-            List<ALMTestSetSummary> testlabPathList = new List<ALMTestSetSummary>();
+            List<ALMTestSetSummary> testlabPathList = [];
             string[] separatePath = PathNode.Split('\\');
             try
             {
@@ -277,13 +277,15 @@ namespace GingerCore.ALM.QCRestAPI
                     separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
                 }
 
-                QCTestSetColl testSets = QcRestClient.GetAllTestSetsUnderFolder(int.Parse(separatePath[separatePath.Length - 1]));
+                QCTestSetColl testSets = QcRestClient.GetAllTestSetsUnderFolder(int.Parse(separatePath[^1]));
 
                 foreach (QCRestClientStd.QCTestSet testset in testSets)
                 {
-                    ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary();
-                    QCTestSetTreeItem.TestSetID = testset.Id;
-                    QCTestSetTreeItem.TestSetName = testset.Name;
+                    ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary
+                    {
+                        TestSetID = testset.Id,
+                        TestSetName = testset.Name
+                    };
                     testlabPathList.Add(QCTestSetTreeItem);
                 }
             }

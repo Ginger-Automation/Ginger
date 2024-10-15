@@ -16,20 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using GingerCore;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.IdentityModel.Tokens.Jwt;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore;
-using GingerCore.Environments;
-using Cassandra;
-using Microsoft.TeamFoundation.Build.WebApi;
-using Ginger.Configurations;
-using Amazon.Runtime;
-using Grpc.Core;
 
 namespace GingerCoreNET.GenAIServices
 {
@@ -41,7 +35,7 @@ namespace GingerCoreNET.GenAIServices
         public GenAIServiceHelper()
         {
         }
-        
+
         public async Task<bool> InitClient()
         {
             try
@@ -118,7 +112,7 @@ namespace GingerCoreNET.GenAIServices
 
         private async Task<Boolean> GetOrValidateToken()
         {
-           if (IsTokenValid())
+            if (IsTokenValid())
             {
                 return true;
             }
@@ -172,7 +166,7 @@ namespace GingerCoreNET.GenAIServices
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR,"Response is not successfull");
+                    Reporter.ToLog(eLogLevel.ERROR, "Response is not successfull");
                     throw new HttpRequestException($"{response.StatusCode}");
                 }
             }
@@ -248,13 +242,15 @@ namespace GingerCoreNET.GenAIServices
         }
         private MultipartFormDataContent PrepareRequestDetailsForChat(string Question)
         {
-            var content = new MultipartFormDataContent();
-            content.Add(new StringContent(Question), "question");
-            content.Add(new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.Account)), "account");
-            content.Add(new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.DomainType)), "domainType");
-            content.Add(new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.TemperatureLevel)), "temperatureVal");
-            content.Add(new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.MaxTokenValue)), "maxTokensVal");
-            content.Add(new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.DataPath)), "dataPath");
+            var content = new MultipartFormDataContent
+            {
+                { new StringContent(Question), "question" },
+                { new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.Account)), "account" },
+                { new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.DomainType)), "domainType" },
+                { new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.TemperatureLevel)), "temperatureVal" },
+                { new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.MaxTokenValue)), "maxTokensVal" },
+                { new StringContent(CredentialsCalculation(WorkSpace.Instance.Solution.AskLisaConfiguration.DataPath)), "dataPath" }
+            };
             return content;
         }
     }

@@ -83,9 +83,10 @@ namespace Ginger.Plugin.Platform.WebService.Execution
 
         private GingerHttpRequestMessage GetRequest(NodePlatformAction platformAction)
         {
-            GingerHttpRequestMessage Request = new GingerHttpRequestMessage();
-
-            Request.URL = new Uri(platformAction.InputParams["EndPointURL"].ToString());
+            GingerHttpRequestMessage Request = new GingerHttpRequestMessage
+            {
+                URL = new Uri(platformAction.InputParams["EndPointURL"].ToString())
+            };
 
             if (platformAction.ActionType == "ActWebAPISoap")
             {
@@ -99,7 +100,7 @@ namespace Ginger.Plugin.Platform.WebService.Execution
 
                 if (platformAction.InputParams["RequestKeyValues"] is Newtonsoft.Json.Linq.JArray RObj)
                 {
-                    Request.RequestKeyValues = new List<RestAPIKeyBodyValues>();
+                    Request.RequestKeyValues = [];
                     foreach (Newtonsoft.Json.Linq.JToken Jt in RObj.Children())
                     {
 

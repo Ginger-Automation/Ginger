@@ -16,37 +16,32 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Ginger.SolutionWindows;
 using Ginger.UserControls;
-using GingerCore;
 using GingerCore.Environments;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
-using System;
-using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
-using Ginger.Environments.AddEnvironmentWizardLib;
 
-namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
+namespace Ginger.Environments.GingerOpsEnvWizardLib
 {
     /// <summary>
-    /// Interaction logic for GingerAnalyticsApplicationPage.xaml
+    /// Interaction logic for GingerOpsApplicationPage.xaml
     /// </summary>
-    public partial class GingerAnalyticsApplicationPage : Page, IWizardPage
+    public partial class GingerOpsApplicationPage : Page, IWizardPage
     {
-        AddGingerAnalyticsEnvWizard mWizard;
+        AddGingerOpsEnvWizard mWizard;
 
-        public GingerAnalyticsApplicationPage()
+        public GingerOpsApplicationPage()
         {
             InitializeComponent();
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), Header = "Environment", WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.GingerAnalyticsStatus), Header = "Status", WidthWeight = 40 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.GingerAnalyticsRemark), Header = "Remark", WidthWeight = 40 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ProjEnvironment.Name), Header = "Environment", WidthWeight = 40 },
+                new GridColView() { Field = nameof(ProjEnvironment.GingerOpsStatus), Header = "Status", WidthWeight = 40 },
+                new GridColView() { Field = nameof(ProjEnvironment.GingerOpsRemark), Header = "Remark", WidthWeight = 60 },
+            ]
+            };
             SelectApplicationGrid.SetAllColumnsDefaultView(view);
             SelectApplicationGrid.InitViewItems();
         }
@@ -70,9 +65,11 @@ namespace Ginger.Environments.GingerAnalyticsEnvWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (AddGingerAnalyticsEnvWizard)WizardEventArgs.Wizard;
+                    mWizard = (AddGingerOpsEnvWizard)WizardEventArgs.Wizard;
+                    break;
+                case EventType.Active:
                     SelectApplicationGrid.DataSourceList = mWizard.ImportedEnvs;
-                break;
+                    break;
                 default:
                     break;
             }

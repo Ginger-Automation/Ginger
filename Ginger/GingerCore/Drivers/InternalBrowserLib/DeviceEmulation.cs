@@ -31,7 +31,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         public static ObservableList<DeviceEmulation> DevicelistCombo()
         {
-            ObservableList<DeviceEmulation> Devices = new ObservableList<DeviceEmulation>();
+            ObservableList<DeviceEmulation> Devices = [];
 
             string devicelist = Properties.Resources.DevicesList;
             XmlDocument xml = new XmlDocument();
@@ -40,19 +40,22 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
             foreach (XmlNode xn in xnList)
             {
-                DeviceEmulation Dev = new DeviceEmulation();
-
-                Dev.Devicename = xn.Attributes["name"].Value;
-                Dev.Height = Int32.Parse(xn.Attributes["height"].Value);
-                Dev.Width = Int32.Parse(xn.Attributes["width"].Value);
-                Dev.UserAgent = xn.Attributes["useragent"].Value;
+                DeviceEmulation Dev = new DeviceEmulation
+                {
+                    Devicename = xn.Attributes["name"].Value,
+                    Height = Int32.Parse(xn.Attributes["height"].Value),
+                    Width = Int32.Parse(xn.Attributes["width"].Value),
+                    UserAgent = xn.Attributes["useragent"].Value
+                };
 
                 Devices.Add(Dev);
             }
 
-            DeviceEmulation Desktop = new DeviceEmulation();
-            Desktop.Devicename = "Desktop";
-            Desktop.UserAgent = null;
+            DeviceEmulation Desktop = new DeviceEmulation
+            {
+                Devicename = "Desktop",
+                UserAgent = null
+            };
             Devices.Add(Desktop);
 
             return Devices;

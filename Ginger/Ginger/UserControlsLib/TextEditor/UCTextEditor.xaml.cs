@@ -120,8 +120,10 @@ namespace Ginger.UserControlsLib.TextEditor
         private void TextArea_TextEntered(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             completionWindow = new CompletionWindow(textEditor.TextArea);
-            SelectedContentArgs args = new SelectedContentArgs();
-            args.TextEditor = textEditor;
+            SelectedContentArgs args = new SelectedContentArgs
+            {
+                TextEditor = textEditor
+            };
             //TODO: fill the rest of the args
 
             List<ICompletionData> data = mTextEditor.GetCompletionData(e.Text, args);
@@ -255,9 +257,8 @@ namespace Ginger.UserControlsLib.TextEditor
             {
                 foreach (ITextEditorToolBarItem t in TE.Tools)
                 {
-                    if (t is TextEditorToolBarItem)
+                    if (t is TextEditorToolBarItem textEditorToolBarItem)
                     {
-                        TextEditorToolBarItem textEditorToolBarItem = (TextEditorToolBarItem)t;
                         AddToolbarTool(textEditorToolBarItem.Image, textEditorToolBarItem.clickHandler, textEditorToolBarItem.toolTip, textEditorToolBarItem.toolVisibility);
                     }
                     else
@@ -272,10 +273,12 @@ namespace Ginger.UserControlsLib.TextEditor
 
         public void AddPluginToolbarTool(ITextEditorToolBarItem t)
         {
-            Button tool = new Button();
-            tool.ToolTip = t.ToolTip;
-            tool.Content = t.ToolText;
-            tool.Tag = t;
+            Button tool = new Button
+            {
+                ToolTip = t.ToolTip,
+                Content = t.ToolText,
+                Tag = t
+            };
             tool.Click += ToolBarItemClick;
 
 
@@ -303,9 +306,11 @@ namespace Ginger.UserControlsLib.TextEditor
         //TODO: looks liek too many calls, even the the caret didn't move, can first check if pos changed otherwise return - keep last
         private void Caret_PositionChanged(object sender, EventArgs e)
         {
-            SelectedContentArgs args = new SelectedContentArgs();
-            args.TextEditor = this.textEditor;
-            args.FoldingManager = mFoldingManager;
+            SelectedContentArgs args = new SelectedContentArgs
+            {
+                TextEditor = this.textEditor,
+                FoldingManager = mFoldingManager
+            };
             if (mTextEditor == null)
             {
                 return;
@@ -343,8 +348,10 @@ namespace Ginger.UserControlsLib.TextEditor
         private void InitFoldings()
         {
             // start a timer to set folding every 2 sec
-            DispatcherTimer foldingUpdateTimer = new DispatcherTimer();
-            foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
+            DispatcherTimer foldingUpdateTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(2)
+            };
             foldingUpdateTimer.Tick += delegate { UpdateFoldings(); };
             foldingUpdateTimer.Start();
         }
@@ -385,17 +392,21 @@ namespace Ginger.UserControlsLib.TextEditor
 
         private Image CreateCopyImage(Image image)
         {
-            Image NewImage = new Image();
-            NewImage.Source = image.Source;
+            Image NewImage = new Image
+            {
+                Source = image.Source
+            };
             return NewImage;
         }
 
         public void AddToolbarTool(Image image, ToolClickRoutedEventHandler clickHandler, string toolTip = "", Visibility toolVisibility = Visibility.Visible)
         {
-            Button tool = new Button();
-            tool.Visibility = toolVisibility;
-            tool.ToolTip = toolTip;
-            tool.Content = CreateCopyImage(image);
+            Button tool = new Button
+            {
+                Visibility = toolVisibility,
+                ToolTip = toolTip,
+                Content = CreateCopyImage(image)
+            };
             tool.Click += ToolBarButtonClick;
             tool.Tag = clickHandler;
 
@@ -420,10 +431,11 @@ namespace Ginger.UserControlsLib.TextEditor
             // since it can be implemented also as Plugin we need to avoid passing Avalon objects
 
             ToolClickRoutedEventHandler clickHandler = (ToolClickRoutedEventHandler)((Button)sender).Tag;
-            TextEditorToolRoutedEventArgs args = new TextEditorToolRoutedEventArgs();
-
-            args.CaretLocation = textEditor.CaretOffset;
-            args.txt = textEditor.Text;
+            TextEditorToolRoutedEventArgs args = new TextEditorToolRoutedEventArgs
+            {
+                CaretLocation = textEditor.CaretOffset,
+                txt = textEditor.Text
+            };
             clickHandler.Invoke(args);
 
             BackgroundRenderer.Segments.Clear();

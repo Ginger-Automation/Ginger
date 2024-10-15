@@ -34,9 +34,11 @@ namespace GingerCore.ALM.RQM
         public RQMTestSuiteExecutionRecord()
         {
             CurrentTestSuiteResult = new RQMTestSuiteResults();
-            TestSuiteResults = new ObservableList<RQMTestSuiteResults>();
-            CurrentTestSuiteResult = new RQMTestSuiteResults();
-            CurrentTestSuiteResult.RQMExecutionRecords = new ObservableList<RQMExecutionRecord>();
+            TestSuiteResults = [];
+            CurrentTestSuiteResult = new RQMTestSuiteResults
+            {
+                RQMExecutionRecords = []
+            };
         }
 
         public RQMTestSuiteExecutionRecord(string uRLPathVersioned)
