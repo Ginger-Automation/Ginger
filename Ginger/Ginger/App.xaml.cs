@@ -250,7 +250,7 @@ namespace Ginger
         /// Handles the startup sequence of the application. Initializes logging, workspace, 
         /// processes command-line arguments, and determines the running mode (UI or execution).
         /// </summary>
-        private void Application_Startup(object sender, StartupEventArgs e)
+        private async void Application_Startup(object sender, StartupEventArgs e)
         {
             InitLogging();
 
@@ -275,7 +275,7 @@ namespace Ginger
             }
             else
             {
-                RunNewCLI(parserResult);
+               await RunNewCLI(parserResult);
             }
         }
 
@@ -318,7 +318,11 @@ namespace Ginger
         /// <returns>DoOptions object or null.</returns>
         private DoOptions ExtractDoOptions(ParserResult<object> parserResult)
         {
-            return parserResult?.Value is DoOptions tempOptions && tempOptions.Operation == DoOptions.DoOperation.open? tempOptions: null;
+            if (parserResult?.Value is DoOptions tempOptions && tempOptions.Operation == DoOptions.DoOperation.open)
+            {
+                return tempOptions;
+            }
+            return null;
         }
 
         /// <summary>
@@ -358,11 +362,15 @@ namespace Ginger
             }
 
             HideConsoleWindow();
-
-            bool tempAutoLoad = WorkSpace.Instance.UserProfile.AutoLoadLastSolution;
+            bool CheckAutoLoadSolution = false;
 
             try
             {
+                if (WorkSpace.Instance.UserProfile != null)
+                {
+                    CheckAutoLoadSolution = WorkSpace.Instance.UserProfile.AutoLoadLastSolution;
+                }
+
                 if (doOptions != null)
                 {
                     WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;
@@ -379,7 +387,7 @@ namespace Ginger
             {
                 if (doOptions != null)
                 {
-                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = tempAutoLoad;
+                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = CheckAutoLoadSolution;
                 }
             }
         }
@@ -410,12 +418,22 @@ namespace Ginger
 
         private async Task RunNewCLI(ParserResult<object> parserResult)
         {
-            if (parserResult != null)
+            try
             {
-                await cliProcessor.ProcessParsedArguments(parserResult);
+                if (parserResult != null)
+                {
+                    await cliProcessor.ProcessParsedArguments(parserResult);
+                }
             }
-            // do proper close !!!         
-            System.Windows.Application.Current.Shutdown(Environment.ExitCode);
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while processing command-line arguments", ex);
+            }
+            finally
+            {
+                System.Windows.Application.Current.Shutdown(Environment.ExitCode);
+            }
+            
         }
 
         public void StartGingerUI()
