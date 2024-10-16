@@ -273,7 +273,7 @@ namespace Ginger.Run
             ((ExecutionLogger)mExecutionLogger).SetRunsetFolder(execResultsFolder, maxFolderSize, currentExecutionDateTime, offline);
             if (!offline)
             {
-                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, null);
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), string.Format("{0} (ID:{1})", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid) , null);                
             }
         }
 
@@ -457,7 +457,7 @@ namespace Ginger.Run
         public override void ActionStart(uint eventTime, Act action)
         {
             SetActionFolder(action);
-            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Action", string.Format("{0} (ID:{1}, ParentID:{2})", action.Description, action.Guid, action.ExecutionParentGuid), null);
+            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Action", string.Format("{0} (ID:{1}, ParentID:{2}, ParentActivityID: {3})", action.Description, action.Guid, action.ExecutionParentGuid, mCurrentActivity?.Guid), null);
         }
         // remove
         public void SetActionFolder(Act action)
@@ -495,15 +495,23 @@ namespace Ginger.Run
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {
             // if user set special action log in output
-            if (action.EnableActionLogConfig)
+            try
             {
-                if (mGingerRunnerLogger == null)
+                if (action.EnableActionLogConfig && !string.IsNullOrEmpty(mExecutionLogger.ExecutionLogfolder))
                 {
-                    string loggerFile = Path.Combine(mExecutionLogger.ExecutionLogfolder, FileSystem.AppendTimeStamp("GingerLog.txt"));
-                    mGingerRunnerLogger = new GingerRunnerLogger(loggerFile);
+                    if (mGingerRunnerLogger == null)
+                    {
+                        string loggerFile = Path.Combine(mExecutionLogger.ExecutionLogfolder, FileSystem.AppendTimeStamp("GingerLog.txt"));
+                        mGingerRunnerLogger = new GingerRunnerLogger(loggerFile);
+                    }
+                    mGingerRunnerLogger.LogAction(action);
                 }
-                mGingerRunnerLogger.LogAction(action);
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in LogAction", ex);
+            }
+
             Activity currentActivity = null;
             try
             {
@@ -593,7 +601,7 @@ namespace Ginger.Run
 
                 if (!offlineMode)
                 {
-                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2})", action.Description, action.Guid, action.ExecutionParentGuid), AR);
+                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2}, ParentActivityID: {3})", action.Description, action.Guid, action.ExecutionParentGuid, mCurrentActivity?.Guid), AR);
                 }
             }
             catch (Exception ex)
