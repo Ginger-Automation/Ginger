@@ -23,7 +23,7 @@ RUN mkdir -p /usr/share/amdocs/Ginger \
 RUN chmod -R 777 /GingerRuntime
 
 # Add neccessary environment variables for the container
-ENV NO_PROXY="http://localhost"
+ENV NO_PROXY="localhost"
 ENV GIT_SSL_NO_VERIFY=true
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV GINGER_EXE_ENV=docker
