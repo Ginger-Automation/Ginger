@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
@@ -129,7 +130,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Finishing to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
                 }
                 string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.ExecutionId);
-                bool isResponseSuccessful = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
+                bool isResponseSuccessful = false;
+                //awaitig SendRestRequestAndGetResponse is working fine on windows but crashing on Linux Runtime, issue looks related to restsharp, need to replace it
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    isResponseSuccessful = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
+                }
+                else
+                {
+                    isResponseSuccessful = SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).Result;
+                }
+
                 if (isResponseSuccessful)
                 {
                     Reporter.ToLog(eLogLevel.INFO, $"Successfully sent {message}");
