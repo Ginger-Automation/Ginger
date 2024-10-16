@@ -22,7 +22,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
+using CommandLine;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
 using Ginger.SourceControl;
@@ -32,6 +34,7 @@ using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -240,45 +243,163 @@ namespace Ginger
             }
         }
 
-
+        CLIProcessor cliProcessor;
 
         // Main entry point to Ginger UI/CLI
-        private void Application_Startup(object sender, StartupEventArgs e)
+        /// <summary>
+        /// Handles the startup sequence of the application. Initializes logging, workspace, 
+        /// processes command-line arguments, and determines the running mode (UI or execution).
+        /// </summary>
+        private async void Application_Startup(object sender, StartupEventArgs e)
+        {
+            try
+            {
+                InitLogging();
+
+                bool startGrid = ShouldStartGrid(e.Args);
+                WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
+
+                var parserResult = ParseCommandLineArguments(e.Args);
+
+                DoOptions doOptions = ExtractDoOptions(parserResult);
+
+                if (IsExecutionMode(e.Args, doOptions))
+                {
+                    WorkSpace.Instance.RunningInExecutionMode = true;
+                    Reporter.ReportAllAlsoToConsole = true;
+                }
+
+                InitializeGingerCore();
+
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    ProcessGingerUIStartup(doOptions);
+                }
+                else
+                {
+                    await RunNewCLI(parserResult);
+                }
+            }
+            catch (Exception ex) {
+                Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
+            }
+
+        }
+
+        /// <summary>
+        /// Initializes the logging mechanism for the application using log4net.
+        /// </summary>
+        private void InitLogging()
         {
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
+        }
 
+        /// <summary>
+        /// Determines whether the application should start with the grid view.
+        /// Returns true if there are no command-line arguments.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
+        /// <returns>True if no arguments are provided, otherwise false.</returns>
+        private bool ShouldStartGrid(string[] args)
+        {
+            return args.Length == 0;
+        }
 
+        /// <summary>
+        /// Parses command-line arguments and returns the result.
+        /// If no arguments are provided, returns null.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
+        /// <returns>ParserResult containing parsed arguments or null.</returns>
+        private ParserResult<object> ParseCommandLineArguments(string[] args)
+        {
+            cliProcessor = new CLIProcessor();
+            return args.Length != 0 ? cliProcessor.ParseArguments(args) : null;
+        }
 
-            bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
-            WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
-            if (e.Args.Length != 0)
+        /// <summary>
+        /// Extracts the DoOptions object from the parser result if available and the operation is 'open'.
+        /// Otherwise, returns null.
+        /// </summary>
+        /// <param name="parserResult">Parsed command-line arguments.</param>
+        /// <returns>DoOptions object or null.</returns>
+        private DoOptions ExtractDoOptions(ParserResult<object> parserResult)
+        {
+            if (parserResult?.Value is DoOptions tempOptions && tempOptions.Operation == DoOptions.DoOperation.open)
             {
-                WorkSpace.Instance.RunningInExecutionMode = true;
-                Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
+                return tempOptions;
             }
-            // add additional classes from Ginger and GingerCore
-            InitClassTypesDictionary();
+            return null;
+        }
 
+        /// <summary>
+        /// Determines if the application is in execution mode based on command-line arguments and DoOptions.
+        /// Returns true if there are arguments and DoOptions is null.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
+        /// <param name="doOptions">DoOptions extracted from the parsed arguments.</param>
+        /// <returns>True if the application is in execution mode, otherwise false.</returns>
+        private bool IsExecutionMode(string[] args, DoOptions doOptions)
+        {
+            return args.Length != 0 && doOptions == null;
+        }
+
+        /// <summary>
+        /// Initializes various core components of Ginger such as class types, workspace, and telemetry.
+        /// Logs the startup information.
+        /// </summary>
+        private void InitializeGingerCore()
+        {
+            InitClassTypesDictionary();
             WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());
             WorkSpace.Instance.InitTelemetry();
-
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
+        }
 
-
-            if (!WorkSpace.Instance.RunningInExecutionMode)
+        /// <summary>
+        /// Processes the startup for the Ginger UI. Initializes logging, checks the user profile settings, 
+        /// hides the console window, and loads the last solution if applicable.
+        /// </summary>
+        /// <param name="doOptions">DoOptions object containing user-specific startup options.</param>
+        private void ProcessGingerUIStartup(DoOptions doOptions)
+        {
+            if (WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
             {
-                if (WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
-                {
-                    GingerLog.StartCustomTraceListeners();
-                }
-                HideConsoleWindow();
-                StartGingerUI();// start regular Ginger UI
+                GingerLog.StartCustomTraceListeners();
             }
-            else
+
+            HideConsoleWindow();
+            bool CheckAutoLoadSolution = false;
+
+            try
             {
-                RunNewCLI(e.Args);
+                if (WorkSpace.Instance.UserProfile != null)
+                {
+                    CheckAutoLoadSolution = WorkSpace.Instance.UserProfile.AutoLoadLastSolution;
+                }
+
+                if (doOptions != null)
+                {
+                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;
+                }
+
+                StartGingerUI();
+
+                if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
+                {
+                    DoOptionsHandler.Run(doOptions);
+                }
+            }
+            finally
+            {
+                if (doOptions != null)
+                {
+                    WorkSpace.Instance.UserProfile.AutoLoadLastSolution = CheckAutoLoadSolution;
+                }
             }
         }
+
+
 
 
         [DllImport("kernel32.dll")]
@@ -302,13 +423,24 @@ namespace Ginger
             ShowWindow(handle, SW_SHOW);
         }
 
-        private async void RunNewCLI(string[] args)
+        private async Task RunNewCLI(ParserResult<object> parserResult)
         {
-            CLIProcessor cLIProcessor = new CLIProcessor();
-            await cLIProcessor.ExecuteArgs(args);
-
-            // do proper close !!!         
-            System.Windows.Application.Current.Shutdown(Environment.ExitCode);
+            try
+            {
+                if (parserResult != null)
+                {
+                    await cliProcessor.ProcessParsedArguments(parserResult);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while processing command-line arguments", ex);
+            }
+            finally
+            {
+                System.Windows.Application.Current.Shutdown(Environment.ExitCode);
+            }
+            
         }
 
         public void StartGingerUI()
