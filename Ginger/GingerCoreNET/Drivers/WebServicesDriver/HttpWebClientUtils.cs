@@ -814,6 +814,11 @@ namespace GingerCore.Actions.WebAPI
                         }
                         RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
                         break;
+
+                    case ApplicationAPIUtils.eContentType.JSonWithoutCharset:
+                        RequestMessage.Content = new StringContent(BodyString, new MediaTypeHeaderValue(ContentType));
+                        break;
+
                     default:
                         RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
                         break;
@@ -880,6 +885,11 @@ namespace GingerCore.Actions.WebAPI
                     case ApplicationAPIUtils.eContentType.XML:
                         Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
                         ContentType = "application/xml";
+                        break;
+
+                    case ApplicationAPIUtils.eContentType.JSonWithoutCharset:
+                        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        ContentType = "application/json";
                         break;
                 }
             }

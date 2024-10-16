@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -99,7 +99,7 @@ namespace Amdocs.Ginger.Repository
 
         public enum eContentType
         {
-            [EnumValueDescription("application/json")]
+            [EnumValueDescription("application/json;charset=utf-8")]
             JSon,
             [EnumValueDescription("text/plain;charset=utf-8")]
             TextPlain,
@@ -110,7 +110,9 @@ namespace Amdocs.Ginger.Repository
             [EnumValueDescription("multipart/form-data")]
             FormData,
             [EnumValueDescription("application/pdf")]
-            PDF
+            PDF,
+            [EnumValueDescription("application/json")]
+            JSonWithoutCharset
         }
 
         public enum eCookieMode
