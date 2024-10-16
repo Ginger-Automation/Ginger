@@ -7,7 +7,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
     /// <summary>
     /// Interaction logic for UIElementScrollToOptionsPage.xaml
     /// </summary>
-    public partial class UIElementScrollToOptionsPage : Page
+    public partial class UIElementScrollToElementOptionsPage : Page
     {
         public enum eScrollAlignment
         {
@@ -17,7 +17,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             Nearest
         }
 
-        public UIElementScrollToOptionsPage(ActUIElement action)
+        public UIElementScrollToElementOptionsPage(ActUIElement action)
         {
             InitializeComponent();
 

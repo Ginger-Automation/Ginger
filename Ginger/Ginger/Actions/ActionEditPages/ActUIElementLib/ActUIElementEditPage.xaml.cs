@@ -277,7 +277,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     break;
 
                 case eElementAction.ScrollToElement:
-                    pageContent = new UIElementScrollToOptionsPage(mAction);
+                    pageContent = new UIElementScrollToElementOptionsPage(mAction);
                     break;
 
                 case eElementAction.DoubleClick:
