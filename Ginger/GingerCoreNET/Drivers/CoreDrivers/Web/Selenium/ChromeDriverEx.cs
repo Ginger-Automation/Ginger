@@ -27,41 +27,26 @@ namespace GingerCore.Drivers
         public static Screenshot GetFullPageScreenshot(this ChromiumDriver driver)
         {
             // Capture the original scroll position
-            var originalScrollPosition = driver.ExecuteScript("return { x: window.pageXOffset, y: window.pageYOffset };");
+            Dictionary<string, object> originalScrollPosition = (Dictionary<string, object>)driver.ExecuteScript("return { x: window.pageXOffset, y: window.pageYOffset };");
 
-            //Dictionary will contain the parameters needed to get the full page screen shot
+            // Capture page dimensions and device metrics
             Dictionary<string, Object> metrics = new Dictionary<string, Object>
             {
-                ["width"] = driver.ExecuteScript("return Math.max(window.innerWidth,document.body.scrollWidth,document.documentElement.scrollWidth)"),
-                ["height"] = driver.ExecuteScript("return Math.max(window.innerHeight,document.body.scrollHeight,document.documentElement.scrollHeight)")
+                ["width"] = driver.ExecuteScript("return Math.max(window.innerWidth, document.body.scrollWidth, document.documentElement.scrollWidth)"),
+                ["height"] = driver.ExecuteScript("return Math.max(window.innerHeight, document.body.scrollHeight, document.documentElement.scrollHeight)"),
+                ["deviceScaleFactor"] = Convert.ToDouble(driver.ExecuteScript("return window.devicePixelRatio") ?? 1),
+                ["mobile"] = driver.ExecuteScript("return typeof window.orientation !== 'undefined'")
             };
-            object devicePixelRatio = driver.ExecuteScript("return window.devicePixelRatio");
-            if (devicePixelRatio != null)
-            {
-                double doubleValue = 0;
-                if (double.TryParse(devicePixelRatio.ToString(), out doubleValue))
-                {
-                    metrics["deviceScaleFactor"] = doubleValue;
-                }
-                else
-                {
-                    long longValue = 0;
-                    if (long.TryParse(devicePixelRatio.ToString(), out longValue))
-                    {
-                        metrics["deviceScaleFactor"] = longValue;
-                    }
-                }
-            }
-            metrics["mobile"] = driver.ExecuteScript("return typeof window.orientation !== 'undefined'");
-            //Execute the emulation Chrome Command to change browser to a custom device that is the size of the entire page
-            driver.ExecuteCdpCommand("Emulation.setDeviceMetricsOverride", metrics);
-            //You can then just screenshot it as it thinks everything is visible
-            Screenshot screenshot = driver.GetScreenshot();
-            //This command will return your browser back to a normal, usable form if you need to do anything else with it.
-            driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", []);
 
-            // Restore the original scroll position
-            driver.ExecuteScript($"window.scrollTo({{ top: {((IDictionary<string, object>)originalScrollPosition)["y"]}, left: {((IDictionary<string, object>)originalScrollPosition)["x"]} }});");
+            // Execute the emulation Chrome command to change browser to a custom device that is the size of the entire page
+            driver.ExecuteCdpCommand("Emulation.setDeviceMetricsOverride", metrics);
+
+            // Take screenshot as everything is now visible
+            Screenshot screenshot = driver.GetScreenshot();
+
+            // Reset the device metrics and scroll position to original state 
+            driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", new Dictionary<string, object>());
+            driver.ExecuteScript($"window.scrollTo({{ top: {originalScrollPosition["y"]}, left: {originalScrollPosition["x"]}, behavior: 'instant' }});");
 
             return screenshot;
         }
