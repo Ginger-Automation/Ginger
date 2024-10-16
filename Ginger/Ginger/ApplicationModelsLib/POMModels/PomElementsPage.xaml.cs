@@ -1086,8 +1086,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         {
                             SetMissingCategoriesForElement(element, (ePomElementCategory)Enum.Parse(typeof(ePomElementCategory), selectedCategory));
                         }
-                        Reporter.HideStatusMessage();
                         Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "All missing categories were set successfully.");
+                    }
+                    finally
+                    {
+                        Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
                     {
