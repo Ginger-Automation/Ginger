@@ -131,7 +131,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 }
                 string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.ExecutionId);
                 bool isResponseSuccessful = false;
-                //awaitig SendRestRequestAndGetResponse is working fine on windows but crashing on Linux Runtime, issue looks related to restsharp, need to replace it
+                // Awaiting SendRestRequestAndGetResponse works fine on Windows but crashes on Linux runtime due to an issue related to RestSharp; need to replace it.
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     isResponseSuccessful = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
