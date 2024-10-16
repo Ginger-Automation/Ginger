@@ -1,5 +1,5 @@
 # Use an appropriate base image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy
 
 # Copy the published application to the container
 COPY ./bin/Release/net8.0/publish ./GingerRuntime
@@ -7,14 +7,11 @@ COPY ./bin/Release/net8.0/publish ./GingerRuntime
 # Switch to root user for installation
 USER root
 
-# Update apk and install git
-RUN apk update && \
-    apk add ca-certificates && \
-    apk update ca-certificates && \
-    apk add --no-cache icu-libs
-
-RUN apk add --no-cache git
-
+# Update package list and install dependencies  
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates libicu-dev git && \
+    rm -rf /var/lib/apt/lists/*  
+    
 RUN update-ca-certificates
 
 
@@ -29,12 +26,34 @@ RUN chmod -R 777 /GingerRuntime
 ENV NO_PROXY="localhost"
 ENV GIT_SSL_NO_VERIFY=true
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+ENV GINGER_EXE_ENV=docker
+
+# Install necessary packages and libraries  
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    wget \
+    gnupg2 \
+    software-properties-common \
+    libglib2.0-0 \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    fonts-liberation \
+    libappindicator3-1 \
+    libgtk-3-0 \
+    xvfb \
+    libgbm1 \
+    && rm -rf /var/lib/apt/lists/*  
 
 # Switch back to non-root user
-USER nobody
+#USER nobody
 
 # Set the working directory
 WORKDIR /GingerRuntime
+
+RUN ./selenium-manager/linux/selenium-manager --browser chrome
+RUN ./selenium-manager/linux/selenium-manager --browser firefox
+RUN ./selenium-manager/linux/selenium-manager --browser edge
 
 # Specify the entry point
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]
