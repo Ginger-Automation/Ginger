@@ -1088,14 +1088,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         }
                         Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "All missing categories were set successfully.");
                     }
-                    finally
-                    {
-                        Reporter.HideStatusMessage();
-                    }
                     catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Error in setting missing categories for selected elements", ex);
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error in setting missing categories for all/some elements");
+                    }
+                    finally
+                    {
+                        Reporter.HideStatusMessage();
                     }
                 }
             }
