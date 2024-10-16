@@ -26,6 +26,9 @@ namespace GingerCore.Drivers
     {
         public static Screenshot GetFullPageScreenshot(this ChromiumDriver driver)
         {
+            // Capture the original scroll position
+            var originalScrollPosition = driver.ExecuteScript("return { x: window.pageXOffset, y: window.pageYOffset };");
+
             //Dictionary will contain the parameters needed to get the full page screen shot
             Dictionary<string, Object> metrics = new Dictionary<string, Object>
             {
@@ -56,6 +59,9 @@ namespace GingerCore.Drivers
             Screenshot screenshot = driver.GetScreenshot();
             //This command will return your browser back to a normal, usable form if you need to do anything else with it.
             driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", []);
+
+            // Restore the original scroll position
+            driver.ExecuteScript($"window.scrollTo({{ top: {((IDictionary<string, object>)originalScrollPosition)["y"]}, left: {((IDictionary<string, object>)originalScrollPosition)["x"]} }});");
 
             return screenshot;
         }
