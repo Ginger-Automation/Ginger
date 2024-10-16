@@ -861,9 +861,10 @@ namespace GingerCore.Actions.WebAPI
 
         private void SetContentType()
         {
-            if (ContentType == null)
-            {
-                eContentType = (ApplicationAPIUtils.eContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eContentType>(ActWebAPIRest.Fields.ContentType);
+            eContentType = (ApplicationAPIUtils.eContentType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eContentType>(ActWebAPIRest.Fields.ContentType);
+
+            if (ContentType == null)            
+            {                
                 switch (eContentType)
                 {
                     case ApplicationAPIUtils.eContentType.JSon:
