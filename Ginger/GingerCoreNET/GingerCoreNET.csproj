@@ -344,6 +344,7 @@
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageReference Include="VisualRegressionTracker" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -355,7 +356,6 @@
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
-    <ProjectReference Include="..\VisualRegressionTracker\VisualRegressionTracker.csproj" />
   </ItemGroup>
 
   <ItemGroup>            
