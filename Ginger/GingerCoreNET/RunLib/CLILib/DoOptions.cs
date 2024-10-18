@@ -17,6 +17,9 @@ limitations under the License.
 #endregion
 
 using CommandLine;
+using System;
+using System.IO;
+using System.Web;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -35,8 +38,35 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('o', "operation", Required = true, HelpText = "Select operation to run on solution")]
         public DoOperation Operation { get; set; }
 
+        private string _solution;
+
         [Option('s', "solution", Required = true, HelpText = "Set solution folder")]
-        public string Solution { get; set; }
+        public string Solution
+        {
+            get => _solution;
+            set
+            {
+                string lowerValue = value.ToLowerInvariant();
+
+                if (lowerValue.Contains("ginger://"))
+                {
+                    value = HttpUtility.UrlDecode(value.Replace("ginger://", "", StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (value.EndsWith("/"))
+                {
+                    value = value.TrimEnd('/');
+                }
+
+                if (value.Contains("Ginger.Solution.xml"))
+                {
+                    value = Path.GetDirectoryName(value)?.Trim() ?? string.Empty;
+
+                }
+                _solution = value;
+            }
+        }
+
 
     }
 

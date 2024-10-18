@@ -33,6 +33,7 @@ using GingerCore.Repository;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -256,6 +257,11 @@ namespace Ginger
             {
                 InitLogging();
 
+                if (e.Args.Length != 0)
+                {
+                    EditCommandlineArguments(e.Args);
+                }
+
                 bool startGrid = ShouldStartGrid(e.Args);
                 WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
 
@@ -280,10 +286,23 @@ namespace Ginger
                     await RunNewCLI(parserResult);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
             }
+        }
+        private void EditCommandlineArguments(string[] args)
+        {
+            for (int i = 0; i < args.Length; i++)
+            {
+                args[i] = System.Web.HttpUtility.UrlDecode(args[i]);
+                args[i] = args[i].Replace("gingercli://", "", StringComparison.OrdinalIgnoreCase);
+            }
 
+            if (args.Length > 0 && args[args.Length - 1].EndsWith("/"))
+            {
+                args[args.Length - 1] = args[args.Length - 1].TrimEnd('/');
+            }
         }
 
         /// <summary>
@@ -385,7 +404,7 @@ namespace Ginger
 
                 StartGingerUI();
 
-                if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
+                if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution) && Directory.Exists(doOptions.Solution))
                 {
                     DoOptionsHandler.Run(doOptions);
                 }
@@ -440,7 +459,7 @@ namespace Ginger
             {
                 System.Windows.Application.Current.Shutdown(Environment.ExitCode);
             }
-            
+
         }
 
         public void StartGingerUI()
