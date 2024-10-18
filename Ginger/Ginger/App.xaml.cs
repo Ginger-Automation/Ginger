@@ -34,7 +34,9 @@ using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -257,11 +259,6 @@ namespace Ginger
             {
                 InitLogging();
 
-                if (e.Args.Length != 0)
-                {
-                    EditCommandlineArguments(e.Args);
-                }
-
                 bool startGrid = ShouldStartGrid(e.Args);
                 WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
 
@@ -290,6 +287,19 @@ namespace Ginger
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
             }
+        }
+        static List<string> SplitWithPaths(string input)
+        {
+            var pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";
+            var matches = Regex.Matches(input, pattern);
+            var results = new List<string>();
+
+            foreach (Match match in matches)
+            {
+                results.Add(match.Value.Trim());
+            }
+
+            return results;
         }
         private void EditCommandlineArguments(string[] args)
         {
@@ -323,7 +333,6 @@ namespace Ginger
         {
             return args.Length == 0;
         }
-
         /// <summary>
         /// Parses command-line arguments and returns the result.
         /// If no arguments are provided, returns null.
@@ -332,8 +341,30 @@ namespace Ginger
         /// <returns>ParserResult containing parsed arguments or null.</returns>
         private ParserResult<object> ParseCommandLineArguments(string[] args)
         {
+            string[] arguments;
+            if (args.Length == 1 && System.Web.HttpUtility.UrlDecode(args[0]).Equals("ginger:///", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+            if (args.Length==1)
+            {
+                string input = args[0];
+                input = System.Web.HttpUtility.UrlDecode(input);
+                if (input.StartsWith("ginger://"))
+                {
+                    input = input.Substring("ginger://".Length);
+                }
+                List<string> resultList = SplitWithPaths(input).Select(s => s.Trim('\"')).ToList();
+                arguments = resultList.ToArray();
+            }
+            else
+            {
+                arguments = args;
+            }
+            EditCommandlineArguments(arguments);
+
             cliProcessor = new CLIProcessor();
-            return args.Length != 0 ? cliProcessor.ParseArguments(args) : null;
+            return arguments.Length != 0 ? cliProcessor.ParseArguments(arguments) : null;
         }
 
         /// <summary>
@@ -360,6 +391,10 @@ namespace Ginger
         /// <returns>True if the application is in execution mode, otherwise false.</returns>
         private bool IsExecutionMode(string[] args, DoOptions doOptions)
         {
+            if (args.Length == 1 && System.Web.HttpUtility.UrlDecode(args[0]).Equals("ginger:///", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
             return args.Length != 0 && doOptions == null;
         }
 
