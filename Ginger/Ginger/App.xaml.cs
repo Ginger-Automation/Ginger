@@ -301,18 +301,7 @@ namespace Ginger
 
             return results;
         }
-        private void EditCommandlineArguments(string[] args)
-        {
-            for (int i = 0; i < args.Length; i++)
-            {
-                args[i] = args[i].Replace("gingercli://", "", StringComparison.OrdinalIgnoreCase);
-            }
 
-            if (args.Length > 0 && args[args.Length - 1].EndsWith("/"))
-            {
-                args[args.Length - 1] = args[args.Length - 1].TrimEnd('/');
-            }
-        }
 
         /// <summary>
         /// Initializes the logging mechanism for the application using log4net.
@@ -360,7 +349,7 @@ namespace Ginger
             {
                 arguments = args;
             }
-          //  EditCommandlineArguments(arguments);
+
 
             cliProcessor = new CLIProcessor();
             return arguments.Length != 0 ? cliProcessor.ParseArguments(arguments) : null;
