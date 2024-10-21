@@ -19,7 +19,7 @@ limitations under the License.
 using CommandLine;
 using System;
 using System.IO;
-using System.Web;
+using System.Net;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                 if (lowerValue.Contains("ginger://"))
                 {
-                    value = HttpUtility.UrlDecode(value.Replace("ginger://", "", StringComparison.OrdinalIgnoreCase));
+                    value = WebUtility.UrlDecode(value.Replace("ginger://", "", StringComparison.OrdinalIgnoreCase));
                 }
 
                 if (value.EndsWith("/"))
@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     value = value.TrimEnd('/');
                 }
 
-                if (value.Contains("Ginger.Solution.xml"))
+                if (value.IndexOf("Ginger.Solution.xml", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     value = Path.GetDirectoryName(value)?.Trim() ?? string.Empty;
 

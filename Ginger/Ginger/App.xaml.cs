@@ -305,7 +305,7 @@ namespace Ginger
         {
             for (int i = 0; i < args.Length; i++)
             {
-                args[i] = System.Web.HttpUtility.UrlDecode(args[i]);
+                //  args[i] = System.Web.HttpUtility.UrlDecode(args[i]);
                 args[i] = args[i].Replace("gingercli://", "", StringComparison.OrdinalIgnoreCase);
             }
 
@@ -333,12 +333,12 @@ namespace Ginger
         {
             return args.Length == 0;
         }
+
         /// <summary>
-        /// Parses command-line arguments and returns the result.
-        /// If no arguments are provided, returns null.
+        /// Parses the command line arguments and returns the parsed result.
         /// </summary>
-        /// <param name="args">Command-line arguments.</param>
-        /// <returns>ParserResult containing parsed arguments or null.</returns>
+        /// <param name="args">The command line arguments.</param>
+        /// <returns>The parsed result of the command line arguments.</returns>
         private ParserResult<object> ParseCommandLineArguments(string[] args)
         {
             string[] arguments;
@@ -346,7 +346,7 @@ namespace Ginger
             {
                 return null;
             }
-            if (args.Length==1)
+            if (args.Length == 1)
             {
                 string input = args[0];
                 input = System.Web.HttpUtility.UrlDecode(input);
