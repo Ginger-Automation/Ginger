@@ -46,9 +46,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             get => _solution;
             set
             {
-                string lowerValue = value.ToLowerInvariant();
-
-                if (lowerValue.Contains("ginger://"))
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    return;
+                }
+                if (value.IndexOf("ginger://", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     value = WebUtility.UrlDecode(value.Replace("ginger://", "", StringComparison.OrdinalIgnoreCase));
                 }

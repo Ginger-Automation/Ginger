@@ -305,7 +305,6 @@ namespace Ginger
         {
             for (int i = 0; i < args.Length; i++)
             {
-                //  args[i] = System.Web.HttpUtility.UrlDecode(args[i]);
                 args[i] = args[i].Replace("gingercli://", "", StringComparison.OrdinalIgnoreCase);
             }
 
@@ -354,14 +353,14 @@ namespace Ginger
                 {
                     input = input.Substring("ginger://".Length);
                 }
-                List<string> resultList = SplitWithPaths(input).Select(s => s.Trim('\"')).ToList();
+                List<string> resultList = SplitWithPaths(input).Select(s => s.Trim('\"', '\'')).ToList();
                 arguments = resultList.ToArray();
             }
             else
             {
                 arguments = args;
             }
-            EditCommandlineArguments(arguments);
+          //  EditCommandlineArguments(arguments);
 
             cliProcessor = new CLIProcessor();
             return arguments.Length != 0 ? cliProcessor.ParseArguments(arguments) : null;
