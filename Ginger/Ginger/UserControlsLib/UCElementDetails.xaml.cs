@@ -44,6 +44,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Ginger
@@ -243,7 +244,7 @@ namespace Ginger
             [
                 new GridColView() { Field = "Name", WidthWeight = 3, ReadOnly = true },
                 new GridColView() { Field = "Value", WidthWeight = 5, ReadOnly = true },
-                new GridColView() { Field = nameof(ControlProperty.Category), WidthWeight = 2, ReadOnly = true },
+                new GridColView() { Field = nameof(ControlProperty.Category), WidthWeight = 2, ReadOnly = true, BindingMode = BindingMode.TwoWay },
             ]
             };
 
