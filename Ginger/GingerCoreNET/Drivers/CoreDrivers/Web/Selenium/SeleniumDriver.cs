@@ -1076,6 +1076,12 @@ namespace GingerCore.Drivers
 
             AddCustomDriverPath(driverService);
 
+            if (GetIsRunningInDocker())
+            {
+                options.AddArgument("--headless");
+                options.AddArgument("--no-sandbox");
+            }
+
             if (HideConsoleWindow)
             {
                 driverService.HideCommandPromptWindow = HideConsoleWindow;
@@ -1091,6 +1097,7 @@ namespace GingerCore.Drivers
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && ex.Message.ToLower().Contains("no such file or directory"))
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error while launching chromedriver", ex);
                     Reporter.ToLog(eLogLevel.INFO, "Chrome binary isn't found at default location, checking for Chromium...");
 
                     if (Directory.GetFiles(@"/usr/bin", "chromium-browser.*").Length > 0 && Directory.GetFiles(@"/usr/lib/chromium", "chromedriver.*").Length > 0)
@@ -1132,6 +1139,11 @@ namespace GingerCore.Drivers
                     throw new FileNotFoundException($"Invalid path provided in Custom Driver File in {nameof(DriverFilePath)} in Agent Configuration. Please provide valid path or consider removing it if not needed.");
                 }
             }
+        }
+        private bool GetIsRunningInDocker()
+        {
+            var env = System.Environment.GetEnvironmentVariable("GINGER_EXE_ENV");
+            return env == "docker";
         }
 
         private string UpdateDriver(eBrowserType browserType)
