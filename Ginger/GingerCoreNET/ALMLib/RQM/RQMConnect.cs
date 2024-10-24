@@ -403,7 +403,7 @@ namespace GingerCore.ALM.RQM
             try
             {
                 System.Diagnostics.Trace.WriteLine("in GetRQMTestPlanFullData :");
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                
                 GetRQMProjectListConfiguration();
                 if (RQMProjectListConfig != null)
                 {
@@ -474,8 +474,7 @@ namespace GingerCore.ALM.RQM
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to import selected RQM test plan, RQM_ImportConfigs_Template.xml wasn't found");
                 }
-
-                Mouse.OverrideCursor = null;
+             
             }
             catch (Exception ex)
             {
