@@ -33,7 +33,10 @@ using GingerCore.Repository;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -280,11 +283,12 @@ namespace Ginger
                     await RunNewCLI(parserResult);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
             }
-
         }
+ 
 
         /// <summary>
         /// Initializes the logging mechanism for the application using log4net.
@@ -306,15 +310,37 @@ namespace Ginger
         }
 
         /// <summary>
-        /// Parses command-line arguments and returns the result.
-        /// If no arguments are provided, returns null.
+        /// Parses the command line arguments and returns the parsed result.
         /// </summary>
-        /// <param name="args">Command-line arguments.</param>
-        /// <returns>ParserResult containing parsed arguments or null.</returns>
+        /// <param name="args">The command line arguments.</param>
+        /// <returns>The parsed result of the command line arguments.</returns>
         private ParserResult<object> ParseCommandLineArguments(string[] args)
         {
+            string[] arguments;
+            //Added this codition if only user want to launch Ginger without any solution from browser.
+            if (args.Length == 1 && System.Web.HttpUtility.UrlDecode(args[0]).Equals("ginger:///", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+            if (args.Length == 1)
+            {
+                string input = args[0];
+                input = System.Web.HttpUtility.UrlDecode(input);
+                if (input.StartsWith("ginger://"))
+                {
+                    input = input.Substring("ginger://".Length);
+                }
+                List<string> resultList = General.SplitWithPaths(input).Select(s => s.Trim('\"', '\'')).ToList();
+                arguments = resultList.ToArray();
+            }
+            else
+            {
+                arguments = args;
+            }
+
+
             cliProcessor = new CLIProcessor();
-            return args.Length != 0 ? cliProcessor.ParseArguments(args) : null;
+            return arguments.Length != 0 ? cliProcessor.ParseArguments(arguments) : null;
         }
 
         /// <summary>
@@ -341,6 +367,10 @@ namespace Ginger
         /// <returns>True if the application is in execution mode, otherwise false.</returns>
         private bool IsExecutionMode(string[] args, DoOptions doOptions)
         {
+            if (args.Length == 1 && System.Web.HttpUtility.UrlDecode(args[0]).Equals("ginger:///", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
             return args.Length != 0 && doOptions == null;
         }
 
@@ -387,7 +417,15 @@ namespace Ginger
 
                 if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
                 {
-                    DoOptionsHandler.Run(doOptions);
+                    if(Directory.Exists(doOptions.Solution))
+                    {
+                        DoOptionsHandler.Run(doOptions);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "The specified solution folder path does not exist. Please check the path and try again.");
+                    }
+                   
                 }
             }
             finally
@@ -423,6 +461,11 @@ namespace Ginger
             ShowWindow(handle, SW_SHOW);
         }
 
+        /// <summary>
+        /// Runs the new CLI process with the provided parsed arguments.
+        /// </summary>
+        /// <param name="parserResult">The parsed result of the command line arguments.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         private async Task RunNewCLI(ParserResult<object> parserResult)
         {
             try
@@ -440,9 +483,11 @@ namespace Ginger
             {
                 System.Windows.Application.Current.Shutdown(Environment.ExitCode);
             }
-            
         }
 
+        /// <summary>
+        /// Starts the Ginger UI. Initializes dictionaries and the main window.
+        /// </summary>
         public void StartGingerUI()
         {
             if (WorkSpace.Instance.RunningFromUnitTest)
