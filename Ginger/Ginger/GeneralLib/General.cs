@@ -671,8 +671,12 @@ namespace Ginger
         /// </summary>
         /// <param name="input">The input string to split.</param>
         /// <returns>A list of strings split from the input.</returns>
-       public static List<string> SplitWithPaths(string input)
+        public static List<string> SplitWithPaths(string input)
         {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return new List<string>();
+            }
             var pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";
             var matches = Regex.Matches(input, pattern);
             var results = new List<string>();

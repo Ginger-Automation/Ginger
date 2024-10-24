@@ -415,9 +415,17 @@ namespace Ginger
 
                 StartGingerUI();
 
-                if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution) && Directory.Exists(doOptions.Solution))
+                if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
                 {
-                    DoOptionsHandler.Run(doOptions);
+                    if(Directory.Exists(doOptions.Solution))
+                    {
+                        DoOptionsHandler.Run(doOptions);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "The specified solution folder path does not exist. Please check the path and try again.");
+                    }
+                   
                 }
             }
             finally
