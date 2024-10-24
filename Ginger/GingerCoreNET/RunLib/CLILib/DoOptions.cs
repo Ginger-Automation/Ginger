@@ -50,16 +50,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     return;
                 }
-                if (value.IndexOf("ginger://", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    value = WebUtility.UrlDecode(value.Replace("ginger://", "", StringComparison.OrdinalIgnoreCase));
-                }
-
-                if (value.EndsWith("/"))
-                {
-                    value = value.TrimEnd('/');
-                }
-
                 if (value.IndexOf("Ginger.Solution.xml", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     value = Path.GetDirectoryName(value)?.Trim() ?? string.Empty;

@@ -288,20 +288,7 @@ namespace Ginger
                 Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
             }
         }
-        static List<string> SplitWithPaths(string input)
-        {
-            var pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";
-            var matches = Regex.Matches(input, pattern);
-            var results = new List<string>();
-
-            foreach (Match match in matches)
-            {
-                results.Add(match.Value.Trim());
-            }
-
-            return results;
-        }
-
+ 
 
         /// <summary>
         /// Initializes the logging mechanism for the application using log4net.
@@ -330,6 +317,7 @@ namespace Ginger
         private ParserResult<object> ParseCommandLineArguments(string[] args)
         {
             string[] arguments;
+            //Added this codition if only user want to launch Ginger without any solution from browser.
             if (args.Length == 1 && System.Web.HttpUtility.UrlDecode(args[0]).Equals("ginger:///", StringComparison.OrdinalIgnoreCase))
             {
                 return null;
@@ -342,7 +330,7 @@ namespace Ginger
                 {
                     input = input.Substring("ginger://".Length);
                 }
-                List<string> resultList = SplitWithPaths(input).Select(s => s.Trim('\"', '\'')).ToList();
+                List<string> resultList = General.SplitWithPaths(input).Select(s => s.Trim('\"', '\'')).ToList();
                 arguments = resultList.ToArray();
             }
             else
@@ -465,6 +453,11 @@ namespace Ginger
             ShowWindow(handle, SW_SHOW);
         }
 
+        /// <summary>
+        /// Runs the new CLI process with the provided parsed arguments.
+        /// </summary>
+        /// <param name="parserResult">The parsed result of the command line arguments.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         private async Task RunNewCLI(ParserResult<object> parserResult)
         {
             try
@@ -482,9 +475,11 @@ namespace Ginger
             {
                 System.Windows.Application.Current.Shutdown(Environment.ExitCode);
             }
-
         }
 
+        /// <summary>
+        /// Starts the Ginger UI. Initializes dictionaries and the main window.
+        /// </summary>
         public void StartGingerUI()
         {
             if (WorkSpace.Instance.RunningFromUnitTest)
