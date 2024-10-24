@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Windows.Input;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
@@ -59,9 +60,10 @@ namespace Ginger.ALM.Repository
                 importDestinationFolderPath = WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
             }
             // get activities groups
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             RQMImportReviewPage win = new RQMImportReviewPage(RQMConnect.Instance.GetRQMTestPlanFullData(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectKey, (RQMTestPlan)selectedTestPlan), importDestinationFolderPath);
             win.ShowAsWindow();
-
+            Mouse.OverrideCursor = null;
             return true;
         }
 
@@ -175,6 +177,7 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalIdCalCulated, "RQMID"))
@@ -183,10 +186,12 @@ namespace Ginger.ALM.Repository
                     ((RQMCore)ALMIntegration.Instance.AlmCore).UpdatedRQMTestInBF(ref businessFlow, currentRQMTestPlan, TCsIDs.Select(x => x.Item1.ToString()).ToList());
                 }
             }
+            Mouse.OverrideCursor = null;
         }
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalIdCalCulated, "RQMID"))
@@ -195,6 +200,7 @@ namespace Ginger.ALM.Repository
                     ((RQMCore)ALMIntegration.Instance.AlmCore).UpdateBusinessFlow(ref businessFlow, currentRQMTestPlan);
                 }
             }
+            Mouse.OverrideCursor = null;
         }
 
         public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)

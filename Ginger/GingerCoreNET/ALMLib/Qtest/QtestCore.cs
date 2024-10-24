@@ -27,6 +27,7 @@ using GingerCore.Activities;
 using GingerCore.ALM.Qtest;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
