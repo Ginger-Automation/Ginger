@@ -31,11 +31,13 @@ namespace Ginger.External.Katalon
                     {
                         e.CancelEvent = true;
                         Reporter.ToUser(eUserMsgKey.InvalidKatalonObjectRepository, "Folder path is empty");
+                        break;
                     }
                     if (!Directory.Exists(_wizard.SelectedDirectory))
                     {
                         e.CancelEvent = true;
                         Reporter.ToUser(eUserMsgKey.InvalidKatalonObjectRepository, "Folder doesn't exist");
+                        break;
                     }
                     break;
             }

@@ -83,6 +83,10 @@ namespace Ginger.External.Katalon
                 eImageType.Application,
                 "Set highlighted Target Application for all",
                 ImportedPOMGrid_Toolbar_SyncTargetApplication);
+            ImportedPOMGrid.AddToolbarTool(
+                eImageType.Browser,
+                "Set highlighted URL for all",
+                ImportedPOMGrid_Toolbar_SyncURL);
 
             ImportedPOMGrid.SetAllColumnsDefaultView(view);
             ImportedPOMGrid.InitViewItems();
@@ -136,6 +140,25 @@ namespace Ginger.External.Katalon
                 {
                     item.TargetApplication = highlightedItem.TargetApplication;
                 }
+            }
+        }
+
+        private void ImportedPOMGrid_Toolbar_SyncURL(object? sender, RoutedEventArgs e)
+        {
+            IEnumerable<KatalonConvertedPOMViewModel> visibleItems = ImportedPOMGrid
+                .GetFilteredItems()
+                .Cast<KatalonConvertedPOMViewModel>();
+
+            KatalonConvertedPOMViewModel highlightedItem = (KatalonConvertedPOMViewModel)ImportedPOMGrid.CurrentItem;
+
+            foreach (KatalonConvertedPOMViewModel item in visibleItems)
+            {
+                if (!item.Active)
+                {
+                    continue;
+                }
+
+                item.URL = highlightedItem.URL;
             }
         }
 

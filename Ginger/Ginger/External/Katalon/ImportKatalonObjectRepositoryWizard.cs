@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.WizardLib;
 using GingerWPF.WizardLib;
 using System.ComponentModel;
 
@@ -38,6 +39,7 @@ namespace Ginger.External.Katalon
 
         private void AddPages()
         {
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Agents Introduction", Page: new WizardIntroPage("/External/Katalon/ImportKatalonObjectRepositoryIntro.md"));
             AddPage(Name: "SelectFolder", Title: "Select Folder", SubTitle: "Select Object-Repository folder", Page: new SelectObjectRepositoryFolderWizardPage(wizard: this));
             AddPage(Name: "ImportPOM", Title: "Import POM", SubTitle: "View imported POM list", new ImportPOMFromObjectRepositoryWizardPage(wizard: this));
         }

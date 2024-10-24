@@ -138,7 +138,24 @@ namespace Amdocs.Ginger.CoreNET.External.Katalon.Conversion
         internal static string GeneratePOMName(ePlatformType platform, string directory)
         {
             string name = $"{Path.GetFileName(directory.TrimEnd(Path.DirectorySeparatorChar))} - {platform}";
-            return name;
+            string uniqueIdentifiier = string.Empty;
+            int duplicateCount = 0;
+
+            while (HasPOMWithName($"{name}{uniqueIdentifiier}"))
+            {
+                duplicateCount++;
+
+                if (duplicateCount <= 1)
+                {
+                    uniqueIdentifiier = "_Copy";
+                }
+                else
+                {
+                    uniqueIdentifiier = $"_Copy{duplicateCount}";
+                }
+            }
+
+            return $"{name}{uniqueIdentifiier}";
         }
 
         internal static bool HasPOMWithName(string name)

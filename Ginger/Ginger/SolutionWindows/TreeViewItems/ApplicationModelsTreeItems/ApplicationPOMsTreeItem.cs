@@ -132,14 +132,14 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowRefresh: false);
             }
             MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import", eImageType.Add);
-            TreeViewUtils.AddSubMenuItem(importMenu, "Katalon Object-Repository", ImportFromKatalonObjectRepository, CommandParameter: null!, icon: eImageType.Null);
+            TreeViewUtils.AddSubMenuItem(importMenu, "Katalon Object-Repository", ImportFromKatalonObjectRepository, CommandParameter: null!, icon: eImageType.Katalon);
 
             AddSourceControlOptions(mContextMenu);
         }
 
         private void ImportFromKatalonObjectRepository(object sender, RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new ImportKatalonObjectRepositoryWizard(mPOMModelFolder));
+            WizardWindow.ShowWizard(new ImportKatalonObjectRepositoryWizard(mPOMModelFolder), width: 1000);
         }
 
         internal void AddPOM(object sender, RoutedEventArgs e)
