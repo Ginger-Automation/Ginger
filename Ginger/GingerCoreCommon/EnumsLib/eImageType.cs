@@ -362,6 +362,7 @@ namespace Amdocs.Ginger.Common.Enums
         Accessibility,
         AnglesArrowLeft,
         AnglesArrowRight,
+        Katalon,
 
         #region Comparison Status Images
         Unchanged,

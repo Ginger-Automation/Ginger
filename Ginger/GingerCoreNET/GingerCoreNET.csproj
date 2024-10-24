@@ -32,12 +32,9 @@
     <Compile Remove="DataBaseAbstarct\**" />
     <Compile Remove="GeneralLib\JSON\**" />
     <Compile Remove="NewFolder1\**" />
-    <Compile Remove="NewFolder\**" />
     <EmbeddedResource Remove="DataBaseAbstarct\**" />
     <EmbeddedResource Remove="GeneralLib\JSON\**" />
     <EmbeddedResource Remove="NewFolder1\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
-    <None Remove="NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>

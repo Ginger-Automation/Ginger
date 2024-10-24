@@ -202,6 +202,7 @@ namespace Amdocs.Ginger.Common
         LocatorTestInProgress,
         DeleteSelectedDB,
         RemoteExecutionReportFolder,
+        InvalidKatalonObjectRepository
     }
 
     public static class UserMsgsPool
@@ -819,7 +820,11 @@ namespace Amdocs.Ginger.Common
    "Unrecovered items will be deleted. Do you want to continue?",
    eUserMsgOption.YesNo, eUserMsgSelection.No)
                 },
-                { eUserMsgKey.RemoteExecutionReportFolder, new UserMsg(eUserMsgType.INFO, "Remote Execution History", "Open execution folder not supported for Remote Execution History source.", eUserMsgOption.OK, eUserMsgSelection.OK) }
+                { eUserMsgKey.RemoteExecutionReportFolder, new UserMsg(eUserMsgType.INFO, "Remote Execution History", "Open execution folder not supported for Remote Execution History source.", eUserMsgOption.OK, eUserMsgSelection.OK) },
+                {
+                    eUserMsgKey.InvalidKatalonObjectRepository,
+                    new UserMsg(eUserMsgType.ERROR, "Invalid Katalon Object Repository", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK)
+                }
             };
 
 

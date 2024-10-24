@@ -1123,6 +1123,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.AndroidWhite:
                     SetAsStaticImage("androidWhite.png");
                     break;
+                case eImageType.Katalon:
+                    SetAsStaticImage("katalon.png");
+                    break;
                 #endregion
 
                 #region Comparison Status Images
