@@ -675,11 +675,11 @@ namespace Ginger
         {
             if (string.IsNullOrWhiteSpace(input))
             {
-                return new List<string>();
+                return [];
             }
             var pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";
             var matches = Regex.Matches(input, pattern);
-            var results = new List<string>();
+            List<string> results = [];
 
             foreach (Match match in matches)
             {
