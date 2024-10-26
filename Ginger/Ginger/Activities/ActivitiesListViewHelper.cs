@@ -1225,8 +1225,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void CopySelectedHandler(object sender, RoutedEventArgs e)
         {
-            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
-            foreach (VariableBase var in ListView.List.SelectedItems)
+            ObservableList<RepositoryItemBase> list = [];
+            foreach (Activity var in ListView.List.SelectedItems)
             {
                 list.Add(var);
             }
@@ -1235,8 +1235,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void CutSelectedHandler(object sender, RoutedEventArgs e)
         {
-            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
-            foreach (VariableBase var in ListView.List.SelectedItems)
+            ObservableList<RepositoryItemBase> list = [];
+            foreach (Activity var in ListView.List.SelectedItems)
             {
                 list.Add(var);
             }
