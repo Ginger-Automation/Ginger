@@ -8,6 +8,6 @@ jobs:
     uses: ./.github/workflows/WindowsTest.yml
     secrets: inherit
   Linux:
-    uses: ./.github/workflows/LinuxTest-2.yml
+    uses: ./.github/workflows/LinuxTest.yml
   MacOS:
-    uses: ./.github/workflows/MacOSTest-2.yml
+    uses: ./.github/workflows/MacOSTest.yml
