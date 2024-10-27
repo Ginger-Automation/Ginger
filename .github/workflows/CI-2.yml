@@ -26,5 +26,5 @@ jobs:
     Test:
         name: Test Stage
         needs: Build
-        uses: ./.github/workflows/GingerTests-2.yml
+        uses: ./.github/workflows/GingerTests.yml
         secrets: inherit
