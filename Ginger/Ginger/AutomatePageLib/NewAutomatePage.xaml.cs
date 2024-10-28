@@ -82,7 +82,7 @@ namespace GingerWPF.BusinessFlowsLib
         ProjEnvironment mEnvironment = null;
         BusinessFlow mBusinessFlow;
         Activity mActivity = null;
-        Context mContext = new Context();
+        Context mContext = new();
 
         ApplicationAgentsMapPage mApplicationAgentsMapPage;
         ActivitiesListViewPage mActivitiesPage;
@@ -94,7 +94,7 @@ namespace GingerWPF.BusinessFlowsLib
         bool mExecutionIsInProgress = false;
         bool mSyncSelectedItemWithExecution = true;
 
-        GridLength mLastAddActionsColumnWidth = new GridLength(350);
+        GridLength mLastAddActionsColumnWidth = new(350);
 
         ObjectId mRunnerLiteDbId;
         ObjectId mRunSetLiteDbId;
@@ -1013,10 +1013,6 @@ namespace GingerWPF.BusinessFlowsLib
 
                 //execute                
                 await mExecutionEngine.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
-                if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                {
-                    ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
-                }
                 this.Dispatcher.Invoke(() =>
                 {
                     if (WorkSpace.Instance.UserProfile.AutoGenerateAutomatePageReport)
@@ -1816,6 +1812,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
+                ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
                 CreateLiteDBReport();
                 return;
             }
@@ -1886,6 +1883,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void ShowExecutionSummaryPage()
         {
+            if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
+            }
             ExecutionSummaryPage w = new ExecutionSummaryPage(mContext);
             w.ShowAsWindow();
         }
