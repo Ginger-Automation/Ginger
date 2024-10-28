@@ -53,7 +53,7 @@ namespace Ginger.External.Katalon
 
         private void DirectoryBrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new();
+            using System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new();
             string directory = General.SetupBrowseFolder(folderBrowserDialog);
             _wizard.SelectedDirectory = directory;
             _wizard.POMViewModels.ClearAll();

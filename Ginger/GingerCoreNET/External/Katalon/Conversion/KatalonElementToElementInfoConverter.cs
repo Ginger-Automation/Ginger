@@ -30,12 +30,9 @@ namespace Amdocs.Ginger.CoreNET.External.Katalon.Conversion
                 .OfType<KatalonWebElementEntity>()
                 .ToList();
 
-            foreach (KatalonElementEntity katalonElement in katalonElementList)
+            foreach (KatalonWebElementEntity katalonWebElement in katalonWebElementList)
             {
-                if (katalonElement is KatalonWebElementEntity katalonWebElement)
-                {
-                    elementInfoList.Add(katalonWebElement.ToElementInfo(katalonWebElementList));
-                }
+                elementInfoList.Add(katalonWebElement.ToElementInfo(katalonWebElementList));
             }
             return elementInfoList;
         }
