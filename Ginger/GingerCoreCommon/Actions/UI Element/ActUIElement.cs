@@ -142,8 +142,8 @@ namespace GingerCore.Actions.Common
             public static string SubElementLocateBy = "SubElementLocateBy";
             public static string SubElementLocatorValue = "SubElementLocatorValue";
 
-            // use for ScrollToElement
-            public static string ScrollAlignment = "ScrollAlignment";
+            //used for ScrollToElement
+            public static string VerticalScrollAlignment = "VerticalScrollAlignment";
         }
 
         // Fields Helper for specific action, will create AIV with param name based on enum

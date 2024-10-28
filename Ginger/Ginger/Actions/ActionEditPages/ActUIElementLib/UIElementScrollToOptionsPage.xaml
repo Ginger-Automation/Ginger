@@ -16,8 +16,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="5">
-            <Label Style="{StaticResource $LabelStyle}" FontSize="14" VerticalAlignment="Center" Content="Scroll Alignment: " />
-            <UserControlsLib:UCComboBox x:Name="scrollAlignmentComboBox" Width="150" Margin="5,0,0,0" />
+            <Label Style="{StaticResource $LabelStyle}" FontSize="14" VerticalAlignment="Center" Content="Vertical Alignment: " />
+            <UserControlsLib:UCComboBox x:Name="verticalScrollAlignmentComboBox" Width="150" Margin="5,0,0,0" />
         </StackPanel>
     </Grid>
 </Page>

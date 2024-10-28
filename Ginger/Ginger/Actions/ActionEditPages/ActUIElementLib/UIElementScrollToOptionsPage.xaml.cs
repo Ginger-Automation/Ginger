@@ -13,22 +13,20 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             Start,
             Center,
-            End,
-            Nearest
+            End
         }
 
         public UIElementScrollToElementOptionsPage(ActUIElement action)
         {
             InitializeComponent();
 
-            List<eScrollAlignment> scrollPositions = [
+            List<eScrollAlignment> verticalAlignments = [
                 eScrollAlignment.Start,
                 eScrollAlignment.Center,
                 eScrollAlignment.End,
-                eScrollAlignment.Nearest,
             ];
 
-            scrollAlignmentComboBox.Init(action.GetOrCreateInputParam(ActUIElement.Fields.ScrollAlignment), scrollPositions, false);
+            verticalScrollAlignmentComboBox.Init(action.GetOrCreateInputParam(ActUIElement.Fields.VerticalScrollAlignment), verticalAlignments, false);
         }
     }
 }
