@@ -233,7 +233,15 @@
   </ItemGroup>
 
   <ItemGroup>
-  
+	  <PackageReference Include="Tabula">
+		  <Version>0.1.2</Version>
+	  </PackageReference>
+	  <PackageReference Include="Tesseract">
+		  <Version>4.1.1</Version>
+	  </PackageReference>
+	  <PackageReference Include="Freeware.Pdf2Png">
+		  <Version>1.0.1</Version>
+	  </PackageReference>
     <PackageReference Include="Appium.WebDriver" Version="5.1.0" />
   
     <PackageReference Include="Azure.Identity" Version="1.12.0" />
@@ -392,6 +400,12 @@
     <Reference Include="OctaneStdSDK">
       <HintPath>DLLS\OctaneStdSDK.dll</HintPath>
     </Reference>
+    <Reference Include="Open3270">
+      <HintPath>..\Ginger\DLLs\Open3270.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationCore.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>DLLS\protobuf-net.dll</HintPath>
     </Reference>
@@ -406,6 +420,12 @@
     </Reference>
     <Reference Include="SikuliStandardNet">
       <HintPath>DLLS\SikuliStandardNet.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Speech">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Speech.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="ZephyrEntStdSDK">
       <HintPath>DLLS\ZephyrEntStdSDK.dll</HintPath>
