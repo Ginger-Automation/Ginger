@@ -683,6 +683,26 @@ namespace GingerCoreNET.GeneralLib
                 return false;
             }
         }
+
+        public static bool IsConfigPackageExists(string PackagePath, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType eALMType)
+        {
+            string settingsFolder = string.Empty;
+            settingsFolder = eALMType switch
+            {
+                GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira => "JiraSettings",
+                GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest => "QTestSettings",
+                _ => "JiraSettings",
+            };
+            if (Directory.Exists(Path.Combine(PackagePath, settingsFolder)))
+            {
+                return true;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Configuration package not exist in solution, Settings not exist at: " + Path.Combine(PackagePath, settingsFolder));
+            }
+            return false;
+        }
     }
 
 }

@@ -41,6 +41,12 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Remove="Environments\**" />
+    <EmbeddedResource Remove="Plugins\**" />
+    <None Remove="Environments\**" />
+    <None Remove="Plugins\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="ACL_Data_Contract">
       <HintPath>DLLs\ACL_Data_Contract.dll</HintPath>
     </Reference>
@@ -74,6 +80,9 @@
     </Reference>
     <Reference Include="OctaneRepositoryStd">
       <HintPath>DLLs\OctaneRepositoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="OctaneSdkStandard">
+      <HintPath>..\GingerCoreNET\DLLS\OctaneSdkStandard.dll</HintPath>
     </Reference>
     <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -255,43 +264,6 @@
     <Compile Include="Actions\XML\ActXMLProcessing.cs" />
     <Compile Include="Actions\XML\XMLProcessor.cs" />
     <Compile Include="ActOcr.cs" />
-    <Compile Include="ALM\QtestCore.cs" />
-    <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
-    <Compile Include="ALM\QCRestAPICore.cs" />
-    <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
-    <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
-    <Compile Include="ALM\QCRestAPI\QCRestAPIConnect.cs" />
-    <Compile Include="ALM\QC\ExportToQC.cs" />
-    <Compile Include="ALM\QCCore.cs" />
-    <Compile Include="ALM\QC\ImportFromQC.cs" />
-    <Compile Include="ALM\QC\QCConnect.cs" />
-    <Compile Include="ALM\Qtest\QtestTestRun.cs" />
-    <Compile Include="ALM\Qtest\QtestTestSuite.cs" />
-    <Compile Include="ALM\Qtest\QtestTest.cs" />
-    <Compile Include="ALM\Qtest\QtestTestParameter.cs" />
-    <Compile Include="ALM\Qtest\QtestTestStep.cs" />
-    <Compile Include="ALM\Qtest\QtestConnect.cs" />
-    <Compile Include="ALM\RallyCore.cs" />
-    <Compile Include="ALM\Rally\ImportFromRally.cs" />
-    <Compile Include="ALM\Rally\RallyConnect.cs" />
-    <Compile Include="ALM\Rally\RallyStep.cs" />
-    <Compile Include="ALM\Rally\RallyTestCase.cs" />
-    <Compile Include="ALM\Rally\RallyTestParameter.cs" />
-    <Compile Include="ALM\Rally\RallyTestPlan.cs" />
-    <Compile Include="ALM\RQMCore.cs" />
-    <Compile Include="ALM\RQM\ExportToRQM.cs" />
-    <Compile Include="ALM\RQM\ImportFromRQM.cs" />
-    <Compile Include="ALM\RQM\RQMTestSuiteResults.cs" />
-    <Compile Include="ALM\RQM\RQMTestSuiteExecutionRecord.cs" />
-    <Compile Include="ALM\RQM\RQMTestSuite.cs" />
-    <Compile Include="ALM\RQM\RQMTestParameter.cs" />
-    <Compile Include="ALM\RQM\RQMStep.cs" />
-    <Compile Include="ALM\RQM\RQMExecutionRecord.cs" />
-    <Compile Include="ALM\RQM\RQMTestScript.cs" />
-    <Compile Include="ALM\RQM\RQMTestCase.cs" />
-    <Compile Include="ALM\RQM\RQMFieldsMappingConfig.cs" />
-    <Compile Include="ALM\RQM\RQMTestPlan.cs" />
-    <Compile Include="ALM\RQM\RQMConnect.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="Common\Devices\DeviceConfig.cs" />
     <Compile Include="Common\Devices\DeviceButton.cs" />
@@ -320,7 +292,6 @@
     <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
     <Compile Include="Drivers\MainFrame\Terminal.cs" />
     <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
-    <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\ComboEnumItem.cs" />
     <Compile Include="GeneralLib\ComboGroupedEnumItem.cs" />
@@ -337,7 +308,6 @@
     <Compile Include="GeneralLib\ProcessExtension.cs" />
     <Compile Include="GingerOCR\GingerOcrOperations.cs" />
     <Compile Include="Helpers\HTMLHelper.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -415,19 +385,6 @@
     <Resource Include="tessdata\pdf.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQMSettings.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\Export_Settings.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\executionRecord.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\ExecutionResult.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\TestCase.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\TestPlan.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\TestScript.xml" />
-    <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Import\RQM_ImportConfigs_Template.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <None Include="Resources\%40EmptyStart_16x16.gif" />
     <None Include="Resources\%40Star_16x16.gif" />
     <None Include="Resources\%40StarGray_16x16.gif" />
@@ -442,12 +399,7 @@
   <ItemGroup>
     <Folder Include="Actions\REST\" />
     <Folder Include="Actions\WebServices\" />
-    <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
-    <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
-    <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
-    <Folder Include="Environments\" />
-    <Folder Include="Plugins\Jenkins\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Const.png" />

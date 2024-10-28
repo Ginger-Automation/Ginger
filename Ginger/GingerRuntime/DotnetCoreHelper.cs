@@ -290,6 +290,22 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 case eALMType.Azure:
                     almCore = new AzureDevOpsCore();
                     break;
+                case eALMType.Qtest:
+                    almCore = new QtestCore();
+                    break;
+                case eALMType.QC:
+                    if (CurrentAlmConfigurations.UseRest)
+                    {
+                        almCore = new QCRestAPICore();
+                    }
+                    else
+                    {
+                        almCore = new QCCore();
+                    }
+                    break;
+                case eALMType.RQM:
+                    almCore = new RQMCore();
+                    break;
                 default:
                     Reporter.ToLog(eLogLevel.ERROR, $"Invalid ALM Type - {almType}");
                     break;

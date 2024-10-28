@@ -54,7 +54,6 @@
     <None Remove="DLLS\JiraRepositoryStd.dll" />
     <None Remove="DLLS\LibGit2Sharp.dll" />
     <None Remove="DLLS\OctaneInteractionStd.dll" />
-    <None Remove="DLLS\OctaneRepositoryStd.dll" />
     <None Remove="DLLS\SikuliStandardNet.dll" />
     <None Remove="DLLS\ZephyrEntStdSDK.dll" />
     <None Remove="DLLS\Zepyhr_Ent_Repository_Std.dll" />
@@ -120,9 +119,6 @@
     </Content>
     <Content Include="DLLS\LibGit2Sharp.dll" />
     <Content Include="DLLS\OctaneInteractionStd.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLLS\OctaneRepositoryStd.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLS\SikuliStandardNet.dll">
@@ -361,12 +357,30 @@
   <ItemGroup>            
     <Reference Include="ACL_Data_Contract">
       <HintPath>DLLS\ACL_Data_Contract.dll</HintPath>
+    </Reference>            
+    <Reference Include="ACL_Utils_Server">
+      <HintPath>DLLS\ACL_Utils_Server.dll</HintPath>
     </Reference>
     <Reference Include="AlmDataContractsStd">
       <HintPath>DLLS\AlmDataContractsStd.dll</HintPath>
     </Reference>
+    <Reference Include="ALMFactory">
+      <HintPath>DLLS\ALMFactory.dll</HintPath>
+    </Reference>
+    <Reference Include="AlmFactoryStd">
+      <HintPath>DLLS\AlmFactoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="ALMRepository">
+      <HintPath>DLLS\ALMRepository.dll</HintPath>
+    </Reference>
     <Reference Include="AlmRepositoryStd">
       <HintPath>DLLS\AlmRepositoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="ALMRestClient">
+      <HintPath>DLLS\ALMRestClient.dll</HintPath>
+    </Reference>
+    <Reference Include="ALMRestClientStd">
+      <HintPath>DLLS\ALMRestClientStd.dll</HintPath>
     </Reference>
     <Reference Include="ALM_CommonStd">
       <HintPath>DLLS\ALM_CommonStd.dll</HintPath>
@@ -380,32 +394,68 @@
     <Reference Include="GingerHbaseFilter">
       <HintPath>DLLS\GingerHbaseFilter.dll</HintPath>
     </Reference>
+    <Reference Include="Interop.TDAPIOLELib">
+      <HintPath>DLLS\Interop.TDAPIOLELib.dll</HintPath>
+    </Reference>
     <Reference Include="JiraRepositoryStd">
       <HintPath>DLLS\JiraRepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="LibGit2Sharp">
       <HintPath>DLLS\LibGit2Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="ObjectsUtils">
+      <HintPath>DLLS\ObjectsUtils.dll</HintPath>
+    </Reference>
     <Reference Include="OctaneRepositoryStd">
       <HintPath>DLLS\OctaneRepositoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="OctaneSdkStandard">
+      <HintPath>DLLS\OctaneSdkStandard.dll</HintPath>
     </Reference>
     <Reference Include="OctaneStdSDK">
       <HintPath>DLLS\OctaneStdSDK.dll</HintPath>
     </Reference>
+    <Reference Include="Octane_Repository">
+      <HintPath>DLLS\Octane_Repository.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>DLLS\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="QcRepository">
+      <HintPath>DLLS\QcRepository.dll</HintPath>
     </Reference>
     <Reference Include="QCRestClientStd">
       <HintPath>DLLS\QCRestClientStd.dll</HintPath>
     </Reference>
+    <Reference Include="QCRest_Repository">
+      <HintPath>DLLS\QCRest_Repository.dll</HintPath>
+    </Reference>
+    <Reference Include="QTestAPI">
+      <HintPath>DLLS\QTestAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="QTestAPIStd">
+      <HintPath>DLLS\QTestAPIStd.dll</HintPath>
+    </Reference>
+    <Reference Include="QTestRepository">
+      <HintPath>DLLS\QTestRepository.dll</HintPath>
+    </Reference>
+    <Reference Include="RQMExport">
+      <HintPath>DLLS\RQMExport.dll</HintPath>
+    </Reference>
     <Reference Include="RQMExportStd">
       <HintPath>DLLS\RQMExportStd.dll</HintPath>
+    </Reference>
+    <Reference Include="RQM_Repository">
+      <HintPath>DLLS\RQM_Repository.dll</HintPath>
     </Reference>
     <Reference Include="RQM_RepositoryStd">
       <HintPath>DLLS\RQM_RepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="SikuliStandardNet">
       <HintPath>DLLS\SikuliStandardNet.dll</HintPath>
+    </Reference>
+    <Reference Include="SubAppUtils">
+      <HintPath>DLLS\SubAppUtils.dll</HintPath>
     </Reference>
     <Reference Include="ZephyrEntStdSDK">
       <HintPath>DLLS\ZephyrEntStdSDK.dll</HintPath>
