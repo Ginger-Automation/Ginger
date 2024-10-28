@@ -46,6 +46,8 @@ namespace Ginger.External.Katalon
                         break;
                     }
                     break;
+                default:
+                    break;
             }
         }
 

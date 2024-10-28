@@ -169,6 +169,8 @@ namespace Ginger.External.Katalon
                 case EventType.Active:
                     _ = ImportPOMsAsync();
                     break;
+                default:
+                    break;
             }
         }
 
