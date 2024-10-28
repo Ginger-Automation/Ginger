@@ -41,8 +41,12 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Remove="Actions\REST\**" />
+    <EmbeddedResource Remove="Actions\WebServices\**" />
     <EmbeddedResource Remove="Environments\**" />
     <EmbeddedResource Remove="Plugins\**" />
+    <None Remove="Actions\REST\**" />
+    <None Remove="Actions\WebServices\**" />
     <None Remove="Environments\**" />
     <None Remove="Plugins\**" />
   </ItemGroup>
@@ -194,24 +198,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\ActSikuli.cs" />
-    <Compile Include="Actions\RobotFramework\ActRobot.cs" />
-    <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
-    <Compile Include="Actions\RobotFramework\GingerParam.cs" />
-    <Compile Include="Actions\Common\ActMedia.cs" />
-    <Compile Include="Actions\Common\ActBattery.cs" />
-    <Compile Include="Actions\Common\ActPhone.cs" />
-    <Compile Include="Actions\Common\ActDevice.cs" />
     <Compile Include="Actions\ActDemoPage.cs" />
-    <Compile Include="Actions\Common\ElementConfigControl.cs" />
-    <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
     <Compile Include="Actions\ActImage.cs" />
     <Compile Include="Actions\ActLowLevelClicks.cs" />
     <Compile Include="Actions\ActCreatePDFChart.cs" />
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
-    <Compile Include="Actions\ActFunction.cs" />
-    <Compile Include="Actions\ActASCFControl.cs" />
     <Compile Include="Actions\ActLaunchJavaWSApplication.cs" />
     <Compile Include="Actions\ActGenerateFileFromTemplate.cs" />
     <Compile Include="Actions\ActionFlowControl.cs" />
@@ -221,15 +214,7 @@
     <Compile Include="Actions\ActSetConfig.cs" />
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActTextSpeech.cs" />
-    <Compile Include="Actions\ActWindow.cs" />
-    <Compile Include="Actions\Common\ActDeviceButton.cs" />
-    <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
-    <Compile Include="Actions\Java\ActJavaElement.cs" />
-    <Compile Include="Actions\Java\ActJavaEXE.cs" />
     <Compile Include="Actions\ActTableElement.cs" />
-    <Compile Include="Actions\MainFrame\ActMainframeGetDetails.cs" />
-    <Compile Include="Actions\MainFrame\ActMainframeSendKey.cs" />
-    <Compile Include="Actions\MainFrame\ActMainframeSetText.cs" />
     <Compile Include="Actions\ScreenCapture\LocatorImageCaptureWindow.xaml.cs">
       <DependentUpon>LocatorImageCaptureWindow.xaml</DependentUpon>
     </Compile>
@@ -238,7 +223,6 @@
     </Compile>
     <Compile Include="Actions\ScreenCapture\SnippingTool.Designer.cs" />
     <Compile Include="Actions\UIAutomation\UIAElementInfo.cs" />
-    <Compile Include="Actions\Windows\ActWindowsControl.cs" />
     <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
       <DependentUpon>ScreenCaptureWindow.xaml</DependentUpon>
     </Compile>
@@ -260,9 +244,6 @@
     <Compile Include="Actions\UIAutomation\UIA_ActionRecorder.xaml.cs">
       <DependentUpon>UIA_ActionRecorder.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
-    <Compile Include="Actions\XML\ActXMLProcessing.cs" />
-    <Compile Include="Actions\XML\XMLProcessor.cs" />
     <Compile Include="ActOcr.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="Common\Devices\DeviceConfig.cs" />
@@ -296,9 +277,7 @@
     <Compile Include="GeneralLib\ComboEnumItem.cs" />
     <Compile Include="GeneralLib\ComboGroupedEnumItem.cs" />
     <Compile Include="GeneralLib\ComboItem.cs" />
-    <Compile Include="GeneralLib\CommonLib.cs" />
     <Compile Include="GeneralLib\FrameControlExtensions.cs" />
-    <Compile Include="GeneralLib\JSONHelper.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
@@ -320,7 +299,6 @@
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Animations\Animations.cs" />
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
     </Compile>
@@ -397,8 +375,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Actions\REST\" />
-    <Folder Include="Actions\WebServices\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
   </ItemGroup>
   <ItemGroup>
