@@ -223,7 +223,7 @@ namespace Ginger.Run
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                 }
-                else if (ItemObject is Activity activity) //.GetType() == typeof(GingerCore.Activity) || ItemObject.GetType() == typeof(CleanUpActivity) || ItemObject.GetType() == typeof(ErrorHandler))
+                else if (ItemObject is Activity activity)
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Activity.Status), BindingMode.OneWay);
                     PropertyChangedEventManager.AddHandler(source: activity, handler: RunnerItem_ActivityPropertyChanged, propertyName: allProperties);
@@ -234,7 +234,7 @@ namespace Ginger.Run
                 else
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Act.Status), BindingMode.OneWay);
-                    PropertyChangedEventManager.AddHandler(source: ((RepositoryItemBase)ItemObject), handler: RunnerItem_ActionPropertyChanged, propertyName: allProperties);
+                    PropertyChangedEventManager.AddHandler(source: ((Act)ItemObject), handler: RunnerItem_ActionPropertyChanged, propertyName: allProperties);
                     xRunnerItemContinue.ToolTip = "Resume Run from this Action";
                     xViewRunnerItem.ToolTip = "View Action";
                     xRunnerItemMenu.Visibility = Visibility.Collapsed;
