@@ -49,12 +49,14 @@ namespace Ginger
         {
             try
             {
-                ObservableList<Hyperlink> recentSolutionsLinksList = new ObservableList<Hyperlink>();
+                ObservableList<Hyperlink> recentSolutionsLinksList = [];
                 foreach (Solution sol in ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects)
                 {
-                    Hyperlink solLink = new Hyperlink();
-                    solLink.Tag = sol.Name;
-                    solLink.ToolTip = sol.Folder;
+                    Hyperlink solLink = new Hyperlink
+                    {
+                        Tag = sol.Name,
+                        ToolTip = sol.Folder
+                    };
                     recentSolutionsLinksList.Add(solLink);
                 }
 

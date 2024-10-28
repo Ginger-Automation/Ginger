@@ -96,15 +96,14 @@ namespace GingerCore.Actions.Tuxedo
         public ActInputValue UnixPath { get { return GetOrCreateInputParam(Fields.UnixPath); } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> DynamicUDElements = new ObservableList<ActInputValue>();
+        public ObservableList<ActInputValue> DynamicUDElements = [];
 
 
         public ActInputValue PreCommand { get { return GetOrCreateInputParam(Fields.PreCommand); } }
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(DynamicUDElements);
+            List<ObservableList<ActInputValue>> list = [DynamicUDElements];
             return list;
         }
 

@@ -137,8 +137,10 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         public void CopyRepositoryItem()
         {
             // Arrange
-            Activity a = new Activity();
-            a.ActivityName = "A1";
+            Activity a = new Activity
+            {
+                ActivityName = "A1"
+            };
 
             // Act
             Activity aCopy = (Activity)a.CreateCopy();
@@ -158,8 +160,10 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         public void DuplicateRepositoryItem()
         {
             // Arrange
-            Activity a = new Activity();
-            a.ActivityName = "A2";
+            Activity a = new Activity
+            {
+                ActivityName = "A2"
+            };
 
             // Act
             Activity aCopy = (Activity)a.CreateCopy();

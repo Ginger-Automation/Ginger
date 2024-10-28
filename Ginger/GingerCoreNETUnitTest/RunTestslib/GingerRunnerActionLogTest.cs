@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -72,9 +71,11 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
 
-            ActDummy actDummy = new ActDummy();
-            actDummy.ActionLogConfig = new ActionLogConfig();
-            actDummy.EnableActionLogConfig = true;
+            ActDummy actDummy = new ActDummy
+            {
+                ActionLogConfig = new ActionLogConfig(),
+                EnableActionLogConfig = true
+            };
             actDummy.ActionLogConfig.ActionLogText = actionLogText;
 
             //Act
@@ -95,14 +96,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             ActDummy actDummy = new ActDummy();
 
             // set all the values in the action
-            ActInputValue actInputValue = new ActInputValue();
-            actInputValue.ItemName = "TestInput";
-            actInputValue.Value = INP_VAL_EXPECTED;
+            ActInputValue actInputValue = new ActInputValue
+            {
+                ItemName = "TestInput",
+                Value = INP_VAL_EXPECTED
+            };
 
             actDummy.InputValues.Add(actInputValue);
 
-            actDummy.ActionLogConfig = new ActionLogConfig();
-            actDummy.ActionLogConfig.LogInputVariables = true;
+            actDummy.ActionLogConfig = new ActionLogConfig
+            {
+                LogInputVariables = true
+            };
 
             actDummy.EnableActionLogConfig = true;
 
@@ -124,14 +129,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             ActDummy actDummy = new ActDummy();
 
             // set all the return values in the action
-            ActReturnValue actReturnValue = new ActReturnValue();
-            actReturnValue.ItemName = "TestReturn";
-            actReturnValue.Expected = RET_VAL_EXPECTED;
-            actReturnValue.Actual = RET_VAL_EXPECTED;
+            ActReturnValue actReturnValue = new ActReturnValue
+            {
+                ItemName = "TestReturn",
+                Expected = RET_VAL_EXPECTED,
+                Actual = RET_VAL_EXPECTED
+            };
             actDummy.ReturnValues.Add(actReturnValue);
 
-            actDummy.ActionLogConfig = new ActionLogConfig();
-            actDummy.ActionLogConfig.LogOutputVariables = true;
+            actDummy.ActionLogConfig = new ActionLogConfig
+            {
+                LogOutputVariables = true
+            };
 
             actDummy.EnableActionLogConfig = true;
 
@@ -153,20 +162,26 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             ActDummy actDummy = new ActDummy();
 
             // set all the values in the action
-            ActInputValue actInputValue = new ActInputValue();
-            actInputValue.ItemName = "TestInput";
-            actInputValue.Value = INP_VAL_EXPECTED;
+            ActInputValue actInputValue = new ActInputValue
+            {
+                ItemName = "TestInput",
+                Value = INP_VAL_EXPECTED
+            };
             actDummy.InputValues.Add(actInputValue);
 
-            ActReturnValue actReturnValue = new ActReturnValue();
-            actReturnValue.ItemName = "TestReturn";
-            actReturnValue.Expected = RET_VAL_EXPECTED;
-            actReturnValue.Actual = RET_VAL_EXPECTED;
+            ActReturnValue actReturnValue = new ActReturnValue
+            {
+                ItemName = "TestReturn",
+                Expected = RET_VAL_EXPECTED,
+                Actual = RET_VAL_EXPECTED
+            };
             actDummy.ReturnValues.Add(actReturnValue);
 
-            actDummy.ActionLogConfig = new ActionLogConfig();
-            actDummy.ActionLogConfig.LogInputVariables = true;
-            actDummy.ActionLogConfig.LogOutputVariables = true;
+            actDummy.ActionLogConfig = new ActionLogConfig
+            {
+                LogInputVariables = true,
+                LogOutputVariables = true
+            };
 
             actDummy.EnableActionLogConfig = true;
 
@@ -186,14 +201,17 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_5.log");
 
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
-            ActDummy actDummy = new ActDummy();
+            ActDummy actDummy = new ActDummy
+            {
+                ActionLogConfig = new ActionLogConfig
+                {
+                    LogRunStatus = true
+                },
+                EnableActionLogConfig = true,
 
-            actDummy.ActionLogConfig = new ActionLogConfig();
-            actDummy.ActionLogConfig.LogRunStatus = true;
-            actDummy.EnableActionLogConfig = true;
-
-            //actDummy.Execute();
-            actDummy.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                //actDummy.Execute();
+                Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed
+            };
 
             //Act
             gingerRunnerLogger.LogAction(actDummy);
@@ -210,14 +228,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             string fileName = TestResources.GetTempFile("ActionLog\\ActionLogTest_6.log");
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
 
-            ActDummy actDummy = new ActDummy();
-            actDummy.ActionLogConfig = new ActionLogConfig();
-            actDummy.ActionLogConfig.LogRunStatus = true;
-            actDummy.ActionLogConfig.LogOutputVariables = true;
-            actDummy.EnableActionLogConfig = true;
+            ActDummy actDummy = new ActDummy
+            {
+                ActionLogConfig = new ActionLogConfig
+                {
+                    LogRunStatus = true,
+                    LogOutputVariables = true
+                },
+                EnableActionLogConfig = true,
 
-            // set action status to passed
-            actDummy.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                // set action status to passed
+                Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed
+            };
 
             //Act
             gingerRunnerLogger.LogAction(actDummy);
@@ -236,10 +258,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             GingerRunnerLogger gingerRunnerLogger = new GingerRunnerLogger(fileName);
             ActDummy actDummy = new ActDummy();
 
-            ActReturnValue actReturnValue = new ActReturnValue();
-            actReturnValue.ItemName = "TestReturn";
-            actReturnValue.Expected = RET_VAL_EXPECTED;
-            actReturnValue.Actual = RET_VAL_EXPECTED;
+            ActReturnValue actReturnValue = new ActReturnValue
+            {
+                ItemName = "TestReturn",
+                Expected = RET_VAL_EXPECTED,
+                Actual = RET_VAL_EXPECTED
+            };
             actDummy.ReturnValues.Add(actReturnValue);
 
             //Act
@@ -260,26 +284,34 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             ActDummy actDummy = new ActDummy();
 
             // set all the values in the action
-            ActReturnValue actReturnValue = new ActReturnValue();
-            actReturnValue.ItemName = "TestForFirstReturnValueInTable";
-            actReturnValue.Expected = RET_VAL_EXPECTED;
-            actReturnValue.Actual = RET_VAL_EXPECTED;
+            ActReturnValue actReturnValue = new ActReturnValue
+            {
+                ItemName = "TestForFirstReturnValueInTable",
+                Expected = RET_VAL_EXPECTED,
+                Actual = RET_VAL_EXPECTED
+            };
             actDummy.ReturnValues.Add(actReturnValue);
 
-            actReturnValue = new ActReturnValue();
-            actReturnValue.ItemName = "TestForSecondReturnValueInTable";
-            actReturnValue.Expected = RET_VAL_EXPECTED;
-            actReturnValue.Actual = "WrongValue";
+            actReturnValue = new ActReturnValue
+            {
+                ItemName = "TestForSecondReturnValueInTable",
+                Expected = RET_VAL_EXPECTED,
+                Actual = "WrongValue"
+            };
             actDummy.ReturnValues.Add(actReturnValue);
 
-            actReturnValue = new ActReturnValue();
-            actReturnValue.ItemName = "TestForThirdReturnValueInTable";
-            actReturnValue.Expected = "ExpectedRightValue";
-            actReturnValue.Actual = "WrongActualValue";
+            actReturnValue = new ActReturnValue
+            {
+                ItemName = "TestForThirdReturnValueInTable",
+                Expected = "ExpectedRightValue",
+                Actual = "WrongActualValue"
+            };
             actDummy.ReturnValues.Add(actReturnValue);
 
-            actDummy.ActionLogConfig = new ActionLogConfig();
-            actDummy.ActionLogConfig.LogOutputVariables = true;
+            actDummy.ActionLogConfig = new ActionLogConfig
+            {
+                LogOutputVariables = true
+            };
 
             actDummy.EnableActionLogConfig = true;
 
@@ -297,21 +329,29 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //Arrange
 
             // define action
-            ActDummy actDummy = new ActDummy();
-            // set all the values in the action
-            actDummy.ActionLogConfig = new ActionLogConfig();
-            actDummy.ActionLogConfig.ActionLogText = "TestActionLog";
-            actDummy.ActionLogConfig.LogRunStatus = true;
-            actDummy.EnableActionLogConfig = true;
+            ActDummy actDummy = new ActDummy
+            {
+                // set all the values in the action
+                ActionLogConfig = new ActionLogConfig
+                {
+                    ActionLogText = "TestActionLog",
+                    LogRunStatus = true
+                },
+                EnableActionLogConfig = true
+            };
 
             // define activity 
-            Activity activity = new Activity();
-            activity.ActivityName = "Activity Number 1";
+            Activity activity = new Activity
+            {
+                ActivityName = "Activity Number 1"
+            };
 
             // define business flow
-            BusinessFlow businessFlowWrite = new BusinessFlow();
-            businessFlowWrite.Name = "Business Flow 1";
-            businessFlowWrite.Activities = new ObservableList<Activity>();
+            BusinessFlow businessFlowWrite = new BusinessFlow
+            {
+                Name = "Business Flow 1",
+                Activities = []
+            };
 
             activity.Acts.Add(actDummy);
             businessFlowWrite.Activities.Add(activity);

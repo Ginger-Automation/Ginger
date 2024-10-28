@@ -113,7 +113,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public Visibility TreeTitleVisibility
         {
             get { return xTreeTitle.Visibility; }
-            set 
+            set
             {
                 xTreeItemHeaderPnl.Visibility = value;
                 if (value == Visibility.Collapsed)
@@ -296,7 +296,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             else
             {
                 //if search is already complete and user trying to clear text we collapse the unselected nodes
-                List<TreeViewItem> pathNodes = new List<TreeViewItem>();
+                List<TreeViewItem> pathNodes = [];
                 if (xTreeViewTree.LastSelectedTVI != null)
                 {
                     pathNodes = UCTreeView.getSelecetdItemPathNodes(xTreeViewTree.LastSelectedTVI);
@@ -380,7 +380,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         }
                         else
                         {
-                             xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token);
+                            xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token);
                         }
                     }
                     catch (Exception ex)

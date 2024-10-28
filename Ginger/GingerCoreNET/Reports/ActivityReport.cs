@@ -199,7 +199,7 @@ namespace Ginger.Reports
         {
             get
             {
-                return ActionReports.Count(x=> x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString());                
+                return ActionReports.Count(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString());
             }
         }
 
@@ -208,7 +208,7 @@ namespace Ginger.Reports
             get
             {
                 return ActionReports.Count(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped.ToString());
-                
+
             }
         }
 
@@ -336,7 +336,7 @@ namespace Ginger.Reports
         {
             get
             {
-                actionReports = new List<ActionReport>();
+                actionReports = [];
                 if (LogFolder != null)
                 {
                     foreach (string folder in System.IO.Directory.GetDirectories(LogFolder))
@@ -362,12 +362,12 @@ namespace Ginger.Reports
                 if (_showAllIterationsElements)
                 {
                     var actionReportsSortedBySeq = actionReports.OrderBy(item => item.Seq);
-                    return (List<ActionReport>)actionReportsSortedBySeq.ToList();
+                    return actionReportsSortedBySeq.ToList();
                 }
                 else
                 {
                     var actionReportsLastIterationsSortedBySeq = actionReports.GroupBy(x => x.GUID).Select(x => x.Last()).OrderBy(item => item.Seq);
-                    return (List<ActionReport>)actionReportsLastIterationsSortedBySeq.ToList();
+                    return actionReportsLastIterationsSortedBySeq.ToList();
                 }
             }
         }
@@ -378,13 +378,15 @@ namespace Ginger.Reports
             {
                 if ((mActivity.Acts != null) && (mActivity.Acts.Count > 0))
                 {
-                    List<ActionReport> list = new List<ActionReport>();
+                    List<ActionReport> list = [];
                     int i = 0;
                     foreach (IAct a in mActivity.Acts)
                     {
                         i++;
-                        ActionReport ar = new ActionReport(a, null);//need to provide valid Context
-                        ar.Seq = i;
+                        ActionReport ar = new ActionReport(a, null)
+                        {
+                            Seq = i
+                        };//need to provide valid Context
                         list.Add(ar);
                     }
 
@@ -392,7 +394,7 @@ namespace Ginger.Reports
                 }
                 else
                 {
-                    return new List<ActionReport>();
+                    return [];
                 }
 
             }

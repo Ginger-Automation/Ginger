@@ -22,7 +22,6 @@ using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
 using Ginger;
-using Ginger.Run;
 using GingerCore;
 using GingerCoreNET.RunLib;
 using System;
@@ -58,12 +57,30 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 args = newArgs;
             }
 
-            await ParseArgs(args);
+            ParserResult<object> parserResult = args.Length != 0 ? ParseArguments(args) : null;
+            await ProcessParsedArguments(parserResult);
+
+        }
+
+        ///<summary>
+        /// Parses the command line arguments and returns the parsed result.
+        /// </summary>
+        /// <param name="args">The command line arguments.</param>
+        /// <returns>The parsed result of the command line arguments.</returns>
+        public ParserResult<object> ParseArguments(string[] args)
+        {
+            var parser = new Parser(settings =>
+            {
+                settings.IgnoreUnknownArguments = true;
+            });
+
+            return parser.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args);
         }
 
 
 
-        private async Task ParseArgs(string[] args)
+
+        public async Task ProcessParsedArguments(ParserResult<object> parserResult)
         {
             // FIXME: failing with exc of obj state
             // Do not show default version
@@ -73,16 +90,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 settings.IgnoreUnknownArguments = true;
             });
 
-            int result = await parser.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args).MapResult(
+            int result = await parserResult.MapResult(
                     async (RunOptions opts) => await HandleRunOptions(opts),
-                    async (GridOptions opts) => await HanldeGridOption(opts),
+                    async (GridOptions opts) => await HandleGridOption(opts),
                     async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
                     async (DynamicOptions opts) => await HandleFileOptions("dynamic", opts.FileName, opts.VerboseLevel),
                     async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
                     async (VersionOptions opts) => await HandleVersionOptions(opts),
                     async (ExampleOptions opts) => await HandleExampleOptions(opts),
                     async (DoOptions opts) => await HandleDoOptions(opts),
-
 
                     async errs => await HandleCLIParseError(errs)
             );
@@ -100,7 +116,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
              {
                  try
                  {
-                     DoOptionsHanlder.Run(opts);
+                     DoOptionsHandler.Run(opts);
                      return 0;
                  }
                  catch (Exception ex)
@@ -190,8 +206,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         private string CreateExample(string solution, string runset, string env = null)
         {
             StringBuilder sb = new StringBuilder();
-            RunOptions runOptions = new RunOptions();
-            runOptions.Solution = solution;
+            RunOptions runOptions = new RunOptions
+            {
+                Solution = solution
+            };
             if (env != null)
             {
                 runOptions.Environment = env;
@@ -301,7 +319,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 string fileContent = ReadFile(fileName);
                 mCLIHandler.LoadGeneralConfigurations(fileContent, mCLIHelper);
 
-                if (fileType == "config" || fileType == "dynamic")  // not needed for script
+                if (fileType is "config" or "dynamic")  // not needed for script
                 {
                     if (!CLILoadAndPrepare(runsetConfigs: fileContent))
                     {
@@ -324,7 +342,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
 
-        private async Task<int> HanldeGridOption(GridOptions gridOptions)
+        private async Task<int> HandleGridOption(GridOptions gridOptions)
         {
             WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.grid;
             return await Task.Run(() =>
@@ -426,7 +444,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.ReRunFailed = runOptions.ReRunFailed;
             if (runOptions.ReRunFailed)
             {
-                if(!string.IsNullOrEmpty(runOptions.ReferenceExecutionID))
+                if (!string.IsNullOrEmpty(runOptions.ReferenceExecutionID))
                 {
                     if (!Guid.TryParse(runOptions.ReferenceExecutionID, out Guid temp))
                     {

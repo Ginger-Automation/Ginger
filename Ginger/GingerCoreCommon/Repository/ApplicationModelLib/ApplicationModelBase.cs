@@ -81,13 +81,13 @@ namespace Amdocs.Ginger.Repository
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<AppModelParameter> AppModelParameters = new ObservableList<AppModelParameter>();
+        public ObservableList<AppModelParameter> AppModelParameters = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<GlobalAppModelParameter> GlobalAppModelParameters = new ObservableList<GlobalAppModelParameter>();
+        public ObservableList<GlobalAppModelParameter> GlobalAppModelParameters = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<RepositoryItemKey> TagsKeys = new ObservableList<RepositoryItemKey>();
+        public ObservableList<RepositoryItemKey> TagsKeys = [];
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -127,7 +127,7 @@ namespace Amdocs.Ginger.Repository
 
         #region Output Template
         [IsSerializedForLocalRepository]
-        public ObservableList<ActReturnValue> ReturnValues = new ObservableList<ActReturnValue>();
+        public ObservableList<ActReturnValue> ReturnValues = [];
 
         private bool mSupportSimulation;
 
@@ -149,7 +149,7 @@ namespace Amdocs.Ginger.Repository
 
         public virtual List<string> GetModelListsToConfigsWithExecutionData()
         {
-            return new List<string>();
+            return [];
         }
 
         public void SetModelConfigsWithExecutionData(object obj = null)
@@ -158,12 +158,12 @@ namespace Amdocs.Ginger.Repository
             {
                 obj = this;
             }
-            var properties = obj.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            var properties = obj.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
                 try
                 {
-                    if (mi.Name == "mName" || mi.Name == "Name" || mi.Name == "ItemName" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" || mi.Name == "ObjFileExt" || mi.Name == "ObjFolderName" || mi.Name == "ItemNameField") continue;
+                    if (mi.Name is "mName" or "Name" or "ItemName" or "RelativeFilePath" or "FilePath" or "ObjFileExt" or "ObjFolderName" or "ItemNameField") continue;
 
                     PropertyInfo PI = obj.GetType().GetProperty(mi.Name);
                     dynamic value = null;
@@ -205,10 +205,10 @@ namespace Amdocs.Ginger.Repository
 
         public void UpdateParamsPlaceholder(object item, List<string> placeHoldersToReplace, string newVarName)
         {
-            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            var properties = item.GetType().GetMembers().Where(x => x.MemberType is MemberTypes.Property or MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
-                if (mi.Name == "ItemImageType" || mi.Name == "OptionalValuesString" || mi.Name == "Path" || mi.Name == "PlaceHolder" || mi.Name == "FileName" || mi.Name == "TagsKeys" || mi.Name == "AppModelParameters" || mi.Name == "ContainingFolderFullPath" || mi.Name == "mName" || mi.Name == "Name" || mi.Name == "ItemName" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" || mi.Name == "ObjFileExt" || mi.Name == "ObjFolderName" || mi.Name == "ItemNameField")
+                if (mi.Name is "ItemImageType" or "OptionalValuesString" or "Path" or "PlaceHolder" or "FileName" or "TagsKeys" or "AppModelParameters" or "ContainingFolderFullPath" or "mName" or "Name" or "ItemName" or "RelativeFilePath" or "FilePath" or "ObjFileExt" or "ObjFolderName" or "ItemNameField")
                 {
                     continue;
                 }
@@ -220,12 +220,12 @@ namespace Amdocs.Ginger.Repository
                 else if (mi.MemberType == MemberTypes.Field)
                     value = item.GetType().GetField(mi.Name).GetValue(item);
 
-                if (value != null && value is IObservableList)
+                if (value is not null and IObservableList)
                 {
                     foreach (object o in value)
                         UpdateParamsPlaceholder(o, placeHoldersToReplace, newVarName);
                 }
-                else if (value != null && value is string)
+                else if (value is not null and string)
                 {
                     try
                     {
@@ -251,11 +251,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                ObservableList<AppModelParameter> mergedList = new ObservableList<AppModelParameter>();
-                foreach (AppModelParameter localParam in AppModelParameters)
-                    mergedList.Add(localParam);
-                foreach (GlobalAppModelParameter globalParam in GlobalAppModelParameters)
-                    mergedList.Add(globalParam);
+                ObservableList<AppModelParameter> mergedList = [.. AppModelParameters, .. GlobalAppModelParameters];
                 return mergedList;
             }
         }
@@ -278,7 +274,7 @@ namespace Amdocs.Ginger.Repository
         // !!!!!!!!!!!!!!!!!!!!!!!!!
         public static List<string> GetSoapSecurityHeaderContent(ref string txtBoxBodyContent)
         {
-            List<string> SecuritryContent = new List<string>();
+            List<string> SecuritryContent = [];
             StringBuilder soapHeaderContent = new StringBuilder();
 
             soapHeaderContent.Append("\t<soapenv:Header>\n");
@@ -306,7 +302,7 @@ namespace Amdocs.Ginger.Repository
             SecuritryContent.Add("{WSSECPASSWORD}");
             SecuritryContent.Add("{GETUTCTIMESTAMP}");
             SecuritryContent.Add("{GET_HASHED_WSSECPASSWORD}");
-            SecuritryContent.Add("{GET_HASH_CODE}");            
+            SecuritryContent.Add("{GET_HASH_CODE}");
 
             string wsSecuritySettings = SecuritryContent.ElementAt(0);
             string pattern1 = "<soapenv:Header>(.*?)</soapenv:Header>|<soapenv:Header/>|<(\\s)soapenv:Header(\\s)/>";

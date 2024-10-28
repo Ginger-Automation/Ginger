@@ -69,9 +69,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public void ShowDriverWindow()
         {
-            mConsoleDriverWindow = new ConsoleDriverWindow(BusinessFlow);
-            mConsoleDriverWindow.mConsoleDriver = this;
-            mConsoleDriverWindow.Title = ConsoleWindowTitle();
+            mConsoleDriverWindow = new ConsoleDriverWindow(BusinessFlow)
+            {
+                mConsoleDriver = this,
+                Title = ConsoleWindowTitle()
+            };
             mConsoleDriverWindow.Show();
             IsDriverConnected = Connect();
 
@@ -186,9 +188,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
                                 if ((i > 0) && (i != RCValue.IndexOf("==")) && (i != RCValue.IndexOf("!=") + 1))
                                 {
-                                    Param = (RCValue.Substring(0, i)).Trim();
+                                    Param = (RCValue[..i]).Trim();
                                     //the rest is the value
-                                    Value = RCValue.Substring(Param.Length + 1);
+                                    Value = RCValue[(Param.Length + 1)..];
 
                                     Value = new string(Value.Where(ch => !char.IsControl(ch)).ToArray());
                                     act.AddOrUpdateReturnParamActual(Param, Value);

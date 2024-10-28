@@ -22,6 +22,9 @@
             <DataTemplate x:Key="ParamValueExpressionButton">
                 <Button x:Name="GridParamVEButton" Content="..." Click="GridParamVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
+            <DataTemplate x:Key="DescriptionValueExpressionButton">
+                <Button x:Name="GridDescriptionVEButton" Content="..." Click="GridDescriptionVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
             <DataTemplate x:Key="InputValueExpressionButton">
                 <Button x:Name="InputGridVEButton" Content="..." Click="InputGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>

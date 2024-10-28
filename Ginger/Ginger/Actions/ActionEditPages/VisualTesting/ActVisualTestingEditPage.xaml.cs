@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Actions.UserControls;
 using GingerCore;
@@ -149,17 +148,13 @@ namespace Ginger.Actions.VisualTesting
 
         private Visibility ConvertVisibility(eVisualTestingVisibility eVisualTestingVisibility)
         {
-            switch (eVisualTestingVisibility)
+            return eVisualTestingVisibility switch
             {
-                case eVisualTestingVisibility.Visible:
-                    return Visibility.Visible;
-                case eVisualTestingVisibility.Hidden:
-                    return Visibility.Hidden;
-                case eVisualTestingVisibility.Collapsed:
-                    return Visibility.Collapsed;
-                default:
-                    return Visibility.Visible;
-            }
+                eVisualTestingVisibility.Visible => Visibility.Visible,
+                eVisualTestingVisibility.Hidden => Visibility.Hidden,
+                eVisualTestingVisibility.Collapsed => Visibility.Collapsed,
+                _ => Visibility.Visible,
+            };
         }
 
         private void ChangeAppWindowSize_Changed(object sender, SelectionChangedEventArgs e)

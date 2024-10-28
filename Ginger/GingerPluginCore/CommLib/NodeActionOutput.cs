@@ -24,7 +24,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
     public class NodeActionOutput // TODO: impl interface : IGingerActionOutput
     {
-        public List<NodeActionOutputValue> OutputValues = new List<NodeActionOutputValue>();
+        public List<NodeActionOutputValue> OutputValues = [];
 
         // List<IGingerActionOutputValue> OutputValues { get { return mOutputValues; } set { mOutputValues = value; } }
 

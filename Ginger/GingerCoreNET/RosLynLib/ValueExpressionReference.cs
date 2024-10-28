@@ -38,14 +38,14 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib.Refrences
 
         public ValueExpressionReference()
         {
-            Samples = new List<string>();
+            Samples = [];
 
         }
     }
 
     public class VEReferenceList
     {
-        public List<ValueExpressionReference> Refrences = new List<ValueExpressionReference>();
+        public List<ValueExpressionReference> Refrences = [];
 
         public static VEReferenceList LoadFromJson(string JsonFilePath)
         {

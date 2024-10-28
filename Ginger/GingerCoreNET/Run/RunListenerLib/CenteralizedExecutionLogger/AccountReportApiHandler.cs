@@ -23,13 +23,13 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
-using GingerCore.Drivers.Selenium.SeleniumBMP;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
@@ -129,7 +129,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Finishing to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
                 }
                 string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.ExecutionId);
-                bool isResponseSuccessful = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
+                bool isResponseSuccessful = false;
+                // Awaiting SendRestRequestAndGetResponse works fine on Windows but crashes on Linux runtime due to an issue related to RestSharp; need to replace it.
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    isResponseSuccessful = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
+                }
+                else
+                {
+                    isResponseSuccessful = SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).Result;
+                }
+
                 if (isResponseSuccessful)
                 {
                     Reporter.ToLog(eLogLevel.INFO, $"Successfully sent {message}");
@@ -302,7 +312,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
                         long fileSize = 0;
 
-                        List<string> temp = new List<string>();
+                        List<string> temp = [];
 
                         foreach (string screenshot in filePaths)
                         {
@@ -311,7 +321,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                             if ((5 * 1000000) < fileSize) // 5 MB
                             {
                                 await UploadImageAsync(executionId, temp);
-                                temp = new List<string>();
+                                temp = [];
                                 fileSize = 0;
                             }
 
@@ -377,20 +387,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
                         long fileSize = 0;
 
-                        List<ArtifactDetails> temp = new List<ArtifactDetails>();
+                        List<ArtifactDetails> temp = [];
 
                         foreach (ArtifactDetails artifact in artifactDetails)
                         {
-                            if(File.Exists(artifact.ArtifactReportStoragePath))
+                            if (File.Exists(artifact.ArtifactReportStoragePath))
                             {
                                 fileSize += new System.IO.FileInfo(artifact.ArtifactReportStoragePath).Length;
                                 temp.Add(artifact);
                                 if ((5 * 1000000) < fileSize) // 5 MB
                                 {
                                     await UploadArtifactsAsync(executionId, temp);
-                                    temp = new List<ArtifactDetails>();
+                                    temp = [];
                                     fileSize = 0;
-                                } 
+                                }
                             }
 
                         }
@@ -400,7 +410,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                             await UploadArtifactsAsync(executionId, temp);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Exception occurred during uploading artifacts", ex);
                     }
@@ -475,10 +485,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public List<AccountReportBusinessFlow> GetBusinessflowExecutionDataFromCentralDB(Guid executionId)
         {
-            List<AccountReportBusinessFlow> accountReportBusinessFlows = new List<AccountReportBusinessFlow>();
+            List<AccountReportBusinessFlow> accountReportBusinessFlows = [];
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(GET_BUSINESSFLOW_EXECUTION_DATA + executionId, Method.Get);
+                RestRequest restRequest = new RestRequest(GET_BUSINESSFLOW_EXECUTION_DATA + executionId, Method.Get);
                 string message = string.Format("execution id : {0}", executionId);
                 try
                 {
@@ -505,7 +515,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public List<RunsetHLInfoResponse> GetRunsetExecutionDataFromCentralDB(Guid executionId)
         {
-            List<RunsetHLInfoResponse> accountReportrunset = new List<RunsetHLInfoResponse>();
+            List<RunsetHLInfoResponse> accountReportrunset = [];
             if (restClient != null)
             {
                 RestRequest restRequest = new RestRequest(GET_RUNSET_EXECUTION_DATA + executionId, Method.Get);
@@ -537,7 +547,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public List<AccountReportRunner> GetRunnerExecutionDataFromCentralDB(Guid executionId)
         {
-            List<AccountReportRunner> accountReportrunset = new List<AccountReportRunner>();
+            List<AccountReportRunner> accountReportrunset = [];
             if (restClient != null)
             {
                 RestRequest restRequest = new RestRequest(GET_RUNNER_EXECUTION_DATA + executionId, Method.Get);

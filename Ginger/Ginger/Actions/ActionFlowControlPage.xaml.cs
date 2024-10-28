@@ -57,7 +57,7 @@ namespace Ginger.Actions
             FlowControlGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddFlowControl));
 
             // TODO:  open new edit page -  FlowControlGrid.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditAction));                      
-            if (editMode == General.eRIPageViewMode.View || editMode == General.eRIPageViewMode.ViewAndExecute)
+            if (editMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
             {
                 SetViewMode();
             }
@@ -65,9 +65,11 @@ namespace Ginger.Actions
 
         private void AddFlowControl(object sender, RoutedEventArgs e)
         {
-            FlowControl FC = new FlowControl();
-            FC.Operator = eFCOperator.ActionPassed;
-            FC.Active = true;
+            FlowControl FC = new FlowControl
+            {
+                Operator = eFCOperator.ActionPassed,
+                Active = true
+            };
             mAct.FlowControls.Add(FC);
         }
 
@@ -81,7 +83,7 @@ namespace Ginger.Actions
         private void SetGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            ObservableList<GridColView> viewCols = [];
             view.GridColsView = viewCols;
 
             viewCols.Add(new GridColView() { Field = nameof(FlowControl.Active), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });

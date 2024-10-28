@@ -98,7 +98,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             this.Dispatcher.Invoke(() =>
             {
-                if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus) || e.PropertyName is nameof(mContext.Activity))
+                if (e.PropertyName is nameof(mContext.Agent) or nameof(mContext.AgentStatus) or nameof(mContext.Activity))
                 {
                     if (xSelectedItemFrame.Content == mRecordPage || xSelectedItemFrame.Content == mLiveSpyNavPage || xSelectedItemFrame.Content == mWindowsExplorerNavPage)
                     {
@@ -123,7 +123,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     ToggleRecordLiveSpyAndExplorer();
                 }
 
-                if (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(mContext.Platform))
+                if (e.PropertyName is (nameof(BusinessFlow)) or (nameof(mContext.Platform)))
                 {
                     ToggleApplicatoinModels();
                     SetApplicationModelButtonDetails();
@@ -319,7 +319,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void xGoBackBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (xSelectedItemFrame.Content is APINavPage || xSelectedItemFrame.Content is POMNavPage)
+            if (xSelectedItemFrame.Content is APINavPage or POMNavPage)
             {
                 SetApplicationModeViewFalse();
                 LoadActionFrame(null);

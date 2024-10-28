@@ -60,7 +60,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             get
             {
-                if (PageViewMode == General.eRIPageViewMode.Add || PageViewMode == General.eRIPageViewMode.AddFromModel || PageViewMode == General.eRIPageViewMode.AddFromShardRepository)
+                if (PageViewMode is General.eRIPageViewMode.Add or General.eRIPageViewMode.AddFromModel or General.eRIPageViewMode.AddFromShardRepository)
                 {
                     return false;
                 }
@@ -142,20 +142,24 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemOperation> GetListOperations()
         {
-            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+            List<ListItemOperation> operationsList = [];
 
-            ListItemOperation addToFlow = new ListItemOperation();
-            addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
-            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
-            addToFlow.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "Add to");
-            addToFlow.OperationHandler = AddFromRepository;
+            ListItemOperation addToFlow = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.AddFromShardRepository],
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft,
+                ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "Add to"),
+                OperationHandler = AddFromRepository
+            };
             operationsList.Add(addToFlow);
 
-            ListItemOperation editItem = new ListItemOperation();
-            editItem.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
-            editItem.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
-            editItem.ToolTip = "Edit";
-            editItem.OperationHandler = EditActivityGroup;
+            ListItemOperation editItem = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.AddFromShardRepository],
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit,
+                ToolTip = "Edit",
+                OperationHandler = EditActivityGroup
+            };
             operationsList.Add(editItem);
 
             return operationsList;
@@ -174,6 +178,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 {
                     list.Add(selectedItem);
                 }
+
                 ActionsFactory.AddActivitiesGroupsFromSRHandler(list, mContext.BusinessFlow);
             }
             else
@@ -204,7 +209,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemOperation> GetListExtraOperations()
         {
-            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+            List<ListItemOperation> extraOperationsList = [];
 
             return extraOperationsList;
         }
@@ -212,21 +217,23 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemNotification> GetItemNotificationsList(object item)
         {
             SetItem(item);
-            List<ListItemNotification> notificationsList = new List<ListItemNotification>();
+            List<ListItemNotification> notificationsList = [];
             return notificationsList;
         }
 
         public List<ListItemOperation> GetItemOperationsList(object item)
         {
             SetItem(item);
-            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+            List<ListItemOperation> operationsList = [];
 
-            ListItemOperation ViewLinkedInstances = new ListItemOperation();
-            ViewLinkedInstances.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
-            ViewLinkedInstances.AutomationID = "ViewLinkedInstances";
-            ViewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
-            ViewLinkedInstances.ToolTip = "View Item Usage";
-            ViewLinkedInstances.OperationHandler = ViewRepositoryItemUsage;
+            ListItemOperation ViewLinkedInstances = new ListItemOperation
+            {
+                SupportedViews = [General.eRIPageViewMode.AddFromShardRepository],
+                AutomationID = "ViewLinkedInstances",
+                ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink,
+                ToolTip = "View Item Usage",
+                OperationHandler = ViewRepositoryItemUsage
+            };
             operationsList.Add(ViewLinkedInstances);
 
             return operationsList;
@@ -237,8 +244,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             if (SelectedItemsList.Count > 0)
             {
-                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)mListView.List.SelectedItem);
-                usagePage.extraDetails = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)mListView.List.SelectedItem)
+                {
+                    extraDetails = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>()
+                };
                 usagePage.ShowAsWindow();
             }
             else
@@ -250,7 +259,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemOperation> GetItemExtraOperationsList(object item)
         {
             SetItem(item);
-            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+            List<ListItemOperation> extraOperationsList = [];
 
             return extraOperationsList;
         }
@@ -258,7 +267,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemOperation> GetItemExecutionOperationsList(object item)
         {
             SetItem(item);
-            List<ListItemOperation> executionOperationsList = new List<ListItemOperation>();
+            List<ListItemOperation> executionOperationsList = [];
 
             return executionOperationsList;
         }

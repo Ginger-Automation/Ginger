@@ -35,13 +35,14 @@ namespace Ginger.WindowExplorer.Windows
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActWindowsControl()
-            {
-                Description = "Get Text " + UIAElementInfo.ElementTitle,
-                ControlAction = ActWindowsControl.eControlAction.GetValue
-            });
+            ObservableList<Act> list =
+            [
+                new ActWindowsControl()
+                {
+                    Description = "Get Text " + UIAElementInfo.ElementTitle,
+                    ControlAction = ActWindowsControl.eControlAction.GetValue
+                },
+            ];
             return list;
         }
     }

@@ -48,20 +48,20 @@ namespace Ginger.WindowExplorer.Android
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            ObservableList<Act> list = new ObservableList<Act>();
-
-            list.Add(new ActUIElement()
-            {
-                Description = "Click",
-                ElementAction = ActUIElement.eElementAction.Click
-            });
-
-            list.Add(new ActUIElement()
-            {
-                Description = "Get Custom Attribute text",
-                ElementAction = ActUIElement.eElementAction.GetAttrValue,
-                Value = "text"
-            });
+            ObservableList<Act> list =
+            [
+                new ActUIElement()
+                {
+                    Description = "Click",
+                    ElementAction = ActUIElement.eElementAction.Click
+                },
+                new ActUIElement()
+                {
+                    Description = "Get Custom Attribute text",
+                    ElementAction = ActUIElement.eElementAction.GetAttrValue,
+                    Value = "text"
+                },
+            ];
 
             return list;
         }
@@ -73,7 +73,7 @@ namespace Ginger.WindowExplorer.Android
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> list = new List<ITreeViewItem>();
+            List<ITreeViewItem> list = [];
             List<ElementInfo> Childrens = AndroidElementInfo.WindowExplorer.GetElementChildren(AndroidElementInfo);
 
             foreach (ElementInfo EI in Childrens)

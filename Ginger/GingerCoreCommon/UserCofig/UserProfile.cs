@@ -23,10 +23,9 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
-using Ginger.Configurations;
 using Ginger.UserConfig;
-using GingerCoreNET;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using Newtonsoft.Json.Linq;
@@ -86,7 +85,7 @@ namespace Ginger
         public class UserProfileGrid
         {
             public string GridId { get; set; }
-            public List<UserProfileGridCol> Cols = new List<UserProfileGridCol>();
+            public List<UserProfileGridCol> Cols = [];
         }
 
         public class UserProfileGridCol
@@ -95,7 +94,7 @@ namespace Ginger
             public int Width { get; set; }
         }
 
-        public List<UserProfileGrid> Grids = new List<UserProfileGrid>();
+        public List<UserProfileGrid> Grids = [];
 
         bool mAutoLoadLastSolution;
         [IsSerializedForLocalRepository]
@@ -137,7 +136,7 @@ namespace Ginger
             get => mWatchFileChanges;
             set
             {
-                if(mWatchFileChanges != value)
+                if (mWatchFileChanges != value)
                 {
                     mWatchFileChanges = value;
                     OnPropertyChanged(nameof(mWatchFileChanges));
@@ -152,10 +151,10 @@ namespace Ginger
 
         // Keep the folder names of last solutions opened
         [IsSerializedForLocalRepository]
-        public List<string> RecentSolutions = new List<string>();
+        public List<string> RecentSolutions = [];
 
         [IsSerializedForLocalRepository]
-        public List<string> RecentAppAgentsMapping = new List<string>();
+        public List<string> RecentAppAgentsMapping = [];
 
         //[IsSerializedForLocalRepository]
         /// <summary>
@@ -264,7 +263,7 @@ namespace Ginger
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ALMUserConfig> ALMUserConfigs { get; set; } = new ObservableList<ALMUserConfig>();
+        public ObservableList<ALMUserConfig> ALMUserConfigs { get; set; } = [];
 
         GingerCore.eTerminologyType mTerminologyType;
         [IsSerializedForLocalRepository]
@@ -297,6 +296,40 @@ namespace Ginger
                     mUserType = value;
                     OnPropertyChanged(nameof(UserType));
                 }
+            }
+        }
+
+        private bool mEnableTelemetry;
+        [IsSerializedForLocalRepository(DefaultValue: false)]
+        public bool EnableTelemetry
+        {
+            get
+            {
+                return mEnableTelemetry;
+            }
+            set
+            {
+                mEnableTelemetry = value;
+                OnPropertyChanged(nameof(EnableTelemetry));
+            }
+        }
+
+        private ITelemetryQueueManager.Config mTelemetryConfig;
+        [IsSerializedForLocalRepository]
+        public ITelemetryQueueManager.Config TelemetryConfig
+        {
+            get
+            {
+                if (mTelemetryConfig == null)
+                {
+                    mTelemetryConfig = new();
+                }
+                return mTelemetryConfig;
+            }
+            set
+            {
+                mTelemetryConfig = value;
+                OnPropertyChanged(nameof(TelemetryConfig));
             }
         }
 
@@ -355,8 +388,10 @@ namespace Ginger
             }
 
             Reporter.ToLog(eLogLevel.INFO, "Creating new User Profile");
-            UserProfile up2 = new UserProfile();
-            up2.UserProfileOperations = UserProfileOperations;
+            UserProfile up2 = new UserProfile
+            {
+                UserProfileOperations = UserProfileOperations
+            };
             //up2.LoadDefaults();
             UserProfileOperations.LoadDefaults();
             if (UserConfigdictObj != null)
@@ -531,6 +566,23 @@ namespace Ginger
         }
 
 
+        string mActionOutputValueUserPreferences;
+        [IsSerializedForLocalRepository(DefaultValue: "Path,ActualValue,ExpectedValue,StoreTo")]
+        public string ActionOutputValueUserPreferences
+        {
+            get
+            {
+                return mActionOutputValueUserPreferences;
+            }
+            set
+            {
+                if (mActionOutputValueUserPreferences != value)
+                {
+                    mActionOutputValueUserPreferences = value;
+                    OnPropertyChanged(nameof(ActionOutputValueUserPreferences));
+                }
+            }
+        }
         public string UserName
         {
             get { return Environment.UserName; }
@@ -666,7 +718,7 @@ namespace Ginger
         public bool SourceControlIgnoreCertificate { get; internal set; }
 
         [IsSerializedForLocalRepository]
-        public List<string> ShownHelpLayoutsKeys = new List<string>();
+        public List<string> ShownHelpLayoutsKeys = [];
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
             if (errorType == SerializationErrorType.PropertyNotFound)

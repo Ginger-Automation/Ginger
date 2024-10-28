@@ -45,19 +45,39 @@ namespace GingerCore.Environments
         [IsSerializedForLocalRepository]
         public string ReleaseVersion { get { return mReleaseVersion; } set { if (mReleaseVersion != value) { mReleaseVersion = value; OnPropertyChanged(nameof(ReleaseVersion)); } } }
 
-        private string mNotes;
+        //Ginger Analytics Region starts here, No Tresspassing allowed by Ginger Objects
+
+        private Guid mGingerOpsEnvId;
         [IsSerializedForLocalRepository]
-        public string Notes { get { return mNotes; } set { if (mNotes != value) { mNotes = value; OnPropertyChanged(nameof(Notes)); } } }
+        public Guid GingerOpsEnvId { get { return mGingerOpsEnvId; } set { if (mGingerOpsEnvId != value) { mGingerOpsEnvId = value; OnPropertyChanged(nameof(GingerOpsEnvId)); } } }
+
+        private Guid mGingerOpsProjectId;
+        [IsSerializedForLocalRepository]
+        public Guid GingerOpsProjectId { get { return mGingerOpsProjectId; } set { if (mGingerOpsProjectId != value) { mGingerOpsProjectId = value; OnPropertyChanged(nameof(GingerOpsProjectId)); } } }
+
+        private Guid mGingerOpsArchitectureId;
+        [IsSerializedForLocalRepository]
+        public Guid GingerOpsArchitectureId { get { return mGingerOpsArchitectureId; } set { if (mGingerOpsArchitectureId != value) { mGingerOpsArchitectureId = value; OnPropertyChanged(nameof(GingerOpsArchitectureId)); } } }
+
+        private string mGingerOpsRelease;
+        [IsSerializedForLocalRepository]
+        public string GingerOpsRelease { get { return mGingerOpsRelease; } set { if (mGingerOpsRelease != value) { mGingerOpsRelease = value; OnPropertyChanged(nameof(GingerOpsRelease)); } } }
+
+        private string mGingerOpsStatus; //Ginger Analytics import status
+        public string GingerOpsStatus { get { return mGingerOpsStatus; } set { if (mGingerOpsStatus != value) { mGingerOpsStatus = value; OnPropertyChanged(nameof(GingerOpsStatus)); } } }
+
+        private string mGingerOpsRemark; //Ginger Analytics Remakrs if any during import
+        public string GingerOpsRemark { get { return mGingerOpsRemark; } set { if (mGingerOpsRemark != value) { mGingerOpsRemark = value; OnPropertyChanged(nameof(GingerOpsRemark)); } } }
 
         private bool mActive;
         [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<EnvApplication> Applications { get; set; } = new ObservableList<EnvApplication>();
+        public ObservableList<EnvApplication> Applications { get; set; } = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = [];
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -147,15 +167,17 @@ namespace GingerCore.Environments
 
         public void AddApplications(IEnumerable<ApplicationPlatform> SelectedApplications)
         {
-            
-            foreach(ApplicationPlatform SelectedApplication in SelectedApplications)
+
+            foreach (ApplicationPlatform SelectedApplication in SelectedApplications)
             {
-                EnvApplication envApplication = new ();
-                envApplication.Name = SelectedApplication.AppName;
-                envApplication.ParentGuid = SelectedApplication.Guid;
-                envApplication.Description = SelectedApplication.Description;
-                envApplication.Platform = SelectedApplication.Platform;
-                envApplication.Active = true;
+                EnvApplication envApplication = new()
+                {
+                    Name = SelectedApplication.AppName,
+                    ParentGuid = SelectedApplication.Guid,
+                    Description = SelectedApplication.Description,
+                    Platform = SelectedApplication.Platform,
+                    Active = true
+                };
                 this.Applications.Add(envApplication);
                 OnPropertyChanged(nameof(Applications));
             }

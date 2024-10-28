@@ -65,7 +65,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                 return "Data Source Manipulation";
+                return "Data Source Manipulation";
             }
         }
 
@@ -92,12 +92,14 @@ namespace GingerCore.Actions
                 string value = GetInputParamValue("Value");
                 if (!string.IsNullOrEmpty(value))
                 {
-                    ValueExpression mValueExpression = new(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, RunOnBusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
-                    mValueExpression.Value = value;
+                    ValueExpression mValueExpression = new(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, RunOnBusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>())
+                    {
+                        Value = value
+                    };
                     ValueUC = mValueExpression.ValueCalculated;
                 }
 
-                LiteDBSQLTranslator liteDBSQLTranslator = new (this);
+                LiteDBSQLTranslator liteDBSQLTranslator = new(this);
                 this.ValueExp = liteDBSQLTranslator.CreateValueExpression();
 
                 string Querystring = this.ValueExp;
@@ -107,8 +109,10 @@ namespace GingerCore.Actions
                 {
                     if (!string.IsNullOrEmpty(matcheslist[i].ToString()))
                     {
-                        ValueExpression mValueExpression = new(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, RunOnBusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
-                        mValueExpression.Value = matcheslist[i].ToString();
+                        ValueExpression mValueExpression = new(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, RunOnBusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>())
+                        {
+                            Value = matcheslist[i].ToString()
+                        };
                         string ValueUCdata = mValueExpression.ValueCalculated;
                         Querystring = Querystring.Replace(matcheslist[i].ToString(), ValueUCdata);
                     }
@@ -123,8 +127,10 @@ namespace GingerCore.Actions
                     var tempExp = new ExportToExcelConfig();
                     try
                     {
-                        ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        VE.Value = ExcelConfig.ExcelPath;
+                        ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList)
+                        {
+                            Value = ExcelConfig.ExcelPath
+                        };
                         tempExp.ExcelPath = VE.ValueCalculated;
 
                         VE.Value = ExcelConfig.ExcelSheetName;
@@ -154,27 +160,37 @@ namespace GingerCore.Actions
                 switch (ControlAction)
                 {
                     case eControlAction.GetValue:
-                        ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        VE.Value = ValueExp;
+                        ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList)
+                        {
+                            Value = ValueExp
+                        };
                         AddOrUpdateReturnParamActual("Output", VE.ValueCalculated);
                         break;
                     case eControlAction.SetValue:
-                        ValueExpression SVE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        SVE.Value = this.Value;
+                        ValueExpression SVE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList)
+                        {
+                            Value = this.Value
+                        };
 
-                        ValueExpression VEUpdate = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList, true, SVE.ValueCalculated);
-                        VEUpdate.Value = ValueExp;
+                        ValueExpression VEUpdate = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList, true, SVE.ValueCalculated)
+                        {
+                            Value = ValueExp
+                        };
                         outVal = VEUpdate.ValueCalculated;
                         break;
                     case eControlAction.MarkAsDone:
-                        ValueExpression VEMAD = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        VEMAD.Value = ValueExp;
+                        ValueExpression VEMAD = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList)
+                        {
+                            Value = ValueExp
+                        };
                         outVal = VEMAD.ValueCalculated;
                         break;
                     case eControlAction.RowCount:
                     case eControlAction.AvailableRowCount:
-                        ValueExpression VERC = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        VERC.Value = ValueExp;
+                        ValueExpression VERC = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList)
+                        {
+                            Value = ValueExp
+                        };
                         AddOrUpdateReturnParamActual("Output", VERC.ValueCalculated);
                         break;
                     case eControlAction.ExportToExcel:
@@ -219,8 +235,10 @@ namespace GingerCore.Actions
                         }
                         break;
                     case eControlAction.DeleteRow:
-                        ValueExpression veDel = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        veDel.Value = ValueExp;
+                        ValueExpression veDel = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList)
+                        {
+                            Value = ValueExp
+                        };
                         outVal = veDel.ValueCalculated;
                         int rowCount = 0;
                         if (!string.IsNullOrEmpty(outVal) && !int.TryParse(outVal, out rowCount))
@@ -248,7 +266,7 @@ namespace GingerCore.Actions
                             DataSource.SaveTable(DSTable.DataTable);
                             //Get GingerId
                             DataTable dt = DataSource.GetTable(DSTableName);
-                            DataRow row = dt.Rows[dt.Rows.Count - 1];
+                            DataRow row = dt.Rows[^1];
                             string GingerId = Convert.ToString(row["GINGER_ID"]);
                             AddOrUpdateReturnParamActual("GINGER_ID", GingerId);
                         }
@@ -258,8 +276,10 @@ namespace GingerCore.Actions
                         }
                         break;
                     default:
-                        ValueExpression VEDR = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        VEDR.Value = ValueExp;
+                        ValueExpression VEDR = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList)
+                        {
+                            Value = ValueExp
+                        };
                         outVal = VEDR.ValueCalculated;
                         break;
                 }
@@ -314,13 +334,13 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string KeyName
         {
-            get 
+            get
             {
-                return mKeyName; 
+                return mKeyName;
             }
             set
             {
-                if(!string.Equals(mKeyName , value))
+                if (!string.Equals(mKeyName, value))
                 {
                     mKeyName = value;
                     OnPropertyChanged(nameof(KeyName));
@@ -388,7 +408,8 @@ namespace GingerCore.Actions
 
         private ExportToExcelConfig mExcelConfig;
         [IsSerializedForLocalRepository]
-        public ExportToExcelConfig ExcelConfig {
+        public ExportToExcelConfig ExcelConfig
+        {
             get
             {
                 return mExcelConfig;
@@ -405,7 +426,7 @@ namespace GingerCore.Actions
                     mExcelConfig.StartDirtyTracking();
                     mExcelConfig.OnDirtyStatusChanged += this.RaiseDirtyChanged;
                     OnPropertyChanged(nameof(ExcelConfig));
-                }  
+                }
             }
         }
 
@@ -478,7 +499,8 @@ namespace GingerCore.Actions
 
         private string mQueryValue;
         [IsSerializedForLocalRepository]
-        public string QueryValue {
+        public string QueryValue
+        {
             get
             {
                 return mQueryValue;
@@ -549,11 +571,14 @@ namespace GingerCore.Actions
 
         private bool mByQuery;
         [IsSerializedForLocalRepository]
-        public bool ByQuery { get
+        public bool ByQuery
+        {
+            get
             {
                 return mByQuery;
             }
-                set { 
+            set
+            {
                 mByQuery = value;
                 OnPropertyChanged(nameof(ByQuery));
             }
@@ -569,7 +594,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                if(mDSTableName != value)
+                if (mDSTableName != value)
                 {
                     mDSTableName = value;
                     OnPropertyChanged(nameof(DSTableName));
@@ -579,7 +604,8 @@ namespace GingerCore.Actions
 
         private eRunColPropertyValue mWhereProperty;
         [IsSerializedForLocalRepository]
-        public eRunColPropertyValue WhereProperty {
+        public eRunColPropertyValue WhereProperty
+        {
             get
             {
                 return mWhereProperty;
@@ -596,7 +622,8 @@ namespace GingerCore.Actions
 
         private eRunColOperator mWhereOperator;
         [IsSerializedForLocalRepository]
-        public eRunColOperator WhereOperator {
+        public eRunColOperator WhereOperator
+        {
             get { return mWhereOperator; }
             set
             {
@@ -611,7 +638,8 @@ namespace GingerCore.Actions
 
         private bool mByRowNum;
         [IsSerializedForLocalRepository]
-        public bool ByRowNum {
+        public bool ByRowNum
+        {
             get
             {
                 return mByRowNum;
@@ -719,7 +747,7 @@ namespace GingerCore.Actions
         {
 
             ActDSConditon ADSC = new ActDSConditon();
-            ObservableList<string> Condition = new ObservableList<string>();
+            ObservableList<string> Condition = [];
             if (wCond != ActDSConditon.eCondition.EMPTY)
             {
                 foreach (ActDSConditon.eCondition item in Enum.GetValues(typeof(ActDSConditon.eCondition)))
@@ -731,11 +759,7 @@ namespace GingerCore.Actions
                 }
             }
 
-            List<string> colNames = new List<string>();
-            foreach (string sColName in mColName)
-            {
-                colNames.Add(sColName);
-            }
+            List<string> colNames = [.. mColName];
 
             ADSC.PossibleCondValues = Condition;
             ADSC.PossibleColumnValues = colNames;
@@ -751,7 +775,7 @@ namespace GingerCore.Actions
         {
             if (WhereConditions == null)
             {
-                WhereConditions = new ObservableList<ActDSConditon>();
+                WhereConditions = [];
             }
             foreach (ActDSConditon ADSC in WhereConditions)
             {

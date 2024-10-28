@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package GingerTelemetryProto.v1;
+
+message LogRecord {
+	string Id = 1;
+	string SolutionId = 2;
+	string Account = 3;
+	string CreationTimestamp = 4;
+	string AppVersion = 5;
+	string UserId = 6;
+	string Level = 7;
+	string Message = 8;
+	string Metadata = 9;
+}
+
+message AddLogsRequest {
+	repeated LogRecord Logs = 1;
+}
+
+message AddLogsResponse {
+	int32 LogCount = 1;
+}
+
+service LogCollector {
+	rpc Collect(AddLogsRequest) returns (AddLogsResponse);
+}

@@ -29,7 +29,7 @@ namespace GingerWPF.SolutionLib
         Solution mSolution;
         public override string Title { get { return "Create new solution wizard"; } }
 
-        public List<PluginPackage> SelectedPluginPackages = new List<PluginPackage>();
+        public List<PluginPackage> SelectedPluginPackages = [];
 
         public NewSolutionWizard()
         {

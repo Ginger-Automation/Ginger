@@ -58,13 +58,16 @@ namespace Ginger.Actions.Tuxedo
 
         private void SetGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.Resources["InputValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter", WidthWeight = 150 },
+                new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value", WidthWeight = 150 },
+                new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.Resources["InputValueExpressionButton"] },
+                new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay },
+            ]
+            };
 
             UDParamsGrid.SetAllColumnsDefaultView(view);
             UDParamsGrid.InitViewItems();
@@ -110,17 +113,19 @@ namespace Ginger.Actions.Tuxedo
                 string Value;
                 if (firstSpace > 0)
                 {
-                    Param = s.Substring(0, firstSpace);
-                    Value = s.Substring(firstSpace).Trim();
+                    Param = s[..firstSpace];
+                    Value = s[firstSpace..].Trim();
                 }
                 else
                 {
                     Param = s;
                     Value = "";
                 }
-                ActInputValue AIV = new ActInputValue();
-                AIV.Param = Param;
-                AIV.Value = Value;
+                ActInputValue AIV = new ActInputValue
+                {
+                    Param = Param,
+                    Value = Value
+                };
                 mAct.DynamicUDElements.Add(AIV);
             }
         }

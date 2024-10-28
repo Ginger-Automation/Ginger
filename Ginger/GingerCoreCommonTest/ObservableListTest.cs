@@ -39,9 +39,7 @@ namespace GingerCoreCommonTest
         public void ObservableListCast()
         {
             //Arrange
-            ObservableList<Activity> activities = new ObservableList<Activity>();
-            activities.Add(new Activity() { ActivityName = "a1" });
-            activities.Add(new Activity() { ActivityName = "a2" });
+            ObservableList<Activity> activities = [new Activity() { ActivityName = "a1" }, new Activity() { ActivityName = "a2" }];
 
             //Act
             ObservableList<RepositoryItemBase> list = activities.ListItemsCast<RepositoryItemBase>();

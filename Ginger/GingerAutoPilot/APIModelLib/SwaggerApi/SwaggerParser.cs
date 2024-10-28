@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
-using GingerCore;
 using Newtonsoft.Json.Linq;
 using NSwag;
 using System;
@@ -39,12 +38,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     JToken.Parse(fileConverted); // doing the Jtoken to validate the json file
                     Swaggerdoc = SwaggerDocument.FromJsonAsync(fileConverted).Result;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided yaml document " , ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided yaml document ", ex);
                     Reporter.ToUser(eUserMsgKey.InvalidYAML);
                 }
-                
             }
             else
             {
@@ -64,7 +62,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             if (Swaggerdoc.SchemaType.ToString() == "Swagger2")
             {
                 SwaggerVer2 s2 = new SwaggerVer2();
-                SwaggerModels = s2.SwaggerTwo(Swaggerdoc,SwaggerModels);
+                SwaggerModels = s2.SwaggerTwo(Swaggerdoc, SwaggerModels);
             }
             else
             {

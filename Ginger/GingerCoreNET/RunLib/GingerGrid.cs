@@ -29,11 +29,11 @@ namespace GingerCoreNET.RunLib
     {
         GingerSocketServer2 mGingerSocketServer;
 
-        ObservableList<GingerNodeInfo> mGingerNodeInfo = new ObservableList<GingerNodeInfo>();
+        ObservableList<GingerNodeInfo> mGingerNodeInfo = [];
 
         int mPort;
 
-        static Dictionary<GingerNodeInfo, GingerNodeProxy> GingerNodeProxyDictionary = new Dictionary<GingerNodeInfo, GingerNodeProxy>();
+        static Dictionary<GingerNodeInfo, GingerNodeProxy> GingerNodeProxyDictionary = [];
 
         public GingerGrid(int Port)
         {
@@ -129,7 +129,7 @@ namespace GingerCoreNET.RunLib
                     break;
                 case SocketMessages.SendToNode:  // Send action to Node, used when Grid is remote
                     Guid SessionID2 = p.GetGuid();
-                    GingerNodeInfo gingerNodeInfo = NodeList.FirstOrDefault(x=>x.SessionID == SessionID2);
+                    GingerNodeInfo gingerNodeInfo = NodeList.FirstOrDefault(x => x.SessionID == SessionID2);
                     NewPayLoad actionPayload = p.ReadPayload();
                     NewPayLoad remoteNodeActionResponce = SendRequestPayLoad(gingerNodeInfo.SessionID, actionPayload);
                     remoteNodeActionResponce.Truncate();
@@ -229,8 +229,10 @@ namespace GingerCoreNET.RunLib
             bool b = GingerNodeProxyDictionary.TryGetValue(gingerNodeInfo, out gingerNodeProxy);
             if (!b)
             {
-                gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo);
-                gingerNodeProxy.GingerGrid = this;
+                gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo)
+                {
+                    GingerGrid = this
+                };
                 GingerNodeProxyDictionary.Add(gingerNodeInfo, gingerNodeProxy);
             }
             return gingerNodeProxy;

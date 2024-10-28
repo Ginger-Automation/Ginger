@@ -39,6 +39,7 @@
     <None Remove="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <None Remove="ConflictResolve\ConflictResolveIntro.md" />
     <None Remove="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
+    <None Remove="External\Katalon\ImportKatalonObjectRepositoryIntro.md" />
     <None Remove="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
     <None Remove="Images\%24Close-Window.png" />
     <None Remove="Images\%24DeExpand-Window.png" />
@@ -589,6 +590,7 @@
     <None Remove="RunSetLib\CreateAutoRunWizardLib\AutoRunIntroduction.md" />
     <None Remove="StaticDrivers\selenium-server-standalone.jar" />
     <None Remove="TestLib\WizardLib\Intro.md" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\AIBrain.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\android.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
@@ -599,6 +601,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\Environment.ico" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Environment.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\GingerAnalytics.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
@@ -613,6 +616,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\javascript.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\json.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\json.svg" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\katalon.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\medical.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-n.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-new.png" />
@@ -625,6 +629,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\send.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\sendArrow.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\smart.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\xml.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\xml.svg" />
@@ -654,6 +659,7 @@
 
   <ItemGroup>
     <Resource Include="ConflictResolve\ConflictResolveIntro.md" />
+    <Resource Include="External\Katalon\ImportKatalonObjectRepositoryIntro.md" />
     <Resource Include="GingerIconNew.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -704,9 +710,10 @@
     <PackageReference Include="FontAwesome6.Fonts" Version="2.5.1" />
     <PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="2024.4.1.6" />
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.3.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
+    <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
     <PackageReference Include="log4net" Version="2.0.15" />
@@ -745,7 +752,7 @@
     <ProjectReference Include="..\GingerWin64OsSupport\GingerWin64OsSupport.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup>    
     <Reference Include="ACL_Data_Contract">
       <HintPath>..\GingerCoreNET\DLLS\ACL_Data_Contract.dll</HintPath>
     </Reference>
@@ -2434,7 +2441,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="TestLib\WizardLib\Intro.md" />
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\android.png">
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\AIBrain.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+     <Resource Include="UserControlsLib\ImageMakerLib\Images\android.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\androidOutline.png">
@@ -2459,6 +2469,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Ginger.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerAnalytics.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png">
@@ -2491,6 +2504,9 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\json.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\katalon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\medical.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -2516,7 +2532,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\VRTLogo.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\xml.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

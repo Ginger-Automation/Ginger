@@ -83,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         public NewPayLoad SendRequest(NewPayLoad payload)
         {
             // get stuck when Ginger close
-            while (mProcessingStatus != eProcessingStatus.Ready && mProcessingStatus != eProcessingStatus.ResponseCompleted)
+            while (mProcessingStatus is not eProcessingStatus.Ready and not eProcessingStatus.ResponseCompleted)
             {
 
                 Thread.Sleep(new TimeSpan(1));  //TODO: add timeout!!! or??
@@ -171,7 +171,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                         NewPayLoad Resp = new NewPayLoad(gingerSocketInfo.buffer, true);
 
                         // We got the full packet, convert to Payload and process                        
-                        if (Resp.PaylodType == NewPayLoad.ePaylodType.ResponsePayload || Resp.PaylodType == NewPayLoad.ePaylodType.SocketResponse)
+                        if (Resp.PaylodType is NewPayLoad.ePaylodType.ResponsePayload or NewPayLoad.ePaylodType.SocketResponse)
                         {
                             mProcessingStatus = eProcessingStatus.ResponseStarted;
                             // Create new Payload from the buffer, ignoring the extra space at the end
@@ -258,14 +258,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             NewPayLoad Req = gingerSocketInfo.DataAsPayload;
             if (Req.Name == "GetSession")
             {
-                gingerSocketInfo.Response = new NewPayLoad("SessionID", SessionID);
-                gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;
+                gingerSocketInfo.Response = new NewPayLoad("SessionID", SessionID)
+                {
+                    PaylodType = NewPayLoad.ePaylodType.SocketResponse
+                };
                 return;
             }
             if (Req.Name == "NodeClosing")
             {
-                gingerSocketInfo.Response = new NewPayLoad("OK", "Bye");
-                gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;
+                gingerSocketInfo.Response = new NewPayLoad("OK", "Bye")
+                {
+                    PaylodType = NewPayLoad.ePaylodType.SocketResponse
+                };
                 // TODO: close...
                 return;
             }

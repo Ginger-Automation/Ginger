@@ -151,11 +151,13 @@ namespace Ginger.Run
         public ExecutionLoggerManager(Context context, eExecutedFrom executedFrom = eExecutedFrom.Run)
         {
             mContext = context;
-            mJsonSerializer = new Newtonsoft.Json.JsonSerializer();
-            mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+            mJsonSerializer = new Newtonsoft.Json.JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
             ExecutedFrom = executedFrom;
 
-            if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null)
             {
                 WorkSpace.Instance.Solution.LoggerConfigurations.DataRepositoryChanged -= InitializeExecutionLogger;
                 WorkSpace.Instance.Solution.LoggerConfigurations.DataRepositoryChanged += InitializeExecutionLogger;
@@ -203,15 +205,11 @@ namespace Ginger.Run
                 gingerReport.Watch.Start();
                 gingerReport.LogFolder = string.Empty;
 
-                switch (this.ExecutedFrom)
+                gingerReport.LogFolder = this.ExecutedFrom switch
                 {
-                    case Amdocs.Ginger.Common.eExecutedFrom.Automation:
-                        gingerReport.LogFolder = mExecutionLogger.ExecutionLogfolder;
-                        break;
-                    default:
-                        gingerReport.LogFolder = mExecutionLogger.ExecutionLogfolder;
-                        break;
-                }
+                    Amdocs.Ginger.Common.eExecutedFrom.Automation => mExecutionLogger.ExecutionLogfolder,
+                    _ => mExecutionLogger.ExecutionLogfolder,
+                };
                 mExecutionLogger.CreateNewDirectory(gingerReport.LogFolder);
 
                 if (!offlineMode)
@@ -258,7 +256,7 @@ namespace Ginger.Run
 
             if (!string.IsNullOrEmpty(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription) && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription.Contains('{'))
             {
-                IValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mCurrentBusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false)
+                IValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mCurrentBusinessFlow, [], false, "", false)
                 {
                     Value = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription
                 };
@@ -275,7 +273,7 @@ namespace Ginger.Run
             ((ExecutionLogger)mExecutionLogger).SetRunsetFolder(execResultsFolder, maxFolderSize, currentExecutionDateTime, offline);
             if (!offline)
             {
-                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, null);
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), string.Format("{0} (ID:{1})", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid) , null);                
             }
         }
 
@@ -450,7 +448,7 @@ namespace Ginger.Run
             folderName = folderName.TrimEnd().TrimEnd('-').TrimEnd();
             if (folderName.Length > 30)
             {
-                folderName = folderName.Substring(0, 30);
+                folderName = folderName[..30];
             }
             folderName = folderName.TrimEnd().TrimEnd('-').TrimEnd();
             return folderName;
@@ -459,7 +457,7 @@ namespace Ginger.Run
         public override void ActionStart(uint eventTime, Act action)
         {
             SetActionFolder(action);
-            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Action", string.Format("{0} (ID:{1}, ParentID:{2})", action.Description, action.Guid, action.ExecutionParentGuid), null);
+            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Action", string.Format("{0} (ID:{1}, ParentID:{2}, ParentActivityID: {3})", action.Description, action.Guid, action.ExecutionParentGuid, mCurrentActivity?.Guid), null);
         }
         // remove
         public void SetActionFolder(Act action)
@@ -497,15 +495,23 @@ namespace Ginger.Run
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {
             // if user set special action log in output
-            if (action.EnableActionLogConfig)
+            try
             {
-                if (mGingerRunnerLogger == null)
+                if (action.EnableActionLogConfig && !string.IsNullOrEmpty(mExecutionLogger.ExecutionLogfolder))
                 {
-                    string loggerFile = Path.Combine(mExecutionLogger.ExecutionLogfolder, FileSystem.AppendTimeStamp("GingerLog.txt"));
-                    mGingerRunnerLogger = new GingerRunnerLogger(loggerFile);
+                    if (mGingerRunnerLogger == null)
+                    {
+                        string loggerFile = Path.Combine(mExecutionLogger.ExecutionLogfolder, FileSystem.AppendTimeStamp("GingerLog.txt"));
+                        mGingerRunnerLogger = new GingerRunnerLogger(loggerFile);
+                    }
+                    mGingerRunnerLogger.LogAction(action);
                 }
-                mGingerRunnerLogger.LogAction(action);
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in LogAction", ex);
+            }
+
             Activity currentActivity = null;
             try
             {
@@ -534,9 +540,9 @@ namespace Ginger.Run
                     if (action.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && !WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any(z => z != null && z.FailedActionGuid == action.Guid))
                     {
                         //Get the ALM test Set Level for publish Result to ALM
-                        bool IsRunTestSetLevel = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(x => x.ItemName == "Publish Execution Results to ALM")?.GetAlMTestSetLevel() == eALMTestSetLevel.RunSet ? true : false;
+                        bool IsRunTestSetLevel = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(x => x.ItemName == "Publish Execution Results to ALM")?.GetAlMTestSetLevel() == eALMTestSetLevel.RunSet;
 
-                        List<string> screenShotsPathes = new List<string>();
+                        List<string> screenShotsPathes = [];
                         bool isScreenshotButtonEnabled = false;
                         if ((action.ScreenShots != null) && (action.ScreenShots.Count > 0))
                         {
@@ -595,7 +601,7 @@ namespace Ginger.Run
 
                 if (!offlineMode)
                 {
-                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2})", action.Description, action.Guid, action.ExecutionParentGuid), AR);
+                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2}, ParentActivityID: {3})", action.Description, action.Guid, action.ExecutionParentGuid, mCurrentActivity?.Guid), AR);
                 }
             }
             catch (Exception ex)
@@ -649,7 +655,7 @@ namespace Ginger.Run
 
                     mContext = (Context)gingerrunner.Executor.Context;
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus gingerRunnerStatus = gingerrunner.Executor.RunsetStatus;
-                    if (gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                    if (gingerRunnerStatus is not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed and not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed and not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
                     {
                         continue;
                     }
@@ -764,7 +770,7 @@ namespace Ginger.Run
                     ((ExecutionLogger)mExecutionLogger).ExecutionLogBusinessFlowsCounter = counter;
                     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
                     runner.CalculateBusinessFlowFinalStatus(bf, true);
-                    if (bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                    if (bf.RunStatus is not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed and not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed and not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
                     {
                         continue;
                     }
@@ -829,7 +835,7 @@ namespace Ginger.Run
                     {
                         continue;
                     }
-                    if (activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                    if (activity.Status is not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed and not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed and not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
                     {
                         continue;
                     }
@@ -839,7 +845,7 @@ namespace Ginger.Run
                     System.IO.Directory.CreateDirectory(activity.ExecutionLogFolder);
                     foreach (Act action in activity.Acts)
                     {
-                        if (action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored)
+                        if (action.Status is not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed and not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed and not Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped and not Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored)
                         {
                             continue;
                         }
@@ -870,7 +876,7 @@ namespace Ginger.Run
         {
             throw new NotImplementedException();
         }
-     
+
 
 
     }

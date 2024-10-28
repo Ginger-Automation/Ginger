@@ -27,22 +27,24 @@ namespace Ginger.AnalyzerLib
         public static List<AnalyzerItemBase> Analyze(Solution Solution)
         {
             // Put all tests on Solution here
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
+            List<AnalyzerItemBase> IssuesList = [];
 
             if (Solution.ApplicationPlatforms == null || !Solution.ApplicationPlatforms.Any())
             {
-                AnalyzeSolution AS = new AnalyzeSolution();
-                AS.Details = "Solution doesn't have Applications/Platforms defined";
-                AS.Description = "Solution doesn't have Applications/Platforms defined";
-                AS.HowToFix = "Goto to Solution tab, select the solution tree item, add application to the grid";
-                AS.Status = AnalyzerItemBase.eStatus.NeedFix;
-                AS.CanAutoFix = AnalyzerItemBase.eCanFix.No;
-                AS.Impact = "Activities will not run and will fail";
-                AS.ItemParent = "NA";
-                AS.ItemName = "No Applications / Platforms defined";
-                AS.ItemClass = "Solution";
-                AS.Severity = eSeverity.Critical;
-                AS.Selected = false;
+                AnalyzeSolution AS = new AnalyzeSolution
+                {
+                    Details = "Solution doesn't have Applications/Platforms defined",
+                    Description = "Solution doesn't have Applications/Platforms defined",
+                    HowToFix = "Goto to Solution tab, select the solution tree item, add application to the grid",
+                    Status = AnalyzerItemBase.eStatus.NeedFix,
+                    CanAutoFix = AnalyzerItemBase.eCanFix.No,
+                    Impact = "Activities will not run and will fail",
+                    ItemParent = "NA",
+                    ItemName = "No Applications / Platforms defined",
+                    ItemClass = "Solution",
+                    Severity = eSeverity.Critical,
+                    Selected = false
+                };
                 IssuesList.Add(AS);
             }
             return IssuesList;

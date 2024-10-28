@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.Environments.AppsListPage" 
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+    xmlns:usercontrols2="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
      xmlns:h="clr-namespace:Ginger.Help"
     xmlns:usercontrols="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Environment"
@@ -29,14 +30,18 @@
             <StackPanel>
                 <DockPanel>
                     <Label  Style="{StaticResource $LabelStyle}" Content="Release:"/>
-                    <ComboBox x:Name="xReleaseCombobox" Style="{StaticResource $FlatEditInputComboBoxStyle}"  MinWidth="300px"  HorizontalAlignment="Left"></ComboBox>
+                    <ComboBox x:Name="xReleaseCombobox" IsEnabled="True" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="0,0,0,20"  MinWidth="300px"  HorizontalAlignment="Left"></ComboBox>
+                    <Grid x:Name="xGOpsSyncBtnGrid">
+                        <usercontrols2:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="0,0,205,0" HorizontalAlignment="Right" Height="30" Width="20" Visibility="Hidden"></usercontrols2:ImageMakerControl>
+                        <usercontrols2:ucButton x:Name="xGASyncBtn" IsEnabled="True" Width="205" Padding="0,0,0,0" HorizontalAlignment="Right" Visibility="Collapsed" ButtonType="RoundTextAndImageButton" ButtonText="Sync with GingerOps" ButtonImageType="Retry" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="xGASyncBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Sync with GingerOps"/>
+                    </Grid>
                 </DockPanel>
 
-                <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,5,0,0"  Style="{StaticResource $CeckBoxStyle}"/>
+                <CheckBox x:Name="xPublishcheckbox" IsEnabled="True" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,-5,0,0"  Style="{StaticResource $CeckBoxStyle}"/>
             </StackPanel>
 
         </StackPanel>
 
-        <Ginger:ucGrid x:Name="grdApps" Title="Environment Applications" Grid.Row="1" ShowEdit="Collapsed" ShowRefresh="Collapsed"/>
+        <Ginger:ucGrid x:Name="grdApps" IsEnabled="True" Title="Environment Applications" Grid.Row="1" ShowEdit="Collapsed" ShowRefresh="Collapsed"/>
     </Grid>
 </UserControlsLib:GingerUIPage>

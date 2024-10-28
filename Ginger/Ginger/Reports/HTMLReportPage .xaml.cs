@@ -127,7 +127,7 @@ namespace Ginger.Reports
         private void ReplaceScreenshotTemplate(ref string ActivityData, List<string> ScreenShots)
         {
             var Screenshots = string.Empty;
-            ObservableList<Bitmap> Bitmp = new ObservableList<Bitmap>();
+            ObservableList<Bitmap> Bitmp = [];
             foreach (String bitmapsource in ScreenShots)
             {
                 Bitmap bmp = Ginger.Utils.BitmapManager.FileToBitmapImage(bitmapsource);
@@ -185,7 +185,7 @@ namespace Ginger.Reports
 
             if (Pos2 - Pos1 > 0)
             {
-                str = STR.Substring(Pos1, Pos2 - Pos1);
+                str = STR[Pos1..Pos2];
                 return str;
             }
             return "";

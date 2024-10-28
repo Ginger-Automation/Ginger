@@ -29,7 +29,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.Actions
 {
-        
+
 
 
     public class ActWebSmartSync : Act, IActPluginExecution
@@ -292,7 +292,7 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(UseAllLocators));
             }
         }
-    
+
 
         /// <summary>
         /// Overrides the ToString() method to provide a string representation of the action.

@@ -106,9 +106,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     //Getting the file XML to run.
                     string XMLFiledValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile);
-                    if (XMLFiledValue.Substring(0, 1).Equals("~"))
+                    if (XMLFiledValue[..1].Equals("~"))
                     {
-                        XMLFiledValue = System.IO.Path.Combine(mAct.SolutionFolder, XMLFiledValue.Substring(2));
+                        XMLFiledValue = System.IO.Path.Combine(mAct.SolutionFolder, XMLFiledValue[2..]);
                     }
                     commandParam = Quotationmark + XMLFiledValue + Quotationmark;
                 }
@@ -342,7 +342,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         //retrieves all requests and response for each test step, to be used after running the batch command.
         public Dictionary<string, List<string>> RequestsAndResponds()
         {
-            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> dict = [];
             string[] fileEntries = Directory.GetFiles(ReportPath);
             string testStepName = string.Empty;
             string request = string.Empty;
@@ -360,7 +360,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     continue;
                 }
 
-                if ((fileName.Substring(fileName.Length - 3)).Equals("txt"))
+                if ((fileName[^3..]).Equals("txt"))
                 {
                     testStepName = GenerateTestStepName(fileName);
                     request = GenerateRequest(fileName);
@@ -368,7 +368,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     message = GenerateMessage(fileName);
                     properties = GenerateProperties(fileName);
 
-                    dict.Add(fileName, new List<string>() { testStepName, request, response, ReportPath, message, properties });
+                    dict.Add(fileName, [testStepName, request, response, ReportPath, message, properties]);
                 }
             }
 
@@ -391,14 +391,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         public Dictionary<List<string>, List<string>> OutputParamAndValues()
         {
-            Dictionary<List<string>, List<string>> dict = new Dictionary<List<string>, List<string>>();
+            Dictionary<List<string>, List<string>> dict = [];
 
             string[] fileEntries = Directory.GetFiles(ReportPath);
 
 
             foreach (string fileName in fileEntries)
             {
-                if ((fileName.Substring(fileName.Length - 3)).Equals("txt"))
+                if ((fileName[^3..]).Equals("txt"))
                 {
                     List<string> listNames = OutputNames(fileName);
                     List<string> listValues = OutputValues(fileName);
@@ -415,9 +415,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             int contentLeanth = fileContent.Length;
             int startTestStepIndex = fileContent.IndexOf("TestStep:");
             int endTestStepIndex = fileContent.IndexOf("----------------- Messages ------------------------------");
-            string fileAfterTestStep = fileContent.Substring(startTestStepIndex);
+            string fileAfterTestStep = fileContent[startTestStepIndex..];
             int nextRowIndex = fileAfterTestStep.IndexOf("\r\n");
-            string testStepName = fileAfterTestStep.Substring(9, nextRowIndex - 9);
+            string testStepName = fileAfterTestStep[9..nextRowIndex];
             return testStepName;
         }
 
@@ -442,7 +442,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             else if (endMessageIndex == -1 && endMessageIndexForTransfer == -1)
             {
-                message = message + fileContent.Substring(startMessageIndex);
+                message = message + fileContent[startMessageIndex..];
             }
 
             return message;
@@ -451,7 +451,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         private List<string> OutputNames(string fileName)
         {
             string fileContent = File.ReadAllText(fileName);
-            List<string> listNames = new List<string>();
+            List<string> listNames = [];
 
             while (true)
             {
@@ -466,7 +466,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 int outputPropertyNameLeanth = (endOutputPropertyNameIndex - startOutputPropertyNameIndex);
                 string outputPropertyNameSection = fileContent.Substring(startOutputPropertyNameIndex + 1, outputPropertyNameLeanth - 1);
                 listNames.Add(outputPropertyNameSection);
-                fileContent = fileContent.Substring(endOutputPropertyNameIndex + 1);
+                fileContent = fileContent[(endOutputPropertyNameIndex + 1)..];
             }
             return listNames;
         }
@@ -474,7 +474,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         private List<string> OutputValues(string fileName)
         {
             string fileContent = File.ReadAllText(fileName);
-            List<string> listNames = new List<string>();
+            List<string> listNames = [];
 
             while (true)
             {
@@ -489,7 +489,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 int outputPropertyNameLeanth = (endOutputPropertyValueIndex - startOutputPropertyValueIndex);
                 string outputPropertyValueSection = fileContent.Substring(startOutputPropertyValueIndex + 2, outputPropertyNameLeanth - 2);
                 listNames.Add(outputPropertyValueSection);
-                fileContent = fileContent.Substring(endText + 38);
+                fileContent = fileContent[(endText + 38)..];
             }
             return listNames;
         }
@@ -527,7 +527,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             string requestXML = string.Empty;
             if (requestSection.IndexOf("<") != -1)
             {
-                requestXML = requestSection.Substring(requestSection.IndexOf("<"));
+                requestXML = requestSection[requestSection.IndexOf("<")..];
             }
             else
             {
@@ -547,18 +547,18 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 return string.Empty;
             }
 
-            string responseSection = fileContent.Substring(startResponseIndex);
+            string responseSection = fileContent[startResponseIndex..];
 
             int startResponseXML = responseSection.IndexOf("<");
             if (startResponseXML > -1)
             {
-                return responseSection.Substring(startResponseXML);
+                return responseSection[startResponseXML..];
             }
 
             int startResponseJSON = responseSection.IndexOf("{");
             if (startResponseJSON > -1)
             {
-                return responseSection.Substring(startResponseJSON);
+                return responseSection[startResponseJSON..];
             }
 
             return string.Empty;
@@ -584,12 +584,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
             if (!XMLFiledValue.Equals(string.Empty))
             {
-                if (XMLFiledValue.Substring(XMLFiledValue.Length - 4).ToUpper().Equals(".XML"))
+                if (XMLFiledValue[^4..].ToUpper().Equals(".XML"))
                 {
-                    if (XMLFiledValue.Substring(0, 1).Equals("~"))
+                    if (XMLFiledValue[..1].Equals("~"))
                     {
                         string SolutionFolder = mAct.SolutionFolder;
-                        XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
+                        XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue[2..]);
                     }
 
                     XmlDocument doc = new XmlDocument();

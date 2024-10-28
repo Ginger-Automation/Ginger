@@ -40,7 +40,7 @@ namespace Ginger.ALM.QC
 
         private ITreeViewItem mCurrentSelectedTreeItem = null;
         public string CurrentSelectedPath { get; set; }
-        ObservableList<QCTestSetTreeItem> mCurrentSelectedTestSets = new ObservableList<QCTestSetTreeItem>();
+        ObservableList<QCTestSetTreeItem> mCurrentSelectedTestSets = [];
         public ObservableList<QCTestSetTreeItem> CurrentSelectedTestSets
         {
             get
@@ -63,11 +63,13 @@ namespace Ginger.ALM.QC
             mImportDestinationPath = importDestinationPath;
 
             //root item
-            QCTestLabFolderTreeItem tvi = new QCTestLabFolderTreeItem();
-            tvi.Folder = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Octane ? "Application Modules" : "Root";
-            tvi.Path = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Octane ? @"Application Modules" : @"Root";
+            QCTestLabFolderTreeItem tvi = new QCTestLabFolderTreeItem
+            {
+                Folder = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Octane ? "Application Modules" : "Root",
+                Path = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Octane ? @"Application Modules" : @"Root"
+            };
 
-            
+
             TestLabExplorerTreeView.Tree.AddItem(tvi);
 
             TestLabExplorerTreeView.TreeTitle = "'" + ALMCore.DefaultAlmConfig.ALMDomain + " \\ " + ALMCore.DefaultAlmConfig.ALMProjectName + "' - Test Lab Explorer";
@@ -76,7 +78,7 @@ namespace Ginger.ALM.QC
 
             LoadDataBizFlows();
 
-            mExecDetailNames = new List<string[]>();
+            mExecDetailNames = [];
 
             ShowTestSetDetailsPanel(false);
         }
@@ -94,18 +96,22 @@ namespace Ginger.ALM.QC
                     total += number;
                 }
             }
-            Label totalTcsNum = new Label();
-            totalTcsNum.Content = "Total Number of TC's: " + total;
-            totalTcsNum.Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style;
-            totalTcsNum.Margin = new Thickness(0, 0, 0, 0);
+            Label totalTcsNum = new Label
+            {
+                Content = "Total Number of TC's: " + total,
+                Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style,
+                Margin = new Thickness(0, 0, 0, 0)
+            };
             TSExecDetails.Children.Add(totalTcsNum);
 
             foreach (string[] detail in mExecDetailNames)
             {
-                Label StatusName = new Label();
-                StatusName.Content = detail[1] + " TC's in Status '" + detail[0] + "'";
-                StatusName.Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style;
-                StatusName.Margin = new Thickness(0, 0, 0, 0);
+                Label StatusName = new Label
+                {
+                    Content = detail[1] + " TC's in Status '" + detail[0] + "'",
+                    Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style,
+                    Margin = new Thickness(0, 0, 0, 0)
+                };
                 TSExecDetails.Children.Add(StatusName);
             }
         }
@@ -204,24 +210,30 @@ namespace Ginger.ALM.QC
             switch (mExplorerTestLabPageUsageType)
             {
                 case (eExplorerTestLabPageUsageType.Import):
-                    Button importBtn = new Button();
-                    importBtn.Content = "Import Selected";
+                    Button importBtn = new Button
+                    {
+                        Content = "Import Selected"
+                    };
                     importBtn.Click += new RoutedEventHandler(ImportSelected);
-                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, [importBtn], true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedTestSets;
 
                 case (eExplorerTestLabPageUsageType.Select):
-                    Button selectBtn = new Button();
-                    selectBtn.Content = "Select";
+                    Button selectBtn = new Button
+                    {
+                        Content = "Select"
+                    };
                     selectBtn.Click += new RoutedEventHandler(Select);
-                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, new ObservableList<Button> { selectBtn }, true, "Cancel", Cancel_Clicked);
+                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, [selectBtn], true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedTestSets;
 
                 case (eExplorerTestLabPageUsageType.BrowseFolders):
-                    Button selectFolderBtn = new Button();
-                    selectFolderBtn.Content = "Select Folder";
+                    Button selectFolderBtn = new Button
+                    {
+                        Content = "Select Folder"
+                    };
                     selectFolderBtn.Click += new RoutedEventHandler(SelectFolder);
-                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, new ObservableList<Button> { selectFolderBtn }, true, "Cancel", Cancel_Clicked);
+                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, [selectFolderBtn], true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedPath;
             }
 
@@ -271,7 +283,7 @@ namespace Ginger.ALM.QC
                     Mouse.OverrideCursor = null;
                 }
 
-                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedTestSets) == true)
+                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, CurrentSelectedTestSets) == true)
                 {
                     //Refresh the explorer selected tree items import status
                     LoadDataBizFlows();

@@ -45,11 +45,13 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         {
             string name = "Name_" + Convert.ToString(i);
 
-            ElementInfo eInfo = new ElementInfo();
-            eInfo.ElementName = name;
+            ElementInfo eInfo = new ElementInfo
+            {
+                ElementName = name
+            };
 
             ElementActionCongifuration eleArgs = new ElementActionCongifuration();
-            if (i == 1 || i == 3)
+            if (i is 1 or 3)
             {
                 eleArgs.LocateBy = eLocateBy.ByName.ToString();
                 eleArgs.LocateValue = name;

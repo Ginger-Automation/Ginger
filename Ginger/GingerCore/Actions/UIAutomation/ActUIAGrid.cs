@@ -71,7 +71,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eGridAction)GetOrCreateInputParam<eGridAction>(nameof(GridAction), eGridAction.ClickCell);
+                return GetOrCreateInputParam<eGridAction>(nameof(GridAction), eGridAction.ClickCell);
             }
             set
             {

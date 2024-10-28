@@ -67,8 +67,10 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
             // Wait for node to be connected.
 
-            gingerNodeProxy = new GingerNodeProxy(gingerGrid.NodeList[0]);
-            gingerNodeProxy.GingerGrid = gingerGrid;
+            gingerNodeProxy = new GingerNodeProxy(gingerGrid.NodeList[0])
+            {
+                GingerGrid = gingerGrid
+            };
 
             // GingerRunner gingerRunner = new GingerRunner();
             agent = new Agent();
@@ -80,7 +82,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             // agent.PluginId = "aa";
             agent.ServiceId = "WebPlatformServiceFake";
             agent.AgentType = Agent.eAgentType.Service;
-            agent.DriverConfiguration = new Amdocs.Ginger.Common.ObservableList<DriverConfigParam>();
+            agent.DriverConfiguration = [];
 
             //agent.st
             // agent.StartDriver();
@@ -90,25 +92,34 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
 
             mGR = new GingerRunner();
-            mGR.Executor = new GingerExecutionEngine(mGR);
-
-            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF Test Java Driver";
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
+            mGR.Executor = new GingerExecutionEngine(mGR)
+            {
+                CurrentSolution = new Ginger.SolutionGeneral.Solution()
+            };
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF Test Java Driver"
+            };
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.Web
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "TestApp" });
-            Activity activity = new Activity();
-            activity.TargetApplication = "JavaTestApp";
+            Activity activity = new Activity
+            {
+                TargetApplication = "JavaTestApp"
+            };
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
             mGR.Executor.CurrentBusinessFlow = mBF;
 
 
-            ApplicationAgent AA = new ApplicationAgent();
-            AA.AppName = "JavaTestApp";
-            AA.Agent = agent;
+            ApplicationAgent AA = new ApplicationAgent
+            {
+                AppName = "JavaTestApp",
+                Agent = agent
+            };
 
             mGR.ApplicationAgents.Add(AA);
             mGR.Executor.SetCurrentActivityAgent();
@@ -156,9 +167,11 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             //Arrange
             string url = "aaa";
 
-            ActBrowserElement actBrowserElement = new ActBrowserElement();
-            actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
-            actBrowserElement.Value = url;
+            ActBrowserElement actBrowserElement = new ActBrowserElement
+            {
+                ControlAction = ActBrowserElement.eControlAction.GotoURL,
+                Value = url
+            };
 
             mBF.CurrentActivity.Acts.Add(actBrowserElement);
             mBF.CurrentActivity.Acts.CurrentItem = actBrowserElement;
@@ -218,11 +231,13 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             //Arrange
 
-            ActUIElement actUIElement = new ActUIElement();
-            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Button;
-            actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-            actUIElement.ElementLocateValue = "button1";
-            actUIElement.ElementAction = ActUIElement.eElementAction.Click;
+            ActUIElement actUIElement = new ActUIElement
+            {
+                ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Button,
+                ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID,
+                ElementLocateValue = "button1",
+                ElementAction = ActUIElement.eElementAction.Click
+            };
 
 
 
@@ -246,11 +261,13 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             //Arrange
 
-            ActUIElement actUIElement = new ActUIElement();
-            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Button;
-            actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-            actUIElement.ElementLocateValue = "wrongId";
-            actUIElement.ElementAction = ActUIElement.eElementAction.Click;
+            ActUIElement actUIElement = new ActUIElement
+            {
+                ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Button,
+                ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID,
+                ElementLocateValue = "wrongId",
+                ElementAction = ActUIElement.eElementAction.Click
+            };
 
             mBF.CurrentActivity.Acts.Add(actUIElement);
             mBF.CurrentActivity.Acts.CurrentItem = actUIElement;
@@ -267,18 +284,22 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             //Arrange
             string text = "John";
-            ActUIElement setTextBoxAction = new ActUIElement();
-            setTextBoxAction.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
-            setTextBoxAction.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-            setTextBoxAction.ElementLocateValue = "user";
-            setTextBoxAction.ElementAction = ActUIElement.eElementAction.SetText;
-            setTextBoxAction.Value = text;
+            ActUIElement setTextBoxAction = new ActUIElement
+            {
+                ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox,
+                ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID,
+                ElementLocateValue = "user",
+                ElementAction = ActUIElement.eElementAction.SetText,
+                Value = text
+            };
 
-            ActUIElement getTextBoxAction = new ActUIElement();
-            getTextBoxAction.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
-            getTextBoxAction.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-            getTextBoxAction.ElementLocateValue = "user";
-            getTextBoxAction.ElementAction = ActUIElement.eElementAction.GetText;
+            ActUIElement getTextBoxAction = new ActUIElement
+            {
+                ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox,
+                ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID,
+                ElementLocateValue = "user",
+                ElementAction = ActUIElement.eElementAction.GetText
+            };
 
 
 

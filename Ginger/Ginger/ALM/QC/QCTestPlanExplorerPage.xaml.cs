@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Ginger.ALM.QC.TreeViewItems;
 using GingerCore.ALM;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -39,9 +38,11 @@ namespace Ginger.ALM.QC
             TestPlanExplorerTreeView.TreeTitle = "'" + ALMCore.DefaultAlmConfig.ALMDomain + " \\ " + ALMCore.DefaultAlmConfig.ALMProjectName + "' - Test Plan Explorer";
             TestPlanExplorerTreeView.SetTitleSection(2, 30, 15, FontWeights.Bold);
             //set root item
-            QCTestPlanFolderTreeItem tvi = new QCTestPlanFolderTreeItem();
-            tvi.Folder = "Subject";
-            tvi.Path = @"Subject";
+            QCTestPlanFolderTreeItem tvi = new QCTestPlanFolderTreeItem
+            {
+                Folder = "Subject",
+                Path = @"Subject"
+            };
             TestPlanExplorerTreeView.Tree.AddItem(tvi);
 
             TestPlanExplorerTreeView.Tree.ItemSelected += TestPlanExplorerTreeView_ItemSelected;
@@ -58,11 +59,13 @@ namespace Ginger.ALM.QC
 
         public string ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button selectBtn = new Button();
-            selectBtn.Content = "Select Folder";
+            Button selectBtn = new Button
+            {
+                Content = "Select Folder"
+            };
             selectBtn.Click += new RoutedEventHandler(selectBtn_Clicked);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Browse QC/ALM Test Plan", this, new ObservableList<Button> { selectBtn }, true, "Cancel", Cancel_Clicked);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Browse QC/ALM Test Plan", this, [selectBtn], true, "Cancel", Cancel_Clicked);
 
             return SelectedPath;
         }

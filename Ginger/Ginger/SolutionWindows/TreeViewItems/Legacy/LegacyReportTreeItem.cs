@@ -42,7 +42,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = [];
 
             //Add Reports
             ReportTemplatesTreeItem REPRI = new ReportTemplatesTreeItem(null);

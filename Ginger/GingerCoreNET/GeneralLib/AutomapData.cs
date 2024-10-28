@@ -16,19 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Repository;
 using AutoMapper;
+using GingerCore.Variables;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using GingerCore.Variables;
-using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.CoreNET.GeneralLib
 {
@@ -37,11 +30,11 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         public static void AutoMapVariableData(VariableBase customizedVar, ref VariableBase originalVar, bool skipType)
         {
             string varType = string.Empty;
-            if(!skipType)
+            if (!skipType)
             {
-               varType = customizedVar.GetType().Name;
-            }                
-            
+                varType = customizedVar.GetType().Name;
+            }
+
             switch (varType)
             {
                 case nameof(VariableDateTime):
@@ -70,7 +63,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                     break;
                 case nameof(VariableTimer):
                     CreateMapper<VariableTimer>().Map<VariableTimer, VariableTimer>((VariableTimer)customizedVar, (VariableTimer)originalVar);
-                    break;                
+                    break;
                 case nameof(VariableSelectionList):
                     CreateMapper<VariableSelectionList>().Map<VariableSelectionList, VariableSelectionList>((VariableSelectionList)customizedVar, (VariableSelectionList)originalVar);
                     break;

@@ -411,15 +411,17 @@ namespace Ginger
                 {
                     winStyle = windowStyle;
                 }
-                genWindow = new GenericWindow(owner, winStyle, windowTitle, windowPage, windowBtnsList, showClosebtn, closeBtnText, closeEventHandler);
-                genWindow.Title = windowPage.Title;
+                genWindow = new GenericWindow(owner, winStyle, windowTitle, windowPage, windowBtnsList, showClosebtn, closeBtnText, closeEventHandler)
+                {
+                    Title = windowPage.Title
+                };
                 if (startupLocationWithOffset)
                 {
                     genWindow.WindowStartupLocation = WindowStartupLocation.Manual;
                     genWindow.Left = 50;
                     genWindow.Top = 200;
                 }
-                if (winStyle == eWindowShowStyle.Dialog || winStyle == eWindowShowStyle.OnlyDialog)
+                if (winStyle is eWindowShowStyle.Dialog or eWindowShowStyle.OnlyDialog)
                 {
                     genWindow.ShowDialog();
                 }

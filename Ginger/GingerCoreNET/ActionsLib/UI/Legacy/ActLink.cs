@@ -75,7 +75,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eLinkAction)GetOrCreateInputParam<eLinkAction>(nameof(LinkAction), eLinkAction.Click);
+                return GetOrCreateInputParam<eLinkAction>(nameof(LinkAction), eLinkAction.Click);
             }
             set
             {
@@ -124,7 +124,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform is ePlatformType.Web or ePlatformType.NA or ePlatformType.Mobile)
             {
                 return true;
             }
@@ -144,18 +144,12 @@ namespace GingerCore.Actions
             if (currentType == typeof(ActUIElement))
             {
                 // check special cases, where name should be changed. Than at default case - all names that have no change
-                switch (this.LinkAction)
+                newAct.ElementAction = this.LinkAction switch
                 {
-                    case eLinkAction.Click:
-                        newAct.ElementAction = ActUIElement.eElementAction.JavaScriptClick;
-                        break;
-                    case eLinkAction.Visible:
-                        newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
-                        break;
-                    default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.LinkAction.ToString());
-                        break;
-                }
+                    eLinkAction.Click => ActUIElement.eElementAction.JavaScriptClick,
+                    eLinkAction.Visible => ActUIElement.eElementAction.IsVisible,
+                    _ => (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.LinkAction.ToString()),
+                };
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);

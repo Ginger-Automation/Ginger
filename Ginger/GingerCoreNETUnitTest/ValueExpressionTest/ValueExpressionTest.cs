@@ -27,13 +27,16 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
+using GingerCore.Variables;
 using GingerCoreNET.DataSource;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using static Amdocs.Ginger.Common.GeneralLib.General;
 
 namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
@@ -58,8 +61,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             mSolutionRepository = WorkSpace.Instance.SolutionRepository;
             string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
-            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
-            sol.ContainingFolderFullPath = TempRepositoryFolder;
+            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution
+            {
+                ContainingFolderFullPath = TempRepositoryFolder
+            };
             WorkSpace.Instance.Solution = sol;
             if (WorkSpace.Instance.Solution.SolutionOperations == null)
             {
@@ -69,47 +74,89 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
 
-            runset = new RunSetConfig();
-            runset.Name = "NewRunset1";
+            runset = new RunSetConfig
+            {
+                Name = "NewRunset1"
+            };
             WorkSpace.Instance.RunsetExecutor.RunSetConfig = runset;
+
             runner = new GingerExecutionEngine(new GingerRunner());
             runner.GingerRunner.Name = "Runner1";
             runner.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             WorkSpace.Instance.RunsetExecutor.Runners.Add(runner.GingerRunner);
-            mEnv = new ProjEnvironment();
-            mEnv.Name = "Environment1";
-            EnvApplication app1 = new EnvApplication();
-            app1.Name = "App1";
-            app1.Url = "URL123";
+
+            mEnv = new ProjEnvironment
+            {
+                Name = "Environment1"
+            };
+
+            EnvApplication app1 = new EnvApplication
+            {
+                Name = "App1",
+                Url = "URL123"
+            };
             mEnv.Applications.Add(app1);
-            GeneralParam GP1 = new GeneralParam();
-            GP1.Name = "GP1";
-            GP1.Value = "GP1Value";
+
+            GeneralParam GP1 = new GeneralParam
+            {
+                Name = "GP1",
+                Value = "GP1Value"
+            };
             app1.GeneralParams.Add(GP1);
 
-            mBF = new BusinessFlow();
-            mBF.Name = "Businessflow1";
+            VariableString BFVariableString = new VariableString
+            {
+                Name = "BFVar",
+                InitialStringValue = "initial",
+                Value = "current"
+            };
+
+            mBF = new BusinessFlow
+            {
+                Name = "Businessflow1"
+            };
+            mBF.Variables.Add(BFVariableString);
             runner.BusinessFlows.Add(mBF);
-            mActivity = new GingerCore.Activity();
-            mActivity.Active = true;
-            mActivity.ActivityName = "Activity1";
-            mAct = new ActDummy();
-            mAct.Active = true;
-            mAct.Description = "Action1";
+
+            VariableString ActivityVariableString = new VariableString
+            {
+                Name = "ActivityVar",
+                InitialStringValue = "initial",
+                Value = "current"
+            };
+
+            mActivity = new GingerCore.Activity
+            {
+                Active = true,
+                ActivityName = "Activity1"
+            };
+            mActivity.Variables.Add(ActivityVariableString);
+
+            mAct = new ActDummy
+            {
+                Active = true,
+                Description = "Action1"
+            };
             mActivity.Acts.Add(mAct);
             mActivity.Acts.CurrentItem = mAct;
             mBF.AddActivity(mActivity);
 
 
-            BusinessFlow BF1 = new BusinessFlow();
-            BF1.Name = "Businessflow2";
+            BusinessFlow BF1 = new BusinessFlow
+            {
+                Name = "Businessflow2"
+            };
             runner.BusinessFlows.Add(BF1);
-            GingerCore.Activity activity = new GingerCore.Activity();
-            activity.Active = true;
-            activity.ActivityName = "Activity1";
-            ActDummy dummy = new ActDummy();
-            dummy.Active = true;
-            dummy.Description = "Dummy1";
+            GingerCore.Activity activity = new GingerCore.Activity
+            {
+                Active = true,
+                ActivityName = "Activity1"
+            };
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Description = "Dummy1"
+            };
             activity.Acts.Add(dummy);
             activity.Acts.CurrentItem = dummy;
             BF1.AddActivity(activity);
@@ -183,17 +230,19 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             dataSourceBase.DSType = DataSourceBase.eDSType.LiteDataBase;
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(dataSourceBase);
 
-            ActDSTableElement actDSTableElement = new();
-            actDSTableElement.DSTableName = "MyCustomizedDataTable";
-            actDSTableElement.DSName = "LiteDataBase";
-            actDSTableElement.ByRowNum = true;
-            actDSTableElement.LocateRowValue = "0";
-            actDSTableElement.ControlAction = ActDSTableElement.eControlAction.GetValue;
-            actDSTableElement.LocateColTitle = "New";
-            actDSTableElement.Customized = true;
+            ActDSTableElement actDSTableElement = new()
+            {
+                DSTableName = "MyCustomizedDataTable",
+                DSName = "LiteDataBase",
+                ByRowNum = true,
+                LocateRowValue = "0",
+                ControlAction = ActDSTableElement.eControlAction.GetValue,
+                LocateColTitle = "New",
+                Customized = true
+            };
             LiteDBSQLTranslator liteDBTranslator = new(actDSTableElement);
             string ValueExpression = liteDBTranslator.CreateValueExpression();
-            IValueExpression mVE = new ValueExpression(mEnv, mBF, new ObservableList<DataSourceBase>(), false, "", false)
+            IValueExpression mVE = new ValueExpression(mEnv, mBF, [], false, "", false)
             {
                 Value = ValueExpression
             };
@@ -208,8 +257,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void Comparison()
         {
             //Arrange                      
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{CS Exp=20==10}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{CS Exp=20==10}"
+            };
 
             //Act
             bool v = Convert.ToBoolean(VE.ValueCalculated);
@@ -223,8 +274,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void LogicalOperationAND()
         {
             //Arrange                      
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{CS Exp=20>10 && 9<10}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{CS Exp=20>10 && 9<10}"
+            };
 
             //Act
             bool v = Convert.ToBoolean(VE.ValueCalculated);
@@ -238,8 +291,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void LogicalOperationOR()
         {
             //Arrange                        
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{CS Exp=5>6 || 4<5}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{CS Exp=5>6 || 4<5}"
+            };
 
             //Act
             bool v = Convert.ToBoolean(VE.ValueCalculated);
@@ -253,8 +308,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void MachineName()
         {
             //Arrange    
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{CS Exp=System.Environment.MachineName}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{CS Exp=System.Environment.MachineName}"
+            };
 
             //Act
             string v = VE.ValueCalculated;
@@ -270,8 +327,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void EnvironmentName()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{FD Object=Environment Field=Name}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=Environment Field=Name}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -285,8 +344,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void BusinessFlowName()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{FD Object=BusinessFlow Field=Name}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=BusinessFlow Field=Name}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -297,11 +358,38 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void BusinessFlowVariableSummary()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=BusinessFlow Field=VariablesSummary}"
+            };
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "BFVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
+
+
+        [TestMethod]
+        [Timeout(60000)]
         public void ActivityName()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{FD Object=Activity Field=ActivityName}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=Activity Field=ActivityName}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -310,13 +398,40 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             Assert.AreEqual(v, "Activity1");
         }
 
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActivityVariableSummary()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=Activity Field=VariablesSummary}"
+            };
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
+
         [TestMethod]
         [Timeout(60000)]
         public void ActionName()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{FD Object=Action Field=Description}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=Action Field=Description}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -330,8 +445,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void RunsetName()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{FD Object=Runset Field=Name}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=Runset Field=Name}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -345,8 +462,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void RunnerName()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{FD Object=Runner Field=Name}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=Runner Field=Name}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -360,9 +479,11 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void PreviousBusinessflowName()
         {
             //Arrange  
-            ActDummy dummy = new ActDummy();
-            dummy.Active = true;
-            dummy.Value = "{FD Object=PreviousBusinessFlow Field=Name}";
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Value = "{FD Object=PreviousBusinessFlow Field=Name}"
+            };
             runner.BusinessFlows[1].Activities[0].Acts.Add(dummy);
 
             //Act             
@@ -373,15 +494,46 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             Assert.AreEqual(v, "Businessflow1");
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void PreviousBusinessFlowVariableSummary()
+        {
+            //Arrange  
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Value = "{FD Object=PreviousBusinessFlow Field=VariablesSummary}"
+            };
+
+            //Act     
+            runner.BusinessFlows[1].Activities[0].Acts.Add(dummy);
+
+            //Act             
+            runner.RunRunner();
+            string v = dummy.ValueForDriver;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "BFVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
+
 
         [TestMethod]
         [Timeout(60000)]
         public void PreviousBusinessflowStatus()
         {
             //Arrange              
-            ActDummy dummy = new ActDummy();
-            dummy.Active = true;
-            dummy.Value = "{FD Object=PreviousBusinessFlow Field=RunStatus}";
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Value = "{FD Object=PreviousBusinessFlow Field=RunStatus}"
+            };
             runner.BusinessFlows[1].Activities[0].Acts.Add(dummy);
 
             //Act                
@@ -397,12 +549,16 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void PreviousActivityName()
         {
             //Arrange  
-            GingerCore.Activity activity = new GingerCore.Activity();
-            activity.ActivityName = "Activity2";
-            activity.Active = true;
-            ActDummy dummy = new ActDummy();
-            dummy.Active = true;
-            dummy.Value = "{FD Object=PreviousActivity Field=ActivityName}";
+            GingerCore.Activity activity = new GingerCore.Activity
+            {
+                ActivityName = "Activity2",
+                Active = true
+            };
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Value = "{FD Object=PreviousActivity Field=ActivityName}"
+            };
             activity.Acts.Add(dummy);
             mBF.AddActivity(activity);
 
@@ -416,13 +572,48 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void PreviousActivityVariableSummary()
+        {
+            //Arrange  
+            GingerCore.Activity activity = new GingerCore.Activity
+            {
+                ActivityName = "Activity2",
+                Active = true
+            };
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Value = "{FD Object=PreviousActivity Field=VariablesSummary}"
+            };
+            activity.Acts.Add(dummy);
+            mBF.AddActivity(activity);
+
+            //Act                            
+            runner.RunRunner();
+            string v = dummy.ValueForDriver;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void PreviousActionName()
         {
             //Arrange            
-            ActDummy dummy = new ActDummy();
-            dummy.Active = true;
-            dummy.Description = "Dummy1";
-            dummy.Value = "{FD Object=PreviousAction Field=Description}";
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Description = "Dummy1",
+                Value = "{FD Object=PreviousAction Field=Description}"
+            };
             mActivity.Acts.Add(dummy);
 
             //Act                            
@@ -440,9 +631,11 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         {
             //Arrange           
             mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
-            ActDummy dummy = new ActDummy();
-            dummy.Active = true;
-            dummy.Value = "{FD Object=LastFailedBusinessFlow Field=Name}";
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Value = "{FD Object=LastFailedBusinessFlow Field=Name}"
+            };
             runner.BusinessFlows[1].Activities[0].Acts.Add(dummy);
 
             //Act              
@@ -455,17 +648,51 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void LastBusinessflowFailedVariablesSummary()
+        {
+            //Arrange           
+            mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Value = "{FD Object=LastFailedBusinessFlow Field=VariablesSummary}"
+            };
+            runner.BusinessFlows[1].Activities[0].Acts.Add(dummy);
+
+            //Act              
+            runner.RunRunner();
+            string v = dummy.ValueForDriver;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new( "BFVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void LastActivityFailedName()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{FD Object=LastFailedActivity Field=ActivityName}";
-            GingerCore.Activity activity = new GingerCore.Activity();
-            activity.Active = true;
-            activity.ActivityName = "Activity2";
-            ActDummy dummy1 = new ActDummy();
-            dummy1.Active = true;
-            dummy1.Description = "Dummy action";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=LastFailedActivity Field=ActivityName}"
+            };
+            GingerCore.Activity activity = new GingerCore.Activity
+            {
+                Active = true,
+                ActivityName = "Activity2"
+            };
+            ActDummy dummy1 = new ActDummy
+            {
+                Active = true,
+                Description = "Dummy action"
+            };
             activity.Acts.Add(dummy1);
             mBF.AddActivity(activity);
             mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
@@ -480,14 +707,56 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void LastActivityFailedVariablesSummary()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=LastFailedActivity Field=VariablesSummary}"
+            };
+            GingerCore.Activity activity = new GingerCore.Activity
+            {
+                Active = true,
+                ActivityName = "Activity2"
+            };
+            ActDummy dummy1 = new ActDummy
+            {
+                Active = true,
+                Description = "Dummy action"
+            };
+            activity.Acts.Add(dummy1);
+            mBF.AddActivity(activity);
+            mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
+
+            //Act            
+            runner.RunRunner();
+            string v = VE.ValueCalculated;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new("ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void LastActionFailedName()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{FD Object=LastFailedAction Field=Description}";
-            ActDummy dummy1 = new ActDummy();
-            dummy1.Active = true;
-            dummy1.Description = "Dummy action1";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=LastFailedAction Field=Description}"
+            };
+            ActDummy dummy1 = new ActDummy
+            {
+                Active = true,
+                Description = "Dummy action1"
+            };
             mActivity.Acts.Add(dummy1);
             mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
 
@@ -505,14 +774,20 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         {
             //Arrange  
             mActivity.ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers;
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{FD Object=ErrorHandlerOriginActivity Field=ActivityName}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=ErrorHandlerOriginActivity Field=ActivityName}"
+            };
             mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
-            ErrorHandler errorHandler = new ErrorHandler();
-            errorHandler.Active = true;
-            ActDummy dummy = new ActDummy();
-            dummy.Active = true;
-            dummy.Description = "Error Handler Dummy action";
+            ErrorHandler errorHandler = new ErrorHandler
+            {
+                Active = true
+            };
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Description = "Error Handler Dummy action"
+            };
             errorHandler.Acts.Add(dummy);
             mBF.AddActivity(errorHandler);
 
@@ -524,29 +799,77 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             Assert.AreEqual(v, "Activity1");
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void ErrorHandlerActivityVariablesSummary()
+        {
+            //Arrange  
+            mActivity.ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers;
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=ErrorHandlerOriginActivity Field=VariablesSummary}"
+            };
+            mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
+            ErrorHandler errorHandler = new ErrorHandler
+            {
+                ActivityName = "ErrorHandler",
+                Active = true
+            };
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Description = "Error Handler Dummy action"
+            };
+            errorHandler.Acts.Add(dummy);
+            mBF.AddActivity(errorHandler);
+
+            //Act                        
+            runner.RunRunner();
+            string v = VE.ValueCalculated;
+
+            var expected = new List<VariableMinimalRecord>
+            {
+                new("ActivityVar", "initial", "current" )
+            };
+
+            var actual = System.Text.Json.JsonSerializer.Deserialize<List<VariableMinimalRecord>>(v);
+
+            //Assert
+            Assert.AreEqual(actual[0], expected[0]);
+        }
 
         [TestMethod]
         [Timeout(60000)]
         public void ErrorHandlerActionName()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{FD Object=ErrorHandlerOriginAction Field=Description}";
-            GingerCore.Activity activity = new GingerCore.Activity();
-            activity.Active = true;
-            activity.ActivityName = "Error Handler Activity";
-            ActDummy dummy1 = new ActDummy();
-            dummy1.Active = true;
-            dummy1.Description = "Dummy action";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{FD Object=ErrorHandlerOriginAction Field=Description}"
+            };
+            GingerCore.Activity activity = new GingerCore.Activity
+            {
+                Active = true,
+                ActivityName = "Error Handler Activity"
+            };
+            ActDummy dummy1 = new ActDummy
+            {
+                Active = true,
+                Description = "Dummy action"
+            };
             dummy1.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
             activity.Acts.Add(dummy1);
             activity.ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers;
             mBF.AddActivity(activity);
-            ErrorHandler errorHandler = new ErrorHandler();
-            errorHandler.Active = true;
-            ActDummy dummy = new ActDummy();
-            dummy.Active = true;
-            dummy.Description = "Error Handler Dummy action";
+            ErrorHandler errorHandler = new ErrorHandler
+            {
+                Active = true
+            };
+            ActDummy dummy = new ActDummy
+            {
+                Active = true,
+                Description = "Error Handler Dummy action"
+            };
             errorHandler.Acts.Add(dummy);
             mBF.AddActivity(errorHandler);
 
@@ -568,8 +891,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void GenerateHashCode()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=GenerateHashCode(\"Hello\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=GenerateHashCode(\"Hello\")}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -583,8 +908,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void GenerateHashCodeStringWithSpecialChar()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=GenerateHashCode(\"He\"l\"lo\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=GenerateHashCode(\"He\"l\"lo\")}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -598,8 +925,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void GetEncryptedBase64String()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=GetEncryptedBase64String(\"Hello\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=GetEncryptedBase64String(\"Hello\")}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -613,8 +942,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void GetDecryptedBase64String()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=GetDecryptedBase64String(\"SGVsbG8=\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=GetDecryptedBase64String(\"SGVsbG8=\")}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -628,8 +959,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void GetEncryptedBase64StringWithSpecialChar()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=GetEncryptedBase64String(\"He\"l\"lo\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=GetEncryptedBase64String(\"He\"l\"lo\")}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -643,8 +976,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void GetDecryptedBase64StringWithSpecialChar()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=GetDecryptedBase64String(\"SGUibCJsbw==\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=GetDecryptedBase64String(\"SGUibCJsbw==\")}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -658,8 +993,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void GetEncryptedBase64StringWithJson()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=GetEncryptedBase64String(\"{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=GetEncryptedBase64String(\"{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}\")}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -673,8 +1010,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void GetDecryptedBase64StringWithJson()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=GetDecryptedBase64String(\"eyJuYW1lIjoiSm9obiIsICJhZ2UiOjMxLCAiY2l0eSI6Ik5ldyBZb3JrIn0=\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=GetDecryptedBase64String(\"eyJuYW1lIjoiSm9obiIsICJhZ2UiOjMxLCAiY2l0eSI6Ik5ldyBZb3JrIn0=\")}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -688,8 +1027,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void ReplaceSpecialCharsFromStringWithNoCharsInside()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=ReplaceSpecialChars(\"Hello\",\",_)}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=ReplaceSpecialChars(\"Hello\",\",_)}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -703,8 +1044,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void ReplaceSpecialCharsFromString()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=ReplaceSpecialChars(\"He\"l\"lo\",\",_)}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=ReplaceSpecialChars(\"He\"l\"lo\",\",_)}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -718,8 +1061,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void ReplaceSpecialCharsFromJson()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=ReplaceSpecialChars(\"{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}\",\",_)}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=ReplaceSpecialChars(\"{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}\",\",_)}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -733,8 +1078,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void ReplaceSpecialCharsFromJsonContainsSpecChars()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=ReplaceSpecialChars(\"{\"name\":\"Joh\"n\", \"age\":31, \"city\":\"New York\"}\",\",_)}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=ReplaceSpecialChars(\"{\"name\":\"Joh\"n\", \"age\":31, \"city\":\"New York\"}\",\",_)}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;
@@ -748,10 +1095,11 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void NestedFunCalculateTest()
         {
             //Arrange    
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-
-            //Act
-            VE.Value = @"UsernameToken-{Function Fun=GetHashCode({Function Fun=GetGUID()})}-abcd";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                //Act
+                Value = @"UsernameToken-{Function Fun=GetHashCode({Function Fun=GetGUID()})}-abcd"
+            };
 
             string v = VE.ValueCalculated;
 
@@ -765,10 +1113,11 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void NestedFunCalculateTestWihtReplacCharFunc()
         {
             //Arrange    
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-
-            //Act
-            VE.Value = "{Function Fun=GetEncryptedBase64String(\"{Function Fun=ReplaceSpecialChars(\"Hel\"lo\",\",_)}\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                //Act
+                Value = "{Function Fun=GetEncryptedBase64String(\"{Function Fun=ReplaceSpecialChars(\"Hel\"lo\",\",_)}\")}"
+            };
             string v = VE.ValueCalculated;
 
             //Assert
@@ -781,10 +1130,11 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void NestedFunCalculateTestWihtReplacCharFunc2()
         {
             //Arrange    
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-
-            //Act
-            VE.Value = "{Function Fun=GetEncryptedBase64String(\"{Function Fun=ReplaceSpecialChars(\"{\"name\":\"John\",\"age\":31,\"city\":\"New York\"}\",\",_)}\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                //Act
+                Value = "{Function Fun=GetEncryptedBase64String(\"{Function Fun=ReplaceSpecialChars(\"{\"name\":\"John\",\"age\":31,\"city\":\"New York\"}\",\",_)}\")}"
+            };
             string v = VE.ValueCalculated;
 
             //Assert
@@ -797,8 +1147,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void ReplaceSpecialCharsBackToJson()
         {
             //Arrange  
-            ValueExpression VE = new ValueExpression(mEnv, mBF);
-            VE.Value = "{Function Fun=ReplaceSpecialChars(\"{_name_:_John_, _age_:31, _city_:_New York_}\",_,\")}";
+            ValueExpression VE = new ValueExpression(mEnv, mBF)
+            {
+                Value = "{Function Fun=ReplaceSpecialChars(\"{_name_:_John_, _age_:31, _city_:_New York_}\",_,\")}"
+            };
 
             //Act     
             string v = VE.ValueCalculated;

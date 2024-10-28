@@ -23,7 +23,7 @@ namespace GingerCore.ALM.QC
     {
         public ALMTestSet()
         {
-            this.Tests = new List<ALMTSTest>();
+            this.Tests = [];
         }
 
         public string TestSetName { get; set; }

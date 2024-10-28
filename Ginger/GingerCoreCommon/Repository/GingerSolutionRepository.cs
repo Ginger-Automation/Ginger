@@ -68,6 +68,8 @@ namespace Amdocs.Ginger.CoreNET.Repository
             SR.AddItemInfo<RemoteServiceGrid>("*.Ginger.RemoteServiceGrid.xml", SolutionRepository.cSolutionRootFolderSign + "RemoteServiceGrid", true, "RemoteServiceGrid", PropertyNameForFileName: nameof(RemoteServiceGrid.Name));
 
             SR.AddItemInfo<AccessibilityConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, "AccessibilityConfiguration", PropertyNameForFileName: nameof(AccessibilityConfiguration.Name));
+            SR.AddItemInfo<GingerOpsConfiguration>("*.Ginger.Configuration.xml", SolutionRepository.cSolutionRootFolderSign + "Configurations", true, $"{GingerDicser.GetTermResValue(eTermResKey.GingerOps)}Configuration", PropertyNameForFileName: nameof(GingerOpsConfiguration.Name));
+
 
             return SR;
         }

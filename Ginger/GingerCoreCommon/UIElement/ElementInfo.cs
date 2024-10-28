@@ -34,15 +34,15 @@ namespace Amdocs.Ginger.Common.UIElement
     public class ElementInfo : RepositoryItemBase, IParentOptionalValuesObject
     {
         [IsSerializedForLocalRepository]
-        public ObservableList<ElementLocator> Locators = new ObservableList<ElementLocator>();
+        public ObservableList<ElementLocator> Locators = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ControlProperty> Properties = new ObservableList<ControlProperty>();
+        public ObservableList<ControlProperty> Properties = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ElementLocator> FriendlyLocators = new ObservableList<ElementLocator>();
+        public ObservableList<ElementLocator> FriendlyLocators = [];
 
-        
+
 
         string mScreenShotImage;
         [IsSerializedForLocalRepository]
@@ -168,17 +168,13 @@ namespace Amdocs.Ginger.Common.UIElement
         {
             get
             {
-                switch (ElementStatus)
+                return ElementStatus switch
                 {
-                    case eElementStatus.Passed:
-                        return eImageType.Passed;
-                    case eElementStatus.Failed:
-                        return eImageType.Failed;
-                    case eElementStatus.Pending:
-                        return eImageType.Pending;
-                    default:
-                        return eImageType.Unknown;
-                }
+                    eElementStatus.Passed => eImageType.Passed,
+                    eElementStatus.Failed => eImageType.Failed,
+                    eElementStatus.Pending => eImageType.Pending,
+                    _ => eImageType.Unknown,
+                };
             }
         }
 
@@ -301,7 +297,7 @@ namespace Amdocs.Ginger.Common.UIElement
         /// <summary>
         /// Please dont use this property it is obselet use the below property "OptionalValuesObjectsList"
         /// </summary>
-        List<String> mOptionalValues = new List<string>();
+        List<String> mOptionalValues = [];
         public List<String> OptionalValues
         {
             get
@@ -314,7 +310,7 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-        ObservableList<OptionalValue> mOptionalValuesObjectsList = new ObservableList<OptionalValue>();
+        ObservableList<OptionalValue> mOptionalValuesObjectsList = [];
         [IsSerializedForLocalRepository]
         public ObservableList<OptionalValue> OptionalValuesObjectsList
         {
@@ -330,7 +326,7 @@ namespace Amdocs.Ginger.Common.UIElement
                     {
                         mOptionalValuesObjectsList[0].IsDefault = true;
                     }
-                    mOptionalValues = new List<string>();
+                    mOptionalValues = [];
                 }
                 return mOptionalValuesObjectsList;
             }
@@ -379,9 +375,9 @@ namespace Amdocs.Ginger.Common.UIElement
         public static bool IsElementTypeSupportingOptionalValues(eElementType ei)
         {
             bool supported = false;
-            if (ei == eElementType.TextBox || ei == eElementType.Text ||
-                ei == eElementType.ComboBox || ei == eElementType.ComboBoxOption ||
-                ei == eElementType.List || ei == eElementType.ListItem)
+            if (ei is eElementType.TextBox or eElementType.Text or
+                eElementType.ComboBox or eElementType.ComboBoxOption or
+                eElementType.List or eElementType.ListItem)
             {
                 supported = true;
             }
@@ -502,7 +498,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public void SetLocatorsAndPropertiesCategory(ePomElementCategory? category)
         {
-            foreach(ElementLocator locator in Locators)
+            foreach (ElementLocator locator in Locators)
             {
                 locator.Category = category;
             }
@@ -514,48 +510,26 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public static eImageType GetElementTypeImage(eElementType elementType = eElementType.Unknown)
         {
-            switch (elementType)
+            return elementType switch
             {
-                case eElementType.Button:
-                    return eImageType.Button;
-                case eElementType.CheckBox:
-                    return eImageType.CheckBox;
-                case eElementType.ComboBox:
-                    return eImageType.DropList;
-                case eElementType.ComboBoxOption:
-                    return eImageType.List;
-                case eElementType.HyperLink:
-                    return eImageType.Link;
-                case eElementType.Image:
-                    return eImageType.Image;
-                case eElementType.Label:
-                case eElementType.Text:
-                    return eImageType.Label;
-                case eElementType.List:
-                case eElementType.ListItem:
-                    return eImageType.List;
-                case eElementType.MenuBar:
-                case eElementType.MenuItem:
-                    return eImageType.Menu;
-                case eElementType.RadioButton:
-                    return eImageType.RadioButton;
-                case eElementType.Table:
-                case eElementType.TableItem:
-                    return eImageType.Table;
-                case eElementType.TextBox:
-                    return eImageType.TextBox;
-                case eElementType.Window:
-                case eElementType.Dialog:
-                    return eImageType.Window;
-                case eElementType.DatePicker:
-                    return eImageType.DatePicker;
-                case eElementType.TreeView:
-                    return eImageType.TreeView;
-                case eElementType.Browser:
-                    return eImageType.Browser;
-            }
-
-            return eImageType.Element;
+                eElementType.Button => eImageType.Button,
+                eElementType.CheckBox => eImageType.CheckBox,
+                eElementType.ComboBox => eImageType.DropList,
+                eElementType.ComboBoxOption => eImageType.List,
+                eElementType.HyperLink => eImageType.Link,
+                eElementType.Image => eImageType.Image,
+                eElementType.Label or eElementType.Text => eImageType.Label,
+                eElementType.List or eElementType.ListItem => eImageType.List,
+                eElementType.MenuBar or eElementType.MenuItem => eImageType.Menu,
+                eElementType.RadioButton => eImageType.RadioButton,
+                eElementType.Table or eElementType.TableItem => eImageType.Table,
+                eElementType.TextBox => eImageType.TextBox,
+                eElementType.Window or eElementType.Dialog => eImageType.Window,
+                eElementType.DatePicker => eImageType.DatePicker,
+                eElementType.TreeView => eImageType.TreeView,
+                eElementType.Browser => eImageType.Browser,
+                _ => eImageType.Element,
+            };
         }
     }
 

@@ -132,8 +132,10 @@ namespace GingerCore.Drivers
 
         internal static void ClickLeftMouseButton(int x, int y)
         {
-            INPUT mouseInput = new INPUT();
-            mouseInput.type = SendInputEventType.InputMouse;
+            INPUT mouseInput = new INPUT
+            {
+                type = SendInputEventType.InputMouse
+            };
             mouseInput.mkhi.mi.dx = (x);
             mouseInput.mkhi.mi.dy = (y);
             mouseInput.mkhi.mi.mouseData = 0;
@@ -152,8 +154,10 @@ namespace GingerCore.Drivers
 
         internal static void ClickRightMouseButton(int x, int y)
         {
-            INPUT mouseInput = new INPUT();
-            mouseInput.type = SendInputEventType.InputMouse;
+            INPUT mouseInput = new INPUT
+            {
+                type = SendInputEventType.InputMouse
+            };
             mouseInput.mkhi.mi.dx = (x);
             mouseInput.mkhi.mi.dy = (y);
             mouseInput.mkhi.mi.mouseData = 0;
@@ -231,7 +235,7 @@ namespace GingerCore.Drivers
             IntPtr hwnd = FindWindow(clname, winname);
             if (hwnd == IntPtr.Zero)
             {
-                hwnd = (IntPtr)window.Current.NativeWindowHandle;
+                hwnd = window.Current.NativeWindowHandle;
             }
             uint processId;
             GetWindowThreadProcessId(hwnd, out processId);
@@ -252,7 +256,7 @@ namespace GingerCore.Drivers
                 IntPtr hwnd = FindWindow(clname, winname);
                 if (hwnd == IntPtr.Zero)
                 {
-                    hwnd = (IntPtr)window.Current.NativeWindowHandle;
+                    hwnd = window.Current.NativeWindowHandle;
                 }
                 uint processId;
                 GetWindowThreadProcessId(hwnd, out processId);
@@ -346,8 +350,10 @@ namespace GingerCore.Drivers
 
         internal static void SendTabKey()
         {
-            INPUT ip = new INPUT();
-            ip.type = SendInputEventType.InputKeyboard;
+            INPUT ip = new INPUT
+            {
+                type = SendInputEventType.InputKeyboard
+            };
             ip.mkhi.ki.time = 0;
             ip.mkhi.ki.dwFlags = (uint)KEYEVENTF.KEYDOWN;
             ip.mkhi.ki.wVk = 0x09;
@@ -369,8 +375,8 @@ namespace GingerCore.Drivers
             }
             //TODO: FIXME - do not change cursor position or set foreground window, maybe needed only for PB + Calc clickable point and not +3 + send Button Up
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
-            int x = (int)element.Current.BoundingRectangle.X + ((int)element.Current.BoundingRectangle.Width / 2);
-            int y = (int)element.Current.BoundingRectangle.Y + ((int)element.Current.BoundingRectangle.Height / 2);
+            int x = element.Current.BoundingRectangle.X + (element.Current.BoundingRectangle.Width / 2);
+            int y = element.Current.BoundingRectangle.Y + (element.Current.BoundingRectangle.Height / 2);
 
             ClickLeftMouseButton(x, y);
             System.Threading.Thread.Sleep(500);
@@ -421,13 +427,13 @@ namespace GingerCore.Drivers
             {
                 string[] coordinates = XY.Split(',');
                 //User will specify the X,Y relative to the element instead of related to whole window
-                x = (int)element.Current.BoundingRectangle.X + Int32.Parse(coordinates[0]);
-                y = (int)element.Current.BoundingRectangle.Y + Int32.Parse(coordinates[1]);
+                x = element.Current.BoundingRectangle.X + Int32.Parse(coordinates[0]);
+                y = element.Current.BoundingRectangle.Y + Int32.Parse(coordinates[1]);
             }
             else
             {
-                x = (int)element.Current.BoundingRectangle.X + ((int)element.Current.BoundingRectangle.Width / 2);
-                y = (int)element.Current.BoundingRectangle.Y + ((int)element.Current.BoundingRectangle.Height / 2);
+                x = element.Current.BoundingRectangle.X + (element.Current.BoundingRectangle.Width / 2);
+                y = element.Current.BoundingRectangle.Y + (element.Current.BoundingRectangle.Height / 2);
             }
 
             Cursor.Position = new System.Drawing.Point(x, y);
@@ -442,7 +448,7 @@ namespace GingerCore.Drivers
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
 
-            Cursor.Position = new System.Drawing.Point((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
+            Cursor.Position = new System.Drawing.Point(boundingRect.X + x, boundingRect.Y + y);
         }
 
         public void SendClickOnXYPoint(UIAuto.AutomationElement element, int x, int y)
@@ -465,7 +471,7 @@ namespace GingerCore.Drivers
             SetForeGroundWindow(targetProcessID);
 
 
-            ClickLeftMouseButton((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
+            ClickLeftMouseButton(boundingRect.X + x, boundingRect.Y + y);
             System.Windows.Forms.Cursor.Position = p;
         }
 
@@ -480,9 +486,9 @@ namespace GingerCore.Drivers
             SetForeGroundWindow(targetProcessID);
 
 
-            ClickLeftMouseButton((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
+            ClickLeftMouseButton(boundingRect.X + x, boundingRect.Y + y);
             System.Threading.Thread.Sleep(500);
-            ClickLeftMouseButton((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
+            ClickLeftMouseButton(boundingRect.X + x, boundingRect.Y + y);
             System.Windows.Forms.Cursor.Position = p;
         }
         public void SendRightClickOnWinXYPoint(UIAuto.AutomationElement element, int x, int y)
@@ -494,7 +500,7 @@ namespace GingerCore.Drivers
             SetForeGroundWindow(targetProcessID);
 
 
-            ClickRightMouseButton((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
+            ClickRightMouseButton(boundingRect.X + x, boundingRect.Y + y);
             System.Windows.Forms.Cursor.Position = p;
         }
 
@@ -508,7 +514,7 @@ namespace GingerCore.Drivers
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
 
-            ClickLeftMouseButton((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
+            ClickLeftMouseButton(boundingRect.X + x, boundingRect.Y + y);
             SendInputKeys(value);
             SendTabKey();
 
@@ -527,13 +533,13 @@ namespace GingerCore.Drivers
             {
                 string[] coordinates = XY.Split(',');
                 //User will specify the X,Y relative to the element instead of related to whole window
-                x = (int)element.Current.BoundingRectangle.X + Int32.Parse(coordinates[0]);
-                y = (int)element.Current.BoundingRectangle.Y + Int32.Parse(coordinates[1]);
+                x = element.Current.BoundingRectangle.X + Int32.Parse(coordinates[0]);
+                y = element.Current.BoundingRectangle.Y + Int32.Parse(coordinates[1]);
             }
             else
             {
-                x = (int)element.Current.BoundingRectangle.X + 10;
-                y = (int)element.Current.BoundingRectangle.Y + 5;
+                x = element.Current.BoundingRectangle.X + 10;
+                y = element.Current.BoundingRectangle.Y + 5;
             }
             ClickRightMouseButton(x, y);
             System.Windows.Forms.Cursor.Position = p;
@@ -548,8 +554,8 @@ namespace GingerCore.Drivers
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
 
-            int x1 = (int)element.Current.BoundingRectangle.X + 2;
-            int y1 = (int)element.Current.BoundingRectangle.Y + 2;
+            int x1 = element.Current.BoundingRectangle.X + 2;
+            int y1 = element.Current.BoundingRectangle.Y + 2;
             ClickLeftMouseButton(x1, y1);
             //SendKeys.SendWait(value);
             SendInputKeys(value);
@@ -567,8 +573,8 @@ namespace GingerCore.Drivers
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
 
-            int x1 = (int)element.Current.BoundingRectangle.X + 2;
-            int y1 = (int)element.Current.BoundingRectangle.Y + 2;
+            int x1 = element.Current.BoundingRectangle.X + 2;
+            int y1 = element.Current.BoundingRectangle.Y + 2;
             ClickLeftMouseButton(x1, y1);
             element.SetFocus();
             // SendInputKeys(value);
@@ -583,16 +589,18 @@ namespace GingerCore.Drivers
         {
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
 
-            int x1 = (int)element.Current.BoundingRectangle.X + 2;
-            int y1 = (int)element.Current.BoundingRectangle.Y + 2;
+            int x1 = element.Current.BoundingRectangle.X + 2;
+            int y1 = element.Current.BoundingRectangle.Y + 2;
 
             int id = element.Current.ProcessId;
             SetForeGroundWindow(id);
 
             ClickLeftMouseButton(x1, y1);
 
-            INPUT ip = new INPUT();
-            ip.type = SendInputEventType.InputKeyboard;
+            INPUT ip = new INPUT
+            {
+                type = SendInputEventType.InputKeyboard
+            };
             ip.mkhi.ki.time = 0;
             ip.mkhi.ki.dwFlags = (uint)KEYEVENTF.UNICODE;
             ip.mkhi.ki.wVk = 0;
@@ -616,8 +624,10 @@ namespace GingerCore.Drivers
         }
         public void ClickLeftMouseButtonAndHoldAndDrop(UIAuto.AutomationElement AE, int sourceX, int sourceY, int destX, int destY)
         {
-            INPUT mouseInput = new INPUT();
-            mouseInput.type = SendInputEventType.InputMouse;
+            INPUT mouseInput = new INPUT
+            {
+                type = SendInputEventType.InputMouse
+            };
             mouseInput.mkhi.mi.dx = (sourceX);
             mouseInput.mkhi.mi.dy = (sourceY);
             mouseInput.mkhi.mi.mouseData = 0;
@@ -791,7 +801,7 @@ typeof(SHDocVw.WebBrowser).GUID;
         public SHDocVw.InternetExplorer GetIEFromAutomationelement(UIAuto.AutomationElement element) //***************
         {
 
-            IntPtr HWND = (IntPtr)element.Current.NativeWindowHandle;
+            IntPtr HWND = element.Current.NativeWindowHandle;
 
             int hInst = 0;
             IntPtr lres = IntPtr.Zero;

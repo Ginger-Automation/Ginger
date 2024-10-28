@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Telemetry;
 using Ginger.Reports;
 using GingerCore;
 using System;
@@ -54,7 +55,11 @@ namespace Ginger.Run.RunSetActions
                 Stopwatch st = new Stopwatch();
                 st.Reset();
                 st.Start();
-                runsetActionBase.Execute(RI);
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.RunsetAction))
+                {
+                    featureTracker.Metadata.Add("Type", runsetActionBase.Type);
+                    runsetActionBase.Execute(RI);
+                }
                 st.Stop();
                 runsetActionBase.Elapsed = st.ElapsedMilliseconds;
 

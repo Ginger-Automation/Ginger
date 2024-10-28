@@ -44,7 +44,7 @@ namespace Ginger.Run
             mPageViewMode = pageViewMode;
             mContext = context;
 
-            if (pageEditMode == General.eRIPageViewMode.View || pageEditMode == General.eRIPageViewMode.ViewAndExecute)
+            if (pageEditMode is General.eRIPageViewMode.View or General.eRIPageViewMode.ViewAndExecute)
             {
                 xWrappingDockPanel.IsEnabled = false;
             }
@@ -69,7 +69,7 @@ namespace Ginger.Run
                 xAppAgentsMappingFrame.ClearAndSetContent(new ApplicationAgentsMapPage(mRunner, mContext, false));
             }
 
-            List<int> waitOptions = new List<int>() { 0, 1, 2, 3, 4, 5 };
+            List<int> waitOptions = [0, 1, 2, 3, 4, 5];
             xAutoWaitComboBox.ItemsSource = waitOptions;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoWaitComboBox, ComboBox.SelectedValueProperty, mRunner.GingerRunner, nameof(GingerRunner.AutoWait));
 
@@ -104,7 +104,7 @@ namespace Ginger.Run
                 Content = "Done"
             };
 
-            ObservableList<Button> winButtons = new () { doneBtn };
+            ObservableList<Button> winButtons = [doneBtn];
 
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: doneBtn, eventName: nameof(ButtonBase.Click), handler: (_, e) =>
             {

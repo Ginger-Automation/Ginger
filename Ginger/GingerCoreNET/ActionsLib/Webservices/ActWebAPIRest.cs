@@ -79,7 +79,7 @@ namespace GingerCore.Actions.WebServices
             }
 
 
-            Dictionary<string, string> sHttpHeaders = new Dictionary<string, string>();
+            Dictionary<string, string> sHttpHeaders = [];
 
             foreach (ActInputValue header in this.HttpHeaders)
             {
@@ -89,18 +89,19 @@ namespace GingerCore.Actions.WebServices
 
             }
             platformAction.InputParams.Add("Headers", sHttpHeaders);
-            List<WebAPiKeyValue> WebAPiKeyValues = new List<WebAPiKeyValue>();
+            List<WebAPiKeyValue> WebAPiKeyValues = [];
 
 
             foreach (WebAPIKeyBodyValues WKBV in this.RequestKeyValues)
             {
 
 
-                WebAPiKeyValue wakv = new WebAPiKeyValue();
-
-                wakv.Param = WKBV.Param;
-                wakv.Value = WKBV.ValueForDriver;
-                wakv.ValueType = WKBV.ValueType;
+                WebAPiKeyValue wakv = new WebAPiKeyValue
+                {
+                    Param = WKBV.Param,
+                    Value = WKBV.ValueForDriver,
+                    ValueType = WKBV.ValueType
+                };
 
                 if (WKBV.ValueType == WebAPIKeyBodyValues.eValueType.File)
                 {

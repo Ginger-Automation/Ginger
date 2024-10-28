@@ -76,9 +76,8 @@ namespace Amdocs.Ginger.UserControls.PieChart
         private void DataContextChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
             // handle the events that occur when the bound collection changes
-            if (this.DataContext is INotifyCollectionChanged)
+            if (this.DataContext is INotifyCollectionChanged observable)
             {
-                INotifyCollectionChanged observable = (INotifyCollectionChanged)this.DataContext;
                 observable.CollectionChanged += new NotifyCollectionChangedEventHandler(BoundCollectionChanged);
             }
 
@@ -119,9 +118,8 @@ namespace Amdocs.Ginger.UserControls.PieChart
 
             foreach (object item in myCollectionView)
             {
-                if (item is INotifyPropertyChanged)
+                if (item is INotifyPropertyChanged observable)
                 {
-                    INotifyPropertyChanged observable = (INotifyPropertyChanged)item;
                     observable.PropertyChanged += new PropertyChangedEventHandler(ItemPropertyChanged);
                 }
             }

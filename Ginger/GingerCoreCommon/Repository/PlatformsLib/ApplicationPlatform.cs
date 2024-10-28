@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -140,37 +140,23 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
 
         public static eImageType GetPlatformImage(ePlatformType platformType = ePlatformType.NA)
         {
-            switch (platformType)
+            return platformType switch
             {
-                case ePlatformType.NA:
-                    return eImageType.Empty;
-                case ePlatformType.Web:
-                    return eImageType.Globe;
-                case ePlatformType.WebServices:
-                    return eImageType.Exchange;
-                case ePlatformType.Java:
-                    return eImageType.Java;
-                case ePlatformType.Mobile:
-                    return eImageType.Mobile;
-                case ePlatformType.Windows:
-                    return eImageType.WindowsIcon;
-                case ePlatformType.PowerBuilder:
-                    return eImageType.Runing;
-                case ePlatformType.DOS:
-                    return eImageType.Dos;
-                case ePlatformType.VBScript:
-                    return eImageType.CodeFile;
-                case ePlatformType.Unix:
-                    return eImageType.Linux;
-                case ePlatformType.MainFrame:
-                    return eImageType.Server;
-                case ePlatformType.ASCF:
-                    return eImageType.Screen;
-                case ePlatformType.Service:
-                    return eImageType.Retweet;
-            }
-
-            return eImageType.Empty;
+                ePlatformType.NA => eImageType.Question,
+                ePlatformType.Web => eImageType.Globe,
+                ePlatformType.WebServices => eImageType.Exchange,
+                ePlatformType.Java => eImageType.Java,
+                ePlatformType.Mobile => eImageType.Mobile,
+                ePlatformType.Windows => eImageType.WindowsIcon,
+                ePlatformType.PowerBuilder => eImageType.Runing,
+                ePlatformType.DOS => eImageType.Dos,
+                ePlatformType.VBScript => eImageType.CodeFile,
+                ePlatformType.Unix => eImageType.Linux,
+                ePlatformType.MainFrame => eImageType.Server,
+                ePlatformType.ASCF => eImageType.Screen,
+                ePlatformType.Service => eImageType.Retweet,
+                _ => eImageType.Empty,
+            };
         }
 
         public override string GetItemType()
@@ -184,5 +170,9 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
                 return ItemName;
             }
         }
+
+        private string mGingerOpsAppId; //GingerOps Application ID
+        [IsSerializedForLocalRepository]
+        public string GingerOpsAppId { get { return mGingerOpsAppId; } set { if (mGingerOpsAppId != value) { mGingerOpsAppId = value; OnPropertyChanged(nameof(GingerOpsAppId)); } } }
     }
 }

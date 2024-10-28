@@ -45,7 +45,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
         public eItemUploadStatus ItemUploadStatus { get; set; }
 
-        public static ObservableList<UploadItemSelection> mSelectedItems = new ObservableList<UploadItemSelection>();
+        public static ObservableList<UploadItemSelection> mSelectedItems = [];
 
         public enum eItemUploadType
         {
@@ -158,7 +158,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
         }
 
-        ObservableList<string> mPartToUpload = new ObservableList<string>();
+        ObservableList<string> mPartToUpload = [];
         public ObservableList<string> PartToUpload
         {
             get

@@ -33,7 +33,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static GingerCore.Actions.Common.ActUIElement;
@@ -74,7 +73,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ShowPlatformSpecificPage();
             ShowControlSpecificPage();
             ElementLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
-            
+
 
         }
 
@@ -105,7 +104,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (mAction.Context != null && (Context.GetAsContext(mAction.Context)).BusinessFlow != null)
             {
                 string targetapp = (Context.GetAsContext(mAction.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform; 
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == targetapp).Platform;
             }
             else
             {
@@ -149,7 +148,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             //}
         }
 
-        List<ActUIElement.eElementAction> mElementActionsList = new List<ActUIElement.eElementAction>();
+        List<ActUIElement.eElementAction> mElementActionsList = [];
 
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -277,6 +276,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     pageContent = new UIElementXYCoordinatePage(mAction);
                     break;
 
+                case eElementAction.ScrollToElement:
+                    pageContent = new UIElementScrollToElementOptionsPage(mAction);
+                    break;
 
                 case eElementAction.DoubleClick:
                 case eElementAction.WinClick:
@@ -325,8 +327,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private Page GetRequiredConfigPage()
         {
-            List<ElementConfigControl> elementList = new List<ElementConfigControl>();
-            List<string> possibleValues = new List<string>();
+            List<ElementConfigControl> elementList = [];
+            List<string> possibleValues = [];
 
             switch (mAction.ElementAction)
             {
@@ -348,8 +350,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     }
                     else
                     {
-                        possibleValues = string.IsNullOrEmpty(mAction.GetInputParamValue(Fields.Value)) ? new List<string>() { "" } :
-                                    new List<string>() { mAction.GetInputParamValue(Fields.Value) };
+                        possibleValues = string.IsNullOrEmpty(mAction.GetInputParamValue(Fields.Value)) ? [""] :
+                                    [mAction.GetInputParamValue(Fields.Value)];
 
                         elementList.Add(GetElementConfigControl("Value", Fields.Value, eElementType.TextBox, possibleValues));
                     }
@@ -364,8 +366,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         }
                         else
                         {
-                            possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
-                                            new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) };
+                            possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? [""] :
+                                            [mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)];
                             elementList.Add(GetElementConfigControl("Value", Fields.ValueToSelect, eElementType.ComboBox, possibleValues));
                         }
                     }
@@ -378,7 +380,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     elementList.Add(GetElementConfigControl("Event", Fields.ValueToSelect, eElementType.ComboBox, possibleValues));
 
                     //add checkbox
-                    elementList.Add(GetElementConfigControl("Mouse Event", Fields.IsMouseEvent, eElementType.CheckBox, new List<string> { "false" }, MouseEventCheckBox_click));
+                    elementList.Add(GetElementConfigControl("Mouse Event", Fields.IsMouseEvent, eElementType.CheckBox, ["false"], MouseEventCheckBox_click));
                     break;
 
                 case eElementAction.SelectByIndex:
@@ -391,8 +393,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         }
                         else
                         {
-                            possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" } :
-                                                   new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) };
+                            possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] :
+                                                   [mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)];
 
                             elementList.Add(GetElementConfigControl("Value", Fields.ValueToSelect, eElementType.ComboBox, possibleValues));
 
@@ -405,8 +407,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 case eElementAction.DoubleClick:
                     if (mAction.ElementType == eElementType.MenuItem || mAction.ElementType.Equals(eElementType.TreeView))
                     {
-                        possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
-                                               new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) };
+                        possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? [""] :
+                                               [mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)];
 
                         elementList.Add(GetElementConfigControl("Value", Fields.ValueToSelect, eElementType.TextBox, possibleValues));
                     }
@@ -415,7 +417,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 case eElementAction.GetControlProperty:
                     //TODO: find a better way to bind list of enum with possible values.
                     List<ActUIElement.eElementProperty> propertyList = mPlatform.GetPlatformElementProperties();
-                    List<string> propertyListString = new List<string>();
+                    List<string> propertyListString = [];
                     foreach (ActUIElement.eElementProperty property in propertyList)
                     {
                         propertyListString.Add(property.ToString());
@@ -426,8 +428,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 case eElementAction.Switch:
                     if (mAction.ElementType.Equals(eElementType.Window))
                     {
-                        possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(Fields.SyncTime)) ? new List<string>() { "30" } :
-                           new List<string>() { mAction.GetInputParamValue(Fields.SyncTime) };
+                        possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(Fields.SyncTime)) ? ["30"] :
+                           [mAction.GetInputParamValue(Fields.SyncTime)];
 
                         elementList.Add(GetElementConfigControl("Sync Time", Fields.SyncTime, eElementType.TextBox, possibleValues, null, "Sync time in seconds."));
                     }
@@ -486,10 +488,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     comboBox = CreateComboBox(element);
 
                     comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true, context: Context.GetAsContext(mAction.Context));
-                    ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.ItemsSource = element.PossibleValues;
+                    comboBox.ComboBox.ItemsSource = element.PossibleValues;
                     if (mAction.ElementLocateBy == eLocateBy.POMElement)
                     {
-                        ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.SelectedValue = element.DefaultValue;
+                        comboBox.ComboBox.SelectedValue = element.DefaultValue;
                         comboBox.ComboBoxObject.Style = this.FindResource("$FlatEditInputComboBoxStyle") as Style;
                     }
                     dynamicPanel.Children.Add(elementLabel);
@@ -501,19 +503,21 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     UCValueExpression txtBox = CreateTextBox(element);
 
                     txtBox.Init(Context.GetAsContext(mAction.Context), mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
-                    ((Ginger.Actions.UCValueExpression)txtBox).ValueTextBox.Text = element.PossibleValues.ElementAt(0);
+                    txtBox.ValueTextBox.Text = element.PossibleValues.ElementAt(0);
                     dynamicPanel.Children.Add(elementLabel);
                     dynamicPanel.Children.Add(txtBox);
                 }
                 else if (element.ControlType == eElementType.CheckBox)
                 {
-                    CheckBox dyanamicCheckBox = new CheckBox();
-                    dyanamicCheckBox.Content = element.Title;
-                    dyanamicCheckBox.HorizontalAlignment = HorizontalAlignment.Left;
-                    dyanamicCheckBox.VerticalAlignment = VerticalAlignment.Center;
-                    dyanamicCheckBox.IsChecked = false;
-                    dyanamicCheckBox.Width = 100;
-                    dyanamicCheckBox.Margin = new Thickness() { Left = 5 };
+                    CheckBox dyanamicCheckBox = new CheckBox
+                    {
+                        Content = element.Title,
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        IsChecked = false,
+                        Width = 100,
+                        Margin = new Thickness() { Left = 5 }
+                    };
 
                     if (element.ElementEvent != null)
                     {
@@ -586,13 +590,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
         enum ePomElementValuesType { Values, Indexs }
         private ElementConfigControl GetPomOptionalValuesComboBox(string Valuefield, ePomElementValuesType valuesType)
         {
-            ElementConfigControl optionalValuesCombo = new ElementConfigControl();
-            optionalValuesCombo.Title = "Value";
-            optionalValuesCombo.ControlType = eElementType.ComboBox;
-            optionalValuesCombo.BindedString = Valuefield;
-            optionalValuesCombo.PossibleValues = GetPomElementOptionalValues(valuesType);
-            optionalValuesCombo.DefaultValue = !String.IsNullOrEmpty(mAction.GetInputParamValue(Valuefield)) ?
-                                    mAction.GetInputParamValue(Valuefield) : GetPomElementOptionalValuesDefaultValue(valuesType);
+            ElementConfigControl optionalValuesCombo = new ElementConfigControl
+            {
+                Title = "Value",
+                ControlType = eElementType.ComboBox,
+                BindedString = Valuefield,
+                PossibleValues = GetPomElementOptionalValues(valuesType),
+                DefaultValue = !String.IsNullOrEmpty(mAction.GetInputParamValue(Valuefield)) ?
+                                    mAction.GetInputParamValue(Valuefield) : GetPomElementOptionalValuesDefaultValue(valuesType)
+            };
             return optionalValuesCombo;
         }
 
@@ -710,7 +716,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 if (currentPOM != null)
                 {
                     Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                    selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
+                    selectedPOMElement = currentPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
                 }
             }
             return selectedPOMElement;
@@ -722,7 +728,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         /// <returns></returns>
         private List<string> GetPomElementOptionalValues(ePomElementValuesType valuesType)
         {
-            List<string> optionalValues = new List<string>();
+            List<string> optionalValues = [];
             ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
             if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)
             {

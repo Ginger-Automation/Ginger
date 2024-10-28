@@ -16,38 +16,35 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Drivers.CoreDrivers.Web;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers.Common;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using HtmlAgilityPack;
 using Microsoft.Playwright;
 using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using System.Drawing;
-using System.Runtime.Versioning;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 using System.Diagnostics.CodeAnalysis;
-using GingerCore.Drivers.Common;
+using System.Drawing;
 using System.IO;
-using HtmlAgilityPack;
-using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
-using GingerCore.Actions.VisualTesting;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using amdocs.ginger.GingerCoreNET;
+using System.Linq;
+using System.Runtime.Versioning;
 using System.Threading;
-using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
-using Deque.AxeCore.Commons;
-using Deque.AxeCore.Playwright;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
@@ -76,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 return null;
             }
-            else if (browserType == WebBrowserType.Chrome || browserType == WebBrowserType.Edge || browserType == WebBrowserType.FireFox)
+            else if (browserType is WebBrowserType.Chrome or WebBrowserType.Edge or WebBrowserType.FireFox)
             {
                 return "WebAgentConfigEditPage";
             }
@@ -182,8 +179,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 {
                     case ActBrowserElement actBrowserElement:
                         ActBrowserElementHandler actBrowserElementHandler = new(
-                            actBrowserElement, 
-                            _browser, 
+                            actBrowserElement,
+                            _browser,
                             new ActBrowserElementHandler.Context
                             {
                                 BusinessFlow = BusinessFlow,
@@ -193,15 +190,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         break;
                     case ActUIElement actUIElement:
                         ActUIElementHandler actUIElementHandler = new(
-                            actUIElement, 
-                            new BrowserElementLocator(_browser.CurrentWindow.CurrentTab, 
-                            new()
-                            {
-                                BusinessFlow = BusinessFlow,
-                                Environment = Environment,
-                                POMExecutionUtils = new POMExecutionUtils(act, actUIElement.ElementLocateValue),
-                                Agent = BusinessFlow.CurrentActivity.CurrentAgent,
-                            }));
+                            actUIElement,
+                            _browser.CurrentWindow.CurrentTab,
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab,
+                                new()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new POMExecutionUtils(act, actUIElement.ElementLocateValue),
+                                    Agent = BusinessFlow.CurrentActivity.CurrentAgent,
+                                }));
                         actUIElementHandler.HandleAsync().Wait();
                         break;
                     case ActScreenShot actScreenShot:
@@ -231,22 +230,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         ActAccessibilityTestingHandler actAccessibilityTestingHandler;
                         if (actAccessibilityTesting.GetAccessibilityTarget() == ActAccessibilityTesting.eTarget.Element)
                         {
-                            BrowserElementLocator browserElementLocator = new(_browser.CurrentWindow.CurrentTab, new()
-                            {
-                                BusinessFlow = BusinessFlow,
-                                Environment = Environment,
-                                POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValueCalculated)
-                            });
                             actAccessibilityTestingHandler = new(
                             actAccessibilityTesting,
                             _browser.CurrentWindow.CurrentTab,
-                            browserElementLocator);
+                            new BrowserElementLocator(
+                                _browser.CurrentWindow.CurrentTab,
+                                new BrowserElementLocator.Context()
+                                {
+                                    BusinessFlow = BusinessFlow,
+                                    Environment = Environment,
+                                    POMExecutionUtils = new(actAccessibilityTesting, actAccessibilityTesting.LocateValueCalculated)
+                                }));
                         }
                         else
                         {
                             actAccessibilityTestingHandler = new(
                             actAccessibilityTesting,
-                            _browser.CurrentWindow.CurrentTab, 
+                            _browser.CurrentWindow.CurrentTab,
                             browserElementLocator: null);
                         }
                         actAccessibilityTestingHandler.HandleAsync().Wait();
@@ -484,7 +484,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         }
 
         [MemberNotNull(nameof(_browser))]
-        #pragma warning disable CS8774
+#pragma warning disable CS8774
         private void ThrowIfClosed()
         {
             if (!IsRunning())
@@ -492,7 +492,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 throw new InvalidOperationException($"Cannot perform operation on closed driver.");
             }
         }
-        #pragma warning restore CS8774
+#pragma warning restore CS8774
 
         [SupportedOSPlatform("windows")]
         public Bitmap? GetScreenShot(Tuple<int, int>? size = null, bool fullPage = false)
@@ -508,7 +508,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 }
 
                 byte[] screenshot;
-                 if (fullPage)
+                if (fullPage)
                 {
                     screenshot = await tab.ScreenshotAsync();
                 }
@@ -540,7 +540,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     locateValue = act.LocateValueCalculated;
                 }
 
-                IBrowserElement? element = 
+                IBrowserElement? element =
                     (await _browser!
                     .CurrentWindow
                     .CurrentTab
@@ -656,10 +656,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
                 IBrowserElement? browserElement = null;
                 try
-                {    
+                {
                     browserElement = await currentTab.GetElementAsync("GingerLibLiveSpy.ElementFromPoint();");
                 }
-                catch (Exception) 
+                catch (Exception)
                 {
                     //when we spy the element for the first time, it throws exception because X,Y point of mouse position is undefined for some reason
                 }
@@ -704,7 +704,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public async Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo>? foundElementsList = null, ObservableList<POMPageMetaData>? PomMetaData = null)
         {
             ThrowIfClosed();
-            
+
             if (_lastHighlightedElement != null)
             {
                 await UnhighlightElementAsync(_lastHighlightedElement);
@@ -777,7 +777,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     }
                     return (await _browserTab.GetElementsAsync(locateBy, locateValue)).FirstOrDefault();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     return null;
                 }
@@ -963,7 +963,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public List<eTabView> SupportedViews()
         {
-            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView };
+            return [eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView];
         }
 
         public eTabView DefaultView()
@@ -1214,7 +1214,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public ElementInfo? GetElementParent(ElementInfo elementInfo, PomSetting? pomSetting = null)
         {
-            if (elementInfo is not HTMLElementInfo htmlElementInfo) 
+            if (elementInfo is not HTMLElementInfo htmlElementInfo)
             {
                 return null;
             }
@@ -1288,7 +1288,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ThrowIfClosed();
             return Task.Run(async () =>
             {
-                List<HTMLElementInfo> foundElements = []; 
+                List<HTMLElementInfo> foundElements = [];
                 IEnumerable<IBrowserElement> browserElements = await _browser.CurrentWindow.CurrentTab.GetElementsAsync(eLocateBy.ByCSS, "*");
                 foreach (IBrowserElement browserElement in browserElements)
                 {
@@ -1530,9 +1530,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             ThrowIfClosed();
 
-            VisualElementsInfo visualElementsInfo = new();
-
-            visualElementsInfo.Bitmap = GetScreenShot();
+            VisualElementsInfo visualElementsInfo = new()
+            {
+                Bitmap = GetScreenShot()
+            };
 
             Task.Run(async () =>
             {
@@ -1586,7 +1587,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                     visualElements.Add(VE);
                 }
 
-                visualElementsInfo.Elements = visualElements;;
+                visualElementsInfo.Elements = visualElements; ;
             }).Wait();
 
             return visualElementsInfo;
@@ -1743,8 +1744,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             return Task.Run(() => _browser.CurrentWindow.CurrentTab.ViewportSizeAsync().Result).Result.ToString();
         }
 
-        private static readonly IEnumerable<ActUIElement.eElementAction> ActUIElementSupportedOperations = new List<ActUIElement.eElementAction>()
-        {
+        private static readonly IEnumerable<ActUIElement.eElementAction> ActUIElementSupportedOperations =
+        [
             ActUIElement.eElementAction.Click,
             ActUIElement.eElementAction.DoubleClick,
             ActUIElement.eElementAction.Hover,
@@ -1772,11 +1773,23 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActUIElement.eElementAction.SelectByText,
             ActUIElement.eElementAction.SelectByIndex,
             ActUIElement.eElementAction.SetValue,
-        };
+            ActUIElement.eElementAction.ClickAndValidate,
+            ActUIElement.eElementAction.JavaScriptClick,
+            ActUIElement.eElementAction.MouseClick,
+            ActUIElement.eElementAction.SetText,
+            ActUIElement.eElementAction.SendKeys,
+            ActUIElement.eElementAction.SendKeysXY,
+            ActUIElement.eElementAction.RunJavaScript,
+            ActUIElement.eElementAction.AsyncClick,
+            ActUIElement.eElementAction.GetCustomAttribute,
+            ActUIElement.eElementAction.GetFont,
+            ActUIElement.eElementAction.MousePressRelease,
+            ActUIElement.eElementAction.MouseClick,
+        ];
 
 
-        private static readonly IEnumerable<ActBrowserElement.eControlAction> ActBrowserElementSupportedOperations = new List<ActBrowserElement.eControlAction>()
-        {
+        private static readonly IEnumerable<ActBrowserElement.eControlAction> ActBrowserElementSupportedOperations =
+        [
             ActBrowserElement.eControlAction.GotoURL,
             ActBrowserElement.eControlAction.OpenURLNewTab,
             ActBrowserElement.eControlAction.GetPageURL,
@@ -1797,6 +1810,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActBrowserElement.eControlAction.SwitchToParentFrame,
             ActBrowserElement.eControlAction.SwitchWindow,
             ActBrowserElement.eControlAction.SwitchToDefaultWindow,
-        };
+        ];
     }
 }

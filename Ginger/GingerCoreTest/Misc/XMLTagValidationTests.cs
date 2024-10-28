@@ -67,18 +67,22 @@ namespace UnitTests.NonUITests
             jsonFileName = TestResources.GetTestResourcesFile(@"JSON\sample2.json");
             xmlFileName = TestResources.GetTestResourcesFile(@"XML\book.xml");
             xmlWithPrefixFileName = TestResources.GetTestResourcesFile(@"XML\book_with_prefix.xml");
-            DynamicElements = new ObservableList<ActInputValue>();
+            DynamicElements = [];
         }
 
         private static ObservableList<ActInputValue> SetJSONDynamicParameters()
         {
-            ObservableList<ActInputValue> temp = new ObservableList<ActInputValue>();
-            ActInputValue inp = new ActInputValue();
-            inp.Param = ".info.description";
+            ObservableList<ActInputValue> temp = [];
+            ActInputValue inp = new ActInputValue
+            {
+                Param = ".info.description"
+            };
             temp.Add(inp);
             inp = null;
-            inp = new ActInputValue();
-            inp.Param = ".parameters.query-salesChannel.description";
+            inp = new ActInputValue
+            {
+                Param = ".parameters.query-salesChannel.description"
+            };
             temp.Add(inp);
             inp = null;
             return temp;
@@ -92,10 +96,11 @@ namespace UnitTests.NonUITests
         public void JSonTests()
         {
 
-            ActXMLTagValidation XTA = new ActXMLTagValidation();
-
-            XTA.DocumentType = ActXMLTagValidation.eDocumentType.JSON;
-            XTA.ReqisFromFile = true;
+            ActXMLTagValidation XTA = new ActXMLTagValidation
+            {
+                DocumentType = ActXMLTagValidation.eDocumentType.JSON,
+                ReqisFromFile = true
+            };
             XTA.InputFile.ValueForDriver = jsonFileName;
             DynamicElements = SetJSONDynamicParameters();
             XTA.DynamicElements = DynamicElements;
@@ -114,13 +119,14 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void XMLTests()
         {
-            ActXMLTagValidation XTA = new ActXMLTagValidation();
-
-            XTA.DocumentType = ActXMLTagValidation.eDocumentType.XML;
-            XTA.ReqisFromFile = true;
+            ActXMLTagValidation XTA = new ActXMLTagValidation
+            {
+                DocumentType = ActXMLTagValidation.eDocumentType.XML,
+                ReqisFromFile = true
+            };
             XTA.InputFile.ValueForDriver = xmlFileName;
 
-            ObservableList<ActInputValue> dynamicElements = new ObservableList<ActInputValue>();
+            ObservableList<ActInputValue> dynamicElements = [];
             SetXMLDynamicParameters(dynamicElements, "//book[@publisher='amdocs']");
             SetXMLDynamicParameters(dynamicElements, "/catalog/book[2]");
             XTA.DynamicElements = dynamicElements;
@@ -135,13 +141,14 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void XMLWithPrefixTests()
         {
-            ActXMLTagValidation XTA = new ActXMLTagValidation();
-
-            XTA.DocumentType = ActXMLTagValidation.eDocumentType.XML;
-            XTA.ReqisFromFile = true;
+            ActXMLTagValidation XTA = new ActXMLTagValidation
+            {
+                DocumentType = ActXMLTagValidation.eDocumentType.XML,
+                ReqisFromFile = true
+            };
             XTA.InputFile.ValueForDriver = xmlWithPrefixFileName;
 
-            ObservableList<ActInputValue> dynamicElements = new ObservableList<ActInputValue>();
+            ObservableList<ActInputValue> dynamicElements = [];
             SetXMLDynamicParameters(dynamicElements, "/bookstore/book[2]/author/first-name");
             XTA.DynamicElements = dynamicElements;
             XTA.AddNewReturnParams = true;
@@ -153,8 +160,10 @@ namespace UnitTests.NonUITests
 
         private void SetXMLDynamicParameters(ObservableList<ActInputValue> dynamicElements, string param)
         {
-            ActInputValue actInputValue = new ActInputValue();
-            actInputValue.Param = param;
+            ActInputValue actInputValue = new ActInputValue
+            {
+                Param = param
+            };
             dynamicElements.Add(actInputValue);
         }
     }

@@ -19,11 +19,8 @@ limitations under the License.
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using Deque.AxeCore.Commons;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -48,6 +45,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task RefreshAsync();
 
         public Task<string> PageSourceAsync();
+
+        public Task MouseClickAsync(Point point);
+
+        public Task MouseRightClickAsync(Point point);
+
+        public Task MoveMouseAsync(Point point);
 
         public Task<string> ExecuteJavascriptAsync(string script);
 

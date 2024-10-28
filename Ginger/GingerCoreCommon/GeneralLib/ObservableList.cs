@@ -188,11 +188,7 @@ namespace Amdocs.Ginger.Common
         {
             if (mDoingUndo) return;
 
-            mUndoData = new List<T>();
-            foreach (T item in this.Items)
-            {
-                mUndoData.Add(item);
-            }
+            mUndoData = [.. this.Items];
         }
 
         void IObservableList.Undo()
@@ -222,7 +218,7 @@ namespace Amdocs.Ginger.Common
         public IQueryable<T> OrderBy(string orderByProperty, bool desc = false)
         {
             // We create a lambda expression based on the requested property
-            IEnumerable<T> items = new List<T>();
+            IEnumerable<T> items = [];
             IQueryable<T> source = Items.AsQueryable();
             string command = desc ? "OrderByDescending" : "OrderBy";
             var type = typeof(T);
@@ -401,7 +397,7 @@ namespace Amdocs.Ginger.Common
 
         public ObservableList<NewType> ListItemsCast<NewType>()
         {
-            ObservableList<NewType> list = new ObservableList<NewType>();
+            ObservableList<NewType> list = [];
             var v = Items.Cast<NewType>().ToList();
             foreach (NewType item in v)
             {
@@ -441,11 +437,7 @@ namespace Amdocs.Ginger.Common
         /// <returns></returns>
         public List<T> ToList()
         {
-            List<T> list = new List<T>();
-            foreach (T o in this)
-            {
-                list.Add(o);
-            }
+            List<T> list = [.. this];
             return list;
         }
     }

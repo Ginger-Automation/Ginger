@@ -94,7 +94,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             try
             {
-                Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB,null, "Creating Sealights Session...");
+                Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Creating Sealights Session...");
 
                 SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
 
@@ -259,7 +259,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
             if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.ActivitiesGroup)
             {
-                if (activityGroup.RunStatus == Common.InterfacesLib.eActivitiesGroupRunStatus.Blocked || activityGroup.RunStatus == Common.InterfacesLib.eActivitiesGroupRunStatus.Skipped) // We are tracking the 'skipped' seperatly (in NotifyOnSkippedRunnerEntities(..))
+                if (activityGroup.RunStatus is Common.InterfacesLib.eActivitiesGroupRunStatus.Blocked or Common.InterfacesLib.eActivitiesGroupRunStatus.Skipped) // We are tracking the 'skipped' seperatly (in NotifyOnSkippedRunnerEntities(..))
                 {
                     return;
                 }

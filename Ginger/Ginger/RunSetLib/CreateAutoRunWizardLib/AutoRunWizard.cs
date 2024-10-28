@@ -139,7 +139,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                         {
                             using ExecutionHandlerAPIClient executionHandlerAPIClient = new(AutoRunConfiguration.ExecutionServiceUrl);
                             AddExecutionRequest executionRequest = JsonSerializer.Deserialize<AddExecutionRequest>(
-                                AutoRunConfiguration.CLIContent, 
+                                AutoRunConfiguration.CLIContent,
                                 new JsonSerializerOptions()
                                 {
                                     Converters = { new JsonStringEnumConverter() }

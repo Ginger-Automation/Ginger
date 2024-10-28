@@ -59,9 +59,13 @@ namespace Ginger.SolutionCategories
 
         private void InitGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategory.CategoryName), Header = "Category", ReadOnly = true, BindingMode = BindingMode.OneWay, WidthWeight = 20 });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(SolutionCategory.CategoryName), Header = "Category", ReadOnly = true, BindingMode = BindingMode.OneWay, WidthWeight = 20 },
+            ]
+            };
 
             if (mPageMode == eSolutionCategoriesPageMode.OptionalValuesDefinition)
             {
@@ -103,15 +107,15 @@ namespace Ginger.SolutionCategories
         {
             foreach (SolutionCategoryDefinition cat in mCategoriesDefinitions)
             {
-                if (cat!=null)
+                if (cat != null)
                 {
                     SolutionCategory solCat = mSolutionCategories.FirstOrDefault(x => x.Category == cat.Category);
-                    if (solCat!=null)
+                    if (solCat != null)
                     {
                         cat.CategoryName = solCat.CategoryName;
                         cat.Description = solCat.Description;
                         cat.CategoryOptionalValues = solCat.CategoryOptionalValues;
-                    } 
+                    }
                 }
             }
         }

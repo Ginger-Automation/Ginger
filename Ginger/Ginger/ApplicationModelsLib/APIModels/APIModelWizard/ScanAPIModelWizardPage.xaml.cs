@@ -21,10 +21,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.UserControls;
 using Ginger;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.UserControls;
@@ -82,9 +81,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(selectedAPIModels).OrderBy(d => d.comparisonStatus));
 
-            if (AddAPIModelWizard.DeltaModelsList.Where(f=>f.matchingAPIModel!=null).GroupBy(m => m.matchingAPIModel).Any())
+            if (AddAPIModelWizard.DeltaModelsList.Where(f => f.matchingAPIModel != null).GroupBy(m => m.matchingAPIModel).Any())
             {
-                foreach (DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.Where(f => f.matchingAPIModel != null).GroupBy(m => m.matchingAPIModel).SelectMany(m=>m))
+                foreach (DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.Where(f => f.matchingAPIModel != null).GroupBy(m => m.matchingAPIModel).SelectMany(m => m))
                 {
                     deltaAPIMod.MatchingAPIName = "[Warning] " + deltaAPIMod.MatchingAPIName;
                 }
@@ -141,8 +140,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     bool mergeIssue = false;
                     bool notifyReplaceAPI = false;
                     AddAPIModelWizard.LearnedAPIModelsList.Clear();
-                    List<DeltaAPIModel> repeatingMatchingModels = AddAPIModelWizard.DeltaModelsList.Where(m => m.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting ||
-                                                                m.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
+                    List<DeltaAPIModel> repeatingMatchingModels = AddAPIModelWizard.DeltaModelsList.Where(m => m.SelectedOperationEnum is DeltaAPIModel.eHandlingOperations.ReplaceExisting or
+                                                                DeltaAPIModel.eHandlingOperations.MergeChanges)
                                                                         .GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).ToList();
 
                     bool matchingModelsReplacementIssue = repeatingMatchingModels.Any();
@@ -270,10 +269,21 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private async Task<bool> ShowSwaggerOperations()
         {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "Swagger");
+            if (SwaggerParser.IsValidYaml((AddAPIModelWizard.URL)))
+            {
+                featureTracker.Metadata.Add("FileType", "YAML");
+            }
+            else
+            {
+                featureTracker.Metadata.Add("FileType", "JSON");
+            }
+
             AddAPIModelWizard.ProcessStarted();
             bool parseSuccess = true;
             SwaggerParser SwaggerPar = new SwaggerParser();
-            AddAPIModelWizard.LearnedAPIModelsList = new ObservableList<ApplicationAPIModel>();
+            AddAPIModelWizard.LearnedAPIModelsList = [];
             xApisSelectionGrid.DataSourceList = AddAPIModelWizard.LearnedAPIModelsList;
 
 
@@ -305,12 +315,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private async Task<bool> ShowXMLTemplatesOperations()
         {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "XMLTemplate");
+
             bool parseSuccess = true;
             AddAPIModelWizard.ProcessStarted();
 
             XMLTemplateParser WSDLP = new XMLTemplateParser();
-            ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
-            ObservableList<ApplicationAPIModel> AAMCompletedList = new ObservableList<ApplicationAPIModel>();
+            ObservableList<ApplicationAPIModel> AAMTempList = [];
+            ObservableList<ApplicationAPIModel> AAMCompletedList = [];
 
             foreach (TemplateFile XTF in AddAPIModelWizard.XTFList)
             {
@@ -360,10 +373,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         }
         private async Task<bool> ShowJsonTemplatesOperations()
         {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "JSON_Template");
+
             bool parseSuccess = true;
             JSONTemplateParser JsonTemplate = new JSONTemplateParser();
-            ObservableList<ApplicationAPIModel> AAMTempList = new ObservableList<ApplicationAPIModel>();
-            ObservableList<ApplicationAPIModel> AAMCompletedList = new ObservableList<ApplicationAPIModel>();
+            ObservableList<ApplicationAPIModel> AAMTempList = [];
+            ObservableList<ApplicationAPIModel> AAMCompletedList = [];
 
             foreach (TemplateFile XTF in AddAPIModelWizard.XTFList)
             {
@@ -413,10 +429,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private async Task<bool> ShowWSDLOperations()
         {
+            using IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.AAMLearning);
+            featureTracker.Metadata.Add("APIType", "WSDL");
+
             bool parseSuccess = true;
 
             AddAPIModelWizard.ProcessStarted();
-            AddAPIModelWizard.LearnedAPIModelsList = new ObservableList<ApplicationAPIModel>();
+            AddAPIModelWizard.LearnedAPIModelsList = [];
             xApisSelectionGrid.DataSourceList = AddAPIModelWizard.LearnedAPIModelsList;
             try
             {
@@ -464,26 +483,32 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void SetFieldsGrid()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.Name), Header = "Name", WidthWeight = 250, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.Description), Header = "Description", WidthWeight = 250, BindingMode = BindingMode.OneWay });
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.MatchingAPIName), Header = "Matching API Model", WidthWeight = 300, BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingModelTemplate"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comp. Status", WidthWeight = 150, MaxWidth = 150, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Comp. Operation", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(DeltaAPIModel.OperationsList), nameof(DeltaAPIModel.SelectedOperation), comboSelectionChangedHandler: XHandlingOperation_SelectionChanged) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.SelectedOperation), Header = "Comp. & Merge", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareAndMergeTemplate"] });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(DeltaAPIModel.Name), Header = "Name", WidthWeight = 250, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = nameof(DeltaAPIModel.Description), Header = "Description", WidthWeight = 250, BindingMode = BindingMode.OneWay },
+                new GridColView() { Field = nameof(DeltaAPIModel.MatchingAPIName), Header = "Matching API Model", WidthWeight = 300, BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingModelTemplate"] },
+                new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comp. Status", WidthWeight = 150, MaxWidth = 150, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay },
+                new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Comp. Operation", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(DeltaAPIModel.OperationsList), nameof(DeltaAPIModel.SelectedOperation), comboSelectionChangedHandler: XHandlingOperation_SelectionChanged) },
+                new GridColView() { Field = nameof(DeltaAPIModel.SelectedOperation), Header = "Comp. & Merge", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareAndMergeTemplate"] },
+            ]
+            };
             xApisSelectionGrid.SetAllColumnsDefaultView(view);
 
             //# Custom View - Initial View
-            GridViewDef initView = new GridViewDef(eAddAPIWizardViewStyle.Add.ToString());
-            initView.GridColsView = new ObservableList<GridColView>();
-
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.IsSelected), Header = "Selected", Order = 0, WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xIsSelectedTemplate"] });
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.MatchingAPIName), Header = "Matching API Model", WidthWeight = 20, Visible = false });
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comp. Status", WidthWeight = 150, Visible = false, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Comp. Operation", Visible = false });
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.SelectedOperation), Header = "Comp. & Merge", Visible = false });
+            GridViewDef initView = new GridViewDef(eAddAPIWizardViewStyle.Add.ToString())
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(DeltaAPIModel.IsSelected), Header = "Selected", Order = 0, WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xIsSelectedTemplate"] },
+                new GridColView() { Field = nameof(DeltaAPIModel.MatchingAPIName), Header = "Matching API Model", WidthWeight = 20, Visible = false },
+                new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comp. Status", WidthWeight = 150, Visible = false, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay },
+                new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Comp. Operation", Visible = false },
+                new GridColView() { Field = nameof(DeltaAPIModel.SelectedOperation), Header = "Comp. & Merge", Visible = false },
+            ]
+            };
 
             xApisSelectionGrid.AddCustomView(initView);
             xApisSelectionGrid.ShowViewCombo = Visibility.Collapsed;
@@ -522,8 +547,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         void ShowMergerPage(object sender)
         {
             DeltaAPIModel deltaAPI = null;
-            var fEl = sender as FrameworkElement;
-            if (fEl != null)
+            if (sender is FrameworkElement fEl)
             {
                 deltaAPI = fEl.DataContext as DeltaAPIModel;
             }
@@ -541,16 +565,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void XHandlingOperation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox handlingOpCB = sender as ComboBox;
             string mergerDescription = Convert.ToString(DeltaAPIModel.GetEnumDescription(DeltaAPIModel.eHandlingOperations.MergeChanges));
 
-            if (handlingOpCB != null && handlingOpCB.SelectedItem != null)
+            if (sender is ComboBox handlingOpCB && handlingOpCB.SelectedItem != null)
             {
                 DeltaAPIModel.eHandlingOperations selectedOperation = DeltaAPIModel.GetValueFromDescription<DeltaAPIModel.eHandlingOperations>(Convert.ToString(handlingOpCB.SelectedItem));
 
                 DeltaAPIModel deltaAPI = null;
-                var fEl = sender as FrameworkElement;
-                if (fEl != null)
+                if (sender is FrameworkElement fEl)
                 {
                     deltaAPI = fEl.DataContext as DeltaAPIModel;
                 }
@@ -581,8 +603,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private object GetFrameElementDataContext(object sender)
         {
-            var fEl = sender as FrameworkElement;
-            if (fEl != null)
+            if (sender is FrameworkElement fEl)
             {
                 return fEl.DataContext;
             }
@@ -606,8 +627,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 apiModelTreeSelectionPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
                                                                                     new System.Tuple<string, string>(nameof(ApplicationAPIModel.APIType), deltaAPI.learnedAPI.APIType.ToString()));
 
-                apiModelTreeSelectionPage.xTreeView.Tree.RefreshTreeNodeChildrens(apiRoot);
-
                 List<object> selectedList = apiModelTreeSelectionPage.ShowAsWindow("Matching API Models", (Window)AddAPIModelWizard.mWizardWindow);
 
                 ApplicationAPIModel selectedAPIModel = null;
@@ -616,8 +635,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     selectedAPIModel = selectedList.FirstOrDefault() as ApplicationAPIModel;
                     //deltaAPI.matchingAPIModel = selectedAPIModel;
 
-                    ObservableList<ApplicationAPIModel> selectedMatchingAPIList = new ObservableList<ApplicationAPIModel>() { selectedAPIModel };
-                    ObservableList<ApplicationAPIModel> apiModelsListLearned = new ObservableList<ApplicationAPIModel>() { deltaAPI.learnedAPI };
+                    ObservableList<ApplicationAPIModel> selectedMatchingAPIList = [selectedAPIModel];
+                    ObservableList<ApplicationAPIModel> apiModelsListLearned = [deltaAPI.learnedAPI];
 
                     ObservableList<DeltaAPIModel> comparisonOutputDelta = APIDeltaUtils.DoAPIModelsCompare(apiModelsListLearned, selectedMatchingAPIList);
 

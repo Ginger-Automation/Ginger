@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
@@ -67,38 +66,49 @@ namespace UnitTests.UITests.PBDriverTest
 
             mGR = new GingerRunner();
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF Test PB Driver";
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.PowerBuilder;
+            mBF = new BusinessFlow
+            {
+                Activities = [],
+                Name = "BF Test PB Driver"
+            };
+            Platform p = new Platform
+            {
+                PlatformType = ePlatformType.PowerBuilder
+            };
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "PBTestAPP" });
-            Activity activity = new Activity();
-            activity.TargetApplication = "PBTestApp";
+            Activity activity = new Activity
+            {
+                TargetApplication = "PBTestApp"
+            };
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
 
             mDriver = new PBDriver(mBF);
             mDriver.StartDriver();
-            Agent a = new Agent();
-            a.Active = true;
+            Agent a = new Agent
+            {
+                Active = true
+            };
             ((AgentOperations)a.AgentOperations).Driver = mDriver;
             a.DriverType = Agent.eDriverType.PowerBuilder;
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = [a];
 
-            ApplicationAgent AA = new ApplicationAgent();
-            AA.AppName = "PBTestApp";
-            AA.Agent = a;
+            ApplicationAgent AA = new ApplicationAgent
+            {
+                AppName = "PBTestApp",
+                Agent = a
+            };
             mGR.ApplicationAgents.Add(AA);
             mGR.Executor.CurrentBusinessFlow = mBF;
             mGR.Executor.SetCurrentActivityAgent();
             // Do Switch Window, to be ready for actions
-            ActSwitchWindow c = new ActSwitchWindow();
-            c.LocateBy = eLocateBy.ByTitle;
-            c.LocateValueCalculated = "Simple Page";
-            c.WaitTime = 10;
+            ActSwitchWindow c = new ActSwitchWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValueCalculated = "Simple Page",
+                WaitTime = 10
+            };
             mDriver.RunAction(c);
             //if(c.Status.Value==eRunStatus.Failed)
             //{
@@ -110,35 +120,41 @@ namespace UnitTests.UITests.PBDriverTest
 
             //}
 
-            ActPBControl action = new ActPBControl();
-            action.LocateBy = eLocateBy.ByXPath;
-            action.ControlAction = ActPBControl.eControlAction.SetValue;
-            action.AddNewReturnParams = true;
-            action.Wait = 4;
-            action.LocateValueCalculated = "/[AutomationId:1001]";
-            action.Value = proc.StartInfo.WorkingDirectory = TestResources.GetTestResourcesFolder("PBTestApp") + @"\Browser.html";
-            action.Active = true;
+            ActPBControl action = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.SetValue,
+                AddNewReturnParams = true,
+                Wait = 4,
+                LocateValueCalculated = "/[AutomationId:1001]",
+                Value = proc.StartInfo.WorkingDirectory = TestResources.GetTestResourcesFolder("PBTestApp") + @"\Browser.html",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
             //Act
             mGR.Executor.RunAction(action, false);
 
-            action = new ActPBControl();
-            action.LocateBy = eLocateBy.ByName;
-            action.ControlAction = ActPBControl.eControlAction.SetValue;
-            action.LocateValueCalculated = "Launch Widget Window";
-            action.Active = true;
+            action = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.SetValue,
+                LocateValueCalculated = "Launch Widget Window",
+                Active = true
+            };
 
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
             //Act
             mGR.Executor.RunAction(action, false);
 
-            c = new ActSwitchWindow();
-            c.LocateBy = eLocateBy.ByTitle;
-            c.LocateValueCalculated = "CSM Widgets Test Applicaiton";
-            c.WaitTime = 10;
+            c = new ActSwitchWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValueCalculated = "CSM Widgets Test Applicaiton",
+                WaitTime = 10
+            };
             mDriver.RunAction(c);
 
 
@@ -146,13 +162,15 @@ namespace UnitTests.UITests.PBDriverTest
             string actual = "";
             do
             {
-                action = new ActPBControl();
-                action.LocateBy = eLocateBy.ByName;
-                action.ControlAction = ActPBControl.eControlAction.IsExist;
-                action.LocateValueCalculated = "Script Error";
-                action.AddNewReturnParams = true;
-                action.Timeout = 10;
-                action.Active = true;
+                action = new ActPBControl
+                {
+                    LocateBy = eLocateBy.ByName,
+                    ControlAction = ActPBControl.eControlAction.IsExist,
+                    LocateValueCalculated = "Script Error",
+                    AddNewReturnParams = true,
+                    Timeout = 10,
+                    Active = true
+                };
 
                 mBF.CurrentActivity.Acts.Add(action);
                 mBF.CurrentActivity.Acts.CurrentItem = action;
@@ -163,11 +181,13 @@ namespace UnitTests.UITests.PBDriverTest
                 actual = action.GetReturnParam("Actual");
                 if (actual.Equals("True"))
                 {
-                    ActPBControl PbAct = new ActPBControl();
-                    PbAct.LocateBy = eLocateBy.ByXPath;
-                    PbAct.ControlAction = ActPBControl.eControlAction.Click;
-                    PbAct.LocateValueCalculated = @"/Script Error/[LocalizedControlType:title bar]/Close";
-                    PbAct.Active = true;
+                    ActPBControl PbAct = new ActPBControl
+                    {
+                        LocateBy = eLocateBy.ByXPath,
+                        ControlAction = ActPBControl.eControlAction.Click,
+                        LocateValueCalculated = @"/Script Error/[LocalizedControlType:title bar]/Close",
+                        Active = true
+                    };
                     mBF.CurrentActivity.Acts.Add(PbAct);
                     mBF.CurrentActivity.Acts.CurrentItem = PbAct;
                     mGR.Executor.RunAction(PbAct, false);
@@ -175,10 +195,12 @@ namespace UnitTests.UITests.PBDriverTest
             } while (actual.Equals("True"));
 
             //proceed for switch window and initialize browser
-            c = new ActSwitchWindow();
-            c.LocateBy = eLocateBy.ByTitle;
-            c.LocateValueCalculated = "CSM Widgets Test Applicaiton";
-            c.WaitTime = 2;
+            c = new ActSwitchWindow
+            {
+                LocateBy = eLocateBy.ByTitle,
+                LocateValueCalculated = "CSM Widgets Test Applicaiton",
+                WaitTime = 2
+            };
             mDriver.RunAction(c);
 
             int count = 1;
@@ -228,22 +250,26 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void SetValue_textbox()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.SetValue;
-            act.LocateValueCalculated = "firstName";
-            act.Value = "Ginger";
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.SetValue,
+                LocateValueCalculated = "firstName",
+                Value = "Ginger",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.GetValue;
-            act.LocateValueCalculated = "firstName";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.GetValue,
+                LocateValueCalculated = "firstName",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -260,22 +286,26 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void GetValue_Textbox()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.SetValue;
-            act.LocateValueCalculated = "firstName";
-            act.Value = "Ginger";
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.SetValue,
+                LocateValueCalculated = "firstName",
+                Value = "Ginger",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.GetValue;
-            act.LocateValueCalculated = "firstName";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.GetValue,
+                LocateValueCalculated = "firstName",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -291,33 +321,39 @@ namespace UnitTests.UITests.PBDriverTest
         [Ignore]
         public void SendKeys_textbox()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.Click;
-            act.LocateValueCalculated = "ssnNumber";
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.Click,
+                LocateValueCalculated = "ssnNumber",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
-            act.LocateValueCalculated = "ssnNumber";
-            act.Value = "1234";
-            act.Wait = 4;
-            act.Active = true;
+            act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.SendKeys,
+                LocateValueCalculated = "ssnNumber",
+                Value = "1234",
+                Wait = 4,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.GetValue;
-            act.LocateValueCalculated = "ssnNumber";
-            act.AddNewReturnParams = true;
-            act.Wait = 2;
-            act.Active = true;
+            act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.GetValue,
+                LocateValueCalculated = "ssnNumber",
+                AddNewReturnParams = true,
+                Wait = 2,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -334,22 +370,26 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void SelectFromDropdown()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByID;
-            act.GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDown;
-            act.LocateValueCalculated = "accountSubType";
-            act.Value = "EMPLOYEE";
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByID,
+                GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDown,
+                LocateValueCalculated = "accountSubType",
+                Value = "EMPLOYEE",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByID;
-            act.GenElementAction = ActGenElement.eGenElementAction.GetValue;
-            act.LocateValueCalculated = "accountSubType";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByID,
+                GenElementAction = ActGenElement.eGenElementAction.GetValue,
+                LocateValueCalculated = "accountSubType",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -364,13 +404,15 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void IsEnabled_Textbox()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.Enabled;
-            act.LocateValueCalculated = "firstName";
-            act.AddNewReturnParams = true;
-            act.Value = "Ginger";
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.Enabled,
+                LocateValueCalculated = "firstName",
+                AddNewReturnParams = true,
+                Value = "Ginger",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -385,13 +427,15 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void IsVisible_Textbox()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.Visible;
-            act.LocateValueCalculated = "firstName";
-            act.AddNewReturnParams = true;
-            act.Value = "Ginger";
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.Visible,
+                LocateValueCalculated = "firstName",
+                AddNewReturnParams = true,
+                Value = "Ginger",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -406,13 +450,15 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void GetInnerText_Dropdown()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByID;
-            act.GenElementAction = ActGenElement.eGenElementAction.GetInnerText;
-            act.LocateValueCalculated = "accountSubType";
-            act.AddNewReturnParams = true;
-            act.Value = "Ginger";
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByID,
+                GenElementAction = ActGenElement.eGenElementAction.GetInnerText,
+                LocateValueCalculated = "accountSubType",
+                AddNewReturnParams = true,
+                Value = "Ginger",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -427,13 +473,15 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void GetStyle_Dropdown()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.GetStyle;
-            act.LocateValueCalculated = "accountSubType";
-            act.AddNewReturnParams = true;
-            act.Value = "Ginger";
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.GetStyle,
+                LocateValueCalculated = "accountSubType",
+                AddNewReturnParams = true,
+                Value = "Ginger",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -447,13 +495,15 @@ namespace UnitTests.UITests.PBDriverTest
         [Ignore]
         public void SwitchFrame()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByID;
-            act.GenElementAction = ActGenElement.eGenElementAction.SwitchFrame;
-            act.LocateValueCalculated = "accountSubType";
-            act.Value = "Ginger";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByID,
+                GenElementAction = ActGenElement.eGenElementAction.SwitchFrame,
+                LocateValueCalculated = "accountSubType",
+                Value = "Ginger",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -468,22 +518,26 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void ClickTest()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByXPath;
-            act.GenElementAction = ActGenElement.eGenElementAction.Click;
-            act.LocateValueCalculated = "/html[1]/body[1]/div[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[1]/td[3]/div[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[6]/td[1]/a[1]";
-            act.Active = true;
-            act.AddNewReturnParams = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                GenElementAction = ActGenElement.eGenElementAction.Click,
+                LocateValueCalculated = "/html[1]/body[1]/div[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[1]/td[3]/div[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[6]/td[1]/a[1]",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.IsExist;
-            c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "/Message from webpage/OK";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.IsExist,
+                AddNewReturnParams = true,
+                LocateValueCalculated = "/Message from webpage/OK",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -495,12 +549,14 @@ namespace UnitTests.UITests.PBDriverTest
             string actual = c.GetReturnParam("Actual");
             if (actual.Equals("True"))
             {
-                c = new ActPBControl();
-                c.LocateBy = eLocateBy.ByXPath;
-                c.ControlAction = ActPBControl.eControlAction.Click;
-                c.AddNewReturnParams = true;
-                c.LocateValueCalculated = "/Message from webpage/OK";
-                c.Active = true;
+                c = new ActPBControl
+                {
+                    LocateBy = eLocateBy.ByXPath,
+                    ControlAction = ActPBControl.eControlAction.Click,
+                    AddNewReturnParams = true,
+                    LocateValueCalculated = "/Message from webpage/OK",
+                    Active = true
+                };
                 mBF.CurrentActivity.Acts.Add(c);
                 mBF.CurrentActivity.Acts.CurrentItem = c;
                 //Act
@@ -516,23 +572,27 @@ namespace UnitTests.UITests.PBDriverTest
         [Ignore]
         public void ClickAt_Test()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByXPath;
-            act.GenElementAction = ActGenElement.eGenElementAction.ClickAt;
-            act.LocateValueCalculated = "/html[1]/body[1]/div[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[1]/td[3]/div[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[5]/td[1]";
-            act.Value = "30,30";
-            act.Active = true;
-            act.AddNewReturnParams = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                GenElementAction = ActGenElement.eGenElementAction.ClickAt,
+                LocateValueCalculated = "/html[1]/body[1]/div[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[1]/td[3]/div[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[5]/td[1]",
+                Value = "30,30",
+                Active = true,
+                AddNewReturnParams = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByXPath;
-            c.ControlAction = ActPBControl.eControlAction.IsExist;
-            c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "/Message from webpage/OK";
-            c.Active = true;
+            ActPBControl c = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByXPath,
+                ControlAction = ActPBControl.eControlAction.IsExist,
+                AddNewReturnParams = true,
+                LocateValueCalculated = "/Message from webpage/OK",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
@@ -544,12 +604,14 @@ namespace UnitTests.UITests.PBDriverTest
             string actual = c.GetReturnParam("Actual");
             if (actual.Equals("True"))
             {
-                c = new ActPBControl();
-                c.LocateBy = eLocateBy.ByXPath;
-                c.ControlAction = ActPBControl.eControlAction.Click;
-                c.AddNewReturnParams = true;
-                c.LocateValueCalculated = "/Message from webpage/OK";
-                c.Active = true;
+                c = new ActPBControl
+                {
+                    LocateBy = eLocateBy.ByXPath,
+                    ControlAction = ActPBControl.eControlAction.Click,
+                    AddNewReturnParams = true,
+                    LocateValueCalculated = "/Message from webpage/OK",
+                    Active = true
+                };
                 mBF.CurrentActivity.Acts.Add(c);
                 mBF.CurrentActivity.Acts.CurrentItem = c;
                 //Act
@@ -574,52 +636,62 @@ namespace UnitTests.UITests.PBDriverTest
             //mBF.CurrentActivity.Acts.CurrentItem = act;
             //mGR.Executor.RunAction(act, false);
 
-            act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.SetValue;
-            act.LocateValueCalculated = "lastName";
-            act.Value = "CoreTeam";
-            act.Active = true;
+            act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.SetValue,
+                LocateValueCalculated = "lastName",
+                Value = "CoreTeam",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.SetValue;
-            act.LocateValueCalculated = "lastName";
-            act.Value = "abc@gmail.com";
-            act.Active = true;
+            act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.SetValue,
+                LocateValueCalculated = "lastName",
+                Value = "abc@gmail.com",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.RightClick;
-            act.LocateValueCalculated = "lastName";
-            act.Active = true;
+            act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.RightClick,
+                LocateValueCalculated = "lastName",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByXPath;
-            act.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
-            act.LocateValueCalculated = "/html[1]/body[1]/div[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[1]/td[3]/div[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[3]/td[3]/input[1]";
-            act.Value = "u";
-            act.Wait = 2;
-            act.Active = true;
+            act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByXPath,
+                GenElementAction = ActGenElement.eGenElementAction.SendKeys,
+                LocateValueCalculated = "/html[1]/body[1]/div[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[1]/td[3]/div[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[2]/td[2]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[3]/td[3]/input[1]",
+                Value = "u",
+                Wait = 2,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-            act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.GetValue;
-            act.LocateValueCalculated = "lastName";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.GetValue,
+                LocateValueCalculated = "lastName",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -636,13 +708,15 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void GetAttributeValue_Size()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.GetCustomAttribute;
-            act.LocateValueCalculated = "firstName";
-            act.Value = "size";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.GetCustomAttribute,
+                LocateValueCalculated = "firstName",
+                Value = "size",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -656,12 +730,14 @@ namespace UnitTests.UITests.PBDriverTest
         [Ignore]
         public void SwitchFrame_GenElement()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByID;
-            act.GenElementAction = ActGenElement.eGenElementAction.SwitchFrame;
-            act.LocateValueCalculated = "accountSubType";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByID,
+                GenElementAction = ActGenElement.eGenElementAction.SwitchFrame,
+                LocateValueCalculated = "accountSubType",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -676,12 +752,14 @@ namespace UnitTests.UITests.PBDriverTest
         public void Hover_Test()
         {
             // TODO: 
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.GenElementAction = ActGenElement.eGenElementAction.Hover;
-            act.LocateValueCalculated = "stateForStandard";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.Hover,
+                LocateValueCalculated = "stateForStandard",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -689,13 +767,15 @@ namespace UnitTests.UITests.PBDriverTest
 
 
             string actual = "";
-            action = new ActPBControl();
-            action.LocateBy = eLocateBy.ByName;
-            action.ControlAction = ActPBControl.eControlAction.IsExist;
-            action.LocateValueCalculated = "Script Error";
-            action.AddNewReturnParams = true;
-            action.Timeout = 10;
-            action.Active = true;
+            action = new ActPBControl
+            {
+                LocateBy = eLocateBy.ByName,
+                ControlAction = ActPBControl.eControlAction.IsExist,
+                LocateValueCalculated = "Script Error",
+                AddNewReturnParams = true,
+                Timeout = 10,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
             //Act
@@ -710,24 +790,28 @@ namespace UnitTests.UITests.PBDriverTest
 
                 while (!String.IsNullOrEmpty(actual) && actual.Equals("True"))
                 {
-                    ActPBControl PbAct = new ActPBControl();
-                    PbAct.LocateBy = eLocateBy.ByXPath;
-                    PbAct.ControlAction = ActPBControl.eControlAction.Click;
-                    PbAct.LocateValueCalculated = @"/Script Error/[LocalizedControlType:title bar]/Close";
-                    PbAct.Active = true;
-                    PbAct.AddNewReturnParams = true;
+                    ActPBControl PbAct = new ActPBControl
+                    {
+                        LocateBy = eLocateBy.ByXPath,
+                        ControlAction = ActPBControl.eControlAction.Click,
+                        LocateValueCalculated = @"/Script Error/[LocalizedControlType:title bar]/Close",
+                        Active = true,
+                        AddNewReturnParams = true
+                    };
                     mBF.CurrentActivity.Acts.Add(PbAct);
                     mBF.CurrentActivity.Acts.CurrentItem = PbAct;
                     mGR.Executor.RunAction(PbAct, false);
 
 
-                    action = new ActPBControl();
-                    action.LocateBy = eLocateBy.ByName;
-                    action.ControlAction = ActPBControl.eControlAction.IsExist;
-                    action.LocateValueCalculated = "Script Error";
-                    action.AddNewReturnParams = true;
-                    action.Timeout = 10;
-                    action.Active = true;
+                    action = new ActPBControl
+                    {
+                        LocateBy = eLocateBy.ByName,
+                        ControlAction = ActPBControl.eControlAction.IsExist,
+                        LocateValueCalculated = "Script Error",
+                        AddNewReturnParams = true,
+                        Timeout = 10,
+                        Active = true
+                    };
                     mBF.CurrentActivity.Acts.Add(action);
                     mBF.CurrentActivity.Acts.CurrentItem = action;
                     //Act
@@ -740,11 +824,13 @@ namespace UnitTests.UITests.PBDriverTest
                 Assert.AreEqual(action.Status, eRunStatus.Failed, "Action Status");
             }
 
-            ActGenElement actGen = new ActGenElement();
-            actGen.LocateBy = eLocateBy.ByName;
-            actGen.GenElementAction = ActGenElement.eGenElementAction.Click;
-            actGen.LocateValueCalculated = "lastName";
-            actGen.Active = true;
+            ActGenElement actGen = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByName,
+                GenElementAction = ActGenElement.eGenElementAction.Click,
+                LocateValueCalculated = "lastName",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(actGen);
             mBF.CurrentActivity.Acts.CurrentItem = actGen;
             mGR.Executor.RunAction(actGen, false);
@@ -775,12 +861,14 @@ namespace UnitTests.UITests.PBDriverTest
         [Ignore]
         public void SwitchFrame_Testing()
         {
-            ActBrowserElement act = new ActBrowserElement();
-            act.LocateBy = eLocateBy.ByClassName;
-            act.ControlAction = ActBrowserElement.eControlAction.SwitchFrame;
-            act.Value = "Internet Explorer_Server";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            ActBrowserElement act = new ActBrowserElement
+            {
+                LocateBy = eLocateBy.ByClassName,
+                ControlAction = ActBrowserElement.eControlAction.SwitchFrame,
+                Value = "Internet Explorer_Server",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -792,12 +880,14 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void SwitchToDefaultFrame_Testing()
         {
-            ActBrowserElement act = new ActBrowserElement();
-            act.LocateBy = eLocateBy.ByClassName;
-            act.ControlAction = ActBrowserElement.eControlAction.SwitchToDefaultFrame;
-            act.Value = "Internet Explorer_Server";
-            act.AddNewReturnParams = true;
-            act.Active = true;
+            ActBrowserElement act = new ActBrowserElement
+            {
+                LocateBy = eLocateBy.ByClassName,
+                ControlAction = ActBrowserElement.eControlAction.SwitchToDefaultFrame,
+                Value = "Internet Explorer_Server",
+                AddNewReturnParams = true,
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -809,13 +899,15 @@ namespace UnitTests.UITests.PBDriverTest
         [Timeout(60000)]
         public void GetElementAttribute_Dropdown()
         {
-            ActGenElement act = new ActGenElement();
-            act.LocateBy = eLocateBy.ByID;
-            act.GenElementAction = ActGenElement.eGenElementAction.GetElementAttributeValue;
-            act.LocateValueCalculated = "accountSubType";
-            act.AddNewReturnParams = true;
-            act.Value = "Ginger";
-            act.Active = true;
+            ActGenElement act = new ActGenElement
+            {
+                LocateBy = eLocateBy.ByID,
+                GenElementAction = ActGenElement.eGenElementAction.GetElementAttributeValue,
+                LocateValueCalculated = "accountSubType",
+                AddNewReturnParams = true,
+                Value = "Ginger",
+                Active = true
+            };
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);

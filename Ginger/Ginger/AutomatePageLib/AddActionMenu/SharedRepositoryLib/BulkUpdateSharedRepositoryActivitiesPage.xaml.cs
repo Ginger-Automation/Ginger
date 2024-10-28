@@ -19,37 +19,23 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.UserControls;
 using Ginger.BusinessFlowPages;
-using Ginger.Repository;
 using Ginger.UserControls;
-using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Activities;
-using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using NPOI.OpenXmlFormats.Wordprocessing;
-using Org.BouncyCastle.Asn1.Crmf;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 {
@@ -77,8 +63,8 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         {
             GridViewDef gridViewDef = new(GridViewDef.DefaultViewName)
             {
-                GridColsView = new()
-                {
+                GridColsView =
+                [
                     new GridColView()
                     {
                         Header = "Selected",
@@ -135,29 +121,29 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                         StyleType = GridColView.eGridColStyleType.Template,
                         CellTemplate = (DataTemplate)FindResource("ViewDetailsCellTemplate")
                     }
-                }
+                ]
             };
             BulkUpdateUCGrid.Title = "Bulk Update Shared Activities";
 
             BulkUpdateUCGrid.AddToolbarTool(
-                "@CheckAllRow_16x16.png", 
-                "Select All", 
+                "@CheckAllRow_16x16.png",
+                "Select All",
                 BulkUpdateUCGrid_Toolbar_SelectAllForSync);
             BulkUpdateUCGrid.AddToolbarTool(
-                "@UnCheckAllRow_16x16.png", 
-                "Unselect All", 
+                "@UnCheckAllRow_16x16.png",
+                "Unselect All",
                 BulkUpdateUCGrid_Toolbar_UnselectAllForSync);
             BulkUpdateUCGrid.AddToolbarTool(
-                eImageType.Share, 
-                "Set highlighted Publish for all", 
+                eImageType.Share,
+                "Set highlighted Publish for all",
                 BulkUpdateUCGrid_Toolbar_SyncPublish);
             BulkUpdateUCGrid.AddToolbarTool(
-                eImageType.Mandatory, 
-                "Set highlighted Mandatoryfor all", 
+                eImageType.Mandatory,
+                "Set highlighted Mandatoryfor all",
                 BulkUpdateUCGrid_Toolbar_SyncMandatory);
             BulkUpdateUCGrid.AddToolbarTool(
-                eImageType.Application, 
-                "Set highlighted Target Application for all", 
+                eImageType.Application,
+                "Set highlighted Target Application for all",
                 BulkUpdateUCGrid_Toolbar_SyncTargetApplication);
 
             BulkUpdateUCGrid.TextFilter = BulkUpdateUCGrid_TextFilter;
@@ -277,19 +263,19 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
             _observableLoaderVisibility = new(value: Visibility.Collapsed);
             _observableLoaderLabel = new(value: string.Empty);
-            FrameworkElement loaderElement = CreateWindowLoaderElement(_observableLoaderVisibility,  _observableLoaderLabel);
+            FrameworkElement loaderElement = CreateWindowLoaderElement(_observableLoaderVisibility, _observableLoaderLabel);
             Button updateButton = CreateWindowUpdateButton();
-            
+
             GingerCore.General.LoadGenericWindow(
-                ref _window, 
-                owner: App.MainWindow, 
-                windowStyle: eWindowShowStyle.Dialog, 
-                windowTitle: "Bulk Update Shared Repository Activities", 
+                ref _window,
+                owner: App.MainWindow,
+                windowStyle: eWindowShowStyle.Dialog,
+                windowTitle: "Bulk Update Shared Repository Activities",
                 windowPage: this,
-                windowBtnsList: new ObservableList<Button>() { updateButton },
+                windowBtnsList: [updateButton],
                 loaderElement: loaderElement);
 
-            if(_window != null)
+            if (_window != null)
             {
                 _window.Closing += Window_Closing;
             }
@@ -438,11 +424,11 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
         private void SaveModifiedActivities()
         {
-            IEnumerable<ActivityBulkUpdateListItem> modifiedActivityBulkUpdateListItems = 
+            IEnumerable<ActivityBulkUpdateListItem> modifiedActivityBulkUpdateListItems =
                 _activityBulkUpdateListItems
                 .Where(item => item.IsModified);
 
-            foreach(ActivityBulkUpdateListItem item in modifiedActivityBulkUpdateListItems)
+            foreach (ActivityBulkUpdateListItem item in modifiedActivityBulkUpdateListItems)
             {
                 item.CommitChanges();
                 SaveHandler.Save(item.Activity);
@@ -466,10 +452,10 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
             ActivityDetailsPage activityDetailsPage = new(activity, new Context() { Activity = activity }, General.eRIPageViewMode.View);
             GenericWindow? genericWindow = null;
             GingerCore.General.LoadGenericWindow(
-                ref genericWindow!, 
-                owner: App.MainWindow, 
-                windowStyle: eWindowShowStyle.Dialog, 
-                windowTitle: "Activity Details", 
+                ref genericWindow!,
+                owner: App.MainWindow,
+                windowStyle: eWindowShowStyle.Dialog,
+                windowTitle: "Activity Details",
                 activityDetailsPage);
         }
 
@@ -486,7 +472,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
-            public bool IsModified 
+            public bool IsModified
             {
                 get => _isModified;
                 set
@@ -620,7 +606,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
             private void _consumers_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
             {
-                if(IsModified)
+                if (IsModified)
                 {
                     return;
                 }
@@ -647,14 +633,14 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     return;
                 }
 
-                bool someOldItemsMissing = 
+                bool someOldItemsMissing =
                     e.OldItems
                     .Cast<Consumer>()
-                    .Any(oldConsumer => 
+                    .Any(oldConsumer =>
                         e.NewItems
                         .Cast<Consumer>()
                         .All(newConsumer => oldConsumer.ConsumerGuid != newConsumer.ConsumerGuid));
-                
+
                 if (someOldItemsMissing)
                 {
                     IsModified = true;
@@ -719,7 +705,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 Activity.TargetApplication = _targetApplication;
                 if (Activity.ConsumerApplications == null)
                 {
-                    Activity.ConsumerApplications = new();
+                    Activity.ConsumerApplications = [];
                 }
                 else
                 {

@@ -21,13 +21,14 @@ using Amdocs.Ginger.Common;
 using Ginger.AnalyzerLib;
 using GingerCore;
 using System;
+using System.IO;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    class DoOptionsHanlder
+    public static class DoOptionsHandler
     {
-        internal static void Run(DoOptions opts)
+        public static void Run(DoOptions opts)
         {
             switch (opts.Operation)
             {
@@ -39,6 +40,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     break;
                 case DoOptions.DoOperation.info:
                     DoInfo(opts.Solution);
+                    break;
+                case DoOptions.DoOperation.open:
+                    DoOpen(opts.Solution);
                     break;
             }
         }
@@ -57,12 +61,51 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
 
+        private static void DoOpen(string solutionFolder)
+        {
+            try
+            {
+                // Check if solutionFolder is null or empty
+                if (string.IsNullOrWhiteSpace(solutionFolder))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "The provided solution folder path is null or empty.");
+                    return;
+                }
+
+                // Check if the folder path contains the solution file name
+                if (solutionFolder.Contains("Ginger.Solution.xml"))
+                {
+                    solutionFolder = Path.GetDirectoryName(solutionFolder)?.Trim() ?? string.Empty;
+
+                    if (string.IsNullOrEmpty(solutionFolder))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Invalid solution folder path derived from the solution file.");
+                        return;
+                    }
+                }
+
+                // Check if the directory exists
+                if (!Directory.Exists(solutionFolder))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"The provided folder path '{solutionFolder}' does not exist.");
+                    return;
+                }
+
+                // Attempt to open the solution
+                WorkSpace.Instance.OpenSolution(solutionFolder);
+            }
+            catch (Exception ex)
+            {
+                // Handle any other unexpected errors
+                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while opening the solution in folder '{solutionFolder}'. Error: {ex.Message}");
+            }
+        }
         private static void DoAnalyze(string solution)
         {
             WorkSpace.Instance.OpenSolution(solution);
 
             AnalyzerUtils analyzerUtils = new AnalyzerUtils();
-            ObservableList<AnalyzerItemBase> issues = new ObservableList<AnalyzerItemBase>();
+            ObservableList<AnalyzerItemBase> issues = [];
             analyzerUtils.RunSolutionAnalyzer(WorkSpace.Instance.Solution, issues);
 
             if (issues.Count == 0)

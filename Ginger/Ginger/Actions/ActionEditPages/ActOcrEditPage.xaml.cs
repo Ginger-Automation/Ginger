@@ -23,8 +23,8 @@ using GingerCore.GeneralLib;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using static GingerCore.ActOcr;
 using System.Windows.Input;
+using static GingerCore.ActOcr;
 
 namespace Ginger.Actions
 {
@@ -234,7 +234,7 @@ namespace Ginger.Actions
         private void PdfPassword_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             UCValueExpression uv = (UCValueExpression)sender;
-            if ( !string.IsNullOrEmpty(uv.ValueTextBox.Text) && !uv.ValueTextBox.Text.Contains("{Var Name"))
+            if (!string.IsNullOrEmpty(uv.ValueTextBox.Text) && !uv.ValueTextBox.Text.Contains("{Var Name"))
             {
                 if (!EncryptionHandler.IsStringEncrypted(uv.ValueTextBox.Text))
                 {

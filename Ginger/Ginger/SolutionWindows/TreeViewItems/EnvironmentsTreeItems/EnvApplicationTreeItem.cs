@@ -87,9 +87,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
+
             TreeViewUtils.AddMenuItem(mContextMenu, "Save Parent Environment", Save, this, eImageType.Save);
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete, null, eImageType.Delete);
             TreeViewUtils.AddMenuItem(mContextMenu, "Share With Other Environments", Share, this, eImageType.Share);
+
         }
 
         private void DeleteEnvTreeItems()
@@ -104,13 +106,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
         private void Delete(object sender, RoutedEventArgs e)
         {
-            DeleteEnvTreeItems();
+            if (EnvApplication.GOpsFlag && ProjEnvironment.GOpsFlag)
+            {
+                Reporter.ToUser(eUserMsgKey.GingerOpsDeleteDisable);
+            }
+            else
+            {
+                DeleteEnvTreeItems();
+            }
         }
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            var repoItem = item as RepositoryItemBase;
-            if (repoItem != null)
+            if (item is RepositoryItemBase repoItem)
             {
                 if (!deleteWithoutAsking)
                 {
@@ -135,7 +143,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     if (env.Applications.FirstOrDefault(x => x.Name == EnvApplication.Name) == null)
                     {
-                        EnvApplication app = (EnvApplication)(((RepositoryItemBase)EnvApplication).CreateCopy());
+                        EnvApplication app = (EnvApplication)(EnvApplication.CreateCopy());
                         env.Applications.Add(app);
                         env.SaveBackup();//to mark the env as changed
                         appsWereAdded = true;

@@ -159,11 +159,11 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override void CloseDriver()
         {
-            if(mUIAutomationHelper!=null)
+            if (mUIAutomationHelper != null)
             {
                 mUIAutomationHelper.StopRecording();
                 mUIAutomationHelper = null;
-            }            
+            }
         }
 
         public override Act GetCurrentElement()
@@ -666,7 +666,7 @@ namespace GingerCore.Drivers.WindowsLib
         }
         private UIAuto.AutomationElement HandlePOMElememnt(ActUIElement act)
         {
-            ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
+            ObservableList<ElementLocator> locators = [];
             var pomExcutionUtil = new POMExecutionUtils(act, act.ElementLocateValue);
             var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
@@ -1153,7 +1153,7 @@ namespace GingerCore.Drivers.WindowsLib
                 {
                     if (foundElementsList == null)
                     {
-                        foundElementsList = new ObservableList<ElementInfo>();
+                        foundElementsList = [];
                     }
                     List<ElementInfo> elementInfoList = await mUIAutomationHelper.GetVisibleControls();
 
@@ -1191,7 +1191,7 @@ namespace GingerCore.Drivers.WindowsLib
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Controls", ex);
-                    return new List<ElementInfo>();
+                    return [];
                 }
             });
         }
@@ -1204,7 +1204,7 @@ namespace GingerCore.Drivers.WindowsLib
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
             //only return necessery properties
-            ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+            ObservableList<ControlProperty> list = [];
             UIAElementInfo uIAElement = (UIAElementInfo)ElementInfo;
             if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
             {
@@ -1318,7 +1318,7 @@ namespace GingerCore.Drivers.WindowsLib
                 UIAuto.AutomationElement windowElement = LocateElementByLocators(ElementInfo.Locators, true);
                 if (windowElement != null)
                 {
-                    ElementInfo.ElementObject = (object)windowElement;
+                    ElementInfo.ElementObject = windowElement;
                 }
             }
             HighLightElement(ElementInfo);
@@ -1815,7 +1815,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
-            ObservableList<OptionalValue> optionalValues = new ObservableList<OptionalValue>();
+            ObservableList<OptionalValue> optionalValues = [];
             UIAuto.AutomationElement automationElement = (UIAuto.AutomationElement)ElementInfo.ElementObject;
 
             //get child elements expand if combobox
@@ -1901,7 +1901,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public List<eTabView> SupportedViews()
         {
-            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.TreeView };
+            return [eTabView.Screenshot, eTabView.GridView, eTabView.TreeView];
         }
 
         public eTabView DefaultView()
@@ -1962,9 +1962,11 @@ namespace GingerCore.Drivers.WindowsLib
 
         public string GetViewport()
         {
-            Size size = new Size();
-            size.Height = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
-            size.Width = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
+            Size size = new Size
+            {
+                Height = ((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height,
+                Width = ((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width
+            };
             return size.ToString();
         }
 

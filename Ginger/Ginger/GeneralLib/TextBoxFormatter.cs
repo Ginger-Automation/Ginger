@@ -54,15 +54,19 @@ namespace Ginger.GeneralLib
 
         public void AddBoldText(string txt)
         {
-            System.Windows.Documents.Run run = new System.Windows.Documents.Run(txt);
-            run.FontWeight = FontWeights.Bold;
+            System.Windows.Documents.Run run = new System.Windows.Documents.Run(txt)
+            {
+                FontWeight = FontWeights.Bold
+            };
             mTextBlock.Inlines.Add(run);
         }
 
         public void AddUnderLineText(string txt)
         {
-            System.Windows.Documents.Run run = new System.Windows.Documents.Run(txt);
-            run.TextDecorations = TextDecorations.Underline;
+            System.Windows.Documents.Run run = new System.Windows.Documents.Run(txt)
+            {
+                TextDecorations = TextDecorations.Underline
+            };
             mTextBlock.Inlines.Add(run);
         }
 
@@ -104,10 +108,12 @@ namespace Ginger.GeneralLib
         }
         public void AddImage(string image, int width, int height)
         {
-            Image img = new Image();
-            img.Source = new BitmapImage(new Uri(@"/Images/" + image, UriKind.RelativeOrAbsolute));
-            img.Width = width;
-            img.Height = height;
+            Image img = new Image
+            {
+                Source = new BitmapImage(new Uri(@"/Images/" + image, UriKind.RelativeOrAbsolute)),
+                Width = width,
+                Height = height
+            };
             mTextBlock.Inlines.Add(img);
         }
     }

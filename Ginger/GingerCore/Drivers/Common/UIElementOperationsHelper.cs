@@ -336,8 +336,8 @@ namespace GingerCore.Drivers.Common
             ActionResult actionResult = new ActionResult();
             try
             {
-                int x = (int)automationElement.Current.BoundingRectangle.X + xCoordinate;
-                int y = (int)automationElement.Current.BoundingRectangle.Y + yCoordinate;
+                int x = automationElement.Current.BoundingRectangle.X + xCoordinate;
+                int y = automationElement.Current.BoundingRectangle.Y + yCoordinate;
 
                 winAPI.SendClickOnXYPoint(automationElement, x, y);
                 actionResult.executionInfo = "Successfully clicked the element";
@@ -410,8 +410,10 @@ namespace GingerCore.Drivers.Common
                         actionResult = ClickUsingLegacyPattern(automationElement, ref clickTriggeredFlag);
                     }
 
-                }));
-                UIAClickThread.IsBackground = true;
+                }))
+                {
+                    IsBackground = true
+                };
                 UIAClickThread.Start();
 
                 Stopwatch st = new Stopwatch();

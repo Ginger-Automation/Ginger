@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Ginger.UserControlsLib.TextEditor.XML;
 using System;
 using System.Windows;
@@ -43,12 +42,14 @@ namespace Ginger.Repository
         {
             if (showSaveButton)
             {
-                Button SaveButton = new Button();
-                SaveButton.Content = "Save";
+                Button SaveButton = new Button
+                {
+                    Content = "Save"
+                };
                 SaveButton.Click += new RoutedEventHandler(Save);
 
                 GenericWindow genWin = null;
-                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { SaveButton });
+                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, [SaveButton]);
             }
             else
             {

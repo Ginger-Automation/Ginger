@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.Common.Repository.PlugInsLib
         [JsonProperty]
         public string Interface { get; set; }
 
-        readonly List<ActionInputValueInfo> mInputValues = new List<ActionInputValueInfo>();
+        readonly List<ActionInputValueInfo> mInputValues = [];
 
         [JsonProperty]
         public List<ActionInputValueInfo> InputValues

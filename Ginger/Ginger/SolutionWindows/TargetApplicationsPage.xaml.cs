@@ -70,13 +70,17 @@ namespace Ginger.SolutionWindows
         private void SetAppsGrid()
         {
             xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}s", saveAllHandler: SaveHandler, addHandler: AddApplication, true);
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16, Style = FindResource("@DataGridColumn_Image") as Style });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), Header = "Description", WidthWeight = 40 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Guid), Header = "ID", WidthWeight = 15, ReadOnly = true });
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16, Style = FindResource("@DataGridColumn_Image") as Style },
+                new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 30 },
+                new GridColView() { Field = nameof(ApplicationPlatform.Description), Header = "Description", WidthWeight = 40 },
+                new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, ReadOnly = true },
+                new GridColView() { Field = nameof(ApplicationPlatform.Guid), Header = "ID", WidthWeight = 15, ReadOnly = true },
+            ]
+            };
 
             xTargetApplicationsGrid.SetAllColumnsDefaultView(view);
             xTargetApplicationsGrid.InitViewItems();
@@ -108,7 +112,7 @@ namespace Ginger.SolutionWindows
             {
                 if (mSolution.ApplicationPlatforms == null)
                 {
-                    mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
+                    mSolution.ApplicationPlatforms = [];
                 }
                 xTargetApplicationsGrid.DataSourceList = mSolution.ApplicationPlatforms;
             }
@@ -123,7 +127,7 @@ namespace Ginger.SolutionWindows
         {
             if (xTargetApplicationsGrid.Grid.SelectedItem != null)
             {
-                 GingerCore.General.SetClipboardText(((RepositoryItemBase)xTargetApplicationsGrid.Grid.SelectedItem).Guid.ToString());
+                GingerCore.General.SetClipboardText(((RepositoryItemBase)xTargetApplicationsGrid.Grid.SelectedItem).Guid.ToString());
             }
             else
             {
@@ -204,13 +208,13 @@ namespace Ginger.SolutionWindows
                     }
                 }
 
-                foreach (TargetApplication bfTargetApp in bf.TargetApplications.Where((targetApp)=>targetApp is TargetApplication))
+                foreach (TargetApplication bfTargetApp in bf.TargetApplications.Where((targetApp) => targetApp is TargetApplication))
                 {
                     if (string.Equals(bfTargetApp.AppName, app.NameBeforeEdit))
                     {
                         bfTargetApp.StartDirtyTracking();
                         bfTargetApp.AppName = app.AppName;
-                        startDirtyTrackOfBF =  true;                        
+                        startDirtyTrackOfBF = true;
                     }
                 }
                 if (startDirtyTrackOfBF)
@@ -228,15 +232,15 @@ namespace Ginger.SolutionWindows
                     activity.StartDirtyTracking();
                     activity.TargetApplication = app.AppName;
                     numOfAfectedItems++;
-                }                             
+                }
             }
 
-            foreach(ProjEnvironment projEnv in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+            foreach (ProjEnvironment projEnv in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
             {
                 foreach (EnvApplication envApplication in projEnv.Applications)
                 {
 
-                    if(string.Equals(envApplication.Name, app.NameBeforeEdit))
+                    if (string.Equals(envApplication.Name, app.NameBeforeEdit))
                     {
                         projEnv.StartDirtyTracking();
                         envApplication.Name = app.AppName;
@@ -245,7 +249,7 @@ namespace Ginger.SolutionWindows
                 }
             }
 
-            if(numOfAfectedItems > 0 && OnActivityUpdate!=null)
+            if (numOfAfectedItems > 0 && OnActivityUpdate != null)
             {
                 OnActivityUpdate();
             }
@@ -265,11 +269,11 @@ namespace Ginger.SolutionWindows
 
         public void DeleteApplication(ApplicationPlatform applicationPlatform)
         {
-            if(applicationPlatform == null)
+            if (applicationPlatform == null)
             {
                 return;
             }
-            
+
             bool doesAppExistInBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.TargetApplications.Any(y => y.Name == applicationPlatform.AppName));
             bool doesAppExistInEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().SelectMany((projEnv) => projEnv.Applications).Any((x) => string.Equals(x.Name, applicationPlatform.AppName));
             if (doesAppExistInBF || doesAppExistInEnv)

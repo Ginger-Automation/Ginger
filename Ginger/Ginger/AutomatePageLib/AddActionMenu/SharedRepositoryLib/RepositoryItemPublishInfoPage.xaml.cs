@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Activities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,7 +35,7 @@ namespace Ginger.Repository
     {
         private GenericWindow _pageGenericWin = null;
         private RepositoryItemBase mRepoItem;
-        public ObservableList<RepositoryItemUsage> mRepoItemUsages = new ObservableList<RepositoryItemUsage>();
+        public ObservableList<RepositoryItemUsage> mRepoItemUsages = [];
         private readonly object mAddUsageLock = new object();
 
         public RepositoryItemPublishInfoPage(RepositoryItemBase repoItem)
@@ -49,33 +48,33 @@ namespace Ginger.Repository
 
         private void SetErrorHandlerUsagesGridView()
         {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.Selected, Header = "Selected", StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 5 });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.UsageItemName, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name", WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.HostBizFlowPath, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Path", WidthWeight = 20, ReadOnly = true });
-
-            view.GridColsView.Add(new GridColView()
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName)
             {
-                Field = RepositoryItemUsage.Fields.RepositoryItemPublishType,
-                Header = "Publish Type",
-                WidthWeight = 10,
-                StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eRepositoryItemPublishType)), nameof(RepositoryItemUsage.RepositoryItemPublishType), false, true)
-            });
-
-
-            view.GridColsView.Add(new GridColView()
-            {
-                Field = RepositoryItemUsage.Fields.InsertRepositoryInsatncePosition,
-                Header = "Insert At",
-                WidthWeight = 10,
-                StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eInsertRepositoryInsatncePosition)), nameof(RepositoryItemUsage.InsertRepositoryInsatncePosition), comboSelectionChangedHandler: InsertPositionCobmo_SelectionChanged)
-            });
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemUsage.IndexActivityName), Header = "Index Activity", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(RepositoryItemUsage.ActivityNameList), nameof(RepositoryItemUsage.IndexActivityName), true) });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.PublishStatus, Header = "Status", WidthWeight = 20, ReadOnly = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.ePublishStatus)) });
+                GridColsView =
+            [
+                new GridColView() { Field = RepositoryItemUsage.Fields.Selected, Header = "Selected", StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 5 },
+                new GridColView() { Field = RepositoryItemUsage.Fields.UsageItemName, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name", WidthWeight = 15, ReadOnly = true },
+                new GridColView() { Field = RepositoryItemUsage.Fields.HostBizFlowPath, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Path", WidthWeight = 20, ReadOnly = true },
+                new GridColView()
+                {
+                    Field = RepositoryItemUsage.Fields.RepositoryItemPublishType,
+                    Header = "Publish Type",
+                    WidthWeight = 10,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eRepositoryItemPublishType)), nameof(RepositoryItemUsage.RepositoryItemPublishType), false, true)
+                },
+                new GridColView()
+                {
+                    Field = RepositoryItemUsage.Fields.InsertRepositoryInsatncePosition,
+                    Header = "Insert At",
+                    WidthWeight = 10,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eInsertRepositoryInsatncePosition)), nameof(RepositoryItemUsage.InsertRepositoryInsatncePosition), comboSelectionChangedHandler: InsertPositionCobmo_SelectionChanged)
+                },
+                new GridColView() { Field = nameof(RepositoryItemUsage.IndexActivityName), Header = "Index Activity", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(RepositoryItemUsage.ActivityNameList), nameof(RepositoryItemUsage.IndexActivityName), true) },
+                new GridColView() { Field = RepositoryItemUsage.Fields.PublishStatus, Header = "Status", WidthWeight = 20, ReadOnly = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.ePublishStatus)) },
+            ]
+            };
 
             xRepoItemPublisIngoGrid.SetAllColumnsDefaultView(view);
             xRepoItemPublisIngoGrid.InitViewItems();
@@ -153,12 +152,13 @@ namespace Ginger.Repository
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button publishErrorHandlerButton = new Button();
-            publishErrorHandlerButton.Content = "Publish All Selected";
+            Button publishErrorHandlerButton = new Button
+            {
+                Content = "Publish All Selected"
+            };
             publishErrorHandlerButton.Click += new RoutedEventHandler(PublishErrorHandlerButton_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(publishErrorHandlerButton);
+            ObservableList<Button> winButtons = [publishErrorHandlerButton];
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Repository Item Publish Page", this, winButtons, true, "Close");
         }
 
@@ -199,7 +199,7 @@ namespace Ginger.Repository
                                         {
                                             var indexToAdd = Convert.ToInt32(repositoryItem.IndexActivityName[0].ToString());
                                             string gpOfIndexAct = repositoryItem.ActivityGroupMapping.TryGetValue(repositoryItem.IndexActivityName, out string value) ? value : string.Empty;
-                                            repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(n=>n.Name== gpOfIndexAct), insertIndex: indexToAdd + 1);
+                                            repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(n => n.Name == gpOfIndexAct), insertIndex: indexToAdd + 1);
                                         }
                                     }
                                     if (!errorOccured)

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -19,8 +19,8 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Timers;
+using Amdocs.Ginger.Common.Telemetry;
 
 namespace Amdocs.Ginger.Common
 {
@@ -32,17 +32,19 @@ namespace Amdocs.Ginger.Common
 
         public static bool ReportAllAlsoToConsole { get; set; }
 
+        public static ITelemetryQueueManager TelemetryQueueManager { get; set; }
+
 
         #region ToLog
         public static eAppReporterLoggingLevel AppLoggingLevel { get; set; }
-        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
+        public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null, TelemetryMetadata metadata = null)
         {
             if (WorkSpaceReporter == null || (logLevel == eLogLevel.DEBUG && AppLoggingLevel != eAppReporterLoggingLevel.Debug))
             {
                 return;
             }
 
-            if (logLevel == eLogLevel.ERROR || logLevel == eLogLevel.FATAL)
+            if (logLevel is eLogLevel.ERROR or eLogLevel.FATAL)
             {
                 ReporterData.ErrorCounter++;
             }
@@ -53,9 +55,83 @@ namespace Amdocs.Ginger.Common
             }
 
             WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
+
+            if (TelemetryQueueManager != null)
+            {
+                try
+                {
+                    string msg;
+                    if (exceptionToLog != null)
+                    {
+                        msg = $"{messageToLog}\n{exceptionToLog}";
+                    }
+                    else
+                    {
+                        msg = messageToLog;
+                    }
+                    if (metadata == null)
+                    {
+                        TelemetryQueueManager.AddLog(logLevel, msg);
+                    }
+                    else
+                    {
+                        TelemetryQueueManager.AddLog(logLevel, msg, metadata);
+                    }
+                }
+                catch { }
+            }
         }
         #endregion ToLog
 
+        public static void AddFeatureUsage(FeatureId featureId, TelemetryMetadata metadata = null)
+        {
+            if (TelemetryQueueManager == null)
+            {
+                return;
+            }
+
+            if (metadata == null)
+            {
+                TelemetryQueueManager.AddFeatureUsage(featureId);
+            }
+            else
+            {
+                TelemetryQueueManager.AddFeatureUsage(featureId, metadata);
+            }
+        }
+
+        public static IFeatureTracker StartFeatureTracking(FeatureId featureId)
+        {
+            if (TelemetryQueueManager == null)
+            {
+                return new MockFeatureTracker(featureId);
+            }
+
+            return TelemetryQueueManager.StartFeatureTracking(featureId);
+        }
+
+        private sealed class MockFeatureTracker : IFeatureTracker
+        {
+            public FeatureId FeatureId { get; }
+
+            public TelemetryMetadata Metadata { get; }
+
+            internal MockFeatureTracker(FeatureId featureId)
+            {
+                FeatureId = featureId;
+                Metadata = [];
+            }
+
+            public void Dispose()
+            {
+                return;
+            }
+
+            public void StopTracking()
+            {
+                return;
+            }
+        }
 
 
         #region ToUser        
@@ -91,24 +167,14 @@ namespace Amdocs.Ginger.Common
                 }
 
                 //set the message type
-                switch (messageToShow.MessageType)
+                messageImage = messageToShow.MessageType switch
                 {
-                    case eUserMsgType.ERROR:
-                        messageImage = eUserMsgIcon.Error;
-                        break;
-                    case eUserMsgType.INFO:
-                        messageImage = eUserMsgIcon.Information;
-                        break;
-                    case eUserMsgType.QUESTION:
-                        messageImage = eUserMsgIcon.Question;
-                        break;
-                    case eUserMsgType.WARN:
-                        messageImage = eUserMsgIcon.Warning;
-                        break;
-                    default:
-                        messageImage = eUserMsgIcon.Information;
-                        break;
-                }
+                    eUserMsgType.ERROR => eUserMsgIcon.Error,
+                    eUserMsgType.INFO => eUserMsgIcon.Information,
+                    eUserMsgType.QUESTION => eUserMsgIcon.Question,
+                    eUserMsgType.WARN => eUserMsgIcon.Warning,
+                    _ => eUserMsgIcon.Information,
+                };
 
                 //enter message args if exist
                 if (messageArgs.Length > 0)
@@ -233,9 +299,11 @@ namespace Amdocs.Ginger.Common
             {
                 bClosing = true;
                 // let the message show for at least one second
-                var timer = new Timer();
-                timer.Interval = 1000; // In milliseconds
-                timer.AutoReset = false; // Stops it from repeating
+                var timer = new Timer
+                {
+                    Interval = 1000, // In milliseconds
+                    AutoReset = false // Stops it from repeating
+                };
                 timer.Elapsed += new ElapsedEventHandler(HideMessage_Event);
                 timer.Start();
             }

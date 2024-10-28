@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.ALMLib.Azure;
 using System.Collections.Generic;
 using System.Windows;
@@ -56,12 +55,14 @@ namespace Ginger.ALM.AzureDevOps
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button importButton = new Button();
-            importButton.Content = "Import";
-            importButton.ToolTip = "Import The Selected Test Suite";
+            Button importButton = new Button
+            {
+                Content = "Import",
+                ToolTip = "Import The Selected Test Suite"
+            };
             importButton.Click += new RoutedEventHandler(ImportTestSet);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { importButton });
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, [importButton]);
         }
         private void ImportTestSet(object sender, RoutedEventArgs e)
         {

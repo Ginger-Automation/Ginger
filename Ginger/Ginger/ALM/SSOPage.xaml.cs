@@ -59,8 +59,7 @@ namespace Ginger.ALM
                 throw new ArgumentNullException(nameof(browser));
             }
 
-            IOleServiceProvider sp = browser.Document as IOleServiceProvider;
-            if (sp != null)
+            if (browser.Document is IOleServiceProvider sp)
             {
                 Guid IID_IWebBrowserApp = new Guid("0002DF05-0000-0000-C000-000000000046");
                 Guid IID_IWebBrowser2 = new Guid("D30C1661-CDAF-11d0-8A3E-00C04FC9E26E");

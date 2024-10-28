@@ -31,7 +31,8 @@ namespace Amdocs.Ginger.Repository
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(FileName);
-            return GetParameters(doc, AAMSList, avoidDuplicatesNodes);
+            ObservableList<ApplicationAPIModel> parameters = GetParameters(doc, AAMSList, avoidDuplicatesNodes);
+            return parameters;
         }
 
         public ObservableList<ApplicationAPIModel> ParseDocumentWithXMLContent(string fileContent, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
@@ -43,8 +44,10 @@ namespace Amdocs.Ginger.Repository
 
         private ObservableList<ApplicationAPIModel> GetParameters(XmlDocument doc, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes)
         {
-            ApplicationAPIModel AAM = new ApplicationAPIModel();
-            AAM.Name = Path.GetFileNameWithoutExtension(doc.BaseURI);
+            ApplicationAPIModel AAM = new ApplicationAPIModel
+            {
+                Name = Path.GetFileNameWithoutExtension(doc.BaseURI)
+            };
             XMLDocExtended XDE = new XMLDocExtended(doc);
 
             if (avoidDuplicatesNodes)
@@ -82,7 +85,7 @@ namespace Amdocs.Ginger.Repository
                         }
 
                         string UniqAttributePlaceHolder = "{" + GetPlaceHolderName(XmlAttribute.LocalName.ToUpper()) + "}";
-                        AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, new ObservableList<OptionalValue> { new OptionalValue { Value=XmlAttribute.Value, IsDefault=true} }));
+                        AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, new ObservableList<OptionalValue> { new OptionalValue { Value = XmlAttribute.Value, IsDefault = true } }));
                         XmlAttribute.Value = UniqAttributePlaceHolder;
                     }
                 }

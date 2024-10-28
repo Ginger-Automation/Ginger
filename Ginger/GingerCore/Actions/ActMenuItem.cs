@@ -78,7 +78,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eMenuAction)GetOrCreateInputParam<eMenuAction>(nameof(MenuAction), eMenuAction.Click);
+                return GetOrCreateInputParam<eMenuAction>(nameof(MenuAction), eMenuAction.Click);
             }
             set
             {
@@ -99,7 +99,7 @@ namespace GingerCore.Actions
         }
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.ASCF || platform == ePlatformType.Mobile)
+            if (platform is ePlatformType.Web or ePlatformType.ASCF or ePlatformType.Mobile)
             {
                 return true;
             }
@@ -114,33 +114,19 @@ namespace GingerCore.Actions
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
             newAct.ElementType = eElementType.Unknown;
 
-            switch (this.MenuAction)
+            newAct.ElementAction = this.MenuAction switch
             {
-                case eMenuAction.Click:
-                    newAct.ElementAction = ActUIElement.eElementAction.Click;
-                    break;
-                case eMenuAction.Expand:
-                    newAct.ElementAction = ActUIElement.eElementAction.Expand;
-                    break;
-                case eMenuAction.Collapse:
-                    newAct.ElementAction = ActUIElement.eElementAction.Collapse;
-                    break;
-                default:
-                    newAct.ElementAction = ActUIElement.eElementAction.Unknown;
-                    break;
-            }
-            switch (LocateBy)
+                eMenuAction.Click => ActUIElement.eElementAction.Click,
+                eMenuAction.Expand => ActUIElement.eElementAction.Expand,
+                eMenuAction.Collapse => ActUIElement.eElementAction.Collapse,
+                _ => ActUIElement.eElementAction.Unknown,
+            };
+            newAct.ElementLocateBy = LocateBy switch
             {
-                case eLocateBy.ByName:
-                    newAct.ElementLocateBy = eLocateBy.ByName;
-                    break;
-                case eLocateBy.ByTitle:
-                    newAct.ElementLocateBy = eLocateBy.ByTitle;
-                    break;
-                default:
-                    newAct.ElementLocateBy = eLocateBy.Unknown;
-                    break;
-            }
+                eLocateBy.ByName => eLocateBy.ByName,
+                eLocateBy.ByTitle => eLocateBy.ByTitle,
+                _ => eLocateBy.Unknown,
+            };
             MapMenuActionItems(this.LocateValue, newAct);
 
             // if Locate value = Create/Contact
@@ -177,8 +163,8 @@ namespace GingerCore.Actions
                 newAct.ElementType = eElementType.MenuItem;
                 if (menuLocateValue.IndexOf(";") != -1)
                 {
-                    newAct.ElementLocateValue = menuLocateValue.Substring(0, menuLocateValue.IndexOf(';'));
-                    newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, locateValue.Substring(menuLocateValue.IndexOf(';') + 1));
+                    newAct.ElementLocateValue = menuLocateValue[..menuLocateValue.IndexOf(';')];
+                    newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, locateValue[(menuLocateValue.IndexOf(';') + 1)..]);
                 }
                 else
                 {
@@ -189,7 +175,7 @@ namespace GingerCore.Actions
 
         public string SplitWithEscape(String sourceString, Char Delimiter)
         {
-            List<string> tempList = new List<string>();
+            List<string> tempList = [];
 
             if (sourceString.IndexOf("/") != -1)
             {

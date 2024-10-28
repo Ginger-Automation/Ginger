@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
@@ -33,27 +32,69 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             dbConnector = new LiteDbConnector(Path.Combine(dbFolderName, "GingerExecutionResults.db")); // Set data to ExecutionResults folder name
             InitMappers();
         }
+        /// <summary>
+        /// Initializes the mappers for LiteDB collections.
+        /// </summary>
         public void InitMappers()
         {
+            InitRunSetMapper();
+            InitRunnerMapper();
+            InitBusinessFlowMapper();
+            InitActivityGroupMapper();
+            InitActivityMapper();
+        }
+
+        /// <summary>
+        /// Initializes the mapper for LiteDbRunSet collection.
+        /// </summary>
+        private void InitRunSetMapper()
+        {
             var runSetMapper = dbConnector.GetMapper<LiteDbRunSet>();
-            var runnerMapper = dbConnector.GetMapper<LiteDbRunner>();
-            var bfMapper = dbConnector.GetMapper<LiteDbBusinessFlow>();
-            var agMapper = dbConnector.GetMapper<LiteDbActivityGroup>();
-            var activityMapper = dbConnector.GetMapper<LiteDbActivity>();
-            var action = dbConnector.GetMapper<LiteDbAction>();
-
-            activityMapper.DbRef(rf => rf.AllActionsColl, NameInDb<LiteDbAction>());
-
-            agMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
-
-            bfMapper.DbRef(rf => rf.ActivitiesGroupsColl, NameInDb<LiteDbActivityGroup>());
-
-            bfMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
-
-            runnerMapper.DbRef(rf => rf.AllBusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
-
             runSetMapper.DbRef(rf => rf.RunnersColl, NameInDb<LiteDbRunner>());
         }
+
+        /// <summary>
+        /// Initializes the mapper for LiteDbRunner collection.
+        /// </summary>
+        private void InitRunnerMapper()
+        {
+            var runnerMapper = dbConnector.GetMapper<LiteDbRunner>();
+            runnerMapper.DbRef(rf => rf.BusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
+            runnerMapper.DbRef(rf => rf.AllBusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
+        }
+
+        /// <summary>
+        /// Initializes the mapper for LiteDbBusinessFlow collection.
+        /// </summary>
+        private void InitBusinessFlowMapper()
+        {
+            var bfMapper = dbConnector.GetMapper<LiteDbBusinessFlow>();
+            bfMapper.DbRef(rf => rf.ActivitiesGroupsColl, NameInDb<LiteDbActivityGroup>());
+            bfMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
+            bfMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
+        }
+
+        /// <summary>
+        /// Initializes the mapper for LiteDbActivityGroup collection.
+        /// </summary>
+        private void InitActivityGroupMapper()
+        {
+            var agMapper = dbConnector.GetMapper<LiteDbActivityGroup>();
+            agMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
+            agMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
+        }
+
+        /// <summary>
+        /// Initializes the mapper for LiteDbActivity collection.
+        /// </summary>
+        private void InitActivityMapper()
+        {
+            var activityMapper = dbConnector.GetMapper<LiteDbActivity>();
+            activityMapper.DbRef(rf => rf.ActionsColl, NameInDb<LiteDbAction>());
+            activityMapper.DbRef(rf => rf.AllActionsColl, NameInDb<LiteDbAction>());
+        }
+
+
         public string NameInDb<T>()
         {
             var name = typeof(T).Name + "s";
@@ -148,56 +189,62 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         }
         private List<LiteDbRunSet> GetGingerRunSet(List<LiteDbRunner> runnersData)
         {
-            List<LiteDbRunSet> data = new List<LiteDbRunSet>();
+            List<LiteDbRunSet> data = [];
             for (var a = 0; a < 2; a++)
             {
-                LiteDbRunSet item = new LiteDbRunSet();
-                item.Seq = a;
-                item.GUID = Guid.NewGuid();
-                item.Name = ("RunSet_name");
-                item.Description = ("RunSet_description");
-                item.StartTimeStamp = DateTime.Now;
-                item.EndTimeStamp = DateTime.Today;
-                item.GingerVersion = "66";
-                item.MachineName = "my machine";
-                item.ExecutedbyUser = "my name";
-                item.RunnersColl = runnersData;
+                LiteDbRunSet item = new LiteDbRunSet
+                {
+                    Seq = a,
+                    GUID = Guid.NewGuid(),
+                    Name = ("RunSet_name"),
+                    Description = ("RunSet_description"),
+                    StartTimeStamp = DateTime.Now,
+                    EndTimeStamp = DateTime.Today,
+                    GingerVersion = "66",
+                    MachineName = "my machine",
+                    ExecutedbyUser = "my name",
+                    RunnersColl = runnersData
+                };
                 data.Add(item);
             }
             return data;
         }
         private List<LiteDbRunner> GetGingerRunner(List<LiteDbBusinessFlow> bfsData)
         {
-            List<LiteDbRunner> data = new List<LiteDbRunner>();
+            List<LiteDbRunner> data = [];
             for (var a = 0; a < 3; a++)
             {
-                LiteDbRunner item = new LiteDbRunner();
-                item.Seq = 1;
-                item.GUID = Guid.NewGuid();
-                item.Name = ($"name.{a.ToString()}");
-                item.Description = ($"description.{a.ToString()}");
-                item.RunStatus = "run";
-                item.AllBusinessFlowsColl = bfsData;
+                LiteDbRunner item = new LiteDbRunner
+                {
+                    Seq = 1,
+                    GUID = Guid.NewGuid(),
+                    Name = ($"name.{a}"),
+                    Description = ($"description.{a}"),
+                    RunStatus = "run",
+                    AllBusinessFlowsColl = bfsData
+                };
                 data.Add(item);
             }
             return data;
         }
         private List<LiteDbBusinessFlow> GetGingerBf(List<LiteDbActivityGroup> acGrpData, List<LiteDbActivity> activitiesColl)
         {
-            List<LiteDbBusinessFlow> data = new List<LiteDbBusinessFlow>();
+            List<LiteDbBusinessFlow> data = [];
             for (var a = 0; a < 3; a++)
             {
-                LiteDbBusinessFlow item = new LiteDbBusinessFlow();
-                item.Seq = a;
-                item.GUID = Guid.NewGuid();
-                item.Name = ($"name.{a.ToString()}");
-                item.Description = ($"description.{a.ToString()}");
-                item.StartTimeStamp = DateTime.Now;
-                item.EndTimeStamp = DateTime.Today;
-                item.Elapsed = 17;
-                item.RunStatus = "run";
-                item.ActivitiesGroupsColl = acGrpData;
-                item.AllActivitiesColl = activitiesColl;
+                LiteDbBusinessFlow item = new LiteDbBusinessFlow
+                {
+                    Seq = a,
+                    GUID = Guid.NewGuid(),
+                    Name = ($"name.{a}"),
+                    Description = ($"description.{a}"),
+                    StartTimeStamp = DateTime.Now,
+                    EndTimeStamp = DateTime.Today,
+                    Elapsed = 17,
+                    RunStatus = "run",
+                    ActivitiesGroupsColl = acGrpData,
+                    AllActivitiesColl = activitiesColl
+                };
                 data.Add(item);
             }
             return data;
@@ -205,52 +252,58 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         }
         private List<LiteDbActivityGroup> GetGingerActvityGroup(List<LiteDbActivity> activitiesColl)
         {
-            List<LiteDbActivityGroup> data = new List<LiteDbActivityGroup>();
+            List<LiteDbActivityGroup> data = [];
             for (var a = 0; a < 2; a++)
             {
-                LiteDbActivityGroup item = new LiteDbActivityGroup();
-                item.Name = ($"name.{a.ToString()}");
-                item.Description = ($"description.{a.ToString()}");
-                item.GUID = Guid.NewGuid();
-                item.RunStatus = "run";
-                item.AllActivitiesColl = activitiesColl;
+                LiteDbActivityGroup item = new LiteDbActivityGroup
+                {
+                    Name = ($"name.{a}"),
+                    Description = ($"description.{a}"),
+                    GUID = Guid.NewGuid(),
+                    RunStatus = "run",
+                    AllActivitiesColl = activitiesColl
+                };
                 data.Add(item);
             }
             return data;
         }
         private List<LiteDbActivity> GetGingerActivities(List<LiteDbAction> actionsColl)
         {
-            List<LiteDbActivity> data = new List<LiteDbActivity>();
+            List<LiteDbActivity> data = [];
             for (var a = 0; a < 3; a++)
             {
-                LiteDbActivity item = new LiteDbActivity();
-                item.Seq = a;
-                item.GUID = Guid.NewGuid();
-                item.Name = ($"name.{a.ToString()}");
-                item.Description = ($"description.{a.ToString()}");
-                item.StartTimeStamp = DateTime.Now;
-                item.EndTimeStamp = DateTime.Today;
-                item.Elapsed = 17;
-                item.RunStatus = "run";
-                item.AllActionsColl = actionsColl;
+                LiteDbActivity item = new LiteDbActivity
+                {
+                    Seq = a,
+                    GUID = Guid.NewGuid(),
+                    Name = ($"name.{a}"),
+                    Description = ($"description.{a}"),
+                    StartTimeStamp = DateTime.Now,
+                    EndTimeStamp = DateTime.Today,
+                    Elapsed = 17,
+                    RunStatus = "run",
+                    AllActionsColl = actionsColl
+                };
                 data.Add(item);
             }
             return data;
         }
         private List<LiteDbAction> GetGingerActions()
         {
-            List<LiteDbAction> data = new List<LiteDbAction>();
+            List<LiteDbAction> data = [];
             for (var a = 0; a < 3; a++)
             {
-                LiteDbAction item = new LiteDbAction();
-                item.Seq = a;
-                item.GUID = Guid.NewGuid();
-                item.Name = ($"name.{a.ToString()}");
-                item.Description = ($"description.{a.ToString()}");
-                item.StartTimeStamp = DateTime.Now;
-                item.EndTimeStamp = DateTime.Today;
-                item.Elapsed = 17;
-                item.RunStatus = "run";
+                LiteDbAction item = new LiteDbAction
+                {
+                    Seq = a,
+                    GUID = Guid.NewGuid(),
+                    Name = ($"name.{a}"),
+                    Description = ($"description.{a}"),
+                    StartTimeStamp = DateTime.Now,
+                    EndTimeStamp = DateTime.Today,
+                    Elapsed = 17,
+                    RunStatus = "run"
+                };
                 data.Add(item);
             }
             return data;

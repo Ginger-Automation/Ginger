@@ -35,7 +35,7 @@ namespace Ginger.Activities
         GenericWindow _pageGenericWin = null;
         public bool OKButtonClicked = false;
         BusinessFlow mBusinessFlow;
-        ObservableList<ErrorHandler> lstCurrentBusinessFlowErrorHandler = new ObservableList<ErrorHandler>();
+        ObservableList<ErrorHandler> lstCurrentBusinessFlowErrorHandler = [];
         Activity mActivity;
         public ErrorHandlerMappingPage(Activity activity, BusinessFlow businessFlow)
         {
@@ -112,27 +112,33 @@ namespace Ginger.Activities
 
         private void SetGridsView()
         {
-            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ErrorHandler.IsSelected), WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivityName), WidthWeight = 15, Header = "Name of Error Handler" });
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName)
+            {
+                GridColsView =
+            [
+                new GridColView() { Field = nameof(ErrorHandler.IsSelected), WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" },
+                new GridColView() { Field = nameof(Activity.ActivityName), WidthWeight = 15, Header = "Name of Error Handler" },
+            ]
+            };
             grdErrorHandler.SetAllColumnsDefaultView(defView);
             grdErrorHandler.InitViewItems();
             grdErrorHandler.SetTitleLightStyle = true;
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            Button okBtn = new Button();
-            okBtn.Content = "Ok";
+            Button okBtn = new Button
+            {
+                Content = "Ok"
+            };
             okBtn.Click += new RoutedEventHandler(okBtn_Click);
 
-            Button closeBtn = new Button();
-            closeBtn.Content = "Close";
+            Button closeBtn = new Button
+            {
+                Content = "Close"
+            };
             closeBtn.Click += new RoutedEventHandler(closeBtn_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-
-            winButtons.Add(closeBtn); winButtons.Add(okBtn);
+            ObservableList<Button> winButtons = [closeBtn, okBtn];
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, GingerDicser.GetTermResValue(eTermResKey.Activity) + "-Error Handler Mapping", this, winButtons, false, string.Empty, CloseWinClicked);
         }
@@ -143,7 +149,7 @@ namespace Ginger.Activities
                 mBusinessFlow.CurrentActivity = (Activity)grdErrorHandler.CurrentItem;
                 if (mBusinessFlow.CurrentActivity != null)
                 {
-                    ((Activity)mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
+                    mBusinessFlow.CurrentActivity.PropertyChanged += CurrentActivity_PropertyChanged;
                 }
             }
         }

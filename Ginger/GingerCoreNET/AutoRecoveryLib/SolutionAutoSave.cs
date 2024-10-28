@@ -47,8 +47,10 @@ namespace Ginger.Functionalties
         public bool WaitForAutoSave = false;
         public SolutionAutoSave()
         {
-            AutoSaveTimer = new Timer();
-            AutoSaveTimer.Interval = new TimeSpan(0, 5, 0).TotalMilliseconds;
+            AutoSaveTimer = new Timer
+            {
+                Interval = new TimeSpan(0, 5, 0).TotalMilliseconds
+            };
             AutoSaveTimer.Elapsed += AutoSaveTimer_Tick;
             AutoSaveTimer.AutoReset = true;
             AutoSaveTimer.Enabled = true;
@@ -202,7 +204,7 @@ namespace Ginger.Functionalties
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Failed to delete Auto Save folder", ex);
                 }
-            }           
+            }
         }
 
     }

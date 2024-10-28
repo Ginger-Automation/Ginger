@@ -54,7 +54,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eMobileDeviceAction)GetOrCreateInputParam<eMobileDeviceAction>(nameof(MobileDeviceAction), eMobileDeviceAction.PressBackButton);
+                return GetOrCreateInputParam<eMobileDeviceAction>(nameof(MobileDeviceAction), eMobileDeviceAction.PressBackButton);
             }
             set
             {
@@ -67,7 +67,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eAuthResultSimulation)GetOrCreateInputParam<eAuthResultSimulation>(nameof(AuthResultSimulation), eAuthResultSimulation.Success);
+                return GetOrCreateInputParam<eAuthResultSimulation>(nameof(AuthResultSimulation), eAuthResultSimulation.Success);
             }
             set
             {
@@ -80,7 +80,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eAuthResultDetailsFailureSimulation)GetOrCreateInputParam<eAuthResultDetailsFailureSimulation>(nameof(AuthResultDetailsFailureSimulation), eAuthResultDetailsFailureSimulation.NotRecognized);
+                return GetOrCreateInputParam<eAuthResultDetailsFailureSimulation>(nameof(AuthResultDetailsFailureSimulation), eAuthResultDetailsFailureSimulation.NotRecognized);
             }
             set
             {
@@ -93,7 +93,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eAuthResultDetailsCancelSimulation)GetOrCreateInputParam<eAuthResultDetailsCancelSimulation>(nameof(AuthResultDetailsCancelSimulation), eAuthResultDetailsCancelSimulation.User);
+                return GetOrCreateInputParam<eAuthResultDetailsCancelSimulation>(nameof(AuthResultDetailsCancelSimulation), eAuthResultDetailsCancelSimulation.User);
             }
             set
             {
@@ -106,7 +106,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (ePressKey)GetOrCreateInputParam<ePressKey>(nameof(MobilePressKey), ePressKey.Keycode_HOME);
+                return GetOrCreateInputParam<ePressKey>(nameof(MobilePressKey), ePressKey.Keycode_HOME);
             }
             set
             {
@@ -177,6 +177,58 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue(nameof(ActionAppPackage), value.ToString());
                 OnPropertyChanged(nameof(ActionAppPackage));
+            }
+        }
+
+        public ActInputValue PressDuration
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(PressDuration), "200");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PressDuration), value.ToString());
+                OnPropertyChanged(nameof(PressDuration));
+            }
+        }
+
+        public ActInputValue DragDuration
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(DragDuration), "200");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(DragDuration), value.ToString());
+                OnPropertyChanged(nameof(DragDuration));
+            }
+        }
+
+        public ActInputValue SwipeScale
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(SwipeScale), "1");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SwipeScale), value.ToString());
+                OnPropertyChanged(nameof(SwipeScale));
+            }
+        }
+
+        public ActInputValue SwipeDuration
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(SwipeDuration), "200");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SwipeDuration), value.ToString());
+                OnPropertyChanged(nameof(SwipeDuration));
             }
         }
 
@@ -251,6 +303,8 @@ namespace GingerCore.Actions
             LongPressXY,
             [EnumValueDescription("Tap XY")]
             TapXY,
+            [EnumValueDescription("Double Tap XY")]
+            DoubleTapXY,
             [EnumValueDescription("Drag XY to XY")]
             DragXYXY,
             [EnumValueDescription("Get Current Application Identifiers")]

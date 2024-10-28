@@ -24,7 +24,7 @@ namespace GingerUtils.TimeLine
 {
     public class TimeLineEvents
     {
-        private List<TimeLineEvent> mEvents = new List<TimeLineEvent>();
+        private List<TimeLineEvent> mEvents = [];
 
         public IEnumerable<TimeLineEvent> Events
         {

@@ -68,9 +68,11 @@ namespace Ginger.User
         private void xProfileImageBrowseBtn_Click(object sender, RoutedEventArgs e)
         {
 
-            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
-            op.Title = "Select Image";
-            op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
+            System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog
+            {
+                Title = "Select Image",
+                Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg"
+            };
             if (op.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 var fileLength = new FileInfo(op.FileName).Length;
@@ -124,14 +126,18 @@ namespace Ginger.User
         {
             WorkSpace.Instance.UserProfile.SaveBackup();
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            Button saveBtn = new Button();
-            saveBtn.Content = "Save";
+            ObservableList<Button> winButtons = [];
+            Button saveBtn = new Button
+            {
+                Content = "Save"
+            };
             saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
             winButtons.Add(saveBtn);
 
-            Button undoBtn = new Button();
-            undoBtn.Content = "Undo & Close";
+            Button undoBtn = new Button
+            {
+                Content = "Undo & Close"
+            };
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
             winButtons.Add(undoBtn);
 

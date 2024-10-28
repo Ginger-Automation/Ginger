@@ -49,23 +49,23 @@ namespace GingerCore.Drivers
 {
     public class UIAComWrapperHelper : UIAutomationHelperBase, IXPath
     {
-        Dictionary<UIAuto.AutomationElement, Dictionary<string, UIAuto.AutomationElement[]>> parentDictionary = new Dictionary<UIAuto.AutomationElement, Dictionary<string, UIAuto.AutomationElement[]>>();
+        Dictionary<UIAuto.AutomationElement, Dictionary<string, UIAuto.AutomationElement[]>> parentDictionary = [];
 
         // the current App window we do all searches on
         public string CurrentWindowName { get; set; }
         public UIAuto.AutomationElement CurrentWindow { get; set; }
 
-        public ObservableList<Act> ElementLocators = new ObservableList<Act>();
-        public ObservableList<Act> ParentLocators = new ObservableList<Act>();
+        public ObservableList<Act> ElementLocators = [];
+        public ObservableList<Act> ParentLocators = [];
         public UIAuto.Condition ParentCondition;
         public UIAuto.Condition ElementCondition;
 
         private int loadwaitSeconds;
         private WinAPIAutomation winAPI = new WinAPIAutomation();
-        public Dictionary<string, UIAuto.AutomationElement[]> MainDict = new Dictionary<string, UIAuto.AutomationElement[]>();
+        public Dictionary<string, UIAuto.AutomationElement[]> MainDict = [];
         public HTMLHelper HTMLhelperObj { get; set; }
 
-        List<string> ImportentProperties = new List<string>();
+        List<string> ImportentProperties = [];
 
         private XPathHelper mXPathHelper = null;
 
@@ -370,7 +370,7 @@ namespace GingerCore.Drivers
 
         private UIAuto.Condition createCondbyStr(string cond)
         {
-            List<UIAuto.Condition> conditions = new List<UIAuto.Condition>();
+            List<UIAuto.Condition> conditions = [];
             string[] lstMultiLocVals = cond.Split('|');
 
             if (lstMultiLocVals.Length >= 1)
@@ -417,7 +417,7 @@ namespace GingerCore.Drivers
 
         public override List<object> GetListOfWindows()
         {
-            List<object> appWindows = new List<object>();
+            List<object> appWindows = [];
             UIAuto.TreeWalker walker = UIAuto.TreeWalker.ControlViewWalker;
             UIAuto.AutomationElement PE = walker.GetFirstChild(UIAuto.AutomationElement.RootElement);
 
@@ -444,7 +444,7 @@ namespace GingerCore.Drivers
 
         public override List<AppWindow> GetListOfDriverAppWindows()
         {
-            List<AppWindow> list = new List<AppWindow>();
+            List<AppWindow> list = [];
             try
             {
                 List<object> AppWindows = GetListOfWindows();
@@ -484,7 +484,7 @@ namespace GingerCore.Drivers
                                 {
                                     WindowTitle = p.MainWindowTitle;
                                 }
-                                else if (p.ProcessName != "explorer" || p.ProcessName != "OUTLOOK")
+                                else if (p.ProcessName is not "explorer" or not "OUTLOOK")
                                 {
                                     WindowTitle = p.ProcessName;
                                 }
@@ -508,7 +508,7 @@ namespace GingerCore.Drivers
 
                 else
                 {
-                    Dictionary<string, int> windowDictionary = new Dictionary<string, int>();
+                    Dictionary<string, int> windowDictionary = [];
 
                     foreach (UIAuto.AutomationElement window in AppWindows)
                     {
@@ -644,7 +644,7 @@ namespace GingerCore.Drivers
 
         public ObservableList<Act> CreateParentLocators(Act a)
         {
-            ObservableList<Act> olParLoc = new ObservableList<Act>();
+            ObservableList<Act> olParLoc = [];
             //TODO make multi properties object oriented
             if (a.LocateValue.IndexOf('#') >= 0)
             {
@@ -695,7 +695,7 @@ namespace GingerCore.Drivers
 
         public UIAuto.Condition CreateElementCondition(Act a)
         {
-            List<UIAuto.Condition> conditions = new List<UIAuto.Condition>();
+            List<UIAuto.Condition> conditions = [];
             foreach (Act aLoc in ElementLocators)
             {
                 conditions.Add(new UIAuto.PropertyCondition(getAELocatorTypeByString(aLoc.LocateBy.ToString()), aLoc.LocateValue));
@@ -714,7 +714,7 @@ namespace GingerCore.Drivers
 
         public UIAuto.Condition CreateParentCondition(Act a)
         {
-            List<UIAuto.Condition> conditions = new List<UIAuto.Condition>();
+            List<UIAuto.Condition> conditions = [];
             if (ParentLocators.Count == 0)
             {
                 CreateParentLocators(a);
@@ -902,7 +902,7 @@ namespace GingerCore.Drivers
                             {
                                 int lastIndex = locateValue.IndexOf(")");
                                 int firstindex = locateValue.IndexOf("(");
-                                string controlType = locateValue.Substring(0, firstindex).Trim();
+                                string controlType = locateValue[..firstindex].Trim();
                                 string automationId = locateValue.Substring(firstindex + 1, lastIndex - firstindex - 1);
                                 //Anding condition to find element by LocalizedControlType & Automation Id
                                 UIAuto.AndCondition andConditn = new UIAuto.AndCondition(
@@ -1186,8 +1186,7 @@ namespace GingerCore.Drivers
                     UIAuto.AutomationElement AE2 = UIAuto.AutomationElement.FromPoint(point);
                     if (AE2 != null)
                     {
-                        AEXYList = new List<UIAuto.AutomationElement>();
-                        AEXYList.Add(AE2);
+                        AEXYList = [AE2];
                         return AEXYList;
                     }
                     break;
@@ -1205,7 +1204,7 @@ namespace GingerCore.Drivers
                 return null;
             }
 
-            List<UIAuto.AutomationElement> list = new List<UIAuto.AutomationElement>();
+            List<UIAuto.AutomationElement> list = [];
             for (int i = 0; i < CurAE.Count; i++)
             {
                 list.Add(CurAE[i]);
@@ -1313,7 +1312,7 @@ namespace GingerCore.Drivers
                             i = PathNode.IndexOf("~");
                         }
 
-                        attr = PathNode.Substring(1, i - 1);
+                        attr = PathNode[1..i];
                         value = PathNode.Substring(i + 1, PathNode.Length - attr.Length - 3);
 
                         //check for index
@@ -1323,7 +1322,7 @@ namespace GingerCore.Drivers
                         if (i1 > 0 && i2 > 0) // We have index
                         {
                             string sIDX = value.Substring(i1 + 1, i2 - i1 - 1);
-                            value = value.Substring(0, i1);
+                            value = value[..i1];
                             index2 = int.Parse(sIDX);
                         }
                         CurCond2 = this.getPropertyCondition(attr, value);
@@ -1395,7 +1394,7 @@ namespace GingerCore.Drivers
         public List<UIAuto.AutomationElement> GetElementsByXpath(string XPath)
         {
             List<ElementInfo> elems = mXPathHelper.GetElementsByXpath(XPath);
-            List<UIAuto.AutomationElement> list = new List<UIAuto.AutomationElement>();
+            List<UIAuto.AutomationElement> list = [];
             foreach (ElementInfo EI in elems)
             {
                 list.Add((UIAuto.AutomationElement)EI.ElementObject);
@@ -1442,7 +1441,7 @@ namespace GingerCore.Drivers
                     i = subPathNode.IndexOf("~");
                 }
 
-                attributeName = subPathNode.Substring(0, i);
+                attributeName = subPathNode[..i];
                 attributeValue = subPathNode.Substring(i + 1, subPathNode.Length - attributeName.Length - 1);
 
                 if (attributeName.Equals("Index"))
@@ -1625,7 +1624,7 @@ namespace GingerCore.Drivers
             string[] strAct = act.LocateValue.Split('~'); //"ByName:ButtonClick|ByClass:button~ByName:columnName|ByClass:Edit~ByName:columnName2|ByClass:button"
             string strColumn = strAct[1];
 
-            List<UIAuto.Condition> conditions = new List<UIAuto.Condition>();
+            List<UIAuto.Condition> conditions = [];
             ObservableList<Act> actLocators = CreateElementLocators(strColumn);
             foreach (Act aLoc in actLocators)
             {
@@ -1646,7 +1645,7 @@ namespace GingerCore.Drivers
 
         private ObservableList<Act> CreateElementLocators(string a)
         {
-            ObservableList<Act> olElementLoc = new ObservableList<Act>();
+            ObservableList<Act> olElementLoc = [];
             //TODO make multi properties object oriented
             string[] lstMultiLocVals;
 
@@ -1901,10 +1900,10 @@ namespace GingerCore.Drivers
         public override void DragAndDrop(object obj, ActUIElement act)
         {
             //ActPBControl actPB = (ActPBControl)act;
-            ActUIElement actUIDragAndDrop = (ActUIElement)act;
+            ActUIElement actUIDragAndDrop = act;
             UIAuto.AutomationElement SourceElement = (UIAuto.AutomationElement)obj;
 
-            UIAuto.AutomationElement TargetElement = (UIAuto.AutomationElement)FindElementByLocator((eLocateBy)actUIDragAndDrop.TargetLocateBy, actUIDragAndDrop.TargetLocateValueForDriver);
+            UIAuto.AutomationElement TargetElement = (UIAuto.AutomationElement)FindElementByLocator(actUIDragAndDrop.TargetLocateBy, actUIDragAndDrop.TargetLocateValueForDriver);
             if (TargetElement == null)
             {
                 act.Error = "Target Element not FOund";
@@ -2525,8 +2524,10 @@ namespace GingerCore.Drivers
                 case ActUIElement.eElementAction.DismissDialog:
                     if (AE != null)
                     {
-                        ElementInfo EI = new ElementInfo();
-                        EI.ElementObject = AE;
+                        ElementInfo EI = new ElementInfo
+                        {
+                            ElementObject = AE
+                        };
                         List<ElementInfo> lstElem = GetElementChildren(EI);
                         foreach (ElementInfo elemInfo in lstElem)
                         {
@@ -2794,8 +2795,10 @@ namespace GingerCore.Drivers
                             e = ex;
                         }
 
-                    }));
-                    UIAClickThread.IsBackground = true;
+                    }))
+                    {
+                        IsBackground = true
+                    };
                     clickTriggeredFlag = false;
                     UIAClickThread.Start();
 
@@ -2828,8 +2831,8 @@ namespace GingerCore.Drivers
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             string[] coordinates = clickPoint.Split(',');
-            int x = (int)AE.Current.BoundingRectangle.X + Int32.Parse(coordinates[0]);
-            int y = (int)AE.Current.BoundingRectangle.Y + Int32.Parse(coordinates[1]);
+            int x = AE.Current.BoundingRectangle.X + Int32.Parse(coordinates[0]);
+            int y = AE.Current.BoundingRectangle.Y + Int32.Parse(coordinates[1]);
 
             winAPI.SendClickOnXYPoint(AE, x, y);
         }
@@ -2852,8 +2855,8 @@ namespace GingerCore.Drivers
             System.Drawing.Point newPosition = new System.Drawing.Point(1, 1);
             if (CurrentWindow.Current.BoundingRectangle != null)
             {
-                newPosition.X = (int)CurrentWindow.Current.BoundingRectangle.X + 7;
-                newPosition.Y = (int)CurrentWindow.Current.BoundingRectangle.Y + 7;
+                newPosition.X = CurrentWindow.Current.BoundingRectangle.X + 7;
+                newPosition.Y = CurrentWindow.Current.BoundingRectangle.Y + 7;
             }
             System.Windows.Forms.Cursor.Position = newPosition;
             string str = act.LocateValueCalculated;
@@ -2874,7 +2877,7 @@ namespace GingerCore.Drivers
                         str = parts[0] + Convert.ToChar("\t");
                     }
 
-                    str += parts[parts.Length - 1];
+                    str += parts[^1];
                 }
                 locateValues[j] = str;
                 j++;
@@ -2954,8 +2957,8 @@ namespace GingerCore.Drivers
 
 
             CollapseControlElement(rootElement);
-            x = (int)menuElement.Current.BoundingRectangle.X + ((int)menuElement.Current.BoundingRectangle.Width / 2);
-            y = (int)menuElement.Current.BoundingRectangle.Y + ((int)menuElement.Current.BoundingRectangle.Height / 2);
+            x = menuElement.Current.BoundingRectangle.X + (menuElement.Current.BoundingRectangle.Width / 2);
+            y = menuElement.Current.BoundingRectangle.Y + (menuElement.Current.BoundingRectangle.Height / 2);
             winAPI.SendClick(rootElement);
             str = "True";
             Thread.Sleep(100);
@@ -3024,9 +3027,11 @@ namespace GingerCore.Drivers
         public UIAuto.AutomationElement GetNextMenuElement(UIAuto.AutomationElement menuElement, string NextItem)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Start GetNextMenuElement  :  " + menuElement.Current.Name);
-            List<UIAuto.Condition> conditions = new List<UIAuto.Condition>();
-            conditions.Add(new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, menuElement.Current.LocalizedControlType));
-            conditions.Add(new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, NextItem));
+            List<UIAuto.Condition> conditions =
+            [
+                new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, menuElement.Current.LocalizedControlType),
+                new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, NextItem),
+            ];
             UIAuto.AndCondition CurCond2 = new UIAuto.AndCondition(conditions.ToArray());
             menuElement = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, CurCond2);
             return menuElement;
@@ -3085,16 +3090,16 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement childAE = null, initialTab = null;
             int id = element.Current.ProcessId;
             //int y1 = (int)(element.Current.BoundingRectangle.BottomLeft.Y - 10);
-            int y1 = (int)(element.Current.BoundingRectangle.Bottom - 10);
-            int startPoint = (int)element.Current.BoundingRectangle.X + 5;
-            int endPoint = (int)(element.Current.BoundingRectangle.X + element.Current.BoundingRectangle.Width);
+            int y1 = element.Current.BoundingRectangle.Bottom - 10;
+            int startPoint = element.Current.BoundingRectangle.X + 5;
+            int endPoint = element.Current.BoundingRectangle.X + element.Current.BoundingRectangle.Width;
             UIAuto.PropertyCondition tabSelectCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, "pane");
             int foundTabsCount = 0;
             initialTab = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
             if (((element.Current.BoundingRectangle.Bottom) - (initialTab.Current.BoundingRectangle.Bottom)) < ((initialTab.Current.BoundingRectangle.Top) - (element.Current.BoundingRectangle.Top)))
             {
-                startPoint = (int)element.Current.BoundingRectangle.X + 5;
-                y1 = (int)((element.Current.BoundingRectangle.Y + initialTab.Current.BoundingRectangle.Y) / 2);
+                startPoint = element.Current.BoundingRectangle.X + 5;
+                y1 = (element.Current.BoundingRectangle.Y + initialTab.Current.BoundingRectangle.Y) / 2;
             }
 
             while (startPoint < endPoint && !taskFinished)
@@ -3251,7 +3256,7 @@ namespace GingerCore.Drivers
                                     {
                                         CurrentElementTitle = CurrentSelectedElemet.Current.Name;
                                     }
-                                    winAPI.SendClickOnXYPoint(element, ((int)element.Current.BoundingRectangle.X + 2), ((int)element.Current.BoundingRectangle.Y + 2));
+                                    winAPI.SendClickOnXYPoint(element, (element.Current.BoundingRectangle.X + 2), (element.Current.BoundingRectangle.Y + 2));
                                     UIAuto.AutomationElementCollection AECollection = element.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.ProcessIdProperty, CurrentWindow.Current.ProcessId));
                                     UIAuto.AutomationElement childElement = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, new UIAuto.PropertyCondition(UIAuto.AutomationElement.NameProperty, value));
                                     if (childElement == null)
@@ -3337,7 +3342,7 @@ namespace GingerCore.Drivers
                     // check box handler
                     case "check box":
                     case "tree item":
-                        if (value != "Checked" && value != "Unchecked")
+                        if (value is not "Checked" and not "Unchecked")
                         {
                             throw new Exception(
                                 "Unknown Value: [" + value + "] for CheckBox please use: Checked or Unchecked");
@@ -3490,9 +3495,9 @@ namespace GingerCore.Drivers
 
                             element = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(element);
                         }
-                        if (AddChildToSelection(element, nodeNames[nodeNames.Count - 1]) == false)
+                        if (AddChildToSelection(element, nodeNames[^1]) == false)
                         {
-                            return nodeNames[nodeNames.Count - 1] + "not found" + value;
+                            return nodeNames[^1] + "not found" + value;
                         }
 
                         break;
@@ -3576,10 +3581,7 @@ namespace GingerCore.Drivers
         {
             try
             {
-                UIAuto.ExpandCollapsePattern exPat = element.GetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern)
-                                                                              as UIAuto.ExpandCollapsePattern;
-
-                if (exPat == null)
+                if (element.GetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern) is not UIAuto.ExpandCollapsePattern exPat)
                 {
                     throw new ApplicationException("Unable to set value");
                 }
@@ -3610,10 +3612,8 @@ namespace GingerCore.Drivers
             try
             {
                 UIAuto.AutomationElement autoElement = (UIAuto.AutomationElement)element;
-                UIAuto.ExpandCollapsePattern exPat = autoElement.GetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern)
-                                                                              as UIAuto.ExpandCollapsePattern;
 
-                if (exPat == null)
+                if (autoElement.GetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern) is not UIAuto.ExpandCollapsePattern exPat)
                 {
                     throw new ApplicationException("Unable to expand the combobox");
                 }
@@ -3682,13 +3682,13 @@ namespace GingerCore.Drivers
             else if (childToSelect.StartsWith("*") && childToSelect.EndsWith("*"))
             {
                 sMultiSelect = "Multi";
-                childToSelect = childToSelect.Substring(1, childToSelect.Length - 2);
+                childToSelect = childToSelect[1..^1];
                 bExact = false;
             }
             else if (childToSelect.EndsWith("*"))
             {
                 bExact = false;
-                childToSelect = childToSelect.Substring(0, childToSelect.Length - 1);
+                childToSelect = childToSelect[..^1];
             }
             while (node != null && !taskFinished && !String.IsNullOrEmpty(childToSelect))
             {
@@ -4546,7 +4546,7 @@ namespace GingerCore.Drivers
 
         public override void HandlePaintWindow(object obj)
         {
-            PaintWindow((IntPtr)((UIAuto.AutomationElement)obj).Current.NativeWindowHandle);
+            PaintWindow(((UIAuto.AutomationElement)obj).Current.NativeWindowHandle);
         }
 
         private void waitForElementState(UIAuto.AutomationElement ae)
@@ -4885,13 +4885,15 @@ namespace GingerCore.Drivers
         public List<AppWindow> GetCurrentAppWindows()
         {
             UIAuto.AutomationElementCollection AECollection = UIAuto.AutomationElement.RootElement.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.ProcessIdProperty, CurrentWindow.Current.ProcessId));
-            List<AppWindow> list = new List<AppWindow>();
+            List<AppWindow> list = [];
             for (int i = 0; i < AECollection.Count; i++)
             {
                 AppWindow AW = new AppWindow();
 
-                UIAElementInfo WEI = new UIAElementInfo();
-                WEI.ElementObject = AECollection[i];
+                UIAElementInfo WEI = new UIAElementInfo
+                {
+                    ElementObject = AECollection[i]
+                };
                 AW.RefObject = WEI;
 
                 list.Add(AW);
@@ -4915,7 +4917,7 @@ namespace GingerCore.Drivers
 
         public override List<Bitmap> GetAppDialogAsBitmap(AppWindow aw)  ///********
         {
-            List<Bitmap> bList = new List<Bitmap>();
+            List<Bitmap> bList = [];
             UIAuto.AutomationElement tempAE = (UIAuto.AutomationElement)(((UIAElementInfo)aw.RefObject).ElementObject);
             //TODO: Add function for reduntnt code
             UIAuto.AutomationElementCollection AEList;
@@ -5030,7 +5032,7 @@ namespace GingerCore.Drivers
             return await Task.Run(async () =>
              {
 
-                 List<ElementInfo> list = new List<ElementInfo>();
+                 List<ElementInfo> list = [];
                  List<ElementInfo> HTMLlist;
 
                  //TODO: find a better property - since if the window is off screen controls will not show            
@@ -5330,7 +5332,7 @@ namespace GingerCore.Drivers
 
         public Dictionary<string, UIAuto.AutomationElement[]> GetUpdateDictionary(UIAuto.AutomationElement AE, ref bool isElementsFromPoints)
         {
-            Dictionary<string, UIAuto.AutomationElement[]> MainDict = new Dictionary<string, UIAuto.AutomationElement[]>();
+            Dictionary<string, UIAuto.AutomationElement[]> MainDict = [];
             MainDict = GetDictionaryForGrid(AE, ref isElementsFromPoints);
             parentDictionary.Remove(AE);
             parentDictionary.Add(AE, MainDict);
@@ -5520,8 +5522,8 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement element = (MainDict[whereColumnTitle])[0];
             getColumnOnScreen(tableElement, whereColumnTitle);
 
-            int sourceYPoint = (int)element.Current.BoundingRectangle.Height + 7;
-            int tableHeight = (int)tableElement.Current.BoundingRectangle.Height;
+            int sourceYPoint = element.Current.BoundingRectangle.Height + 7;
+            int tableHeight = tableElement.Current.BoundingRectangle.Height;
             UIAuto.AutomationElement Scroll = tableElement.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty, OrientationType.Vertical));
             UIAuto.AutomationElement pageDown = null, pageUp = null;
 
@@ -5544,9 +5546,9 @@ namespace GingerCore.Drivers
                     string val = GetControlText(element, XY);
                     if (val.Equals(whereColumnValue))
                     {
-                        sourceYPoint = sourceYPoint + (int)element.Current.BoundingRectangle.Y;
+                        sourceYPoint = sourceYPoint + element.Current.BoundingRectangle.Y;
                         getColumnOnScreen(tableElement, targetColumnTitle);
-                        targetXPoint = (int)MainDict[targetColumnTitle][0].Current.BoundingRectangle.X + 5;
+                        targetXPoint = MainDict[targetColumnTitle][0].Current.BoundingRectangle.X + 5;
 
                         winAPI.SendClickOnXYPoint(tableElement, targetXPoint, sourceYPoint);
                         WinAPIAutomation.SendInputKeys(value);
@@ -5608,9 +5610,9 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement Scroll = tableAE.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty, OrientationType.Vertical));
             UIAuto.AutomationElement pageUp = null, pageDown = null, TargetAE = null;
 
-            int x = ((int)colFirstAE.Current.BoundingRectangle.X + 2);
-            int y = ((int)tableAE.Current.BoundingRectangle.Y) + (((int)(colFirstAE.Current.BoundingRectangle.Height)) / 2);
-            int Limit = (int)tableAE.Current.BoundingRectangle.Y + (int)tableAE.Current.BoundingRectangle.Height;
+            int x = (colFirstAE.Current.BoundingRectangle.X + 2);
+            int y = tableAE.Current.BoundingRectangle.Y + (colFirstAE.Current.BoundingRectangle.Height / 2);
+            int Limit = tableAE.Current.BoundingRectangle.Y + tableAE.Current.BoundingRectangle.Height;
 
             TargetAE = FindElementFromRowByPoint(x, y, Limit, targetCellvalue);
             if (TargetAE != null)
@@ -5648,13 +5650,13 @@ namespace GingerCore.Drivers
         /// </summary>
         public UIAuto.AutomationElement GetColOnScreenByPoint(UIAuto.AutomationElement TableAE, UIAuto.AutomationElement refCol, string targetColValue)
         {
-            int x = (int)TableAE.Current.BoundingRectangle.X;
-            int y = (int)refCol.Current.BoundingRectangle.Y + 2;
+            int x = TableAE.Current.BoundingRectangle.X;
+            int y = refCol.Current.BoundingRectangle.Y + 2;
             UIAuto.AutomationElement Scroll = TableAE.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty, OrientationType.Horizontal));
             UIAuto.AutomationElement pageLeft = null, pageRight = null;
 
             //if element is visible on screen
-            refCol = FindColumnByPoint(x, y, ((int)TableAE.Current.BoundingRectangle.X + (int)TableAE.Current.BoundingRectangle.Width), targetColValue);
+            refCol = FindColumnByPoint(x, y, (TableAE.Current.BoundingRectangle.X + TableAE.Current.BoundingRectangle.Width), targetColValue);
             if (refCol != null)
             {
                 return refCol;
@@ -5670,7 +5672,7 @@ namespace GingerCore.Drivers
                 do
                 {
                     pageRight = Scroll.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.NameProperty, "Page right"));
-                    refCol = FindColumnByPoint(x, y, ((int)TableAE.Current.BoundingRectangle.X + (int)TableAE.Current.BoundingRectangle.Width), targetColValue);
+                    refCol = FindColumnByPoint(x, y, (TableAE.Current.BoundingRectangle.X + TableAE.Current.BoundingRectangle.Width), targetColValue);
                     if (refCol != null)
                     {
                         return refCol;
@@ -5914,7 +5916,7 @@ namespace GingerCore.Drivers
             {
                 // need to take decision. do we need to make support this feature or not? it will fail if we are taking childs from location and if there scroll bar exist hen this will return incorrect row count
                 List<UIAuto.AutomationElement> gridControls = GetGridControlsFromPoint(AE);
-                Dictionary<string, UIAuto.AutomationElement[]> dictionary = new Dictionary<string, UIAuto.AutomationElement[]>();
+                Dictionary<string, UIAuto.AutomationElement[]> dictionary = [];
                 string sElementName = "";
 
                 foreach (UIAuto.AutomationElement grdElement in gridControls)
@@ -6001,17 +6003,17 @@ namespace GingerCore.Drivers
         {
             int yPoint = 0;
             int count = 0;
-            List<UIAuto.AutomationElement> gridControls = new List<UIAuto.AutomationElement>();
+            List<UIAuto.AutomationElement> gridControls = [];
             foreach (string str in MainDict.Keys)
             {
                 gridControls.Add(MainDict[str].ToList<UIAuto.AutomationElement>()[0]);
             }
             if (gridControls.Count != 0)
             {
-                yPoint = (int)gridControls[0].Current.BoundingRectangle.Y;
+                yPoint = gridControls[0].Current.BoundingRectangle.Y;
                 for (int i = 0; i < gridControls.Count && gridControls[i] != null; i++)
                 {
-                    if (gridControls[i] != null && yPoint != (int)gridControls[i].Current.BoundingRectangle.Y && (gridControls[i].Current.BoundingRectangle.Y != 0) && (!gridControls[i].Current.LocalizedControlType.Equals("scroll bar")) && (!gridControls[i].Current.LocalizedControlType.Equals("thumb")) && (!gridControls[i].Current.LocalizedControlType.Equals("image")))
+                    if (gridControls[i] != null && yPoint != gridControls[i].Current.BoundingRectangle.Y && (gridControls[i].Current.BoundingRectangle.Y != 0) && (!gridControls[i].Current.LocalizedControlType.Equals("scroll bar")) && (!gridControls[i].Current.LocalizedControlType.Equals("thumb")) && (!gridControls[i].Current.LocalizedControlType.Equals("image")))
                     {
                         count = 1;
                         break;
@@ -6025,7 +6027,7 @@ namespace GingerCore.Drivers
 
         public Dictionary<string, UIAuto.AutomationElement[]> GetDictionaryForGrid(UIAuto.AutomationElement AE, ref bool isElementsFromPoints)
         {
-            Dictionary<string, UIAuto.AutomationElement[]> MainDict = new Dictionary<string, UIAuto.AutomationElement[]>();
+            Dictionary<string, UIAuto.AutomationElement[]> MainDict = [];
             UIAuto.AutomationElement tempElement;
             ElementLocator eleLoc = new ElementLocator();
             tempElement = UIAuto.TreeWalker.ContentViewWalker.GetFirstChild(AE);
@@ -6090,7 +6092,7 @@ namespace GingerCore.Drivers
         {
             bool isElementsFromPoints = false;
             Dictionary<string, UIAuto.AutomationElement[]> tempDictionary = GetDictionaryForGrid(AE, ref isElementsFromPoints);
-            List<String> mColNames = new List<string>();
+            List<String> mColNames = [];
             List<string> keys = tempDictionary.Keys.ToList();
             int maxcount = 0, tempcount = 0;
             foreach (string str in keys)
@@ -6113,16 +6115,18 @@ namespace GingerCore.Drivers
                     mColNames.Add(str);
                 }
             }
-            TableElementInfo TBI = new TableElementInfo();
-            TBI.ColumnNames = mColNames;
-            TBI.RowCount = maxcount;
-            TBI.MainDict = tempDictionary;
+            TableElementInfo TBI = new TableElementInfo
+            {
+                ColumnNames = mColNames,
+                RowCount = maxcount,
+                MainDict = tempDictionary
+            };
             return TBI;
         }
 
         private object GetComboValues(UIAuto.AutomationElement AE)
         {
-            List<ComboBoxElementItem> ComboValues = new List<ComboBoxElementItem>();
+            List<ComboBoxElementItem> ComboValues = [];
 
             //UIAuto.AutomationElement elementNode = UIAuto.TreeWalker.ControlViewWalker.GetFirstChild(AE);
             UIAuto.AutomationElement elementNode = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(AE);
@@ -6139,14 +6143,16 @@ namespace GingerCore.Drivers
         public override ElementInfo GetElementInfoFor(object obj)
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
-            UIAElementInfo EI = new UIAElementInfo();
-            EI.ElementObject = AE;
-            EI.X = (int)AE.Current.BoundingRectangle.X;
-            EI.Y = (int)AE.Current.BoundingRectangle.Y;
-            EI.Width = (int)AE.Current.BoundingRectangle.Width;
-            EI.Height = (int)AE.Current.BoundingRectangle.Height;
-            EI.WindowExplorer = WindowExplorer;
-            EI.ElementType = GetElementControlType(AE);
+            UIAElementInfo EI = new UIAElementInfo
+            {
+                ElementObject = AE,
+                X = AE.Current.BoundingRectangle.X,
+                Y = AE.Current.BoundingRectangle.Y,
+                Width = AE.Current.BoundingRectangle.Width,
+                Height = AE.Current.BoundingRectangle.Height,
+                WindowExplorer = WindowExplorer,
+                ElementType = GetElementControlType(AE)
+            };
             EI.ElementTypeEnum = WindowsPlatform.GetElementType(EI.ElementType, GetControlPropertyValue(EI.ElementObject, "ClassName"));
             //EI.IsExpandable = AE.Current.IsContentElement;
             EI.BoundingRectangle = GetControlPropertyValue(EI.ElementObject, "BoundingRectangle");
@@ -6230,26 +6236,26 @@ namespace GingerCore.Drivers
             //WinAPIAutomation.ShowWindow(CurrentWindow);            
             HandlePaintWindow(CurrentWindow);
             Thread.Sleep(200);
-            int width = (int)tempWindow.Current.BoundingRectangle.Width;
-            int height = (int)tempWindow.Current.BoundingRectangle.Height;
+            int width = tempWindow.Current.BoundingRectangle.Width;
+            int height = tempWindow.Current.BoundingRectangle.Height;
             if (width == 0 || height == 0)
             {
                 WinAPIAutomation.ShowWindow(CurrentWindow);
-                width = (int)tempWindow.Current.BoundingRectangle.Width;
-                height = (int)tempWindow.Current.BoundingRectangle.Height;
+                width = tempWindow.Current.BoundingRectangle.Width;
+                height = tempWindow.Current.BoundingRectangle.Height;
             }
             Bitmap bmp = new Bitmap(width, height);
 
             Graphics memoryGraphics = Graphics.FromImage(bmp);
             IntPtr dc = memoryGraphics.GetHdc();
-            PrintWindow((IntPtr)tempWindow.Current.NativeWindowHandle, dc, 0);
+            PrintWindow(tempWindow.Current.NativeWindowHandle, dc, 0);
             memoryGraphics.ReleaseHdc(dc);
             return bmp;
         }
 
         public override ObservableList<ElementInfo> GetElements(ElementLocator EL)
         {
-            ObservableList<ElementInfo> list = new ObservableList<ElementInfo>();
+            ObservableList<ElementInfo> list = [];
             //temp for test
             List<UIAuto.AutomationElement> AEList = FindElementsByLocator(EL);
             if (AEList != null)
@@ -6277,7 +6283,7 @@ namespace GingerCore.Drivers
         public override List<ElementInfo> GetElementChilderns(object obj)
         {
             taskFinished = false;
-            List<ElementInfo> list = new List<ElementInfo>();
+            List<ElementInfo> list = [];
             if (IsWindowValid(obj))
             {
                 UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
@@ -6285,7 +6291,7 @@ namespace GingerCore.Drivers
                 {
                     //UIAuto.AutomationElement elementNode = UIAuto.TreeWalker.ControlViewWalker.GetFirstChild(AE);
                     UIAuto.AutomationElement elementNode = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(AE);
-                    List<UIAuto.AutomationElement> AEChildList = new List<UIAuto.AutomationElement>();
+                    List<UIAuto.AutomationElement> AEChildList = [];
                     while (elementNode != null && !taskFinished)
                     {
                         AEChildList.Add(elementNode);
@@ -6355,7 +6361,7 @@ namespace GingerCore.Drivers
 
         private List<UIAuto.AutomationElement> GetGridControlsFromPoint(UIAuto.AutomationElement AE)
         {
-            List<UIAuto.AutomationElement> childList = new List<UIAuto.AutomationElement>();
+            List<UIAuto.AutomationElement> childList = [];
             //UIAuto.AutomationElementCollection AEScrolls = AE.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.ControlTypeProperty, ControlType.ScrollBar));
             //UIAuto.AutomationElement horScroll=null;
             //UIAuto.AutomationElement verScroll=null;
@@ -6400,10 +6406,10 @@ namespace GingerCore.Drivers
         {
             AE.SetFocus();
             System.Drawing.Rectangle recGrid = AE.Current.BoundingRectangle;
-            int iX = (int)recGrid.X + 5;
-            int iY = (int)recGrid.Y + 7;
+            int iX = recGrid.X + 5;
+            int iY = recGrid.Y + 7;
             //Get All Rows
-            while (iY < (int)recGrid.Y + recGrid.Height && !taskFinished)
+            while (iY < recGrid.Y + recGrid.Height && !taskFinished)
             {
                 int iRowHeight = 0;
                 while (iX < recGrid.X + recGrid.Width && !taskFinished)
@@ -6425,11 +6431,11 @@ namespace GingerCore.Drivers
                         {
                             childList.Add((UIAuto.AutomationElement)element);
                             System.Drawing.Rectangle recChild = ((UIAuto.AutomationElement)element).Current.BoundingRectangle;
-                            iX = (int)recChild.X + (int)recChild.Width + 5;
-                            iY = (int)recChild.Y + 5;
+                            iX = recChild.X + recChild.Width + 5;
+                            iY = recChild.Y + 5;
                             if (iRowHeight == 0)
                             {
-                                iRowHeight = iY + (int)recChild.Height;
+                                iRowHeight = iY + recChild.Height;
                             }
                         }
                         else
@@ -6447,7 +6453,7 @@ namespace GingerCore.Drivers
                     iRowHeight = iY;
                 }
 
-                iX = (int)recGrid.X + 5;
+                iX = recGrid.X + 5;
                 iY = iRowHeight + 10;
             }
         }
@@ -6464,8 +6470,10 @@ namespace GingerCore.Drivers
 
         ElementInfo IXPath.UseRootElement()
         {
-            UIAElementInfo root = new UIAElementInfo();
-            root.ElementObject = UIAuto.AutomationElement.RootElement;
+            UIAElementInfo root = new UIAElementInfo
+            {
+                ElementObject = UIAuto.AutomationElement.RootElement
+            };
             return root;
         }
 
@@ -6597,7 +6605,7 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement EAE, List<XpathPropertyCondition> conditions, out List<UIAuto.AutomationElement> listRAE,
             bool flagFindFirst = false)
         {
-            listRAE = new List<UIAuto.AutomationElement>();
+            listRAE = [];
             UIAuto.AutomationElement TAE;
             UIAuto.AutomationElement AE = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(EAE);
             while (AE != null && !taskFinished)
@@ -6653,7 +6661,7 @@ namespace GingerCore.Drivers
             UIAuto.AutomationProperty AP = GetAutomationPropertyForXpathProp(conditions[0].PropertyName);
             UIAuto.Condition cond = new UIAuto.PropertyCondition(AP, conditions[0].Value);
             //---
-            List<ElementInfo> rc = new List<ElementInfo>();
+            List<ElementInfo> rc = [];
             UIAElementInfo EI1;
             UIAuto.AutomationElementCollection list = ((UIAuto.AutomationElement)EI.ElementObject).FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
             if (list.Count == 0)
@@ -6828,7 +6836,7 @@ namespace GingerCore.Drivers
                 return "";
             }
 
-            string Name = WinAPIAutomation.GetText((IntPtr)element.Current.NativeWindowHandle);
+            string Name = WinAPIAutomation.GetText(element.Current.NativeWindowHandle);
             if (string.IsNullOrEmpty(Name))
             {
                 Name = element.Current.Name;
@@ -6864,7 +6872,7 @@ namespace GingerCore.Drivers
             //UIAuto.TreeWalker walker = UIAuto.TreeWalker.ControlViewWalker;
             UIAuto.TreeWalker walker = UIAuto.TreeWalker.RawViewWalker;
 
-            List<ElementInfo> list = new List<ElementInfo>();
+            List<ElementInfo> list = [];
 
             try
             {
@@ -6881,7 +6889,7 @@ namespace GingerCore.Drivers
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "", ex);
-                return new List<ElementInfo>();
+                return [];
             }
 
 
@@ -6889,15 +6897,17 @@ namespace GingerCore.Drivers
 
         public override ObservableList<ControlProperty> GetElementProperties(object obj)
         {
-            ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+            ObservableList<ControlProperty> list = [];
 
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
 
             UIAuto.AutomationProperty[] props = AE.GetSupportedProperties();
             foreach (UIAuto.AutomationProperty AP in props)
             {
-                ControlProperty CP = new ControlProperty();
-                CP.Name = AP.ProgrammaticName;
+                ControlProperty CP = new ControlProperty
+                {
+                    Name = AP.ProgrammaticName
+                };
                 CP.Name = CP.Name.Replace("AutomationElementIdentifiers.", "");
                 CP.Name = CP.Name.Replace("Property", "");
                 object propValue;

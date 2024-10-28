@@ -184,7 +184,7 @@ namespace GingerCore.Actions.VisualTesting
 
         void EyesOpen()
         {
-            List<int> mResolution = new List<int>();
+            List<int> mResolution = [];
             try
             {
                 mEyes = new Applitools.Images.Eyes();
@@ -300,7 +300,7 @@ namespace GingerCore.Actions.VisualTesting
 
         void WebEyesOpen()
         {
-            List<int> mResolution = new List<int>();
+            List<int> mResolution = [];
             try
             {
                 runner = new ClassicRunner();
@@ -351,9 +351,11 @@ namespace GingerCore.Actions.VisualTesting
                 }
                 else
                 {
-                    ElementLocator locator = new ElementLocator();
-                    locator.LocateBy = GetLocateBy();
-                    locator.LocateValue = GetLocateValue();
+                    ElementLocator locator = new ElementLocator
+                    {
+                        LocateBy = GetLocateBy(),
+                        LocateValue = GetLocateValue()
+                    };
                     IWebElement webElement = ((SeleniumDriver)mDriver).LocateElement(mAct, false, null, null);
                     WebEyes.Check(Target.Region(webElement).Fully().WithName(mAct.ItemName));
                 }
@@ -462,9 +464,10 @@ namespace GingerCore.Actions.VisualTesting
             Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
             {
-                BatchInfo batchInfo = new BatchInfo(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ItemName);
-
-                batchInfo.Id = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString();
+                BatchInfo batchInfo = new BatchInfo(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ItemName)
+                {
+                    Id = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString()
+                };
                 config.SetBatch(batchInfo);
             }
 
@@ -517,7 +520,7 @@ namespace GingerCore.Actions.VisualTesting
         {
             //Edit URL and prepare it to download images from report
             String bakedURL = sessionURL.Replace("/app/", "/api/");
-            bakedURL = bakedURL.Substring(0, bakedURL.IndexOf("?accountId"));
+            bakedURL = bakedURL[..bakedURL.IndexOf("?accountId")];
             bakedURL += "/steps/";
             return bakedURL;
         }
@@ -525,12 +528,12 @@ namespace GingerCore.Actions.VisualTesting
         private void DownloadImages(int numOfImages, TestResults testResults)
         {
             for (int i = 0; i < numOfImages; i++)
-            {                
-                if(testResults.StepsInfo[i].IsDifferent)
+            {
+                if (testResults.StepsInfo[i].IsDifferent)
                 {
                     String currImagePath = Act.GetScreenShotRandomFileName();
                     currImagePath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(currImagePath), "Applitools_" + DateTime.Now.ToString("ddmmyyyyss.mm") + ".png");
-                    String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + (i+1).ToString() + "/images/diff?ApiKey=" + mDriver.GetApplitoolKey();// ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                    String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + (i + 1).ToString() + "/images/diff?ApiKey=" + mDriver.GetApplitoolKey();// ((SeleniumDriver)mDriver).ApplitoolsViewKey;
                     try
                     {
                         HttpResponseMessage response = runLongRequest(currImageURL);
@@ -590,7 +593,7 @@ namespace GingerCore.Actions.VisualTesting
             {
                 endOfServerUrlLocation = testresult.Url.IndexOf("/app/batches");
             }
-            this.ServerURL = testresult.Url.Substring(0, endOfServerUrlLocation);
+            this.ServerURL = testresult.Url[..endOfServerUrlLocation];
 
         }
 

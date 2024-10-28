@@ -43,12 +43,12 @@ namespace Ginger.ALM.ZephyrEnt
         public enum eExplorerTestPlanningPageUsageType { Import, Select, BrowseFolders, Map }
         private eExplorerTestPlanningPageUsageType mExplorerTestPlanningPageUsageType;
         ObservableList<BusinessFlow> mBizFlows;
-        Dictionary<string, BusinessFlow> bfsExternalIds = new Dictionary<string, BusinessFlow>();
+        Dictionary<string, BusinessFlow> bfsExternalIds = [];
         private List<string[]> mExecDetailNames;
         List<BaseResponseItem> treeData;
         private ITreeViewItem mCurrentSelectedTreeItem = null;
         public string CurrentSelectedPath { get; set; }
-        ObservableList<ZephyrEntPhaseTreeItem> mCurrentSelectedTestSets = new ObservableList<ZephyrEntPhaseTreeItem>();
+        ObservableList<ZephyrEntPhaseTreeItem> mCurrentSelectedTestSets = [];
         public ObservableList<ZephyrEntPhaseTreeItem> CurrentSelectedTestSets
         {
             get
@@ -77,12 +77,14 @@ namespace Ginger.ALM.ZephyrEnt
             TestPlanningExplorerTreeView.Tree.ItemSelected += TestPlanningExplorerTreeView_ItemSelected;
             treeData.ForEach(folder =>
             {
-                TestPlanningFolderTreeItem tvv = new TestPlanningFolderTreeItem(folder);
-                tvv.entityType = EntityFolderType.Cycle;
+                TestPlanningFolderTreeItem tvv = new TestPlanningFolderTreeItem(folder)
+                {
+                    entityType = EntityFolderType.Cycle
+                };
                 tvv.Folder = tvv.Name;
                 tvv.Path = tvv.Name;
                 tvv.FolderOnly = explorerTestPlanningPageUsageType.Equals(eExplorerTestPlanningPageUsageType.BrowseFolders);
-                tvv.CurrentChildrens = new List<ITreeViewItem>();
+                tvv.CurrentChildrens = [];
                 foreach (var item in (JArray)folder.TryGetItem("cyclePhases"))
                 {
                     dynamic d = JObject.Parse(item.ToString());
@@ -102,7 +104,7 @@ namespace Ginger.ALM.ZephyrEnt
                 TestPlanningExplorerTreeView.Tree.AddItem(tvv);
             });
 
-            mExecDetailNames = new List<string[]>();
+            mExecDetailNames = [];
 
             ShowTestSetDetailsPanel(false);
         }
@@ -127,18 +129,22 @@ namespace Ginger.ALM.ZephyrEnt
                     total += number;
                 }
             }
-            Label totalTcsNum = new Label();
-            totalTcsNum.Content = "Total Number of TC's: " + total;
-            totalTcsNum.Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style;
-            totalTcsNum.Margin = new Thickness(0, 0, 0, 0);
+            Label totalTcsNum = new Label
+            {
+                Content = "Total Number of TC's: " + total,
+                Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style,
+                Margin = new Thickness(0, 0, 0, 0)
+            };
             TSExecDetails.Children.Add(totalTcsNum);
 
             foreach (string[] detail in mExecDetailNames)
             {
-                Label StatusName = new Label();
-                StatusName.Content = detail[1] + " TC's in Status '" + detail[0] + "'";
-                StatusName.Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style;
-                StatusName.Margin = new Thickness(0, 0, 0, 0);
+                Label StatusName = new Label
+                {
+                    Content = detail[1] + " TC's in Status '" + detail[0] + "'",
+                    Style = this.FindResource("@SmallerInputFieldLabelStyle") as Style,
+                    Margin = new Thickness(0, 0, 0, 0)
+                };
                 TSExecDetails.Children.Add(StatusName);
             }
         }
@@ -251,24 +257,30 @@ namespace Ginger.ALM.ZephyrEnt
             switch (mExplorerTestPlanningPageUsageType)
             {
                 case (eExplorerTestPlanningPageUsageType.Import):
-                    Button importBtn = new Button();
-                    importBtn.Content = "Import Selected";
+                    Button importBtn = new Button
+                    {
+                        Content = "Import Selected"
+                    };
                     importBtn.Click += new RoutedEventHandler(ImportSelected);
-                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, [importBtn], true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedTestSets;
 
                 case (eExplorerTestPlanningPageUsageType.Select):
-                    Button selectBtn = new Button();
-                    selectBtn.Content = "Select";
+                    Button selectBtn = new Button
+                    {
+                        Content = "Select"
+                    };
                     selectBtn.Click += new RoutedEventHandler(Select);
-                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, new ObservableList<Button> { selectBtn }, true, "Cancel", Cancel_Clicked);
+                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, [selectBtn], true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedTestSets;
 
                 case (eExplorerTestPlanningPageUsageType.BrowseFolders):
-                    Button selectFolderBtn = new Button();
-                    selectFolderBtn.Content = "Select Folder";
+                    Button selectFolderBtn = new Button
+                    {
+                        Content = "Select Folder"
+                    };
                     selectFolderBtn.Click += new RoutedEventHandler(SelectFolder);
-                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, new ObservableList<Button> { selectFolderBtn }, true, "Cancel", Cancel_Clicked);
+                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, [selectFolderBtn], true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedPath;
                 case (eExplorerTestPlanningPageUsageType.Map):
                     //Button importBtn = new Button();
@@ -337,7 +349,7 @@ namespace Ginger.ALM.ZephyrEnt
                         UpdateIfAlreadyImported(ts);
                     }
                 });
-                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedTestSets))
+                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, CurrentSelectedTestSets))
                 {
                     //Refresh the explorer selected tree items import status
                     LoadDataBizFlows();

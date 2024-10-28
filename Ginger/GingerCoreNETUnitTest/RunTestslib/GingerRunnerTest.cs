@@ -139,11 +139,13 @@ namespace WorkspaceHold
 
             //TODO: handle no GG node found
 
-            Agent agent = new Agent();
-            agent.Name = "agent 1";
-            agent.AgentType = Agent.eAgentType.Service;
-            agent.PluginId = mPluginId;
-            agent.ServiceId = mServiceId;
+            Agent agent = new Agent
+            {
+                Name = "agent 1",
+                AgentType = Agent.eAgentType.Service,
+                PluginId = mPluginId,
+                ServiceId = mServiceId
+            };
 
             mGingerRunner = new GingerExecutionEngine(new GingerRunner());
             mGingerRunner.GingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = cWebApp, Agent = agent });

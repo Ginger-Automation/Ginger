@@ -25,8 +25,8 @@ namespace GingerCore
     {
         public static eTerminologyType TERMINOLOGY_TYPE { get; set; }
 
-        static List<KeyValuePair<string, string>> gingerTermDefaultList = new List<KeyValuePair<string, string>>()
-        {
+        static List<KeyValuePair<string, string>> gingerTermDefaultList =
+        [
             new KeyValuePair<string, string>("BusinessFlow", "Business Flow"),
             new KeyValuePair<string, string>("BusinessFlows", "Business Flows"),
             new KeyValuePair<string, string>("ActivitiesGroup", "Activities Group"),
@@ -40,10 +40,10 @@ namespace GingerCore
             new KeyValuePair<string, string>("RunSets", "Run Sets"),
             new KeyValuePair<string, string>("ALM", "ALM"),
             new KeyValuePair<string, string>("TargetApplication", "Target Application")
-        };
+        ];
 
-        static List<KeyValuePair<string, string>> gingerTermGherkinList = new List<KeyValuePair<string, string>>()
-        {
+        static List<KeyValuePair<string, string>> gingerTermGherkinList =
+        [
             new KeyValuePair<string, string>("BusinessFlow", "Business Flow Feature"),
             new KeyValuePair<string, string>("BusinessFlows", "Business Flow Features"),
             new KeyValuePair<string, string>("ActivitiesGroup", "Scenario"),
@@ -55,11 +55,11 @@ namespace GingerCore
             new KeyValuePair<string, string>("RunSet", "Run Set"),
             new KeyValuePair<string, string>("RunSets", "Run Sets"),
             new KeyValuePair<string, string>("TargetApplication", "Target Application")
-        };
+        ];
 
 
-        static List<KeyValuePair<string, string>> gingerTermTestingList = new List<KeyValuePair<string, string>>()
-        {
+        static List<KeyValuePair<string, string>> gingerTermTestingList =
+        [
             new KeyValuePair<string, string>("BusinessFlow", "Test Set"),
             new KeyValuePair<string, string>("BusinessFlows", "Test Sets"),
             new KeyValuePair<string, string>("ActivitiesGroup", "Test Case"),
@@ -71,10 +71,10 @@ namespace GingerCore
             new KeyValuePair<string, string>("RunSet", "Calendar"),
             new KeyValuePair<string, string>("RunSets", "Calendars"),
             new KeyValuePair<string, string>("TargetApplication", "Target Application")
-        };
+        ];
 
-        static List<KeyValuePair<string, string>> gingerTermTDMList = new List<KeyValuePair<string, string>>()
-        {
+        static List<KeyValuePair<string, string>> gingerTermTDMList =
+        [
             new KeyValuePair<string, string>("BusinessFlow", "Sub Business Process"),
             new KeyValuePair<string, string>("BusinessFlows", "Sub Business Processes"),
             new KeyValuePair<string, string>("ActivitiesGroup", "Activity"),
@@ -86,10 +86,10 @@ namespace GingerCore
             new KeyValuePair<string, string>("RunSet", "Business Process"),
             new KeyValuePair<string, string>("RunSets", "Business Processes"),
             new KeyValuePair<string, string>("TargetApplication", "Target Application")
-        };
+        ];
 
-        static List<KeyValuePair<string, string>> gingerTermMBTList = new List<KeyValuePair<string, string>>()
-        {
+        static List<KeyValuePair<string, string>> gingerTermMBTList =
+        [
             new KeyValuePair<string, string>("BusinessFlow", "Use Case"),
             new KeyValuePair<string, string>("BusinessFlows", "Use Cases"),
             new KeyValuePair<string, string>("ActivitiesGroup", "Sub process"),
@@ -102,7 +102,7 @@ namespace GingerCore
             new KeyValuePair<string, string>("RunSet", "Test Suite"),
             new KeyValuePair<string, string>("RunSets", "Test Suites"),
             new KeyValuePair<string, string>("ALM", "ALM")
-        };
+        ];
 
         public static string GetTerminologyValue(eTermResKey key)
         {

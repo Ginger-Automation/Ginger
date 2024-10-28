@@ -25,7 +25,7 @@ namespace Ginger.TwoLevelMenuLib
 {
     public class TopMenuItem : MenuItemBase
     {
-        public ObservableList<SubMenuItem> SubItems = new ObservableList<SubMenuItem>();
+        public ObservableList<SubMenuItem> SubItems = [];
 
         public SubMenuItem LastSubMenuItem;
 

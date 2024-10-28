@@ -117,34 +117,40 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 AR.Seq = context.Activity.ExecutionLogActionCounter;
             }
 
-            AR.RunDescription = ConvertValueExpressionToString(context.Environment , context.BusinessFlow , action.RunDescription);
+            AR.RunDescription = ConvertValueExpressionToString(context.Environment, context.BusinessFlow, action.RunDescription);
             return AR;
         }
         internal ActivityReport GetActivityReportData(Activity activity, Context context, bool offlineMode)
         {
-            ActivityReport AR = new ActivityReport(activity);
-            AR.Seq = context.BusinessFlow.ExecutionLogActivityCounter;
-            AR.VariablesBeforeExec = activity.VariablesBeforeExec;
-            AR.RunDescription = ConvertValueExpressionToString(context.Environment , context.BusinessFlow, activity.RunDescription);
+            ActivityReport AR = new ActivityReport(activity)
+            {
+                Seq = context.BusinessFlow.ExecutionLogActivityCounter,
+                VariablesBeforeExec = activity.VariablesBeforeExec,
+                RunDescription = ConvertValueExpressionToString(context.Environment, context.BusinessFlow, activity.RunDescription)
+            };
             return AR;
         }
         internal ActivityGroupReport GetAGReportData(ActivitiesGroup activityGroup, IContext context)
         {
-            ActivityGroupReport AGR = new (activityGroup, context.BusinessFlow);
-            AGR.Seq = context.BusinessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
-            AGR.ExecutionLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder;
-            AGR.ExternalID = ConvertValueExpressionToString(context.Environment, context.BusinessFlow, activityGroup.ExternalID);
+            ActivityGroupReport AGR = new(activityGroup, context.BusinessFlow)
+            {
+                Seq = context.BusinessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1,
+                ExecutionLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder,
+                ExternalID = ConvertValueExpressionToString(context.Environment, context.BusinessFlow, activityGroup.ExternalID)
+            };
 
             return AGR;
         }
         internal BusinessFlowReport GetBFReportData(BusinessFlow businessFlow, ProjEnvironment environment)
         {
-            BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
-            BFR.VariablesBeforeExec = businessFlow.VariablesBeforeExec;
-            BFR.SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec;
-            BFR.Seq = this.ExecutionLogBusinessFlowsCounter;
-            BFR.RunDescription = ConvertValueExpressionToString(environment, businessFlow, businessFlow.RunDescription );
-            BFR.ExternalID = ConvertValueExpressionToString( environment, businessFlow , businessFlow.ExternalID);
+            BusinessFlowReport BFR = new BusinessFlowReport(businessFlow)
+            {
+                VariablesBeforeExec = businessFlow.VariablesBeforeExec,
+                SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec,
+                Seq = this.ExecutionLogBusinessFlowsCounter,
+                RunDescription = ConvertValueExpressionToString(environment, businessFlow, businessFlow.RunDescription),
+                ExternalID = ConvertValueExpressionToString(environment, businessFlow, businessFlow.ExternalID)
+            };
             return BFR;
         }
 
@@ -220,11 +226,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public abstract string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate);
 
-        protected static string ConvertValueExpressionToString(ProjEnvironment environment, BusinessFlow businessFlow , string ValueExpresionString)
+        protected static string ConvertValueExpressionToString(ProjEnvironment environment, BusinessFlow businessFlow, string ValueExpresionString)
         {
             if (!string.IsNullOrEmpty(ValueExpresionString))
             {
-                IValueExpression mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false)
+                IValueExpression mVE = new GingerCore.ValueExpression(environment, businessFlow, [], false, "", false)
                 {
                     Value = ValueExpresionString
                 };

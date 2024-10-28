@@ -53,13 +53,14 @@ using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
-using OpenQA.Selenium.Appium.Interfaces;
+using OpenQA.Selenium.Appium.Interactions;
 using OpenQA.Selenium.Appium.iOS;
-using OpenQA.Selenium.Appium.MultiTouch;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -68,6 +69,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using AppiumInteractions = OpenQA.Selenium.Appium.Interactions;
+
+
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -114,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eDeviceSource))]
         [UserConfiguredDefault("LocalAppium")]
-        [UserConfiguredDescription("Device Source is Local Appium or UFTM Mobile Lab")]
+        [UserConfiguredDescription("Device Source is Local Appium or Devices Lab")]
         public eDeviceSource DeviceSource { get; set; }
 
         [UserConfigured]
@@ -160,13 +164,25 @@ namespace Amdocs.Ginger.CoreNET
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
 
-        public double mScreenScaleFactorCorrectionX = 1;
-        public double mScreenScaleFactorCorrectionY = 1;
-
         public bool IsDeviceConnected
         {
             get => mIsDeviceConnected;
             set => mIsDeviceConnected = value;
+        }
+
+        public bool IsUftLabDevice
+        {
+            get
+            {
+                if (DeviceSource == eDeviceSource.MicroFoucsUFTMLab)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         RestClient restClient;
@@ -176,20 +192,17 @@ namespace Amdocs.Ginger.CoreNET
             get => LoadDeviceWindow;
         }
 
-        public override ePomElementCategory? PomCategory 
+        public override ePomElementCategory? PomCategory
         {
             get
             {
                 if (AppType == eAppType.NativeHybride)
                 {
-                    switch(DevicePlatformType)
+                    return DevicePlatformType switch
                     {
-                        case eDevicePlatformType.iOS:
-                            return ePomElementCategory.iOS;                            
-                        case eDevicePlatformType.Android:
-                        default:
-                            return ePomElementCategory.Android;                       
-                    }
+                        eDevicePlatformType.iOS => (ePomElementCategory?)ePomElementCategory.iOS,
+                        _ => (ePomElementCategory?)ePomElementCategory.Android,
+                    };
                 }
                 else
                 {
@@ -235,7 +248,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public override void StartDriver()
         {
-            mIsDeviceConnected = ConnectToAppium();            
+            mIsDeviceConnected = ConnectToAppium();
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -291,7 +304,7 @@ namespace Amdocs.Ginger.CoreNET
                     ErrorMessageFromDriver = error;
                     return false;
                 }
-                           
+
                 if (Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device")
                 {
                     string error = string.Format("Failed to start Appium session.{0}Error: Mobile device is already in use. Please close all other sessions and try again.", System.Environment.NewLine);
@@ -300,11 +313,13 @@ namespace Amdocs.Ginger.CoreNET
                     return false;
                 }
 
-                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                mSeleniumDriver.isAppiumSession = true;
-                mSeleniumDriver.StopProcess = this.StopProcess;
-                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
-                mSeleniumDriver.PomCategory = this.PomCategory;
+                mSeleniumDriver = new SeleniumDriver(Driver)
+                {
+                    isAppiumSession = true,
+                    StopProcess = this.StopProcess,
+                    BusinessFlow = this.BusinessFlow,
+                    PomCategory = this.PomCategory
+                }; //used for running regular Selenium actions
 
                 if (AppType == eAppType.Web && mDefaultURL != null)
                 {
@@ -318,6 +333,9 @@ namespace Amdocs.Ginger.CoreNET
                     }
                 }
 
+                //Pull device screen sizes for calculations
+                CalculateMobileDeviceScreenSizes();
+
                 return true;
 
             }
@@ -326,33 +344,9 @@ namespace Amdocs.Ginger.CoreNET
                 string error = string.Format("Failed to start Appium session.{0}Error: '{1}'", System.Environment.NewLine, ex.Message);
                 Reporter.ToLog(eLogLevel.ERROR, error, ex);
                 ErrorMessageFromDriver = error;
-
-                //if (!WorkSpace.Instance.RunningInExecutionMode)
-                //{
-                //    Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
-                //}
                 return false;
             }
         }
-
-        //private static ICommandExecutor CreateRealExecutor(Uri remoteAddress, TimeSpan commandTimeout, IWebProxy proxy)
-        //{
-        //    var seleniumAssembly = Assembly.Load("WebDriver");
-        //    var commandType = seleniumAssembly.GetType("OpenQA.Selenium.Remote.HttpCommandExecutor");
-        //    ICommandExecutor commandExecutor = null;
-
-        //    if (null != commandType)
-        //    {
-        //        commandExecutor =
-        //            Activator.CreateInstance(commandType, new object[] { remoteAddress, commandTimeout }) as
-        //                ICommandExecutor;              
-        //    }
-
-        //    commandExecutor = new HttpCommandExecutor(remoteAddress, commandTimeout);
-        //    ((HttpCommandExecutor)commandExecutor).Proxy = proxy;
-
-        //    return commandExecutor;
-        //}
 
         private DriverOptions GetCapabilities()
         {
@@ -371,7 +365,7 @@ namespace Amdocs.Ginger.CoreNET
                         continue;
                     }
 
-                    if (UserCapability.Parameter.ToLower().Trim() == "defaulturl" || UserCapability.Parameter.ToLower().Trim() == "ginger:defaulturl")
+                    if (UserCapability.Parameter.ToLower().Trim() is "defaulturl" or "ginger:defaulturl")
                     {
                         mDefaultURL = UserCapability.Value;
 
@@ -413,7 +407,7 @@ namespace Amdocs.Ginger.CoreNET
                         else if (UserCapability.Parameter.Trim().ToLower() == "platformVersion".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:platformVersion".ToLower())
                         {
                             driverOptions.PlatformVersion = UserCapability.Value;
-                        }                        
+                        }
                         else if (UserCapability.Parameter.Trim().ToLower() == "deviceName".ToLower() || UserCapability.Parameter.Trim().ToLower() == "appium:deviceName".ToLower())
                         {
                             driverOptions.DeviceName = UserCapability.Value;
@@ -436,7 +430,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to set Appium capability '{0}'='{1}'", UserCapability.Parameter, UserCapability.Value), ex);
                 }
@@ -447,9 +441,9 @@ namespace Amdocs.Ginger.CoreNET
 
         private bool isContainQuotationMarks(DriverConfigParam capability)
         {
-            if (capability.Value[0] == '\"' && capability.Value[capability.Value.Length - 1] == '\"')
+            if (capability.Value[0] == '\"' && capability.Value[^1] == '\"')
             {
-                capability.Value = capability.Value.Substring(1, capability.Value.Length - 2);
+                capability.Value = capability.Value[1..^1];
                 return true;
             }
             return false;
@@ -465,26 +459,6 @@ namespace Amdocs.Ginger.CoreNET
             mIsDeviceConnected = false;
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
-
-        //public List<IWebElement> LocateElements(eLocateBy LocatorType, string LocValue)
-        //{
-        //    if (AppType == eAppType.Web)
-        //        return mSeleniumDriver.LocateElements(LocatorType, LocValue);
-
-        //        IReadOnlyCollection<IWebElement> elem = null;
-
-        //    switch (LocatorType)
-        //    {
-        //        //need to override regular selenium driver locator if needed, 
-        //        //if not then to run the regular selenium driver locator for it to avoid duplication
-
-        //        default:
-        //            elem = mSeleniumDriver.LocateElements(LocatorType, LocValue);
-        //            break;
-        //    }
-
-        //    return elem.ToList();           
-        //}
 
         public IWebElement LocateElement(Act act)
         {
@@ -598,7 +572,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     case ActUIElement.eElementAction.JavaScriptClick:
                     case ActUIElement.eElementAction.Submit:
-                        e = LocateElement(act);                       
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             e.Click();
@@ -611,7 +585,7 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActUIElement.eElementAction.SetValue:
                     case ActUIElement.eElementAction.SetText:
-                        e = LocateElement(act);                       
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             e.SendKeys(act.GetInputParamCalculatedValue("Value"));
@@ -624,7 +598,7 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActUIElement.eElementAction.GetText:
                     case ActUIElement.eElementAction.GetFont:
-                        e = LocateElement(act);                        
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             /// As text attribute does not exist on iOS devices
@@ -644,7 +618,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.GetTextLength:
-                        e = LocateElement(act);                        
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             /// As text attribute does not exist on iOS devices
@@ -670,7 +644,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.IsValuePopulated:
-                        e = LocateElement(act);                        
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             switch (act.ElementType)
@@ -691,7 +665,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.GetSize:
-                        e = LocateElement(act);                        
+                        e = LocateElement(act);
                         if (e != null)
                         {
                             act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("contentSize").ToString());
@@ -711,7 +685,8 @@ namespace Amdocs.Ginger.CoreNET
                             int numberOfMaxLoops = (element_Y - 500) / 200;
                             while (!e.Displayed && numberOfMaxLoops > 0)
                             {
-                                (BuildTouchAction(Driver, element_X, 500, element_X, 300, 200)).Perform();
+                                //(BuildTouchAction(Driver, element_X, 500, element_X, 300, 200)).Perform();
+                                SwipeByXY(element_X, 500, element_X, 300, TimeSpan.FromMilliseconds(200));
                                 numberOfMaxLoops--;
                             }
                         }
@@ -720,7 +695,8 @@ namespace Amdocs.Ginger.CoreNET
                             int numberOfMaxLoops = 12;
                             while (numberOfMaxLoops > 0)
                             {
-                                (BuildTouchAction(Driver, 500, 500, 500, 300, 200)).Perform();
+                                //(BuildTouchAction(Driver, 500, 500, 500, 300, 200)).Perform();
+                                SwipeByXY(500, 500, 500, 300, TimeSpan.FromMilliseconds(200));
                                 e = LocateElement(act);
                                 if (e != null && e.Displayed)
                                 {
@@ -745,9 +721,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.ClickXY:
-                        ITouchAction tc;
-                        tc = new TouchAction(Driver);
-                        tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate)), Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate))).Perform();
+                        TapXY(Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate)), Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate)));
                         break;
 
                     default:
@@ -791,7 +765,7 @@ namespace Amdocs.Ginger.CoreNET
                                 y = Convert.ToInt64(act.LocateValueCalculated.Split(',')[1]);
                             }
                             catch { x = 0; y = 0; }
-                            TapXY(x, y);
+                            TapXY((int)x, (int)y);
                         }
                         else
                         {
@@ -803,9 +777,32 @@ namespace Amdocs.Ginger.CoreNET
                         try
                         {
                             e = LocateElement(act);
-                            TouchAction t = new TouchAction(Driver);
-                            t.Tap(e, 1, 1);
-                            Driver.PerformTouchAction(t);
+                            TapElement(e, 1, 1);
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                        }
+                        break;
+
+
+                    case ActGenElement.eGenElementAction.DoubleTapElement:
+                        try
+                        {
+                            e = LocateElement(act);
+                            DoubleTapElement(e, 1, 1);
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                        }
+                        break;
+
+                    case ActGenElement.eGenElementAction.PressElement:
+                        try
+                        {
+                            e = LocateElement(act);
+                            PressElement(e, 1, 1, TimeSpan.FromSeconds(1));
                         }
                         catch (Exception ex)
                         {
@@ -821,7 +818,7 @@ namespace Amdocs.Ginger.CoreNET
                             //make sure value was cleared- trying to handle clear issue in WebViews
                             try
                             {
-                                //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Searc, or say "OK Google".
+                                //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Search, or say "OK Google".
                                 //Wasting time when not needed
                                 string elemntContent = e.Text; //.GetAttribute("name");
                                 if (string.IsNullOrEmpty(elemntContent) == false)
@@ -842,16 +839,12 @@ namespace Amdocs.Ginger.CoreNET
                             switch (DevicePlatformType)
                             {
                                 case eDevicePlatformType.Android:
-                                    //e.Clear();
                                     e.SendKeys(act.GetInputParamCalculatedValue("Value"));
                                     break;
                                 case eDevicePlatformType.iOS:
-                                    //e.Clear();
                                     e.SendKeys(act.GetInputParamCalculatedValue("Value"));
-                                    //((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
                                     break;
                             }
-                            //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 100);
                         }
                         else
                         {
@@ -960,25 +953,79 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        private string GetAppPackage(ActMobileDevice act)
+        {
+            string appPackage = null;
+            if (string.IsNullOrEmpty(act.ActionAppPackage.ValueForDriver) || act.ActionAppPackage.ValueForDriver.ToLower().Trim() == "default")
+            {
+                if (DevicePlatformType == eDevicePlatformType.Android)
+                {
+                    appPackage = AppiumCapabilities.FirstOrDefault(x => x.Parameter is "appPackage" or "appium:appPackage").Value;
+                }
+                else
+                {
+                    appPackage = AppiumCapabilities.FirstOrDefault(x => x.Parameter is "bundleId" or "appium:bundleId").Value;
+                }
+
+                return appPackage;
+            }
+            else
+            {
+                return act.ActionAppPackage.ValueForDriver;
+            }
+        }
+
         private void MobileDeviceActionHandler(ActMobileDevice act)
         {
-            ITouchAction tc;
+            //ITouchAction tc;
             try
             {
                 switch (act.MobileDeviceAction)
                 {
+                    case ActMobileDevice.eMobileDeviceAction.TapXY:
+                        TapXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.DoubleTapXY:
+                        DoubleTapXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
+                        break;
+
                     case ActMobileDevice.eMobileDeviceAction.PressXY:
-                        tc = new TouchAction(Driver);
-                        tc.Press(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
+                        PressXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
+                                        TimeSpan.FromMilliseconds(Convert.ToInt32(act.PressDuration.ValueForDriver)));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LongPressXY:
-                        tc = new TouchAction(Driver);
-                        tc.LongPress(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
+                        PressXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver), TimeSpan.FromSeconds(3));
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.TapXY:
-                        TapXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
+                    case ActMobileDevice.eMobileDeviceAction.DragXYXY:
+                        DragAndDropByXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
+                                           Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver),
+                                            TimeSpan.FromMilliseconds(Convert.ToDouble(act.PressDuration.ValueForDriver)),
+                                            TimeSpan.FromMilliseconds(Convert.ToDouble(act.DragDuration.ValueForDriver)));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
+                        SwipeByXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
+                                  Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver),
+                                  TimeSpan.FromMilliseconds(Convert.ToInt32(act.SwipeDuration.ValueForDriver)));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeDown:
+                        SwipeScreen(eSwipeSide.Down, Convert.ToDouble(act.SwipeScale.ValueForDriver), TimeSpan.FromMilliseconds(Convert.ToInt32(act.SwipeDuration.ValueForDriver)));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeUp:
+                        SwipeScreen(eSwipeSide.Up, Convert.ToDouble(act.SwipeScale.ValueForDriver), TimeSpan.FromMilliseconds(Convert.ToInt32(act.SwipeDuration.ValueForDriver)));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
+                        SwipeScreen(eSwipeSide.Left, Convert.ToDouble(act.SwipeScale.ValueForDriver), TimeSpan.FromMilliseconds(Convert.ToInt32(act.SwipeDuration.ValueForDriver)));
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeRight:
+                        SwipeScreen(eSwipeSide.Right, Convert.ToDouble(act.SwipeScale.ValueForDriver), TimeSpan.FromMilliseconds(Convert.ToInt32(act.SwipeDuration.ValueForDriver)));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressBackButton:
@@ -1048,28 +1095,8 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.SwipeDown:
-                        SwipeScreen(eSwipeSide.Down, 1);
-                        break;
-
-                    case ActMobileDevice.eMobileDeviceAction.SwipeUp:
-                        SwipeScreen(eSwipeSide.Up, 1);
-                        break;
-                    case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
-                        SwipeScreen(eSwipeSide.Left);
-                        break;
-
-                    case ActMobileDevice.eMobileDeviceAction.SwipeRight:
-                        SwipeScreen(eSwipeSide.Right);
-                        break;
-
                     case ActMobileDevice.eMobileDeviceAction.TakeScreenShot:
                         ActScreenShotHandler(act);
-                        break;
-
-                    case ActMobileDevice.eMobileDeviceAction.DragXYXY:
-                        DoDrag(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
-                            Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetCurrentApplicationInfo:
@@ -1079,33 +1106,19 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.OpenApp:
                         if (AppType == eAppType.NativeHybride)
                         {
-                            Driver.ActivateApp((GetAppPackage(act)));
-                        }
-                        else
-                        {
-                            act.Error = "Operation not supported for this mobile OS or application type.";
+                            Driver.ActivateApp(GetAppPackage(act));
                         }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.CloseApp:
                         if (AppType == eAppType.NativeHybride)
                         {
-                            Driver.TerminateApp((GetAppPackage(act)));
+                            Driver.TerminateApp(GetAppPackage(act));
                         }
                         else
                         {
                             act.Error = "Operation not supported for this mobile OS or application type.";
                         }
-                        break;
-
-                    case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
-                        ITouchAction swipe;
-                        swipe = BuildTouchAction(Driver,
-                            Convert.ToInt32(act.X1.ValueForDriver),
-                            Convert.ToInt32(act.Y1.ValueForDriver),
-                            Convert.ToInt32(act.X2.ValueForDriver),
-                            Convert.ToInt32(act.Y2.ValueForDriver), 1000);
-                        swipe.Perform();
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetPageSource:
@@ -1113,33 +1126,40 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LockDevice:
-                            PerformLockButtonPress(eLockOperation.Lock);
+                        PerformLockButtonPress(eLockOperation.Lock);
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
-                            PerformLockButtonPress(eLockOperation.UnLock);
+                        PerformLockButtonPress(eLockOperation.UnLock);
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
                         AddReturnParamFromDict(GetDeviceBatteryInfo(), act);
                         act.RawResponseValues = GetDeviceMetricsString("batteryinfo").Result;
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceCPUUsage:
                         AddReturnParamFromDict(GetDeviceCPUInfo(), act);
                         act.RawResponseValues = GetDeviceMetricsString("cpuinfo").Result;
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceNetwork:
                         act.AddOrUpdateReturnParamActual("Device's network information", GetDeviceNetworkInfo()?.Result);
                         act.RawResponseValues = GetDeviceMetricsString("networkinfo").Result;
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceRAMUsage:
                         AddReturnParamFromDict(GetDeviceMemoryInfo(), act);
                         act.RawResponseValues = GetDeviceMetricsString("memoryinfo").Result;
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceGeneralInfo:
                         foreach (KeyValuePair<string, object> entry in GetDeviceGeneralInfo())
                         {
                             act.AddOrUpdateReturnParamActual(entry.Key, entry.Value.ToString());
                         }
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
                         string photoString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
                         string photoSimulationResponse = SimulatePhotoOrBarcode(photoString, "camera");
@@ -1148,6 +1168,7 @@ namespace Amdocs.Ginger.CoreNET
                             act.Error = photoSimulationResponse;
                         }
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.SimulateBarcode:
                         string barcodeString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
                         string barcodeSimulationResponse = SimulatePhotoOrBarcode(barcodeString, "barcode");
@@ -1156,6 +1177,7 @@ namespace Amdocs.Ginger.CoreNET
                             act.Error = barcodeSimulationResponse;
                         }
                         break;
+
                     case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
                         {
                             string biometricsAnswer = string.Empty;
@@ -1183,9 +1205,11 @@ namespace Amdocs.Ginger.CoreNET
                             }
                             break;
                         }
+
                     case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
                         CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
                         break;
+
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
@@ -1193,28 +1217,6 @@ namespace Amdocs.Ginger.CoreNET
             catch (Exception ex)
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-            }
-        }
-
-        private string GetAppPackage(ActMobileDevice act)
-        {
-            string appPackage = null;
-            if (string.IsNullOrEmpty(act.ActionAppPackage.ValueForDriver) || act.ActionAppPackage.ValueForDriver.ToLower().Trim() == "default")
-            {
-                if (DevicePlatformType == eDevicePlatformType.Android)
-                {
-                    appPackage = AppiumCapabilities.Where(x => x.Parameter == "appPackage" || x.Parameter == "appium:appPackage").FirstOrDefault().Value;
-                }
-                else
-                {
-                    appPackage = AppiumCapabilities.Where(x => x.Parameter == "bundleId" || x.Parameter == "appium:bundleId").FirstOrDefault().Value;
-                }
-
-                return appPackage;
-            }
-            else
-            {
-                return act.ActionAppPackage.Value;
             }
         }
 
@@ -1244,8 +1246,8 @@ namespace Amdocs.Ginger.CoreNET
             {
                 return false;
             }
-            string extention = photo.Substring(photo.LastIndexOf('.') + 1);
-            if (extention == "jpg" || extention == "jpeg" || extention == "png")
+            string extention = photo[(photo.LastIndexOf('.') + 1)..];
+            if (extention is "jpg" or "jpeg" or "png")
             {
                 return true;
             }
@@ -1278,7 +1280,7 @@ namespace Amdocs.Ginger.CoreNET
                     Array.Clear(bytes);
                 }
             }
-            
+
             Dictionary<string, string> sensorSimulationMap = new Dictionary<string, string>
             {
                 { "uploadMedia", encodeString },
@@ -1293,7 +1295,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public string BiometricSimulation(string authResult, string authResultDetails)
         {
-            Dictionary<string, object> sensorSimulationMap = new Dictionary<string, object>();
+            Dictionary<string, object> sensorSimulationMap = [];
             Dictionary<string, string> simulationData = new Dictionary<string, string>
             {
                 { "authResult", authResult },
@@ -1314,7 +1316,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 returnString = new StringBuilder(returnString + entry.Key + ": " + entry.Value + ", ").ToString();
             }
-            returnString = returnString.Substring(0, returnString.Length - 2);
+            returnString = returnString[..^2];
             return returnString;
         }
 
@@ -1324,7 +1326,6 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.AddOrUpdateReturnParamActual(entry.Key, entry.Value);
             }
-
         }
 
         public override void HighlightActElement(Act act)
@@ -1335,7 +1336,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                act.AddScreenShot(Driver.GetScreenshot().AsByteArray, "Device Screenshot");
+                act.AddScreenShot(GetScreenshotImageFromDriver(), "Device Screenshot");
             }
             catch (Exception ex)
             {
@@ -1344,44 +1345,121 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        //private void CreateScreenShot(Act act)
-        //{
-        //    Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-        //    string filename = Path.GetTempFileName();
-        //    ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
-        //    Bitmap tmp = new System.Drawing.Bitmap(filename);
-        //    act.AddScreenShot(tmp);
-        //}
-
-        //public Screenshot GetScreenShot()
-        //{
-        //    Screenshot ss=null;
-        //    try
-        //    {
-        //        ss = Driver.GetScreenshot ();
-
-        //    }
-        //    catch
-        //    {
-        //        Bitmap bmp = new Bitmap (1024, 768);
-        //        var ms = new MemoryStream ();
-        //        bmp.Save (ms, System.Drawing.Imaging.ImageFormat.Png);
-        //        var byteImage = ms.ToArray ();
-        //        ss = new Screenshot (Convert.ToBase64String (byteImage));
-        //    }
-        //     return ss;
-        //}
-
         public ICollection<IWebElement> GetAllElements()
         {
             return (ICollection<IWebElement>)Driver.FindElements(By.XPath(".//*"));
         }
 
-        public void TapXY(long x, long y)
+        public void TapXY(int pageX, int pageY)
         {
-            TouchAction t = new TouchAction(Driver);
-            t.Tap(x, y);
-            Driver.PerformTouchAction(t);
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageX, pageY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void TapElement(IWebElement element, int elementX, int elementY)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(element, elementX, elementY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void DoubleTapXY(int pageX, int pageY)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageX, pageY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePause(TimeSpan.FromMilliseconds(100)));// small wait before second tap
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void DoubleTapElement(IWebElement element, int elementX, int elementY)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(element, elementX, elementY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePause(TimeSpan.FromMilliseconds(100)));// small wait before second tap
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+
+        public void PressXY(int pageX, int pageY, TimeSpan pressDuration)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageX, pageY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePause(pressDuration));// Hold for specified duration
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void PerformLongPress(long x, long y, TimeSpan? clickDuration = null)
+        {
+            if (clickDuration == null)
+            {
+                clickDuration = TimeSpan.FromSeconds(3);
+            }
+
+            PressXY((int)x, (int)y, (TimeSpan)clickDuration);
+
+            if (IsRecording)
+            {
+                var mobDevAction = GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.LongPressXY);
+                mobDevAction.X1.Value = x.ToString();
+                mobDevAction.Y1.Value = y.ToString();
+                mobDevAction.PressDuration.Value = ((TimeSpan)clickDuration).TotalMilliseconds.ToString();
+                RecordingOperations(mobDevAction);
+            }
+        }
+
+        public void PressElement(IWebElement element, int elementX, int elementY, TimeSpan pressDuration)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(element, elementX, elementY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePause(pressDuration));// Hold for specified duration
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void DragAndDropByXY(int pageDragX, int pageDragY, int pageDropX, int pageDropY, TimeSpan pressDuration, TimeSpan dragDuration)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageDragX, pageDragY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePause(pressDuration));
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageDropX, pageDropY, dragDuration));
+            actionBuilder.AddAction(finger.CreatePause(TimeSpan.FromMilliseconds(200)));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
+        }
+
+        public void SwipeByXY(int pageStartX, int pageStartY, int pageEndX, int pageEndY, TimeSpan swipeDuration)
+        {
+            AppiumInteractions.PointerInputDevice finger = new AppiumInteractions.PointerInputDevice(PointerKind.Touch);
+            ActionBuilder actionBuilder = new ActionBuilder();
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageStartX, pageStartY, TimeSpan.Zero));
+            actionBuilder.AddAction(finger.CreatePointerDown(PointerButton.TouchContact));
+            actionBuilder.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, pageEndX, pageEndY, swipeDuration));
+            actionBuilder.AddAction(finger.CreatePointerUp(PointerButton.TouchContact));
+            Driver.PerformActions(actionBuilder.ToActionSequenceList());
         }
 
         public void PerformBackButtonPress()
@@ -1421,8 +1499,10 @@ namespace Amdocs.Ginger.CoreNET
                     //((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
                     break;
                 case eDevicePlatformType.iOS:
-                    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
-                    commandArgs.Add("name", "home");
+                    Dictionary<string, object> commandArgs = new Dictionary<string, object>
+                    {
+                        { "name", "home" }
+                    };
                     Driver.ExecuteScript("mobile: pressButton", commandArgs);
                     break;
             }
@@ -1438,7 +1518,7 @@ namespace Amdocs.Ginger.CoreNET
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
-                    ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Menu);
+                    ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Keycode_APP_SWITCH);
                     break;
             }
 
@@ -1479,7 +1559,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     break;
                 case eDevicePlatformType.iOS:
-                    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
+                    Dictionary<string, object> commandArgs = [];
                     switch (volumeOperation)
                     {
                         case eVolumeOperation.Up:
@@ -1513,7 +1593,7 @@ namespace Amdocs.Ginger.CoreNET
                         case eLockOperation.UnLock:
                             ((AndroidDriver)Driver).Unlock();
                             System.Threading.Thread.Sleep(200);
-                            SwipeScreen(eSwipeSide.Up);
+                            SwipeScreen(eSwipeSide.Up, 1, TimeSpan.FromMilliseconds(200));
                             break;
                     }
                     break;
@@ -1558,11 +1638,6 @@ namespace Amdocs.Ginger.CoreNET
                 case eDevicePlatformType.Android:
                     ((AndroidDriver)Driver).LongPressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));
                     break;
-                    //case eDevicePlatformType.iOS:
-                    //    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
-                    //    commandArgs.Add("name", key);
-                    //    Driver.ExecuteScript("mobile: pressButton", commandArgs);
-                    //    break;
             }
         }
 
@@ -1584,7 +1659,7 @@ namespace Amdocs.Ginger.CoreNET
             return Pagesource;
         }
 
-        public void SwipeScreen(eSwipeSide side, double impact = 1)
+        public void SwipeScreen(eSwipeSide side, double swipeScale, TimeSpan swipeDuration)
         {
             System.Drawing.Size sz = Driver.Manage().Window.Size;
             double startX;
@@ -1597,49 +1672,33 @@ namespace Amdocs.Ginger.CoreNET
                     startX = sz.Width * 0.5;
                     startY = sz.Height * 0.3;
                     endX = sz.Width * 0.5;
-                    endY = startY + (sz.Height * 0.4 * impact);
+                    endY = startY + (sz.Height * 0.4 * swipeScale);
                     break;
                 case eSwipeSide.Up: // center of header
                     startX = sz.Width * 0.5;
                     startY = sz.Height * 0.7;
                     endX = sz.Width * 0.5;
-                    endY = startY - (sz.Height * 0.4 * impact);
+                    endY = startY - (sz.Height * 0.4 * swipeScale);
                     break;
                 case eSwipeSide.Right: // center of left side
                     startX = sz.Width * 0.3;
                     startY = sz.Height * 0.5;
-                    endX = startX + (sz.Width * 0.4 * impact);
+                    endX = startX + (sz.Width * 0.4 * swipeScale);
                     endY = sz.Height * 0.5;
                     break;
                 case eSwipeSide.Left: // center of right side
                     startX = sz.Width * 0.7;
                     startY = sz.Height * 0.5;
-                    endX = startX - (sz.Width * 0.4 * impact);
+                    endX = startX - (sz.Width * 0.4 * swipeScale);
                     endY = sz.Height * 0.5;
                     break;
                 default:
                     throw new ArgumentException("swipeScreen(): dir: '" + side + "' NOT supported");
             }
 
-            (BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();            
+            SwipeByXY((int)startX, (int)startY, (int)endX, (int)endY, swipeDuration);
         }
 
-        public ITouchAction BuildTouchAction(AppiumDriver driver, double startX, double startY, double endX, double endY, int waitDuration = 200)
-        {
-            ITouchAction touchAction;
-            touchAction = new TouchAction(driver)
-            .Press(startX, startY)
-            .Wait(waitDuration)
-            .MoveTo(endX, endY)
-            .Release();
-
-            return touchAction;
-        }
-
-        public void DoDrag(int startX, int startY, int endX, int endY)
-        {
-            (BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();
-        }
 
         private string GetCurrentPackage()
         {
@@ -1651,7 +1710,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier")?.ToString());
                 }
                 else
                 {
@@ -1676,7 +1735,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    var detail= ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier");
+                    var detail = ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier");
                     if (detail != null)
                     {
                         return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
@@ -1710,7 +1769,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier")?.ToString());
                 }
                 else
                 {
@@ -1747,11 +1806,13 @@ namespace Amdocs.Ginger.CoreNET
 
         List<AppWindow> IWindowExplorer.GetAppWindows()
         {
-            List<AppWindow> list = new List<AppWindow>();
+            List<AppWindow> list = [];
 
-            AppWindow AW = new AppWindow();
-            AW.WindowType = AppWindow.eWindowType.Appium;
-            AW.Title = (AppType == eAppType.Web) ? GetURL() : GetCurrentActivityDetails();   // TODO: add device name and info
+            AppWindow AW = new AppWindow
+            {
+                WindowType = AppWindow.eWindowType.Appium,
+                Title = (AppType == eAppType.Web) ? GetURL() : GetCurrentActivityDetails()   // TODO: add device name and info
+            };
 
             list.Add(AW);
             return list;
@@ -1811,7 +1872,7 @@ namespace Amdocs.Ginger.CoreNET
             XmlNode foundNode = null;
             ElementInfo foundElement = null;
             var mousePos = OnSpyingElementEvent();
-            if (mousePos != null && mousePos is Point)
+            if (mousePos is not null and Point)
             {
                 mousePosCurrent = (Point)mousePos;  // new Point((mousePos as Point).X, (mousePos as Point).Y);
             }
@@ -1850,8 +1911,10 @@ namespace Amdocs.Ginger.CoreNET
 
             if (Driver != null)
             {
-                AppWindow aw = new AppWindow();
-                aw.Title = GetCurrentActivityDetails();
+                AppWindow aw = new AppWindow
+                {
+                    Title = GetCurrentActivityDetails()
+                };
                 return aw;
             }
             else
@@ -1875,7 +1938,7 @@ namespace Amdocs.Ginger.CoreNET
 
                 if (foundElementsList == null)
                 {
-                    foundElementsList = new ObservableList<ElementInfo>();
+                    foundElementsList = [];
                 }
 
                 await GetPageSourceDocument(true);
@@ -1905,7 +1968,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
 
                     ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
-                    EI.IsAutoLearned = true;                    
+                    EI.IsAutoLearned = true;
 
                     if (pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
                     {
@@ -1933,10 +1996,10 @@ namespace Amdocs.Ginger.CoreNET
 
                     if (pomSetting.filteredElementType == null ||
                         (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
-                    {                        
+                    {
                         foundElementsList.Add(EI);
                     }
-                }            
+                }
 
                 return foundElementsList.ToList();
             }
@@ -2028,84 +2091,29 @@ namespace Amdocs.Ginger.CoreNET
 
         public static eElementType GetElementTypeFromTag(string ElementTag)
         {
-            switch (ElementTag.ToLower())
+            return ElementTag.ToLower() switch
             {
-                case "android.widget.edittext":
-                case "xcuielementtypetextfield":
-                case "xcuielementtypesearchfield":
-                    return eElementType.TextBox;
-
-                case "android.widget.button":
-                case "android.widget.ratingbar":
-                case "android.widget.framelayout":
-                case "android.widget.imageview":
-                case "android.widget.imagebutton":
-                case "android.widget.switch":
-                case "xcuielementtypebutton":
-                case "xcuielementtypeswitch":
-                    return eElementType.Button;
-
-                case "android.widget.spinner":
-                case "xcuielementtypecombobox":
-                    return eElementType.ComboBox;
-
-                case "android.widget.checkbox":
-                case "xcuielementtypecheckbox":
-                    return eElementType.CheckBox;
-
-                case "android.widget.view":
-                case "android.widget.textview":
-                case "android.widget.checkedtextview":
-                case "xcuielementtypecell":
-                case "xcuielementtypestatictext":
-                    return eElementType.Label;
-
-                case "android.widget.image":
-                case "xcuielementtypeimage":
-                    return eElementType.Image;
-
-                case "android.widget.radiobutton":
-                case "xcuielementtyperadiobutton":
-                    return eElementType.RadioButton;
-
-                case "android.widget.canvas":
-                case "android.widget.linearlayout":
-                case "android.widget.relativelayout":
-                case "xcuielementtypeother":
-                    return eElementType.Canvas;
-
-                case "xcuielementtypetab":
-                    return eElementType.Tab;
-
-                case "xcuielementtypebrowser":
-                    return eElementType.Browser;
-
-                case "xcuielementtypetable":
-                    return eElementType.Table;
-
-                case "xcuielementtypetablerow":
-                case "xcuielementtypetablecolumn":
-                    return eElementType.TableItem;
-
-                case "xcuielementtypelink":
-                    return eElementType.HyperLink;
-
-                case "android.widget.form":
-                    return eElementType.Form;
-
-                case "android.view.view":
-                    return eElementType.Div;
-
+                "android.widget.edittext" or "xcuielementtypetextfield" or "xcuielementtypesearchfield" => eElementType.TextBox,
+                "android.widget.button" or "android.widget.ratingbar" or "android.widget.framelayout" or "android.widget.imageview" or "android.widget.imagebutton" or "android.widget.switch" or "xcuielementtypebutton" or "xcuielementtypeswitch" => eElementType.Button,
+                "android.widget.spinner" or "xcuielementtypecombobox" => eElementType.ComboBox,
+                "android.widget.checkbox" or "xcuielementtypecheckbox" => eElementType.CheckBox,
+                "android.widget.view" or "android.widget.textview" or "android.widget.checkedtextview" or "xcuielementtypecell" or "xcuielementtypestatictext" => eElementType.Label,
+                "android.widget.image" or "xcuielementtypeimage" => eElementType.Image,
+                "android.widget.radiobutton" or "xcuielementtyperadiobutton" => eElementType.RadioButton,
+                "android.widget.canvas" or "android.widget.linearlayout" or "android.widget.relativelayout" or "xcuielementtypeother" => eElementType.Canvas,
+                "xcuielementtypetab" => eElementType.Tab,
+                "xcuielementtypebrowser" => eElementType.Browser,
+                "xcuielementtypetable" => eElementType.Table,
+                "xcuielementtypetablerow" or "xcuielementtypetablecolumn" => eElementType.TableItem,
+                "xcuielementtypelink" => eElementType.HyperLink,
+                "android.widget.form" => eElementType.Form,
+                "android.view.view" => eElementType.Div,
                 //case "android.widget.checkedtextview":
                 //case "xcuielementtypecell":
                 //    return eElementType.ListItem;
-
-                case "xcuielementtypewindow":
-                    return eElementType.Window;
-
-                default:
-                    return eElementType.Unknown;
-            }
+                "xcuielementtypewindow" => eElementType.Window,
+                _ => eElementType.Unknown,
+            };
         }
         private async Task<string> GetNodeXPath(XmlNode xmlNode)
         {
@@ -2159,7 +2167,7 @@ namespace Amdocs.Ginger.CoreNET
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
         {
-            List<ElementInfo> list = new List<ElementInfo>();
+            List<ElementInfo> list = [];
 
             //AppiumElementInfo EI = (AppiumElementInfo)ElementInfo;
             //XmlNode node = EI.XmlNode;
@@ -2192,7 +2200,7 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         // if we have resource id then get just the id out of it
                         string[] a = resid.Split('/');
-                        Name = a[a.Length - 1];
+                        Name = a[^1];
                     }
                 }
             }
@@ -2246,7 +2254,7 @@ namespace Amdocs.Ginger.CoreNET
                 return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo, pomSetting);
             }
 
-            ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
+            ObservableList<ElementLocator> list = [];
 
             //if (DevicePlatformType == eDevicePlatformType.iOS)
             //{
@@ -2381,11 +2389,10 @@ namespace Amdocs.Ginger.CoreNET
                 return ((IWindowExplorer)mSeleniumDriver).GetElementProperties(ElementInfo);
             }
 
-            ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+            ObservableList<ControlProperty> list = [];
 
-            XmlNode node = ElementInfo.ElementObject as XmlNode;
 
-            if (node == null)
+            if (ElementInfo.ElementObject is not XmlNode node)
             {
                 return list;
             }
@@ -2399,9 +2406,11 @@ namespace Amdocs.Ginger.CoreNET
 
             for (int i = 0; i < attrs.Count; i++)
             {
-                ControlProperty CP = new ControlProperty();
-                CP.Name = attrs[i].Name;
-                CP.Value = attrs[i].Value;
+                ControlProperty CP = new ControlProperty
+                {
+                    Name = attrs[i].Name,
+                    Value = attrs[i].Value
+                };
                 list.Add(CP);
 
                 if (CP.Name == "x")
@@ -2656,29 +2665,14 @@ namespace Amdocs.Ginger.CoreNET
 
             try
             {
-                switch (EL.LocateBy)
+                elem = EL.LocateBy switch
                 {
-                    case eLocateBy.ByResourceID:
-                        elem = Driver.FindElement(By.Id(EL.LocateValue));
-                        break;
-
-                    case eLocateBy.iOSPredicateString:
-                        elem = Driver.FindElement(MobileBy.IosNSPredicate(EL.LocateValue));
-                        break;
-
-                    case eLocateBy.iOSClassChain:
-                        elem = Driver.FindElement(MobileBy.IosClassChain(EL.LocateValue));
-                        break;
-
-                    case eLocateBy.ByRelXPath:
-                    case eLocateBy.ByXPath:
-                        elem = Driver.FindElement(By.XPath(EL.LocateValue));
-                        break;
-
-                    default:
-                        elem = mSeleniumDriver.LocateElementByLocator(EL, Driver); 
-                        break;
-                }
+                    eLocateBy.ByResourceID => Driver.FindElement(By.Id(EL.LocateValue)),
+                    eLocateBy.iOSPredicateString => Driver.FindElement(MobileBy.IosNSPredicate(EL.LocateValue)),
+                    eLocateBy.iOSClassChain => Driver.FindElement(MobileBy.IosClassChain(EL.LocateValue)),
+                    eLocateBy.ByRelXPath or eLocateBy.ByXPath => Driver.FindElement(By.XPath(EL.LocateValue)),
+                    _ => mSeleniumDriver.LocateElementByLocator(EL, Driver),
+                };
             }
             catch (Exception exc)
             {
@@ -2780,7 +2774,7 @@ namespace Amdocs.Ginger.CoreNET
         }
 
         int checkSessionCounter = 0;
-        public Byte[] GetScreenshotImage()        
+        public Byte[] GetScreenshotImage()
         {
             checkSessionCounter++;
             //check session is still valid
@@ -2788,15 +2782,48 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (Driver.SessionDetails != null)
                 {
-                    return Driver.GetScreenshot().AsByteArray;
+                    return GetScreenshotImageFromDriver();
                 }
-            }            
+            }
             else
             {
-                return Driver.GetScreenshot().AsByteArray;
+                return GetScreenshotImageFromDriver();
             }
 
             return null;
+        }
+
+        private Byte[] GetScreenshotImageFromDriver()
+        {
+
+            //Take screen shot
+            var screenshot = Driver.GetScreenshot();
+            //Update screen size for iOS as it changed per app
+            if (DevicePlatformType == eDevicePlatformType.iOS)
+            {
+                CalculateMobileDeviceScreenSizes();
+            }
+            // Convert screenshot to Image for resizing
+            using (var stream = new MemoryStream(screenshot.AsByteArray))
+            using (var image = Image.FromStream(stream))
+            {
+                // Create a new bitmap with the native device size
+                using (var resizedImage = new Bitmap(mWindowWidth, mWindowHeight))
+                {
+                    // Draw the original image onto the new bitmap
+                    using (var graphics = Graphics.FromImage(resizedImage))
+                    {
+                        graphics.DrawImage(image, 0, 0, mWindowWidth, mWindowHeight);
+                    }
+                    // Convert the resized image to byte array
+                    using (var ms = new MemoryStream())
+                    {
+                        resizedImage.Save(ms, ImageFormat.Png);
+                        return ms.ToArray();
+                    }
+                }
+            }
+
         }
 
         public void PerformTap(long x, long y)
@@ -2808,8 +2835,10 @@ namespace Amdocs.Ginger.CoreNET
 
                 if (elemInfo != null)
                 {
-                    RecordingEventArgs args = new RecordingEventArgs();
-                    args.EventType = eRecordingEvent.ElementRecorded;
+                    RecordingEventArgs args = new RecordingEventArgs
+                    {
+                        EventType = eRecordingEvent.ElementRecorded
+                    };
 
                     ElementActionCongifuration configArgs = new ElementActionCongifuration();
 
@@ -2832,14 +2861,12 @@ namespace Amdocs.Ginger.CoreNET
                     RecordingEvent?.Invoke(this, args);
                 }
             }
-            TapXY(x, y);
+            TapXY((int)x, (int)y);
         }
 
         public bool TestLocatorOutput(ElementInfo Elem, ElementLocator LocatorToTest)
         {
-            var elem = LocateElementByLocator(LocatorToTest) as IWebElement;
-
-            if (elem != null)
+            if (LocateElementByLocator(LocatorToTest) is IWebElement elem)
             {
                 return elem.Location.X == Elem.X && elem.Location.Y == Elem.Y;
             }
@@ -2847,23 +2874,11 @@ namespace Amdocs.Ginger.CoreNET
             return false;
         }
 
-        public void PerformLongPress(long x, long y)
-        {
-            TouchAction tc = new TouchAction(Driver);
-            tc.LongPress(x, y).Perform();
 
-            if (IsRecording)
-            {
-                var mobDevAction = GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.LongPressXY);
-                mobDevAction.X1.Value = x.ToString();
-                mobDevAction.Y1.Value = y.ToString();
-                RecordingOperations(mobDevAction);
-            }
-        }
 
-        public void PerformDrag(Point start, Point end)
+        public void PerformDrag(Point start, Point end, TimeSpan pressDuration, TimeSpan dragDuration)
         {
-            DoDrag(start.X, start.Y, end.X, end.Y);
+            DragAndDropByXY(start.X, start.Y, end.X, end.Y, pressDuration, dragDuration);
 
             if (IsRecording)
             {
@@ -2874,18 +2889,35 @@ namespace Amdocs.Ginger.CoreNET
 
                 mobDevAction.X2.Value = end.X.ToString();
                 mobDevAction.Y2.Value = end.Y.ToString();
+
+                mobDevAction.PressDuration.Value = pressDuration.TotalMilliseconds.ToString();
+                mobDevAction.DragDuration.Value = dragDuration.TotalMilliseconds.ToString();
                 RecordingOperations(mobDevAction);
             }
         }
 
         public void SwitchToLandscape()
         {
-            Driver.Orientation = ScreenOrientation.Landscape;
+            try
+            {
+                Driver.Orientation = ScreenOrientation.Landscape;
+            }
+            finally
+            {
+                CalculateMobileDeviceScreenSizes();
+            }
         }
 
         public void SwitchToPortrait()
         {
-            Driver.Orientation = ScreenOrientation.Portrait;
+            try
+            {
+                Driver.Orientation = ScreenOrientation.Portrait;
+            }
+            finally
+            {
+                CalculateMobileDeviceScreenSizes();
+            }
         }
 
         public eDeviceOrientation GetOrientation()
@@ -2895,10 +2927,39 @@ namespace Amdocs.Ginger.CoreNET
 
         public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
-            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-            string filename = Path.GetTempFileName();
-            ss.SaveAsFile(filename);
-            return new System.Drawing.Bitmap(filename);
+            try
+            {
+                // Get the screenshot as a byte array
+                byte[] screenshotBytes = GetScreenshotImageFromDriver();
+
+                if (screenshotBytes == null || screenshotBytes.Length == 0)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to capture screenshot.");
+                    throw new Exception("Failed to capture screenshot.");
+                }
+
+                // Convert the byte array to a Bitmap
+                using (MemoryStream ms = new MemoryStream(screenshotBytes))
+                {
+                    Bitmap bitmap = new Bitmap(ms);
+
+                    // Optionally resize the bitmap if setScreenSize is provided
+                    if (setScreenSize != null)
+                    {
+                        Bitmap resizedBitmap = new Bitmap(bitmap, setScreenSize.Item1, setScreenSize.Item2);
+                        bitmap.Dispose();
+                        return resizedBitmap;
+                    }
+
+                    return bitmap;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions as needed
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to capture screenshot.", ex);
+                return null;
+            }
         }
 
         XmlDocument pageSourceXml = null;
@@ -2930,7 +2991,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (ElmsNodes != null && ElmsNodes.Count > 0)
                 {
                     //move to collection for getting last node which fits to bounds
-                    ObservableList<XmlNode> ElmsNodesColc = new ObservableList<XmlNode>();
+                    ObservableList<XmlNode> ElmsNodesColc = [];
                     foreach (XmlNode elemNode in ElmsNodes)
                     {
                         //if (mDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.iOS && elemNode.LocalName == "UIAWindow") continue;                        
@@ -2962,7 +3023,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                     }
 
-                    Dictionary<XmlNode, long> foundElements = new Dictionary<XmlNode, long>();
+                    Dictionary<XmlNode, long> foundElements = [];
                     foreach (XmlNode elementNode in ElmsNodesColc.Reverse())
                     {
                         //get the element location
@@ -3093,38 +3154,47 @@ namespace Amdocs.Ginger.CoreNET
             return foundNode != null ? await GetElementInfoforXmlNode(foundNode) : null;
         }
 
+        int mWindowWidth = 0;
+        public int WindowWidth { get { return mWindowWidth; } }
+        int mWindowHeight = 0;
+        public int WindowHeight { get { return mWindowHeight; } }
+        double mWindowScaleFactor = 0;
+        public double WindowScaleFactor { get { return mWindowScaleFactor; } }
 
-        public void CalculateSourceMobileImageConvertFactors(eImagePointUsage factorUsage)
+        private void CalculateMobileDeviceScreenSizes()
         {
-            mScreenScaleFactorCorrectionX = 1;
-            mScreenScaleFactorCorrectionY = 1;
-           
-
-            //override with user configuration
-            double userScreenScaleFactorCorrectionX;
-            if (double.TryParse(ScreenScaleFactorCorrectionX, out userScreenScaleFactorCorrectionX))
+            try
             {
-                mScreenScaleFactorCorrectionX = userScreenScaleFactorCorrectionX;
+                var windowSize = Driver.Manage().Window.Size;
+                if (DevicePlatformType == eDevicePlatformType.iOS)
+                {
+                    var nativeSize = (Dictionary<string, object>)Driver.ExecuteScript("mobile: viewportRect");
+                    mWindowScaleFactor = Convert.ToInt32(nativeSize["width"]) / windowSize.Width;
+                }
+                else
+                {
+                    mWindowScaleFactor = 1;
+                }
+                mWindowWidth = (int)(windowSize.Width * mWindowScaleFactor);
+                mWindowHeight = (int)(windowSize.Height * mWindowScaleFactor);
             }
-            double userScreenScaleFactorCorrectionY;
-            if (double.TryParse(ScreenScaleFactorCorrectionY, out userScreenScaleFactorCorrectionY))
+            catch (Exception ex)
             {
-                mScreenScaleFactorCorrectionY = userScreenScaleFactorCorrectionY;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get Mobile Device Screen Sizes", ex);
             }
-        }       
+        }
 
         public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
-        {           
-            double scale_factor_x = 1, scale_factor_y = 1;
-            CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
-            scale_factor_x = (SrcWidth / mScreenScaleFactorCorrectionX) / ActWidth;
-            scale_factor_y = (SrcHeight / mScreenScaleFactorCorrectionY) / ActHeight;
+        {
+            Point pointOnMobile = new Point();
 
-            Point pointOnAppScreen = new Point();
-            pointOnAppScreen.X = (int)(clickedPoint.X * scale_factor_x);
-            pointOnAppScreen.Y = (int)(clickedPoint.Y * scale_factor_y);
+            double xRatio = (double)(SrcWidth / ActWidth);
+            double yRatio = (double)(SrcHeight / ActHeight);
 
-            return pointOnAppScreen;
+            pointOnMobile.X = (int)(clickedPoint.X * xRatio / WindowScaleFactor);
+            pointOnMobile.Y = (int)(clickedPoint.Y * yRatio / WindowScaleFactor);
+
+            return pointOnMobile;
         }
 
         public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo)
@@ -3132,9 +3202,8 @@ namespace Amdocs.Ginger.CoreNET
             double scale_factor_x, scale_factor_y;
             XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
 
-            CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
-            scale_factor_x = (SrcWidth / mScreenScaleFactorCorrectionX) / ActWidth;
-            scale_factor_y = (SrcHeight / mScreenScaleFactorCorrectionY) / ActHeight;
+            scale_factor_x = (double)(SrcWidth / ActWidth);
+            scale_factor_y = (double)(SrcHeight / ActHeight);
 
             switch (DevicePlatformType)
             {
@@ -3184,11 +3253,11 @@ namespace Amdocs.Ginger.CoreNET
                         string hgt = GetAttrValue(rectangleXmlNode, "height");
                         string wdth = GetAttrValue(rectangleXmlNode, "width");
 
-                        ElementStartPoints.X = (int)(Convert.ToInt32(x) / scale_factor_x);
-                        ElementStartPoints.Y = (int)(Convert.ToInt32(y) / scale_factor_y);
+                        ElementStartPoints.X = (int)((Convert.ToInt32(x) / scale_factor_x) * mWindowScaleFactor);
+                        ElementStartPoints.Y = (int)((Convert.ToInt32(y) / scale_factor_y) * mWindowScaleFactor);
 
-                        ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / scale_factor_x);
-                        ElementMaxPoints.Y = ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / scale_factor_y);
+                        ElementMaxPoints.X = (int)(ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / scale_factor_x) * mWindowScaleFactor);
+                        ElementMaxPoints.Y = (int)(ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / scale_factor_y) * mWindowScaleFactor);
                     }
 
                     break;
@@ -3223,7 +3292,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public List<eTabView> SupportedViews()
         {
-            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.PageSource };
+            return [eTabView.Screenshot, eTabView.GridView, eTabView.PageSource];
         }
 
         public eTabView DefaultView()
@@ -3243,29 +3312,35 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1)
+        public void PerformScreenSwipe(eSwipeSide swipeSide, double swipeScale, TimeSpan swipeDuration)
         {
-            SwipeScreen(swipeSide, impact);
+            SwipeScreen(swipeSide, swipeScale, swipeDuration);
 
             if (IsRecording)
             {
                 ActMobileDevice mobAct = new ActMobileDevice();
+                mobAct.SwipeScale.Value = swipeScale.ToString();
+                mobAct.SwipeDuration.Value = swipeDuration.TotalMilliseconds.ToString();
                 switch (swipeSide)
                 {
                     case eSwipeSide.Up:
                         mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeUp;
+                        mobAct.Description = "Perform Swipe Up";
                         break;
 
                     case eSwipeSide.Down:
                         mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeDown;
+                        mobAct.Description = "Perform Swipe Down";
                         break;
 
                     case eSwipeSide.Right:
                         mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeRight;
+                        mobAct.Description = "Perform Swipe Right";
                         break;
 
                     case eSwipeSide.Left:
                         mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeLeft;
+                        mobAct.Description = "Perform Swipe Left";
                         break;
                 }
 
@@ -3324,6 +3399,36 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        public void OpenDeviceExternalView()
+        {
+            //open URL in browser
+            try
+            {
+                //build the URL to use
+                Uri serverUri = new Uri(this.AppiumServer);
+                var uribuilder = new UriBuilder
+                {
+                    Scheme = serverUri.Scheme,
+                    Port = serverUri.Port,
+                    Host = serverUri.Host,
+                    //Path = string.Format(@"/integration8/en/#/remote?deviceId={0}", GetDeviceUDID())
+                };
+                string deviceViewUrl = string.Format(@"{0}integration8/en/#/remote?deviceId={1}", uribuilder.Uri.ToString(), GetDeviceUDID().ToString());
+
+                // Launch the browser with the URL
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                    FileName = deviceViewUrl,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to open the external device URL in browser", ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to open the external device URL in browser, Error: " + ex.Message);
+            }
+        }
+
         public string GetApplitoolServerURL()
         {
             return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
@@ -3354,7 +3459,7 @@ namespace Amdocs.Ginger.CoreNET
             try
             {
                 Method method = Method.Post;
-                RestRequest restRequest = (RestRequest)new RestRequest(api, method) { RequestFormat = DataFormat.Json }.AddJsonBody(requestBody);
+                RestRequest restRequest = new RestRequest(api, method) { RequestFormat = DataFormat.Json }.AddJsonBody(requestBody);
                 RestResponse response = await restClient.ExecuteAsync(restRequest);
                 if (response.IsSuccessful)
                 {
@@ -3363,7 +3468,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + api + "Response: " + response.Content);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to send " + api + "Response: " + response.Content);
                     return response.Content;
                 }
             }
@@ -3376,21 +3481,21 @@ namespace Amdocs.Ginger.CoreNET
 
         private Dictionary<string, string> StringToDictionary(string response)
         {
-            response = response.Substring(10, response.Length - 12);
-            List<string> responseList = new List<string>();
+            response = response[10..^2];
+            List<string> responseList = [];
             while (!string.IsNullOrEmpty(response))
             {
                 int startIndex = response.IndexOf("[") + 1;
                 int endIndex = response.IndexOf("]");
-                responseList.Add(response.Substring(startIndex, endIndex - startIndex));
+                responseList.Add(response[startIndex..endIndex]);
                 if (endIndex + 2 > response.Length)
                 {
-                    response = response.Substring(endIndex + 1);
+                    response = response[(endIndex + 1)..];
 
                 }
                 else
                 {
-                    response = response.Substring(endIndex + 2);
+                    response = response[(endIndex + 2)..];
                 }
 
             }
@@ -3398,7 +3503,7 @@ namespace Amdocs.Ginger.CoreNET
             string[] keyArray = responseList[0].Split(',');
             responseList[1] = responseList[1].Replace("\"", "");
             string[] valueArray = responseList[1].Split(',');
-            Dictionary<string, string> dict = new Dictionary<string, string>();
+            Dictionary<string, string> dict = [];
             for (int i = 0; i < keyArray.Length; i++)
             {
                 dict.Add(keyArray[i], valueArray[i]);
@@ -3427,7 +3532,7 @@ namespace Amdocs.Ginger.CoreNET
             string response = await GetDeviceMetricsString(dataType);
             if (response == null || response.Contains("error"))
             {
-                return new Dictionary<string, string>();
+                return [];
             }
             try
             {
@@ -3436,7 +3541,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception e)
             {
-                return new Dictionary<string, string>();
+                return [];
             }
         }
 
@@ -3500,7 +3605,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception e)
             {
-                return new Dictionary<string, object>();
+                return [];
             }
 
         }
@@ -3522,7 +3627,7 @@ namespace Amdocs.Ginger.CoreNET
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return true;
             }

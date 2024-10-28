@@ -70,10 +70,10 @@ namespace Ginger.BusinessFlowWindows
             int totalActivity = 0;
             int totalAction = 0;
             List<string> status;
-            SeriesActivityCollection = new SeriesCollection();
-            SeriesActionCollection = new SeriesCollection();
+            SeriesActivityCollection = [];
+            SeriesActionCollection = [];
 
-            DataContext = this;    
+            DataContext = this;
             List<StatItem> st = mContext.BusinessFlow.GetActivitiesStats();
             foreach (var v in st)
             {
@@ -161,16 +161,20 @@ namespace Ginger.BusinessFlowWindows
 
         internal void ShowAsWindow()
         {
-            Button ReportButton = new Button();
-            ReportButton.Content = "Generate Report";
-           WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: ReportButton, eventName: nameof(ButtonBase.Click), handler: ReportButton_Click);
+            Button ReportButton = new Button
+            {
+                Content = "Generate Report"
+            };
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: ReportButton, eventName: nameof(ButtonBase.Click), handler: ReportButton_Click);
 
-            Button ExportBtn = new Button();
-            ExportBtn.Content = "Export Execution Details";
+            Button ExportBtn = new Button
+            {
+                Content = "Export Execution Details"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: ExportBtn, eventName: nameof(ButtonBase.Click), handler: ExportExecutionDetails);
 
             GenericWindow genWin = null;
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, new ObservableList<Button> { ExportBtn, ReportButton });
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, [ExportBtn, ReportButton]);
         }
 
         private void ReportButton_Click(object sender, RoutedEventArgs e)
@@ -185,11 +189,10 @@ namespace Ginger.BusinessFlowWindows
 
         private void ExportExecutionDetails(object sender, RoutedEventArgs e)
         {
-            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
-            bfs.Add(mContext.BusinessFlow);
+            ObservableList<BusinessFlow> bfs = [mContext.BusinessFlow];
             if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                if (ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mContext.Environment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false),mContext))
+                if (ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mContext.Environment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false), mContext))
                 {
                     ExportResultsToALMConfigPage.Instance.ShowAsWindow();
                 }

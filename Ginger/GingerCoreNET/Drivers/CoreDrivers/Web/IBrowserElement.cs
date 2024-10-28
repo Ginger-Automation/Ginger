@@ -16,13 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.UIElement;
 using Deque.AxeCore.Commons;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -44,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
         public Task ClickAsync();
 
-        public Task ClickAsync(int x, int y);
+        public Task ClickAsync(Point point);
 
         public Task DoubleClickAsync();
 
@@ -87,6 +83,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public Task SetCheckboxAsync(bool check);
 
         public Task SetTextAsync(string text);
+
+        public Task TypeTextAsync(string text);
+
+        public Task PressKeysAsync(IEnumerable<string> keys);
 
         public Task<byte[]> ScreenshotAsync();
 

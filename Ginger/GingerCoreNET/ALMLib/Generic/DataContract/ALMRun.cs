@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.DataContract
 
         public ALMRun()
         {
-            ElementsField = new Dictionary<string, object>();
+            ElementsField = [];
         }
 
         public ALMRun ParseXML(XElement fields)

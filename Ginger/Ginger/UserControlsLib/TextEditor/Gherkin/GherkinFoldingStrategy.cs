@@ -46,7 +46,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
         public IEnumerable<NewFolding> CreateNewFoldings(ITextSource document)
         {
-            List<NewFolding> newFoldings = new List<NewFolding>();
+            List<NewFolding> newFoldings = [];
 
             //TODO: string Examples = "Examples:";   // will be nested handle like braces
 
@@ -58,7 +58,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 char c = document.GetCharAt(i);
                 line += c;
                 // we check when we find new line
-                if (c == '\n' || c == '\r')
+                if (c is '\n' or '\r')
                 {
                     string lt = line.Trim();
                     if (lt.StartsWith(Scenario) || lt.StartsWith(ScenarioOutline) || lt.StartsWith(Tag))

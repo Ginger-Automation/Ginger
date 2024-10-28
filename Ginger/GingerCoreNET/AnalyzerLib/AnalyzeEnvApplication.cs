@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Ginger.AnalyzerLib;
-using GingerCore.Environments;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using amdocs.ginger.GingerCoreNET;
-using Microsoft.VisualStudio.Services.Common;
 using System.Text.RegularExpressions;
 namespace Amdocs.Ginger.CoreNET.AnalyzerLib
 {
@@ -119,10 +119,7 @@ namespace Amdocs.Ginger.CoreNET.AnalyzerLib
 
         private static void FixMissingEnvApp(object? sender, EventArgs e)
         {
-
-            AnalyzeEnvApplication AnalyzeTargetApplication = sender as AnalyzeEnvApplication;
-
-            if (AnalyzeTargetApplication == null)
+            if (sender is not AnalyzeEnvApplication AnalyzeTargetApplication)
             {
                 return;
             }

@@ -22,7 +22,6 @@ using Ginger.SolutionCategories;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib;
 using GingerCore.GeneralLib;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -98,7 +97,7 @@ namespace Ginger.SolutionWindows
             if (mSolutionCategoriesPage == null)
             {
                 mSolutionCategoriesPage = new SolutionCategoriesPage();
-                xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage); 
+                xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
             }
             mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.OptionalValuesDefinition);
 
@@ -115,13 +114,17 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.UpdateKey.Visibility = Visibility.Visible;
             mSolution.SaveBackup();
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            Button SaveBtn = new Button();
-            SaveBtn.Content = "Save";
+            ObservableList<Button> winButtons = [];
+            Button SaveBtn = new Button
+            {
+                Content = "Save"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: SaveBtn, eventName: nameof(ButtonBase.Click), handler: SaveBtn_Click);
             winButtons.Add(SaveBtn);
-            Button undoBtn = new Button();
-            undoBtn.Content = "Undo & Close";
+            Button undoBtn = new Button
+            {
+                Content = "Undo & Close"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: UndoBtn_Click);
             winButtons.Add(undoBtn);
             //Button replaceKeyBtn = new Button();
@@ -168,9 +171,11 @@ namespace Ginger.SolutionWindows
             xCategoriesExpander.Visibility = Visibility.Collapsed;
 
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            Button uSaveKeyBtn = new Button();
-            uSaveKeyBtn.Content = "Ok";
+            ObservableList<Button> winButtons = [];
+            Button uSaveKeyBtn = new Button
+            {
+                Content = "Ok"
+            };
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: uSaveKeyBtn, eventName: nameof(ButtonBase.Click), handler: SaveKeyBtn_Click);
             winButtons.Add(uSaveKeyBtn);
             //Button replaceKeyBtn = new Button();

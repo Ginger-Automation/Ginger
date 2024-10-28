@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.TelemetryLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -47,7 +46,7 @@ namespace GingerCoreNETUnitTest.TelemetryTestLib
 
 
             // Arrange
-            Telemetry.CheckVersionAndNews();
+            Amdocs.Ginger.CoreNET.TelemetryLib.Telemetry.CheckVersionAndNews();
 
             // Act
 

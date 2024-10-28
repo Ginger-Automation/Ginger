@@ -46,7 +46,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> list = new List<ITreeViewItem>();
+            List<ITreeViewItem> list = [];
 
             List<ElementInfo> ChildrenList = ElementInfo.WindowExplorer.GetElementChildren(this.ElementInfo);
             if (ChildrenList != null)

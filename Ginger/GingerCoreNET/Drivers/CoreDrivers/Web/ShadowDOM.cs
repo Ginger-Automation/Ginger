@@ -16,10 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.UIElement;
 using OpenQA.Selenium;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
@@ -34,7 +33,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
         public ISearchContext GetShadowRootIfExists(ISearchContext webElement)
         {
 
-            if (webElement == null || webElement is not IWebElement)
+            if (webElement is null or not IWebElement)
             {
                 return null;
             }
@@ -73,8 +72,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
                 if (indexOfOpenBracket != -1)
                 {
-                    string tagName = tag.Substring(0, indexOfOpenBracket);
-                    string count = tag.Substring(indexOfOpenBracket);
+                    string tagName = tag[..indexOfOpenBracket];
+                    string count = tag[indexOfOpenBracket..];
                     count = count.Replace('[', '(');
                     count = count.Replace(']', ')');
                     strBuilder.Append($"{tagName}:nth-of-type{count} ");

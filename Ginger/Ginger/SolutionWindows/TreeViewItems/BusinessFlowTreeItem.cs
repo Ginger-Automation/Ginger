@@ -19,43 +19,38 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Telemetry;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
-using Amdocs.Ginger.CoreNET.BPMN.Models;
-using Amdocs.Ginger.CoreNET.BPMN.Serialization;
+using Amdocs.Ginger.CoreNET.BPMN.Exportation;
+using Amdocs.Ginger.Repository;
 using Ginger.Actions.ActionConversion;
 using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
 using Ginger.Exports.ExportToJava;
+using Ginger.Repository;
+using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControlsLib.TextEditor;
 using Ginger.VisualAutomate;
 using GingerCore;
+using GingerCore.Activities;
 using GingerWPF.BusinessFlowsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Task = System.Threading.Tasks.Task;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.Activities;
-using MongoDB.Bson;
-using System.Linq;
-using Ginger.Repository.AddItemToRepositoryWizard;
-using Ginger.Repository.ItemToRepositoryWizard;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.CoreNET.BPMN.Conversion;
-using Amdocs.Ginger.CoreNET.BPMN.Exportation;
-using Ginger.Repository;
+using Task = System.Threading.Tasks.Task;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private const string BPMNExportPath = @"~\\Documents\BPMN";
-        
+
         private BusinessFlowViewPage mBusinessFlowViewPage;
 
         private BusinessFlow mBusinessFlow { get; set; }
@@ -116,7 +111,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
 
             mBusinessFlow.StopTimer();
-           
+
         }
 
         ContextMenu ITreeViewItem.Menu()
@@ -165,7 +160,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ActionsConversionHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>();
+            ObservableList<BusinessFlow> lst = [];
             if (((ITreeViewItem)this).NodeObject().GetType().Equals(typeof(GingerCore.BusinessFlow)))
             {
                 lst.Add((GingerCore.BusinessFlow)((ITreeViewItem)this).NodeObject());
@@ -181,11 +176,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         /// <param name="e"></param>
         private async void LegacyActionsRemoveHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            ObservableList<BusinessFlowToConvert> lstBFToConvert = new ObservableList<BusinessFlowToConvert>();
+            ObservableList<BusinessFlowToConvert> lstBFToConvert = [];
             if (((ITreeViewItem)this).NodeObject().GetType().Equals(typeof(GingerCore.BusinessFlow)))
             {
-                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
-                flowToConvert.BusinessFlow = (GingerCore.BusinessFlow)((ITreeViewItem)this).NodeObject();
+                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert
+                {
+                    BusinessFlow = (GingerCore.BusinessFlow)((ITreeViewItem)this).NodeObject()
+                };
                 lstBFToConvert.Add(flowToConvert);
             }
 
@@ -217,10 +214,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void GoToGherkinFeatureFile(object sender, RoutedEventArgs e)
         {
-            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mBusinessFlow.ExternalID.Replace("~", WorkSpace.Instance.Solution.Folder), true);
-            documentEditorPage.Title = "Gherkin Page";
-            documentEditorPage.Height = 700;
-            documentEditorPage.Width = 1000;
+            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mBusinessFlow.ExternalID.Replace("~", WorkSpace.Instance.Solution.Folder), true)
+            {
+                Title = "Gherkin Page",
+                Height = 700,
+                Width = 1000
+            };
             documentEditorPage.ShowAsWindow();
 
         }
@@ -247,11 +246,27 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ExportToALM(object sender, System.Windows.RoutedEventArgs e)
         {
-            ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow, true);
+            bool wasSuccessful = ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow, true);
+            if (wasSuccessful)
+            {
+                Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
+                {
+                    { "Type", ALMIntegration.Instance.GetALMType().ToString() },
+                    { "Operation", "ExportBusinessFlow" },
+                });
+            }
         }
         private void MapToALM(object sender, System.Windows.RoutedEventArgs e)
         {
-            ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow, true);
+            bool wasSuccessful = ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow, true);
+            if (wasSuccessful)
+            {
+                Reporter.AddFeatureUsage(FeatureId.ALM, new TelemetryMetadata()
+                {
+                    { "Type", ALMIntegration.Instance.GetALMType().ToString() },
+                    { "Operation", "MapBusinessFlow" },
+                });
+            }
         }
 
         private void ExportToCSV(object sender, System.Windows.RoutedEventArgs e)
@@ -284,9 +299,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private bool TryAddingMissingActivityGroupsToSharedRepository()
         {
-            bool wasAllAddedToSharedRepository; 
+            bool wasAllAddedToSharedRepository;
             try
-            { 
+            {
                 IEnumerable<ActivitiesGroup> activityGroups = GetActivityGroupsMissingFromSharedRepository();
                 bool allActivityGroupsAlreadyInSharedRepository = !activityGroups.Any();
                 if (allActivityGroupsAlreadyInSharedRepository)
@@ -315,7 +330,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 wasAllAddedToSharedRepository = activityGroups.All(ag => ag.IsSharedRepositoryInstance);
                 return wasAllAddedToSharedRepository;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.FailedToAddItemsToSharedRepository, "Unexpected error, check logs for more details");
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while adding missing activities and activity groups to shared repository.", ex);
@@ -331,11 +346,56 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNZIP);
 
                 string fullBPMNExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
-                BusinessFlowToBPMNExporter businessFlowToBPMNExporter = new(mBusinessFlow, new BusinessFlowToBPMNExporter.Options() 
-                { 
+                BusinessFlowToBPMNExporter businessFlowToBPMNExporter = new(mBusinessFlow, new BusinessFlowToBPMNExporter.Options()
+                {
                     ExportPath = fullBPMNExportPath
                 });
-                string exportPath = businessFlowToBPMNExporter.Export();
+                int? activitiesGroupCount = null;
+                int? activityCount = null;
+                int? actionCount = null;
+                try
+                {
+                    if (mBusinessFlow.Activities != null)
+                    {
+                        activitiesGroupCount = mBusinessFlow.ActivitiesGroups.Count;
+
+                        activityCount = mBusinessFlow.Activities.Where(a => a.Active).Count();
+
+                        actionCount = mBusinessFlow
+                            .Activities
+                            .Select(activity =>
+                            {
+                                if (activity == null || !activity.Active || activity.Acts == null)
+                                {
+                                    return 0;
+                                }
+                                return activity.Acts.Where(act => act != null && act.Active).Count();
+                            })
+                            .Aggregate((count, total) => total + count);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"error while capturing '{FeatureId.ExportBusinessFlowBPMN}' feature metadata", ex);
+                }
+
+                string exportPath = string.Empty;
+                using (IFeatureTracker featureTracker = Reporter.StartFeatureTracking(FeatureId.ExportBusinessFlowBPMN))
+                {
+                    if (activitiesGroupCount != null)
+                    {
+                        featureTracker.Metadata.Add("ActivitiesGroupCount", activitiesGroupCount.ToString());
+                    }
+                    if (activityCount != null)
+                    {
+                        featureTracker.Metadata.Add("ActivityCount", activityCount.ToString());
+                    }
+                    if (actionCount != null)
+                    {
+                        featureTracker.Metadata.Add("ActionCount", actionCount.ToString());
+                    }
+                    exportPath = businessFlowToBPMNExporter.Export();
+                }
                 string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
 
                 Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeExportPath);

@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.SourceControlLib;
 using static GingerCoreNET.SourceControl.SourceControlFileInfo;
 
 namespace GingerCoreNET.SourceControl
@@ -231,29 +230,16 @@ namespace GingerCoreNET.SourceControl
             {
                 string err = null;
                 eRepositoryItemStatus ss = GetFileStatus(FullPath, true, ref err);
-                switch (ss)
+                return ss switch
                 {
-                    case eRepositoryItemStatus.New:
-                        return eImageType.SourceControlNew;
-
-                    case eRepositoryItemStatus.Modified:
-                        return eImageType.SourceControlModified;
-
-                    case eRepositoryItemStatus.Equel:
-                        return eImageType.SourceControlEquel;
-
-                    case eRepositoryItemStatus.LockedByMe:
-                        return eImageType.SourceControlLockedByMe;
-
-                    case eRepositoryItemStatus.LockedByAnotherUser:
-                        return eImageType.SourceControlLockedByAnotherUser;
-
-                    case eRepositoryItemStatus.Unknown:
-                        return eImageType.SourceControlError;
-
-                    default:
-                        return eImageType.SourceControlDeleted;
-                }
+                    eRepositoryItemStatus.New => eImageType.SourceControlNew,
+                    eRepositoryItemStatus.Modified => eImageType.SourceControlModified,
+                    eRepositoryItemStatus.Equel => eImageType.SourceControlEquel,
+                    eRepositoryItemStatus.LockedByMe => eImageType.SourceControlLockedByMe,
+                    eRepositoryItemStatus.LockedByAnotherUser => eImageType.SourceControlLockedByAnotherUser,
+                    eRepositoryItemStatus.Unknown => eImageType.SourceControlError,
+                    _ => eImageType.SourceControlDeleted,
+                };
             });
         }
     }

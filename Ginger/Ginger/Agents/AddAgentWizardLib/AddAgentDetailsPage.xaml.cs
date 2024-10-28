@@ -44,7 +44,7 @@ namespace Ginger.Agents.AddAgentWizardLib
     {
         AddAgentWizard mWizard;
         public readonly ObservableList<PluginPackage> Plugins;
-        private List<DriverInfo> DriversforPlatform = new List<DriverInfo>();
+        private List<DriverInfo> DriversforPlatform = [];
 
         public AddAgentDetailsPage()
         {
@@ -67,8 +67,7 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xAgentTagsViewer.Init(mWizard.Agent.Tags);
 
                     //Removing ASCF from platform combobox                    
-                    List<dynamic> platformesToExclude = new List<dynamic>();
-                    platformesToExclude.Add(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF);
+                    List<dynamic> platformesToExclude = [GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF];
                     //GingerCore.General.FillComboFromEnumObj(xPlatformTypeComboBox, mWizard.Agent.Platform, excludeList:platformesToExclude);//All
                     //Only platforms used in Solution (having Target Application for)
                     List<object> onlySolutionPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Select(x => x.Platform).Distinct().ToList().Cast<object>().ToList();
@@ -125,7 +124,7 @@ namespace Ginger.Agents.AddAgentWizardLib
 
         private bool DriverSupportMultipleBrowsers(eDriverType driverType)
         {
-            return driverType == eDriverType.Selenium || driverType == eDriverType.Playwright;
+            return driverType is eDriverType.Selenium or eDriverType.Playwright;
         }
 
         private void xPlatformTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

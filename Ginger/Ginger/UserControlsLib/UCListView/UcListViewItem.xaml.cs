@@ -79,7 +79,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             get
             {
-                return (object)GetValue(ItemProperty);
+                return GetValue(ItemProperty);
             }
             set
             {
@@ -88,8 +88,7 @@ namespace Ginger.UserControlsLib.UCListView
         }
         private static void OnItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as UcListViewItem;
-            if (control != null && e.NewValue != null)
+            if (d is UcListViewItem control && e.NewValue != null)
             {
                 control.Item = ((object)e.NewValue);
             }
@@ -111,8 +110,7 @@ namespace Ginger.UserControlsLib.UCListView
         }
         private static void OnItemInfoPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var c = d as UcListViewItem;
-            if (c != null && e.NewValue != null)
+            if (d is UcListViewItem c && e.NewValue != null)
             {
                 c.ListHelper = ((IListViewHelper)e.NewValue);
             }
@@ -218,12 +216,14 @@ namespace Ginger.UserControlsLib.UCListView
 
                     if (!string.IsNullOrEmpty(mItemActiveField))
                     {
-                        System.Windows.Data.Binding b = new System.Windows.Data.Binding();
-                        b.Source = Item;
-                        b.Path = new PropertyPath(mItemActiveField);
-                        b.Mode = BindingMode.OneWay;
-                        b.Converter = new ActiveBackgroundColorConverter();
-                        b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                        System.Windows.Data.Binding b = new System.Windows.Data.Binding
+                        {
+                            Source = Item,
+                            Path = new PropertyPath(mItemActiveField),
+                            Mode = BindingMode.OneWay,
+                            Converter = new ActiveBackgroundColorConverter(),
+                            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                        };
                         xMainBorder.SetBinding(Border.BackgroundProperty, b);
                     }
                 });
@@ -463,10 +463,12 @@ namespace Ginger.UserControlsLib.UCListView
                         MenuItem menuitem = new MenuItem();
                         menuitem.SetValue(AutomationProperties.AutomationIdProperty, operation.AutomationID);
                         menuitem.Style = (Style)FindResource("$MenuItemStyle");
-                        ImageMakerControl iconImage = new ImageMakerControl();
-                        iconImage.ImageType = operation.ImageType;
-                        iconImage.SetAsFontImageWithSize = operation.ImageSize;
-                        iconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                        ImageMakerControl iconImage = new ImageMakerControl
+                        {
+                            ImageType = operation.ImageType,
+                            SetAsFontImageWithSize = operation.ImageSize,
+                            HorizontalAlignment = HorizontalAlignment.Left
+                        };
                         menuitem.Icon = iconImage;
                         menuitem.Header = operation.Header;
                         menuitem.ToolTip = operation.ToolTip;
@@ -513,12 +515,16 @@ namespace Ginger.UserControlsLib.UCListView
                             if (!addedToGroup)
                             {
                                 //creating the group and adding
-                                MenuItem groupMenuitem = new MenuItem();
-                                groupMenuitem.Style = (Style)FindResource("$MenuItemStyle");
-                                ImageMakerControl groupIconImage = new ImageMakerControl();
-                                groupIconImage.ImageType = operation.GroupImageType;
-                                groupIconImage.SetAsFontImageWithSize = operation.ImageSize;
-                                groupIconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                                MenuItem groupMenuitem = new MenuItem
+                                {
+                                    Style = (Style)FindResource("$MenuItemStyle")
+                                };
+                                ImageMakerControl groupIconImage = new ImageMakerControl
+                                {
+                                    ImageType = operation.GroupImageType,
+                                    SetAsFontImageWithSize = operation.ImageSize,
+                                    HorizontalAlignment = HorizontalAlignment.Left
+                                };
                                 groupMenuitem.Icon = groupIconImage;
                                 groupMenuitem.Header = operation.Group;
                                 groupMenuitem.ToolTip = operation.Group;
@@ -665,7 +671,7 @@ namespace Ginger.UserControlsLib.UCListView
                     var parent = GingerCore.General.TryFindParent<UcListView>(this);
                     if (parent != null)
                     {
-                        ParentList = (UcListView)parent;
+                        ParentList = parent;
                         WeakEventManager<UcListView, UcListViewEventArgs>.RemoveHandler(ParentList, nameof(UcListView.UcListViewEvent), ParentList_UcListViewEvent);
                         WeakEventManager<UcListView, UcListViewEventArgs>.AddHandler(ParentList, nameof(UcListView.UcListViewEvent), ParentList_UcListViewEvent);
                         WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(ParentList.List, nameof(Selector.SelectionChanged), ParentList_SelectionChanged);
@@ -769,7 +775,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 xItemNameTxtBlock.MaxWidth = xItemNameColumn.ActualWidth - 100;
                 xItemDescriptionTxtBlock.MaxWidth = xItemNameTxtBlock.MaxWidth;
-            }           
+            }
         }
 
         private void XDetailsGrid_SizeChanged(object sender, SizeChangedEventArgs e)

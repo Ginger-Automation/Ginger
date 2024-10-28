@@ -826,8 +826,7 @@ namespace Amdocs.Ginger.Repository
             var members = type.GetMembers();
             foreach (MemberInfo memberInfo in members)
             {
-                IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(memberInfo, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
-                if (token != null)
+                if (Attribute.GetCustomAttribute(memberInfo, typeof(IsSerializedForLocalRepositoryAttribute), false) is IsSerializedForLocalRepositoryAttribute token)
                 {
                     object defaultValue = token.GetDefualtValue();
                     if (defaultValue != null)
@@ -882,8 +881,7 @@ namespace Amdocs.Ginger.Repository
                     foreach (Exception exSub in ex.LoaderExceptions)
                     {
                         sb.AppendLine(exSub.Message);
-                        FileNotFoundException exFileNotFound = exSub as FileNotFoundException;
-                        if (exFileNotFound != null)
+                        if (exSub is FileNotFoundException exFileNotFound)
                         {
                             if (!string.IsNullOrEmpty(exFileNotFound.FusionLog))
                             {
@@ -922,7 +920,7 @@ namespace Amdocs.Ginger.Repository
             int i = className.LastIndexOf('.');
             if (i > 0)
             {
-                className = className.Substring(i + 1);
+                className = className[(i + 1)..];
             }
 
             bool b = mClassDictionary.TryGetValue(className, out Type t);

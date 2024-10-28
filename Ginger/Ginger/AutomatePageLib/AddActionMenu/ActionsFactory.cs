@@ -29,7 +29,6 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
-using GingerCore.Environments;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
@@ -61,7 +60,8 @@ namespace Ginger.BusinessFlowPages
             {
                 mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
             }
-            else { 
+            else
+            {
                 return -1;
             }
             if (!mContext.Activity.EnableEdit && mContext.Activity.IsLinkedItem)
@@ -70,7 +70,7 @@ namespace Ginger.BusinessFlowPages
                 return -1;
             }
 
-            ePlatformType currentActivityPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
+            ePlatformType currentActivityPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == mContext.Activity.TargetApplication).Platform;
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;
@@ -79,9 +79,9 @@ namespace Ginger.BusinessFlowPages
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Activity target platform is \"" + currentActivityPlatform + "\", where as action platform is \"" + selectedAction.Platform + "\"" + System.Environment.NewLine + "Please select same platform actions only.");
                     return -1;
                 }
-                if (!(selectedAction is ActWithoutDriver))
+                if (selectedAction is not ActWithoutDriver)
                 {
-                    selectedAction.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
+                    selectedAction.Platform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == mContext.Activity.TargetApplication).Platform;
                 }
                 instance = GenerateSelectedAction(selectedAction, mContext);
             }
@@ -116,9 +116,9 @@ namespace Ginger.BusinessFlowPages
                 instance = null;
                 targetIndex = updatedTargetIndex;
             }
-            else if (mItem is ApplicationAPIModel || mItem is RepositoryFolder<ApplicationAPIModel>)
+            else if (mItem is ApplicationAPIModel or RepositoryFolder<ApplicationAPIModel>)
             {
-                ObservableList<ApplicationAPIModel> apiModelsList = new ObservableList<ApplicationAPIModel>();
+                ObservableList<ApplicationAPIModel> apiModelsList = [];
                 if (mItem is RepositoryFolder<ApplicationAPIModel>)
                 {
                     apiModelsList = (mItem as RepositoryFolder<ApplicationAPIModel>).GetFolderItems();
@@ -239,14 +239,13 @@ namespace Ginger.BusinessFlowPages
 
                 instance.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
-                if (instance is ActPlugIn)
+                if (instance is ActPlugIn p)
                 {
-                    ActPlugIn p = (ActPlugIn)instance;
                     // TODO: add per group or... !!!!!!!!!
 
                     //Check if target already exist else add it
                     // TODO: search only in targetplugin type
-                    TargetPlugin targetPlugin = (TargetPlugin)mContext.BusinessFlow.TargetApplications.FirstOrDefault(x=>  x.Name == p.ServiceId);
+                    TargetPlugin targetPlugin = (TargetPlugin)mContext.BusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == p.ServiceId);
                     if (targetPlugin == null)
                     {
                         // check if interface add it
@@ -348,7 +347,7 @@ namespace Ginger.BusinessFlowPages
                         businessFlow.ActivitiesGroups.Move(businessFlow.ActivitiesGroups.IndexOf(parentGroup), insertIndex);
                     }
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
-                
+
                     //since a new activity instance is created, it shouldn't be dirty and should have 0 development time
                     activityIns.SetDirtyStatusToNoChange();
                     Activity.StopAndResetTimer(activityIns);
@@ -395,8 +394,8 @@ namespace Ginger.BusinessFlowPages
                     {
                         if (mContext != null && mContext.Runner != null)
                         {
-                            ((ActWithoutDriver)act).RunOnBusinessFlow = (BusinessFlow)mContext.Runner.CurrentBusinessFlow;
-                            ((ActWithoutDriver)act).RunOnEnvironment = (ProjEnvironment)((GingerExecutionEngine)mContext.Runner).GingerRunner.ProjEnvironment;
+                            ((ActWithoutDriver)act).RunOnBusinessFlow = mContext.Runner.CurrentBusinessFlow;
+                            ((ActWithoutDriver)act).RunOnEnvironment = ((GingerExecutionEngine)mContext.Runner).GingerRunner.ProjEnvironment;
                             ((ActWithoutDriver)act).DSList = ((GingerExecutionEngine)mContext.Runner).GingerRunner.DSList;
                         }
                     }

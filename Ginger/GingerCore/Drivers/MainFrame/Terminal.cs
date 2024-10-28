@@ -170,7 +170,7 @@ namespace GingerCore.Drivers.MainFrame
             {
                 this.emu.SendKey(true, key, 2000);
                 this.UpdateCaretIndex();
-                if (key != TnKey.Tab && key != TnKey.BackTab)
+                if (key is not TnKey.Tab and not TnKey.BackTab)
                 {
                 }
             }
@@ -236,9 +236,7 @@ namespace GingerCore.Drivers.MainFrame
         {
             int PosY = Caret / 81;
             int PosX = Caret - (81 * PosY);
-            List<int> XY = new List<int>();
-            XY.Add(PosX);
-            XY.Add(PosY);
+            List<int> XY = [PosX, PosY];
             return XY;
         }
 

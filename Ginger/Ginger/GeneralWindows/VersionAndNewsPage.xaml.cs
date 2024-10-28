@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.TelemetryLib;
 using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -34,7 +33,7 @@ namespace Ginger.GeneralWindows
         {
             InitializeComponent();
 
-            xMessage.Content = Telemetry.VersionAndNewsInfo;
+            xMessage.Content = Amdocs.Ginger.CoreNET.TelemetryLib.Telemetry.VersionAndNewsInfo;
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)

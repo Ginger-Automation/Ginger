@@ -68,7 +68,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
-                if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+                if (e.PropertyName is nameof(mContext.Activity) or nameof(mContext.Target))
                 {
                     UpdateAPITree();
                 }
@@ -84,8 +84,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mAPIPage.xTreeView.Tree.CurrentSelectedTreeViewItem != null)
             {
-                GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems.AppApiModelTreeItem selectedItem = mAPIPage.xTreeView.Tree.CurrentSelectedTreeViewItem as GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems.AppApiModelTreeItem;
-                if (selectedItem != null)
+                if (mAPIPage.xTreeView.Tree.CurrentSelectedTreeViewItem is GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems.AppApiModelTreeItem selectedItem)
                 {
                     BusinessFlowPages.ActionsFactory.AddActionsHandler(selectedItem.mApiModel, mContext);
                 }

@@ -199,13 +199,13 @@ namespace Ginger.Reports
                 if (inputValues == null)
                 {
                     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    inputValues = mAction.InputValues.Select(a => GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(                       
+                    inputValues = mAction.InputValues.Select(a => GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(
                         $"{a.Param}_:_{a.Value}_:_{a.DisplayValue}")).ToList();
 
                     if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Any()))
                     {
-                        mAction.GetInputValueListForVEProcessing().ForEach(x => 
-                        x.ForEach(a => 
+                        mAction.GetInputValueListForVEProcessing().ForEach(x =>
+                        x.ForEach(a =>
                         inputValues.Add(GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(
                                 $"{a.Param}_:_{a.Value}_:_{a.DisplayValue}"))));
                     }
@@ -253,7 +253,7 @@ namespace Ginger.Reports
             {
                 if (outputValues == null)
                 {
-                    outputValues = mAction.ReturnValues.Select(a => $"{a.Param}_:_{a.Actual}_:_{a.ExpectedCalculated}_:_{a.Status}").ToList();
+                    outputValues = mAction.ReturnValues.Select(a => $"{a.Param}_:_{a.Actual}_:_{a.ExpectedCalculated}_:_{a.Status}_:_{a.Description}").ToList();
                 }
                 return outputValues;
             }
@@ -279,6 +279,8 @@ namespace Ginger.Reports
                 dt.Columns["ExpectedValue"].Caption = "Expected Value";
                 dt.Columns.Add("Status");
                 dt.Columns["Status"].Caption = "Status";
+                dt.Columns.Add("Description");
+                dt.Columns["Description"].Caption = "Description";
 
                 foreach (string outputValues in OutputValues)
                 {
@@ -288,6 +290,7 @@ namespace Ginger.Reports
                     dr["ActualValue"] = elementsAfter[1];
                     dr["ExpectedValue"] = elementsAfter[2];
                     dr["Status"] = elementsAfter[3];
+                    dr["Description"] = elementsAfter[4];
                     dt.Rows.Add(dr);
                 }
                 return dt;
@@ -374,7 +377,7 @@ namespace Ginger.Reports
         private string error = string.Empty;
         private long? elapsed = 0;
         public string screenShots = string.Empty;
-        public List<string> screenShotsList = new List<string>();
+        public List<string> screenShotsList = [];
 
         public bool IsPassed { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed; } }
         public bool IsFailed { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed; } }
@@ -424,13 +427,15 @@ namespace Ginger.Reports
         {
             get
             {
-                List<ReturnValueReport> list = new List<ReturnValueReport>();
+                List<ReturnValueReport> list = [];
                 int i = 0;
                 foreach (ActReturnValue ARV in mAction.ReturnValues)
                 {
                     i++;
-                    ReturnValueReport ar = new ReturnValueReport(ARV);
-                    ar.Seq = i;
+                    ReturnValueReport ar = new ReturnValueReport(ARV)
+                    {
+                        Seq = i
+                    };
                     list.Add(ar);
                 }
 
@@ -444,9 +449,11 @@ namespace Ginger.Reports
         {
             if (mContext != null)
             {
-                ValueExpression VE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
-                VE.DecryptFlag = false;
-                VE.Value = value;
+                ValueExpression VE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)
+                {
+                    DecryptFlag = false,
+                    Value = value
+                };
 
                 return VE.ValueCalculated;
             }

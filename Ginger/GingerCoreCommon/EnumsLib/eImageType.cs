@@ -58,6 +58,7 @@ namespace Amdocs.Ginger.Common.Enums
         BusinessFlow,
         ActivitiesGroup,
         Activity,
+        AIActivity,
         Action,
         Agent,
         RunSet,
@@ -157,6 +158,7 @@ namespace Amdocs.Ginger.Common.Enums
         MoveUp,
         MoveDown,
         MoveUpDown,
+        Category,
         ParallelExecution,
         SequentialExecution,
         Duplicate,
@@ -178,6 +180,7 @@ namespace Amdocs.Ginger.Common.Enums
         ActiveAll,
         ExpandToFullScreen,
         Exchange,
+        GingerAnalytics,
         Export,
         Filter,
         ImportFile,
@@ -200,6 +203,7 @@ namespace Amdocs.Ginger.Common.Enums
         Paste,
         WindowRestore,
         Rules,
+        VerticalBars,
         #endregion
 
         #region Items Images
@@ -211,6 +215,7 @@ namespace Amdocs.Ginger.Common.Enums
         Folder,
         ItemModified,
         Email,
+        Home,
         Parameter,
         ListGroup,
         FlowDiagram,
@@ -357,6 +362,7 @@ namespace Amdocs.Ginger.Common.Enums
         Accessibility,
         AnglesArrowLeft,
         AnglesArrowRight,
+        Katalon,
 
         #region Comparison Status Images
         Unchanged,

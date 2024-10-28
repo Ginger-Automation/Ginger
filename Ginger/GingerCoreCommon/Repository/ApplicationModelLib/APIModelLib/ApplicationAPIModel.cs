@@ -54,10 +54,10 @@ namespace Amdocs.Ginger.Repository
         public ApplicationAPIUtils.eHttpVersion ReqHttpVersion { get { return mReqHttpVersion; } set { if (mReqHttpVersion != value) { mReqHttpVersion = value; OnPropertyChanged(nameof(ReqHttpVersion)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<APIModelKeyValue> HttpHeaders = new ObservableList<APIModelKeyValue>();
+        public ObservableList<APIModelKeyValue> HttpHeaders = [];
 
         [IsSerializedForLocalRepository]
-        public ObservableList<APIModelBodyKeyValue> APIModelBodyKeyValueHeaders = new ObservableList<APIModelBodyKeyValue>();
+        public ObservableList<APIModelBodyKeyValue> APIModelBodyKeyValueHeaders = [];
 
         [IsSerializedForLocalRepository]
         public ApplicationAPIUtils.eNetworkCredentials NetworkCredentials { get; set; }
@@ -156,7 +156,7 @@ namespace Amdocs.Ginger.Repository
         //[IsSerializedForLocalRepository]
         //public OutputTemplateModel mOutputTemplateModel { get; set; }
 
-        public ObservableList<TemplateFile> OptionalValuesTemplates = new ObservableList<TemplateFile>();// XML & JSON
+        public ObservableList<TemplateFile> OptionalValuesTemplates = [];// XML & JSON
 
         public override eImageType ItemImageType
         {
@@ -177,9 +177,7 @@ namespace Amdocs.Ginger.Repository
 
         public override List<string> GetModelListsToConfigsWithExecutionData()
         {
-            List<string> list = new List<string>();
-            list.Add(nameof(this.HttpHeaders));
-            list.Add(nameof(this.APIModelBodyKeyValueHeaders));
+            List<string> list = [nameof(this.HttpHeaders), nameof(this.APIModelBodyKeyValueHeaders)];
             return list;
         }
     }

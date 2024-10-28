@@ -88,8 +88,7 @@ namespace GingerCoreCommonTest.VariableTests
         public void ListVar_TestImageType()
         {
             //Arrange
-            List<string> lstTemp = new List<string>();
-            lstTemp.Add("Jupiter");
+            List<string> lstTemp = ["Jupiter"];
             VariableList variableList = new VariableList("TestList", lstTemp);
 
             //Act
@@ -104,15 +103,12 @@ namespace GingerCoreCommonTest.VariableTests
         public void ListVar_TestGenerateAutoValue()
         {
             //Arrange
-            List<string> lstTemp = new List<string>();
-            lstTemp.Add("Apple");
-            lstTemp.Add("Blue");
-            lstTemp.Add("Green");
-            lstTemp.Add("Yellow");
-            VariableList variableList = new VariableList("TestList", lstTemp);
-
-            //Act
-            variableList.RandomOrder = false;
+            List<string> lstTemp = ["Apple", "Blue", "Green", "Yellow"];
+            VariableList variableList = new VariableList("TestList", lstTemp)
+            {
+                //Act
+                RandomOrder = false
+            };
             string errorMsg = string.Empty;
             variableList.GenerateAutoValue(ref errorMsg);
             string strValue = variableList.Value;
@@ -126,13 +122,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void ListVar_TestGenerateAutoValuesSequence()
         {
             //Arrange
-            List<string> lstTemp = new List<string>();
-            lstTemp.Add("Apple");
-            lstTemp.Add("Blue");
-            lstTemp.Add("Green");
-            lstTemp.Add("Yellow");
-            VariableList variableList = new VariableList("TestList", lstTemp);
-            variableList.RandomOrder = false;
+            List<string> lstTemp = ["Apple", "Blue", "Green", "Yellow"];
+            VariableList variableList = new VariableList("TestList", lstTemp)
+            {
+                RandomOrder = false
+            };
 
             for (int iVar = 0; iVar < lstTemp.Count; iVar++)
             {
@@ -151,11 +145,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void ListVar_TestRandomGenerateAutoValue()
         {
             //Arrange
-            List<string> lstTemp = new List<string>();
-            lstTemp.Add("Jupiter");
-            lstTemp.Add("Saturn");
-            VariableList variableList = new VariableList("TestList", lstTemp);
-            variableList.RandomOrder = true;
+            List<string> lstTemp = ["Jupiter", "Saturn"];
+            VariableList variableList = new VariableList("TestList", lstTemp)
+            {
+                RandomOrder = true
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -171,9 +165,11 @@ namespace GingerCoreCommonTest.VariableTests
         public void ListVar_TestRandomGenerateAutoValueNotExists()
         {
             //Arrange
-            List<string> lstTemp = new List<string>();
-            VariableList variableList = new VariableList("TestList", lstTemp);
-            variableList.RandomOrder = true;
+            List<string> lstTemp = [];
+            VariableList variableList = new VariableList("TestList", lstTemp)
+            {
+                RandomOrder = true
+            };
 
             //Act
             string errorMsg = string.Empty;
@@ -188,9 +184,7 @@ namespace GingerCoreCommonTest.VariableTests
         public void ListVar_TestFormula()
         {
             //Arrange
-            List<string> lstTemp = new List<string>();
-            lstTemp.Add("One");
-            lstTemp.Add("Two");
+            List<string> lstTemp = ["One", "Two"];
             VariableList variableList = new VariableList("TestList", lstTemp);
             string formulaExpectedResult = String.Join(",", lstTemp.ToArray());
 
@@ -206,7 +200,7 @@ namespace GingerCoreCommonTest.VariableTests
         public void ListVar_TestFormulaForEmptyList()
         {
             //Arrange
-            List<string> lstTemp = new List<string>();
+            List<string> lstTemp = [];
             VariableList variableList = new VariableList("TestList", lstTemp);
             string formulaExpectedResult = String.Join(",", lstTemp.ToArray());
 
@@ -236,9 +230,7 @@ namespace GingerCoreCommonTest.VariableTests
         public void ListVar_TestResetIndexValue()
         {
             //Arrange
-            List<string> lstTemp = new List<string>();
-            lstTemp.Add("Friend");
-            lstTemp.Add("Love");
+            List<string> lstTemp = ["Friend", "Love"];
             VariableList variableList = new VariableList("TestList", lstTemp);
 
             //Act
@@ -254,7 +246,7 @@ namespace GingerCoreCommonTest.VariableTests
         public void ListVar_TestResetIndexValueForEmptyList()
         {
             //Arrange
-            List<string> lstTemp = new List<string>();
+            List<string> lstTemp = [];
             VariableList variableList = new VariableList("TestList", lstTemp);
 
             //Act

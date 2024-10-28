@@ -63,11 +63,15 @@ namespace Ginger.Reports.Designer
 
         public static ReportPage GetSampleReportPage(string Xaml)
         {
-            BusinessFlow BF1 = new BusinessFlow() { Name = "BF1 - Create Customer", Description = "Create any type of customer: Business/Residential..." };
-            BF1.Active = true;
-            BF1.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-            BF1.Activities = new ObservableList<Activity>();
-            BF1.Elapsed = 2364;
+            BusinessFlow BF1 = new BusinessFlow
+            {
+                Name = "BF1 - Create Customer",
+                Description = "Create any type of customer: Business/Residential...",
+                Active = true,
+                RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed,
+                Activities = [],
+                Elapsed = 2364
+            };
 
             //Activity 1
             Activity a1 = new Activity() { ActivityName = "Launch Application & Login", Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed };
@@ -76,11 +80,13 @@ namespace Ginger.Reports.Designer
             ActGotoURL act1 = new ActGotoURL() { Description = "Goto URL www.abcd.com", Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, Elapsed = 3124 };
             a1.Acts.Add(act1);
 
-            ActReturnValue ARV1 = new ActReturnValue();
-            ARV1.Param = "RC";
-            ARV1.Expected = "123";
-            ARV1.Actual = "123";
-            ARV1.Status = ActReturnValue.eStatus.Passed;
+            ActReturnValue ARV1 = new ActReturnValue
+            {
+                Param = "RC",
+                Expected = "123",
+                Actual = "123",
+                Status = ActReturnValue.eStatus.Passed
+            };
             act1.ReturnValues.Add(ARV1);
 
             ActTextBox act2 = new ActTextBox() { Description = "Enter User ID", Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, Elapsed = 230 };
@@ -112,7 +118,7 @@ namespace Ginger.Reports.Designer
             a2.Acts.Add(acta24);
 
             //Add Variables
-            BF1.Variables = new ObservableList<VariableBase>();
+            BF1.Variables = [];
 
             VariableString v1 = new VariableString() { Name = "FirstName", Value = "David Smith" };
             BF1.Variables.Add(v1);
@@ -121,10 +127,15 @@ namespace Ginger.Reports.Designer
             BF1.Variables.Add(v2);
 
             //Add a few simple BFs            
-            BusinessFlow BF2 = new BusinessFlow() { Name = "BF2 - Customer Order Product", Description = "", Active = true };
-            BF2.Activities = new ObservableList<Activity>();
-            BF2.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-            BF2.Elapsed = 1249;
+            BusinessFlow BF2 = new BusinessFlow
+            {
+                Name = "BF2 - Customer Order Product",
+                Description = "",
+                Active = true,
+                Activities = [],
+                RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed,
+                Elapsed = 1249
+            };
 
             ProjEnvironment env = new ProjEnvironment() { Name = "Env1" };
             //TODO: add more env info
@@ -175,7 +186,7 @@ namespace Ginger.Reports.Designer
                 // First handle generic types
                 string TypeFullName = pi.PropertyType.FullName;
                 //TODO: add all generic types
-                if (TypeFullName == "System.Int32" || TypeFullName == "System.String" || TypeFullName == "System.Boolean" || TypeFullName == "System.TimeSpan")
+                if (TypeFullName is "System.Int32" or "System.String" or "System.Boolean" or "System.TimeSpan")
                 {
                     TreeViewItem tviN2 = new TreeViewItem() { Header = pi.Name, DataContext = pi.Name };
                     tviN2.MouseDoubleClick += ReportObjectsTreeView_MouseDoubleClick;
@@ -204,7 +215,7 @@ namespace Ginger.Reports.Designer
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
-                    if (CurrObj is object)
+                    if (CurrObj is not null)
                     {
                         Type oType = CurrObj.GetType();
                         if (oType.IsGenericType && (oType.GetGenericTypeDefinition() == typeof(List<>)))

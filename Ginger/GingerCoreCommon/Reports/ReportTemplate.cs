@@ -96,30 +96,38 @@ namespace Ginger.Reports
 
         public static List<ReportTemplate> GetInternalTemplates()
         {
-            List<ReportTemplate> list = new List<ReportTemplate>();
+            List<ReportTemplate> list = [];
 
-            ReportTemplate RT1 = new ReportTemplate();
-            RT1.Name = "Summary Report";
-            RT1.Description = "aaa";
-            RT1.Xaml = GetInternalReportXaml("SummaryReport.xaml");
+            ReportTemplate RT1 = new ReportTemplate
+            {
+                Name = "Summary Report",
+                Description = "aaa",
+                Xaml = GetInternalReportXaml("SummaryReport.xaml")
+            };
             list.Add(RT1);
 
-            ReportTemplate RT2 = new ReportTemplate();
-            RT2.Name = "Totals Report";
-            RT2.Description = "aaa";
-            RT2.Xaml = GetInternalReportXaml("TotalsReport.xaml");
+            ReportTemplate RT2 = new ReportTemplate
+            {
+                Name = "Totals Report",
+                Description = "aaa",
+                Xaml = GetInternalReportXaml("TotalsReport.xaml")
+            };
             list.Add(RT2);
 
-            ReportTemplate RT3 = new ReportTemplate();
-            RT3.Name = "Full Detailed Report";
-            RT3.Description = "aaa";
-            RT3.Xaml = GetInternalReportXaml("FullDetailedReport.xaml");
+            ReportTemplate RT3 = new ReportTemplate
+            {
+                Name = "Full Detailed Report",
+                Description = "aaa",
+                Xaml = GetInternalReportXaml("FullDetailedReport.xaml")
+            };
             list.Add(RT3);
 
-            ReportTemplate RT4 = new ReportTemplate();
-            RT4.Name = "Screenshots Report";
-            RT4.Description = @"Showing Activity Details and all of it's actions screenshots without action level details";
-            RT4.Xaml = GetInternalReportXaml("ScreenshotReport.xaml");
+            ReportTemplate RT4 = new ReportTemplate
+            {
+                Name = "Screenshots Report",
+                Description = @"Showing Activity Details and all of it's actions screenshots without action level details",
+                Xaml = GetInternalReportXaml("ScreenshotReport.xaml")
+            };
             list.Add(RT4);
 
             return list;

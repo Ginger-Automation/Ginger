@@ -61,7 +61,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eImageAction)GetOrCreateInputParam<eImageAction>(nameof(ImageAction), eImageAction.IsVisible);
+                return GetOrCreateInputParam<eImageAction>(nameof(ImageAction), eImageAction.IsVisible);
             }
             set
             {

@@ -137,8 +137,12 @@ namespace GingerTest
             string initialValue = "123";
             string updatedValue = "abc123";
 
-            mBF = new BusinessFlow() { Name = "TestActvVarSync", Active = true };
-            mBF.Activities = new ObservableList<Activity>();
+            mBF = new BusinessFlow
+            {
+                Name = "TestActvVarSync",
+                Active = true,
+                Activities = []
+            };
 
             VariableString V1 = new VariableString() { Name = variableName, InitialStringValue = initialValue };
 
@@ -181,8 +185,12 @@ namespace GingerTest
             string initialValue = "123";
             string updatedValue = "abc123";
 
-            mBF = new BusinessFlow() { Name = "TestActvVarSyncV2", Active = true };
-            mBF.Activities = new ObservableList<Activity>();
+            mBF = new BusinessFlow
+            {
+                Name = "TestActvVarSyncV2",
+                Active = true,
+                Activities = []
+            };
 
             VariableString V1 = new VariableString() { Name = variableName, InitialStringValue = initialValue };
 

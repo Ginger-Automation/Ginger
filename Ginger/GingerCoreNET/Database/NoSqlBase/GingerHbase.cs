@@ -26,7 +26,6 @@ using org.apache.hadoop.hbase.rest.protobuf.generated;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using static GingerCore.Actions.ActDBValidation;
@@ -40,22 +39,21 @@ using FirstKeyOnlyFilter = Microsoft.HBase.Client.Filters.FirstKeyOnlyFilter;
 using RegexStringComparator = Microsoft.HBase.Client.Filters.RegexStringComparator;
 using RequestOptions = Microsoft.HBase.Client.RequestOptions;
 using Scanner = org.apache.hadoop.hbase.rest.protobuf.generated.Scanner;
-using Microsoft.HBase.Client.Filters;
 using SingleColumnValueFilter = Microsoft.HBase.Client.Filters.SingleColumnValueFilter;
 namespace GingerCore.NoSqlBase
 {
 
     public class GingerHbase : NoSqlBase
-    {       
+    {
         ActDBValidation Act = null;
         string connectionUrl;
         string userName;
-        string password;               
-        
+        string password;
+
         private static readonly Encoding _encoding = Encoding.UTF8;
-       
-       
-        public GingerHbase(string url,string Uname,string passwd)
+
+
+        public GingerHbase(string url, string Uname, string passwd)
         {
             this.connectionUrl = url;
             this.userName = Uname;
@@ -65,7 +63,7 @@ namespace GingerCore.NoSqlBase
         {
             Action = DBValidationtype;
             this.Db = mDB;
-            Act = mact;            
+            Act = mact;
         }
 
         public override bool MakeSureConnectionIsOpen()
@@ -74,7 +72,7 @@ namespace GingerCore.NoSqlBase
         }
         HBaseClient client;
         RequestOptions requestOption;
-        public override  bool Connect()
+        public override bool Connect()
         {
 
             this.connectionUrl = Db.DatabaseOperations.TNSCalculated;
@@ -82,10 +80,10 @@ namespace GingerCore.NoSqlBase
             this.password = Db.DatabaseOperations.PassCalculated;
             var ConnectionUri = new Uri(this.connectionUrl);
 
-            ClusterCredentials ClCredential = new(ConnectionUri, this.userName,this.password);
-           
+            ClusterCredentials ClCredential = new(ConnectionUri, this.userName, this.password);
 
-            requestOption =  new RequestOptions
+
+            requestOption = new RequestOptions
             {
                 RetryPolicy = Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.RetryPolicy.NoRetry,
                 KeepAlive = true,
@@ -99,10 +97,10 @@ namespace GingerCore.NoSqlBase
             };
 
             client = new HBaseClient(ClCredential, requestOption);
-                
+
             try
             {
-                              
+
                 TableList tables = new TableList();
                 Task getTablesTask = Task.Run(() =>
                 {
@@ -112,9 +110,9 @@ namespace GingerCore.NoSqlBase
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.WARN, "Unable to connect to Hbase and get table list ", ex);                        
-                    }                                 
-                    
+                        Reporter.ToLog(eLogLevel.WARN, "Unable to connect to Hbase and get table list ", ex);
+                    }
+
                 });
 
                 getTablesTask.Wait();
@@ -132,10 +130,10 @@ namespace GingerCore.NoSqlBase
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Unable to connect to Hbase", ex);
                 return false;
-            }         
-        }       
+            }
+        }
 
-        public string[] getWhereParts(string refstring,string familyname) 
+        public string[] getWhereParts(string refstring, string familyname)
         {
             string[] resarray = new string[4];
             string[] words1 = new string[2];
@@ -145,7 +143,7 @@ namespace GingerCore.NoSqlBase
                 words1 = refstring.Split(" Like ");
                 resarray[0] = "RegexComp";
             }
-          
+
             if (refstring.Contains("!=") || refstring.Contains("<>"))
             {
                 words1 = refstring.Split("!=");
@@ -171,27 +169,27 @@ namespace GingerCore.NoSqlBase
             {
                 words1 = refstring.Split('<');
                 resarray[0] = "LessThan";
-            } 
+            }
 
             else if (refstring.Contains('>'))
             {
                 words1 = refstring.Split('>');
                 resarray[0] = "GreaterThan";
 
-            }           
+            }
 
             if (words1[0].Contains(':'))
             {
                 string[] temp = words1[0].Split(':');
-                resarray[1] = temp[0].Trim(); 
-                resarray[2] = temp[1].Trim(); 
-                resarray[3] = words1[1].Trim(); 
+                resarray[1] = temp[0].Trim();
+                resarray[2] = temp[1].Trim();
+                resarray[3] = words1[1].Trim();
             }
             else
             {
-                resarray[1] = familyname;    
-                resarray[2] = words1[0].Trim();  
-                resarray[3] = words1[1].Trim(); 
+                resarray[1] = familyname;
+                resarray[2] = words1[0].Trim();
+                resarray[3] = words1[1].Trim();
 
             }
             return resarray;
@@ -206,34 +204,34 @@ namespace GingerCore.NoSqlBase
             }
             else if (string.Equals("RegexComp", op))
             {
-                RegexStringComparator comp = new RegexStringComparator(fieldValue);   
+                RegexStringComparator comp = new RegexStringComparator(fieldValue);
                 return new SingleColumnValueFilter(
                   Encoding.UTF8.GetBytes(family),
                   Encoding.UTF8.GetBytes(fieldName),
                   CompareFilter.CompareOp.Equal,
                   comp);
-            }          
+            }
             else
             {
-                
+
                 return null;
             }
-            
+
         }
         public Scanner getScanner(string wherepart, string familyname)
         {
-            
+
             Scanner scanner = new Scanner();
 
             string[] Querydata;
             string[] whereSubParts;
             Filter filter = null;
 
-            if (!(wherepart.Contains(" AND ") || wherepart.Contains(" OR ") || wherepart.Contains(" IN ")))  
+            if (!(wherepart.Contains(" AND ") || wherepart.Contains(" OR ") || wherepart.Contains(" IN ")))
             {
                 Querydata = getWhereParts(wherepart, familyname);
 
-                filter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);               
+                filter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);
                 scanner.filter = filter?.ToEncodedString();
 
             }
@@ -241,7 +239,7 @@ namespace GingerCore.NoSqlBase
             {
                 whereSubParts = wherepart.Split(" AND ");
                 Querydata = getWhereParts(whereSubParts[0], familyname);
-                Filter firstfilter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);         
+                Filter firstfilter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);
                 for (int i = 0; i < whereSubParts.Length; i++)
                 {
 
@@ -254,7 +252,7 @@ namespace GingerCore.NoSqlBase
             }
             else if (wherepart.Contains(" IN "))
             {
-                whereSubParts = wherepart.Split(" IN "); 
+                whereSubParts = wherepart.Split(" IN ");
                 string fieldName;
 
                 if (whereSubParts[0].Contains(':'))
@@ -269,10 +267,10 @@ namespace GingerCore.NoSqlBase
                 Filter firstfilter;
                 if (whereSubParts[1].Contains(','))
                 {
-                    var values = whereSubParts[1].Substring(1, whereSubParts[1].Length - 2).Split(',');
-                    firstfilter = getFilter("Equal", familyname, fieldName, values[0]);                    
+                    var values = whereSubParts[1][1..^1].Split(',');
+                    firstfilter = getFilter("Equal", familyname, fieldName, values[0]);
                     for (int i = 1; i < values.Length; i++)
-                    {                       
+                    {
                         var nextfilter = getFilter("Equal", familyname, fieldName, values[i]);
                         filter = new FilterList(FilterList.Operator.MustPassOne, firstfilter, nextfilter);
                         firstfilter = nextfilter;
@@ -281,7 +279,7 @@ namespace GingerCore.NoSqlBase
                 }
                 else
                 {
-                    var value = whereSubParts[1].Substring(1, whereSubParts[1].Length - 2);
+                    var value = whereSubParts[1][1..^1];
                     Filter testfilter = getFilter("Equal", familyname, fieldName, value);
                     scanner.filter = testfilter.ToEncodedString();
                 }
@@ -310,220 +308,222 @@ namespace GingerCore.NoSqlBase
         }
         public override async void PerformDBAction()
         {
-                                          
-                ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-                VE.Value = Act.QueryValue;
-                string SQLCalculated = VE.ValueCalculated;
-                var ConnectionUri = new Uri(Db.DatabaseOperations.TNSCalculated);
-                ClusterCredentials ClCredential = new(ConnectionUri, Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated);                
 
-                requestOption = new RequestOptions
-                {
-                    RetryPolicy = Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.RetryPolicy.NoRetry,
-                    KeepAlive = true,
-                    TimeoutMillis = 30000,
-                    ReceiveBufferSize = 1048576,
-                    SerializationBufferSize = 1048576,
-                    UseNagle = false,
-                    AlternativeEndpoint = "",
-                    Port = ConnectionUri.Port,
-                    AlternativeHost = null
-                };
-                try
-                {
-                    HBaseClient actionClient = new HBaseClient(ClCredential, requestOption);
-                    Scanner scanner;                              
-                    ScannerInformation scanInfo = null;
-                    string familyName;
-                    string table;
-                    string wherepart;
-                    string[] Querydata = new string[4];
-                    Filter filter = null ;
-                    switch (Action)
-                    {
-                        case eDBValidationType.RecordCount:
+            ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList)
+            {
+                Value = Act.QueryValue
+            };
+            string SQLCalculated = VE.ValueCalculated;
+            var ConnectionUri = new Uri(Db.DatabaseOperations.TNSCalculated);
+            ClusterCredentials ClCredential = new(ConnectionUri, Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated);
 
-                            int nuRows = 0;
-                            scanner = new Scanner();
-                            FirstKeyOnlyFilter keyOnlyFilter = new FirstKeyOnlyFilter();
-                            scanner.filter = keyOnlyFilter.ToEncodedString();                                    
-                            scanInfo = actionClient.CreateScannerAsync(Act.Details.Info, scanner, requestOption).Result;
-                            nuRows = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result.rows.Count;                      
-                            Act.AddOrUpdateReturnParamActual("Record Count", nuRows.ToString());
+            requestOption = new RequestOptions
+            {
+                RetryPolicy = Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.RetryPolicy.NoRetry,
+                KeepAlive = true,
+                TimeoutMillis = 30000,
+                ReceiveBufferSize = 1048576,
+                SerializationBufferSize = 1048576,
+                UseNagle = false,
+                AlternativeEndpoint = "",
+                Port = ConnectionUri.Port,
+                AlternativeHost = null
+            };
+            try
+            {
+                HBaseClient actionClient = new HBaseClient(ClCredential, requestOption);
+                Scanner scanner;
+                ScannerInformation scanInfo = null;
+                string familyName;
+                string table;
+                string wherepart;
+                string[] Querydata = new string[4];
+                Filter filter = null;
+                switch (Action)
+                {
+                    case eDBValidationType.RecordCount:
+
+                        int nuRows = 0;
+                        scanner = new Scanner();
+                        FirstKeyOnlyFilter keyOnlyFilter = new FirstKeyOnlyFilter();
+                        scanner.filter = keyOnlyFilter.ToEncodedString();
+                        scanInfo = actionClient.CreateScannerAsync(Act.Details.Info, scanner, requestOption).Result;
+                        nuRows = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result.rows.Count;
+                        Act.AddOrUpdateReturnParamActual("Record Count", nuRows.ToString());
+                        break;
+
+                    case eDBValidationType.SimpleSQLOneValue:
+
+                        table = Act.Table;
+                        if (string.IsNullOrEmpty(table))
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "The Table value can not be empty");
+                            break;
+                        }
+                        string colpart = Act.Column;
+                        if (string.IsNullOrEmpty(colpart))
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "The ColumnPart can not be empty");
                             break;
 
-                        case eDBValidationType.SimpleSQLOneValue:
+                        }
+                        wherepart = Act.Where;
+                        if (string.IsNullOrEmpty(wherepart))
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "The WherePart can not be empty");
+                            break;
+                        }
 
-                            table = Act.Table;
-                            if (string.IsNullOrEmpty(table))
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "The Table value can not be empty");
-                                break;
-                            }
-                            string colpart = Act.Column;
-                            if (string.IsNullOrEmpty(colpart))
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "The ColumnPart can not be empty");
-                                break;
+                        familyName = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList()[0].name;
 
-                            }
-                            wherepart = Act.Where;
-                            if (string.IsNullOrEmpty(wherepart))
+                        scanner = getScanner(wherepart, familyName);
+                        scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
+                        int path = 1;
+
+                        CellSet currentColumnSet;
+                        bool columnFound = false;
+                        while ((currentColumnSet = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                        {
+                            foreach (CellSet.Row row in currentColumnSet.rows)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "The WherePart can not be empty");
+                                string rowKey = _encoding.GetString(row.key);
+
+                                List<Cell> cells = row.values;
+
+                                foreach (Cell cell in cells)
+                                {
+                                    string columnName = ExtractColumnName(cell.column);
+                                    if (!string.IsNullOrEmpty(Querydata[1]))
+                                    {
+                                        columnName = Querydata[1] + ":" + columnName;
+                                    }
+                                    string columnValue = Encoding.ASCII.GetString(cell.data);
+
+                                    if (string.Equals(columnName, Act.Column))
+                                    {
+                                        Act.AddOrUpdateReturnParamActualWithPath(columnName, Encoding.ASCII.GetString(cell.data), path.ToString());
+                                        columnFound = true;
+                                        break;
+                                    }
+                                }
+                                if (columnFound)
+                                {
+                                    break;
+                                }
+                            }
+                            if (columnFound)
+                            {
                                 break;
                             }
-                            
+                        }
+
+                        break;
+
+                    case eDBValidationType.FreeSQL:
+
+                        if (string.IsNullOrEmpty(SQLCalculated))
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "The Query value can not be empty");
+                            break;
+                        }
+
+                        if (SQLCalculated.Contains("where"))
+                        {
+                            table = SQLCalculated.Substring(SQLCalculated.IndexOf("from") + 4, (SQLCalculated.IndexOf("where") - SQLCalculated.IndexOf("from") - 4)).Trim();
+                            wherepart = SQLCalculated[(SQLCalculated.IndexOf("where") + 5)..];
                             familyName = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList()[0].name;
-                            
-                            scanner = getScanner(wherepart, familyName);                           
-                            scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
-                            int path = 1;
+                            scanner = getScanner(wherepart, familyName);
 
-                            CellSet currentColumnSet;
-                            bool columnFound = false;
-                            while ((currentColumnSet = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                        }
+                        else
+                        {
+
+                            scanner = new Scanner();
+                            table = SQLCalculated[(SQLCalculated.IndexOf("from") + 4)..].Trim();
+                        }
+
+                        scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
+                        int path1 = 1;
+
+                        if (SQLCalculated.Contains('*'))
+                        {
+
+                            CellSet next;
+
+                            while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                             {
-                                foreach (CellSet.Row row in currentColumnSet.rows)
+                                foreach (CellSet.Row row in next.rows)
                                 {
                                     string rowKey = _encoding.GetString(row.key);
 
                                     List<Cell> cells = row.values;
 
-                                    foreach (Cell cell in cells)
+                                    foreach (Cell c in cells)
                                     {
-                                        string columnName = ExtractColumnName(cell.column);
-                                        if (!string.IsNullOrEmpty(Querydata[1]))
-                                        {
-                                            columnName = Querydata[1] + ":" + columnName;
-                                        }
-                                        string columnValue = Encoding.ASCII.GetString(cell.data);
 
-                                        if (string.Equals(columnName, Act.Column))
-                                        {
-                                            Act.AddOrUpdateReturnParamActualWithPath(columnName, Encoding.ASCII.GetString(cell.data), path.ToString());
-                                            columnFound = true;
-                                            break;
-                                        }
+                                        Act.AddOrUpdateReturnParamActualWithPath(ExtractColumnName(c.column), Encoding.ASCII.GetString(c.data), path1.ToString());
+
                                     }
-                                    if (columnFound)
-                                    {
-                                        break;
-                                    }
-                                }
-                                if (columnFound )
-                                {
-                                    break;
-                                }
-                            }
-                        
-                            break;
-
-                        case eDBValidationType.FreeSQL:
-
-                            if (string.IsNullOrEmpty(SQLCalculated))
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "The Query value can not be empty");
-                                break;
-                            }
-                           
-                            if (SQLCalculated.Contains("where"))
-                            {
-                                table = SQLCalculated.Substring(SQLCalculated.IndexOf("from") + 4, (SQLCalculated.IndexOf("where") - SQLCalculated.IndexOf("from") - 4)).Trim();
-                                wherepart = SQLCalculated.Substring(SQLCalculated.IndexOf("where") + 5);
-                                familyName = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList()[0].name;
-                                scanner = getScanner(wherepart, familyName);
-           
-                            }
-                            else
-                            {
-                               
-                                scanner = new Scanner();
-                                table = SQLCalculated.Substring(SQLCalculated.IndexOf("from") + 4).Trim();
-                            }
-                       
-                            scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
-                            int path1 = 1;
-
-                            if (SQLCalculated.Contains('*'))
-                            {
-
-                                CellSet next;
-
-                                while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
-                                {
-                                    foreach (CellSet.Row row in next.rows)
-                                    {
-                                        string rowKey = _encoding.GetString(row.key);
-
-                                        List<Cell> cells = row.values;
-
-                                        foreach (Cell c in cells)
-                                        {
-
-                                            Act.AddOrUpdateReturnParamActualWithPath(ExtractColumnName(c.column), Encoding.ASCII.GetString(c.data), path1.ToString());
-
-                                        }
-                                        path1++;
-                                    }
-
+                                    path1++;
                                 }
 
                             }
-                            else
+
+                        }
+                        else
+                        {
+
+                            int i = SQLCalculated.IndexOf("select");
+                            int j = SQLCalculated.IndexOf("from");
+
+                            string[] selectedcols = SQLCalculated.Trim().Substring((SQLCalculated.IndexOf("select") + 6), SQLCalculated.IndexOf("from") - SQLCalculated.IndexOf("select") - 6).Split(",");
+                            CellSet next;
+                            List<string> list = [];
+                            foreach (string col in selectedcols)
                             {
+                                list.Add(col.Trim());
+                            }
 
-                                int i = SQLCalculated.IndexOf("select");
-                                int j = SQLCalculated.IndexOf("from");
-
-                                string[] selectedcols = SQLCalculated.Trim().Substring((SQLCalculated.IndexOf("select") + 6), SQLCalculated.IndexOf("from") - SQLCalculated.IndexOf("select") - 6).Split(",");
-                                CellSet next;
-                                List<string> list = new();
-                                foreach (string col in selectedcols)
+                            while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                            {
+                                foreach (CellSet.Row row in next.rows)
                                 {
-                                    list.Add(col.Trim());
-                                }                                    
+                                    string rowKey = _encoding.GetString(row.key);
 
-                                while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
-                                {
-                                    foreach (CellSet.Row row in next.rows)
+                                    List<Cell> cells = row.values;
+
+                                    foreach (Cell c in cells)
                                     {
-                                        string rowKey = _encoding.GetString(row.key);
-
-                                        List<Cell> cells = row.values;
-                                        
-                                        foreach (Cell c in cells)
+                                        string colname = ExtractColumnName(c.column);
+                                        if (list.Contains(colname))
                                         {
-                                            string colname = ExtractColumnName(c.column);
-                                            if (list.Contains(colname))
-                                            {
-                                                Act.AddOrUpdateReturnParamActualWithPath(colname, Encoding.ASCII.GetString(c.data), path1.ToString());
-
-                                            }
+                                            Act.AddOrUpdateReturnParamActualWithPath(colname, Encoding.ASCII.GetString(c.data), path1.ToString());
 
                                         }
-                                        path1++;
+
                                     }
+                                    path1++;
                                 }
+                            }
 
-                            }                      
+                        }
 
-                            break;
-                        default:
+                        break;
+                    default:
                         {
                             break;
                         }
-                    }     
-                }  
-                catch (Exception ex)
-                {
-                    Act.Error = ex.Message;
-                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                 }
-                finally
-                {
-                    client.DisposeIfNotNull();
-                }                                       
+            }
+            catch (Exception ex)
+            {
+                Act.Error = ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+            }
+            finally
+            {
+                client.DisposeIfNotNull();
+            }
 
         }
 
@@ -546,10 +546,10 @@ namespace GingerCore.NoSqlBase
 
         public override List<string> GetTableList(string Keyspace)
         {
-          
+
             ClusterCredentials ClCredential = new(new System.Uri(this.connectionUrl), this.userName, this.password);
             HBaseClient client1 = new HBaseClient(ClCredential);
-            HBTableList = new List<string>() ;
+            HBTableList = [];
             TableList tables = null!;
             Task getTablesTask = Task.Run(() =>
             {
@@ -564,7 +564,7 @@ namespace GingerCore.NoSqlBase
 
             });
 
-            getTablesTask.Wait();            
+            getTablesTask.Wait();
             int i = tables.name.Count;
             for (int j = 0; j < i; j++)
             {
@@ -573,16 +573,16 @@ namespace GingerCore.NoSqlBase
             return HBTableList;
 
         }
-        
-        public List<string> ColumnList;       
+
+        public List<string> ColumnList;
 
         public override async Task<List<string>> GetColumnList(string Tablename)
         {
-            ColumnList = new List<string>();
+            ColumnList = [];
             ClusterCredentials ClCredential = new(new System.Uri(Db.DatabaseOperations.TNSCalculated), Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated);
             HBaseClient client1 = new HBaseClient(ClCredential);
             var result11 = client1.GetTableSchemaAsync(Tablename, null).Result.columns.ToList();
-            
+
             if (result11.Count > 1)
             {
                 for (int i = 0; i < result11.Count; i++)
@@ -596,7 +596,7 @@ namespace GingerCore.NoSqlBase
                     ScannerInformation scanInfo = null;
                     try
                     {
-                        scanInfo = client1.CreateScannerAsync(Tablename, scanner, scanOptions).Result;                       
+                        scanInfo = client1.CreateScannerAsync(Tablename, scanner, scanOptions).Result;
                         CellSet next;
                         while ((next = client1.ScannerGetNextAsync(scanInfo, scanOptions).Result) != null)
                         {
@@ -608,7 +608,7 @@ namespace GingerCore.NoSqlBase
                                     string columnName = ExtractColumnName(c.column);
                                     if (!ColumnList.Contains(columnName))
                                     {
-                                        ColumnList.Add(tmp+":"+columnName);
+                                        ColumnList.Add(tmp + ":" + columnName);
                                     }
                                 }
                             }
@@ -629,10 +629,10 @@ namespace GingerCore.NoSqlBase
                 scanner.filter = filter.ToEncodedString();
                 RequestOptions scanOptions = RequestOptions.GetDefaultOptions();
                 scanOptions.AlternativeEndpoint = "";
-                ScannerInformation scanInfo ;
+                ScannerInformation scanInfo;
                 try
                 {
-                    scanInfo = client1.CreateScannerAsync(Tablename, scanner, scanOptions).Result;                    
+                    scanInfo = client1.CreateScannerAsync(Tablename, scanner, scanOptions).Result;
                     CellSet next;
                     while ((next = client1.ScannerGetNextAsync(scanInfo, scanOptions).Result) != null)
                     {
@@ -659,15 +659,15 @@ namespace GingerCore.NoSqlBase
                 }
             }
             return ColumnList;
-        }                    
+        }
 
         private string ExtractColumnName(Byte[] cellColumn)
         {
             string qualifiedColumnName = _encoding.GetString(cellColumn);
             string[] parts = qualifiedColumnName.Split(new[] { ':' }, 2);
             return parts[1];
-        }   
-        
-       
+        }
+
+
     }
 }

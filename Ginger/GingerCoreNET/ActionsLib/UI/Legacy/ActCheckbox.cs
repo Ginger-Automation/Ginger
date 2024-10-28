@@ -81,7 +81,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eCheckboxAction)GetOrCreateInputParam<eCheckboxAction>(nameof(CheckboxAction), eCheckboxAction.Check);
+                return GetOrCreateInputParam<eCheckboxAction>(nameof(CheckboxAction), eCheckboxAction.Check);
             }
             set
             {
@@ -125,7 +125,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform is ePlatformType.Web or ePlatformType.NA or ePlatformType.Mobile)
             {
                 return true;
             }
@@ -145,19 +145,12 @@ namespace GingerCore.Actions
             if (currentType == typeof(ActUIElement))
             {
                 // check special cases, where name should be changed. Than at default case - all names that have no change
-                switch (this.CheckboxAction)
+                newAct.ElementAction = this.CheckboxAction switch
                 {
-                    case eCheckboxAction.Check:
-                    case eCheckboxAction.Uncheck:
-                        newAct.ElementAction = ActUIElement.eElementAction.Click;
-                        break;
-                    case eCheckboxAction.IsDisabled:
-                        newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
-                        break;
-                    default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.CheckboxAction.ToString());
-                        break;
-                }
+                    eCheckboxAction.Check or eCheckboxAction.Uncheck => ActUIElement.eElementAction.Click,
+                    eCheckboxAction.IsDisabled => ActUIElement.eElementAction.IsVisible,
+                    _ => (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.CheckboxAction.ToString()),
+                };
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);

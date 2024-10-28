@@ -90,9 +90,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
         public UIElementTableConfigPage(ElementInfo ElementInfo, ObservableList<Act> Actions, Context context)
         {
             eBaseWindow = BaseWindow.WindowExplorer;
-            mAct = new ActUIElement();
-            mAct.Context = context;
-            mAct.Description = "UI Element Table";
+            mAct = new ActUIElement
+            {
+                Context = context,
+                Description = "UI Element Table"
+            };
             string targetApp = context?.BusinessFlow.CurrentActivity.TargetApplication;
             mPlatform = PlatformInfoBase.GetPlatformImpl((from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
 
@@ -159,8 +161,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             else
             {
-                mColNames = new List<string>();
-                mColNames.Add("0");
+                mColNames = ["0"];
                 mRowCount = 0;
             }
         }
@@ -258,7 +259,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 SubElementTypeComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementType),
                 mPlatform.GetSubElementType(mAct.ElementType).ToList(), isVENeeded: false);
 
-                operationTypeList = new List<ComboItem>();
+                operationTypeList = [];
                 ActUIElement.eSubElementType elementType;
                 if (Enum.TryParse(mAct.GetInputParamCalculatedValue(ActUIElement.Fields.SubElementType), out elementType))
                 {
@@ -573,11 +574,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         void ShowCellActions()
         {
-            mOriginalActions = new ObservableList<Act>();
-            foreach (Act a in mActions)
-            {
-                mOriginalActions.Add(a);
-            }
+            mOriginalActions = [.. mActions];
         }
 
 
