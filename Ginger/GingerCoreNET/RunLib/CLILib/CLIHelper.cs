@@ -351,7 +351,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportRunset != null && accountReportRunset.Count > 0)
                         {
-                            if (accountReportRunset.Any(x => !x.Status.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
+                            if (accountReportRunset.Any(x => !x.Status.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
                             {
                                 Reporter.ToLog(eLogLevel.INFO, string.Format("The Runset is already Passed or In_progress for provided reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
                                 Result = false;
@@ -368,9 +368,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         List<AccountReportRunner> accountReportRunnerList = accountReportApiHandler.GetRunnerExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportRunnerList != null)
                         {
-                            if (accountReportRunnerList.Any(x => x.RunStatus.Equals(eRunStatus.Failed)))
+                            if (accountReportRunnerList.Any(x => x.RunStatus.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed)))
                             {
-                                var FailedRunnerGuidList = accountReportRunnerList.Where(x => x.RunStatus.Equals(eRunStatus.Failed)).Select(x => x.EntityId);
+                                var FailedRunnerGuidList = accountReportRunnerList.Where(x => x.RunStatus.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed)).Select(x => x.EntityId);
                                 foreach (GingerRunner runner in mRunsetExecutor.RunSetConfig.GingerRunners)
                                 {
                                     if (!FailedRunnerGuidList.Contains(runner.Guid))
@@ -396,10 +396,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         List<AccountReportBusinessFlow> accountReportBusinessFlows = accountReportApiHandler.GetBusinessflowExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportBusinessFlows != null && accountReportBusinessFlows.Count > 0)
                         {
-                            if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(eRunStatus.Failed)))
+                            if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed)))
                             {
 
-                                var FailedBFGuidList = accountReportBusinessFlows.Where(x => x.RunStatus.Equals(eRunStatus.Failed)).Select(x => x.InstanceGUID);
+                                var FailedBFGuidList = accountReportBusinessFlows.Where(x => x.RunStatus.Equals(AccountReport.Contracts.Enum.eExecutionStatus.Failed)).Select(x => x.InstanceGUID);
                                 foreach (GingerRunner runner in mRunsetExecutor.RunSetConfig.GingerRunners)
                                 {
                                     foreach (BusinessFlowRun business in runner.BusinessFlowsRunList)

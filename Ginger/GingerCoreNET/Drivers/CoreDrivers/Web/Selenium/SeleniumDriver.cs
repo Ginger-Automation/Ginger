@@ -803,11 +803,18 @@ namespace GingerCore.Drivers
                             SetUnhandledPromptBehavior(EDOpts);
                             if (IsUserProfileFolderPathValid())
                             {
-                                EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
+                                EDOpts.AddArgument($"--user-data-dir={UserProfileFolderPath}");
                             }
                             else
                             {
                                 SetProxy(EDOpts);
+                            }
+                            if (SeleniumUserArgs != null)
+                            {
+                                foreach (string arg in SeleniumUserArgs)
+                                {
+                                    EDOpts.AddArgument(arg);
+                                }
                             }
                             SetCurrentPageLoadStrategy(EDOpts);
                             driverService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
