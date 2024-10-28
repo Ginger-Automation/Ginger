@@ -187,25 +187,6 @@ namespace Ginger.Run
             else if (ItemObject is Activity activity)
             {
                 IEnumerable<GingerCore.Actions.Act> acts = null;
-                //Activity activity = null;
-                //if (ItemObject.GetType() == typeof(Activity))
-                //{
-                    acts = ((Activity)ItemObject).Acts.OfType<GingerCore.Actions.Act>();
-                    activity = (Activity)ItemObject;
-                //}
-
-                //if (ItemObject.GetType() == typeof(CleanUpActivity))
-                //{
-                //    acts = ((CleanUpActivity)ItemObject).Acts.OfType<GingerCore.Actions.Act>();
-                //    activity = (CleanUpActivity)ItemObject;
-                //}
-
-                //if (ItemObject.GetType() == typeof(ErrorHandler))
-                //{
-                //    acts = ((ErrorHandler)ItemObject).Acts.OfType<GingerCore.Actions.Act>();
-                //    activity = (ErrorHandler)ItemObject;
-                //}
-
                 if (acts != null)
                 {
 
