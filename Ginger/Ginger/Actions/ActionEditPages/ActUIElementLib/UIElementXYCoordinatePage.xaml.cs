@@ -41,9 +41,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (mAct.ElementData != null)
             {
                 string[] spliter = new string[] { "," };
-                string[] cordinations = Convert.ToString(mAct.ElementData).Split(spliter, StringSplitOptions.RemoveEmptyEntries);
-                mAct.AddOrUpdateInputParamValue("XCoordinate", cordinations[0]);
-                mAct.AddOrUpdateInputParamValue("YCoordinate", cordinations[1]);
+                string[] coordinates = Convert.ToString(mAct.ElementData).Split(spliter, StringSplitOptions.RemoveEmptyEntries);
+                mAct.AddOrUpdateInputParamValue("XCoordinate", coordinates[0]);
+                mAct.AddOrUpdateInputParamValue("YCoordinate", coordinates[1]);
             }
 
             if (mAct.ElementAction == ActUIElement.eElementAction.SendKeysXY)
