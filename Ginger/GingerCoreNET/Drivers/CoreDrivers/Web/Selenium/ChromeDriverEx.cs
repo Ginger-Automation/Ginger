@@ -26,8 +26,18 @@ namespace GingerCore.Drivers
     {
         public static Screenshot GetFullPageScreenshot(this ChromiumDriver driver)
         {
-            // Capture the original scroll position
-            Dictionary<string, object> originalScrollPosition = (Dictionary<string, object>)driver.ExecuteScript("return { x: window.pageXOffset, y: window.pageYOffset };");
+            // Capture the original scroll position           
+            Dictionary<string, object> originalScrollPosition;
+            try
+            {
+                originalScrollPosition = (Dictionary<string, object>)driver.ExecuteScript("return { x: window.pageXOffset, y: window.pageYOffset };")
+                                    ?? new Dictionary<string, object> { ["x"] = 0, ["y"] = 0 };
+            }
+            catch
+            {
+                // Fallback to default values if script execution fails
+                originalScrollPosition = new Dictionary<string, object> { ["x"] = 0, ["y"] = 0 };
+            }
 
             // Capture page dimensions and device metrics
             Dictionary<string, Object> metrics = new Dictionary<string, Object>
@@ -40,15 +50,13 @@ namespace GingerCore.Drivers
             object devicePixelRatio = driver.ExecuteScript("return window.devicePixelRatio");
             if (devicePixelRatio != null)
             {
-                double doubleValue = 0;
-                if (double.TryParse(devicePixelRatio.ToString(), out doubleValue))
+                if (double.TryParse(devicePixelRatio.ToString(), out var doubleValue))
                 {
                     metrics["deviceScaleFactor"] = doubleValue;
                 }
                 else
                 {
-                    long longValue = 0;
-                    if (long.TryParse(devicePixelRatio.ToString(), out longValue))
+                    if (long.TryParse(devicePixelRatio.ToString(), out var longValue))
                     {
                         metrics["deviceScaleFactor"] = longValue;
                     }
@@ -56,14 +64,25 @@ namespace GingerCore.Drivers
             }
 
             // Execute the emulation Chrome command to change browser to a custom device that is the size of the entire page
-            driver.ExecuteCdpCommand("Emulation.setDeviceMetricsOverride", metrics);
-
-            // Take screenshot as everything is now visible
-            Screenshot screenshot = driver.GetScreenshot();
-
-            // Reset the device metrics and scroll position to original state 
-            driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", new Dictionary<string, object>());
-            driver.ExecuteScript($"window.scrollTo({{ top: {originalScrollPosition["y"]}, left: {originalScrollPosition["x"]}, behavior: 'instant' }});");
+            Screenshot screenshot = null;
+            try
+            {
+                driver.ExecuteCdpCommand("Emulation.setDeviceMetricsOverride", metrics);
+                screenshot = driver.GetScreenshot();
+            }
+            finally
+            {
+                try
+                {
+                    // Always attempt to restore original state
+                    driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", []);
+                    driver.ExecuteScript($"window.scrollTo({{ top: {originalScrollPosition["y"]}, left: {originalScrollPosition["x"]}, behavior: 'instant' }});");
+                }
+                catch (WebDriverException)
+                {
+                    // Log warning if restoration fails
+                }
+            }
 
             return screenshot;
         }
