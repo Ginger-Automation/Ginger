@@ -4411,21 +4411,6 @@ namespace Ginger.Run
 
                 while (ExecutingActivity != null)
                 {
-                    if (ExecutingActivity.GetType() == typeof(ErrorHandler) || ExecutingActivity.GetType() == typeof(CleanUpActivity))
-                    {
-                        if (!CurrentBusinessFlow.Activities.IsLastItem())
-                        {
-                            GotoNextActivity();
-                            ExecutingActivity = (Activity)CurrentBusinessFlow.Activities.CurrentItem;
-                        }
-                        else
-                        {
-                            ExecutingActivity = null;
-                        }
-                        continue;
-                    }
-                    else
-                    {
                         ExecutingActivity.Status = eRunStatus.Running;
                         GiveUserFeedback();
                         SetMappedValuesToActivityVariables(ExecutingActivity, previouslyExecutedActivities.ToArray());
@@ -4497,7 +4482,7 @@ namespace Ginger.Run
                             }
                         }
 
-                    }
+                    
                 }
             }
             catch (Exception ex)
