@@ -34,9 +34,26 @@ namespace GingerCore.Drivers
             {
                 ["width"] = driver.ExecuteScript("return Math.max(window.innerWidth, document.body.scrollWidth, document.documentElement.scrollWidth)"),
                 ["height"] = driver.ExecuteScript("return Math.max(window.innerHeight, document.body.scrollHeight, document.documentElement.scrollHeight)"),
-                ["deviceScaleFactor"] = Convert.ToDouble(driver.ExecuteScript("return window.devicePixelRatio") ?? 1),
                 ["mobile"] = driver.ExecuteScript("return typeof window.orientation !== 'undefined'")
             };
+
+            object devicePixelRatio = driver.ExecuteScript("return window.devicePixelRatio");
+            if (devicePixelRatio != null)
+            {
+                double doubleValue = 0;
+                if (double.TryParse(devicePixelRatio.ToString(), out doubleValue))
+                {
+                    metrics["deviceScaleFactor"] = doubleValue;
+                }
+                else
+                {
+                    long longValue = 0;
+                    if (long.TryParse(devicePixelRatio.ToString(), out longValue))
+                    {
+                        metrics["deviceScaleFactor"] = longValue;
+                    }
+                }
+            }
 
             // Execute the emulation Chrome command to change browser to a custom device that is the size of the entire page
             driver.ExecuteCdpCommand("Emulation.setDeviceMetricsOverride", metrics);
