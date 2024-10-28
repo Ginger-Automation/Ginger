@@ -368,7 +368,7 @@ namespace Amdocs.Ginger.CoreNET.External.Katalon.Conversion
                 locators.Add(new()
                 {
                     Active = true,
-                    LocateBy = eLocateBy.ByID,
+                    LocateBy = eLocateBy.ByName,
                     LocateValue = nameProperty.Value,
                     IsAutoLearned = true, //static
                 });

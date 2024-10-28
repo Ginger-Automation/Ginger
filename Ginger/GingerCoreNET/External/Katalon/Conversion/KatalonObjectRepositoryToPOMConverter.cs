@@ -167,7 +167,7 @@ namespace Amdocs.Ginger.CoreNET.External.Katalon.Conversion
         }
 
         /// <summary>
-        /// Get all the Rust files (.rs) in <paramref name="directory"/>.
+        /// Get all the Rust Source files (.rs) in <paramref name="directory"/>.
         /// </summary>
         /// <returns>Collection of paths of all the Rust files (.rs).</returns>
         private static IEnumerable<string> GetKatalonObjectFilesInDirectory(string directory)

@@ -6,22 +6,37 @@ namespace Amdocs.Ginger.CoreNET.External.Katalon.Conversion
 {
     internal static class KatalonElementToElementInfoConverter
     {
+        /// <summary>
+        /// Converts a collection of Katalon elements to Ginger ElementInfo objects.
+        /// </summary>
+        /// <param name="katalonElementList">The list of Katalon elements to convert.</param>
+        /// <returns>A collection of converted ElementInfo objects.</returns>
+        /// <exception cref="System.ArgumentNullException">Thrown when katalonElementList is null.</exception>
         internal static IEnumerable<ElementInfo> Convert(IEnumerable<KatalonElementEntity> katalonElementList)
         {
+            if (katalonElementList == null)
+            {
+                throw new System.ArgumentNullException(nameof(katalonElementList));
+            }
+
+            if (!katalonElementList.Any())
+            {
+                return Enumerable.Empty<ElementInfo>();
+            }
+
             List<ElementInfo> elementInfoList = [];
+
+            var katalonWebElementList = katalonElementList
+                .OfType<KatalonWebElementEntity>()
+                .ToList();
 
             foreach (KatalonElementEntity katalonElement in katalonElementList)
             {
-                IEnumerable<KatalonWebElementEntity> katalonWebElementList = katalonElementList
-                .Where(e => e is KatalonWebElementEntity)
-                .Cast<KatalonWebElementEntity>();
-
                 if (katalonElement is KatalonWebElementEntity katalonWebElement)
                 {
                     elementInfoList.Add(katalonWebElement.ToElementInfo(katalonWebElementList));
                 }
             }
-
             return elementInfoList;
         }
     }

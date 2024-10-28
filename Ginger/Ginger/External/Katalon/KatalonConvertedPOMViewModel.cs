@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Ginger.External.Katalon
             get => _name;
             set
             {
-                _name = value;
+                _name = value ?? string.Empty;
                 PropertyChanged?.Invoke(sender: this, new(nameof(Name)));
             }
         }
@@ -39,7 +40,7 @@ namespace Ginger.External.Katalon
             get => _url;
             set
             {
-                _url = value;
+                _url = value ?? string.Empty;
                 PropertyChanged?.Invoke(sender: this, new(nameof(URL)));
             }
         }
@@ -49,7 +50,7 @@ namespace Ginger.External.Katalon
             get => _targetApplication;
             set
             {
-                _targetApplication = value;
+                _targetApplication = value ?? string.Empty;
                 PropertyChanged?.Invoke(sender: this, new(nameof(TargetApplication)));
             }
         }
@@ -62,6 +63,8 @@ namespace Ginger.External.Katalon
 
         public KatalonConvertedPOMViewModel(ApplicationPOMModel pom, ePlatformType platform)
         {
+            ArgumentNullException.ThrowIfNull(pom);
+
             POM = pom;
             _active = true;
             _name = POM.Name;
@@ -73,23 +76,27 @@ namespace Ginger.External.Katalon
                 .Solution
                 .GetSolutionTargetApplications()
                 .Where(ta => GetApplicationPlatform(ta.Name) == platform)
-                .Select(ta => ta.Name);
+                .Select(ta => ta.Name)
+                .ToList();
         }
 
         private ePlatformType GetApplicationPlatform(string application)
         {
-            return
-                WorkSpace
-                .Instance
-                .Solution
-                .GetApplicationPlatformForTargetApp(application);
+            ArgumentException.ThrowIfNullOrEmpty(application);
+
+            if (WorkSpace.Instance?.Solution == null)
+            {
+                throw new InvalidOperationException("Workspace or Solution is not initialized");
+            }
+
+            return WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(application);
         }
 
         public void CommitChanges()
         {
-            if (URL != null && !string.Equals(URL.Trim(), string.Empty))
+            if (!string.IsNullOrWhiteSpace(URL))
             {
-                POM.PageURL = URL;
+                POM.PageURL = URL.Trim();
             }
 
             ApplicationPlatform? appPlatform = WorkSpace.Instance

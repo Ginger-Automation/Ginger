@@ -12,9 +12,11 @@
         Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition
-                Height="auto" />
+                Height="auto"
+                MinHeight="30"/>
             <RowDefinition
-                Height="auto" />
+                Height="auto"
+                MinHeight="30"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition
@@ -24,12 +26,13 @@
         </Grid.ColumnDefinitions>
         <Label
             Style="{StaticResource @InputFieldLabelStyle}"
-            Content="Select Katalon Object-Repositoy Folder" />
+            Content="Select Katalon Object-Repository Folder" />
         <TextBox
             x:Name="DirectoryTextBox"
             Grid.Row="1"
             Grid.Column="0"
-            Style="{StaticResource $TextBoxStyle}"/>
+            Style="{StaticResource $TextBoxStyle}"
+            ToolTip="Enter or browse for the Katalon Object Repository folder location" />
         <Button
             x:Name="DirectoryBrowseButton"
             Grid.Row="1"
@@ -37,6 +40,7 @@
             Content="Browse"
             VerticalAlignment="Center"
             Style="{StaticResource $InputButtonStyle}"
-            Click="DirectoryBrowseButton_Click" />
+            Click="DirectoryBrowseButton_Click"
+            ToolTip="Click to browse and select the Katalon Object Repository folder" />
     </Grid>
 </Page>

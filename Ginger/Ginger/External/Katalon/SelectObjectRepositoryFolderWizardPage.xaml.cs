@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,11 @@ namespace Ginger.External.Katalon
 
         public SelectObjectRepositoryFolderWizardPage(ImportKatalonObjectRepositoryWizard wizard)
         {
+            if (wizard == null)
+            {
+                throw new ArgumentNullException(nameof(wizard));
+            }
+
             InitializeComponent();
 
             _wizard = wizard;
@@ -27,16 +33,16 @@ namespace Ginger.External.Katalon
             switch (e.EventType)
             {
                 case EventType.LeavingForNextPage:
-                    if (_wizard.SelectedDirectory == null || string.Equals(_wizard.SelectedDirectory.Trim(), string.Empty))
+                    if (string.IsNullOrWhiteSpace(_wizard.SelectedDirectory))
                     {
                         e.CancelEvent = true;
-                        Reporter.ToUser(eUserMsgKey.InvalidKatalonObjectRepository, "Folder path is empty");
+                        Reporter.ToUser(eUserMsgKey.InvalidKatalonObjectRepository, "Please select a folder containing Katalon Object Repository files.");
                         break;
                     }
-                    if (!Directory.Exists(_wizard.SelectedDirectory))
+                    if (!Directory.Exists(_wizard.SelectedDirectory.Trim()))
                     {
                         e.CancelEvent = true;
-                        Reporter.ToUser(eUserMsgKey.InvalidKatalonObjectRepository, "Folder doesn't exist");
+                        Reporter.ToUser(eUserMsgKey.InvalidKatalonObjectRepository, $"The selected folder does not exist.");
                         break;
                     }
                     break;
