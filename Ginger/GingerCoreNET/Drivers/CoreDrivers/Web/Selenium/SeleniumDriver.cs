@@ -70,6 +70,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static GingerCoreNET.GeneralLib.General;
 using DevToolsDomains = OpenQA.Selenium.DevTools.V125.DevToolsSessionDomains;
 
 
@@ -6802,7 +6803,7 @@ namespace GingerCore.Drivers
             else
             {
                 //e = LocateElementByLocators(ElementInfo.Locators);
-                e = Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).HTMLElementObject.XPath));
+                e = Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).HTMLElementObject?.XPath));
                 ElementInfo.ElementObject = e;
 
             }
@@ -9012,20 +9013,34 @@ namespace GingerCore.Drivers
                         {
                             var js = (IJavaScriptExecutor)Driver;
                             string command = string.Empty;
-                            string scrollAlignment = act.GetInputParamCalculatedValue(ActUIElement.Fields.VerticalScrollAlignment).ToLower();
-                            
+                            string scrollAlignment = act.GetInputParamCalculatedValue(ActUIElement.Fields.VerticalScrollAlignment);
+
                             switch (scrollAlignment)
                             {
-                                case "center":
-                                    long elementPosition = e.Location.Y;
-                                    long viewportHeight = (long)js.ExecuteScript("return window.innerHeight");
-                                    long scrollPosition = elementPosition - (viewportHeight / 2);
-                                    command = $"window.scrollTo(0, {scrollPosition});";
+                                case nameof(eScrollAlignment.Center):
+                                    try
+                                    {
+                                        long elementPosition = e.Location.Y;
+                                        long viewportHeight = (long)js.ExecuteScript("return window.innerHeight");
+                                        long scrollPosition = elementPosition - (viewportHeight / 2);
+                                        command = $"window.scrollTo(0, {scrollPosition});";
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // Log the exception with a detailed message  
+                                        Reporter.ToLog(eLogLevel.DEBUG, $"An error occurred while calculating the scroll position: {ex.Message}");
+
+                                        // Prepare the fallback scroll command  
+                                        command = "arguments[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });";
+                                    }
                                     break;
-                                case "end":
+                                case nameof(eScrollAlignment.End):
                                     command = "arguments[0].scrollIntoView(false);";
                                     break;
-                                case "start":
+                                case nameof(eScrollAlignment.Nearest):
+                                    command = "arguments[0].scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });";
+                                    break;
+                                case nameof(eScrollAlignment.Start):
                                 default:
                                     command = "arguments[0].scrollIntoView(true);";
                                     break;

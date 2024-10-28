@@ -1,6 +1,7 @@
 ﻿using GingerCore.Actions.Common;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using static GingerCoreNET.GeneralLib.General;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -9,13 +10,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
     /// </summary>
     public partial class UIElementScrollToElementOptionsPage : Page
     {
-        public enum eScrollAlignment
-        {
-            Start,
-            Center,
-            End
-        }
-
         public UIElementScrollToElementOptionsPage(ActUIElement action)
         {
             InitializeComponent();
@@ -24,9 +18,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 eScrollAlignment.Start,
                 eScrollAlignment.Center,
                 eScrollAlignment.End,
+                eScrollAlignment.Nearest,
             ];
 
-            verticalScrollAlignmentComboBox.Init(action.GetOrCreateInputParam(ActUIElement.Fields.VerticalScrollAlignment), verticalAlignments, false);
+            verticalScrollAlignmentComboBox.Init(action.GetOrCreateInputParam(ActUIElement.Fields.VerticalScrollAlignment, nameof(eScrollAlignment.Start)), verticalAlignments, false);
         }
     }
 }
