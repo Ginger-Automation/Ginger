@@ -34,9 +34,17 @@ namespace Amdocs.Ginger.CoreNET.External.Katalon.Conversion
 
         internal static IEnumerable<Result> Convert(string directory)
         {
-            List<Result> results = [];
-            Convert(directory, results);
-            return results;
+            try
+            {
+                List<Result> results = [];
+                Convert(directory, results);
+                return results;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while converting Katalon Object Repository to POM", ex);
+                return Array.Empty<Result>();
+            }
         }
 
         internal static void Convert(string directory, ICollection<Result> results)
