@@ -383,7 +383,7 @@
       <HintPath>DLLS\ALM_CommonStd.dll</HintPath>
     </Reference>
     <Reference Include="AzureDevOpsRepo">
-      <HintPath>..\..\..\..\ALMInteraction\AzureRepositoryStd\bin\Debug\net8.0\AzureDevOpsRepo.dll</HintPath>
+      <HintPath>DLLS\AzureDevOpsRepo.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
@@ -414,6 +414,12 @@
     </Reference>
     <Reference Include="Octane_Repository">
       <HintPath>DLLS\Octane_Repository.dll</HintPath>
+    </Reference>
+    <Reference Include="Open3270">
+      <HintPath>..\Ginger\DLLs\Open3270.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <HintPath>DLLS\PresentationCore.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net">
       <HintPath>DLLS\protobuf-net.dll</HintPath>
