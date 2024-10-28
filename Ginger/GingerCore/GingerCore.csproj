@@ -215,6 +215,7 @@
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActTextSpeech.cs" />
     <Compile Include="Actions\ActTableElement.cs" />
+    <Compile Include="Actions\Common\ElementConfigControl.cs" />
     <Compile Include="Actions\ScreenCapture\LocatorImageCaptureWindow.xaml.cs">
       <DependentUpon>LocatorImageCaptureWindow.xaml</DependentUpon>
     </Compile>
