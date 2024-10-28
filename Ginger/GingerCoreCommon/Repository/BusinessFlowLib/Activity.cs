@@ -929,10 +929,7 @@ namespace GingerCore
                 action.ParentGuid = action.Guid;
                 oldNewActionGuidList.Add(new(action.ParentGuid, action.Guid));
             }
-            foreach (VariableBase variable in copy.Variables)
-            {
-                variable.ParentGuid = variable.Guid;
-            }
+
             foreach (FlowControl fc in copy.Acts.SelectMany(a => a.FlowControls))
             {
                 Guid targetGuid = fc.GetGuidFromValue();
