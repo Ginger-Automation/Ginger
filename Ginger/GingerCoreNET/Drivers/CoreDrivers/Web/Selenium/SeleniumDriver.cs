@@ -257,7 +257,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Provide the path to the browser executable.")]
         public string BrowserExecutablePath { get; set; }
-        //"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
 
         [UserConfigured]
         [UserConfiguredDefault("false")]//"driver is failing to launch when the mode is true"
@@ -694,9 +693,8 @@ namespace GingerCore.Drivers
                     //checking the windows 32 and 64 bit version exists or not. if not then user can provide the path mannually.
                     case eBrowserType.Brave:
                         ChromeOptions brave_options = new ChromeOptions();
-                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath) && BrowserExecutablePath.Contains("brave.exe"))
+                        if (BrowserExecutablePath != null && BrowserExecutablePath.Trim().Length > 0 && File.Exists(BrowserExecutablePath))
                         {
-
                             brave_options.BinaryLocation = BrowserExecutablePath;
                         }
                         else if (File.Exists(BRAVE_64BIT_BINARY_PATH))
@@ -710,8 +708,8 @@ namespace GingerCore.Drivers
                         else
                         {
                             throw new Exception("The Brave browser path is not available in default path. Please install it or provide the valid executable path in 'Browser Executable Path' parameter in agent configuration.");
-
                         }
+
                         configChromeDriverAndStart(brave_options);
 
                         break;
