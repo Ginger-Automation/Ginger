@@ -9010,9 +9010,27 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.ScrollToElement:
                         try
                         {
-                            string scrollAlignment = act.GetInputParamCalculatedValue(ActUIElement.Fields.ScrollAlignment).ToLower();
-                            string command = $"arguments[0].scrollIntoView({{ block: '{scrollAlignment}' }});";
-                            ((IJavaScriptExecutor)Driver).ExecuteScript(command, e);
+                            var js = (IJavaScriptExecutor)Driver;
+                            string command = string.Empty;
+                            string scrollAlignment = act.GetInputParamCalculatedValue(ActUIElement.Fields.VerticalScrollAlignment).ToLower();
+                            
+                            switch (scrollAlignment)
+                            {
+                                case "center":
+                                    long elementPosition = e.Location.Y;
+                                    long viewportHeight = (long)js.ExecuteScript("return window.innerHeight");
+                                    long scrollPosition = elementPosition - (viewportHeight / 2);
+                                    command = $"window.scrollTo(0, {scrollPosition});";
+                                    break;
+                                case "end":
+                                    command = "arguments[0].scrollIntoView(false);";
+                                    break;
+                                case "start":
+                                default:
+                                    command = "arguments[0].scrollIntoView(true);";
+                                    break;
+                            }
+                            js.ExecuteScript(command, e);
                         }
                         catch (Exception)
                         {
