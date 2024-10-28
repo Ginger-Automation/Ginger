@@ -1,36 +1,71 @@
+# This GitHub Actions workflow is named "CD" and is triggered manually via the `workflow_dispatch` event.
+# It accepts the following inputs:
+# - major: Year (number, required, default: '24')
+# - minor: Release (number, required, default: '4')
+# - build: Beta (number, required, default: '0')
+# - revision: Alpha (number, required, default: '0')
+# - SSLCert: Add Certificate (choice, required, default: 'No', options: ['Yes', 'No'])
+#
+# The workflow consists of the following jobs:
+# 1. Create-version-Number:
+#    - Runs on `ubuntu-latest`.
+#    - Generates version numbers and tags based on the input values.
+#    - Outputs `version_number` and `version_tag`.
+#    - Caches the generated version text file.
+#
+# 2. CI:
+#    - Depends on the `Create-version-Number` job.
+#    - Uses the `.github/workflows/CI.yml` workflow.
+#    - Inherits secrets.
+#
+# 3. Release:
+#    - Depends on the `CI` job.
+#    - Uses the `.github/workflows/Release.yml` workflow.
+#    - Inherits secrets.
+#
+# 4. Deploy:
+#    - Depends on the `Release` job.
+#    - Uses the `.github/workflows/Deploy.yml` workflow.
+#
+# 5. Docker:
+#    - Depends on the `CI` job.
+#    - Uses the `.github/workflows/Docker.yml` workflow.
+#    - Inherits secrets.
+
 name: CD
 
 on:
+    # Trigger the workflow manually with the `workflow_dispatch` event
     workflow_dispatch: 
-        inputs:
-            major:
-                description: Year
-                type: number 
-                required: true
-                default: '24'
-            minor:
-                description: Release
-                type: number 
-                required: true
-                default: '4'
-            build:
-                description: Beta
-                type: number 
-                required: true
-                default: '0'
-            revision:
-                description: Alpha
-                type: number 
-                required: true
-                default: '0'
-            SSLCert:
-                description: "Add Certificate"
-                type: choice
-                required: true
-                default: 'No'
-                options:
-                  - 'Yes'
-                  - 'No'
+      inputs:
+        major:
+          description: Year # The year of the release, e.g., 24 for 2024
+          type: number 
+          required: true
+          default: '24'
+        minor:
+          description: Release # The minor version of the release, e.g., 4 for the fourth release of the year
+          type: number 
+          required: true
+          default: '4'
+        build:
+          description: Beta # The build number, typically used for beta versions
+          type: number 
+          required: true
+          default: '0'
+        revision:
+          description: Alpha # The revision number, typically used for alpha versions
+          type: number 
+          required: true
+          default: '0'
+        SSLCert:
+          description: "Add Certificate" # Option to add an SSL certificate
+          type: choice
+          required: true
+          default: 'No'
+          options:
+          - 'Yes' # Add SSL certificate
+          - 'No'  # Do not add SSL certificate
 jobs:
     Create-version-Number:
         runs-on: ubuntu-latest
