@@ -39,6 +39,7 @@
     <None Remove="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <None Remove="ConflictResolve\ConflictResolveIntro.md" />
     <None Remove="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
+    <None Remove="External\Katalon\ImportKatalonObjectRepositoryIntro.md" />
     <None Remove="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
     <None Remove="Images\%24Close-Window.png" />
     <None Remove="Images\%24DeExpand-Window.png" />
@@ -615,6 +616,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\javascript.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\json.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\json.svg" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\katalon.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\medical.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-n.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-new.png" />
@@ -657,6 +659,7 @@
 
   <ItemGroup>
     <Resource Include="ConflictResolve\ConflictResolveIntro.md" />
+    <Resource Include="External\Katalon\ImportKatalonObjectRepositoryIntro.md" />
     <Resource Include="GingerIconNew.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -2499,6 +2502,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\json.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\katalon.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\medical.png">
