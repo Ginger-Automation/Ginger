@@ -121,6 +121,33 @@ namespace GingerCoreNET.GeneralLib
         }
 
 
+        /// <summary>  
+        /// Defines the possible vertical alignment options for scrolling elements into view.  
+        /// </summary>  
+        public enum eScrollAlignment
+        {
+            /// <summary>  
+            /// Aligns the top of the element with the top of the visible area of the scrollable ancestor.  
+            /// </summary>  
+            Start,
+
+            /// <summary>  
+            /// Centers the element vertically in the visible area of the scrollable ancestor.  
+            /// </summary>  
+            Center,
+
+            /// <summary>  
+            /// Aligns the bottom of the element with the bottom of the visible area of the scrollable ancestor.  
+            /// </summary>  
+            End,
+
+            /// <summary>  
+            /// Aligns the element with the nearest edge of the visible area of the scrollable ancestor,  
+            /// either the top or bottom, depending on which is closer.  
+            /// </summary>  sssss
+            Nearest
+        }
+
         #endregion ENUM
 
         static Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
