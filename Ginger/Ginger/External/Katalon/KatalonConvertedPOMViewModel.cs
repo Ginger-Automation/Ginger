@@ -71,13 +71,18 @@ namespace Ginger.External.Katalon
             _url = string.Empty;
             _targetApplication = string.Empty;
 
-            TargetApplicationOptions = WorkSpace
+            List<string> solutionTargetApps = WorkSpace
                 .Instance
                 .Solution
                 .GetSolutionTargetApplications()
                 .Where(ta => GetApplicationPlatform(ta.Name) == platform)
                 .Select(ta => ta.Name)
                 .ToList();
+
+            TargetApplicationOptions =
+                new string[] { string.Empty }
+                .Concat(solutionTargetApps)
+                .ToArray();
         }
 
         private ePlatformType GetApplicationPlatform(string application)

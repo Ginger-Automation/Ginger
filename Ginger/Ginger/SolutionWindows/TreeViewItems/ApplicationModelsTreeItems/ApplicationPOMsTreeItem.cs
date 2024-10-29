@@ -131,7 +131,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowRefresh: false);
             }
-            MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import", eImageType.Add);
+            MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import", eImageType.ImportFile);
             TreeViewUtils.AddSubMenuItem(importMenu, "Katalon Object-Repository", ImportFromKatalonObjectRepository, CommandParameter: null!, icon: eImageType.Katalon);
 
             AddSourceControlOptions(mContextMenu);

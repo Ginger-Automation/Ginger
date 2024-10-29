@@ -123,7 +123,11 @@ namespace Ginger.External.Katalon
                 .GetFilteredItems()
                 .Cast<KatalonConvertedPOMViewModel>();
 
-            KatalonConvertedPOMViewModel highlightedItem = (KatalonConvertedPOMViewModel)ImportedPOMGrid.CurrentItem;
+            KatalonConvertedPOMViewModel? highlightedItem = (KatalonConvertedPOMViewModel)ImportedPOMGrid.CurrentItem;
+            if (highlightedItem == null)
+            {
+                return;
+            }
 
             foreach (KatalonConvertedPOMViewModel item in visibleItems)
             {
@@ -149,7 +153,11 @@ namespace Ginger.External.Katalon
                 .GetFilteredItems()
                 .Cast<KatalonConvertedPOMViewModel>();
 
-            KatalonConvertedPOMViewModel highlightedItem = (KatalonConvertedPOMViewModel)ImportedPOMGrid.CurrentItem;
+            KatalonConvertedPOMViewModel? highlightedItem = (KatalonConvertedPOMViewModel)ImportedPOMGrid.CurrentItem;
+            if (highlightedItem == null)
+            {
+                return;
+            }
 
             foreach (KatalonConvertedPOMViewModel item in visibleItems)
             {
