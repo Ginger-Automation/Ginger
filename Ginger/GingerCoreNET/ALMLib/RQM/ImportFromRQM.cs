@@ -1249,6 +1249,16 @@ namespace GingerCore.ALM.RQM
                 //setp 3. Get all Custom Attribute details by API 
                 //step 4. Get All custom Attribute Possible values
 
+                GetCustomAttributes(bw, fields, rqmSserverUrl, loginData, ref baseUri_, ref selfLink_, ref maxPageNumber_);
+            }
+            catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
+        }
+
+        private static void GetCustomAttributes(BackgroundWorker bw, ObservableList<ExternalItemFieldBase> fields, string rqmSserverUrl, LoginDTO loginData, ref string baseUri_, ref string selfLink_, ref int maxPageNumber_)
+        {
+            try
+            {
+
                 Reporter.ToLog(eLogLevel.DEBUG, $"starting Custom attribute fields retrieve process...");
                 PopulateLogOnFieldMappingwinodw(bw, "starting Custom attribute fields retrieve process...");
                 RqmResponseData CustomAttribute = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + RQMCore.ALMProjectGroupName + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + ALMCore.DefaultAlmConfig.ALMProjectGUID + "/customAttribute"));
@@ -1457,7 +1467,7 @@ namespace GingerCore.ALM.RQM
                         fields.Add(field);
                     }//TODO: Add Values to CategoryTypes Parallel
                     PopulateLogOnFieldMappingwinodw(bw, $"Starting values retrieve process... ");
-                    #region new Gat Values by filed Category Type
+                    #region new Get Values by filed Custom Attributes
                     foreach (ExternalItemFieldBase field in fields)
                     {
                         string baseUrl = $"{rqmSserverUrl}{RQMCore.ALMProjectGroupName}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALMCore.DefaultAlmConfig.ALMProjectGUID}/customAttribute/?fields=feed/entry/content/customAttribute/";
@@ -1499,6 +1509,7 @@ namespace GingerCore.ALM.RQM
                     }
                     #endregion
                 }
+
             }
             catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
         }

@@ -794,7 +794,7 @@ namespace GingerCore.ALM.RQM
                     testPlan.Activities.Add(GetTestCaseFromActivityGroup(ag));
 
                 }
-                List<ACL_Data_Contract.ExternalItemFieldBase> ExternalFields = CovertExternalFieldsTOACLDataContractfields(mExternalItemsFields);
+                List<ACL_Data_Contract.ExternalItemFieldBase> ExternalFields = ConvertExternalFieldsToACLDataContractfields(mExternalItemsFields);
                 RQMConnect.Instance.RQMRep.GetConection();
 
                 resultInfo = RQMConnect.Instance.RQMRep.ExportTestPlan(loginData, testPlanList, ALMCore.DefaultAlmConfig.ALMServerURL, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, null,null, ExternalFields);
@@ -906,7 +906,7 @@ namespace GingerCore.ALM.RQM
             return false;
         }
 
-        private List<ACL_Data_Contract.ExternalItemFieldBase> CovertExternalFieldsTOACLDataContractfields(ObservableList<ExternalItemFieldBase> fields)
+        private List<ACL_Data_Contract.ExternalItemFieldBase> ConvertExternalFieldsToACLDataContractfields(ObservableList<ExternalItemFieldBase> fields)
         {
             List<ACL_Data_Contract.ExternalItemFieldBase> fieldsToReturn = [];
 
