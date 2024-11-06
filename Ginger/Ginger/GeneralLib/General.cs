@@ -677,7 +677,7 @@ namespace Ginger
             {
                 return [];
             }
-            var pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";
+            var pattern = @"""[^""]*""|(?:[A-Za-z]:\\[^ ]+(?: [^ ]+)*[^ ]+)|[^\s]+";
             var matches = Regex.Matches(input, pattern);
             List<string> results = [];
 
