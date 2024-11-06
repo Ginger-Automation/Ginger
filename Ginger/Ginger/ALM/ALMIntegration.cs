@@ -25,6 +25,7 @@ using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.ALM.QC;
+using GingerCore.ALM.RQM;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerWPF.WizardLib;

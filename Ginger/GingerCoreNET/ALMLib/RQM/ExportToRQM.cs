@@ -38,6 +38,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using ExternalItemFieldBase = Amdocs.Ginger.Repository.ExternalItemFieldBase;
 //using AlmDataContractsStd.Contracts;
 
 namespace GingerCore.ALM.RQM
@@ -793,10 +794,10 @@ namespace GingerCore.ALM.RQM
                     testPlan.Activities.Add(GetTestCaseFromActivityGroup(ag));
 
                 }
-
+                List<ACL_Data_Contract.ExternalItemFieldBase> ExternalFields = CovertExternalFieldsTOACLDataContractfields(mExternalItemsFields);
                 RQMConnect.Instance.RQMRep.GetConection();
 
-                resultInfo = RQMConnect.Instance.RQMRep.ExportTestPlan(loginData, testPlanList, ALMCore.DefaultAlmConfig.ALMServerURL, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, null);
+                resultInfo = RQMConnect.Instance.RQMRep.ExportTestPlan(loginData, testPlanList, ALMCore.DefaultAlmConfig.ALMServerURL, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, null,null, ExternalFields);
             }
             catch (Exception ex)
             {
@@ -903,6 +904,23 @@ namespace GingerCore.ALM.RQM
                 return false;
             }
             return false;
+        }
+
+        private List<ACL_Data_Contract.ExternalItemFieldBase> CovertExternalFieldsTOACLDataContractfields(ObservableList<ExternalItemFieldBase> fields)
+        {
+            List<ACL_Data_Contract.ExternalItemFieldBase> fieldsToReturn = [];
+
+            //Going through the fields to leave only Test Set fields
+            for (int indx = 0; indx < fields.Count; indx++)
+            {
+                    ACL_Data_Contract.ExternalItemFieldBase field = new ACL_Data_Contract.ExternalItemFieldBase();
+                    field.ItemType = fields[indx].ItemType;
+                    field.Name = fields[indx].Name;
+                    field.SelectedValue = fields[indx].SelectedValue;
+                    fieldsToReturn.Add(field);
+            }
+
+            return fieldsToReturn;
         }
 
         private ActivityPlan GetTestPlanFromBusinessFlow(BusinessFlow businessFlow)
