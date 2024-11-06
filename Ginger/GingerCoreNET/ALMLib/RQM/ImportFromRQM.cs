@@ -961,7 +961,6 @@ namespace GingerCore.ALM.RQM
 
             ObservableList<ExternalItemFieldBase> fields = [];
             fields = GetOnlineFields(bw);
-            //GetItemfilesAll(bw, fields);
 
             SaveItemFields(fields);
             return fields;
@@ -1425,7 +1424,7 @@ namespace GingerCore.ALM.RQM
                             CustomAttributeID = typeIdentifier[(typeIdentifier.LastIndexOf(':') + 1)..];
                             CustomAttributeName = CustomAttributeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
                             CustomAttributeItemType = CustomAttributeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
-                            CustomAttributeMandatory = "false"; //CustomAttributeListing.GetElementsByTagName("ns2:required").Item(0).InnerText;
+                            CustomAttributeMandatory = "false";
 
                             itemfield.ItemType = CustomAttributeItemType;
                             itemfield.ID = CustomAttributeID;

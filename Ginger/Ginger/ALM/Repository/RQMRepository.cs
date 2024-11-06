@@ -242,7 +242,7 @@ namespace Ginger.ALM.Repository
                 return false;
             }
             ObservableList<ExternalItemFieldBase> OriginalExternalFieldBase = new ObservableList<ExternalItemFieldBase>();
-            if(WorkSpace.Instance.Solution.ALMConfigs.Where(x=>x.DefaultAlm == true).FirstOrDefault().ALMProjectGUID != WorkSpace.Instance.Solution.ExternalItemsFields.FirstOrDefault().ProjectGuid)
+            if(WorkSpace.Instance.Solution.ALMConfigs.Where(x=>x.DefaultAlm).FirstOrDefault().ALMProjectGUID != WorkSpace.Instance.Solution.ExternalItemsFields.FirstOrDefault().ProjectGuid)
             {
                 ObservableList<ExternalItemFieldBase> ExternalOnlineItemsFields = ImportFromRQM.GetOnlineFields(null);
                 foreach (ExternalItemFieldBase externalItemFieldBase in ExternalOnlineItemsFields)
