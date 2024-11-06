@@ -808,6 +808,7 @@ namespace GingerCore.Drivers
                             {
                                 SetProxy(EDOpts);
                             }
+
                             if (SeleniumUserArgs != null)
                             {
                                 foreach (string arg in SeleniumUserArgs)

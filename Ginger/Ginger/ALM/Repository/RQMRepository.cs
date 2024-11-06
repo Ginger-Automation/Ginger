@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.ALM.RQM;
 using GingerCore;
 using GingerCore.Activities;
@@ -240,7 +241,42 @@ namespace Ginger.ALM.Repository
             {
                 return false;
             }
-            if (WorkSpace.Instance.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
+            ObservableList<ExternalItemFieldBase> originalExternalFields = new ObservableList<ExternalItemFieldBase>();
+
+            var defaultALMConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
+            var firstExternalItemField = WorkSpace.Instance.Solution.ExternalItemsFields.FirstOrDefault();
+
+            if (defaultALMConfig != null && firstExternalItemField != null &&
+                defaultALMConfig.ALMProjectGUID != firstExternalItemField.ProjectGuid)
+            {
+                var externalOnlineItemsFields = ImportFromRQM.GetOnlineFields(null);
+
+                foreach (var externalItemField in externalOnlineItemsFields)
+                {
+                    var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
+                        .FirstOrDefault(x => x.Name.Equals(externalItemField.Name, StringComparison.CurrentCultureIgnoreCase));
+
+                    var fieldToAdd = new ExternalItemFieldBase
+                    {
+                        Name = externalItemField.Name,
+                        ID = externalItemField.ID,
+                        ItemType = externalItemField.ItemType,
+                        Guid = externalItemField.Guid,
+                        IsCustomField = externalItemField.IsCustomField,
+                        SelectedValue = existingField != null && !string.IsNullOrEmpty(existingField.SelectedValue)
+                            ? existingField.SelectedValue
+                            : externalItemField.SelectedValue
+                    };
+
+                    originalExternalFields.Add(fieldToAdd);
+                }
+            }
+            else
+            {
+                originalExternalFields = WorkSpace.Instance.Solution.ExternalItemsFields;
+            }
+
+            if (!originalExternalFields.Any(x => x.ItemType == "TestCase"))
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no predefined values for RQM's mandatory fields. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
                 return false;
@@ -256,7 +292,7 @@ namespace Ginger.ALM.Repository
             string res = string.Empty;
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
 
-            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow, WorkSpace.Instance.Solution.ExternalItemsFields, ref res);
+            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow, originalExternalFields, ref res);
 
             if (exportRes)
             {

@@ -58,6 +58,12 @@ namespace Amdocs.Ginger.Repository
         public bool SystemFieled { get; set; }
         public bool IsMultiple { get; set; } = false;
 
+        [IsSerializedForLocalRepository]
+        public bool IsCustomField { get; set; } = false;
+
+        [IsSerializedForLocalRepository]
+        public string ProjectGuid { get; set; }
+
         ObservableList<string> mPossibleValues = [];
         public ObservableList<string> PossibleValues
         {
