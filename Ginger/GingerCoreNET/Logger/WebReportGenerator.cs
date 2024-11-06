@@ -77,6 +77,11 @@ namespace Amdocs.Ginger.CoreNET.Logger
                         IoHandler.Instance.TryFolderDelete(rootFolder);
                     }
                     IoHandler.Instance.CopyFolderRec(clientAppFolderPath, ReportrootPath, true);
+
+                    if(!Directory.Exists(Path.Combine(ReportrootPath, "assets", "screenshots")))
+                    {
+                        Directory.CreateDirectory(Path.Combine(ReportrootPath, "assets", "screenshots"));
+                    }
                 }
             }
             catch (Exception ex)
