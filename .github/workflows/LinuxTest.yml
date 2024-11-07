@@ -74,7 +74,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: success() || failure()        # run this step even if previous step failed
         with:
-          name: Ginger Linux UnitTests    # Name of the check run which will be created
+          name: Report Ginger Linux UnitTests    # Name of the check run which will be created
           path: "**/*.trx"                # Path to test results
           reporter: dotnet-trx            # Format of test results     
           
