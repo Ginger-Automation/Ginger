@@ -2045,5 +2045,58 @@ namespace GingerCore
                 return variableDetails;
             }
         }
+
+        public bool AreEqual(BusinessFlow other)
+        {
+            if (other == null || this.Name != other.Name
+                 || this.Activities.Count != other.Activities.Count
+                 || this.Variables.Count != other.Variables.Count
+                 || this.TargetApplications.Count != other.TargetApplications.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.TargetApplications.Count; i++)
+            {
+                if (!other.TargetApplications.Any(f => f.Name.Equals(this.TargetApplications[i].Name)
+                        && f.Guid.Equals(this.TargetApplications[i].Guid)))
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < this.Variables.Count; i++)
+            {
+                if (!this.Variables[i].AreEqual(other.Variables[i]))
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < this.Activities.Count; i++)
+            {
+                if (!this.Activities[i].AreEqual(other.Activities[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Compares this instance with another object to determine if they are equal.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the objects are equal; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return AreEqual(obj as BusinessFlow);
+        }
     }
 }

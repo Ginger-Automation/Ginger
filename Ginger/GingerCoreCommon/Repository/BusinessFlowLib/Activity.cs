@@ -1278,5 +1278,56 @@ namespace GingerCore
             }
         }
 
+        /// <summary>
+        /// Compares this instance with another Activity instance to determine if they are equal.
+        /// </summary>
+        /// <param name="other">The other Activity instance to compare with.</param>
+        /// <returns>True if the instances are equal; otherwise, false.</returns>
+        public bool AreEqual(Activity other)
+        {
+            if (other == null || this.Acts.Count != other.Acts.Count || this.Variables.Count != other.Variables.Count)
+            {
+                return false;
+            }
+
+            if (this.ActivityName != other.ActivityName || this.TargetApplication != other.TargetApplication ||
+                   this.Type != other.Type || this.ActivitiesGroupID != other.ActivitiesGroupID)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.Acts.Count; i++)
+            {
+                if (!this.Acts[i].AreEqual(other.Acts[i]))
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < this.Variables.Count; i++)
+            {
+                if (!this.Variables[i].AreEqual(other.Variables[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Compares this instance with another object to determine if they are equal.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the objects are equal; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return AreEqual(obj as Activity);
+        }
     }
 }

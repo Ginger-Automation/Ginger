@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 
@@ -77,6 +78,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         /// Gets a value indicating whether automatic screenshot capture is enabled on failure.
         /// </summary>
         bool AutoScreenShotOnFailure { get; }
-
+        public bool AreEqual(Act other);
+        public bool AreEqual(object other);
     }
 }

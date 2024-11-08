@@ -337,7 +337,6 @@
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
-    <PackageReference Include="VisualRegressionTracker" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -459,6 +458,9 @@
     </Reference>
     <Reference Include="SubAppUtils">
       <HintPath>DLLS\SubAppUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="VisualRegressionTracker">
+      <HintPath>DLLS\VisualRegressionTracker.dll</HintPath>
     </Reference>
     <Reference Include="ZephyrEntStdSDK">
       <HintPath>DLLS\ZephyrEntStdSDK.dll</HintPath>
