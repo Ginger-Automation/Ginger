@@ -169,26 +169,37 @@ namespace Ginger.ALM.Repository
             if (!String.IsNullOrEmpty(businessFlow.ExternalID))
             {
                 matchingTS = ((OctaneCore)ALMIntegration.Instance.AlmCore).GetTestSuiteById(businessFlow.ExternalID);
-                if (matchingTS != null)
+                if (businessFlow.ALMTestSetLevel.Equals("RunSet", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    //ask user if want to continute
-                    userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
-                    if (userSelec == eUserMsgSelection.Cancel)
+                    if (String.IsNullOrEmpty(testPlanUploadPath))
                     {
-                        return false;
+                        testPlanUploadPath = matchingTS.ParentId;
                     }
-                    else if (userSelec == eUserMsgSelection.No)
+                }
+                else
+                {
+                    if (matchingTS != null)
                     {
-                        matchingTS = null;
-                    }
-                    else
-                    {
-                        if (String.IsNullOrEmpty(testPlanUploadPath))
+                        //ask user if want to continute
+                        userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
+                        if (userSelec == eUserMsgSelection.Cancel)
                         {
-                            testPlanUploadPath = matchingTS.ParentId;
+                            return false;
+                        }
+                        else if (userSelec == eUserMsgSelection.No)
+                        {
+                            matchingTS = null;
+                        }
+                        else
+                        {
+                            if (String.IsNullOrEmpty(testPlanUploadPath))
+                            {
+                                testPlanUploadPath = matchingTS.ParentId;
+                            }
                         }
                     }
                 }
+                
             }
 
 
