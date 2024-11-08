@@ -1248,7 +1248,7 @@ namespace GingerCore.ALM.RQM
                 //step 2. Get all the custom attribute link as per the response
                 //setp 3. Get all Custom Attribute details by API 
                 //step 4. Get All custom Attribute Possible values
-                ObservableList<ExternalItemFieldBase> Customfields = new ObservableList<ExternalItemFieldBase>();
+                ObservableList<ExternalItemFieldBase> Customfields;
                 Customfields = GetCustomAttributes(bw, rqmSserverUrl, loginData, ref baseUri_, ref selfLink_, ref maxPageNumber_);
                 foreach (var CustomfieldItem in Customfields)
                 {
@@ -1358,13 +1358,12 @@ namespace GingerCore.ALM.RQM
                                 string CustomAttributeItemType = string.Empty; //-->itemfield.ItemType
                                 string CustomAttributeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
                                 string CustomAttributeID = string.Empty;
-                                string CustomAttributefieldType = string.Empty;
 
                                 string typeIdentifier = CustomAttributeListing.GetElementsByTagName("ns4:identifier").Item(0).InnerText;
                                 CustomAttributeID = typeIdentifier[(typeIdentifier.LastIndexOf(':') + 1)..];
                                 CustomAttributeName = CustomAttributeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
                                 CustomAttributeItemType = CustomAttributeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
-                                CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
+                                string CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
                                 CustomAttributeMandatory = "false";
 
 
@@ -1372,6 +1371,7 @@ namespace GingerCore.ALM.RQM
                                 itemfield.ItemType = CustomAttributeItemType;
                                 itemfield.ID = CustomAttributeID;
                                 itemfield.Name = CustomAttributeName;
+                                itemfield.Type = CustomAttributefieldType;
                                 if (itemfield.SelectedValue == null)
                                 {
                                     itemfield.SelectedValue = "Unassigned";
@@ -1436,13 +1436,12 @@ namespace GingerCore.ALM.RQM
                             string CustomAttributeItemType = string.Empty; //-->itemfield.ItemType
                             string CustomAttributeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
                             string CustomAttributeID = string.Empty;
-                            string CustomAttributefieldType = string.Empty;
 
                             string typeIdentifier = CustomAttributeListing.GetElementsByTagName("ns4:identifier").Item(0).InnerText;
                             CustomAttributeID = typeIdentifier[(typeIdentifier.LastIndexOf(':') + 1)..];
                             CustomAttributeName = CustomAttributeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
                             CustomAttributeItemType = CustomAttributeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
-                            CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
+                            string CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
                             CustomAttributeMandatory = "false";
 
                             itemfield.ItemType = CustomAttributeItemType;
