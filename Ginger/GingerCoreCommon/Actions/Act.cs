@@ -2075,5 +2075,49 @@ namespace GingerCore.Actions
         }
 
 
+        /// <summary>
+        /// Compares the current Act instance with another Act instance to determine equality.
+        /// </summary>
+        /// <param name="other">The other Act instance to compare with.</param>
+        /// <returns>True if the instances are equal; otherwise, false.</returns>
+        public bool AreEqual(Act other)
+        {
+            if (other == null || this.ActInputValues.Count != other.ActInputValues.Count)
+            {
+                return false;
+            }
+
+            if (this.Description != other.Description ||
+                   this.Platform != other.Platform)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.ActInputValues.Count; i++)
+            {
+                if (!this.ActInputValues[i].AreEqual(other.ActInputValues[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Compares the current Act instance with another object to determine equality.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the object is an Act instance and is equal to the current instance; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return Equals(obj as Act);
+        }
+
     }
 }

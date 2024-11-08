@@ -446,7 +446,7 @@ namespace GingerCore.NoSqlBase
                         int path1 = 1;
 
 
-                        var tableDescriptor = await actionClient.GetTableSchemaAsync(table, null);
+                        //var tableDescriptor = await actionClient.GetTableSchemaAsync(table, null);
                         //Console.WriteLine($"Table: {tableDescriptor.Name}");
 
                         // Iterating over column families  

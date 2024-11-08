@@ -706,5 +706,37 @@ namespace GingerCore.Variables
         {
             return string.Empty;
         }
+
+        /// <summary>
+        /// Compares this instance with another VariableBase instance for equality.
+        /// </summary>
+        /// <param name="other">The other VariableBase instance to compare with.</param>
+        /// <returns>True if the instances are equal; otherwise, false.</returns>
+        public bool AreEqual(VariableBase other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return this.Name == other.Name &&
+                   this.VariableType == other.VariableType &&
+                   this.GetInitialValue() == other.GetInitialValue();
+        }
+
+        /// <summary>
+        /// Compares this instance with another object for equality.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the objects are equal; otherwise, false.</returns>
+        public bool AreEqual(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return Equals(obj as VariableBase);
+        }
     }
 }
