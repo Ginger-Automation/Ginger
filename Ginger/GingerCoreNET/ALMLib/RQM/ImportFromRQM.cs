@@ -1358,12 +1358,15 @@ namespace GingerCore.ALM.RQM
                                 string CustomAttributeItemType = string.Empty; //-->itemfield.ItemType
                                 string CustomAttributeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
                                 string CustomAttributeID = string.Empty;
+                                string CustomAttributefieldType = string.Empty;
 
                                 string typeIdentifier = CustomAttributeListing.GetElementsByTagName("ns4:identifier").Item(0).InnerText;
                                 CustomAttributeID = typeIdentifier[(typeIdentifier.LastIndexOf(':') + 1)..];
                                 CustomAttributeName = CustomAttributeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
                                 CustomAttributeItemType = CustomAttributeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
-                                CustomAttributeMandatory = CustomAttributeListing.GetElementsByTagName("ns2:required").Item(0).InnerText;
+                                CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
+                                CustomAttributeMandatory = "false";
+
 
 
                                 itemfield.ItemType = CustomAttributeItemType;

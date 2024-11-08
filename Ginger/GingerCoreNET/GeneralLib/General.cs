@@ -705,6 +705,10 @@ namespace GingerCoreNET.GeneralLib
             return false;
         }
 
+        /// <summary>
+        /// Retrieves external fields from either online RQM or workspace solution based on configuration.
+        /// </summary>
+        /// <returns>List of external fields with their values.</returns>
         public static ObservableList<ExternalItemFieldBase> GetExternalFields()
         {
             ObservableList<ExternalItemFieldBase> originalExternalFields = new ObservableList<ExternalItemFieldBase>();
@@ -716,25 +720,14 @@ namespace GingerCoreNET.GeneralLib
                 defaultALMConfig.ALMProjectGUID != firstExternalItemField.ProjectGuid)
             {
                 var externalOnlineItemsFields = ImportFromRQM.GetOnlineFields(null);
-
+                if (externalOnlineItemsFields == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to retrieve online fields from RQM");
+                    return originalExternalFields;
+                }
                 foreach (var externalItemField in externalOnlineItemsFields)
                 {
-                    var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
-                        .FirstOrDefault(x => x.Name.Equals(externalItemField.Name, StringComparison.CurrentCultureIgnoreCase));
-
-                    var fieldToAdd = new ExternalItemFieldBase
-                    {
-                        Name = externalItemField.Name,
-                        ID = externalItemField.ID,
-                        ItemType = externalItemField.ItemType,
-                        Guid = externalItemField.Guid,
-                        IsCustomField = externalItemField.IsCustomField,
-                        SelectedValue = existingField != null && !string.IsNullOrEmpty(existingField.SelectedValue)
-                            ? existingField.SelectedValue
-                            : externalItemField.SelectedValue
-                    };
-
-                    originalExternalFields.Add(fieldToAdd);
+                    originalExternalFields.Add(MapExternalField(externalItemField));
                 }
             }
             else
@@ -743,6 +736,24 @@ namespace GingerCoreNET.GeneralLib
             }
 
             return originalExternalFields;
+        }
+
+        private static ExternalItemFieldBase MapExternalField(ExternalItemFieldBase externalItemField)
+        {
+            var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
+                .FirstOrDefault(x => x.Name.Equals(externalItemField.Name, StringComparison.CurrentCultureIgnoreCase));
+
+            return new ExternalItemFieldBase
+            {
+                Name = externalItemField.Name,
+                ID = externalItemField.ID,
+                ItemType = externalItemField.ItemType,
+                Guid = externalItemField.Guid,
+                IsCustomField = externalItemField.IsCustomField,
+                SelectedValue = existingField != null && !string.IsNullOrEmpty(existingField.SelectedValue)
+                    ? existingField.SelectedValue
+                    : externalItemField.SelectedValue
+            };
         }
     }
 
