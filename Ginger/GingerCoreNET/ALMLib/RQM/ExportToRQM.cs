@@ -19,12 +19,13 @@ limitations under the License.
 using ACL_Data_Contract;
 using ACL_Data_Contract.Abstraction;
 using ALM_CommonStd.DataContracts;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
-using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using GingerCoreNET.GeneralLib;
 using Newtonsoft.Json;
 using RQMExportStd.ExportBLL;
 using System;
@@ -655,8 +656,16 @@ namespace GingerCore.ALM.RQM
             ACL_Data_Contract.Activity currentActivity = GetTestCaseFromActivityGroup(activGroup);
             try
             {
+                var originalExternalFields = General.GetExternalFields();
+                
+                if (!originalExternalFields.Any(x => x.ItemType == "TestCase"))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no predefined values for RQM's mandatory fields. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
+                    return null;
+                }
+                List<ACL_Data_Contract.ExternalItemFieldBase> ExternalFields = ConvertExternalFieldsToACLDataContractfields(originalExternalFields);
                 // if executionRecord not updated and not exists - so create one in RQM and update BussinesFlow object (this may be not saved due not existed "autosave" functionality)
-                var resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, testPlan.Name);
+                var resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, testPlan.Name, ExternalFields);
                 if (resultInfo != null && !string.IsNullOrEmpty(resultInfo.ErrorDesc))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - Test Case not found {resultInfo.ErrorCode}, {resultInfo.ErrorDesc}");
@@ -682,7 +691,6 @@ namespace GingerCore.ALM.RQM
             }
             return result;
         }
-
         public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };

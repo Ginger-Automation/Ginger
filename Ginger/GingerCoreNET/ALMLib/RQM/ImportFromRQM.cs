@@ -1248,17 +1248,21 @@ namespace GingerCore.ALM.RQM
                 //step 2. Get all the custom attribute link as per the response
                 //setp 3. Get all Custom Attribute details by API 
                 //step 4. Get All custom Attribute Possible values
-
-                GetCustomAttributes(bw, fields, rqmSserverUrl, loginData, ref baseUri_, ref selfLink_, ref maxPageNumber_);
+                ObservableList<ExternalItemFieldBase> Customfields;
+                Customfields = GetCustomAttributes(bw, rqmSserverUrl, loginData, ref baseUri_, ref selfLink_, ref maxPageNumber_);
+                foreach (var CustomfieldItem in Customfields)
+                {
+                    fields.Add(CustomfieldItem);
+                }
             }
             catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
         }
 
-        private static void GetCustomAttributes(BackgroundWorker bw, ObservableList<ExternalItemFieldBase> fields, string rqmSserverUrl, LoginDTO loginData, ref string baseUri_, ref string selfLink_, ref int maxPageNumber_)
+        private static ObservableList<ExternalItemFieldBase> GetCustomAttributes(BackgroundWorker bw, string rqmSserverUrl, LoginDTO loginData, ref string baseUri_, ref string selfLink_, ref int maxPageNumber_)
         {
+            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
             try
             {
-
                 Reporter.ToLog(eLogLevel.DEBUG, $"starting Custom attribute fields retrieve process...");
                 PopulateLogOnFieldMappingwinodw(bw, "starting Custom attribute fields retrieve process...");
                 RqmResponseData CustomAttribute = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + RQMCore.ALMProjectGroupName + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + ALMCore.DefaultAlmConfig.ALMProjectGUID + "/customAttribute"));
@@ -1359,12 +1363,15 @@ namespace GingerCore.ALM.RQM
                                 CustomAttributeID = typeIdentifier[(typeIdentifier.LastIndexOf(':') + 1)..];
                                 CustomAttributeName = CustomAttributeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
                                 CustomAttributeItemType = CustomAttributeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
-                                CustomAttributeMandatory = CustomAttributeListing.GetElementsByTagName("ns2:required").Item(0).InnerText;
+                                string CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
+                                CustomAttributeMandatory = "false";
+
 
 
                                 itemfield.ItemType = CustomAttributeItemType;
                                 itemfield.ID = CustomAttributeID;
                                 itemfield.Name = CustomAttributeName;
+                                itemfield.Type = CustomAttributefieldType;
                                 if (itemfield.SelectedValue == null)
                                 {
                                     itemfield.SelectedValue = "Unassigned";
@@ -1434,12 +1441,14 @@ namespace GingerCore.ALM.RQM
                             CustomAttributeID = typeIdentifier[(typeIdentifier.LastIndexOf(':') + 1)..];
                             CustomAttributeName = CustomAttributeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
                             CustomAttributeItemType = CustomAttributeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
+                            string CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
                             CustomAttributeMandatory = "false";
 
                             itemfield.ItemType = CustomAttributeItemType;
                             itemfield.ID = CustomAttributeID;
                             itemfield.TypeIdentifier = typeIdentifier;
                             itemfield.Name = CustomAttributeName;
+                            itemfield.Type = CustomAttributefieldType;
                             if (itemfield.SelectedValue == null)
                             {
                                 itemfield.SelectedValue = "Unassigned";
@@ -1470,48 +1479,67 @@ namespace GingerCore.ALM.RQM
                     #region new Get Values by filed Custom Attributes
                     foreach (ExternalItemFieldBase field in fields)
                     {
-                        string baseUrl = $"{rqmSserverUrl}{RQMCore.ALMProjectGroupName}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALMCore.DefaultAlmConfig.ALMProjectGUID}/customAttribute/?fields=feed/entry/content/customAttribute/";
-
-
-                        // Construct URL
-                        string fullUrl = $"{baseUrl}(customAttribute[@href='{field.TypeIdentifier}']|*))";
-                        Reporter.ToLog(eLogLevel.DEBUG, $"fullUrl : {fullUrl}");
-                        RqmResponseData CustomAttributefieldlist = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData,
-                        new Uri(fullUrl));
-
-                        XDocument doc = XDocument.Parse(CustomAttributefieldlist.responseText);
-                        XNamespace ns = "http://www.w3.org/2005/Atom";
-
-                        // Query the XML to get all titles inside entry nodes
-                        var titles = doc.Descendants(ns + "entry")
-                                        .Select(entry => entry.Element(ns + "title")?.Value)
-                                        .Where(title => title != null);
-
-                        PopulateLogOnFieldMappingwinodw(bw, $"Number of values populated :{titles.Count()}");
-                        if (bw != null)
+                        if(field.IsMultiple)
                         {
-                            bw.ReportProgress(CustomAttributeRsult.Count, populatedValue);
+                            string baseUrl = $"{rqmSserverUrl}{RQMCore.ALMProjectGroupName}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALMCore.DefaultAlmConfig.ALMProjectGUID}/customAttribute/?fields=feed/entry/content/customAttribute/";
+
+                            // Construct URL
+                            string fullUrl = $"{baseUrl}(customAttribute[@href='{field.TypeIdentifier}']|*))";
+                            Reporter.ToLog(eLogLevel.DEBUG, $"fullUrl : {fullUrl}");
+                            RqmResponseData CustomAttributefieldlist = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData,
+                            new Uri(fullUrl));
+
+                            XDocument doc = XDocument.Parse(CustomAttributefieldlist.responseText);
+                            XNamespace ns = "http://www.w3.org/2005/Atom";
+
+                            // Query the XML to get all titles inside entry nodes
+                            var titles = doc.Descendants(ns + "entry")
+                                            .Select(entry => entry.Element(ns + "title")?.Value)
+                                            .Where(title => title != null);
+
+                            PopulateLogOnFieldMappingwinodw(bw, $"Number of values populated :{titles.Count()}");
+                            if (bw != null)
+                            {
+                                bw.ReportProgress(CustomAttributeRsult.Count, populatedValue);
+                            }
+
+                            if (titles != null && titles.Any())
+                            {
+                                foreach (var title in titles)
+                                {
+                                    field.PossibleValues.Add(title);
+                                }
+
+                                // Set the first item as SelectedValue if PossibleValues is not empty
+                                if (field.PossibleValues.Count > 0)
+                                {
+                                    field.SelectedValue = field.PossibleValues[0];
+                                }
+                            }
                         }
-
-                        if (titles != null && titles.Any())
+                        else
                         {
-                            foreach (var title in titles)
+                            if(field.Type != null && (field.Type.Equals("MEDIUM_STRING",StringComparison.CurrentCultureIgnoreCase) || field.Type.Equals("SMALL_STRING", StringComparison.CurrentCultureIgnoreCase)))
                             {
-                                field.PossibleValues.Add(title);
+                                field.SelectedValue = string.Empty;
                             }
-
-                            // Set the first item as SelectedValue if PossibleValues is not empty
-                            if (field.PossibleValues.Count > 0)
+                            else
                             {
-                                field.SelectedValue = field.PossibleValues[0];
+                                field.SelectedValue = null;
                             }
+                            
                         }
                     }
                     #endregion
                 }
 
             }
-            catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
+            catch (Exception e) 
+            { 
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+                
+            }
+            return fields;
         }
 
         private static void PopulateLogOnFieldMappingwinodw(BackgroundWorker bw, string msg)

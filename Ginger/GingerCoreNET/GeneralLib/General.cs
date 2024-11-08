@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.ALM.RQM;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -702,6 +703,57 @@ namespace GingerCoreNET.GeneralLib
                 Reporter.ToLog(eLogLevel.WARN, "Configuration package not exist in solution, Settings not exist at: " + Path.Combine(PackagePath, settingsFolder));
             }
             return false;
+        }
+
+        /// <summary>
+        /// Retrieves external fields from either online RQM or workspace solution based on configuration.
+        /// </summary>
+        /// <returns>List of external fields with their values.</returns>
+        public static ObservableList<ExternalItemFieldBase> GetExternalFields()
+        {
+            ObservableList<ExternalItemFieldBase> originalExternalFields = new ObservableList<ExternalItemFieldBase>();
+
+            var defaultALMConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
+            var firstExternalItemField = WorkSpace.Instance.Solution.ExternalItemsFields.FirstOrDefault();
+
+            if (defaultALMConfig != null && firstExternalItemField != null &&
+                defaultALMConfig.ALMProjectGUID != firstExternalItemField.ProjectGuid)
+            {
+                var externalOnlineItemsFields = ImportFromRQM.GetOnlineFields(null);
+                if (externalOnlineItemsFields == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to retrieve online fields from RQM");
+                    return originalExternalFields;
+                }
+                foreach (var externalItemField in externalOnlineItemsFields)
+                {
+                    originalExternalFields.Add(MapExternalField(externalItemField));
+                }
+            }
+            else
+            {
+                originalExternalFields = WorkSpace.Instance.Solution.ExternalItemsFields;
+            }
+
+            return originalExternalFields;
+        }
+
+        private static ExternalItemFieldBase MapExternalField(ExternalItemFieldBase externalItemField)
+        {
+            var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
+                .FirstOrDefault(x => x.Name.Equals(externalItemField.Name, StringComparison.CurrentCultureIgnoreCase));
+
+            return new ExternalItemFieldBase
+            {
+                Name = externalItemField.Name,
+                ID = externalItemField.ID,
+                ItemType = externalItemField.ItemType,
+                Guid = externalItemField.Guid,
+                IsCustomField = externalItemField.IsCustomField,
+                SelectedValue = existingField != null && !string.IsNullOrEmpty(existingField.SelectedValue)
+                    ? existingField.SelectedValue
+                    : externalItemField.SelectedValue
+            };
         }
     }
 
