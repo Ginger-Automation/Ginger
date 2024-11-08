@@ -656,7 +656,7 @@ namespace GingerCore.ALM.RQM
             ACL_Data_Contract.Activity currentActivity = GetTestCaseFromActivityGroup(activGroup);
             try
             {
-                var originalExternalFields = GetExternalFields();
+                var originalExternalFields = General.GetExternalFields();
                 
                 if (!originalExternalFields.Any(x => x.ItemType == "TestCase"))
                 {
@@ -690,46 +690,6 @@ namespace GingerCore.ALM.RQM
                 result = $"Failed to create Execution Record Per Activity- {currentActivity.EntityName} in CreateExecutionRecord {ex.InnerException}";
             }
             return result;
-        }
-
-        private static ObservableList<ExternalItemFieldBase> GetExternalFields()
-        {
-            ObservableList<ExternalItemFieldBase> originalExternalFields = new ObservableList<ExternalItemFieldBase>();
-
-            var defaultALMConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
-            var firstExternalItemField = WorkSpace.Instance.Solution.ExternalItemsFields.FirstOrDefault();
-
-            if (defaultALMConfig != null && firstExternalItemField != null &&
-                defaultALMConfig.ALMProjectGUID != firstExternalItemField.ProjectGuid)
-            {
-                var externalOnlineItemsFields = ImportFromRQM.GetOnlineFields(null);
-
-                foreach (var externalItemField in externalOnlineItemsFields)
-                {
-                    var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
-                        .FirstOrDefault(x => x.Name.Equals(externalItemField.Name, StringComparison.CurrentCultureIgnoreCase));
-
-                    var fieldToAdd = new ExternalItemFieldBase
-                    {
-                        Name = externalItemField.Name,
-                        ID = externalItemField.ID,
-                        ItemType = externalItemField.ItemType,
-                        Guid = externalItemField.Guid,
-                        IsCustomField = externalItemField.IsCustomField,
-                        SelectedValue = existingField != null && !string.IsNullOrEmpty(existingField.SelectedValue)
-                            ? existingField.SelectedValue
-                            : externalItemField.SelectedValue
-                    };
-
-                    originalExternalFields.Add(fieldToAdd);
-                }
-            }
-            else
-            {
-                originalExternalFields = WorkSpace.Instance.Solution.ExternalItemsFields;
-            }
-
-            return originalExternalFields;
         }
         public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
         {

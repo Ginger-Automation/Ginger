@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.ALM.RQM;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -702,6 +703,46 @@ namespace GingerCoreNET.GeneralLib
                 Reporter.ToLog(eLogLevel.WARN, "Configuration package not exist in solution, Settings not exist at: " + Path.Combine(PackagePath, settingsFolder));
             }
             return false;
+        }
+
+        public static ObservableList<ExternalItemFieldBase> GetExternalFields()
+        {
+            ObservableList<ExternalItemFieldBase> originalExternalFields = new ObservableList<ExternalItemFieldBase>();
+
+            var defaultALMConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
+            var firstExternalItemField = WorkSpace.Instance.Solution.ExternalItemsFields.FirstOrDefault();
+
+            if (defaultALMConfig != null && firstExternalItemField != null &&
+                defaultALMConfig.ALMProjectGUID != firstExternalItemField.ProjectGuid)
+            {
+                var externalOnlineItemsFields = ImportFromRQM.GetOnlineFields(null);
+
+                foreach (var externalItemField in externalOnlineItemsFields)
+                {
+                    var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
+                        .FirstOrDefault(x => x.Name.Equals(externalItemField.Name, StringComparison.CurrentCultureIgnoreCase));
+
+                    var fieldToAdd = new ExternalItemFieldBase
+                    {
+                        Name = externalItemField.Name,
+                        ID = externalItemField.ID,
+                        ItemType = externalItemField.ItemType,
+                        Guid = externalItemField.Guid,
+                        IsCustomField = externalItemField.IsCustomField,
+                        SelectedValue = existingField != null && !string.IsNullOrEmpty(existingField.SelectedValue)
+                            ? existingField.SelectedValue
+                            : externalItemField.SelectedValue
+                    };
+
+                    originalExternalFields.Add(fieldToAdd);
+                }
+            }
+            else
+            {
+                originalExternalFields = WorkSpace.Instance.Solution.ExternalItemsFields;
+            }
+
+            return originalExternalFields;
         }
     }
 

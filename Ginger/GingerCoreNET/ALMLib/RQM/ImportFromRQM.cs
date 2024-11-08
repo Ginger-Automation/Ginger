@@ -1250,7 +1250,10 @@ namespace GingerCore.ALM.RQM
                 //step 4. Get All custom Attribute Possible values
                 ObservableList<ExternalItemFieldBase> Customfields = new ObservableList<ExternalItemFieldBase>();
                 Customfields = GetCustomAttributes(bw, rqmSserverUrl, loginData, ref baseUri_, ref selfLink_, ref maxPageNumber_);
-                fields.AddRange(Customfields);
+                foreach (var CustomfieldItem in Customfields)
+                {
+                    fields.Add(CustomfieldItem);
+                }
             }
             catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
         }
