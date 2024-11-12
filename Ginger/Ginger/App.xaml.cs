@@ -287,8 +287,8 @@ namespace Ginger
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
             }
-        }
- 
+       }
+
 
         /// <summary>
         /// Initializes the logging mechanism for the application using log4net.
@@ -325,6 +325,7 @@ namespace Ginger
             if (args.Length == 1)
             {
                 string input = args[0];
+                input = input.Replace("\n", "").Replace("\r", "");
                 input = System.Web.HttpUtility.UrlDecode(input);
                 if (input.StartsWith("ginger://"))
                 {
@@ -338,11 +339,9 @@ namespace Ginger
                 arguments = args;
             }
 
-
             cliProcessor = new CLIProcessor();
             return arguments.Length != 0 ? cliProcessor.ParseArguments(arguments) : null;
         }
-
         /// <summary>
         /// Extracts the DoOptions object from the parser result if available and the operation is 'open'.
         /// Otherwise, returns null.
