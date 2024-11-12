@@ -583,7 +583,7 @@ namespace Ginger.Run
                     CreateStatistics(bizsList, eObjectType.BusinessFlow);
                     //Activities
                     List<GingerCoreNET.GeneralLib.StatItem> activitiesList = [];
-                    var activitiesGroups = mBFESs.SelectMany(b => b.Activities).Where(b => b.GetType() != typeof(ErrorHandler) && b.GetType() != typeof(CleanUpActivity))
+                    var activitiesGroups = mBFESs.SelectMany(b => b.Activities)
                     .GroupBy(n => n.Status)
                     .Select(n => new
                     {
@@ -600,7 +600,7 @@ namespace Ginger.Run
                     CreateStatistics(activitiesList, eObjectType.Activity);
                     //Actions
                     List<GingerCoreNET.GeneralLib.StatItem> actionsList = [];
-                    var actionsGroups = mBFESs.SelectMany(b => b.Activities).Where(b => b.GetType() != typeof(ErrorHandler) && b.GetType() != typeof(CleanUpActivity)).SelectMany(x => x.Acts)
+                    var actionsGroups = mBFESs.SelectMany(b => b.Activities).SelectMany(x => x.Acts)
                     .GroupBy(n => n.Status)
                     .Select(n => new
                     {

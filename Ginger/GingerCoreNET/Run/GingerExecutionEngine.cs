@@ -3747,8 +3747,7 @@ namespace Ginger.Run
                 {
                     //check if Activity is allowed to run
                     if (CurrentBusinessFlow == null ||
-                        activity.Acts.Count == 0 || //no Actions to run
-                            activity.GetType() == typeof(ErrorHandler) ||//don't run error handler from RunActivity                            
+                        activity.Acts.Count == 0 || //no Actions to run                            
                                 activity.CheckIfVaribalesDependenciesAllowsToRun(CurrentBusinessFlow, true) == false || //Variables-Dependencies not allowing to run
                                     (mGingerRunner.FilterExecutionByTags == true && CheckIfActivityTagsMatch() == false))//add validation for Ginger runner tags
                     {
@@ -4494,7 +4493,8 @@ namespace Ginger.Run
 
                 if (mStopRun == false)
                 {
-                    ExecuteCleanUpActivities();
+                    // we do not need to run cleanup in end, as we are now executing as kind of regular activity
+                    //ExecuteCleanUpActivities();
                 }
                 SetBusinessFlowActivitiesAndActionsSkipStatus();
                 if (doContinueRun == false)
@@ -4576,7 +4576,7 @@ namespace Ginger.Run
                 // Assume pass unless error
                 eRunStatus newStatus = eRunStatus.Passed;
 
-                foreach (Activity a in BF.Activities.Where(a => a.GetType() != typeof(ErrorHandler)))
+                foreach (Activity a in BF.Activities)
                 {
                     if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
                     {
