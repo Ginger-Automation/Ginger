@@ -6,10 +6,12 @@ using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Ginger.External.Katalon
 {
@@ -84,7 +86,7 @@ namespace Ginger.External.Katalon
                 "Set highlighted Target Application for all",
                 ImportedPOMGrid_Toolbar_SyncTargetApplication);
             ImportedPOMGrid.AddToolbarTool(
-                eImageType.Browser,
+                eImageType.Globe,
                 "Set highlighted URL for all",
                 ImportedPOMGrid_Toolbar_SyncURL);
 
@@ -177,6 +179,22 @@ namespace Ginger.External.Katalon
                 case EventType.Active:
                     _ = ImportPOMsAsync();
                     break;
+                case EventType.LeavingForNextPage:
+                    bool hasAnyInvalidPOM = false;
+                    foreach (KatalonConvertedPOMViewModel pom in _wizard.POMViewModels)
+                    {
+                        if (pom.Active && !pom.IsValid())
+                        {
+                            hasAnyInvalidPOM = true;
+                            pom.ShowAllErrorHighlights();
+                        }
+                    }
+                    e.CancelEvent = hasAnyInvalidPOM;
+                    if (!hasAnyInvalidPOM)
+                    {
+                        _wizard.AddPOMs();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -186,6 +204,7 @@ namespace Ginger.External.Katalon
         {
             try
             {
+                _wizard.ProcessStarted();
                 _wizard.POMViewModels.ClearAll();
                 _conversionResults.ClearAll();
                 ImportedPOMGrid.DisableGridColoumns();
@@ -195,6 +214,10 @@ namespace Ginger.External.Katalon
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error while importing Katalon Object-Repository as Ginger POM", ex);
+            }
+            finally
+            {
+                _wizard.ProcessEnded();
             }
         }
 
@@ -213,6 +236,23 @@ namespace Ginger.External.Katalon
             }
 
             _wizard.POMViewModels.Add(new(conversionResult.POM, conversionResult.Platform));
+        }
+    }
+
+    public sealed class BoolToErrorBorderThicknessConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool boolValue)
+            {
+                return boolValue ? new Thickness(uniformLength: 1) : new Thickness(uniformLength: 0);
+            }
+            return new Thickness(uniformLength: 0);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
