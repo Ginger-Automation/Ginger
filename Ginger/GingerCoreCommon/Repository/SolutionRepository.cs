@@ -173,7 +173,6 @@ namespace Amdocs.Ginger.Repository
 
                 string filePath = CreateRepositoryItemFileName(repositoryItem);
                 RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
-                if (rf == null) { return; }
                 rf.SaveRepositoryItem(filePath, txt);
                 repositoryItem.FileName = filePath;
                 repositoryItem.FilePath = filePath;
