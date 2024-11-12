@@ -39,7 +39,7 @@ namespace Ginger.External.Katalon
 
         private void AddPages()
         {
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Introduction", Page: new WizardIntroPage("/External/Katalon/ImportKatalonObjectRepositoryIntro.md"));
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Katalon Object Repository Import Introduction", Page: new WizardIntroPage("/External/Katalon/ImportKatalonObjectRepositoryIntro.md"));
             AddPage(Name: "SelectFolder", Title: "Select Folder", SubTitle: "Select Object-Repository folder", Page: new SelectObjectRepositoryFolderWizardPage(wizard: this));
             AddPage(Name: "ImportPOM", Title: "Import POM", SubTitle: "View imported POM list", new ImportPOMFromObjectRepositoryWizardPage(wizard: this));
         }
