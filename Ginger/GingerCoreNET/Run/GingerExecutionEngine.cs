@@ -109,6 +109,10 @@ namespace Ginger.Run
         Activity mExecutedActivityWhenStopped = null;
         Act mExecutedActionWhenStopped = null;
 
+        public BusinessFlow ExecutedBusinessFlowWhenStopped => mExecutedBusinessFlowWhenStopped;
+        public Activity ExecutedActivityWhenStopped => mExecutedActivityWhenStopped;
+        public Act ExecutedActionWhenStopped => mExecutedActionWhenStopped;
+
         Activity mLastExecutedActivity;
 
         private eRunSource? mRunSource = null;
@@ -4411,78 +4415,78 @@ namespace Ginger.Run
 
                 while (ExecutingActivity != null)
                 {
-                        ExecutingActivity.Status = eRunStatus.Running;
-                        GiveUserFeedback();
-                        SetMappedValuesToActivityVariables(ExecutingActivity, previouslyExecutedActivities.ToArray());
-                        if (doContinueRun && FirstExecutedActivity.Equals(ExecutingActivity))
+                    ExecutingActivity.Status = eRunStatus.Running;
+                    GiveUserFeedback();
+                    SetMappedValuesToActivityVariables(ExecutingActivity, previouslyExecutedActivities.ToArray());
+                    if (doContinueRun && FirstExecutedActivity.Equals(ExecutingActivity))
+                    {
+                        // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
+                        RunActivity(ExecutingActivity, true, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
+                    }
+                    else
+                    {
+                        RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
+                    }
+                    previouslyExecutedActivities.Add(ExecutingActivity);
+                    //TODO: Why this is here? do we need to rehook
+                    CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
+                    if (ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                    {
+                        CurrentBusinessFlow.LastFailedActivity = ExecutingActivity;
+                    }
+                    if (ExecutingActivity.Mandatory && ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                    {
+                        //CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
+                        CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        if (!(CurrentBusinessFlow.Activities.IsLastItem()))
                         {
-                            // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
-                            RunActivity(ExecutingActivity, true, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
+                            GotoNextActivity();
+                            SetNextActivitiesBlockedStatus();
+                        }
+                        return;
+                    }
+
+                    if (mStopRun || mStopBusinessFlow)
+                    {
+                        //CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
+                        SetBusinessFlowActivitiesAndActionsSkipStatus();
+                        SetActivityGroupsExecutionStatus();
+                        CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
+                        return;
+                    }
+
+                    if (mErrorPostExecutionActionFlowBreaker)
+                    {
+                        if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextActivity)
+                        {
+                            mErrorPostExecutionActionFlowBreaker = false;
                         }
                         else
                         {
-                            RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
+                            break;
                         }
-                        previouslyExecutedActivities.Add(ExecutingActivity);
-                        //TODO: Why this is here? do we need to rehook
-                        CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
-                        if (ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
-                        {
-                            CurrentBusinessFlow.LastFailedActivity = ExecutingActivity;
-                        }
-                        if (ExecutingActivity.Mandatory && ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
-                        {
-                            //CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
-                            CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            if (!(CurrentBusinessFlow.Activities.IsLastItem()))
-                            {
-                                GotoNextActivity();
-                                SetNextActivitiesBlockedStatus();
-                            }
-                            return;
-                        }
+                    }
 
-                        if (mStopRun || mStopBusinessFlow)
+                    if ((Activity)CurrentBusinessFlow.Activities.CurrentItem != ExecutingActivity)
+                    {
+                        //If not equal means flow control update current item to target activity, no need to do next activity
+                        ExecutingActivity = (Activity)CurrentBusinessFlow.Activities.CurrentItem;
+                    }
+                    else
+                    {
+                        if (!CurrentBusinessFlow.Activities.IsLastItem())
                         {
-                            //CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
-                            SetBusinessFlowActivitiesAndActionsSkipStatus();
-                            SetActivityGroupsExecutionStatus();
-                            CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
-                            return;
-                        }
-
-                        if (mErrorPostExecutionActionFlowBreaker)
-                        {
-                            if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextActivity)
-                            {
-                                mErrorPostExecutionActionFlowBreaker = false;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-
-                        if ((Activity)CurrentBusinessFlow.Activities.CurrentItem != ExecutingActivity)
-                        {
-                            //If not equal means flow control update current item to target activity, no need to do next activity
+                            Thread.Sleep(1);
+                            GotoNextActivity();
                             ExecutingActivity = (Activity)CurrentBusinessFlow.Activities.CurrentItem;
                         }
                         else
                         {
-                            if (!CurrentBusinessFlow.Activities.IsLastItem())
-                            {
-                                Thread.Sleep(1);
-                                GotoNextActivity();
-                                ExecutingActivity = (Activity)CurrentBusinessFlow.Activities.CurrentItem;
-                            }
-                            else
-                            {
-                                ExecutingActivity = null;
-                            }
+                            ExecutingActivity = null;
                         }
+                    }
 
-                    
+
                 }
             }
             catch (Exception ex)

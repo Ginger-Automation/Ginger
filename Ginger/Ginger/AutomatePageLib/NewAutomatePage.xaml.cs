@@ -1015,6 +1015,7 @@ namespace GingerWPF.BusinessFlowsLib
                 await mExecutionEngine.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
                 this.Dispatcher.Invoke(() =>
                 {
+                    CalculateFinalStatusForReport();
                     if (WorkSpace.Instance.UserProfile.AutoGenerateAutomatePageReport)
                     {
                         GenerateReport();
@@ -1315,66 +1316,21 @@ namespace GingerWPF.BusinessFlowsLib
                 switch (continueFrom)
                 {
                     case eContinueFrom.LastStoppedAction:
+
+                        LogExecutionDetailsUpToLastExecutedAction(mExecutionEngine.ExecutedActivityWhenStopped, mExecutionEngine.ExecutedActionWhenStopped);
                         await mExecutionEngine.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.LastStoppedAction);
                         break;
                     case eContinueFrom.SpecificAction:
                         Activity parentActivity = ((Tuple<Activity, Act>)executedItem).Item1;
                         Act actionToExecute = ((Tuple<Activity, Act>)executedItem).Item2;
-                        try
-                        {
-                            if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                            {
-                                bool reachedCurrentAction = false;
-                                foreach (Activity activity in mBusinessFlow.Activities)
-                                {
-                                    foreach (Act action in activity.Acts.Cast<Act>())
-                                    {
-                                        if (activity == parentActivity && action == actionToExecute)
-                                        {
-                                            reachedCurrentAction = true;
-                                            break;
-                                        }
-                                        mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
-                                    }
-                                    if (reachedCurrentAction)
-                                    {
-                                        break;
-                                    }
-                                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Error while logging previous activity and actions", ex);
-                        }
+                        LogExecutionDetailsUpToLastExecutedAction(parentActivity, actionToExecute);
 
                         await mExecutionEngine.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificAction, mBusinessFlow, parentActivity, actionToExecute);
                         break;
                     case eContinueFrom.SpecificActivity:
                         Activity activityToExecute = (Activity)executedItem;
-                        try
-                        {
-                            if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                            {
-                                foreach (Activity activity in mBusinessFlow.Activities)
-                                {
-                                    if (activity == activityToExecute)
-                                    {
-                                        break;
-                                    }
-                                    foreach (Act action in activity.Acts.Cast<Act>())
-                                    {
-                                        mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
-                                    }
-                                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Error while logging previous activity and actions", ex);
-                        }
+
+                        LogExecutionDetailsUpToLastExecutedActivity(activityToExecute);
 
                         mBusinessFlow.CurrentActivity = activityToExecute;
 
@@ -1390,8 +1346,76 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
+                CalculateFinalStatusForReport();
                 //mExecutionIsInProgress = false;
                 //SetUIElementsBehaverDuringExecution();
+            }
+        }
+
+        /// <summary>
+        /// Logs the execution details up to the last executed activity.
+        /// </summary>
+        /// <param name="activityToExecute">The activity to execute.</param>
+        private void LogExecutionDetailsUpToLastExecutedActivity(Activity activityToExecute)
+        {
+            try
+            {
+                if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    foreach (Activity activity in mBusinessFlow.Activities)
+                    {
+                        if (activity == activityToExecute)
+                        {
+                            break;
+                        }
+                        foreach (Act action in activity.Acts.Cast<Act>())
+                        {
+                            mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                        }
+                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while logging previous activity and actions", ex);
+            }
+        }
+
+        /// <summary>
+        /// Logs the execution details of actions and activities up to the last executed action.
+        /// </summary>
+        /// <param name="parentActivity">The parent activity containing the actions.</param>
+        /// <param name="actionToExecute">The action up to which the logging should be performed.</param>
+        private void LogExecutionDetailsUpToLastExecutedAction(Activity parentActivity, Act actionToExecute)
+        {
+            try
+            {
+                if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    bool reachedCurrentAction = false;
+                    foreach (Activity activity in mBusinessFlow.Activities)
+                    {
+                        foreach (Act action in activity.Acts.Cast<Act>())
+                        {
+                            if (activity == parentActivity && action == actionToExecute)
+                            {
+                                reachedCurrentAction = true;
+                                break;
+                            }
+                            mExecutionEngine.ExecutionLoggerManager.ActionEnd(0, action);
+                        }
+                        if (reachedCurrentAction)
+                        {
+                            break;
+                        }
+                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, activity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while logging previous activity and actions", ex);
             }
         }
 
@@ -1812,7 +1836,6 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
                 CreateLiteDBReport();
                 return;
             }
@@ -1883,12 +1906,29 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void ShowExecutionSummaryPage()
         {
-            if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-            {
-                ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
-            }
             ExecutionSummaryPage w = new ExecutionSummaryPage(mContext);
             w.ShowAsWindow();
+        }
+
+        private void CalculateFinalStatusForReport()
+        {
+            try
+            {
+                if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
+                }
+
+                foreach (Activity activity in mContext.BusinessFlow.Activities)
+                {
+                    mExecutionEngine.CalculateActivityFinalStatus(activity);
+                }
+                mExecutionEngine.CalculateBusinessFlowFinalStatus(mContext.BusinessFlow);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while CalculateFinalStatusForReport", ex);
+            }
         }
 
         private void xSummaryPageMenuItem_Click(object sender, RoutedEventArgs e)
