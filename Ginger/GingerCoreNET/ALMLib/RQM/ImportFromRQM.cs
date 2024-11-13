@@ -1274,7 +1274,6 @@ namespace GingerCore.ALM.RQM
                 }
                 //TODO: Get 'next' and 'last links
                 XmlNodeList CustomAttributelinkList_ = CustomAttributeList.GetElementsByTagName("link");
-
                 if (CustomAttributelinkList_.Count > 0)
                 {
                     XmlNode selfPage = CustomAttributelinkList_.Item(1);
@@ -1352,8 +1351,6 @@ namespace GingerCore.ALM.RQM
                                 {
                                     CustomAttributeListing.LoadXml(CustomAttributeDetail.responseText);
                                 }
-
-
                                 string CustomAttributeName = string.Empty; // -->itemfield.Name
                                 string CustomAttributeItemType = string.Empty; //-->itemfield.ItemType
                                 string CustomAttributeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
@@ -1364,7 +1361,24 @@ namespace GingerCore.ALM.RQM
                                 CustomAttributeName = CustomAttributeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
                                 CustomAttributeItemType = CustomAttributeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
                                 string CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
-                                CustomAttributeMandatory = "false";
+                                // Define the namespace manager for the XML document
+                                XmlNamespaceManager nsManager = new XmlNamespaceManager(CustomAttributeListing.NameTable);
+                                nsManager.AddNamespace("ns2", "http://jazz.net/xmlns/alm/qm/v0.1/");
+
+                                // XPath query to find ns2:required
+                                string xpath = "//ns2:required";
+
+                                // Use SelectSingleNode to check if ns2:required element exists
+                                XmlNode requiredNode = CustomAttributeListing.SelectSingleNode(xpath, nsManager);
+
+                                if (requiredNode != null)
+                                {
+                                    CustomAttributeMandatory = CustomAttributeListing.GetElementsByTagName("ns2:required").Item(0).InnerText;
+                                }
+                                else
+                                {
+                                    CustomAttributeMandatory = "false";
+                                }
 
 
 
@@ -1372,6 +1386,7 @@ namespace GingerCore.ALM.RQM
                                 itemfield.ID = CustomAttributeID;
                                 itemfield.Name = CustomAttributeName;
                                 itemfield.Type = CustomAttributefieldType;
+                                itemfield.TypeIdentifier = typeIdentifier;
                                 if (itemfield.SelectedValue == null)
                                 {
                                     itemfield.SelectedValue = "Unassigned";
@@ -1442,28 +1457,59 @@ namespace GingerCore.ALM.RQM
                             CustomAttributeName = CustomAttributeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
                             CustomAttributeItemType = CustomAttributeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
                             string CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
-                            CustomAttributeMandatory = "false";
+                            // Define the namespace manager for the XML document
+                            XmlNamespaceManager nsManager = new XmlNamespaceManager(CustomAttributeListing.NameTable);
+                            nsManager.AddNamespace("ns2", "http://jazz.net/xmlns/alm/qm/v0.1/");
+
+                            // XPath query to find ns2:required
+                            string xpath = "//ns2:required";
+
+                            // Use SelectSingleNode to check if ns2:required element exists
+                            XmlNode requiredNode = CustomAttributeListing.SelectSingleNode(xpath, nsManager);
+
+                            if (requiredNode != null)
+                            {
+                                CustomAttributeMandatory = CustomAttributeListing.GetElementsByTagName("ns2:required").Item(0).InnerText;
+                            }
+                            else
+                            {
+                                CustomAttributeMandatory = "false";
+                            }
+                            
 
                             itemfield.ItemType = CustomAttributeItemType;
                             itemfield.ID = CustomAttributeID;
                             itemfield.TypeIdentifier = typeIdentifier;
                             itemfield.Name = CustomAttributeName;
                             itemfield.Type = CustomAttributefieldType;
-                            if (itemfield.SelectedValue == null)
-                            {
-                                itemfield.SelectedValue = "Unassigned";
-                            }
-
                             if (CustomAttributeMandatory == "true")
                             {
                                 itemfield.ToUpdate = true;
                                 itemfield.Mandatory = true;
+                                if(itemfield.Type.Equals("INTEGER",StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    itemfield.SelectedValue = "1";
+                                }
+                                else if(itemfield.Type.Equals("MEDIUMSTRING", StringComparison.CurrentCultureIgnoreCase) || itemfield.Type.Equals("SMALLSTRING", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    itemfield.SelectedValue = "dummy";
+                                }
+                                else if(itemfield.Type.Equals("TIMESTAMP", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    itemfield.SelectedValue = DateTime.Now.ToString("yyyy-mm-dd");
+                                }
                             }
                             else
                             {
                                 itemfield.ToUpdate = false;
                                 itemfield.Mandatory = false;
                             }
+                            if (itemfield.SelectedValue == null)
+                            {
+                                itemfield.SelectedValue = "Unassigned";
+                            }
+
+                            
                             itemfield.IsCustomField = true;
                             itemfield.ProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID;
                             CustomAttributeRsult.Add(itemfield);
@@ -1537,7 +1583,6 @@ namespace GingerCore.ALM.RQM
             catch (Exception e) 
             { 
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
-                
             }
             return fields;
         }
