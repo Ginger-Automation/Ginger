@@ -2071,6 +2071,8 @@ namespace Ginger.Run
             {
                 foreach (CleanUpActivity cleanUpActivity in cleanUpActivities)
                 {
+                    CurrentBusinessFlow.CurrentActivity = cleanUpActivity;
+
                     RunActivity(cleanUpActivity);
                 }
             }
@@ -2465,69 +2467,69 @@ namespace Ginger.Run
                     switch (ActExecutorType)
                     {
                         case GingerRunner.eActionExecutorType.RunOnDriver:
+                        {
+                            if (currentAgent == null)
                             {
-                                if (currentAgent == null)
+                                if (string.IsNullOrEmpty(act.Error))
                                 {
-                                    if (string.IsNullOrEmpty(act.Error))
-                                    {
-                                        act.Error = "No Agent was found for the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Application.";
-                                    }
-
-                                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                                    act.Error = "No Agent was found for the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Application.";
                                 }
-                                else
-                                {
-                                    if (((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentType == Agent.eAgentType.Driver)
-                                    {
-                                        if (((AgentOperations)currentAgent.AgentOperations).Status != Agent.eStatus.Running)
-                                        {
-                                            if (string.IsNullOrEmpty(act.Error))
-                                            {
-                                                if (((AgentOperations)currentAgent.AgentOperations).Driver != null && !string.IsNullOrEmpty(((AgentOperations)currentAgent.AgentOperations).Driver.ErrorMessageFromDriver))
-                                                {
-                                                    act.Error = ((AgentOperations)currentAgent.AgentOperations).Driver.ErrorMessageFromDriver;
-                                                }
-                                                else
-                                                {
-                                                    act.Error = $"Agent failed to start for the {GingerDicser.GetTermResValue(eTermResKey.Activity)} Application. Current Agent Status {((AgentOperations)currentAgent.AgentOperations).Status}";
-                                                }
-                                            }
 
-                                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                        }
-                                        else
+                                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            }
+                            else
+                            {
+                                if (((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentType == Agent.eAgentType.Driver)
+                                {
+                                    if (((AgentOperations)currentAgent.AgentOperations).Status != Agent.eStatus.Running)
+                                    {
+                                        if (string.IsNullOrEmpty(act.Error))
                                         {
-                                            using (IFeatureTracker rodFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
+                                            if (((AgentOperations)currentAgent.AgentOperations).Driver != null && !string.IsNullOrEmpty(((AgentOperations)currentAgent.AgentOperations).Driver.ErrorMessageFromDriver))
                                             {
-                                                rodFeatureTracker.Metadata.Add("Type", act.GetType().Name);
-                                                rodFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunOnDriver.ToString());
-                                                rodFeatureTracker.Metadata.Add("IsSharedRepositoryInstance", act.IsSharedRepositoryInstance.ToString());
-                                                ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).RunAction(act);
+                                                act.Error = ((AgentOperations)currentAgent.AgentOperations).Driver.ErrorMessageFromDriver;
+                                            }
+                                            else
+                                            {
+                                                act.Error = $"Agent failed to start for the {GingerDicser.GetTermResValue(eTermResKey.Activity)} Application. Current Agent Status {((AgentOperations)currentAgent.AgentOperations).Status}";
                                             }
                                         }
+
+                                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                                     }
                                     else
                                     {
-
-                                        if (act is IActPluginExecution PluginAction)
+                                        using (IFeatureTracker rodFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
                                         {
-
-                                            Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
-                                            ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);
-                                        }
-
-                                        else
-                                        {
-                                            act.Error = "Current Plugin Agent does not support execution for " + act.ActionDescription;
-                                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-
+                                            rodFeatureTracker.Metadata.Add("Type", act.GetType().Name);
+                                            rodFeatureTracker.Metadata.Add("ExecutorType", GingerRunner.eActionExecutorType.RunOnDriver.ToString());
+                                            rodFeatureTracker.Metadata.Add("IsSharedRepositoryInstance", act.IsSharedRepositoryInstance.ToString());
+                                            ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).RunAction(act);
                                         }
                                     }
-
                                 }
-                            }
+                                else
+                                {
 
-                            break;
+                                    if (act is IActPluginExecution PluginAction)
+                                    {
+
+                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
+                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);
+                                    }
+
+                                    else
+                                    {
+                                        act.Error = "Current Plugin Agent does not support execution for " + act.ActionDescription;
+                                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+
+                                    }
+                                }
+
+                            }
+                        }
+
+                        break;
 
                         case GingerRunner.eActionExecutorType.RunWithoutDriver:
                             using (IFeatureTracker rwdFeatureTracker = Reporter.StartFeatureTracking(FeatureId.ActionExecution))
@@ -4415,6 +4417,20 @@ namespace Ginger.Run
 
                 while (ExecutingActivity != null)
                 {
+                    if (ExecutingActivity is CleanUpActivity)
+                    {
+                        if (!CurrentBusinessFlow.Activities.IsLastItem())
+                        {
+                            GotoNextActivity();
+                            ExecutingActivity = (Activity)CurrentBusinessFlow.Activities.CurrentItem;
+                            continue;
+                        }
+                        else
+                        {
+                             ExecutingActivity = null;
+                            break;
+                        }
+                    }
                     ExecutingActivity.Status = eRunStatus.Running;
                     GiveUserFeedback();
                     SetMappedValuesToActivityVariables(ExecutingActivity, previouslyExecutedActivities.ToArray());
@@ -4438,7 +4454,7 @@ namespace Ginger.Run
                     {
                         //CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
                         CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        if (!(CurrentBusinessFlow.Activities.IsLastItem()))
+                        if (!CurrentBusinessFlow.Activities.IsLastItem())
                         {
                             GotoNextActivity();
                             SetNextActivitiesBlockedStatus();
