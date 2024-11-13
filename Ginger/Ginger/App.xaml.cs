@@ -261,7 +261,6 @@ namespace Ginger
 
                 bool startGrid = ShouldStartGrid(e.Args);
                 WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
-
                 var parserResult = ParseCommandLineArguments(e.Args);
 
                 DoOptions doOptions = ExtractDoOptions(parserResult);
@@ -271,9 +270,7 @@ namespace Ginger
                     WorkSpace.Instance.RunningInExecutionMode = true;
                     Reporter.ReportAllAlsoToConsole = true;
                 }
-
                 InitializeGingerCore();
-
                 if (!WorkSpace.Instance.RunningInExecutionMode)
                 {
                     ProcessGingerUIStartup(doOptions);
@@ -330,6 +327,10 @@ namespace Ginger
                 if (input.StartsWith("ginger://"))
                 {
                     input = input.Substring("ginger://".Length);
+                }
+                if (input.EndsWith("/"))
+                {
+                    input = input.Substring(0, input.Length - 1);
                 }
                 List<string> resultList = General.SplitWithPaths(input).Select(s => s.Trim('\"', '\'')).ToList();
                 arguments = resultList.ToArray();
