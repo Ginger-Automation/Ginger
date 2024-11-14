@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -69,6 +69,7 @@ namespace GingerCore
     {
         private eHandlerType mHandlerType;
         public bool IsSelected { get; set; }
+        public bool IsAddedToReport { get; set; } = false;
 
         [IsSerializedForLocalRepository]
         public eHandlerType HandlerType

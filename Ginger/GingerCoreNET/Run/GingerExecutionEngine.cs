@@ -3997,7 +3997,7 @@ namespace Ginger.Run
                     PostScopeVariableHandling(activity.Variables);
 
                     NotifyActivityEnd(activity);
-
+                    CalculateErrorHandlersActivtyEnd(activity);
                     mLastExecutedActivity = activity;
                     CurrentBusinessFlow.PreviousActivity = activity;
                     GiveUserFeedback();
@@ -5862,6 +5862,26 @@ namespace Ginger.Run
             {
                 CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
             }
+        }
+
+        private void CalculateErrorHandlersActivtyEnd(Activity activity)
+        {
+
+            var errorHandlerList = CurrentBusinessFlow.Activities.Where(x => x.GetType() == typeof(ErrorHandler) && x.Status != eRunStatus.Skipped);
+
+            foreach (ErrorHandler errActivity in errorHandlerList)
+            {
+                if ( activity.EndTimeStamp > errActivity.EndTimeStamp && activity.Status == eRunStatus.Failed && !errActivity.IsAddedToReport)
+                {
+                    uint evetTime = RunListenerBase.GetEventTime();
+                    foreach (RunListenerBase runnerListener in mRunListeners)
+                    {
+                        runnerListener.ActivityEnd(evetTime, errActivity);
+                    }
+                    errActivity.IsAddedToReport = true;
+                }
+            }
+            
         }
     }
 }
