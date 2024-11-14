@@ -930,7 +930,7 @@ namespace GingerCore.ALM.RQM
                     field.TypeIdentifier = fields[indx].TypeIdentifier;
                     field.IsMultiple = fields[indx].IsMultiple;
                     
-                if (!fieldsToReturn.Contains(field))
+                if (!fieldsToReturn.Any(f => f.ID == field.ID))
                 {
                     // Add it if it doesn't already exist
                     fieldsToReturn.Add(field);

@@ -1373,7 +1373,7 @@ namespace GingerCore.ALM.RQM
 
                                 if (requiredNode != null)
                                 {
-                                    CustomAttributeMandatory = CustomAttributeListing.GetElementsByTagName("ns2:required").Item(0).InnerText;
+                                    CustomAttributeMandatory = requiredNode.InnerText;
                                 }
                                 else
                                 {
@@ -1387,6 +1387,30 @@ namespace GingerCore.ALM.RQM
                                 itemfield.Name = CustomAttributeName;
                                 itemfield.Type = CustomAttributefieldType;
                                 itemfield.TypeIdentifier = typeIdentifier;
+                                if (CustomAttributeMandatory.Equals("true", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    itemfield.ToUpdate = true;
+                                    itemfield.Mandatory = true;
+                                    if (itemfield.Type.Equals("INTEGER", StringComparison.CurrentCultureIgnoreCase))
+                                    {
+                                        itemfield.SelectedValue = "1";
+                                    }
+                                    else if (itemfield.Type.Equals("MEDIUMSTRING", StringComparison.CurrentCultureIgnoreCase) || itemfield.Type.Equals("SMALLSTRING", StringComparison.CurrentCultureIgnoreCase))
+                                    {
+                                        itemfield.SelectedValue = "dummy";
+                                    }
+                                    else if (itemfield.Type.Equals("TIMESTAMP", StringComparison.CurrentCultureIgnoreCase))
+                                    {
+                                        itemfield.SelectedValue = DateTime.Now.ToString("yyyy-MM-dd");
+                                    }
+                                    Reporter.ToLog(eLogLevel.INFO, $" CustomAttributeMandatory {CustomAttributeMandatory} itemfield.Name {itemfield.Name} itemfield.Type {itemfield.Type} itemfield..SelectedValue {itemfield.SelectedValue}");
+                                }
+                                else
+                                {
+                                    itemfield.ToUpdate = false;
+                                    itemfield.Mandatory = false;
+                                }
+
                                 if (itemfield.SelectedValue == null)
                                 {
                                     itemfield.SelectedValue = "Unassigned";
@@ -1469,7 +1493,7 @@ namespace GingerCore.ALM.RQM
 
                             if (requiredNode != null)
                             {
-                                CustomAttributeMandatory = CustomAttributeListing.GetElementsByTagName("ns2:required").Item(0).InnerText;
+                                CustomAttributeMandatory = requiredNode.InnerText;
                             }
                             else
                             {
@@ -1496,7 +1520,7 @@ namespace GingerCore.ALM.RQM
                                 }
                                 else if(itemfield.Type.Equals("TIMESTAMP", StringComparison.CurrentCultureIgnoreCase))
                                 {
-                                    itemfield.SelectedValue = DateTime.Now.ToString("yyyy-mm-dd");
+                                    itemfield.SelectedValue = DateTime.Now.ToString("yyyy-MM-dd");
                                 }
                                 Reporter.ToLog(eLogLevel.INFO, $" CustomAttributeMandatory {CustomAttributeMandatory} itemfield.Name {itemfield.Name} itemfield.Type {itemfield.Type} itemfield..SelectedValue {itemfield.SelectedValue}");
                             }
