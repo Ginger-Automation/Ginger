@@ -1475,14 +1475,14 @@ namespace GingerCore.ALM.RQM
                             {
                                 CustomAttributeMandatory = "false";
                             }
-                            
 
+                            
                             itemfield.ItemType = CustomAttributeItemType;
                             itemfield.ID = CustomAttributeID;
                             itemfield.TypeIdentifier = typeIdentifier;
                             itemfield.Name = CustomAttributeName;
                             itemfield.Type = CustomAttributefieldType;
-                            if (CustomAttributeMandatory == "true")
+                            if (CustomAttributeMandatory.Equals("true",StringComparison.CurrentCultureIgnoreCase))
                             {
                                 itemfield.ToUpdate = true;
                                 itemfield.Mandatory = true;
@@ -1498,6 +1498,7 @@ namespace GingerCore.ALM.RQM
                                 {
                                     itemfield.SelectedValue = DateTime.Now.ToString("yyyy-mm-dd");
                                 }
+                                Reporter.ToLog(eLogLevel.INFO, $" CustomAttributeMandatory {CustomAttributeMandatory} itemfield.Name {itemfield.Name} itemfield.Type {itemfield.Type} itemfield..SelectedValue {itemfield.SelectedValue}");
                             }
                             else
                             {

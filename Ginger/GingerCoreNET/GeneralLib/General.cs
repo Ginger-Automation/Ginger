@@ -748,6 +748,7 @@ namespace GingerCoreNET.GeneralLib
                 Name = externalItemField.Name,
                 ID = externalItemField.ID,
                 ItemType = externalItemField.ItemType,
+                Type = externalItemField.Type,
                 Guid = externalItemField.Guid,
                 IsCustomField = externalItemField.IsCustomField,
                 SelectedValue = existingField != null && !string.IsNullOrEmpty(existingField.SelectedValue)

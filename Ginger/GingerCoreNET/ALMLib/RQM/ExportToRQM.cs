@@ -926,6 +926,7 @@ namespace GingerCore.ALM.RQM
                     field.Name = fields[indx].Name;
                     field.SelectedValue = fields[indx].SelectedValue;
                     field.ID = fields[indx].ID;
+                    field.Type = fields[indx].Type;
                     field.TypeIdentifier = fields[indx].TypeIdentifier;
                     field.IsMultiple = fields[indx].IsMultiple;
                     
@@ -1138,7 +1139,10 @@ namespace GingerCore.ALM.RQM
                 {
                     if (itemField.Mandatory == true || itemField.ToUpdate == true)
                     {
-                        propertiesList.Add(itemField.Name, itemField.SelectedValue);
+                        if (!propertiesList.ContainsKey(itemField.Name))
+                        {
+                            propertiesList.Add(itemField.Name, itemField.SelectedValue);
+                        }
                     }
                 }
             }
