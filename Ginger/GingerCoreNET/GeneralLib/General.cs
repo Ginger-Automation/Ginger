@@ -727,7 +727,11 @@ namespace GingerCoreNET.GeneralLib
                 }
                 foreach (var externalItemField in externalOnlineItemsFields)
                 {
-                    originalExternalFields.Add(MapExternalField(externalItemField));
+                    ExternalItemFieldBase item = MapExternalField(externalItemField);
+                    if(item != null)
+                    {
+                        originalExternalFields.Add(item);
+                    }
                 }
             }
             else
@@ -740,19 +744,68 @@ namespace GingerCoreNET.GeneralLib
 
         private static ExternalItemFieldBase MapExternalField(ExternalItemFieldBase externalItemField)
         {
-            var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
-                .FirstOrDefault(x => x.Name.Equals(externalItemField.Name, StringComparison.CurrentCultureIgnoreCase));
-
-            return new ExternalItemFieldBase
+            try
             {
-                Name = externalItemField.Name,
-                ID = externalItemField.ID,
-                ItemType = externalItemField.ItemType,
-                Guid = externalItemField.Guid,
-                IsCustomField = externalItemField.IsCustomField,
-                SelectedValue = existingField != null && !string.IsNullOrEmpty(existingField.SelectedValue)
-                    ? existingField.SelectedValue
-                    : externalItemField.SelectedValue
+                var existingField = WorkSpace.Instance.Solution.ExternalItemsFields
+                    .FirstOrDefault(x => x.Name.Equals(externalItemField.Name, StringComparison.CurrentCultureIgnoreCase) && x.ProjectGuid == externalItemField.ProjectGuid);
+
+                string value = "";
+
+                if (existingField == null)
+                {
+                    if (externalItemField.Mandatory)
+                    {
+                        if (!string.IsNullOrEmpty(externalItemField.SelectedValue))
+                        {
+                            value = externalItemField.SelectedValue;
+                        }
+                        else
+                        {
+                            value = GetDefaultValue(externalItemField);
+                        }
+                    }
+                }
+                else
+                {
+                    if (externalItemField.Mandatory)
+                    {
+                        if (!string.IsNullOrEmpty(existingField.SelectedValue))
+                        {
+                            value = existingField.SelectedValue;
+                        }
+                        else
+                        {
+                            value = GetDefaultValue(externalItemField);
+                        }
+                    }
+                }
+                return new ExternalItemFieldBase
+                {
+                    Name = externalItemField.Name,
+                    ID = externalItemField.ID,
+                    ItemType = externalItemField.ItemType,
+                    Type = externalItemField.Type,
+                    Guid = externalItemField.Guid,
+                    IsCustomField = externalItemField.IsCustomField,
+                    SelectedValue = value
+                };
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Failed to Map External Fields",ex.InnerException);
+                return null;
+            }
+        }
+
+        private static string GetDefaultValue(ExternalItemFieldBase externalItemField)
+        {
+            // Return default values based on the field type.
+            return (externalItemField.Type.ToUpperInvariant()) switch
+            {
+                "INTEGER" => "1",
+                "MEDIUMSTRING" => "Dummy",
+                "SMALLSTRING" => "Dummy",
+                _ => externalItemField.SelectedValue
             };
         }
     }
