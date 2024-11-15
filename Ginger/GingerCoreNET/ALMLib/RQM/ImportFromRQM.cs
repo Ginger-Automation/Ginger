@@ -946,7 +946,8 @@ namespace GingerCore.ALM.RQM
                     Mandatory = field.Mandatory,
                     PossibleValues = field.PossibleValues,
                     Selected = field.SelectedValue,
-                    ToUpdate = field.ToUpdate
+                    ToUpdate = field.ToUpdate,
+                    IsCustomField = field.IsCustomField,
                 };
 
                 externalItemsListForJson.Add(JEIF);
@@ -959,8 +960,21 @@ namespace GingerCore.ALM.RQM
         {
 
             ObservableList<ExternalItemFieldBase> fields = [];
+            fields = GetOnlineFields(bw);
 
+            SaveItemFields(fields);
+            return fields;
+        }
 
+        public static ObservableList<ExternalItemFieldBase> GetOnlineFields(BackgroundWorker bw)
+        {
+            ObservableList<ExternalItemFieldBase> fields = [];
+            GetItemFieldsAll(bw, fields);
+            return fields;
+        }
+
+        private static void GetItemFieldsAll(BackgroundWorker bw, ObservableList<ExternalItemFieldBase> fields)
+        {
             try
             {
                 //TODO : receive as parameters:
@@ -1100,7 +1114,7 @@ namespace GingerCore.ALM.RQM
                                     itemfield.ToUpdate = false;
                                     itemfield.Mandatory = false;
                                 }
-
+                                itemfield.ProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID;
                                 catTypeRsult.Add(itemfield);
                                 PopulateLogOnFieldMappingwinodw(bw, $"Populating field :{categoryTypeName} \r\nNumber of fields populated :{catTypeRsult.Count}");
 
@@ -1174,6 +1188,7 @@ namespace GingerCore.ALM.RQM
                                 itemfield.ToUpdate = false;
                                 itemfield.Mandatory = false;
                             }
+                            itemfield.ProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID;
                             catTypeRsult.Add(itemfield);
                             PopulateLogOnFieldMappingwinodw(bw, $"Populating field :{categoryTypeName} \r\nNumber of fields populated :{catTypeRsult.Count}");
                         }
@@ -1227,10 +1242,373 @@ namespace GingerCore.ALM.RQM
                     #endregion
 
                 }
+
+
+                //step 1. Get Custom attribute list by API
+                //step 2. Get all the custom attribute link as per the response
+                //setp 3. Get all Custom Attribute details by API 
+                //step 4. Get All custom Attribute Possible values
+                ObservableList<ExternalItemFieldBase> Customfields;
+                Customfields = GetCustomAttributes(bw, rqmSserverUrl, loginData, ref baseUri_, ref selfLink_, ref maxPageNumber_);
+                foreach (var CustomfieldItem in Customfields)
+                {
+                    fields.Add(CustomfieldItem);
+                }
             }
             catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
+        }
 
-            SaveItemFields(fields);
+        private static ObservableList<ExternalItemFieldBase> GetCustomAttributes(BackgroundWorker bw, string rqmSserverUrl, LoginDTO loginData, ref string baseUri_, ref string selfLink_, ref int maxPageNumber_)
+        {
+            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            try
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"starting Custom attribute fields retrieve process...");
+                PopulateLogOnFieldMappingwinodw(bw, "starting Custom attribute fields retrieve process...");
+                RqmResponseData CustomAttribute = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + RQMCore.ALMProjectGroupName + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + ALMCore.DefaultAlmConfig.ALMProjectGUID + "/customAttribute"));
+                XmlDocument CustomAttributeList = new XmlDocument();
+                if (!string.IsNullOrEmpty(CustomAttribute.responseText))
+                {
+
+                    CustomAttributeList.LoadXml(CustomAttribute.responseText);
+                }
+                //TODO: Get 'next' and 'last links
+                XmlNodeList CustomAttributelinkList_ = CustomAttributeList.GetElementsByTagName("link");
+                if (CustomAttributelinkList_.Count > 0)
+                {
+                    XmlNode selfPage = CustomAttributelinkList_.Item(1);
+                    XmlNode lastPage_ = CustomAttributelinkList_.Item(3);
+
+                    if (selfPage.Attributes["rel"].Value.ToString() == "self") //verify self link is present
+                    {
+                        selfLink_ = selfPage.Attributes["href"].Value.ToString();
+                        baseUri_ = selfLink_;
+                    }
+
+                    if (lastPage_.Attributes["rel"].Value.ToString() == "last") //verify there is more than one page
+                    {
+                        if (selfPage.Attributes["rel"].Value.ToString() == "self") //verify self link is present
+                        {
+                            selfLink_ = selfPage.Attributes["href"].Value.ToString();
+                            baseUri_ = selfLink_[..^1];
+                        }
+
+                        string tempString_ = lastPage_.Attributes["href"].Value.ToString();
+                        maxPageNumber_ = System.Convert.ToInt32(tempString_[(tempString_.LastIndexOf('=') + 1)..]);
+                    }
+                    string newUri_ = string.Empty;
+                    List<string> CustomAttributeUriPages = [];
+                    ConcurrentBag<ExternalItemFieldBase> CustomAttributeRsult = [];
+
+                    for (int k = 0; k <= maxPageNumber_; k++)
+                    {
+                        if (maxPageNumber_ > 0)
+                        {
+                            newUri_ = baseUri_ + k.ToString();
+                            CustomAttributeUriPages.Add(newUri_);
+                        }
+                        else
+                        {
+                            newUri_ = baseUri_;
+                            CustomAttributeUriPages.Add(newUri_);
+                        }
+                    }
+
+                    //Parallel computing solution CustomAttribute
+                    List<XmlNode> entryList = [];
+                    if (CustomAttributeUriPages.Count > 1)
+                    {
+                        Parallel.ForEach(CustomAttributeUriPages.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, CustomAttributeUri =>
+                        {
+                            newUri_ = CustomAttributeUri;
+                            CustomAttribute = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(newUri_));
+                            if (!string.IsNullOrEmpty(CustomAttribute.responseText))
+                            {
+                                CustomAttributeList.LoadXml(CustomAttribute.responseText);
+                            }
+                            //TODO: Get all ID links under entry:
+                            XmlNodeList CustomAttributeEntry_ = CustomAttributeList.GetElementsByTagName("entry");
+
+                            foreach (XmlNode entryNode in CustomAttributeEntry_)
+                            {
+                                entryList.Add(entryNode);
+                            }
+                            ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
+                            {
+
+                                XmlNodeList innerNodes = singleEntry.ChildNodes;
+                                XmlNode linkNode = innerNodes.Item(4);
+                                ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
+
+                                string getIDlink = string.Empty;
+                                getIDlink = linkNode.Attributes["href"].Value.ToString(); // retrived CategoryType link
+
+
+                                RqmResponseData CustomAttributeDetail = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(getIDlink));
+
+                                XmlDocument CustomAttributeListing = new();
+                                if (!string.IsNullOrEmpty(CustomAttributeDetail.responseText))
+                                {
+                                    CustomAttributeListing.LoadXml(CustomAttributeDetail.responseText);
+                                }
+                                string CustomAttributeName = string.Empty; // -->itemfield.Name
+                                string CustomAttributeItemType = string.Empty; //-->itemfield.ItemType
+                                string CustomAttributeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
+                                string CustomAttributeID = string.Empty;
+
+                                string typeIdentifier = CustomAttributeListing.GetElementsByTagName("ns4:identifier").Item(0).InnerText;
+                                CustomAttributeID = typeIdentifier[(typeIdentifier.LastIndexOf(':') + 1)..];
+                                CustomAttributeName = CustomAttributeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
+                                CustomAttributeItemType = CustomAttributeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
+                                string CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
+                                // Define the namespace manager for the XML document
+                                XmlNamespaceManager nsManager = new XmlNamespaceManager(CustomAttributeListing.NameTable);
+                                nsManager.AddNamespace("ns2", "http://jazz.net/xmlns/alm/qm/v0.1/");
+
+                                // XPath query to find ns2:required
+                                string xpath = "//ns2:required";
+
+                                // Use SelectSingleNode to check if ns2:required element exists
+                                XmlNode requiredNode = CustomAttributeListing.SelectSingleNode(xpath, nsManager);
+
+                                if (requiredNode != null)
+                                {
+                                    CustomAttributeMandatory = requiredNode.InnerText;
+                                }
+                                else
+                                {
+                                    CustomAttributeMandatory = "false";
+                                }
+
+
+
+                                itemfield.ItemType = CustomAttributeItemType;
+                                itemfield.ID = CustomAttributeID;
+                                itemfield.Name = CustomAttributeName;
+                                itemfield.Type = CustomAttributefieldType;
+                                itemfield.TypeIdentifier = typeIdentifier;
+                                if (CustomAttributeMandatory.Equals("true", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    itemfield.ToUpdate = true;
+                                    itemfield.Mandatory = true;
+                                    if (itemfield.Type.Equals("INTEGER", StringComparison.CurrentCultureIgnoreCase))
+                                    {
+                                        itemfield.SelectedValue = "1";
+                                    }
+                                    else if (itemfield.Type.Equals("MEDIUMSTRING", StringComparison.CurrentCultureIgnoreCase) || itemfield.Type.Equals("SMALLSTRING", StringComparison.CurrentCultureIgnoreCase))
+                                    {
+                                        itemfield.SelectedValue = "dummy";
+                                    }
+                                    else if (itemfield.Type.Equals("TIMESTAMP", StringComparison.CurrentCultureIgnoreCase))
+                                    {
+                                        itemfield.SelectedValue = DateTime.Now.ToString("yyyy-MM-dd");
+                                    }
+                                    Reporter.ToLog(eLogLevel.INFO, $" CustomAttributeMandatory {CustomAttributeMandatory} itemfield.Name {itemfield.Name} itemfield.Type {itemfield.Type} itemfield..SelectedValue {itemfield.SelectedValue}");
+                                }
+                                else
+                                {
+                                    itemfield.ToUpdate = false;
+                                    itemfield.Mandatory = false;
+                                }
+
+                                if (itemfield.SelectedValue == null)
+                                {
+                                    itemfield.SelectedValue = "Unassigned";
+                                }
+
+                                if (CustomAttributeMandatory == "true")
+                                {
+                                    itemfield.ToUpdate = true;
+                                    itemfield.Mandatory = true;
+                                }
+                                else
+                                {
+                                    itemfield.ToUpdate = false;
+                                    itemfield.Mandatory = false;
+                                }
+                                itemfield.ProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID;
+                                CustomAttributeRsult.Add(itemfield);
+                                PopulateLogOnFieldMappingwinodw(bw, $"Populating field :{CustomAttributeName} \r\nNumber of fields populated :{CustomAttributeRsult.Count}");
+
+                            }
+                            );
+                        }
+                        );
+                    }
+                    else
+                    {
+                        populatedValue = string.Empty;
+                        newUri_ = baseUri_;
+                        CustomAttribute = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(newUri_));
+
+                        if (!string.IsNullOrEmpty(CustomAttribute.responseText))
+                        {
+                            CustomAttributeList.LoadXml(CustomAttribute.responseText);
+                        }
+
+                        //TODO: Get all ID links under entry:
+                        XmlNodeList CustomAttributeEntry_ = CustomAttributeList.GetElementsByTagName("entry");
+
+                        foreach (XmlNode entryNode in CustomAttributeEntry_)
+                        {
+                            entryList.Add(entryNode);
+                        }
+                        ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
+                        {
+                            XmlNodeList innerNodes = singleEntry.ChildNodes;
+                            XmlNode linkNode = innerNodes.Item(4);
+                            ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
+
+                            string getIDlink = string.Empty;
+                            getIDlink = linkNode.Attributes["href"].Value.ToString(); // retrived CategoryType link
+
+                            RqmResponseData CustomAttributeDetail = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(getIDlink));
+
+                            XmlDocument CustomAttributeListing = new XmlDocument();
+
+                            if (!string.IsNullOrEmpty(CustomAttributeDetail.responseText))
+                            {
+                                CustomAttributeListing.LoadXml(CustomAttributeDetail.responseText);
+                            }
+
+                            string CustomAttributeName = string.Empty; // -->itemfield.Name
+                            string CustomAttributeItemType = string.Empty; //-->itemfield.ItemType
+                            string CustomAttributeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
+                            string CustomAttributeID = string.Empty;
+
+                            string typeIdentifier = CustomAttributeListing.GetElementsByTagName("ns4:identifier").Item(0).InnerText;
+                            CustomAttributeID = typeIdentifier[(typeIdentifier.LastIndexOf(':') + 1)..];
+                            CustomAttributeName = CustomAttributeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
+                            CustomAttributeItemType = CustomAttributeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
+                            string CustomAttributefieldType = CustomAttributeListing.GetElementsByTagName("ns2:type").Item(0).InnerText;
+                            // Define the namespace manager for the XML document
+                            XmlNamespaceManager nsManager = new XmlNamespaceManager(CustomAttributeListing.NameTable);
+                            nsManager.AddNamespace("ns2", "http://jazz.net/xmlns/alm/qm/v0.1/");
+
+                            // XPath query to find ns2:required
+                            string xpath = "//ns2:required";
+
+                            // Use SelectSingleNode to check if ns2:required element exists
+                            XmlNode requiredNode = CustomAttributeListing.SelectSingleNode(xpath, nsManager);
+
+                            if (requiredNode != null)
+                            {
+                                CustomAttributeMandatory = requiredNode.InnerText;
+                            }
+                            else
+                            {
+                                CustomAttributeMandatory = "false";
+                            }
+
+                            
+                            itemfield.ItemType = CustomAttributeItemType;
+                            itemfield.ID = CustomAttributeID;
+                            itemfield.TypeIdentifier = typeIdentifier;
+                            itemfield.Name = CustomAttributeName;
+                            itemfield.Type = CustomAttributefieldType;
+                            if (CustomAttributeMandatory.Equals("true",StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                itemfield.ToUpdate = true;
+                                itemfield.Mandatory = true;
+                                if(itemfield.Type.Equals("INTEGER",StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    itemfield.SelectedValue = "1";
+                                }
+                                else if(itemfield.Type.Equals("MEDIUMSTRING", StringComparison.CurrentCultureIgnoreCase) || itemfield.Type.Equals("SMALLSTRING", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    itemfield.SelectedValue = "dummy";
+                                }
+                                else if(itemfield.Type.Equals("TIMESTAMP", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    itemfield.SelectedValue = DateTime.Now.ToString("yyyy-MM-dd");
+                                }
+                                Reporter.ToLog(eLogLevel.INFO, $" CustomAttributeMandatory {CustomAttributeMandatory} itemfield.Name {itemfield.Name} itemfield.Type {itemfield.Type} itemfield..SelectedValue {itemfield.SelectedValue}");
+                            }
+                            else
+                            {
+                                itemfield.ToUpdate = false;
+                                itemfield.Mandatory = false;
+                            }
+                            if (itemfield.SelectedValue == null)
+                            {
+                                itemfield.SelectedValue = "Unassigned";
+                            }
+
+                            
+                            itemfield.IsCustomField = true;
+                            itemfield.ProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID;
+                            CustomAttributeRsult.Add(itemfield);
+                            PopulateLogOnFieldMappingwinodw(bw, $"Populating field :{CustomAttributeName} \r\nNumber of fields populated :{CustomAttributeRsult.Count}");
+                        }
+                        );
+                    }
+                    foreach (ExternalItemFieldBase field in CustomAttributeRsult)
+                    {
+                        fields.Add(field);
+                    }//TODO: Add Values to CategoryTypes Parallel
+                    PopulateLogOnFieldMappingwinodw(bw, $"Starting values retrieve process... ");
+                    #region new Get Values by filed Custom Attributes
+                    foreach (ExternalItemFieldBase field in fields)
+                    {
+                        if(field.IsMultiple)
+                        {
+                            string baseUrl = $"{rqmSserverUrl}{RQMCore.ALMProjectGroupName}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALMCore.DefaultAlmConfig.ALMProjectGUID}/customAttribute/?fields=feed/entry/content/customAttribute/";
+
+                            // Construct URL
+                            string fullUrl = $"{baseUrl}(customAttribute[@href='{field.TypeIdentifier}']|*))";
+                            Reporter.ToLog(eLogLevel.DEBUG, $"fullUrl : {fullUrl}");
+                            RqmResponseData CustomAttributefieldlist = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData,
+                            new Uri(fullUrl));
+
+                            XDocument doc = XDocument.Parse(CustomAttributefieldlist.responseText);
+                            XNamespace ns = "http://www.w3.org/2005/Atom";
+
+                            // Query the XML to get all titles inside entry nodes
+                            var titles = doc.Descendants(ns + "entry")
+                                            .Select(entry => entry.Element(ns + "title")?.Value)
+                                            .Where(title => title != null);
+
+                            PopulateLogOnFieldMappingwinodw(bw, $"Number of values populated :{titles.Count()}");
+                            if (bw != null)
+                            {
+                                bw.ReportProgress(CustomAttributeRsult.Count, populatedValue);
+                            }
+
+                            if (titles != null && titles.Any())
+                            {
+                                foreach (var title in titles)
+                                {
+                                    field.PossibleValues.Add(title);
+                                }
+
+                                // Set the first item as SelectedValue if PossibleValues is not empty
+                                if (field.PossibleValues.Count > 0)
+                                {
+                                    field.SelectedValue = field.PossibleValues[0];
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if(field.Type != null && (field.Type.Equals("MEDIUM_STRING",StringComparison.CurrentCultureIgnoreCase) || field.Type.Equals("SMALL_STRING", StringComparison.CurrentCultureIgnoreCase)))
+                            {
+                                field.SelectedValue = string.Empty;
+                            }
+                            else
+                            {
+                                field.SelectedValue = null;
+                            }
+                            
+                        }
+                    }
+                    #endregion
+                }
+
+            }
+            catch (Exception e) 
+            { 
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
+            }
             return fields;
         }
 

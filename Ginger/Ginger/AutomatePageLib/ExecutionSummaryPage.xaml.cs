@@ -148,13 +148,6 @@ namespace Ginger.BusinessFlowWindows
 
         private void ShowStatus()
         {
-            // Why we create new GR? !!!
-            GingerExecutionEngine Gr = new GingerExecutionEngine(new GingerRunner());
-            foreach (Activity activity in mContext.BusinessFlow.Activities)
-            {
-                Gr.CalculateActivityFinalStatus(activity);
-            }
-            Gr.CalculateBusinessFlowFinalStatus(mContext.BusinessFlow);
             StatusLabel.Content = mContext.BusinessFlow.RunStatus;
             StatusLabel.Foreground = General.GetStatusBrush(mContext.BusinessFlow.RunStatus);
         }

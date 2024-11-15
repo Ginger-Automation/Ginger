@@ -22,9 +22,9 @@ using ALM_CommonStd.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
-using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using GingerCoreNET.GeneralLib;
 using Newtonsoft.Json;
 using RQMExportStd.ExportBLL;
 using System;
@@ -38,6 +38,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using ExternalItemFieldBase = Amdocs.Ginger.Repository.ExternalItemFieldBase;
 //using AlmDataContractsStd.Contracts;
 
 namespace GingerCore.ALM.RQM
@@ -107,6 +108,14 @@ namespace GingerCore.ALM.RQM
         RQMTestPlan testPlan;
         public bool ExportExecutionDetailsToRQM(BusinessFlow businessFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
+            var originalExternalFields = General.GetExternalFields();
+
+            if (!originalExternalFields.Any(x => x.ItemType == "TestCase"))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no predefined values for RQM's mandatory fields. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
+                return false;
+            }
+            List<ACL_Data_Contract.ExternalItemFieldBase> ExternalFields = ConvertExternalFieldsToACLDataContractfields(originalExternalFields);
             result = string.Empty;
             string bfExportedID = GetExportedIDString(businessFlow.ExternalIdCalCulated, "RQMID");
             if (string.IsNullOrEmpty(bfExportedID) || bfExportedID.Equals("0"))
@@ -192,7 +201,7 @@ namespace GingerCore.ALM.RQM
                                     || publishToALMConfig.FilterStatus == FilterByStatus.All)
                                 {
                                     testPlan.Name = !string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunNameCalculated) ? publishToALMConfig.VariableForTCRunNameCalculated : testPlan.Name;
-                                    ExecutionResult exeResult = GetExeResultforActivityGroup(businessFlow, bfExportedID, activGroup, ref result, testPlan, currentRQMProjectMapping, loginData, publishToALMConfig);
+                                    ExecutionResult exeResult = GetExeResultforActivityGroup(businessFlow, bfExportedID, activGroup, ref result, testPlan, currentRQMProjectMapping, loginData, publishToALMConfig, ExternalFields);
                                     if (exeResult != null)
                                     {
                                         exeResultList.Add(exeResult);
@@ -240,7 +249,7 @@ namespace GingerCore.ALM.RQM
                             }
                             valuelist.Add(exeResultList.FirstOrDefault().TestCaseExportID);
 
-                            resultInfo = RQMConnect.Instance.RQMRep.ExportExecutionResult(loginData, exeResultList, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName);
+                            resultInfo = RQMConnect.Instance.RQMRep.ExportExecutionResult(loginData, exeResultList, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName,null, ExternalFields);
                             if (!resultInfo.IsSuccess)
                             {
                                 Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for  {businessFlow.Name} and testplan {bfExportedID}, execution record id {exeResultList.FirstOrDefault().ExecutionRecordExportID} Error: {resultInfo.ErrorDesc}");
@@ -372,7 +381,7 @@ namespace GingerCore.ALM.RQM
             // get data about execution records per current test plan - finish
             return false;
         }
-        private ExecutionResult GetExeResultforActivityGroup(BusinessFlow businessFlow, string bfExportedID, ActivitiesGroup activGroup, ref string result, RQMTestPlan testPlan, RQMProject currentRQMProjectMapping, LoginDTO loginData, PublishToALMConfig publishToALMConfig)
+        private ExecutionResult GetExeResultforActivityGroup(BusinessFlow businessFlow, string bfExportedID, ActivitiesGroup activGroup, ref string result, RQMTestPlan testPlan, RQMProject currentRQMProjectMapping, LoginDTO loginData, PublishToALMConfig publishToALMConfig, List<ACL_Data_Contract.ExternalItemFieldBase> ExternalFields = null)
         {
             try
             {
@@ -505,7 +514,7 @@ namespace GingerCore.ALM.RQM
                     if (string.IsNullOrEmpty(exeRecordId) || exeRecordId.Equals("0"))
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"Record id not found for {businessFlow.Name}, creating new record");
-                        result = CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId);
+                        result = CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId,ExternalFields);
                     }
                 }
 
@@ -648,14 +657,15 @@ namespace GingerCore.ALM.RQM
             }
         }
 
-        private string CreateExecutionRecord(string bfExportedID, ActivitiesGroup activGroup, RQMTestPlan testPlan, LoginDTO loginData, string txExportID, string tsExportID, ref string erExportID)
+        private string CreateExecutionRecord(string bfExportedID, ActivitiesGroup activGroup, RQMTestPlan testPlan, LoginDTO loginData, string txExportID, string tsExportID, ref string erExportID, List<ACL_Data_Contract.ExternalItemFieldBase> ExternalFields = null)
         {
             string result = string.Empty;
             ACL_Data_Contract.Activity currentActivity = GetTestCaseFromActivityGroup(activGroup);
             try
             {
+                
                 // if executionRecord not updated and not exists - so create one in RQM and update BussinesFlow object (this may be not saved due not existed "autosave" functionality)
-                var resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, testPlan.Name);
+                var resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, testPlan.Name, ExternalFields);
                 if (resultInfo != null && !string.IsNullOrEmpty(resultInfo.ErrorDesc))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - Test Case not found {resultInfo.ErrorCode}, {resultInfo.ErrorDesc}");
@@ -681,7 +691,6 @@ namespace GingerCore.ALM.RQM
             }
             return result;
         }
-
         public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
@@ -777,7 +786,7 @@ namespace GingerCore.ALM.RQM
 
             }
 
-            ResultInfo resultInfo;
+            ALM_CommonStd.DataContracts.ResultInfo resultInfo;
             try
             {
                 //Create (RQM)TestCase for each Ginger ActivityGroup and add it to RQM TestCase List
@@ -793,10 +802,10 @@ namespace GingerCore.ALM.RQM
                     testPlan.Activities.Add(GetTestCaseFromActivityGroup(ag));
 
                 }
-
+                List<ACL_Data_Contract.ExternalItemFieldBase> ExternalFields = ConvertExternalFieldsToACLDataContractfields(mExternalItemsFields);
                 RQMConnect.Instance.RQMRep.GetConection();
 
-                resultInfo = RQMConnect.Instance.RQMRep.ExportTestPlan(loginData, testPlanList, ALMCore.DefaultAlmConfig.ALMServerURL, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, null);
+                resultInfo = RQMConnect.Instance.RQMRep.ExportTestPlan(loginData, testPlanList, ALMCore.DefaultAlmConfig.ALMServerURL, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, null,null, ExternalFields);
             }
             catch (Exception ex)
             {
@@ -903,6 +912,31 @@ namespace GingerCore.ALM.RQM
                 return false;
             }
             return false;
+        }
+
+        private List<ACL_Data_Contract.ExternalItemFieldBase> ConvertExternalFieldsToACLDataContractfields(ObservableList<ExternalItemFieldBase> fields)
+        {
+            List<ACL_Data_Contract.ExternalItemFieldBase> fieldsToReturn = [];
+
+            //Going through the fields to leave only Test Set fields
+            for (int indx = 0; indx < fields.Count; indx++)
+            {
+                    ACL_Data_Contract.ExternalItemFieldBase field = new ACL_Data_Contract.ExternalItemFieldBase();
+                    field.ItemType = fields[indx].ItemType;
+                    field.Name = fields[indx].Name;
+                    field.SelectedValue = fields[indx].SelectedValue;
+                    field.ID = fields[indx].ID;
+                    field.Type = fields[indx].Type;
+                    field.TypeIdentifier = fields[indx].TypeIdentifier;
+                    field.IsMultiple = fields[indx].IsMultiple;
+                    
+                if (!fieldsToReturn.Any(f => f.ID == field.ID))
+                {
+                    // Add it if it doesn't already exist
+                    fieldsToReturn.Add(field);
+                }
+            }
+            return fieldsToReturn;
         }
 
         private ActivityPlan GetTestPlanFromBusinessFlow(BusinessFlow businessFlow)
@@ -1105,7 +1139,10 @@ namespace GingerCore.ALM.RQM
                 {
                     if (itemField.Mandatory == true || itemField.ToUpdate == true)
                     {
-                        propertiesList.Add(itemField.Name, itemField.SelectedValue);
+                        if (!propertiesList.ContainsKey(itemField.Name))
+                        {
+                            propertiesList.Add(itemField.Name, itemField.SelectedValue);
+                        }
                     }
                 }
             }

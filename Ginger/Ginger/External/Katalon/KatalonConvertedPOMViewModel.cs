@@ -14,6 +14,7 @@ namespace Ginger.External.Katalon
         private string _name;
         private string _url;
         private string _targetApplication;
+        private bool _showTargetApplicationErrorHighlight;
 
         public bool Active
         {
@@ -51,11 +52,25 @@ namespace Ginger.External.Katalon
             set
             {
                 _targetApplication = value ?? string.Empty;
+                if (IsTargetApplicationValid())
+                {
+                    ShowTargetApplicationErrorHighlight = false;
+                }
                 PropertyChanged?.Invoke(sender: this, new(nameof(TargetApplication)));
             }
         }
 
         public IEnumerable<string> TargetApplicationOptions { get; }
+
+        public bool ShowTargetApplicationErrorHighlight
+        {
+            get => _showTargetApplicationErrorHighlight;
+            set
+            {
+                _showTargetApplicationErrorHighlight = value;
+                PropertyChanged?.Invoke(sender: this, new(nameof(ShowTargetApplicationErrorHighlight)));
+            }
+        }
 
         public ApplicationPOMModel POM { get; }
 
@@ -71,13 +86,18 @@ namespace Ginger.External.Katalon
             _url = string.Empty;
             _targetApplication = string.Empty;
 
-            TargetApplicationOptions = WorkSpace
+            List<string> solutionTargetApps = WorkSpace
                 .Instance
                 .Solution
                 .GetSolutionTargetApplications()
                 .Where(ta => GetApplicationPlatform(ta.Name) == platform)
                 .Select(ta => ta.Name)
                 .ToList();
+
+            TargetApplicationOptions =
+                new string[] { string.Empty }
+                .Concat(solutionTargetApps)
+                .ToArray();
         }
 
         private ePlatformType GetApplicationPlatform(string application)
@@ -90,6 +110,33 @@ namespace Ginger.External.Katalon
             }
 
             return WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(application);
+        }
+
+        public bool IsValid()
+        {
+            if (!IsTargetApplicationValid())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public void ShowAllErrorHighlights()
+        {
+            if (!IsTargetApplicationValid())
+            {
+                ShowTargetApplicationErrorHighlight = true;
+            }
+        }
+
+        public void ClearAllErrorHighlights()
+        {
+            ShowTargetApplicationErrorHighlight = false;
+        }
+
+        public bool IsTargetApplicationValid()
+        {
+            return !string.IsNullOrWhiteSpace(TargetApplication);
         }
 
         public void CommitChanges()

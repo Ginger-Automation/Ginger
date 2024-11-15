@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.ALM.RQM;
 using GingerCore;
 using GingerCore.Activities;
@@ -240,7 +241,9 @@ namespace Ginger.ALM.Repository
             {
                 return false;
             }
-            if (WorkSpace.Instance.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
+            var originalExternalFields = GingerCoreNET.GeneralLib.General.GetExternalFields();
+
+            if (!originalExternalFields.Any(x => x.ItemType == "TestCase"))
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no predefined values for RQM's mandatory fields. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
                 return false;
@@ -256,7 +259,7 @@ namespace Ginger.ALM.Repository
             string res = string.Empty;
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
 
-            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow, WorkSpace.Instance.Solution.ExternalItemsFields, ref res);
+            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow, originalExternalFields, ref res);
 
             if (exportRes)
             {
@@ -287,6 +290,7 @@ namespace Ginger.ALM.Repository
             Reporter.HideStatusMessage();
             return exportRes;
         }
+
 
         #region External Item Fields
 

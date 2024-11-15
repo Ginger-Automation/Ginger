@@ -261,7 +261,6 @@ namespace Ginger
 
                 bool startGrid = ShouldStartGrid(e.Args);
                 WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
-
                 var parserResult = ParseCommandLineArguments(e.Args);
 
                 DoOptions doOptions = ExtractDoOptions(parserResult);
@@ -271,9 +270,7 @@ namespace Ginger
                     WorkSpace.Instance.RunningInExecutionMode = true;
                     Reporter.ReportAllAlsoToConsole = true;
                 }
-
                 InitializeGingerCore();
-
                 if (!WorkSpace.Instance.RunningInExecutionMode)
                 {
                     ProcessGingerUIStartup(doOptions);
@@ -287,8 +284,8 @@ namespace Ginger
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
             }
-        }
- 
+       }
+
 
         /// <summary>
         /// Initializes the logging mechanism for the application using log4net.
@@ -325,10 +322,15 @@ namespace Ginger
             if (args.Length == 1)
             {
                 string input = args[0];
+                input = input.Replace("\n", "").Replace("\r", "");
                 input = System.Web.HttpUtility.UrlDecode(input);
                 if (input.StartsWith("ginger://"))
                 {
                     input = input.Substring("ginger://".Length);
+                }
+                if (input.EndsWith("/"))
+                {
+                    input = input.Substring(0, input.Length - 1);
                 }
                 List<string> resultList = General.SplitWithPaths(input).Select(s => s.Trim('\"', '\'')).ToList();
                 arguments = resultList.ToArray();
@@ -338,11 +340,9 @@ namespace Ginger
                 arguments = args;
             }
 
-
             cliProcessor = new CLIProcessor();
             return arguments.Length != 0 ? cliProcessor.ParseArguments(arguments) : null;
         }
-
         /// <summary>
         /// Extracts the DoOptions object from the parser result if available and the operation is 'open'.
         /// Otherwise, returns null.

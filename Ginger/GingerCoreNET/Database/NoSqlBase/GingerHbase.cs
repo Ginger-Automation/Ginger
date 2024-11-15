@@ -445,6 +445,22 @@ namespace GingerCore.NoSqlBase
                         scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
                         int path1 = 1;
 
+
+                        //var tableDescriptor = await actionClient.GetTableSchemaAsync(table, null);
+                        //Console.WriteLine($"Table: {tableDescriptor.Name}");
+
+                        // Iterating over column families  
+                        //foreach (var columnFamily in tableDescriptor..ColumnFamilies)
+                        //{
+                        //    Console.WriteLine($"Column Family: {columnFamily.Name}");
+
+                        //    // Here you can add logic to infer or define data types.  
+                        //    // HBase doesn't store data types inherently, you may need to  
+                        //    // map them based on your application's logic or design.  
+                        //    // For instance:  
+                        //    // - You might have a convention where specific column families  
+                        //    //   relate to specific data types.  
+                        //}
                         if (SQLCalculated.Contains('*'))
                         {
 
@@ -458,11 +474,27 @@ namespace GingerCore.NoSqlBase
 
                                     List<Cell> cells = row.values;
 
-                                    foreach (Cell c in cells)
+                                    try
+                                    {
+                                        foreach (Cell c in cells)
+                                        {
+
+                                            try
+                                            {
+                                                Act.AddOrUpdateReturnParamActualWithPath(ExtractColumnName(c.column), DisplayInferredTypeAndValue(c.data), path1.ToString());
+                                            }
+                                            catch (Exception)
+                                            {
+
+                                                // throw;
+                                            }
+
+                                        }
+                                    }
+                                    catch (Exception)
                                     {
 
-                                        Act.AddOrUpdateReturnParamActualWithPath(ExtractColumnName(c.column), Encoding.ASCII.GetString(c.data), path1.ToString());
-
+                                        // throw;
                                     }
                                     path1++;
                                 }
@@ -497,7 +529,7 @@ namespace GingerCore.NoSqlBase
                                         string colname = ExtractColumnName(c.column);
                                         if (list.Contains(colname))
                                         {
-                                            Act.AddOrUpdateReturnParamActualWithPath(colname, Encoding.ASCII.GetString(c.data), path1.ToString());
+                                            Act.AddOrUpdateReturnParamActualWithPath(colname, DisplayInferredTypeAndValue(c.data), path1.ToString());
 
                                         }
 
@@ -527,6 +559,94 @@ namespace GingerCore.NoSqlBase
 
         }
 
+        public enum DataType
+        {
+            Int,
+            Long,
+            Float,
+            Double,
+            String,
+            Unknown
+        }
+
+        public static string DisplayInferredTypeAndValue(byte[] byteArray)
+        {
+
+
+            if (byteArray == null || byteArray.Length == 0)
+            {
+                return "";
+            }
+            DataType inferredType = DataType.String;
+            if (byteArray != null && byteArray.Length > 0 && (byteArray[0] == 0))
+            {
+                inferredType = InferDataType(byteArray);
+            }
+            if (inferredType != DataType.String)
+            {
+                Array.Reverse(byteArray);
+            }
+            object value = ConvertByteArrayToType(byteArray, inferredType);
+
+            if (inferredType == DataType.Long && value != null && value.ToString()[0] == '-' && value.ToString().Length >= 20)
+            {
+                inferredType = DataType.Double;
+                value = ConvertByteArrayToType(byteArray, inferredType);
+            }
+
+            if (value != null && value.ToString().Contains('�'))
+            {
+                inferredType = InferDataType(byteArray);
+                if (inferredType != DataType.String)
+                {
+                    Array.Reverse(byteArray);
+                }
+                value = ConvertByteArrayToType(byteArray, inferredType);
+            }
+            //Console.WriteLine($"Inferred Type: {inferredType}, Value: {value}");
+            return value?.ToString();
+        }
+
+        public static DataType InferDataType(byte[] byteArray)
+        {
+            switch (byteArray.Length)
+            {
+                case 4:
+                    // Potentially int or float  
+                    if (System.BitConverter.ToInt32(byteArray, 0) != 0) // Example heuristic, adjust as necessary  
+                        return DataType.Int; // could be an int  
+                    if (System.BitConverter.ToSingle(byteArray, 0) != 0)
+                        return DataType.Float; // could be a float  
+
+                    return DataType.Unknown;
+
+                case 8:
+                    // Potentially long or double  
+                    if (System.BitConverter.ToInt64(byteArray, 0) != 0) // Example heuristic, adjust as necessary  
+                        return DataType.Long; // could be a long  
+                    if (System.BitConverter.ToDouble(byteArray, 0) != 0)
+                        return DataType.Double; // could be a double  
+
+                    return DataType.Unknown;
+
+                default:
+                    // Consider any string values or unknowns  
+                    return DataType.String; // treating as string for variable lengths  
+            }
+        }
+
+        public static object ConvertByteArrayToType(byte[] byteArray, DataType dataType)
+        {
+            return dataType switch
+            {
+                DataType.Int => System.BitConverter.ToInt32(byteArray, 0),
+                DataType.Long => System.BitConverter.ToInt64(byteArray, 0),
+                DataType.Float => System.BitConverter.ToSingle(byteArray, 0),
+                DataType.Double => System.BitConverter.ToDouble(byteArray, 0),
+                DataType.String => System.Text.Encoding.UTF8.GetString(byteArray),
+                _ => null,// or throw an exception based on your needs  
+            };
+        }
 
         public string Base64Encode(string text)
         {

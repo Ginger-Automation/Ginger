@@ -85,7 +85,7 @@ namespace Ginger.Variables
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
             xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
 
-            if (parent.GOpsFlag)
+            if (parent is not null && parent.GOpsFlag)
             {
                 xVarNameTxtBox.IsEnabled = false;
                 xVarDescritpiontxtBox.IsEnabled = false;

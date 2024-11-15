@@ -77,7 +77,7 @@ namespace Ginger.Run
                 {
                     return eRunnerItemType.BusinessFlow;
                 }
-                else if (ItemObject.GetType() == typeof(GingerCore.Activity))
+                else if (ItemObject is Activity)
                 {
                     return eRunnerItemType.Activity;
                 }
@@ -186,7 +186,7 @@ namespace Ginger.Run
             }
             else if (ItemObject is Activity activity)
             {
-                IEnumerable<GingerCore.Actions.Act> acts = null;
+                IEnumerable<GingerCore.Actions.Act> acts = ((Activity)ItemObject).Acts.OfType<GingerCore.Actions.Act>();
                 if (acts != null)
                 {
 

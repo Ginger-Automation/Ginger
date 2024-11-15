@@ -29,5 +29,6 @@ namespace GingerCore.External
         public ObservableList<string> PossibleValues { get; set; }
         public string Selected { get; set; }
         public bool ToUpdate { get; set; }
+        public bool IsCustomField { get; set; }
     }
 }
