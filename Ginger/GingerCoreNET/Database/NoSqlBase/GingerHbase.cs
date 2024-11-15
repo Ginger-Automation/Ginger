@@ -447,7 +447,6 @@ namespace GingerCore.NoSqlBase
                             Reporter.ToLog(eLogLevel.ERROR, "The Query value can not be empty");
                             break;
                         }
-
                         if (SQLCalculated.Contains("where"))
                         {
                             table = SQLCalculated.Substring(SQLCalculated.IndexOf("from") + 4, (SQLCalculated.IndexOf("where") - SQLCalculated.IndexOf("from") - 4)).Trim();
@@ -455,12 +454,12 @@ namespace GingerCore.NoSqlBase
                             var familyNameList = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList();
 
                             CellSet next;
-                            
+
                             scanner = null;
 
                             foreach (var i in familyNameList)
                             {
-                                familyName=i.name;
+                                familyName = i.name;
                                 scanner = getScanner(wherepart, familyName);
                                 scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
 
@@ -502,11 +501,11 @@ namespace GingerCore.NoSqlBase
                                                 Act.AddOrUpdateReturnParamActualWithPath(ExtractColumnName(c.column), DisplayInferredTypeAndValue(c.data), path1.ToString());
                                             }
                                             catch (Exception)
-                                            {}
+                                            { }
                                         }
                                     }
                                     catch (Exception)
-                                    {}
+                                    { }
                                     path1++;
                                 }
 
@@ -586,6 +585,10 @@ namespace GingerCore.NoSqlBase
             {
                 return "";
             }
+            if (byteArray.All(y => y == 0))
+            {
+                return "0";
+            }
             DataType inferredType = DataType.String;
             if (byteArray != null && byteArray.Length > 0 && (byteArray[0] == 0))
             {
@@ -596,6 +599,23 @@ namespace GingerCore.NoSqlBase
                 Array.Reverse(byteArray);
             }
             object value = ConvertByteArrayToType(byteArray, inferredType);
+
+         
+            if (inferredType == DataType.Double && !(Double.IsNaN(double.Parse(value.ToString())) || Double.IsInfinity(double.Parse(value.ToString()))))
+            {
+                //Not a double
+                inferredType = DataType.Long;
+                value = ConvertByteArrayToType(byteArray, inferredType);
+
+            }
+
+            if (inferredType == DataType.Long && (Double.IsNaN(double.Parse(value.ToString())) || Double.IsInfinity(double.Parse(value.ToString()))))
+            {
+                //Not a Long
+                inferredType = DataType.Double;
+                value = ConvertByteArrayToType(byteArray, inferredType);
+
+            }
 
             if (inferredType == DataType.Long && value != null && value.ToString()[0] == '-' && value.ToString().Length >= 20)
             {
@@ -630,11 +650,11 @@ namespace GingerCore.NoSqlBase
                     return DataType.Unknown;
 
                 case 8:
-                    // Potentially long or double  
+                    if (System.BitConverter.ToDouble(byteArray, 0) != 0)
+                        return DataType.Double;
                     if (System.BitConverter.ToInt64(byteArray, 0) != 0) // Example heuristic, adjust as necessary  
                         return DataType.Long; // could be a long  
-                    if (System.BitConverter.ToDouble(byteArray, 0) != 0)
-                        return DataType.Double; // could be a double  
+                                              // could be a double  
 
                     return DataType.Unknown;
 
@@ -643,6 +663,8 @@ namespace GingerCore.NoSqlBase
                     return DataType.String; // treating as string for variable lengths  
             }
         }
+
+     
 
         public static object ConvertByteArrayToType(byte[] byteArray, DataType dataType)
         {
