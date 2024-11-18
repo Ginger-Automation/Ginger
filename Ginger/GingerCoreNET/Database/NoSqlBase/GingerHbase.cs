@@ -18,16 +18,14 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Applitools.Utils;
-using Cassandra.DataStax.Graph.Internal;
 using GingerCore.Actions;
-using Microsoft.Azure.Cosmos.Core;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.HBase.Client;
 using MongoDB.Driver;
 using OctaneStdSDK.Entities.Base;
 using org.apache.hadoop.hbase.rest.protobuf.generated;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -226,11 +224,7 @@ namespace GingerCore.NoSqlBase
             else if (string.Equals("RegexComp", op))
             {
                 RegexStringComparator comp = new RegexStringComparator(fieldValue);
-                return new SingleColumnValueFilter(
-                  Encoding.UTF8.GetBytes(family),
-                  Encoding.UTF8.GetBytes(fieldName),
-                  CompareFilter.CompareOp.Equal,
-                  comp);
+                return new SingleColumnValueFilter(Encoding.UTF8.GetBytes(family), Encoding.UTF8.GetBytes(fieldName), CompareFilter.CompareOp.Equal, comp);
             }
             else
             {
@@ -494,27 +488,22 @@ namespace GingerCore.NoSqlBase
 
                                     List<Cell> cells = row.values;
 
-                                    try
+
+                                    foreach (Cell c in cells)
                                     {
-                                        foreach (Cell c in cells)
-                                        {
-                                            try
-                                            {
-                                                Act.AddOrUpdateReturnParamActualWithPath(ExtractColumnName(c.column), DisplayInferredTypeAndValue(c.data), path1.ToString());
-                                            }
-                                            catch (Exception)
-                                            { }
-                                        }
+
+                                        Act.AddOrUpdateReturnParamActualWithPath(ExtractColumnName(c.column), DisplayInferredTypeAndValue(c.data), path1.ToString());
+
                                     }
-                                    catch (Exception)
-                                    { }
+
+
                                     path1++;
                                 }
 
                             }
                             if (isDataLoaded != true)
                             {
-                                throw new Exception("Data not found, Please check query");
+                                throw new DataException("Data not found, Please check query");
                             }
 
                         }
@@ -552,7 +541,7 @@ namespace GingerCore.NoSqlBase
                             }
                             if (isDataLoaded != true)
                             {
-                                throw new Exception("Data not found, Please Check query");
+                                throw new DataException("Data not found, Please Check query");
                             }
                         }
 
@@ -590,12 +579,11 @@ namespace GingerCore.NoSqlBase
         public static string DisplayInferredTypeAndValue(byte[] byteArray)
         {
 
-
             if (byteArray == null || byteArray.Length == 0)
             {
                 return "";
             }
-            if (byteArray.All(y => y == 0))
+            if (byteArray.Length<9 && byteArray.All(y => y == 0))
             {
                 return "0";
             }
