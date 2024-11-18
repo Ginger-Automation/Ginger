@@ -418,11 +418,11 @@ namespace GingerCore.NoSqlBase
                                     {
                                         columnName = Querydata[1] + ":" + columnName;
                                     }
-                                    string columnValue = Encoding.ASCII.GetString(cell.data);
+                                    string columnValue = DisplayInferredTypeAndValue(cell.data);
 
                                     if (string.Equals(columnName, Act.Column))
                                     {
-                                        Act.AddOrUpdateReturnParamActualWithPath(columnName, Encoding.ASCII.GetString(cell.data), path.ToString());
+                                        Act.AddOrUpdateReturnParamActualWithPath(columnName, DisplayInferredTypeAndValue(cell.data), path.ToString());
                                         columnFound = true;
                                         break;
                                     }
@@ -479,6 +479,7 @@ namespace GingerCore.NoSqlBase
 
                         scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
                         int path1 = 1;
+                        bool isDataLoaded = false;
                         if (SQLCalculated.Contains('*'))
                         {
 
@@ -486,6 +487,7 @@ namespace GingerCore.NoSqlBase
 
                             while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                             {
+                                isDataLoaded = true;
                                 foreach (CellSet.Row row in next.rows)
                                 {
                                     string rowKey = _encoding.GetString(row.key);
@@ -510,6 +512,10 @@ namespace GingerCore.NoSqlBase
                                 }
 
                             }
+                            if (isDataLoaded != true)
+                            {
+                                throw new Exception("Data not found, Please check query");
+                            }
 
                         }
                         else
@@ -524,6 +530,7 @@ namespace GingerCore.NoSqlBase
 
                             while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                             {
+                                isDataLoaded = true;
                                 foreach (CellSet.Row row in next.rows)
                                 {
                                     string rowKey = _encoding.GetString(row.key);
@@ -543,7 +550,10 @@ namespace GingerCore.NoSqlBase
                                     path1++;
                                 }
                             }
-
+                            if (isDataLoaded != true)
+                            {
+                                throw new Exception("Data not found, Please Check query");
+                            }
                         }
 
                         break;
@@ -600,7 +610,7 @@ namespace GingerCore.NoSqlBase
             }
             object value = ConvertByteArrayToType(byteArray, inferredType);
 
-         
+
             if (inferredType == DataType.Double && !(Double.IsNaN(double.Parse(value.ToString())) || Double.IsInfinity(double.Parse(value.ToString()))))
             {
                 //Not a double
@@ -664,7 +674,7 @@ namespace GingerCore.NoSqlBase
             }
         }
 
-     
+
 
         public static object ConvertByteArrayToType(byte[] byteArray, DataType dataType)
         {
