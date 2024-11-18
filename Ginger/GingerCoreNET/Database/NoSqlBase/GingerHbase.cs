@@ -18,7 +18,10 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Applitools.Utils;
+using Cassandra.DataStax.Graph.Internal;
 using GingerCore.Actions;
+using Microsoft.Azure.Cosmos.Core;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.HBase.Client;
 using MongoDB.Driver;
 using OctaneStdSDK.Entities.Base;
@@ -29,6 +32,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static GingerCore.Actions.ActDBValidation;
+using static Microsoft.HBase.Client.Filters.CompareFilter;
 using BinaryComparator = Microsoft.HBase.Client.Filters.BinaryComparator;
 using Cell = org.apache.hadoop.hbase.rest.protobuf.generated.Cell;
 using CompareFilter = Microsoft.HBase.Client.Filters.CompareFilter;
@@ -40,6 +44,7 @@ using RegexStringComparator = Microsoft.HBase.Client.Filters.RegexStringComparat
 using RequestOptions = Microsoft.HBase.Client.RequestOptions;
 using Scanner = org.apache.hadoop.hbase.rest.protobuf.generated.Scanner;
 using SingleColumnValueFilter = Microsoft.HBase.Client.Filters.SingleColumnValueFilter;
+
 namespace GingerCore.NoSqlBase
 {
 
@@ -200,7 +205,23 @@ namespace GingerCore.NoSqlBase
             CompareFilter.CompareOp compareOp = Enum.GetValues<CompareFilter.CompareOp>().FirstOrDefault(e => string.Equals(e.ToString(), op));
             if (string.Equals(compareOp.ToString(), op))
             {
-                return new SingleColumnValueFilter(Encoding.UTF8.GetBytes(family), Encoding.UTF8.GetBytes(fieldName), compareOp, Encoding.UTF8.GetBytes(fieldValue));
+
+
+                if (fieldValue.StartsWith('\'') && fieldValue.EndsWith('\''))
+                {
+                    fieldValue = fieldValue.Trim('\'');
+                    return new SingleColumnValueFilter(Encoding.UTF8.GetBytes(family), Encoding.UTF8.GetBytes(fieldName), compareOp, Encoding.UTF8.GetBytes(fieldValue), filterIfMissing: true);
+                }
+                else if (fieldValue.Contains('.'))
+                {
+                    return new SingleColumnValueFilter(Encoding.UTF8.GetBytes(family), Encoding.UTF8.GetBytes(fieldName), compareOp, System.BitConverter.GetBytes(double.Parse(fieldValue)), filterIfMissing: true);
+                }
+                else
+                {
+                    var longBytes = System.BitConverter.GetBytes(long.Parse(fieldValue));
+                    Array.Reverse(longBytes);
+                    return new SingleColumnValueFilter(Encoding.UTF8.GetBytes(family), Encoding.UTF8.GetBytes(fieldName), compareOp, longBytes, filterIfMissing: true);
+                }
             }
             else if (string.Equals("RegexComp", op))
             {
@@ -426,41 +447,38 @@ namespace GingerCore.NoSqlBase
                             Reporter.ToLog(eLogLevel.ERROR, "The Query value can not be empty");
                             break;
                         }
-
                         if (SQLCalculated.Contains("where"))
                         {
                             table = SQLCalculated.Substring(SQLCalculated.IndexOf("from") + 4, (SQLCalculated.IndexOf("where") - SQLCalculated.IndexOf("from") - 4)).Trim();
                             wherepart = SQLCalculated[(SQLCalculated.IndexOf("where") + 5)..];
-                            familyName = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList()[0].name;
-                            scanner = getScanner(wherepart, familyName);
+                            var familyNameList = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList();
+
+                            CellSet next;
+
+                            scanner = null;
+
+                            foreach (var i in familyNameList)
+                            {
+                                familyName = i.name;
+                                scanner = getScanner(wherepart, familyName);
+                                scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
+
+                                if ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                                {
+                                    break;
+                                }
+
+                            }
 
                         }
                         else
                         {
-
                             scanner = new Scanner();
                             table = SQLCalculated[(SQLCalculated.IndexOf("from") + 4)..].Trim();
                         }
 
                         scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
                         int path1 = 1;
-
-
-                        //var tableDescriptor = await actionClient.GetTableSchemaAsync(table, null);
-                        //Console.WriteLine($"Table: {tableDescriptor.Name}");
-
-                        // Iterating over column families  
-                        //foreach (var columnFamily in tableDescriptor..ColumnFamilies)
-                        //{
-                        //    Console.WriteLine($"Column Family: {columnFamily.Name}");
-
-                        //    // Here you can add logic to infer or define data types.  
-                        //    // HBase doesn't store data types inherently, you may need to  
-                        //    // map them based on your application's logic or design.  
-                        //    // For instance:  
-                        //    // - You might have a convention where specific column families  
-                        //    //   relate to specific data types.  
-                        //}
                         if (SQLCalculated.Contains('*'))
                         {
 
@@ -478,24 +496,16 @@ namespace GingerCore.NoSqlBase
                                     {
                                         foreach (Cell c in cells)
                                         {
-
                                             try
                                             {
                                                 Act.AddOrUpdateReturnParamActualWithPath(ExtractColumnName(c.column), DisplayInferredTypeAndValue(c.data), path1.ToString());
                                             }
                                             catch (Exception)
-                                            {
-
-                                                // throw;
-                                            }
-
+                                            { }
                                         }
                                     }
                                     catch (Exception)
-                                    {
-
-                                        // throw;
-                                    }
+                                    { }
                                     path1++;
                                 }
 
@@ -504,10 +514,6 @@ namespace GingerCore.NoSqlBase
                         }
                         else
                         {
-
-                            int i = SQLCalculated.IndexOf("select");
-                            int j = SQLCalculated.IndexOf("from");
-
                             string[] selectedcols = SQLCalculated.Trim().Substring((SQLCalculated.IndexOf("select") + 6), SQLCalculated.IndexOf("from") - SQLCalculated.IndexOf("select") - 6).Split(",");
                             CellSet next;
                             List<string> list = [];
@@ -559,6 +565,8 @@ namespace GingerCore.NoSqlBase
 
         }
 
+
+
         public enum DataType
         {
             Int,
@@ -577,6 +585,10 @@ namespace GingerCore.NoSqlBase
             {
                 return "";
             }
+            if (byteArray.All(y => y == 0))
+            {
+                return "0";
+            }
             DataType inferredType = DataType.String;
             if (byteArray != null && byteArray.Length > 0 && (byteArray[0] == 0))
             {
@@ -587,6 +599,23 @@ namespace GingerCore.NoSqlBase
                 Array.Reverse(byteArray);
             }
             object value = ConvertByteArrayToType(byteArray, inferredType);
+
+         
+            if (inferredType == DataType.Double && !(Double.IsNaN(double.Parse(value.ToString())) || Double.IsInfinity(double.Parse(value.ToString()))))
+            {
+                //Not a double
+                inferredType = DataType.Long;
+                value = ConvertByteArrayToType(byteArray, inferredType);
+
+            }
+
+            if (inferredType == DataType.Long && (Double.IsNaN(double.Parse(value.ToString())) || Double.IsInfinity(double.Parse(value.ToString()))))
+            {
+                //Not a Long
+                inferredType = DataType.Double;
+                value = ConvertByteArrayToType(byteArray, inferredType);
+
+            }
 
             if (inferredType == DataType.Long && value != null && value.ToString()[0] == '-' && value.ToString().Length >= 20)
             {
@@ -621,11 +650,11 @@ namespace GingerCore.NoSqlBase
                     return DataType.Unknown;
 
                 case 8:
-                    // Potentially long or double  
+                    if (System.BitConverter.ToDouble(byteArray, 0) != 0)
+                        return DataType.Double;
                     if (System.BitConverter.ToInt64(byteArray, 0) != 0) // Example heuristic, adjust as necessary  
                         return DataType.Long; // could be a long  
-                    if (System.BitConverter.ToDouble(byteArray, 0) != 0)
-                        return DataType.Double; // could be a double  
+                                              // could be a double  
 
                     return DataType.Unknown;
 
@@ -634,6 +663,8 @@ namespace GingerCore.NoSqlBase
                     return DataType.String; // treating as string for variable lengths  
             }
         }
+
+     
 
         public static object ConvertByteArrayToType(byte[] byteArray, DataType dataType)
         {
