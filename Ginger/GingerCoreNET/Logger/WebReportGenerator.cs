@@ -77,11 +77,6 @@ namespace Amdocs.Ginger.CoreNET.Logger
                         IoHandler.Instance.TryFolderDelete(rootFolder);
                     }
                     IoHandler.Instance.CopyFolderRec(clientAppFolderPath, ReportrootPath, true);
-
-                    if(!Directory.Exists(Path.Combine(ReportrootPath, "assets", "screenshots")))
-                    {
-                        Directory.CreateDirectory(Path.Combine(ReportrootPath, "assets", "screenshots"));
-                    }
                 }
             }
             catch (Exception ex)
@@ -98,9 +93,9 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 {
                     return lightDbRunSet;
                 }
-                IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "Execution_Data"));
-                IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "screenshots"));
-                IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "artifacts"));
+
+                CleanReportFolders(ReportrootPath);
+
                 LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
                 lightDbRunSet = dbManager.GetLatestExecutionRunsetData(runSetGuid);
                 lightDbRunSet.SetAllIterationElementsRecursively(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().First(r => r.IsDefault).ShowAllIterationsElements);
@@ -114,6 +109,48 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 Reporter.ToLog(eLogLevel.ERROR, "RunNewHtmlReport,error :" + ex.ToString());
             }
             return lightDbRunSet;
+        }
+
+        /// <summary>
+        /// Cleans the report folders by deleting data in specified subdirectories.
+        /// If the directories do not exist, they are created.
+        /// </summary>
+        /// <param name="ReportrootPath">The root path of the report folders.</param>
+        private static void CleanReportFolders(string ReportrootPath)
+        {
+            try
+            {
+                try
+                {
+                    IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "Execution_Data"));
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Directory.CreateDirectory(Path.Combine(ReportrootPath, "assets", "Execution_Data"));
+                }
+
+                try
+                {
+                    IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "screenshots"));
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Directory.CreateDirectory(Path.Combine(ReportrootPath, "assets", "screenshots"));
+                }
+
+                try
+                {
+                    IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "artifacts"));
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Directory.CreateDirectory(Path.Combine(ReportrootPath, "assets", "artifacts"));
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while cleaning up reports folder", ex);
+            }
         }
 
         private void RemoveSkippedItems(LiteDbRunSet liteDbRunSet)
