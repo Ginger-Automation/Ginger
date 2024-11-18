@@ -1201,6 +1201,9 @@
     <None Update="Reports\Ginger-Web-Client\assets\sass\_fonts.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_1_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\assets\theme\theme-report.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
