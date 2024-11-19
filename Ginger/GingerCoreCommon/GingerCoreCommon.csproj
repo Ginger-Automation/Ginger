@@ -20,7 +20,7 @@
     <Product>Ginger by Amdocs</Product>
     <Copyright>Copyright © 2014-2024 European Support Limited</Copyright>
 
-    <Version>24.5.1.0</Version>
+    <Version>24.5.1</Version>
     <Title>Ginger Core Common</Title>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
