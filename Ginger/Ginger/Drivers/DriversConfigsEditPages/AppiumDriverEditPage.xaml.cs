@@ -76,6 +76,14 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             //xScreenScaleFactorCorrectionYTextBox.Init(null, screenScaleFactorCorrectionY, nameof(DriverConfigParam.Value));
             //BindingHandler.ObjFieldBinding(xScreenScaleFactorCorrectionYTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenScaleFactorCorrectionY)), nameof(DriverConfigParam.Description));
 
+            DriverConfigParam screenshotHeight = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotHeight));
+            xScreenshotHeightTextBox.Init(null, screenshotHeight, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xScreenshotHeightTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotHeight)), nameof(DriverConfigParam.Description));
+
+            DriverConfigParam screenshotWidth = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotWidth));
+            xScreenshotWidthTextBox.Init(null, screenshotWidth, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xScreenshotWidthTextBox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ScreenshotWidth)), nameof(DriverConfigParam.Description));
+
             xLoadTimeoutTxtbox.Init(null, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));
 

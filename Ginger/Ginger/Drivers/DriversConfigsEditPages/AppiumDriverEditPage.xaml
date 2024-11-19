@@ -67,6 +67,14 @@
                                         <Label Content="Screen click correction Y:" Style="{StaticResource $LabelStyle}"/>
                                         <Actions:UCValueExpression x:Name="xScreenScaleFactorCorrectionYTextBox" Width="120" Margin="5,0,0,0"/>
                                     </StackPanel>-->
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
+                                        <Label Content="Screenshot Height:" Style="{StaticResource $LabelStyle}"/>
+                                        <Actions:UCValueExpression x:Name="xScreenshotHeightTextBox" Width="120" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
+                                        <Label Content="Screenshot Width:" Style="{StaticResource $LabelStyle}"/>
+                                        <Actions:UCValueExpression x:Name="xScreenshotWidthTextBox" Width="120" Margin="5,0,0,0"/>
+                                    </StackPanel>
                                 </StackPanel>
                             </Expander.Content>
                         </Expander>

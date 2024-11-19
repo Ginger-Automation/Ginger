@@ -110,6 +110,16 @@ namespace Amdocs.Ginger.CoreNET
         public String ScreenScaleFactorCorrectionY { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("Auto")]
+        [UserConfiguredDescription("Define the Height to set for the mobile device screenshot")]
+        public String ScreenshotHeight { get; set;}
+
+        [UserConfigured]
+        [UserConfiguredDefault("Auto")]
+        [UserConfiguredDescription("Define the Width to set for the mobile device screenshot")]
+        public String ScreenshotWidth { get; set; }
+
+        [UserConfigured]
         [UserConfiguredEnumType(typeof(eDevicePlatformType))]
         [UserConfiguredDefault("Android")]
         [UserConfiguredDescription("Device platform type 'Android' or 'iOS'")]
@@ -3177,6 +3187,26 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 mWindowWidth = (int)(windowSize.Width * mWindowScaleFactor);
                 mWindowHeight = (int)(windowSize.Height * mWindowScaleFactor);
+
+                //override with user configured sizes
+                if (ScreenshotHeight != "Auto")
+                {
+                    //convert from int
+                    int userConfiguredHeight;
+                    if (int.TryParse(ScreenshotHeight, out userConfiguredHeight))
+                    {
+                        mWindowHeight = userConfiguredHeight;
+                    }
+                }
+                if (ScreenshotWidth != "Auto")
+                {
+                    //convert from int
+                    int userConfiguredWidth;
+                    if (int.TryParse(ScreenshotWidth, out userConfiguredWidth))
+                    {
+                        mWindowWidth = userConfiguredWidth;
+                    }
+                }
             }
             catch (Exception ex)
             {
