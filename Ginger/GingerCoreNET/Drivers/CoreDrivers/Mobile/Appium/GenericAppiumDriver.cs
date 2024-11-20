@@ -3201,7 +3201,7 @@ namespace Amdocs.Ginger.CoreNET
                 mWindowHeight = (int)(windowSize.Height * mWindowScaleFactor);
 
                 //override with user configured sizes
-                if (ScreenshotHeight != "Auto")
+                if (ScreenshotHeight.ToLower().Trim() != "auto")
                 {
                     //convert from int
                     int userConfiguredHeight;
@@ -3215,10 +3215,14 @@ namespace Amdocs.Ginger.CoreNET
                         else
                         {
                             mWindowHeight = userConfiguredHeight;
-                        }
+                        }                      
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot height is not valid, using the calculated height");
                     }
                 }
-                if (ScreenshotWidth != "Auto")
+                if (ScreenshotWidth.ToLower().Trim() != "auto")
                 {
                     //convert from int
                     int userConfiguredWidth;
@@ -3233,6 +3237,10 @@ namespace Amdocs.Ginger.CoreNET
                         {
                             mWindowWidth = userConfiguredWidth;
                         }
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot width is not valid, using the calculated width.");
                     }
                 }
             }

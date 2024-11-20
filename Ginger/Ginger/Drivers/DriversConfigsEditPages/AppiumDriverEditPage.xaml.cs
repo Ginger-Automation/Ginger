@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Ginger.UserControls;
+using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.GeneralLib;
 using System;
@@ -94,12 +95,33 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             BindRadioButtons();
 
+            ApplyValidationRules();
+
             if (mAppiumCapabilities.MultiValues == null || mAppiumCapabilities.MultiValues.Count == 0)
             {
                 mAppiumCapabilities.MultiValues = [];
                 AutoSetCapabilities(true);
             }
             SetCapabilitiesGridView();
+        }
+
+        private void ApplyValidationRules()
+        {
+            xServerURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
+            xLoadTimeoutTxtbox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Load Timeout cannot be empty"));
+            xScreenshotHeightTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Height cannot be empty"));
+            xScreenshotWidthTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Width cannot be empty"));
+
+            CallConfigPropertyChange();
+        }
+
+        private void CallConfigPropertyChange()
+        {
+            // need in order to trigger the validation's rules 
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.AppiumServer));
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.LoadDeviceWindow));
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.ScreenshotHeight));
+            mAgent.OnPropertyChanged(nameof(GenericAppiumDriver.ScreenshotWidth));
         }
 
         private void BindRadioButtons()
