@@ -1676,6 +1676,18 @@ namespace Amdocs.Ginger.CoreNET
             double startY;
             double endX;
             double endY;
+            //valide swipeScale is between 0.1 and 2 and if not set it to 1 and write warn messaage
+            if (swipeScale < 0.1 || swipeScale > 2)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Mobile action swipeScreen(): swipeScale: '" + swipeScale + "' is out of range (0.1-2), setting it to 1");
+                swipeScale = 1;
+            }
+            //validate swipeDuration is bigger than 0 and if not set it to 200 and write warn messaage
+            if (swipeDuration.TotalMilliseconds < 0)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Mobile action swipeScreen(): swipeDuration: '" + swipeDuration + "' is out of range, setting it to 200");
+                swipeDuration = TimeSpan.FromMilliseconds(200);
+            }
             switch (side)
             {
                 case eSwipeSide.Down: // center of footer
@@ -3195,7 +3207,15 @@ namespace Amdocs.Ginger.CoreNET
                     int userConfiguredHeight;
                     if (int.TryParse(ScreenshotHeight, out userConfiguredHeight))
                     {
-                        mWindowHeight = userConfiguredHeight;
+                        //validate user configured height is at least 300 pixels, if not than use the calculated height and write Warn message
+                        if (userConfiguredHeight < 300)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot height is less than 300 pixels, using the calculated height '" + mWindowHeight.ToString() +"' instead.");
+                        }
+                        else
+                        {
+                            mWindowHeight = userConfiguredHeight;
+                        }
                     }
                 }
                 if (ScreenshotWidth != "Auto")
@@ -3204,7 +3224,15 @@ namespace Amdocs.Ginger.CoreNET
                     int userConfiguredWidth;
                     if (int.TryParse(ScreenshotWidth, out userConfiguredWidth))
                     {
-                        mWindowWidth = userConfiguredWidth;
+                        //validate user configured width is at least 300 pixels, if not than use the calculated width and write Warn message
+                        if (userConfiguredWidth < 300)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot width is less than 300 pixels, using the calculated width '" + mWindowWidth.ToString() + "' instead.");
+                        }
+                        else
+                        {
+                            mWindowWidth = userConfiguredWidth;
+                        }
                     }
                 }
             }
