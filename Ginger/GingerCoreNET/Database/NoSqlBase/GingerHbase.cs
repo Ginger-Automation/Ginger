@@ -457,7 +457,7 @@ namespace GingerCore.NoSqlBase
                                 scanner = getScanner(wherepart, familyName);
                                 scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
 
-                                if ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                                if ((actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                                 {
                                     break;
                                 }
@@ -501,7 +501,7 @@ namespace GingerCore.NoSqlBase
                                 }
 
                             }
-                            if (isDataLoaded != true)
+                            if (!isDataLoaded)
                             {
                                 throw new DataException("Data not found, Please check query");
                             }
@@ -539,7 +539,7 @@ namespace GingerCore.NoSqlBase
                                     path1++;
                                 }
                             }
-                            if (isDataLoaded != true)
+                            if (!isDataLoaded)
                             {
                                 throw new DataException("Data not found, Please Check query");
                             }
