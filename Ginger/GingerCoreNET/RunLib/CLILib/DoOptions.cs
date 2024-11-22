@@ -25,14 +25,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
 
     [Verb("do", HelpText = "Solution Operations like: analyze, clean and more for list run 'ginger help solution")]
-    public class DoOptions  // 'ginger do --operation analyze' run analyzer on solution
+    public class DoOptions:SourceControlOptions  // 'ginger do --operation analyze' run analyzer on solution
     {
         public enum DoOperation
         {
             analyze,
             info,
             clean,
-            open
+            open,
+            openSourceControl
         }
 
         [Option('o', "operation", Required = true, HelpText = "Select operation to run on solution")]
@@ -58,6 +59,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 _solution = value;
             }
         }
+
+
+        [Option('e', "encryptionKey", Required = true, HelpText = "Provide the solution encyrption key")]
+        public string EncryptionKey { get; set; }
 
 
     }

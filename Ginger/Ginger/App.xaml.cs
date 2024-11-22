@@ -351,7 +351,7 @@ namespace Ginger
         /// <returns>DoOptions object or null.</returns>
         private DoOptions ExtractDoOptions(ParserResult<object> parserResult)
         {
-            if (parserResult?.Value is DoOptions tempOptions && tempOptions.Operation == DoOptions.DoOperation.open)
+            if (parserResult?.Value is DoOptions tempOptions &&( tempOptions.Operation == DoOptions.DoOperation.open || tempOptions.Operation == DoOptions.DoOperation.openSourceControl))
             {
                 return tempOptions;
             }
@@ -417,14 +417,9 @@ namespace Ginger
 
                 if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
                 {
-                    if(Directory.Exists(doOptions.Solution))
-                    {
+                  
                         DoOptionsHandler.Run(doOptions);
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "The specified solution folder path does not exist. Please check the path and try again.");
-                    }
+                   
                    
                 }
             }
