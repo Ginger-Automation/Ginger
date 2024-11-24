@@ -68,11 +68,11 @@
                                         <Actions:UCValueExpression x:Name="xScreenScaleFactorCorrectionYTextBox" Width="120" Margin="5,0,0,0"/>
                                     </StackPanel>-->
                                     <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
-                                        <Label Content="Screenshot Height (pixels):" Style="{StaticResource $LabelStyle}"/>
+                                        <Label Content="Screenshot height (pixels):" Style="{StaticResource $LabelStyle}"/>
                                         <Actions:UCValueExpression x:Name="xScreenshotHeightTextBox" Width="120" Margin="5,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
-                                        <Label Content="Screenshot Width (pixels):" Style="{StaticResource $LabelStyle}"/>
+                                        <Label Content="Screenshot width (pixels):" Style="{StaticResource $LabelStyle}"/>
                                         <Actions:UCValueExpression x:Name="xScreenshotWidthTextBox" Width="120" Margin="7,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>

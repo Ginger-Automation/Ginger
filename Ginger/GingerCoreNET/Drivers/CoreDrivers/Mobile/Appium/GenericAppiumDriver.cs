@@ -1346,13 +1346,66 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                act.AddScreenShot(GetScreenshotImageFromDriver(), "Device Screenshot");
+                Tuple<int?, int?> customSize = GetUserCustomeScreenshotSize();
+                act.AddScreenShot(GetScreenshotImageFromDriver(customSize.Item1, customSize.Item2), "Device Screenshot");
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while taking device screen shot", ex);
                 act.Error = "Error occurred while taking device screen shot, Details: " + ex.Message;
             }
+        }
+
+        private Tuple<int?,int?> GetUserCustomeScreenshotSize()
+        {
+            int? customeWidth = null;
+            int? customeHeight = null;
+
+            //override with user configured sizes
+            if (ScreenshotWidth.ToLower().Trim() != "auto")
+            {
+                //convert from int
+                int userConfiguredWidth;
+                if (int.TryParse(ScreenshotWidth, out userConfiguredWidth))
+                {
+                    //validate user configured width is at least 300 pixels, if not than use the calculated width and write Warn message
+                    if (userConfiguredWidth < 200)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot width is less than 200 pixels, using the calculated width '" + mWindowWidth.ToString() + "' instead.");
+                    }
+                    else
+                    {
+                        customeWidth = userConfiguredWidth;
+                    }
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot width is not valid, using the calculated width.");
+                }
+            }
+            if (ScreenshotHeight.ToLower().Trim() != "auto")
+            {
+                //convert from int
+                int userConfiguredHeight;
+                if (int.TryParse(ScreenshotHeight, out userConfiguredHeight))
+                {
+                    //validate user configured height is at least 300 pixels, if not than use the calculated height and write Warn message
+                    if (userConfiguredHeight < 200)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot height is less than 200 pixels, using the calculated height '" + mWindowHeight.ToString() + "' instead.");
+                    }
+                    else
+                    {
+                        customeHeight = userConfiguredHeight;
+                    }
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot height is not valid, using the calculated height");
+                }
+            }
+
+            return new Tuple<int?, int?>(customeWidth, customeHeight);
         }
 
         public ICollection<IWebElement> GetAllElements()
@@ -2815,27 +2868,43 @@ namespace Amdocs.Ginger.CoreNET
             return null;
         }
 
-        private Byte[] GetScreenshotImageFromDriver()
+        private Byte[] GetScreenshotImageFromDriver(int? width = null, int ? height = null)
         {
+            int screenshotWidth = 0;
+            int screenshotHeight = 0;
 
             //Take screen shot
             var screenshot = Driver.GetScreenshot();
+
             //Update screen size for iOS as it changed per app
             if (DevicePlatformType == eDevicePlatformType.iOS)
             {
                 CalculateMobileDeviceScreenSizes();
             }
+            screenshotWidth = mWindowWidth;
+            screenshotHeight = mWindowHeight;
+
+            //ovveride with user configured width/height if such
+            if (width != null)
+            {
+                screenshotWidth = width.Value;
+            }
+            if (height != null)
+            {
+                screenshotHeight = height.Value;
+            }                        
+
             // Convert screenshot to Image for resizing
             using (var stream = new MemoryStream(screenshot.AsByteArray))
             using (var image = Image.FromStream(stream))
             {
                 // Create a new bitmap with the native device size
-                using (var resizedImage = new Bitmap(mWindowWidth, mWindowHeight))
+                using (var resizedImage = new Bitmap(screenshotWidth, screenshotHeight))
                 {
                     // Draw the original image onto the new bitmap
                     using (var graphics = Graphics.FromImage(resizedImage))
                     {
-                        graphics.DrawImage(image, 0, 0, mWindowWidth, mWindowHeight);
+                        graphics.DrawImage(image, 0, 0, screenshotWidth, screenshotHeight);
                     }
                     // Convert the resized image to byte array
                     using (var ms = new MemoryStream())
@@ -2845,7 +2914,6 @@ namespace Amdocs.Ginger.CoreNET
                     }
                 }
             }
-
         }
 
         public void PerformTap(long x, long y)
@@ -2952,7 +3020,16 @@ namespace Amdocs.Ginger.CoreNET
             try
             {
                 // Get the screenshot as a byte array
-                byte[] screenshotBytes = GetScreenshotImageFromDriver();
+                Tuple<int?, int?> customSize = null;
+                if (setScreenSize != null)
+                {
+                    customSize = new Tuple<int?, int?>(setScreenSize.Item1, setScreenSize.Item2);
+                }
+                else
+                {
+                    customSize = GetUserCustomeScreenshotSize();
+                }
+                byte[] screenshotBytes = GetScreenshotImageFromDriver(customSize.Item1, customSize.Item2);
 
                 if (screenshotBytes == null || screenshotBytes.Length == 0)
                 {
@@ -3198,51 +3275,7 @@ namespace Amdocs.Ginger.CoreNET
                     mWindowScaleFactor = 1;
                 }
                 mWindowWidth = (int)(windowSize.Width * mWindowScaleFactor);
-                mWindowHeight = (int)(windowSize.Height * mWindowScaleFactor);
-
-                //override with user configured sizes
-                if (ScreenshotHeight.ToLower().Trim() != "auto")
-                {
-                    //convert from int
-                    int userConfiguredHeight;
-                    if (int.TryParse(ScreenshotHeight, out userConfiguredHeight))
-                    {
-                        //validate user configured height is at least 300 pixels, if not than use the calculated height and write Warn message
-                        if (userConfiguredHeight < 300)
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot height is less than 300 pixels, using the calculated height '" + mWindowHeight.ToString() +"' instead.");
-                        }
-                        else
-                        {
-                            mWindowHeight = userConfiguredHeight;
-                        }                      
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot height is not valid, using the calculated height");
-                    }
-                }
-                if (ScreenshotWidth.ToLower().Trim() != "auto")
-                {
-                    //convert from int
-                    int userConfiguredWidth;
-                    if (int.TryParse(ScreenshotWidth, out userConfiguredWidth))
-                    {
-                        //validate user configured width is at least 300 pixels, if not than use the calculated width and write Warn message
-                        if (userConfiguredWidth < 300)
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot width is less than 300 pixels, using the calculated width '" + mWindowWidth.ToString() + "' instead.");
-                        }
-                        else
-                        {
-                            mWindowWidth = userConfiguredWidth;
-                        }
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The user configured screenshot width is not valid, using the calculated width.");
-                    }
-                }
+                mWindowHeight = (int)(windowSize.Height * mWindowScaleFactor);                
             }
             catch (Exception ex)
             {
