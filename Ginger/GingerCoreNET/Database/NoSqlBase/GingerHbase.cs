@@ -462,6 +462,10 @@ namespace GingerCore.NoSqlBase
                             var familyNameList = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList();
                             scanner = null;
                             //choose family name where column exsist
+                            if (!familyNameList.Any())
+                            {
+                                throw new InvalidOperationException($"No column families found for table {table}");
+                            }
                             foreach (var i in familyNameList)
                             {
                                 familyName = i.name;
@@ -501,25 +505,16 @@ namespace GingerCore.NoSqlBase
                                     Columns = new Dictionary<string, string>()
                                 };
 
-                                try
+                                foreach (Cell c in cells)
                                 {
-                                    foreach (Cell c in cells)
-                                    {
-                                        //Add data in list
-                                        try
-                                        {
-                                            string columnName = ExtractColumnName(c.column);
-                                            string columnValue = DisplayInferredTypeAndValue(c.data);
-                                            rowData.Columns[columnName] = columnValue;
-                                        }
-                                        catch (Exception)
-                                        {
-                                        }
-                                    }
+                                    //Add data in list
+
+                                    string columnName = ExtractColumnName(c.column);
+                                    string columnValue = DisplayInferredTypeAndValue(c.data);
+                                    rowData.Columns[columnName] = columnValue;
+
                                 }
-                                catch (Exception)
-                                {
-                                }
+
 
                                 rowDataList.Add(rowData);
                             }
@@ -613,7 +608,10 @@ namespace GingerCore.NoSqlBase
             {
                 int startIndex = orderByIndex + orderByClause.Length + 1;
                 int endIndex = query.IndexOf(" ", startIndex);
-                if (endIndex == -1) endIndex = query.Length;
+                if (endIndex == -1)
+                {
+                    endIndex = query.Length;
+                }
                 orderByColumnName = query.Substring(startIndex, endIndex - startIndex).Trim();
 
                 // Remove any trailing "desc" or "asc" if present
