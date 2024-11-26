@@ -646,7 +646,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
             List<ePomElementCategory> categoriesList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetPlatformPOMElementCategories();
 
-            List<string> categories = new List<string>();
+            List<string> categories = [];
             foreach (ePomElementCategory category in categoriesList)
             {
                 categories.Add(category.ToString());
@@ -1087,17 +1087,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
                             if (element.Properties.All(y => y.Category == null) && element.Locators.All(y => y.Category == null))
                             {
                                 SetMissingCategoriesForElement(element, (ePomElementCategory)Enum.Parse(typeof(ePomElementCategory), selectedCategory));
-                                isCategoryUpdated=true; 
+                                isCategoryUpdated = true;
                             }
 
                         }
                         if (isCategoryUpdated)
                         {
-                            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "All the missing categories have been successfully set.");
+                            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Missing categories updated successfully.");
                         }
                         else
                         {
-                            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "None of the missing categories have been successfully set.");
+                            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No missing categoriess found.");
                         }
 
                     }
