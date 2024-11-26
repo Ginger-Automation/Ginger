@@ -18,16 +18,23 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Applitools.Utils;
+using Cassandra.DataStax.Graph.Internal;
+using DocumentFormat.OpenXml.Packaging;
 using GingerCore.Actions;
+using Microsoft.Azure.Cosmos.Core;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.HBase.Client;
+using Microsoft.VisualStudio.Services.Zeus;
 using MongoDB.Driver;
+using NPOI.OpenXmlFormats.Dml.Diagram;
 using OctaneStdSDK.Entities.Base;
 using org.apache.hadoop.hbase.rest.protobuf.generated;
 using System;
 using System.Collections.Generic;
-using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static GingerCore.Actions.ActDBValidation;
 using static Microsoft.HBase.Client.Filters.CompareFilter;
@@ -224,7 +231,11 @@ namespace GingerCore.NoSqlBase
             else if (string.Equals("RegexComp", op))
             {
                 RegexStringComparator comp = new RegexStringComparator(fieldValue);
-                return new SingleColumnValueFilter(Encoding.UTF8.GetBytes(family), Encoding.UTF8.GetBytes(fieldName), CompareFilter.CompareOp.Equal, comp);
+                return new SingleColumnValueFilter(
+                  Encoding.UTF8.GetBytes(family),
+                  Encoding.UTF8.GetBytes(fieldName),
+                  CompareFilter.CompareOp.Equal,
+                  comp);
             }
             else
             {
@@ -321,6 +332,8 @@ namespace GingerCore.NoSqlBase
             }
             return scanner;
         }
+
+
         public override async void PerformDBAction()
         {
 
@@ -342,7 +355,7 @@ namespace GingerCore.NoSqlBase
                 UseNagle = false,
                 AlternativeEndpoint = "",
                 Port = ConnectionUri.Port,
-                AlternativeHost = null
+                AlternativeHost = null,
             };
             try
             {
@@ -441,23 +454,21 @@ namespace GingerCore.NoSqlBase
                             Reporter.ToLog(eLogLevel.ERROR, "The Query value can not be empty");
                             break;
                         }
-                        if (SQLCalculated.Contains("where"))
+                        CellSet next;
+                        table = ExtractTableName(SQLCalculated);
+                        if (SQLCalculated.IndexOf("where", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
-                            table = SQLCalculated.Substring(SQLCalculated.IndexOf("from") + 4, (SQLCalculated.IndexOf("where") - SQLCalculated.IndexOf("from") - 4)).Trim();
-                            wherepart = SQLCalculated[(SQLCalculated.IndexOf("where") + 5)..];
+                            wherepart = ExtractWherePart(SQLCalculated);
                             var familyNameList = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList();
-
-                            CellSet next;
-
                             scanner = null;
-
+                            //choose family name where column exsist
                             foreach (var i in familyNameList)
                             {
                                 familyName = i.name;
                                 scanner = getScanner(wherepart, familyName);
                                 scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
 
-                                if ((actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                                if ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                                 {
                                     break;
                                 }
@@ -468,83 +479,97 @@ namespace GingerCore.NoSqlBase
                         else
                         {
                             scanner = new Scanner();
-                            table = SQLCalculated[(SQLCalculated.IndexOf("from") + 4)..].Trim();
                         }
+                        string orderByColumnName = ExtractOrderByColumnName(SQLCalculated);
 
-                        scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
                         int path1 = 1;
-                        bool isDataLoaded = false;
+                        bool isDataFound = false;
+                        List<RowData> rowDataList = new List<RowData>();
+                        scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
+                        //According to scanner info read data form hbase
+                        while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                        {
+                            isDataFound = true;
+                            foreach (CellSet.Row row in next.rows)
+                            {
+                                string rowKey = _encoding.GetString(row.key);
+                                List<Cell> cells = row.values;
+
+                                RowData rowData = new RowData
+                                {
+                                    RowKey = rowKey,
+                                    Columns = new Dictionary<string, string>()
+                                };
+
+                                try
+                                {
+                                    foreach (Cell c in cells)
+                                    {
+                                        //Add data in list
+                                        try
+                                        {
+                                            string columnName = ExtractColumnName(c.column);
+                                            string columnValue = DisplayInferredTypeAndValue(c.data);
+                                            rowData.Columns[columnName] = columnValue;
+                                        }
+                                        catch (Exception)
+                                        {
+                                        }
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                }
+
+                                rowDataList.Add(rowData);
+                            }
+                        }
+                        //if want to sort data by particular column
+                        if (!string.IsNullOrEmpty(orderByColumnName))
+                        {
+                            bool desc = string.Equals(ExtractOrderByDirection(SQLCalculated), "Desc", StringComparison.OrdinalIgnoreCase);
+                            rowDataList.Sort(new RowDataComparer(orderByColumnName, desc));
+                        }
+                        //To show the all column value
                         if (SQLCalculated.Contains('*'))
                         {
-
-                            CellSet next;
-
-                            while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                            foreach (var rowData in rowDataList)
                             {
-                                isDataLoaded = true;
-                                foreach (CellSet.Row row in next.rows)
+                                foreach (var column in rowData.Columns)
                                 {
-                                    string rowKey = _encoding.GetString(row.key);
-
-                                    List<Cell> cells = row.values;
-
-
-                                    foreach (Cell c in cells)
-                                    {
-
-                                        Act.AddOrUpdateReturnParamActualWithPath(ExtractColumnName(c.column), DisplayInferredTypeAndValue(c.data), path1.ToString());
-
-                                    }
-
-
-                                    path1++;
+                                    Act.AddOrUpdateReturnParamActualWithPath(column.Key, column.Value, path1.ToString());
                                 }
-
+                                path1++;
                             }
-                            if (!isDataLoaded)
-                            {
-                                throw new DataException("Data not found, Please check query");
-                            }
-
                         }
+                        //To show the selected column value
                         else
                         {
-                            string[] selectedcols = SQLCalculated.Trim().Substring((SQLCalculated.IndexOf("select") + 6), SQLCalculated.IndexOf("from") - SQLCalculated.IndexOf("select") - 6).Split(",");
-                            CellSet next;
-                            List<string> list = [];
+                            int selectIndex = SQLCalculated.IndexOf("select", StringComparison.OrdinalIgnoreCase);
+                            int fromIndex = SQLCalculated.IndexOf("from", StringComparison.OrdinalIgnoreCase);
+                            string[] selectedcols = SQLCalculated.Trim().Substring(selectIndex + 6, fromIndex - selectIndex - 6).Split(",");
+                            List<string> columnNameList = [];
                             foreach (string col in selectedcols)
                             {
-                                list.Add(col.Trim());
+                                columnNameList.Add(col.Trim());
                             }
-
-                            while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                            foreach (var rowData in rowDataList)
                             {
-                                isDataLoaded = true;
-                                foreach (CellSet.Row row in next.rows)
+                                foreach (var column in rowData.Columns)
                                 {
-                                    string rowKey = _encoding.GetString(row.key);
-
-                                    List<Cell> cells = row.values;
-
-                                    foreach (Cell c in cells)
+                                    if (columnNameList.Contains(column.Key))
                                     {
-                                        string colname = ExtractColumnName(c.column);
-                                        if (list.Contains(colname))
-                                        {
-                                            Act.AddOrUpdateReturnParamActualWithPath(colname, DisplayInferredTypeAndValue(c.data), path1.ToString());
-
-                                        }
-
+                                        Act.AddOrUpdateReturnParamActualWithPath(column.Key, column.Value, path1.ToString());
                                     }
-                                    path1++;
                                 }
-                            }
-                            if (!isDataLoaded)
-                            {
-                                throw new DataException("Data not found, Please Check query");
+                                path1++;
                             }
                         }
-
+                        //show error if data not found
+                        if (!isDataFound)
+                        {
+                            throw new InvalidDataException("Data not found");
+                        }
                         break;
                     default:
                         {
@@ -563,8 +588,86 @@ namespace GingerCore.NoSqlBase
             }
 
         }
+        //Get where part of query
+        string ExtractWherePart(string SQLCalculated)
+        {
+            int whereIndex = SQLCalculated.IndexOf("where", StringComparison.OrdinalIgnoreCase);
+            var wherepart = SQLCalculated[(whereIndex + 5)..];
+            string searchString = "order by";
+            int orderByIndex = wherepart.IndexOf(searchString, StringComparison.OrdinalIgnoreCase);
+            if (orderByIndex >= 0)
+            {
+                // Remove the 'ORDER BY' clause and everything after it
+                wherepart = wherepart.Substring(0, orderByIndex).Trim();
+            }
+            return wherepart;
+        }
+        //Get Order by column Name
+        public string ExtractOrderByColumnName(string query)
+        {
+            string orderByClause = "order by";
+            string orderByColumnName = "";
 
+            int orderByIndex = query.IndexOf(orderByClause, StringComparison.OrdinalIgnoreCase);
+            if (orderByIndex >= 0)
+            {
+                int startIndex = orderByIndex + orderByClause.Length + 1;
+                int endIndex = query.IndexOf(" ", startIndex);
+                if (endIndex == -1) endIndex = query.Length;
+                orderByColumnName = query.Substring(startIndex, endIndex - startIndex).Trim();
 
+                // Remove any trailing "desc" or "asc" if present
+                orderByColumnName = orderByColumnName.Split(' ')[0];
+            }
+
+            return orderByColumnName;
+        }
+
+        //Choose Asc/Desc order of sorting
+        public string ExtractOrderByDirection(string query)
+        {
+            string orderByClause = "order by";
+            string orderByDirection = "";
+
+            int orderByIndex = query.IndexOf(orderByClause, StringComparison.OrdinalIgnoreCase);
+            if (orderByIndex >= 0)
+            {
+                int startIndex = orderByIndex + orderByClause.Length;
+                string orderByPart = query.Substring(startIndex).Trim();
+
+                if (orderByPart.EndsWith("desc", StringComparison.OrdinalIgnoreCase))
+                {
+                    orderByDirection = "DESC";
+                }
+                else if (orderByPart.EndsWith("asc", StringComparison.OrdinalIgnoreCase))
+                {
+                    orderByDirection = "ASC";
+                }
+                else
+                {
+                    // Default to ASC if no direction is specified
+                    orderByDirection = "ASC";
+                }
+            }
+
+            return orderByDirection;
+        }
+
+        //Extract the table name from query
+        static string ExtractTableName(string query)
+        {
+            string pattern = @"FROM\s+([a-zA-Z0-9_]+)";
+            Match match = Regex.Match(query, pattern, RegexOptions.IgnoreCase);
+
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
 
         public enum DataType
         {
@@ -579,11 +682,12 @@ namespace GingerCore.NoSqlBase
         public static string DisplayInferredTypeAndValue(byte[] byteArray)
         {
 
+
             if (byteArray == null || byteArray.Length == 0)
             {
                 return "";
             }
-            if (byteArray.Length<9 && byteArray.All(y => y == 0))
+            if (byteArray.All(y => y == 0))
             {
                 return "0";
             }
@@ -818,5 +922,81 @@ namespace GingerCore.NoSqlBase
         }
 
 
+    }
+    public class RowData
+    {
+        public string RowKey { get; set; }
+        public Dictionary<string, string> Columns { get; set; }
+    }
+    public class RowDataComparer : IComparer<RowData>
+    {
+        private readonly string _colName;
+        private readonly bool _desc;
+
+        public RowDataComparer(string colName, bool desc)
+        {
+            _colName = colName;
+            _desc = desc;
+        }
+
+        public int Compare(RowData x, RowData y)
+        {
+            if (!x.Columns.TryGetValue(_colName, out string xVal))
+            {
+                xVal = string.Empty;
+            }
+            if (!y.Columns.TryGetValue(_colName, out string yVal))
+            {
+                yVal = string.Empty;
+            }
+
+            int direction = _desc ? -1 : 1;
+            if (TryCompareAsLong(xVal, yVal, out int comparison))
+            {
+                return direction * comparison;
+            }
+            else if (TryCompareAsDouble(xVal, yVal, out comparison))
+            {
+                return direction * comparison;
+            }
+            else
+            {
+                return direction * xVal.CompareTo(yVal);
+            }
+        }
+
+        private bool TryCompareAsLong(string x, string y, out int comparison)
+        {
+            if (!long.TryParse(x, out long xLong))
+            {
+                comparison = 0;
+                return false;
+            }
+            if (!long.TryParse(y, out long yLong))
+            {
+                comparison = 0;
+                return false;
+            }
+
+            comparison = xLong.CompareTo(yLong);
+            return true;
+        }
+
+        private bool TryCompareAsDouble(string x, string y, out int comparison)
+        {
+            if (!double.TryParse(x, out double xDouble))
+            {
+                comparison = 0;
+                return false;
+            }
+            if (!double.TryParse(y, out double yDouble))
+            {
+                comparison = 0;
+                return false;
+            }
+
+            comparison = xDouble.CompareTo(yDouble);
+            return true;
+        }
     }
 }
