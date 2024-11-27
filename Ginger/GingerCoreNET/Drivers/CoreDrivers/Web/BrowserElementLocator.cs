@@ -24,6 +24,7 @@ using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Drivers.Common;
 using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
@@ -98,12 +99,29 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
 
             POMElementLocator<IBrowserElement>.ElementsProvider elementsProvider = _browserTab.GetElementsAsync;
 
+            ElementInfo element = pomLocatorParser.ElementInfo;
+
+            IBrowserElement? parentElement = await FindParentElementInPOMAsync(pomLocatorParser.POMId, element);
+            bool isParentElementShadowHost = parentElement != null && (await parentElement.ShadowRootAsync()) != null;
+            if (isParentElementShadowHost)
+            {
+                element = (ElementInfo)element.CreateCopy(setNewGUID: false, deepCopy: true);
+                foreach (ElementLocator locator in element.Locators)
+                {
+                    if (locator.LocateBy is eLocateBy.ByXPath or eLocateBy.ByRelXPath)
+                    {
+                        locator.LocateBy = eLocateBy.ByCSS;
+                        locator.LocateValue = new ShadowDOM().ConvertXPathToCssSelector(locator.LocateValue);
+                    }
+                }
+            }
+
             POMElementLocator<IBrowserElement> pomElementLocator = new(new POMElementLocator<IBrowserElement>.Args
             {
                 AutoUpdatePOM = false,
                 BusinessFlow = _context.BusinessFlow,
                 Environment = _context.Environment,
-                ElementInfo = pomLocatorParser.ElementInfo,
+                ElementInfo = element,
                 ElementsProvider = elementsProvider,
                 POMExecutionUtils = _context.POMExecutionUtils,
                 Agent = _context.Agent,
@@ -111,6 +129,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web
             POMElementLocator<IBrowserElement>.LocateResult result = await pomElementLocator.LocateAsync();
 
             return result.Elements;
+        }
+
+        private async Task<IBrowserElement?> FindParentElementInPOMAsync(Guid pomId, ElementInfo childElement)
+        {
+            if (childElement is not HTMLElementInfo htmlElementInfo)
+            {
+                return null;
+            }
+
+            string parentElementIdAsString = htmlElementInfo.FindParentPOMGuid();
+            if (!Guid.TryParse(parentElementIdAsString, out Guid parentElementId) || parentElementId == Guid.Empty)
+            {
+                return null;
+            }
+            string parentLocateValue = POMLocatorParser.Convert(pomId, parentElementId);
+            IBrowserElement? parentElement = (await FindAllMatchingElementsFromPOMAsync(parentLocateValue)).FirstOrDefault();
+
+            return parentElement;
         }
 
         private async Task SwitchToFrameOfElementAsync(ElementInfo elementInfo)
