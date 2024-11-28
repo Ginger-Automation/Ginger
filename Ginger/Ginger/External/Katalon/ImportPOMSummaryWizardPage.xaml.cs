@@ -31,7 +31,10 @@ namespace Ginger.External.Katalon
 
         public void WizardEvent(WizardEventArgs e)
         {
-
+            if (e.EventType == EventType.Prev && _wizard.GetCurrentPage().Page == this)
+            {
+                e.CancelEvent = true;
+            }
         }
 
         private void UpdateSummary(int importedPOMCount)
