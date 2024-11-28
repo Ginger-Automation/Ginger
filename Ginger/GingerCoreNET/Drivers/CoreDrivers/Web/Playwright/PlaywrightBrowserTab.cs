@@ -16,15 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using Cassandra;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright;
+using GingerCore.Actions;
 using Microsoft.Playwright;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -63,8 +70,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         private readonly LinkedList<string> _consoleMessages = [];
         private IFrame _currentFrame;
         private bool _isClosed = false;
+        List<Tuple<string, object>> networkResponseLogList;
+        List<Tuple<string, object>> networkRequestLogList;
+        ObservableList<IResponse> NetworkResponseList;
+        ActBrowserElement _act;
+        public bool isNetworkLogMonitoringStarted = false;
+        IDialog dialogs;
 
         public bool IsClosed => _isClosed;
+        BrowserHelper _BrowserHelper; 
 
         internal PlaywrightBrowserTab(IPlaywrightPage playwrightPage, IBrowserTab.OnTabClose onTabClose)
         {
@@ -73,6 +87,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _currentFrame = _playwrightPage.MainFrame;
             _playwrightPage.Console += OnConsoleMessage;
             _playwrightPage.Close += OnPlaywrightPageClose;
+            _playwrightPage.Dialog += OnPlaywrightDialog;
+            _BrowserHelper = new BrowserHelper();
         }
 
         private void RemoveEventHandlers()
@@ -604,6 +620,237 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         public static bool IsFrameLocatorSupported(eLocateBy locateBy)
         {
             return SupportedFrameLocators.Contains(locateBy);
+        }
+
+        public async Task StartCaptureNetworkLog(ActBrowserElement act)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    _act = act;
+                    networkRequestLogList = new List<Tuple<string, object>>();
+                    networkResponseLogList = new List<Tuple<string, object>>();
+                    NetworkResponseList = new ObservableList<IResponse>();
+                    _playwrightPage.Request += OnNetworkRequestSent;
+                    _playwrightPage.Response += OnNetworkResponseReceived;
+                    isNetworkLogMonitoringStarted = true;
+                });
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+            
+        }
+
+        public async Task GetCaptureNetworkLog(ActBrowserElement act)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    _act = act;
+                    if (isNetworkLogMonitoringStarted)
+                    {
+                        act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
+                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
+                        foreach (var val in networkRequestLogList.ToList())
+                        {
+                            act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                        }
+
+                        foreach (var val in networkResponseLogList.ToList())
+                        {
+                            act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                        }
+                    }
+                    else
+                    {
+                        act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+
+
+        public async void StopCaptureNetworkLog(ActBrowserElement act)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    _act = act;
+                    _playwrightPage.Request -= OnNetworkRequestSent;
+                    _playwrightPage.Response -= OnNetworkResponseReceived;
+                    isNetworkLogMonitoringStarted = false;
+                    act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
+                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                    foreach (var val in networkRequestLogList.ToList())
+                    {
+                        act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                    }
+                    foreach (var val in networkResponseLogList.ToList())
+                    {
+                        act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                    }
+                    string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", networkRequestLogList);
+                    act.ExInfo = $"RequestFile : {requestPath}\n";
+                    string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", networkResponseLogList);
+                    act.ExInfo = $"{act.ExInfo} ResponseFile : {responsePath}\n";
+
+                    act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
+                    act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
+
+                    Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
+
+                    Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+    
+        }
+
+        
+
+        private async void OnNetworkRequestSent(object? sender, IRequest request)
+        {
+            try
+            {
+                if (_BrowserHelper.IsToMonitorAllUrls(_act) || _BrowserHelper.IsToMonitorOnlySelectedUrls(_act, request.Url))
+                {
+                    networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl:{ request.Url}", JsonConvert.SerializeObject(request, Formatting.Indented,
+                                                                                                                                new JsonSerializerSettings
+                                                                                                                                {
+                                                                                                                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                                                                                                })
+                ));
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+
+        private async void OnNetworkResponseReceived(object? sender, IResponse response)
+        {
+            await response.FinishedAsync();
+            try
+            {
+                if (response.BodyAsync() != null)
+                {
+                    string monitorType = _act.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value;
+                    if (_BrowserHelper.IsToMonitorAllUrls(_act) || _BrowserHelper.IsToMonitorOnlySelectedUrls(_act,response.Url))
+                    {
+                        if (_act.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
+                        {
+                            if (response.Request.ResourceType.Equals("XHR",StringComparison.CurrentCultureIgnoreCase) || response.Request.ResourceType.Equals("FETCH", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{ response.Url}", JsonConvert.SerializeObject(response, Formatting.Indented,
+                                                                                                                                    new JsonSerializerSettings
+                                                                                                                                    {
+                                                                                                                                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                                                                                                    })
+                                ));
+                            }
+                        }
+                        else
+                        {
+                            networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{response.Url}", JsonConvert.SerializeObject(response, Formatting.Indented,
+                                                                                                                                    new JsonSerializerSettings
+                                                                                                                                    {
+                                                                                                                                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                                                                                                    })
+                            ));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+
+        
+
+        
+
+        private async void OnPlaywrightDialog(object? sender, IDialog e)
+        {
+            try
+            {
+                await Task.Run(() => {
+                    dialogs = e;
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+
+        public async Task AcceptMessageBox()
+        {
+            try
+            {
+                await dialogs.AcceptAsync();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+
+        }
+
+        public async Task DismissMessageBox()
+        {
+            try
+            {
+                await dialogs.DismissAsync();
+                
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+
+        }
+
+        public string GetMessageBoxText()
+        {
+            try
+            {
+                return dialogs.Message;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                return "Error While Get Message Box Text";
+            }
+
+        }
+
+        public async Task SetMessageBoxText(string MessageBoxText)
+        {
+            try
+            {
+                await dialogs.AcceptAsync(promptText:MessageBoxText);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error While Accept Message", ex);
+            }
+
         }
     }
 

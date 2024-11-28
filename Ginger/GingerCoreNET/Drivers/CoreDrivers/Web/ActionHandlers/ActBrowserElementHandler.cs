@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -144,6 +145,34 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                         break;
                     case ActBrowserElement.eControlAction.SwitchToDefaultWindow:
                         await HandleSwitchToDefaultWindowOperationAsync();
+                        break;
+                    case ActBrowserElement.eControlAction.AcceptMessageBox:
+                        await HandleAcceptMessageBoxOperationAsync();
+                        break;
+                    case ActBrowserElement.eControlAction.DismissMessageBox:
+                        await HandleDismissMessageBoxOperationAsync();
+                        break;
+                    case ActBrowserElement.eControlAction.GetMessageBoxText:
+                        string AlertBoxText = HandleGetMessageBoxTextOperation();
+                        _act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
+                        if (_act.GetReturnParam("Actual") == null)
+                        {
+                            _act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
+                        }
+                        break;
+                    case ActBrowserElement.eControlAction.SetAlertBoxText:
+                        string MessageBoxText = _act.GetInputParamCalculatedValue("Value");
+                        await HandleSetMessageBoxTextOperationAsync(MessageBoxText);
+                        break;
+
+                    case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
+                        await HandleStartMonitoringNetworkLogOperationAsync();
+                        break;
+                    case ActBrowserElement.eControlAction.GetNetworkLog:
+                        await HandleGetNetworkLogOperationAsync();
+                        break;
+                    case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
+                        await HandleStopMonitoringNetworkLogOperationAsync();
                         break;
                     default:
                         string operationName = Common.GeneralLib.General.GetEnumValueDescription(typeof(ActBrowserElement.eControlAction), _act.ControlAction);
@@ -537,6 +566,103 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
 
             await _browser.CurrentWindow.SetTabAsync(firstTab);
+        }
+
+        private async Task HandleAcceptMessageBoxOperationAsync()
+        {
+            try
+            {
+                await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).AcceptMessageBox();
+            }
+            catch (Exception e)
+            {
+                _act.Error = "Error when Accepting MessageBox.";
+                Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
+                return;
+            }
+        }
+
+        private async Task HandleDismissMessageBoxOperationAsync()
+        {
+            try
+            {
+                await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).DismissMessageBox();
+            }
+            catch (Exception e)
+            {
+                _act.Error = "Error when Dismiss MessageBox.";
+                Reporter.ToLog(eLogLevel.ERROR, "Error when Dismiss MessageBox - " + e.Message);
+                return;
+            }
+        }
+
+        private string HandleGetMessageBoxTextOperation()
+        {
+            try
+            {
+                return ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).GetMessageBoxText();
+            }
+            catch (Exception e)
+            {
+                _act.Error = "Error when Get MessageBox Text.";
+                Reporter.ToLog(eLogLevel.ERROR, "Error when Get MessageBox Text - " + e.Message);
+                return string.Empty;
+            }
+        }
+
+        private async Task HandleSetMessageBoxTextOperationAsync(string MessageBoxText)
+        {
+            try
+            {
+                await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).SetMessageBoxText(MessageBoxText);
+            }
+            catch (Exception e)
+            {
+                _act.Error = "Error when Set MessageBox Text.";
+                Reporter.ToLog(eLogLevel.ERROR, "Error when Set MessageBox Text - " + e.Message);
+            }
+        }
+
+        private async Task HandleStartMonitoringNetworkLogOperationAsync()
+        {
+            try
+            {
+               await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).StartCaptureNetworkLog(_act);
+            }
+            catch (Exception e)
+            {
+                _act.Error = "Error when Accepting MessageBox.";
+                Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
+                return;
+            }
+        }
+
+        private async Task HandleGetNetworkLogOperationAsync()
+        {
+            try
+            {
+                await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).GetCaptureNetworkLog(_act);
+            }
+            catch (Exception e)
+            {
+                _act.Error = "Error when Accepting MessageBox.";
+                Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
+                return;
+            }
+        }
+
+        private async Task HandleStopMonitoringNetworkLogOperationAsync()
+        {
+            try
+            {
+                ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).StopCaptureNetworkLog(_act);
+            }
+            catch (Exception e)
+            {
+                _act.Error = "Error when Accepting MessageBox.";
+                Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
+                return;
+            }
         }
     }
 }
