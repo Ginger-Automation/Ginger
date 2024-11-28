@@ -73,7 +73,7 @@
 
         <StackPanel x:Name="xSwipePnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
             <StackPanel x:Name="xSwipeScalePnl" Orientation="Horizontal">
-                <Label Style="{StaticResource $LabelStyle}" Content="Swipe scale (0.1-1):" Margin="0 0 0 0"/>
+                <Label Style="{StaticResource $LabelStyle}" Content="Swipe scale (0.1-2):" Margin="0 0 0 0"/>
                 <Activities:UCValueExpression x:Name="xSwipeScaleTxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="160"  Margin="57 0 0 0" />
             </StackPanel>
             <StackPanel  Orientation="Horizontal" Margin="0 10 0 0">
