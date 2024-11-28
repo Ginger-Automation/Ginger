@@ -28,6 +28,7 @@ using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -567,100 +568,130 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
 
             await _browser.CurrentWindow.SetTabAsync(firstTab);
         }
-
+        /// <summary>
+        /// This asynchronous method accepts a message box (such as a dialog box) in the current browser tab. 
+        /// If an error occurs, it logs the error and updates the Error property.
+        /// </summary>
+        /// <returns></returns>
         private async Task HandleAcceptMessageBoxOperationAsync()
         {
             try
             {
                 await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).AcceptMessageBox();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _act.Error = "Error when Accepting MessageBox.";
-                Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
+                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
         }
-
+        /// <summary>
+        /// This asynchronous method dismisses a message box (closes it) in the current browser tab. 
+        /// If an error occurs, it logs the error and updates the Error property.
+        /// </summary>
+        /// <returns></returns>
         private async Task HandleDismissMessageBoxOperationAsync()
         {
             try
             {
                 await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).DismissMessageBox();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _act.Error = "Error when Dismiss MessageBox.";
-                Reporter.ToLog(eLogLevel.ERROR, "Error when Dismiss MessageBox - " + e.Message);
+                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
         }
+        /// <summary>
+        /// This method retrieves the text of the message box from the current browser tab. 
+        /// If an error occurs, it logs the error and returns an empty string.
 
+        /// </summary>
+        /// <returns></returns>
         private string HandleGetMessageBoxTextOperation()
         {
             try
             {
                 return ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).GetMessageBoxText();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _act.Error = "Error when Get MessageBox Text.";
-                Reporter.ToLog(eLogLevel.ERROR, "Error when Get MessageBox Text - " + e.Message);
+                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return string.Empty;
             }
         }
-
+        /// <summary>
+        /// This asynchronous method sets the text of the message box in the current browser tab. 
+        /// If an error occurs, it logs the error.
+        /// </summary>
+        /// <param name="MessageBoxText"></param>
+        /// <returns></returns>
         private async Task HandleSetMessageBoxTextOperationAsync(string MessageBoxText)
         {
             try
             {
                 await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).SetMessageBoxText(MessageBoxText);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _act.Error = "Error when Set MessageBox Text.";
-                Reporter.ToLog(eLogLevel.ERROR, "Error when Set MessageBox Text - " + e.Message);
+                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-
+        /// <summary>
+        /// This asynchronous method starts monitoring and capturing network logs in the current browser tab. If an error occurs, 
+        /// it logs the error and updates the Error property.
+        /// </summary>
+        /// <returns></returns>
         private async Task HandleStartMonitoringNetworkLogOperationAsync()
         {
             try
             {
                await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).StartCaptureNetworkLog(_act);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _act.Error = "Error when Accepting MessageBox.";
-                Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
+                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
         }
-
+        /// <summary>
+        /// This asynchronous method retrieves the captured network logs from the current browser tab. 
+        /// If an error occurs, it logs the error and updates the Error property.
+        /// </summary>
+        /// <returns></returns>
         private async Task HandleGetNetworkLogOperationAsync()
         {
             try
             {
                 await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).GetCaptureNetworkLog(_act);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _act.Error = "Error when Accepting MessageBox.";
-                Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
+                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
         }
-
+        /// <summary>
+        /// This asynchronous method stops monitoring and capturing network logs in the current browser tab. 
+        /// If an error occurs, it logs the error and updates the Error property.
+        /// </summary>
+        /// <returns></returns>
         private async Task HandleStopMonitoringNetworkLogOperationAsync()
         {
             try
             {
                 ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).StopCaptureNetworkLog(_act);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _act.Error = "Error when Accepting MessageBox.";
-                Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
+                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
         }

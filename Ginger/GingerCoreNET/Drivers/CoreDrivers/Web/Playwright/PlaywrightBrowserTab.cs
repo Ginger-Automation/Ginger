@@ -621,7 +621,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             return SupportedFrameLocators.Contains(locateBy);
         }
-
+        /// <summary>
+        /// This asynchronous method initiates the process of capturing network logs for the current page. 
+        /// It sets up the necessary data structures and event handlers to monitor network requests and responses.
+        /// </summary>
+        /// <param name="act"></param>
+        /// <returns></returns>
         public async Task StartCaptureNetworkLog(ActBrowserElement act)
         {
             try
@@ -643,7 +648,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
             
         }
-
+        /// <summary>
+        /// This asynchronous method retrieves the captured network logs (requests and responses) for the current browser element and stores them in the act object.
+        /// It only performs the action if network log monitoring has been started.
+        /// </summary>
+        /// <param name="act"></param>
+        /// <returns></returns>
         public async Task GetCaptureNetworkLog(ActBrowserElement act)
         {
             try
@@ -677,7 +687,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-
+        /// <summary>
+        /// This asynchronous method stops the network log capture by unsubscribing from the network request and response events. 
+        /// It then processes and stores the captured logs, saves them to files, and attaches the files as artifacts to the act object.
+        /// </summary>
+        /// <param name="act"></param>
 
         public async void StopCaptureNetworkLog(ActBrowserElement act)
         {
@@ -719,8 +733,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
     
         }
 
-        
 
+        /// <summary>
+        /// This method handles the network request event, capturing the details of outgoing network requests. 
+        /// It adds the request URL and its serialized data to the network log if the request matches the specified criteria.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="request"></param>
         private async void OnNetworkRequestSent(object? sender, IRequest request)
         {
             try
@@ -740,7 +759,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-
+        /// <summary>
+        /// This method handles the network response event, capturing details about the response once it's received. 
+        /// It checks if the response should be logged based on the configured criteria and adds relevant information to the network response log.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="response"></param>
         private async void OnNetworkResponseReceived(object? sender, IResponse response)
         {
             await response.FinishedAsync();
@@ -798,7 +822,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-
+        /// <summary>
+        /// This asynchronous method accepts (clicks the "OK" or equivalent) on a message box or dialog.
+        /// </summary>
+        /// <returns></returns>
         public async Task AcceptMessageBox()
         {
             try
@@ -811,7 +838,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
         }
-
+        /// <summary>
+        /// This asynchronous method dismisses (closes or cancels) a message box or dialog.
+        /// </summary>
+        /// <returns></returns>
         public async Task DismissMessageBox()
         {
             try
@@ -825,7 +855,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
         }
-
+        /// <summary>
+        /// This method retrieves the text content of the current message box or dialog.
+        /// </summary>
+        /// <returns></returns>
         public string GetMessageBoxText()
         {
             try
@@ -839,7 +872,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             }
 
         }
-
+        /// <summary>
+        /// This asynchronous method sets the text (usually for a prompt dialog) in the message box.
+        /// </summary>
+        /// <param name="MessageBoxText"></param>
+        /// <returns></returns>
         public async Task SetMessageBoxText(string MessageBoxText)
         {
             try
