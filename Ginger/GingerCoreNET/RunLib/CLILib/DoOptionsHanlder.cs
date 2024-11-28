@@ -18,11 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger;
 using Ginger.AnalyzerLib;
-using Ginger.SourceControl;
 using GingerCore;
-using GingerCoreNET.SourceControl;
 using System;
 using System.IO;
 using System.Text;
@@ -30,77 +27,39 @@ using System.Text;
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
 
-    public static class DoOptionsHandler
+    public class DoOptionsHandler
     {
-        public static void Run(DoOptions opts)
+        DoOptions mOpts;
+        CLIHelper mCLIHelper = new();
+        public void Run(DoOptions opts)
         {
-            
+            mOpts = opts;
             switch (opts.Operation)
             {
                 case DoOptions.DoOperation.analyze:
-                    DoAnalyze(opts.Solution);
+                    DoAnalyze();
                     break;
                 case DoOptions.DoOperation.clean:
                     // TODO: remove execution folder, backups and more
                     break;
                 case DoOptions.DoOperation.info:
-                    DoInfo(opts.Solution);
+                    DoInfo();
                     break;
                 case DoOptions.DoOperation.open:
-                    DoOpen(opts.Solution, opts.EncryptionKey);
-                    break;
-                case DoOptions.DoOperation.openSourceControl:
-                    DoOpenSourceControl(opts);
+                    DoOpen();
                     break;
             }
         }
-        private static void DoOpenSourceControl(DoOptions runOptions)
-        {
-
-            if (WorkSpace.Instance.UserProfile == null)
-            {
-                WorkSpace.Instance.UserProfile = new UserProfile();
-                UserProfileOperations userProfileOperations = new UserProfileOperations(WorkSpace.Instance.UserProfile);
-                WorkSpace.Instance.UserProfile.UserProfileOperations = userProfileOperations;
-            }
-            WorkSpace.Instance.UserProfile.SourceControlURL = runOptions.URL;
-            WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
-            WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
-            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
-            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient = runOptions.useScmShell;
-            WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;
-            WorkSpace.Instance.UserProfile.SourceControlPass = runOptions.Pass;
-
-            if (runOptions.PasswordEncrypted)
-            {
-                PasswordEncrypted(runOptions);
-            }
 
 
-            Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
-            string solutionFolder = runOptions.Solution;
-            if (!SourceControlIntegration.DownloadSolution(solutionFolder))
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
-            }
-           
 
-            if (!Directory.Exists(solutionFolder))
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"The provided folder path '{solutionFolder}' does not exist.");
-                return;
-            }
-            // Check if the directory exists
-            if (string.IsNullOrEmpty(runOptions.EncryptionKey))
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Encryption key is empty, please provide it and try again.");
-                return;
-            }
-            WorkSpace.Instance.OpenSolution(solutionFolder, runOptions.EncryptionKey);
-        }
+        /// <summary>
+        /// Decrypts the source control password if it is encrypted.
+        /// </summary>
+        /// <param name="runOptions">The options containing the encrypted password and encryption key.</param>
         private static void PasswordEncrypted(DoOptions runOptions)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, $"PasswordEncrypted: '{runOptions.PasswordEncrypted.ToString()}'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"PasswordEncrypted: '{runOptions.PasswordEncrypted}'");
             string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
             if (runOptions.PasswordEncrypted.ToString() is "Y" or "true" or "True")
             {
@@ -114,14 +73,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password");//not showing ex details for not showing the password by mistake in log
                 }
             }
-
-
             WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
         }
-        private static void DoInfo(string solution)
+        private void DoInfo()
         {
             // TODO: print info on solution, how many BFs etc, try to read all items - for Linux deser test
-            WorkSpace.Instance.OpenSolution(solution);
+            WorkSpace.Instance.OpenSolution(mOpts.Solution);
             StringBuilder stringBuilder = new StringBuilder(Environment.NewLine);
             stringBuilder.Append("Solution Name  :").Append(WorkSpace.Instance.Solution.Name).Append(Environment.NewLine);
             stringBuilder.Append("Business Flows :").Append(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count).Append(Environment.NewLine);
@@ -132,8 +89,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
 
-        private static void DoOpen(string solutionFolder, string encryptionKey)
+        /// <summary>
+        /// Opens the solution specified in the options.
+        /// </summary>
+        /// <param name="solutionFolder">The folder path of the solution to open.</param>
+        /// <param name="encryptionKey">The encryption key for the solution, if any.</param>
+        private void DoOpen()
         {
+            string solutionFolder = mOpts.Solution;
+            string encryptionKey = mOpts.EncryptionKey;
             try
             {
                 // Check if solutionFolder is null or empty
@@ -142,8 +106,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     Reporter.ToLog(eLogLevel.ERROR, "The provided solution folder path is null or empty.");
                     return;
                 }
-                    // Check if the folder path contains the solution file name
-                    if (solutionFolder.Contains("Ginger.Solution.xml"))
+                // Check if the folder path contains the solution file name
+                if (solutionFolder.Contains("Ginger.Solution.xml"))
                 {
                     solutionFolder = Path.GetDirectoryName(solutionFolder)?.Trim() ?? string.Empty;
 
@@ -154,20 +118,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                 }
 
-                // Check if the directory exists
-                if (!Directory.Exists(solutionFolder))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "The specified solution folder path does not exist. Please check the path and try again.");
-                    return;
-                }
-                // Check if the directory exists
-                if (string.IsNullOrEmpty(encryptionKey))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Encryption key is empty, please provide it and try again.");
-                    return;
-                }
                 // Attempt to open the solution
-                WorkSpace.Instance.OpenSolution(solutionFolder, encryptionKey);
+                mCLIHelper.AddCLIGitProperties(mOpts);
+                mCLIHelper.SetWorkSpaceGitProperties(mOpts);
+                if (mOpts.PasswordEncrypted)
+                {
+                    PasswordEncrypted(mOpts);
+                }
+                mCLIHelper.Solution = mOpts.Solution;
+                if (!mCLIHelper.LoadSolution())
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                }
             }
             catch (Exception ex)
             {
@@ -175,9 +137,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while opening the solution in folder '{solutionFolder}'. Error: {ex.Message}");
             }
         }
-        private static void DoAnalyze(string solution)
+        private void DoAnalyze()
         {
-            WorkSpace.Instance.OpenSolution(solution);
+            WorkSpace.Instance.OpenSolution(mOpts.Solution);
 
             AnalyzerUtils analyzerUtils = new AnalyzerUtils();
             ObservableList<AnalyzerItemBase> issues = [];

@@ -19,21 +19,19 @@ limitations under the License.
 using CommandLine;
 using System;
 using System.IO;
-using System.Net;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
 
     [Verb("do", HelpText = "Solution Operations like: analyze, clean and more for list run 'ginger help solution")]
-    public class DoOptions:SourceControlOptions  // 'ginger do --operation analyze' run analyzer on solution
+    public class DoOptions : SourceControlOptions  // 'ginger do --operation analyze' run analyzer on solution
     {
         public enum DoOperation
         {
             analyze,
             info,
             clean,
-            open,
-            openSourceControl
+            open
         }
 
         [Option('o', "operation", Required = true, HelpText = "Select operation to run on solution")]
@@ -61,7 +59,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
 
-        [Option('e', "encryptionKey", Required = true, HelpText = "Provide the solution encyrption key")]
+        [Option('e', "encryptionKey", Required = false, HelpText = "Provide the solution encyrption key")]
         public string EncryptionKey { get; set; }
 
 

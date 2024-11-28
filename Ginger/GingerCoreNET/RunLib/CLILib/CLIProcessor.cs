@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
-using Ginger;
 using GingerCore;
 using GingerCoreNET.RunLib;
 using System;
@@ -40,7 +39,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     public class CLIProcessor
     {
         ICLI mCLIHandler;
-        CLIHelper mCLIHelper = new CLIHelper();
+        CLIHelper mCLIHelper = new();
 
         public async Task ExecuteArgs(string[] args)
         {
@@ -116,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
              {
                  try
                  {
-                     DoOptionsHandler.Run(opts);
+                     new DoOptionsHandler().Run(opts);
                      return 0;
                  }
                  catch (Exception ex)
@@ -392,6 +391,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             Reporter.ToLog(eLogLevel.INFO, "Loading Configurations...");
 
             mCLIHandler = new CLIArgs();
+            mCLIHelper.AddCLIGitProperties(runOptions);
             mCLIHelper.Solution = runOptions.Solution;
             mCLIHelper.SetEncryptionKey(runOptions.EncryptionKey);
             mCLIHelper.Runset = runOptions.Runset;
@@ -399,19 +399,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.RunAnalyzer = !runOptions.DoNotAnalyze;
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
-
-            mCLIHelper.SourceControlURL = runOptions.URL;
-            mCLIHelper.SourcecontrolUser = runOptions.User;
-            mCLIHelper.sourceControlType = runOptions.SCMType;
-
-            mCLIHelper.SetSourceControlBranch(runOptions.Branch);
-
-            mCLIHelper.sourceControlPass = runOptions.Pass;
-            mCLIHelper.sourceControlPassEncrypted = runOptions.PasswordEncrypted;
-            mCLIHelper.SourceControlProxyServer(runOptions.SourceControlProxyServer);
-            mCLIHelper.SourceControlProxyPort(runOptions.SourceControlProxyPort);
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
-
             mCLIHelper.SealightsEnable = runOptions.SealightsEnable;
             mCLIHelper.SealightsUrl = runOptions.SealightsUrl;
             mCLIHelper.SealightsAgentToken = runOptions.SealightsAgentToken;
@@ -421,8 +409,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
             mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel?.ToString() == "None" ? null : runOptions.SealightsEntityLevel?.ToString();
             mCLIHelper.SealightsTestRecommendations = runOptions.SealightsTestRecommendations;
-
-            //set source application and source app user
             mCLIHelper.SourceApplication = runOptions.SourceApplication;
             mCLIHelper.SourceApplicationUser = runOptions.SourceApplicationUser;
 
@@ -461,22 +447,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 mCLIHelper.RerunLevel = runOptions.RerunLevel;
             }
 
-            if (WorkSpace.Instance.UserProfile == null)
-            {
-                WorkSpace.Instance.UserProfile = new UserProfile();
-                UserProfileOperations userProfileOperations = new UserProfileOperations(WorkSpace.Instance.UserProfile);
-                WorkSpace.Instance.UserProfile.UserProfileOperations = userProfileOperations;
-            }
-            WorkSpace.Instance.UserProfile.SourceControlURL = runOptions.URL;
-            WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
-            WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
-            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
-            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient = runOptions.useScmShell;
-
-
-
-            WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;
-            WorkSpace.Instance.UserProfile.SourceControlPass = runOptions.Pass;
+            mCLIHelper.SetWorkSpaceGitProperties(runOptions);
             if (runOptions.PasswordEncrypted)
             {
                 mCLIHandler.LoadGeneralConfigurations("", mCLIHelper);

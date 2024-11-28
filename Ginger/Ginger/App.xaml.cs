@@ -33,10 +33,8 @@ using GingerCore.Repository;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -258,7 +256,6 @@ namespace Ginger
             try
             {
                 InitLogging();
-
                 bool startGrid = ShouldStartGrid(e.Args);
                 WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
                 var parserResult = ParseCommandLineArguments(e.Args);
@@ -284,7 +281,7 @@ namespace Ginger
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Unhandled exception in Application_Startup", ex);
             }
-       }
+        }
 
 
         /// <summary>
@@ -326,11 +323,11 @@ namespace Ginger
                 input = System.Web.HttpUtility.UrlDecode(input);
                 if (input.StartsWith("ginger://"))
                 {
-                    input = input.Substring("ginger://".Length);
+                    input = input["ginger://".Length..];
                 }
                 if (input.EndsWith("/"))
                 {
-                    input = input.Substring(0, input.Length - 1);
+                    input = input[..^1];
                 }
                 List<string> resultList = General.SplitWithPaths(input).Select(s => s.Trim('\"', '\'')).ToList();
                 arguments = resultList.ToArray();
@@ -351,7 +348,7 @@ namespace Ginger
         /// <returns>DoOptions object or null.</returns>
         private DoOptions ExtractDoOptions(ParserResult<object> parserResult)
         {
-            if (parserResult?.Value is DoOptions tempOptions &&( tempOptions.Operation == DoOptions.DoOperation.open || tempOptions.Operation == DoOptions.DoOperation.openSourceControl))
+            if (parserResult?.Value is DoOptions tempOptions && (tempOptions.Operation == DoOptions.DoOperation.open))
             {
                 return tempOptions;
             }
@@ -417,10 +414,10 @@ namespace Ginger
 
                 if (doOptions != null && !string.IsNullOrWhiteSpace(doOptions.Solution))
                 {
-                  
-                        DoOptionsHandler.Run(doOptions);
-                   
-                   
+
+                    new DoOptionsHandler().Run(doOptions);
+
+
                 }
             }
             finally
