@@ -98,5 +98,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.POM
             ElementId = elementId;
             ElementInfo = element;
         }
+
+        public static string Convert(Guid pomId, Guid elementId)
+        {
+            return $"{pomId}_{elementId}";
+        }
     }
 }
