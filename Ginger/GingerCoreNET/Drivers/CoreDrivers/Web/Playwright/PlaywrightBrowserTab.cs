@@ -26,6 +26,7 @@ using Deque.AxeCore.Playwright;
 using GingerCore.Actions;
 using Microsoft.Playwright;
 using Newtonsoft.Json;
+using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -693,7 +694,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// </summary>
         /// <param name="act"></param>
 
-        public async void StopCaptureNetworkLog(ActBrowserElement act)
+        public async Task StopCaptureNetworkLog(ActBrowserElement act)
         {
             try
             {
@@ -770,7 +771,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             await response.FinishedAsync();
             try
             {
-                if (response.BodyAsync() != null)
+                if (response != null)
                 {
                     string monitorType = _act.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value;
                     if (_BrowserHelper.IsToMonitorAllUrls(_act) || _BrowserHelper.IsToMonitorOnlySelectedUrls(_act,response.Url))
@@ -813,9 +814,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             try
             {
-                await Task.Run(() => {
-                    dialogs = e;
-                });
+               dialogs = e;
             }
             catch (Exception ex)
             {
@@ -830,7 +829,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             try
             {
-                await dialogs.AcceptAsync();
+                if (dialogs != null)
+                {
+                    await dialogs.AcceptAsync();
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "No dialog to accept.");
+                }
             }
             catch (Exception ex)
             {
@@ -846,8 +852,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             try
             {
-                await dialogs.DismissAsync();
-                
+                if (dialogs != null)
+                {
+                    await dialogs.DismissAsync();
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "No dialog to dismiss.");
+                }
+
             }
             catch (Exception ex)
             {
@@ -863,7 +876,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             try
             {
-                return dialogs.Message;
+                if (dialogs != null)
+                {
+                    return dialogs.Message;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "No dialog to get message.");
+                    return string.Empty;
+                }
             }
             catch (Exception ex)
             {
@@ -881,7 +902,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             try
             {
-                await dialogs.AcceptAsync(promptText:MessageBoxText);
+                if (dialogs != null)
+                {
+                    await dialogs.AcceptAsync(promptText: MessageBoxText);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "No dialog to accept.");
+                    
+                }
             }
             catch (Exception ex)
             {

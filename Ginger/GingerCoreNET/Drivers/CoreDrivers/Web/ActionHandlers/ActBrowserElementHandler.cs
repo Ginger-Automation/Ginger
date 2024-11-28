@@ -686,7 +686,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
         {
             try
             {
-                ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).StopCaptureNetworkLog(_act);
+                await ((PlaywrightBrowserTab)_browser!.CurrentWindow.CurrentTab).StopCaptureNetworkLog(_act);
             }
             catch (Exception ex)
             {

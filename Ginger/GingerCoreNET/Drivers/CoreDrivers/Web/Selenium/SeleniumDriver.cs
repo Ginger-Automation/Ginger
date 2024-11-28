@@ -10933,8 +10933,6 @@ namespace GingerCore.Drivers
         {
             try
             {
-                await Task.Run(() =>
-                {
                     if (isNetworkLogMonitoringStarted)
                     {
                         act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
@@ -10954,7 +10952,6 @@ namespace GingerCore.Drivers
                         act.ExInfo = $"Action is skipped,{nameof(ActBrowserElement.eControlAction.StartMonitoringNetworkLog)} Action is not started";
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
-                });
             }
             catch(Exception ex)
             {
