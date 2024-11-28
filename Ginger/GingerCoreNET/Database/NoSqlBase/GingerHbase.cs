@@ -105,7 +105,7 @@ namespace GingerCore.NoSqlBase
 
             try
             {
-                TableList tables = new TableList();
+                TableList tables = new();
                 Task getTablesTask = Task.Run(() =>
                 {
                     try
@@ -236,7 +236,7 @@ namespace GingerCore.NoSqlBase
             }
             else if (string.Equals("RegexComp", op))
             {
-                RegexStringComparator comp = new RegexStringComparator(fieldValue);
+                RegexStringComparator comp = new(fieldValue);
                 return new SingleColumnValueFilter(
                   Encoding.UTF8.GetBytes(family),
                   Encoding.UTF8.GetBytes(fieldName),
@@ -254,7 +254,7 @@ namespace GingerCore.NoSqlBase
         /// </summary>
         public Scanner getScanner(string wherepart, string familyname)
         {
-            Scanner scanner = new Scanner();
+            Scanner scanner = new();
 
             string[] Querydata;
             string[] whereSubParts;
@@ -344,7 +344,7 @@ namespace GingerCore.NoSqlBase
         public override async void PerformDBAction()
         {
 
-            ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList)
+            ValueExpression VE = new(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList)
             {
                 Value = Act.QueryValue
             };
@@ -366,7 +366,7 @@ namespace GingerCore.NoSqlBase
             };
             try
             {
-                HBaseClient actionClient = new HBaseClient(ClCredential, requestOption);
+                HBaseClient actionClient = new(ClCredential, requestOption);
                 Scanner scanner;
                 ScannerInformation scanInfo = null;
                 string familyName;
@@ -380,7 +380,7 @@ namespace GingerCore.NoSqlBase
 
                         int nuRows = 0;
                         scanner = new Scanner();
-                        FirstKeyOnlyFilter keyOnlyFilter = new FirstKeyOnlyFilter();
+                        FirstKeyOnlyFilter keyOnlyFilter = new();
                         scanner.filter = keyOnlyFilter.ToEncodedString();
                         scanInfo = actionClient.CreateScannerAsync(Act.Details.Info, scanner, requestOption).Result;
                         nuRows = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result.rows.Count;
@@ -498,6 +498,24 @@ namespace GingerCore.NoSqlBase
                         List<RowData> rowDataList = [];
                         scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
                         //According to scanner info read data form hbase
+
+
+                        /*       double[] array = { 829, 101, 1, 2830.862, 1, 1, 501, 1, 19.5, 96.5, 14999, 120, 1, 1, 329 };
+                               foreach (double i in array)
+                               {
+                                   var v_lon = System.BitConverter.GetBytes(i);
+                                   Array.Reverse(v_lon);
+                                   string longValu112 = ExtractColumnValue(v_lon);
+                                   if (i == double.Parse(longValu112))
+                                   {
+
+                                   }
+                                   else
+                                   {
+
+                                   }
+                               }*/
+
                         while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                         {
                             isDataFound = true;
@@ -506,7 +524,7 @@ namespace GingerCore.NoSqlBase
                                 string rowKey = _encoding.GetString(row.key);
                                 List<Cell> cells = row.values;
 
-                                RowData rowData = new RowData
+                                RowData rowData = new()
                                 {
                                     RowKey = rowKey,
                                     Columns = []
@@ -721,7 +739,11 @@ namespace GingerCore.NoSqlBase
                 return "0";
             }
             DataType inferredType = DataType.String;
-            if (byteArray != null && byteArray.Length > 0 && (byteArray[0] == 0))
+            if (byteArray.Length == 8 && byteArray.All(n => n is not 0 and < 128))
+            {
+                return Encoding.UTF8.GetString(byteArray);
+            }
+            if (byteArray != null && byteArray.Length > 0 && byteArray.Length == 8)
             {
                 inferredType = InferDataType(byteArray);
             }
@@ -731,7 +753,7 @@ namespace GingerCore.NoSqlBase
             }
             object value = ConvertByteArrayToType(byteArray, inferredType);
 
-            if (inferredType == DataType.Double && !(Double.IsNaN(double.Parse(value.ToString())) || Double.IsInfinity(double.Parse(value.ToString()))))
+            if (inferredType == DataType.Double && value.ToString().Contains("E") && !(Double.IsNaN(double.Parse(value.ToString())) || Double.IsInfinity(double.Parse(value.ToString()))))
             {
                 //Not a double
                 inferredType = DataType.Long;
@@ -850,7 +872,7 @@ namespace GingerCore.NoSqlBase
         public override List<string> GetTableList(string Keyspace)
         {
             ClusterCredentials ClCredential = new(new System.Uri(this.connectionUrl), this.userName, this.password);
-            HBaseClient client1 = new HBaseClient(ClCredential);
+            HBaseClient client1 = new(ClCredential);
             HBTableList = [];
             TableList tables = null!;
             Task getTablesTask = Task.Run(() =>
@@ -880,7 +902,7 @@ namespace GingerCore.NoSqlBase
         {
             ColumnList = [];
             ClusterCredentials ClCredential = new(new System.Uri(Db.DatabaseOperations.TNSCalculated), Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated);
-            HBaseClient client1 = new HBaseClient(ClCredential);
+            HBaseClient client1 = new(ClCredential);
             var result11 = client1.GetTableSchemaAsync(Tablename, null).Result.columns.ToList();
 
             if (result11.Count > 1)
@@ -888,7 +910,7 @@ namespace GingerCore.NoSqlBase
                 for (int i = 0; i < result11.Count; i++)
                 {
                     var tmp = result11[i].name;
-                    Scanner scanner = new Scanner();
+                    Scanner scanner = new();
                     var filter = new FamilyFilter(CompareFilter.CompareOp.Equal, new BinaryComparator(Encoding.UTF8.GetBytes(tmp)));
                     scanner.filter = filter?.ToEncodedString();
                     RequestOptions scanOptions = RequestOptions.GetDefaultOptions();
@@ -924,7 +946,7 @@ namespace GingerCore.NoSqlBase
             }
             else
             {
-                Scanner scanner = new Scanner();
+                Scanner scanner = new();
                 var filter = new FamilyFilter(CompareFilter.CompareOp.Equal, new BinaryComparator(Encoding.UTF8.GetBytes(result11[0].name)));
                 scanner.filter = filter.ToEncodedString();
                 RequestOptions scanOptions = RequestOptions.GetDefaultOptions();
