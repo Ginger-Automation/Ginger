@@ -10940,12 +10940,12 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
                         foreach (var val in networkRequestLogList.ToList())
                         {
-                            act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
                         }
 
                         foreach (var val in networkResponseLogList.ToList())
                         {
-                            act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
                         }
                     }
                     else
@@ -11022,11 +11022,11 @@ namespace GingerCore.Drivers
                     act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
                     foreach (var val in networkRequestLogList.ToList())
                     {
-                        act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
                     }
                     foreach (var val in networkResponseLogList.ToList())
                     {
-                        act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                        act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString() } {val.Item1}", Convert.ToString(val.Item2));
                     }
 
                     await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V127.Network.DisableCommandSettings());

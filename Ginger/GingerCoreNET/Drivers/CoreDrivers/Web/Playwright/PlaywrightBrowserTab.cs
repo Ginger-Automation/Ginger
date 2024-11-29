@@ -16,17 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Exceptions;
-using Cassandra;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright;
 using GingerCore.Actions;
 using Microsoft.Playwright;
 using Newtonsoft.Json;
-using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -73,7 +70,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         private bool _isClosed = false;
         List<Tuple<string, object>> networkResponseLogList;
         List<Tuple<string, object>> networkRequestLogList;
-        ObservableList<IResponse> NetworkResponseList;
         ActBrowserElement _act;
         public bool isNetworkLogMonitoringStarted = false;
         IDialog dialogs;
@@ -633,9 +629,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _BrowserHelper = new BrowserHelper(act);
             try
             {
-                    networkRequestLogList = new List<Tuple<string, object>>();
-                    networkResponseLogList = new List<Tuple<string, object>>();
-                    NetworkResponseList = new ObservableList<IResponse>();
+                    networkRequestLogList = [];
+                    networkResponseLogList = [];
                     _playwrightPage.Request += OnNetworkRequestSent;
                     _playwrightPage.Response += OnNetworkResponseReceived;
                     isNetworkLogMonitoringStarted = true;
@@ -666,12 +661,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                         act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
                         foreach (var val in networkRequestLogList.ToList())
                         {
-                            act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
                         }
 
                         foreach (var val in networkResponseLogList.ToList())
                         {
-                            act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
                         }
                     }
                     else
@@ -700,30 +695,37 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             {
                 await Task.Run(() =>
                 {
-                    _playwrightPage.Request -= OnNetworkRequestSent;
-                    _playwrightPage.Response -= OnNetworkResponseReceived;
-                    isNetworkLogMonitoringStarted = false;
-                    act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
-                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
-                    foreach (var val in networkRequestLogList.ToList())
+                    try
                     {
-                        act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                        _playwrightPage.Request -= OnNetworkRequestSent;
+                        _playwrightPage.Response -= OnNetworkResponseReceived;
+                        isNetworkLogMonitoringStarted = false;
+                        act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
+                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                        foreach (var val in networkRequestLogList)
+                        {
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                        }
+                        foreach (var val in networkResponseLogList)
+                        {
+                            act.AddOrUpdateReturnParamActual($"{act.ControlAction.ToString()} {val.Item1}", Convert.ToString(val.Item2));
+                        }
+                        string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", networkRequestLogList);
+                        act.ExInfo = $"RequestFile : {requestPath}\n";
+                        string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", networkResponseLogList);
+                        act.ExInfo = $"{act.ExInfo} ResponseFile : {responsePath}\n";
+
+                        act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
+                        act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
+
+                        Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
+
+                        Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
                     }
-                    foreach (var val in networkResponseLogList.ToList())
+                    catch (Exception ex)
                     {
-                        act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
-                    string requestPath = _BrowserHelper.CreateNetworkLogFile("NetworklogRequest", networkRequestLogList);
-                    act.ExInfo = $"RequestFile : {requestPath}\n";
-                    string responsePath = _BrowserHelper.CreateNetworkLogFile("NetworklogResponse", networkResponseLogList);
-                    act.ExInfo = $"{act.ExInfo} ResponseFile : {responsePath}\n";
-
-                    act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
-                    act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
-
-                    Act.AddArtifactToAction(Path.GetFileName(requestPath), act, requestPath);
-
-                    Act.AddArtifactToAction(Path.GetFileName(responsePath), act, responsePath);
                 });
             }
             catch (Exception ex)
