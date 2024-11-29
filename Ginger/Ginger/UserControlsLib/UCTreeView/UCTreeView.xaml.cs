@@ -782,10 +782,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     wasFound = true;
                 }
 
-                if (FilterItemsByTextNew(item.Childrens(), text))
+                bool foundMatchInChildren = FilterItemsByTextNew(item.Childrens(), text);
+                if (foundMatchInChildren)
                 {
                     wasFound = true;
                     itemBase.Visibility = Visibility.Visible;
+                }
+
+                bool canExpand = item.IsExpandable() && itemBase.TreeViewItem != null;
+                if (foundMatchInChildren && canExpand)
+                {
+                    itemBase.TreeViewItem!.IsExpanded = true;
                 }
             }
 
