@@ -463,7 +463,7 @@ namespace GingerCore.NoSqlBase
                         }
                         CellSet next;
                         table = ExtractTableName(SQLCalculated);
-                        if (SQLCalculated.IndexOf("where", StringComparison.OrdinalIgnoreCase) >= 0)
+                        if (SQLCalculated.IndexOf(" where ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
                             wherepart = ExtractWherePart(SQLCalculated);
                             var familyNameList = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList();
@@ -497,24 +497,6 @@ namespace GingerCore.NoSqlBase
                         bool isDataFound = false;
                         List<RowData> rowDataList = [];
                         scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
-                        //According to scanner info read data form hbase
-
-
-                        /*       double[] array = { 829, 101, 1, 2830.862, 1, 1, 501, 1, 19.5, 96.5, 14999, 120, 1, 1, 329 };
-                               foreach (double i in array)
-                               {
-                                   var v_lon = System.BitConverter.GetBytes(i);
-                                   Array.Reverse(v_lon);
-                                   string longValu112 = ExtractColumnValue(v_lon);
-                                   if (i == double.Parse(longValu112))
-                                   {
-
-                                   }
-                                   else
-                                   {
-
-                                   }
-                               }*/
 
                         while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                         {
@@ -565,9 +547,9 @@ namespace GingerCore.NoSqlBase
                         //To show the selected column value
                         else
                         {
-                            int selectIndex = SQLCalculated.IndexOf("select", StringComparison.OrdinalIgnoreCase);
-                            int fromIndex = SQLCalculated.IndexOf("from", StringComparison.OrdinalIgnoreCase);
-                            string[] selectedcols = SQLCalculated.Trim().Substring(selectIndex + 6, fromIndex - selectIndex - 6).Split(",");
+                            int selectIndex = SQLCalculated.IndexOf(" select ", StringComparison.OrdinalIgnoreCase);
+                            int fromIndex = SQLCalculated.IndexOf(" from ", StringComparison.OrdinalIgnoreCase);
+                            string[] selectedcols = SQLCalculated.Trim().Substring(selectIndex + 8, fromIndex - selectIndex - 8).Split(",");
                             List<string> columnNameList = [];
                             foreach (string col in selectedcols)
                             {
@@ -614,10 +596,16 @@ namespace GingerCore.NoSqlBase
         /// </summary>
         /// <param name="SQLCalculated">The SQL query.</param>
         /// <returns>The where part as a string.</returns>
+
         string ExtractWherePart(string SQLCalculated)
         {
-            int whereIndex = SQLCalculated.IndexOf("where", StringComparison.OrdinalIgnoreCase);
-            var wherepart = SQLCalculated[(whereIndex + 5)..];
+            int whereIndex = SQLCalculated.IndexOf(" where ", StringComparison.OrdinalIgnoreCase);
+            if (whereIndex == -1)
+            {
+                return string.Empty; // No WHERE clause found
+            }
+
+            var wherepart = SQLCalculated[(whereIndex + 7)..];
             string searchString = "order by";
             int orderByIndex = wherepart.IndexOf(searchString, StringComparison.OrdinalIgnoreCase);
             if (orderByIndex >= 0)
@@ -625,6 +613,7 @@ namespace GingerCore.NoSqlBase
                 // Remove the 'ORDER BY' clause and everything after it
                 wherepart = wherepart[..orderByIndex].Trim();
             }
+
             return wherepart;
         }
 
@@ -674,11 +663,11 @@ namespace GingerCore.NoSqlBase
                 int startIndex = orderByIndex + orderByClause.Length;
                 string orderByPart = query[startIndex..].Trim();
 
-                if (orderByPart.EndsWith("desc", StringComparison.OrdinalIgnoreCase))
+                if (orderByPart.EndsWith(" desc", StringComparison.OrdinalIgnoreCase))
                 {
                     orderByDirection = "DESC";
                 }
-                else if (orderByPart.EndsWith("asc", StringComparison.OrdinalIgnoreCase))
+                else if (orderByPart.EndsWith(" asc", StringComparison.OrdinalIgnoreCase))
                 {
                     orderByDirection = "ASC";
                 }
