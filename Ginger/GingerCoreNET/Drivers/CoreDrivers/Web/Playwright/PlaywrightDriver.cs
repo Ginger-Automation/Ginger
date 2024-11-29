@@ -1810,6 +1810,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             ActBrowserElement.eControlAction.SwitchToParentFrame,
             ActBrowserElement.eControlAction.SwitchWindow,
             ActBrowserElement.eControlAction.SwitchToDefaultWindow,
+            ActBrowserElement.eControlAction.AcceptMessageBox,
+            ActBrowserElement.eControlAction.DismissMessageBox,
+            ActBrowserElement.eControlAction.GetMessageBoxText,
+            ActBrowserElement.eControlAction.SetAlertBoxText,
+            ActBrowserElement.eControlAction.StartMonitoringNetworkLog,
+            ActBrowserElement.eControlAction.GetNetworkLog,
+            ActBrowserElement.eControlAction.StopMonitoringNetworkLog,
         ];
     }
 }
