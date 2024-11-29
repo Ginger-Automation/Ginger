@@ -1201,6 +1201,9 @@
     <None Update="Reports\Ginger-Web-Client\assets\sass\_fonts.scss">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_1_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\assets\theme\theme-report.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1235,6 +1238,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main.2ad51ab896990d24.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.50dca4a1d8ae08b9.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\polyfills.ab6619d5cdfdf12c.js">

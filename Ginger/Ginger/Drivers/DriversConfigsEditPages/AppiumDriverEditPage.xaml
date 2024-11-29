@@ -36,7 +36,7 @@
                             </Hyperlink>):
                         </TextBlock>
                         <Actions:UCValueExpression x:Name="xServerURLTextBox" HorizontalAlignment="Stretch" VerticalAlignment="Top"  DockPanel.Dock="Top"/>
-                        <CheckBox x:Name="xLoadDeviceWindow" Style="{StaticResource $CeckBoxStyle}" Content="Load device window" Margin="0,5,0,0" IsChecked="True" Checked="xLoadDeviceWindow_Checked" Unchecked="xLoadDeviceWindow_Checked"/>
+                        <CheckBox x:Name="xLoadDeviceWindow" Style="{StaticResource $CeckBoxStyle}" Content="Load device window" Margin="0,15,0,0" IsChecked="True" Checked="xLoadDeviceWindow_Checked" Unchecked="xLoadDeviceWindow_Checked"/>
                         <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Horizontal" Margin="0,5,0,0">
                             <Label  Content="Auto refresh mode:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
                             <RadioButton x:Name="xLiveRdBtn" Content="Live" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" />
@@ -53,11 +53,11 @@
                                     <!--<CheckBox x:Name="xAllowUnahutCertChkBox" Content="Allow unauthorized certificates" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>-->
                                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                                         <CheckBox x:Name="xUseProxyChkBox" Content="Use proxy" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Checked="xUseProxyChkBox_Checked" Unchecked="xUseProxyChkBox_Unchecked"/>
-                                        <Actions:UCValueExpression x:Name="xProxyTextBox" Width="180" Margin="10,0,0,0" IsEnabled="False"/>
+                                        <Actions:UCValueExpression x:Name="xProxyTextBox" Width="190" Margin="10,0,0,0" IsEnabled="False"/>
                                     </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+                                    <StackPanel Orientation="Horizontal" Margin="0,15,0,10">
                                         <Label Content="Load timeout (seconds):" Style="{StaticResource $LabelStyle}"/>
-                                        <Actions:UCValueExpression x:Name="xLoadTimeoutTxtbox" Width="120" Margin="10,0,0,0"/>
+                                        <Actions:UCValueExpression x:Name="xLoadTimeoutTxtbox" Width="122" Margin="17,0,0,0"/>
                                     </StackPanel>
                                     <!--<StackPanel Orientation="Horizontal" Margin="0,2,0,10">
                                         <Label Content="Screen click correction X:" Style="{StaticResource $LabelStyle}"/>
@@ -67,6 +67,14 @@
                                         <Label Content="Screen click correction Y:" Style="{StaticResource $LabelStyle}"/>
                                         <Actions:UCValueExpression x:Name="xScreenScaleFactorCorrectionYTextBox" Width="120" Margin="5,0,0,0"/>
                                     </StackPanel>-->
+                                    <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+                                        <Label Content="Screenshot height (pixels):" Style="{StaticResource $LabelStyle}"/>
+                                        <Actions:UCValueExpression x:Name="xScreenshotHeightTextBox" Width="120" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+                                        <Label Content="Screenshot width (pixels):" Style="{StaticResource $LabelStyle}"/>
+                                        <Actions:UCValueExpression x:Name="xScreenshotWidthTextBox" Width="120" Margin="7,0,0,0"/>
+                                    </StackPanel>
                                 </StackPanel>
                             </Expander.Content>
                         </Expander>
