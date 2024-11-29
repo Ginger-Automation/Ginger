@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         Config, Dynamic, Script, Arguments
     }
 
-    public class CLIHelper : SourceControlOptions, INotifyPropertyChanged
+    public class CLIHelper : INotifyPropertyChanged
     {
         public string Solution;
         public string Env;
