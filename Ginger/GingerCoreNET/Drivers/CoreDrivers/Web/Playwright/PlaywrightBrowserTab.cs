@@ -633,15 +633,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _BrowserHelper = new BrowserHelper(act);
             try
             {
-                await Task.Run(() =>
-                {
                     networkRequestLogList = new List<Tuple<string, object>>();
                     networkResponseLogList = new List<Tuple<string, object>>();
                     NetworkResponseList = new ObservableList<IResponse>();
                     _playwrightPage.Request += OnNetworkRequestSent;
                     _playwrightPage.Response += OnNetworkResponseReceived;
                     isNetworkLogMonitoringStarted = true;
-                });
             }
             catch(Exception ex)
             {

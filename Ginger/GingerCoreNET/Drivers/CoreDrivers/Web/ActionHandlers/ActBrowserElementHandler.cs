@@ -154,12 +154,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
                         await HandleDismissMessageBoxOperationAsync();
                         break;
                     case ActBrowserElement.eControlAction.GetMessageBoxText:
-                        string AlertBoxText = HandleGetMessageBoxTextOperation();
-                        _act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
-                        if (_act.GetReturnParam("Actual") == null)
-                        {
-                            _act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
-                        }
+                        _act.AddOrUpdateReturnParamActual("Actual", HandleGetMessageBoxTextOperation());
                         break;
                     case ActBrowserElement.eControlAction.SetAlertBoxText:
                         string MessageBoxText = _act.GetInputParamCalculatedValue("Value");
@@ -581,7 +576,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             catch (Exception ex)
             {
-                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                _act.Error = $"Error when handling message box operation.";
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
@@ -599,7 +594,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             catch (Exception ex)
             {
-                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                _act.Error = $"Error when handling message box operation.";
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
@@ -618,7 +613,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             catch (Exception ex)
             {
-                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                _act.Error = $"Error when handling message box operation.";
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return string.Empty;
             }
@@ -637,7 +632,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             catch (Exception ex)
             {
-                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                _act.Error = $"Error when handling message box operation.";
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
@@ -654,7 +649,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             catch (Exception ex)
             {
-                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                _act.Error = $"Error when handling Network log  operation.";
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
@@ -672,7 +667,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             catch (Exception ex)
             {
-                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                _act.Error = $"Error when handling Network log  operation.";
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
@@ -690,7 +685,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.ActionHandlers
             }
             catch (Exception ex)
             {
-                _act.Error = $"Error when {MethodBase.GetCurrentMethod().Name}.";
+                _act.Error = $"Error when handling Network log  operation.";
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return;
             }
