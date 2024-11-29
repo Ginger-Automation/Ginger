@@ -59,7 +59,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
 
-        [Option('e', "encryptionKey", Required = false, HelpText = "Provide the solution encyrption key")]
+        [Option('e', "encryptionKey", Required = false, HelpText = "Provide the solution encryption key")]
         public string EncryptionKey { get; set; }
 
 

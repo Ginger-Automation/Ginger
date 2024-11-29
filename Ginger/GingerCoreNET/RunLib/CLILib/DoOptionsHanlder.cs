@@ -52,29 +52,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
 
-
-        /// <summary>
-        /// Decrypts the source control password if it is encrypted.
-        /// </summary>
-        /// <param name="runOptions">The options containing the encrypted password and encryption key.</param>
-        private static void PasswordEncrypted(DoOptions runOptions)
-        {
-            Reporter.ToLog(eLogLevel.DEBUG, $"PasswordEncrypted: '{runOptions.PasswordEncrypted}'");
-            string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
-            if (runOptions.PasswordEncrypted.ToString() is "Y" or "true" or "True")
-            {
-                try
-                {
-                    pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass, runOptions.EncryptionKey);
-                }
-                catch (Exception ex)
-                {
-                    string mess = ex.Message; //To avoid warning of ex not used
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password");//not showing ex details for not showing the password by mistake in log
-                }
-            }
-            WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
-        }
         private void DoInfo()
         {
             // TODO: print info on solution, how many BFs etc, try to read all items - for Linux deser test
@@ -121,9 +98,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 // Attempt to open the solution
                 mCLIHelper.AddCLIGitProperties(mOpts);
                 mCLIHelper.SetWorkSpaceGitProperties(mOpts);
+                mCLIHelper.SetEncryptionKey(encryptionKey);
                 if (mOpts.PasswordEncrypted)
                 {
-                    PasswordEncrypted(mOpts);
+                    mCLIHelper.PasswordEncrypted(mOpts.PasswordEncrypted.ToString());
                 }
                 mCLIHelper.Solution = mOpts.Solution;
                 if (!mCLIHelper.LoadSolution())
