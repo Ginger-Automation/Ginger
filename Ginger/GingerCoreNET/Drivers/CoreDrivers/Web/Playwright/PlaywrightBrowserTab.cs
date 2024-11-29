@@ -89,7 +89,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
             _playwrightPage.Console += OnConsoleMessage;
             _playwrightPage.Close += OnPlaywrightPageClose;
             _playwrightPage.Dialog += OnPlaywrightDialog;
-            _BrowserHelper = new BrowserHelper();
         }
 
         private void RemoveEventHandlers()
@@ -630,11 +629,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns></returns>
         public async Task StartCaptureNetworkLog(ActBrowserElement act)
         {
+            _act = act;
+            _BrowserHelper = new BrowserHelper(act);
             try
             {
                 await Task.Run(() =>
                 {
-                    _act = act;
                     networkRequestLogList = new List<Tuple<string, object>>();
                     networkResponseLogList = new List<Tuple<string, object>>();
                     NetworkResponseList = new ObservableList<IResponse>();
@@ -657,11 +657,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         /// <returns></returns>
         public async Task GetCaptureNetworkLog(ActBrowserElement act)
         {
+            _act = act;
+            _BrowserHelper = new BrowserHelper(act);
             try
             {
                 await Task.Run(() =>
                 {
-                    _act = act;
                     if (isNetworkLogMonitoringStarted)
                     {
                         act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList(), Formatting.Indented));
@@ -696,11 +697,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
 
         public async Task StopCaptureNetworkLog(ActBrowserElement act)
         {
+            _act = act;
+            _BrowserHelper = new BrowserHelper(act);
             try
             {
                 await Task.Run(() =>
                 {
-                    _act = act;
                     _playwrightPage.Request -= OnNetworkRequestSent;
                     _playwrightPage.Response -= OnNetworkResponseReceived;
                     isNetworkLogMonitoringStarted = false;
@@ -745,7 +747,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
         {
             try
             {
-                if (_BrowserHelper.IsToMonitorAllUrls(_act) || _BrowserHelper.IsToMonitorOnlySelectedUrls(_act, request.Url))
+                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl( request.Url))
                 {
                     networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl:{ request.Url}", JsonConvert.SerializeObject(request, Formatting.Indented,
                                                                                                                                 new JsonSerializerSettings
@@ -774,7 +776,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Playwright
                 if (response != null)
                 {
                     string monitorType = _act.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value;
-                    if (_BrowserHelper.IsToMonitorAllUrls(_act) || _BrowserHelper.IsToMonitorOnlySelectedUrls(_act,response.Url))
+                    if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl(response.Url))
                     {
                         if (_act.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
                         {

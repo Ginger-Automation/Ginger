@@ -71,7 +71,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static GingerCoreNET.GeneralLib.General;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V125.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V127.DevToolsSessionDomains; //.V125.DevToolsSessionDomains;
 
 
 
@@ -88,7 +88,7 @@ namespace GingerCore.Drivers
         INetwork interceptor;
         public bool isNetworkLogMonitoringStarted = false;
         ActBrowserElement mAct;
-        BrowserHelper _BrowserHelper = new BrowserHelper();
+        BrowserHelper _BrowserHelper;
         private int mDriverProcessId = 0;
         private readonly ShadowDOM shadowDOM = new();
         private const string CHROME_DRIVER_NAME = "chromedriver";
@@ -8391,6 +8391,7 @@ namespace GingerCore.Drivers
 
         public async void ActBrowserElementHandler(ActBrowserElement act)
         {
+            _BrowserHelper = new BrowserHelper(act);
             try
             {
                 string AgentType = GetAgentAppName();
@@ -10892,9 +10893,9 @@ namespace GingerCore.Drivers
                 try
                 {
                     //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession(125);
+                    devToolsSession = devTools.GetDevToolsSession(127);
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
-                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V125.Network.EnableCommandSettings());
+                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V127.Network.EnableCommandSettings());
                     blockOrUnblockUrls();
                 }
                 catch (Exception ex)
@@ -10920,11 +10921,11 @@ namespace GingerCore.Drivers
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V125.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V127.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V125.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V127.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
                 }
                 Thread.Sleep(300);
             }
@@ -11028,7 +11029,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(nameof(act.ControlAction) + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V125.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V127.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 
@@ -11092,7 +11093,7 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if (_BrowserHelper.IsToMonitorAllUrls(mAct) || _BrowserHelper.IsToMonitorOnlySelectedUrls(mAct, e.RequestUrl))
+                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl( e.RequestUrl))
                 {
                     networkRequestLogList.Add(new Tuple<string, object>($"RequestUrl: {e.RequestUrl}", JsonConvert.SerializeObject(e, Formatting.Indented)));
                 }
@@ -11111,7 +11112,7 @@ namespace GingerCore.Drivers
             {
                 string monitorType = mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value;
 
-                if (_BrowserHelper.IsToMonitorAllUrls(mAct) || _BrowserHelper.IsToMonitorOnlySelectedUrls(mAct, e.ResponseUrl))
+                if (_BrowserHelper.ShouldMonitorAllUrls() || _BrowserHelper.ShouldMonitorUrl(e.ResponseUrl))
                 {
                     if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
                     {
@@ -11122,7 +11123,7 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{e.ResponseUrl}", JsonConvert.SerializeObject(e, Formatting.Indented)));
+                        networkResponseLogList.Add(new Tuple<string, object>($"ResponseUrl:{e.ResponseUrl}",  JsonConvert.SerializeObject(e, Formatting.Indented)));
                     }
                 }
             }
