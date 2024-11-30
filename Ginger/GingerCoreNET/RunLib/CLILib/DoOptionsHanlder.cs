@@ -26,31 +26,36 @@ using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    public static class DoOptionsHandler
+
+    public class DoOptionsHandler
     {
-        public static void Run(DoOptions opts)
+        DoOptions mOpts;
+        CLIHelper mCLIHelper = new();
+        public void Run(DoOptions opts)
         {
+            mOpts = opts;
             switch (opts.Operation)
             {
                 case DoOptions.DoOperation.analyze:
-                    DoAnalyze(opts.Solution);
+                    DoAnalyze();
                     break;
                 case DoOptions.DoOperation.clean:
                     // TODO: remove execution folder, backups and more
                     break;
                 case DoOptions.DoOperation.info:
-                    DoInfo(opts.Solution);
+                    DoInfo();
                     break;
                 case DoOptions.DoOperation.open:
-                    DoOpen(opts.Solution);
+                    DoOpen();
                     break;
             }
         }
 
-        private static void DoInfo(string solution)
+
+        private void DoInfo()
         {
             // TODO: print info on solution, how many BFs etc, try to read all items - for Linux deser test
-            WorkSpace.Instance.OpenSolution(solution);
+            WorkSpace.Instance.OpenSolution(mOpts.Solution);
             StringBuilder stringBuilder = new StringBuilder(Environment.NewLine);
             stringBuilder.Append("Solution Name  :").Append(WorkSpace.Instance.Solution.Name).Append(Environment.NewLine);
             stringBuilder.Append("Business Flows :").Append(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count).Append(Environment.NewLine);
@@ -61,8 +66,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
 
-        private static void DoOpen(string solutionFolder)
+        /// <summary>
+        /// Opens the solution specified in the options.
+        /// </summary>
+        /// <param name="solutionFolder">The folder path of the solution to open.</param>
+        /// <param name="encryptionKey">The encryption key for the solution, if any.</param>
+        private void DoOpen()
         {
+            string solutionFolder = mOpts.Solution;
+            string encryptionKey = mOpts.EncryptionKey;
             try
             {
                 // Check if solutionFolder is null or empty
@@ -71,7 +83,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     Reporter.ToLog(eLogLevel.ERROR, "The provided solution folder path is null or empty.");
                     return;
                 }
-
                 // Check if the folder path contains the solution file name
                 if (solutionFolder.Contains("Ginger.Solution.xml"))
                 {
@@ -84,15 +95,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                 }
 
-                // Check if the directory exists
-                if (!Directory.Exists(solutionFolder))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, $"The provided folder path '{solutionFolder}' does not exist.");
-                    return;
-                }
-
                 // Attempt to open the solution
-                WorkSpace.Instance.OpenSolution(solutionFolder);
+                mCLIHelper.AddCLIGitProperties(mOpts);
+                mCLIHelper.SetWorkSpaceGitProperties(mOpts);
+                mCLIHelper.SetEncryptionKey(encryptionKey);
+                if (mOpts.PasswordEncrypted)
+                {
+                    mCLIHelper.PasswordEncrypted(mOpts.PasswordEncrypted.ToString());
+                }
+                mCLIHelper.Solution = mOpts.Solution;
+                if (!mCLIHelper.LoadSolution())
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                }
             }
             catch (Exception ex)
             {
@@ -100,9 +115,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while opening the solution in folder '{solutionFolder}'. Error: {ex.Message}");
             }
         }
-        private static void DoAnalyze(string solution)
+        private void DoAnalyze()
         {
-            WorkSpace.Instance.OpenSolution(solution);
+            WorkSpace.Instance.OpenSolution(mOpts.Solution);
 
             AnalyzerUtils analyzerUtils = new AnalyzerUtils();
             ObservableList<AnalyzerItemBase> issues = [];

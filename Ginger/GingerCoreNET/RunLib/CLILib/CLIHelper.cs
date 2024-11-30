@@ -20,9 +20,9 @@ using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.AnalyzerLib;
 using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
@@ -215,6 +215,46 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         //UserProfile WorkSpace.Instance.UserProfile;
         RunSetConfig mRunSetConfig;
 
+        /// <summary>
+        /// Adds CLI Git properties from the provided SourceControlOptions.
+        /// </summary>
+        /// <param name="runOptions">The SourceControlOptions containing the Git properties.</param>
+        internal void AddCLIGitProperties(SourceControlOptions runOptions)
+        {
+            SourceControlURL = runOptions.URL;
+            SourcecontrolUser = runOptions.User;
+            sourceControlType = runOptions.SCMType;
+            SetSourceControlBranch(runOptions.Branch);
+            sourceControlPass = runOptions.Pass;
+            sourceControlPassEncrypted = runOptions.PasswordEncrypted;
+            SourceControlProxyServer(runOptions.SourceControlProxyServer);
+            SourceControlProxyPort(runOptions.SourceControlProxyPort);
+        }
+
+        /// <summary>
+        /// Sets the workspace Git properties from the provided SourceControlOptions.
+        /// </summary>
+        /// <param name="runOptions">The SourceControlOptions containing the Git properties.</param>
+        internal void SetWorkSpaceGitProperties(SourceControlOptions runOptions)
+        {
+            if (WorkSpace.Instance.UserProfile == null)
+            {
+                WorkSpace.Instance.UserProfile = new UserProfile();
+                UserProfileOperations userProfileOperations = new UserProfileOperations(WorkSpace.Instance.UserProfile);
+                WorkSpace.Instance.UserProfile.UserProfileOperations = userProfileOperations;
+            }
+            WorkSpace.Instance.UserProfile.SourceControlURL = runOptions.URL;
+            WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
+            WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient = runOptions.useScmShell;
+            WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;
+            WorkSpace.Instance.UserProfile.SourceControlPass = runOptions.Pass;
+        }
+        /// <summary>
+        /// Loads the solution.
+        /// </summary>
+        /// <returns>True if the solution is loaded successfully, otherwise false.</returns>
         public bool LoadSolution()
         {
             try
